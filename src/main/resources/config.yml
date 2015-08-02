@@ -1,0 +1,228 @@
+#============================================================#
+# +--------------------------------------------------------+ #
+# |        Advanced Achievements configuration 1.6         | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+# You can use Minecraft chat colours in messages and names, but include ' ' around the text.
+# If you want to use a ' in a text, write two ' instead, and include additional ' ' around the whole text.
+# In command rewards, PLAYER designates the name of the player who just got the achievement.
+# Only spaces, no tabs. Don't forget the indents, plugin won't work otherwise! 
+# To check your file, use: yaml-online-parser.appspot.com
+# Available entities for the Kills section: hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
+# Available objects for rewards/Crafts/Places/Breaks: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+# Original and commented file: dev.bukkit.org/bukkit-plugins/advanced-achievements/pages/configuration/
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# |                    General settings                    | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+# Time in seconds between each /aach book (server reload resets time).
+Time: 900
+
+# Check for update on plugin launch and notify when an OP joins the game.
+CheckForUpdate: true
+
+# Set to true to activate firework effects when a player receives an achievement.
+Firework: true
+
+# Set to true to activate sound effect when a player receives his book.
+Sound: true
+
+# Set to true if you are using a version of Vault prior to 1.4.
+RetroVault: false
+
+# Set the icon of the plugin (default: shamrock, "\u2618").
+Icon: "\u2618"
+
+# Notify other connected players when an achievement is received.
+ChatNotify: false
+
+# Separator between name, description and date on a book page.
+BookSeparator: ''
+
+# Prevent stats from increasing when player in creative mode.
+RestrictCreative: false
+
+# Display "Reward command carried out!" message when you set a command award for an achievement.
+RewardCommandNotif: true
+
+# Make a daily backup of your local database.
+DatabaseBackup: true
+
+# Prevent stats from increasing when player in a specific world (delete the [] before using).
+ExcludedWorlds: []
+#  - yourWorld1
+#  - yourWorld2
+
+# Number of players displayed on /aach top command.
+TopList: 5
+
+# DO NOT CHANGE.
+DatabaseVersion: 4
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# |                  Action achievements                   | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+# When a player connects during the day.
+Connections:
+  '1':
+    Message: You connected to our server for the first time!
+    Name: Good Choice
+
+# When a specific block is placed (specify block name, lower case).
+Places:
+  stone:
+    '100':
+      Message: '&4One hundred placed stones!'
+      Name: Stone Addict
+    '1000':
+      Message: '&4One thousand placed stones!'
+      Name: Stone God
+      
+# When a specific block is broken (specify block name, lower case).
+Breaks:
+  stone:
+    '1':
+      Message: '&1The first time you went mining!'
+      Name: Cobble!
+      Reward:
+        Command: give PLAYER 158 10
+  log:
+    '100':
+      Message: '&2You have cut 100 logs!'
+      Name: Wood Cutter
+              
+# When a specific mob is killed (specify mob name or 'player', lower case).
+Kills:
+  zombie:
+    '1':
+      Message: '&8The first time you killed a zombie!'
+      Name: The Walking Dead
+      Reward:
+        Money:
+          Amount: 1
+        Item:
+          Type: diamond
+          Amount: 1
+          
+# When a specific item is crafted (specify item name, lower case).
+Crafts:
+  diamond_sword:
+    '1':
+      Message: The first time you crafted a blade!
+      Name: Blacksmith Apprentice
+      Reward:
+        Money:
+          Amount: 1        
+
+# When the player dies.
+Deaths:
+  '1':
+    Message: The first time you died!
+    Name: Rest in Peace
+    
+# When an arrow is shot.
+Arrows:
+  '50':
+    Message: '50 arrows shot!'
+    Name: Arrows Around the Place
+    
+# When a snowball is thrown.  
+Snowballs:
+  '1000':
+    Message: '1000 snowballs thrown. That''s the spirit!'
+    Name: Winter Addict 
+    
+# When an egg is thrown.  
+Eggs:
+  '1000':
+    Message: '1000 eggs thrown!'
+    Name: Omelet Addict 
+    
+# When a fish is caught. 
+Fish:
+  '1':
+    Message: The first time you caught a fish!
+    Name: Time for Fish and Chips
+
+# When a tool/armor/weapon is broken.  
+ItemBreaks:
+  '1':
+    Message: You broke your favorite tool!
+    Name: '&4Clumsy Guy'
+
+# When an item is eaten.  
+EatenItems:
+  '1':
+    Message: Just had a snack!
+    Name: First Snack  
+    
+# When a sheep is sheared.
+Shear:
+  '100':
+    Message: 100 sheep sheared!
+    Name: '&1Wool Addict'
+    
+# When a cow is milked.
+Milk:
+  '1':
+    Message: Just milked a cow!
+    Name: First Milk    
+    
+# When a trade with a villager is made.
+Trades:
+  '1':
+    Message: Doing business with your first villager!
+    Name: First Trade    
+    
+# When an anvil is used.
+AnvilsUsed:
+  '1':
+    Message: You just repaired your first item!
+    Name: First Repair 
+    
+# When an anvil is used.
+Enchantments:
+  '5':
+    Message: 5 objects enchanted!
+    Name: '&5Wizard'
+    
+# When a bed is entered. 
+Beds:  
+  '5':
+    Message: You entered a bed 5 times!
+    Name: Sleepy guy 
+    
+# Maximum level reached.    
+MaxLevel:  
+  '10':
+    Message: Level 10 reached!
+    Name: '&4Rookie'  
+    
+# When a potion is consumed.
+ConsumedPotions:
+  '100':
+    Message: Drinking weird beverages all the time...
+    Name: Alcoholic 
+    
+#============================================================#
+# +--------------------------------------------------------+ #
+# |                  Command achievements                  | #
+# +--------------------------------------------------------+ #
+#============================================================#
+    
+# Let achievement commands be given several times.
+MultiCommand: true
+    
+# A player with achievement.give (or the console) can use the /aach give yourAch1 playerName 
+# to give yourAch1 achievement to playerName.
+Commands:
+  yourAch1:
+    Message: You took part in the special event!
+    Name: Special Event Achievement!

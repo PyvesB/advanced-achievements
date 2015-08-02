@@ -1,0 +1,20 @@
+name: AdvancedAchievements
+main: com.hm.achievement.AdvancedAchievements
+version: 1.6.1
+author: DarkPyves
+softdepend: [Vault]
+description: A plugin that enables custom achievements and RP books on your server.
+commands:
+  aach:
+    description: Main command.   
+permissions:
+  achievement.get:
+    description: Allows receiving achievements.
+  achievement.book:
+    description: Allows receiving achievements books.
+  achievement.reload:
+    description: Allows to reload the plugin's configuration.
+  achievement.give:
+    description: Allows giving achievements by command.
+
+
