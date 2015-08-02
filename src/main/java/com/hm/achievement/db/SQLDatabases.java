@@ -47,86 +47,86 @@ public class SQLDatabases {
 							.getConnection("jdbc:sqlite:" + dbfile);
 					Statement st = conn.createStatement();
 					st.execute("CREATE TABLE IF NOT EXISTS `breaks` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "blockid SMALLINT UNSIGNED,"
 							+ "breaks INT UNSIGNED,"
 							+ "PRIMARY KEY(`playername`, `blockid`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `places` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "blockid SMALLINT UNSIGNED,"
 							+ "places INT UNSIGNED,"
 							+ "PRIMARY KEY(`playername`, `blockid`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `kills` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "mobname varchar(32)," + "kills INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`, `mobname`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `crafts` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "item SMALLINT UNSIGNED," + "times INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`, `item`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `achievements` ("
-							+ "playername varchar(32),"
-							+ "achievement varchar(32)," + "description varchar(32),"
-							+ "date varchar(32),"
+							+ "playername char(36),"
+							+ "achievement varchar(64)," + "description varchar(128),"
+							+ "date varchar(16),"
 							+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `deaths` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "deaths INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `arrows` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "arrows INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `snowballs` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "snowballs INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `eggs` ("
-							+ "playername varchar(32)," + "eggs INT UNSIGNED,"
+							+ "playername char(36)," + "eggs INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `fish` ("
-							+ "playername varchar(32)," + "fish INT UNSIGNED,"
+							+ "playername char(36)," + "fish INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `itembreaks` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "itembreaks INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `eatenitems` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "eatenitems INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `shears` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "shears INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `milks` ("
-							+ "playername varchar(32)," + "milks INT UNSIGNED,"
+							+ "playername char(36)," + "milks INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `connections` ("
-							+ "playername varchar(32),"
-							+ "connections INT UNSIGNED," + "date varchar(32),"
+							+ "playername char(36),"
+							+ "connections INT UNSIGNED," + "date varchar(16),"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `trades` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "trades INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `anvils` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "anvils INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `enchantments` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "enchantments INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `levels` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "levels INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `beds` ("
-							+ "playername varchar(32)," + "beds INT UNSIGNED,"
+							+ "playername char(36)," + "beds INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `consumedpotions` ("
-							+ "playername varchar(32),"
+							+ "playername char(36),"
 							+ "consumedpotions INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.close();
@@ -173,86 +173,86 @@ public class SQLDatabases {
 			if(plugin.getConfig().getString("Database").equalsIgnoreCase("mysql")){
 				Statement st = conn.createStatement();
 				st.execute("CREATE TABLE IF NOT EXISTS `breaks` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "blockid SMALLINT UNSIGNED,"
 						+ "breaks INT UNSIGNED,"
 						+ "PRIMARY KEY(`playername`, `blockid`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `places` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "blockid SMALLINT UNSIGNED,"
 						+ "places INT UNSIGNED,"
 						+ "PRIMARY KEY(`playername`, `blockid`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `kills` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "mobname varchar(32)," + "kills INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`, `mobname`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `crafts` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "item SMALLINT UNSIGNED," + "times INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`, `item`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `achievements` ("
-						+ "playername varchar(32),"
-						+ "achievement varchar(32)," + "description varchar(32),"
-						+ "date varchar(32),"
+						+ "playername char(36),"
+						+ "achievement varchar(64)," + "description varchar(128),"
+						+ "date varchar(16),"
 						+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `deaths` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "deaths INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `arrows` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "arrows INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `snowballs` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "snowballs INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `eggs` ("
-						+ "playername varchar(32)," + "eggs INT UNSIGNED,"
+						+ "playername char(36)," + "eggs INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `fish` ("
-						+ "playername varchar(32)," + "fish INT UNSIGNED,"
+						+ "playername char(36)," + "fish INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `itembreaks` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "itembreaks INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `eatenitems` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "eatenitems INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `shears` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "shears INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `milks` ("
-						+ "playername varchar(32)," + "milks INT UNSIGNED,"
+						+ "playername char(36)," + "milks INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `connections` ("
-						+ "playername varchar(32),"
-						+ "connections INT UNSIGNED," + "date varchar(32),"
+						+ "playername char(36),"
+						+ "connections INT UNSIGNED," + "date varchar(16),"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `trades` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "trades INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `anvils` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "anvils INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `enchantments` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "enchantments INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `levels` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "levels INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `beds` ("
-						+ "playername varchar(32)," + "beds INT UNSIGNED,"
+						+ "playername char(36)," + "beds INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `consumedpotions` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "consumedpotions INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.close();
@@ -260,13 +260,13 @@ public class SQLDatabases {
 			if (plugin.getDatabaseVersion() == 1) {
 				Statement st = conn.createStatement();
 				st.execute("CREATE TABLE IF NOT EXISTS `trades` ("
-						+ "playername varchar(32)," + "trades INT UNSIGNED,"
+						+ "playername char(36)," + "trades INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `anvils` ("
-						+ "playername varchar(32)," + "anvils INT UNSIGNED,"
+						+ "playername char(36)," + "anvils INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `enchantments` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "enchantments INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 
@@ -276,13 +276,13 @@ public class SQLDatabases {
 			if (plugin.getDatabaseVersion() == 2) {
 				Statement st = conn.createStatement();
 				st.execute("CREATE TABLE IF NOT EXISTS `eggs` ("
-						+ "playername varchar(32)," + "eggs INT UNSIGNED,"
+						+ "playername char(36)," + "eggs INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `levels` ("
-						+ "playername varchar(32)," + "levels INT UNSIGNED,"
+						+ "playername char(36)," + "levels INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `beds` ("
-						+ "playername varchar(32)," + "beds INT UNSIGNED,"
+						+ "playername char(36)," + "beds INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.close();
 				plugin.setDatabaseVersion(3);
@@ -292,7 +292,7 @@ public class SQLDatabases {
 			if (plugin.getDatabaseVersion() == 3) {
 				Statement st = conn.createStatement();
 				st.execute("CREATE TABLE IF NOT EXISTS `consumedpotions` ("
-						+ "playername varchar(32),"
+						+ "playername char(36),"
 						+ "consumedpotions INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.close();
@@ -462,8 +462,10 @@ public class SQLDatabases {
 			ResultSet rs = st
 					.executeQuery("SELECT COUNT(*) FROM `achievements` WHERE playername = '"
 							+ player.getUniqueId() + "'");
-
-			int numberAchievements = rs.getInt(1);
+			int numberAchievements = 0;
+			if(rs.next()){
+				numberAchievements = rs.getInt(1);
+			}
 
 			st.close();
 			rs.close();
