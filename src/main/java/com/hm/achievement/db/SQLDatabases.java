@@ -66,7 +66,7 @@ public class SQLDatabases {
 							+ "PRIMARY KEY (`playername`, `item`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `achievements` ("
 							+ "playername varchar(32),"
-							+ "achievement varchar(32)," + "desc varchar(32),"
+							+ "achievement varchar(32)," + "description varchar(32),"
 							+ "date varchar(32),"
 							+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `deaths` ("
@@ -192,7 +192,7 @@ public class SQLDatabases {
 						+ "PRIMARY KEY (`playername`, `item`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `achievements` ("
 						+ "playername varchar(32),"
-						+ "achievement varchar(32)," + "desc varchar(32),"
+						+ "achievement varchar(32)," + "description varchar(32),"
 						+ "date varchar(32),"
 						+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `deaths` ("
@@ -441,7 +441,7 @@ public class SQLDatabases {
 			ArrayList<String> achievementsList = new ArrayList<String>();
 			while (rs.next()) {
 				achievementsList.add(rs.getString("achievement"));
-				achievementsList.add(rs.getString("desc"));
+				achievementsList.add(rs.getString("description"));
 				achievementsList.add(rs.getString("date"));
 			}
 			st.close();
@@ -506,7 +506,7 @@ public class SQLDatabases {
 			Statement st = conn.createStatement();
 			achievement = achievement.replace("'", "''");
 			desc = desc.replace("'", "''");
-			st.execute("replace into `achievements` (playername, achievement, desc, date) VALUES ('"
+			st.execute("replace into `achievements` (playername, achievement, description, date) VALUES ('"
 					+ player.getUniqueId()
 					+ "','"
 					+ achievement
