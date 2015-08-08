@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveShearListener implements Listener {
 	private AdvancedAchievements plugin;
@@ -29,7 +30,17 @@ public class AchieveShearListener implements Listener {
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		Integer shears = plugin.getDb().registerShear(player);
+		Integer shears = 0;
+		if (!DatabasePools.getShearHashMap().containsKey(
+				player.getUniqueId().toString()))
+			shears = plugin.getDb().getShear(player) + 1;
+		else
+			shears = DatabasePools.getShearHashMap().get(
+					player.getUniqueId().toString()) + 1;
+
+		DatabasePools.getShearHashMap().put(player.getUniqueId().toString(),
+				shears);
+
 		String configAchievement = "Shear." + shears;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 			String name = plugin.getConfig().getString(

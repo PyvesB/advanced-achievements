@@ -31,6 +31,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.hm.achievement.db.SQLDatabases;
+import com.hm.achievement.db.SendPooledRequests;
 import com.hm.achievement.listener.AchieveArrowListener;
 import com.hm.achievement.listener.AchieveBedListener;
 import com.hm.achievement.listener.AchieveBlockListener;
@@ -53,10 +54,12 @@ import com.hm.achievement.listener.AchieveXPListener;
  * server. Some minor parts of the code are based on Achievement plugin by
  * Death_marine and captainawesome7, under Federation of Lost Lawn Chairs
  * license (http://dev.bukkit.org/licenses/1332-federation-of-lost-lawn-chairs)
- * AdvancedAchievements is under GNU General Public License version 3.
+ * AdvancedAchievements is under GNU General Public License version 3. Please
+ * visit the plugin's GitHub for more information :
+ * https://github.com/PyvesB/AdvancedAchievements
  * 
  * @since April 2015
- * @version 1.6.1
+ * @version 1.6.2
  * @author DarkPyves
  */
 
@@ -133,6 +136,14 @@ public class AdvancedAchievements extends JavaPlugin {
 		db = new SQLDatabases();
 
 		players = new HashMap<Player, Long>();
+
+	}
+
+	public void onDisable() {
+
+		new SendPooledRequests(this, false).sendRequests();
+		this.getLogger().info(
+				"Remaining requests sent to database, plugin disabled.");
 
 	}
 
@@ -219,6 +230,13 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		db.initialize(this);
 
+		Bukkit.getServer()
+				.getScheduler()
+				.scheduleSyncRepeatingTask(
+						Bukkit.getPluginManager().getPlugin(
+								"AdvancedAchievements"),
+						new SendPooledRequests(this, true), 2400, 1200);
+
 		this.getLogger()
 				.info("AdvancedAchievements configurations and database successfully loaded!");
 	}
@@ -300,6 +318,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		this.saveDefaultConfig();
 
+		// Workaround to keep configuration file comments.
 		File config = new File(this.getDataFolder(), "config.yml");
 		BufferedReader reader = null;
 		try {
@@ -420,6 +439,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.saveConfig();
 
 		}
+
 
 		try {
 			reader = new BufferedReader(new FileReader(config));
@@ -824,6 +844,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				player.getWorld().playSound(player.getLocation(),
 						Sound.LEVEL_UP, 1, 0);
 
+			// Up to three achievement books can be generated (= 150
+			// achievements received by a player).
 			ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 			ItemStack book2 = new ItemStack(Material.WRITTEN_BOOK);
 			ItemStack book3 = new ItemStack(Material.WRITTEN_BOOK);

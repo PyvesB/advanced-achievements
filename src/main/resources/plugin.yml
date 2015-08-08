@@ -1,6 +1,6 @@
 name: AdvancedAchievements
 main: com.hm.achievement.AdvancedAchievements
-version: 1.6.1
+version: 1.6.2
 author: DarkPyves
 softdepend: [Vault]
 description: A plugin that enables custom achievements and RP books on your server.

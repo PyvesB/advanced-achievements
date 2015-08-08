@@ -1,6 +1,6 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |        Advanced Achievements configuration 1.6         | #
+# |        Advanced Achievements configuration 1.6.2       | #
 # +--------------------------------------------------------+ #
 #============================================================#
 
@@ -60,8 +60,23 @@ ExcludedWorlds: []
 # Number of players displayed on /aach top command.
 TopList: 5
 
+#============================================================#
+# +--------------------------------------------------------+ #
+# |                   Database settings                    | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
 # DO NOT CHANGE.
 DatabaseVersion: 4
+
+# Database type, sqlite or mysql.
+DatabaseType: sqlite
+
+# Settings to link with MySQL database (ignore if sqlite).
+MYSQL:
+  Database: 'jdbc:mysql://localhost:3306/minecraft'
+  User: root
+  Password: root
 
 #============================================================#
 # +--------------------------------------------------------+ #

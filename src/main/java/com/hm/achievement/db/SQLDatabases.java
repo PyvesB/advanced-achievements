@@ -21,7 +21,7 @@ public class SQLDatabases {
 
 	public Connection getSQLConnection() {
 
-		String dataHandler = plugin.getConfig().getString("Database");
+		String dataHandler = plugin.getConfig().getString("DatabaseType", "sqlite");
 		String mysqlDatabase = plugin.getConfig().getString("MYSQL.Database",
 				"jdbc:mysql://localhost:3306/minecraft");
 		String mysqlUser = plugin.getConfig().getString("MYSQL.User", "root");
@@ -57,8 +57,8 @@ public class SQLDatabases {
 							+ "places INT UNSIGNED,"
 							+ "PRIMARY KEY(`playername`, `blockid`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `kills` ("
-							+ "playername char(36),"
-							+ "mobname varchar(32)," + "kills INT UNSIGNED,"
+							+ "playername char(36)," + "mobname varchar(32),"
+							+ "kills INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`, `mobname`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `crafts` ("
 							+ "playername char(36),"
@@ -66,16 +66,14 @@ public class SQLDatabases {
 							+ "PRIMARY KEY (`playername`, `item`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `achievements` ("
 							+ "playername char(36),"
-							+ "achievement varchar(64)," + "description varchar(128),"
+							+ "achievement varchar(64)," + "desc varchar(128),"
 							+ "date varchar(16),"
 							+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `deaths` ("
-							+ "playername char(36),"
-							+ "deaths INT UNSIGNED,"
+							+ "playername char(36)," + "deaths INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `arrows` ("
-							+ "playername char(36),"
-							+ "arrows INT UNSIGNED,"
+							+ "playername char(36)," + "arrows INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `snowballs` ("
 							+ "playername char(36),"
@@ -96,8 +94,7 @@ public class SQLDatabases {
 							+ "eatenitems INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `shears` ("
-							+ "playername char(36),"
-							+ "shears INT UNSIGNED,"
+							+ "playername char(36)," + "shears INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `milks` ("
 							+ "playername char(36)," + "milks INT UNSIGNED,"
@@ -107,20 +104,17 @@ public class SQLDatabases {
 							+ "connections INT UNSIGNED," + "date varchar(16),"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `trades` ("
-							+ "playername char(36),"
-							+ "trades INT UNSIGNED,"
+							+ "playername char(36)," + "trades INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `anvils` ("
-							+ "playername char(36),"
-							+ "anvils INT UNSIGNED,"
+							+ "playername char(36)," + "anvils INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `enchantments` ("
 							+ "playername char(36),"
 							+ "enchantments INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `levels` ("
-							+ "playername char(36),"
-							+ "levels INT UNSIGNED,"
+							+ "playername char(36)," + "levels INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `beds` ("
 							+ "playername char(36)," + "beds INT UNSIGNED,"
@@ -132,7 +126,8 @@ public class SQLDatabases {
 					st.close();
 					return conn;
 				} catch (IOException ex) {
-					plugin.getLogger().severe("File write error: achievements.db");
+					plugin.getLogger().severe(
+							"File write error: achievements.db");
 				} catch (SQLException ex) {
 					plugin.getLogger().severe(
 							"SQLite exception on initialize" + ex);
@@ -170,42 +165,37 @@ public class SQLDatabases {
 
 		}
 		try {
-			if(plugin.getConfig().getString("Database").equalsIgnoreCase("mysql")){
+			if (plugin.getConfig().getString("DatabaseType", "sqlite")
+					.equalsIgnoreCase("mysql")) {
 				Statement st = conn.createStatement();
 				st.execute("CREATE TABLE IF NOT EXISTS `breaks` ("
-						+ "playername char(36),"
-						+ "blockid SMALLINT UNSIGNED,"
+						+ "playername char(36)," + "blockid SMALLINT UNSIGNED,"
 						+ "breaks INT UNSIGNED,"
 						+ "PRIMARY KEY(`playername`, `blockid`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `places` ("
-						+ "playername char(36),"
-						+ "blockid SMALLINT UNSIGNED,"
+						+ "playername char(36)," + "blockid SMALLINT UNSIGNED,"
 						+ "places INT UNSIGNED,"
 						+ "PRIMARY KEY(`playername`, `blockid`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `kills` ("
-						+ "playername char(36),"
-						+ "mobname varchar(32)," + "kills INT UNSIGNED,"
+						+ "playername char(36)," + "mobname varchar(32),"
+						+ "kills INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`, `mobname`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `crafts` ("
-						+ "playername char(36),"
-						+ "item SMALLINT UNSIGNED," + "times INT UNSIGNED,"
+						+ "playername char(36)," + "item SMALLINT UNSIGNED,"
+						+ "times INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`, `item`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `achievements` ("
-						+ "playername char(36),"
-						+ "achievement varchar(64)," + "description varchar(128),"
-						+ "date varchar(16),"
+						+ "playername char(36)," + "achievement varchar(64),"
+						+ "description varchar(128)," + "date varchar(16),"
 						+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `deaths` ("
-						+ "playername char(36),"
-						+ "deaths INT UNSIGNED,"
+						+ "playername char(36)," + "deaths INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `arrows` ("
-						+ "playername char(36),"
-						+ "arrows INT UNSIGNED,"
+						+ "playername char(36)," + "arrows INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `snowballs` ("
-						+ "playername char(36),"
-						+ "snowballs INT UNSIGNED,"
+						+ "playername char(36)," + "snowballs INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `eggs` ("
 						+ "playername char(36)," + "eggs INT UNSIGNED,"
@@ -214,39 +204,32 @@ public class SQLDatabases {
 						+ "playername char(36)," + "fish INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `itembreaks` ("
-						+ "playername char(36),"
-						+ "itembreaks INT UNSIGNED,"
+						+ "playername char(36)," + "itembreaks INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `eatenitems` ("
-						+ "playername char(36),"
-						+ "eatenitems INT UNSIGNED,"
+						+ "playername char(36)," + "eatenitems INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `shears` ("
-						+ "playername char(36),"
-						+ "shears INT UNSIGNED,"
+						+ "playername char(36)," + "shears INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `milks` ("
 						+ "playername char(36)," + "milks INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `connections` ("
-						+ "playername char(36),"
-						+ "connections INT UNSIGNED," + "date varchar(16),"
-						+ "PRIMARY KEY (`playername`)" + ")");
+						+ "playername char(36)," + "connections INT UNSIGNED,"
+						+ "date varchar(16)," + "PRIMARY KEY (`playername`)"
+						+ ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `trades` ("
-						+ "playername char(36),"
-						+ "trades INT UNSIGNED,"
+						+ "playername char(36)," + "trades INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `anvils` ("
-						+ "playername char(36),"
-						+ "anvils INT UNSIGNED,"
+						+ "playername char(36)," + "anvils INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `enchantments` ("
-						+ "playername char(36),"
-						+ "enchantments INT UNSIGNED,"
+						+ "playername char(36)," + "enchantments INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `levels` ("
-						+ "playername char(36),"
-						+ "levels INT UNSIGNED,"
+						+ "playername char(36)," + "levels INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `beds` ("
 						+ "playername char(36)," + "beds INT UNSIGNED,"
@@ -257,6 +240,8 @@ public class SQLDatabases {
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.close();
 			}
+
+			// Update old datbase versions.
 			if (plugin.getDatabaseVersion() == 1) {
 				Statement st = conn.createStatement();
 				st.execute("CREATE TABLE IF NOT EXISTS `trades` ("
@@ -266,8 +251,7 @@ public class SQLDatabases {
 						+ "playername char(36)," + "anvils INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `enchantments` ("
-						+ "playername char(36),"
-						+ "enchantments INT UNSIGNED,"
+						+ "playername char(36)," + "enchantments INT UNSIGNED,"
 						+ "PRIMARY KEY (`playername`)" + ")");
 
 				st.close();
@@ -339,7 +323,7 @@ public class SQLDatabases {
 
 	}
 
-	public Integer registerKill(Player player, String mobname) {
+	public Integer getKills(Player player, String mobname) {
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
@@ -348,21 +332,15 @@ public class SQLDatabases {
 							+ player.getUniqueId()
 							+ "' AND mobname = '"
 							+ mobname + "'");
-			Integer prev = 0;
+			Integer entityKills = 0;
 			while (rs.next()) {
-				prev = rs.getInt("kills");
+				entityKills = rs.getInt("kills");
 			}
-			Integer newKills = prev + 1;
-			st.execute("replace into `kills` (playername, mobname, kills) VALUES ('"
-					+ player.getUniqueId()
-					+ "', '"
-					+ mobname
-					+ "', "
-					+ newKills + ")");
+
 			st.close();
 			rs.close();
 			conn.close();
-			return newKills;
+			return entityKills;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
@@ -370,7 +348,7 @@ public class SQLDatabases {
 	}
 
 	@SuppressWarnings("deprecation")
-	public Integer registerPlace(Player player, Block block) {
+	public Integer getPlace(Player player, Block block) {
 		try {
 			Connection conn = getSQLConnection();
 			Integer blockBreaks = 0;
@@ -383,17 +361,11 @@ public class SQLDatabases {
 			while (rs.next()) {
 				blockBreaks = rs.getInt("places");
 			}
-			Integer newBreaks = blockBreaks + 1;
-			st.execute("replace into `places` (playername, blockid, places) VALUES ('"
-					+ player.getUniqueId()
-					+ "',"
-					+ block.getTypeId()
-					+ ", "
-					+ newBreaks + ")");
+
 			st.close();
 			rs.close();
 			conn.close();
-			return newBreaks;
+			return blockBreaks;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
@@ -401,7 +373,7 @@ public class SQLDatabases {
 	}
 
 	@SuppressWarnings("deprecation")
-	public Integer registerBreak(Player player, Block block) {
+	public Integer getBreaks(Player player, Block block) {
 		try {
 			Connection conn = getSQLConnection();
 			Integer blockBreaks = 0;
@@ -414,17 +386,11 @@ public class SQLDatabases {
 			while (rs.next()) {
 				blockBreaks = rs.getInt("breaks");
 			}
-			Integer newBreaks = blockBreaks + 1;
-			st.execute("replace into `breaks` (playername, blockid, breaks) VALUES ('"
-					+ player.getUniqueId()
-					+ "',"
-					+ block.getTypeId()
-					+ ", "
-					+ newBreaks + ")");
+
 			st.close();
 			rs.close();
 			conn.close();
-			return newBreaks;
+			return blockBreaks;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
@@ -441,7 +407,11 @@ public class SQLDatabases {
 			ArrayList<String> achievementsList = new ArrayList<String>();
 			while (rs.next()) {
 				achievementsList.add(rs.getString("achievement"));
-				achievementsList.add(rs.getString("description"));
+				if (plugin.getConfig().getString("DatabaseType", "sqlite")
+						.equalsIgnoreCase("mysql"))
+					achievementsList.add(rs.getString("description"));
+				else
+					achievementsList.add(rs.getString("desc"));
 				achievementsList.add(rs.getString("date"));
 			}
 			st.close();
@@ -463,7 +433,7 @@ public class SQLDatabases {
 					.executeQuery("SELECT COUNT(*) FROM `achievements` WHERE playername = '"
 							+ player.getUniqueId() + "'");
 			int numberAchievements = 0;
-			if(rs.next()){
+			if (rs.next()) {
 				numberAchievements = rs.getInt(1);
 			}
 
@@ -508,13 +478,21 @@ public class SQLDatabases {
 			Statement st = conn.createStatement();
 			achievement = achievement.replace("'", "''");
 			desc = desc.replace("'", "''");
-			st.execute("replace into `achievements` (playername, achievement, description, date) VALUES ('"
-					+ player.getUniqueId()
-					+ "','"
-					+ achievement
-					+ "','"
-					+ desc
-					+ "','" + date + "')");
+			if (plugin.getConfig().getString("DatabaseType", "sqlite")
+					.equalsIgnoreCase("mysql"))
+				st.execute("replace into `achievements` (playername, achievement, description, date) VALUES ('"
+						+ player.getUniqueId()
+						+ "','"
+						+ achievement
+						+ "','"
+						+ desc + "','" + date + "')");
+			else
+				st.execute("replace into `achievements` (playername, achievement, desc, date) VALUES ('"
+						+ player.getUniqueId()
+						+ "','"
+						+ achievement
+						+ "','"
+						+ desc + "','" + date + "')");
 			st.close();
 			conn.close();
 
@@ -573,21 +551,18 @@ public class SQLDatabases {
 		}
 	}
 
-	public Integer registerArrow(Player player) {
+	public Integer getArrows(Player player) {
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st
 					.executeQuery("SELECT arrows from `arrows` WHERE playername = '"
 							+ player.getUniqueId() + "'");
-			Integer prev = 0;
+			Integer arrows = 0;
 			while (rs.next()) {
-				prev = rs.getInt("arrows");
+				arrows = rs.getInt("arrows");
 			}
-			Integer arrows = prev + 1;
-			st.execute("replace into `arrows` (playername, arrows) VALUES ('"
-					+ player.getUniqueId() + "', " + arrows + ")");
-			st.close();
+
 			rs.close();
 			conn.close();
 			return arrows;
@@ -597,48 +572,44 @@ public class SQLDatabases {
 		}
 	}
 
-	public Integer registerSnowball(Player player) {
+	public Integer getSnowballs(Player player) {
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st
 					.executeQuery("SELECT snowballs from `snowballs` WHERE playername = '"
 							+ player.getUniqueId() + "'");
-			Integer prev = 0;
+			Integer snowballs = 0;
 			while (rs.next()) {
-				prev = rs.getInt("snowballs");
+				snowballs = rs.getInt("snowballs");
 			}
-			Integer newSnowballs = prev + 1;
-			st.execute("replace into `snowballs` (playername, snowballs) VALUES ('"
-					+ player.getUniqueId() + "', " + newSnowballs + ")");
+
 			st.close();
 			rs.close();
 			conn.close();
-			return newSnowballs;
+			return snowballs;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
 		}
 	}
 
-	public Integer registerEgg(Player player) {
+	public Integer getEggs(Player player) {
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st
 					.executeQuery("SELECT eggs from `eggs` WHERE playername = '"
 							+ player.getUniqueId() + "'");
-			Integer prev = 0;
+			Integer eggs = 0;
 			while (rs.next()) {
-				prev = rs.getInt("eggs");
+				eggs = rs.getInt("eggs");
 			}
-			Integer newEggs = prev + 1;
-			st.execute("replace into `eggs` (playername, eggs) VALUES ('"
-					+ player.getUniqueId() + "', " + newEggs + ")");
+
 			st.close();
 			rs.close();
 			conn.close();
-			return newEggs;
+			return eggs;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;
@@ -717,24 +688,22 @@ public class SQLDatabases {
 		}
 	}
 
-	public Integer registerShear(Player player) {
+	public Integer getShear(Player player) {
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st
 					.executeQuery("SELECT shears from `shears` WHERE playername = '"
 							+ player.getUniqueId() + "'");
-			Integer prev = 0;
+			Integer shears = 0;
 			while (rs.next()) {
-				prev = rs.getInt("shears");
+				shears = rs.getInt("shears");
 			}
-			Integer newShears = prev + 1;
-			st.execute("replace into `shears` (playername, shears) VALUES ('"
-					+ player.getUniqueId() + "', " + newShears + ")");
+
 			st.close();
 			rs.close();
 			conn.close();
-			return newShears;
+			return shears;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;

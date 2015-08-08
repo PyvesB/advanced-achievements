@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveBlockListener implements Listener {
 	AdvancedAchievements plugin;
@@ -21,6 +22,7 @@ public class AchieveBlockListener implements Listener {
 		plugin = instance;
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 
@@ -35,7 +37,17 @@ public class AchieveBlockListener implements Listener {
 		if (!plugin.getConfig().isConfigurationSection("Breaks." + blockName))
 			return;
 
-		Integer breaks = plugin.getDb().registerBreak(player, block);
+		Integer breaks = 0;
+		if (!DatabasePools.getBlockBreakHashMap().containsKey(
+				player.getUniqueId().toString() + block.getTypeId()))
+			breaks = plugin.getDb().getBreaks(player, block) + 1;
+		else
+			breaks = DatabasePools.getBlockBreakHashMap().get(
+					player.getUniqueId().toString() + block.getTypeId()) + 1;
+
+		DatabasePools.getBlockBreakHashMap().put(
+				player.getUniqueId().toString() + block.getTypeId(), breaks);
+
 		String configAchievement = "Breaks." + blockName + "." + breaks;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 			String name = plugin.getConfig().getString(
@@ -58,6 +70,7 @@ public class AchieveBlockListener implements Listener {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 
@@ -72,7 +85,17 @@ public class AchieveBlockListener implements Listener {
 		if (!plugin.getConfig().isConfigurationSection("Places." + blockName))
 			return;
 
-		Integer places = plugin.getDb().registerPlace(player, block);
+		Integer places = 0;
+		if (!DatabasePools.getBlockPlaceHashMap().containsKey(
+				player.getUniqueId().toString() + block.getTypeId()))
+			places = plugin.getDb().getPlace(player, block) + 1;
+		else
+			places = DatabasePools.getBlockPlaceHashMap().get(
+					player.getUniqueId().toString() + block.getTypeId()) + 1;
+
+		DatabasePools.getBlockPlaceHashMap().put(
+				player.getUniqueId().toString() + block.getTypeId(), places);
+
 		String configAchievement = "Places." + blockName + "." + places;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 			String name = plugin.getConfig().getString(

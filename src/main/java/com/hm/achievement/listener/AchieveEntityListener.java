@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveEntityListener implements Listener {
 	private AdvancedAchievements plugin;
@@ -47,7 +48,17 @@ public class AchieveEntityListener implements Listener {
 		if (!plugin.getConfig().isConfigurationSection("Kills." + mobName))
 			return;
 
-		Integer kills = plugin.getDb().registerKill(player, mobName);
+		Integer kills = 0;
+		if (!DatabasePools.getEntityDeathHashMap().containsKey(
+				player.getUniqueId().toString() + mobName))
+			kills = plugin.getDb().getKills(player, mobName) + 1;
+		else
+			kills = DatabasePools.getEntityDeathHashMap().get(
+					player.getUniqueId().toString() + mobName) + 1;
+
+		DatabasePools.getEntityDeathHashMap().put(
+				player.getUniqueId().toString() + mobName, kills);
+
 		String configAchievement = "Kills." + mobName + "." + kills;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 			String name = plugin.getConfig().getString(

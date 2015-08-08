@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveArrowListener implements Listener {
 	private AdvancedAchievements plugin;
@@ -32,7 +33,17 @@ public class AchieveArrowListener implements Listener {
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		Integer arrows = plugin.getDb().registerArrow(player);
+		Integer arrows = 0;
+		if (!DatabasePools.getArrowHashMap().containsKey(
+				player.getUniqueId().toString()))
+			arrows = plugin.getDb().getArrows(player) + 1;
+		else
+			arrows = DatabasePools.getArrowHashMap().get(
+					player.getUniqueId().toString()) + 1;
+
+		DatabasePools.getArrowHashMap().put(player.getUniqueId().toString(),
+				arrows);
+
 		String configAchievement = "Arrows." + arrows;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 			String name = plugin.getConfig().getString(
