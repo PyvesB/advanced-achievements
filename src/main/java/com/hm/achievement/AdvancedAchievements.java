@@ -610,7 +610,7 @@ public class AdvancedAchievements extends JavaPlugin {
 							player.sendMessage(ChatColor.GRAY + "["
 									+ ChatColor.DARK_PURPLE + icon
 									+ ChatColor.GRAY + "] "
-									+ "Configuration recharg�e avec succ�s. ");
+									+ "Configuration rechargée avec succès. ");
 						else
 							player.sendMessage(ChatColor.GRAY + "["
 									+ ChatColor.DARK_PURPLE + icon
@@ -674,9 +674,9 @@ public class AdvancedAchievements extends JavaPlugin {
 						.append("[")
 						.append(ChatColor.DARK_PURPLE)
 						.append(icon)
-						.append("�lAdvancedAchievements")
-						.append(" �lv" + this.getDescription().getVersion()
-								+ "�r").append(ChatColor.DARK_PURPLE)
+						.append("§lAdvancedAchievements")
+						.append(" §lv" + this.getDescription().getVersion()
+								+ "§r").append(ChatColor.DARK_PURPLE)
 						.append(icon).append(ChatColor.GRAY).append("]")
 						.append(ChatColor.DARK_PURPLE).append("-=-=-=-=-")
 						.toString());
@@ -686,7 +686,7 @@ public class AdvancedAchievements extends JavaPlugin {
 									+ ChatColor.DARK_PURPLE + icon
 									+ ChatColor.GRAY + "] ")
 							.append("/aach book").append(ChatColor.GRAY)
-							.append(" - Obtenir votre livre de succ�s.")
+							.append(" - Obtenir votre livre de succès.")
 							.toString());
 				else
 					sender.sendMessage((new StringBuilder())
@@ -695,7 +695,7 @@ public class AdvancedAchievements extends JavaPlugin {
 									+ ChatColor.GRAY + "] ")
 							.append(ChatColor.DARK_PURPLE + "/aach book")
 							.append(ChatColor.GRAY)
-							.append(" - Receive your achievements book.")
+							.append(" - Вы взяли вашу книгу достижений.")
 							.toString());
 				if (this.getLanguage().equals("fr"))
 					sender.sendMessage((new StringBuilder())
@@ -703,7 +703,7 @@ public class AdvancedAchievements extends JavaPlugin {
 									+ ChatColor.DARK_PURPLE + icon
 									+ ChatColor.GRAY + "] ")
 							.append("/aach stats").append(ChatColor.GRAY)
-							.append(" - Visionner son nombre total de succ�s.")
+							.append(" - Visionner son nombre total de succès.")
 							.toString());
 				else
 					sender.sendMessage((new StringBuilder())
@@ -720,7 +720,7 @@ public class AdvancedAchievements extends JavaPlugin {
 									+ ChatColor.DARK_PURPLE + icon
 									+ ChatColor.GRAY + "] ")
 							.append("/aach top").append(ChatColor.GRAY)
-							.append(" - Afficher le classement des succ�s.")
+							.append(" - Afficher le classement des succès.")
 							.toString());
 				else
 					sender.sendMessage((new StringBuilder())
@@ -752,10 +752,10 @@ public class AdvancedAchievements extends JavaPlugin {
 							.append(ChatColor.GRAY + "["
 									+ ChatColor.DARK_PURPLE + icon
 									+ ChatColor.GRAY + "] ")
-							.append("/aach give �oach nom�r")
+							.append("/aach give §oach nom§r")
 							.append(ChatColor.GRAY)
-							.append(" - Donne le succ�s �oach �r")
-							.append(ChatColor.GRAY).append("au joueur �onom.")
+							.append(" - Donne le succès §oach §r")
+							.append(ChatColor.GRAY).append("au joueur §onom.")
 							.toString());
 				else
 					sender.sendMessage((new StringBuilder())
@@ -763,11 +763,11 @@ public class AdvancedAchievements extends JavaPlugin {
 									+ ChatColor.DARK_PURPLE + icon
 									+ ChatColor.GRAY + "] ")
 							.append(ChatColor.DARK_PURPLE
-									+ "/aach give �oach name�r")
+									+ "/aach give §oach name§r")
 							.append(ChatColor.GRAY)
-							.append(" - Give the achievement �oach �r")
+							.append(" - Give the achievement §oach §r")
 							.append(ChatColor.GRAY)
-							.append("to the player �oname.").toString());
+							.append("to the player §oname.").toString());
 				player.sendMessage((new StringBuilder())
 						.append(ChatColor.DARK_PURPLE)
 						.append("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
@@ -793,10 +793,10 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (this.getLanguage().equals("fr"))
 			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 					+ icon + ChatColor.GRAY + "] "
-					+ "Joueurs ayant obtenu le plus de succ�s :");
+					+ "Joueurs ayant obtenu le plus de succès :");
 		else
 			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ icon + ChatColor.GRAY + "] " + "Top achievement owners:");
+					+ icon + ChatColor.GRAY + "] " + "Топ обладателей достижений:");
 
 		for (int i = 0; i < achievementsTop.size(); i += 2) {
 			try {
@@ -825,12 +825,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (this.getLanguage().equals("fr"))
 			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 					+ icon + ChatColor.GRAY + "] "
-					+ "Nombre de succ�s obtenus : " + ChatColor.DARK_PURPLE
+					+ "Nombre de succès obtenus : " + ChatColor.DARK_PURPLE
 					+ achievements + ChatColor.GRAY + "/"
 					+ ChatColor.DARK_PURPLE + totalAchievements);
 		else
 			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ icon + ChatColor.GRAY + "] " + "Achievements received: "
+					+ icon + ChatColor.GRAY + "] " + "Полученные достижения: "
 					+ ChatColor.DARK_PURPLE + achievements + ChatColor.GRAY
 					+ "/" + ChatColor.DARK_PURPLE + totalAchievements);
 
@@ -879,7 +879,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			bm.setAuthor(name);
 			if (this.getLanguage().equals("fr"))
-				bm.setTitle("Livre de Succ�s");
+				bm.setTitle("Livre de Succès");
 			else
 				bm.setTitle("Achievements");
 
@@ -915,7 +915,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 				bm2.setAuthor(name);
 				if (this.getLanguage().equals("fr"))
-					bm2.setTitle("Livre de Succ�s 2");
+					bm2.setTitle("Livre de Succès 2");
 				else
 					bm2.setTitle("Achievements 2");
 
@@ -952,7 +952,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 				bm3.setAuthor(name);
 				if (this.getLanguage().equals("fr"))
-					bm3.setTitle("Livre de Succ�s 3");
+					bm3.setTitle("Livre de Succès 3");
 				else
 					bm3.setTitle("Achievements 3");
 
@@ -967,7 +967,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			if (this.getLanguage().equals("fr"))
 				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 						+ icon + ChatColor.GRAY + "] "
-						+ "Vous avez re�u votre livre de succ�s!");
+						+ "Vous avez reçu votre livre de succès!");
 			else
 				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 						+ icon + ChatColor.GRAY + "] "
