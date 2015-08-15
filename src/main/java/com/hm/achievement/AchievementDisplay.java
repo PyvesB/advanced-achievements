@@ -24,14 +24,14 @@ public class AchievementDisplay {
 		if (plugin.getLanguage().equals("fr")) {
 			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 					+ plugin.getIcon() + ChatColor.GRAY + "] "
-					+ "Nouveau succ�s : " + ChatColor.WHITE + name);
+					+ "Nouveau succès : " + ChatColor.WHITE + name);
 			if (plugin.isChatMessage()) {
 				for (Player p : plugin.getServer().getOnlinePlayers()) {
 					if (!p.getName().equals(player.getName())) {
 						p.sendMessage(ChatColor.GRAY + "["
 								+ ChatColor.DARK_PURPLE + plugin.getIcon()
 								+ ChatColor.GRAY + "] " + player.getName()
-								+ " a obtenu le succ�s : " + ChatColor.WHITE
+								+ " a obtenu le succès : " + ChatColor.WHITE
 								+ name);
 					}
 				}
@@ -41,14 +41,14 @@ public class AchievementDisplay {
 		else {
 			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 					+ plugin.getIcon() + ChatColor.GRAY + "] "
-					+ "New Achievement: " + ChatColor.WHITE + name);
+					+ "Получено новое достижение: " + ChatColor.WHITE + name);
 			if (plugin.isChatMessage()) {
 				for (Player p : plugin.getServer().getOnlinePlayers()) {
 					if (!p.getName().equals(player.getName())) {
 						p.sendMessage(ChatColor.GRAY + "["
 								+ ChatColor.DARK_PURPLE + plugin.getIcon()
 								+ ChatColor.GRAY + "] " + player.getName()
-								+ " received the achievement: "
+								+ " получил(а) достижение: "
 								+ ChatColor.WHITE + name);
 					}
 				}
