@@ -31,11 +31,11 @@ public class AchievementRewards {
 		if (plugin.getLanguage().equals("fr"))
 			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 					+ plugin.getIcon() + ChatColor.GRAY + "] "
-					+ "Vous avez re�u une r�compense!");
+					+ "Vous avez reçu une récompense!");
 		else
 			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 					+ plugin.getIcon() + ChatColor.GRAY + "] "
-					+ "You received an item reward!");
+					+ "В награду за достижение получено:");
 		return item;
 	}
 
@@ -51,12 +51,12 @@ public class AchievementRewards {
 			if (plugin.getLanguage().equals("fr"))
 				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "Vous avez gagn� : " + ChatColor.DARK_PURPLE + amtd
+						+ "Vous avez gagné : " + ChatColor.DARK_PURPLE + amtd
 						+ " " + plugin.getEconomy().currencyNamePlural() + "!");
 			else
 				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "You received: " + ChatColor.DARK_PURPLE + amtd + " "
+						+ "Получено: " + ChatColor.DARK_PURPLE + amtd + " "
 						+ plugin.getEconomy().currencyNamePlural() + "!");
 		}
 	}
@@ -88,11 +88,11 @@ public class AchievementRewards {
 			if (plugin.getLanguage().equals("fr"))
 				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "Commande de r�compense ex�cut�e !"	);
+						+ "Commande de récompense exécutée !"	);
 			else
 				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "Reward command carried out!");
+						+ "Награда за достижение получена!");
 
 		}
 
