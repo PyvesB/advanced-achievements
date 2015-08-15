@@ -51,12 +51,12 @@ public class AchievementCommandGiver implements Listener {
 					sender.sendMessage(ChatColor.GRAY + "["
 							+ ChatColor.DARK_PURPLE + plugin.getIcon()
 							+ ChatColor.GRAY + "] " + "Le joueur " + args[2]
-							+ " poss�de d�j� ce succ�s !");
+							+ " possède déjà ce succès !");
 				else
 					sender.sendMessage(ChatColor.GRAY + "["
 							+ ChatColor.DARK_PURPLE + plugin.getIcon()
 							+ ChatColor.GRAY + "] " + "The player " + args[2]
-							+ " has already received this achievement!");
+							+ " уже получил(а) это достижение!");
 				return;
 			}
 
@@ -78,11 +78,11 @@ public class AchievementCommandGiver implements Listener {
 			if (plugin.getLanguage().equals("fr"))
 				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "Succ�s donn�!");
+						+ "Succès donné!");
 			else
 				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "Achievement given!");
+						+ "Достижение выдано!");
 		}
 	}
 }
