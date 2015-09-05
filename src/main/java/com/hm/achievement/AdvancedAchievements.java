@@ -890,7 +890,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				for (ItemStack item : new ItemStack[] { book })
 					player.getWorld().dropItem(player.getLocation(), item);
 
-			if (i > 149) {
+			if (i > 150) {
 				while (i < achievements.size() && i < 300) {
 					try {
 						String currentAchievement = achievements.get(i) + "\n"
@@ -927,7 +927,7 @@ public class AdvancedAchievements extends JavaPlugin {
 						player.getWorld().dropItem(player.getLocation(), item);
 			}
 
-			if (i > 299) {
+			if (i > 300) {
 				while (i < achievements.size() && i < 450) {
 					try {
 						String currentAchievement = achievements.get(i) + "\n"
