@@ -45,23 +45,46 @@ public class AchievementRewards {
 				plugin.getEconomy().depositPlayer(player.getName(), amtd);
 			else
 				plugin.getEconomy().depositPlayer(player, amtd);
-			player.sendMessage(ChatColor.GRAY
+			
+			if(amount > 1) player.sendMessage(ChatColor.GRAY
 					+ "["
 					+ ChatColor.DARK_PURPLE
 					+ plugin.getIcon()
 					+ ChatColor.GRAY
 					+ "] "
-					+ Lang.MONEY_REWARD_RECEIVED.toString().replace(
-							"AMOUNT",
-							"&5" + amtd + " "
-									+ plugin.getEconomy().currencyNamePlural()));
+					+ ChatColor.translateAlternateColorCodes(
+							'&',
+							Lang.MONEY_REWARD_RECEIVED.toString().replace(
+									"AMOUNT",
+									"&5"
+											+ amtd
+											+ " "
+											+ plugin.getEconomy()
+													.currencyNamePlural())));
+			else player.sendMessage(ChatColor.GRAY
+					+ "["
+					+ ChatColor.DARK_PURPLE
+					+ plugin.getIcon()
+					+ ChatColor.GRAY
+					+ "] "
+					+ ChatColor.translateAlternateColorCodes(
+							'&',
+							Lang.MONEY_REWARD_RECEIVED.toString().replace(
+									"AMOUNT",
+									"&5"
+											+ amtd
+											+ " "
+											+ plugin.getEconomy()
+													.currencyNameSingular())));
 		}
 	}
 
 	public void checkConfig(Player player, String configAchievement) {
 
-		int money = plugin.getConfig().getInt(
-				configAchievement + ".Reward.Money.Amount", 0);
+		int money = Math.max(plugin.getConfig().getInt(
+				configAchievement + ".Reward.Money", 0), plugin.getConfig().getInt(
+						configAchievement + ".Reward.Money.Amount", 0));
+		plugin.getLogger().info(money + "");
 		int itemAmount = plugin.getConfig().getInt(
 				configAchievement + ".Reward.Item.Amount", 0);
 		String command = plugin.getConfig().getString(
