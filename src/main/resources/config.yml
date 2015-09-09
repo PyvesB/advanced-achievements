@@ -60,6 +60,9 @@ ExcludedWorlds: []
 # Number of players displayed on /aach top command.
 TopList: 5
 
+# Display achievement details on /aach stats command.
+StatsDetails: true
+
 #============================================================#
 # +--------------------------------------------------------+ #
 # |                   Database settings                    | #

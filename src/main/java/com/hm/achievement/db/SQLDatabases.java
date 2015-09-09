@@ -67,7 +67,7 @@ public class SQLDatabases {
 					st.execute("CREATE TABLE IF NOT EXISTS `achievements` ("
 							+ "playername char(36),"
 							+ "achievement varchar(64)," + "desc varchar(128),"
-							+ "date varchar(16),"
+							+ "date varchar(10),"
 							+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `deaths` ("
 							+ "playername char(36)," + "deaths INT UNSIGNED,"
@@ -101,7 +101,7 @@ public class SQLDatabases {
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `connections` ("
 							+ "playername char(36),"
-							+ "connections INT UNSIGNED," + "date varchar(16),"
+							+ "connections INT UNSIGNED," + "date varchar(10),"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `trades` ("
 							+ "playername char(36)," + "trades INT UNSIGNED,"
@@ -186,7 +186,7 @@ public class SQLDatabases {
 						+ "PRIMARY KEY (`playername`, `item`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `achievements` ("
 						+ "playername char(36)," + "achievement varchar(64),"
-						+ "description varchar(128)," + "date varchar(16),"
+						+ "description varchar(128)," + "date varchar(10),"
 						+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `deaths` ("
 						+ "playername char(36)," + "deaths INT UNSIGNED,"
@@ -217,7 +217,7 @@ public class SQLDatabases {
 						+ "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `connections` ("
 						+ "playername char(36)," + "connections INT UNSIGNED,"
-						+ "date varchar(16)," + "PRIMARY KEY (`playername`)"
+						+ "date varchar(10)," + "PRIMARY KEY (`playername`)"
 						+ ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `trades` ("
 						+ "playername char(36)," + "trades INT UNSIGNED,"
@@ -515,7 +515,6 @@ public class SQLDatabases {
 			String hasAchievement = "";
 			while (rs.next())
 				hasAchievement = rs.getString("achievement");
-			plugin.getLogger().info("HasAchievement " + hasAchievement);
 			st.close();
 			rs.close();
 			conn.close();

@@ -29,11 +29,11 @@ public class AchieveConnectionRunnable implements Runnable {
 
 		if (!format.format(now)
 				.equals(plugin.getDb().getConnectionDate(player))) {
-			
-			Integer connections = plugin.getDb().registerConnection(player, format.format(now));
+
+			Integer connections = plugin.getDb().registerConnection(player,
+					format.format(now));
 			String configAchievement = "Connections." + connections;
-			if (plugin.getReward().checkAchievement(
-					configAchievement)) {
+			if (plugin.getReward().checkAchievement(configAchievement)) {
 				String name = plugin.getConfig().getString(
 						configAchievement + ".Name");
 				String msg = plugin.getConfig().getString(
@@ -46,7 +46,7 @@ public class AchieveConnectionRunnable implements Runnable {
 								configAchievement + ".Name"),
 						plugin.getConfig().getString(
 								configAchievement + ".Message"),
-						"&0" + format.format(now));
+						format.format(now));
 				plugin.getReward().checkConfig(player, configAchievement);
 			}
 		}

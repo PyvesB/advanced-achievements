@@ -52,7 +52,7 @@ public class AchieveXPListener implements Listener {
 					plugin.getConfig().getString(configAchievement + ".Name"),
 					plugin.getConfig()
 							.getString(configAchievement + ".Message"),
-					"&0" + format.format(now));
+					format.format(now));
 			plugin.getReward().checkConfig(player, configAchievement);
 		}
 	}

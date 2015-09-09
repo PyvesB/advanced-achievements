@@ -52,6 +52,7 @@ import com.hm.achievement.listener.AchieveMilkListener;
 import com.hm.achievement.listener.AchieveShearListener;
 import com.hm.achievement.listener.AchieveSnowballEggsListener;
 import com.hm.achievement.listener.AchieveXPListener;
+import com.hm.achievement.metrics.MetricsLite;
 
 /**
  * A plugin that enables custom achievements and RP books on your Minecraft
@@ -110,6 +111,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private boolean databaseBackup;
 	private List<String> excludedWorldList;
 	private int topList;
+	private boolean statsDetails;
 
 	public static YamlConfiguration LANG;
 	public static File LANG_FILE;
@@ -490,6 +492,12 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.saveConfig();
 
 		}
+		
+		if (!this.getConfig().getKeys(false).contains("StatsDetails")) {
+			this.getConfig().set("StatsDetails", true);
+			this.saveConfig();
+
+		}
 
 		try {
 			reader = new BufferedReader(new FileReader(config));
@@ -539,6 +547,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		databaseBackup = this.getConfig().getBoolean("DatabaseBackup", true);
 		excludedWorldList = this.getConfig().getStringList("ExcludedWorlds");
 		topList = this.getConfig().getInt("TopList", 5);
+		statsDetails = this.getConfig().getBoolean("StatsDetails", true);
 
 		lastTopTime = 0;
 
@@ -547,6 +556,13 @@ public class AdvancedAchievements extends JavaPlugin {
 					"http://dev.bukkit.org/bukkit-plugins/advanced-achievements/files.rss");
 			updateNeeded = updateChecker.updateNeeded();
 		}
+		
+		 try {
+		        MetricsLite metrics = new MetricsLite(this);
+		        metrics.start();
+		    } catch (IOException e) {
+		    	this.getLogger().severe("Metrics stats no sent.");
+		    }
 
 		backupDBFile();
 
@@ -812,7 +828,123 @@ public class AdvancedAchievements extends JavaPlugin {
 				+ ChatColor.GRAY + "] " + "["
 				+ ChatColor.translateAlternateColorCodes('&', barDisplay)
 				+ ChatColor.GRAY + "]");
+		
+		if(statsDetails){
+		
+		String achievementsList = "";
+		
+		for (String section : this.getConfig().getConfigurationSection("Breaks").getKeys(false))
+			for (String ach : this.getConfig().getConfigurationSection("Breaks." + section).getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " " ;
+			else achievementsList +=  "&8§o" + this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String section : this.getConfig().getConfigurationSection("Places").getKeys(false))
+			for (String ach : this.getConfig().getConfigurationSection("Places." + section).getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Places." + section + "." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Places." + section + "." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " " ;
+			else achievementsList +=  "&8§o" + this.getConfig().getString("Places." + section + "." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String section : this.getConfig().getConfigurationSection("Kills").getKeys(false))
+			for (String ach : this.getConfig().getConfigurationSection("Kills." + section).getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Kills." + section + "." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Kills." + section + "." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " " ;
+			else achievementsList +=  "&8§o" + this.getConfig().getString("Kills." + section + "." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
 
+		for (String section : this.getConfig().getConfigurationSection("Crafts").getKeys(false))
+			for (String ach : this.getConfig().getConfigurationSection("Crafts." + section).getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Crafts." + section + "." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Crafts." + section + "." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " " ;
+			else achievementsList +=  "&8§o" + this.getConfig().getString("Crafts." + section + "." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+		for (String ach : this.getConfig().getConfigurationSection("Deaths").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Deaths." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Deaths." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " " ;
+			else achievementsList +=  "&8§o" + this.getConfig().getString("Deaths." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		
+		for (String ach : this.getConfig().getConfigurationSection("Arrows").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Arrows." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Arrows." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("Arrows." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String ach : this.getConfig().getConfigurationSection("Eggs").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Eggs." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Eggs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("Eggs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String ach : this.getConfig().getConfigurationSection("Snowballs").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Snowballs." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Snowballs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("Snowballs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String ach : this.getConfig().getConfigurationSection("Fish").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Fish." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Fish." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("Fish." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+		for (String ach : this.getConfig().getConfigurationSection("ItemBreaks").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("ItemBreaks." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("ItemBreaks." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("ItemBreaks." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+		for (String ach : this.getConfig().getConfigurationSection("ConsumedPotions").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("ConsumedPotions." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("ConsumedPotions." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+		for (String ach : this.getConfig().getConfigurationSection("EatenItems").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("EatenItems." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("EatenItems." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("EatenItems." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String ach : this.getConfig().getConfigurationSection("Shear").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Shear." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Shear." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("Shear." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+		for (String ach : this.getConfig().getConfigurationSection("Milk").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Milk." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Milk." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("Milk." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String ach : this.getConfig().getConfigurationSection("Connections").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Connections." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Connections." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("Connections." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String ach : this.getConfig().getConfigurationSection("Trades").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Trades." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Trades." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("Trades." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String ach : this.getConfig().getConfigurationSection("AnvilsUsed").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("AnvilsUsed." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("AnvilsUsed." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("AnvilsUsed." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+		for (String ach : this.getConfig().getConfigurationSection("Enchantments").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Enchantments." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Enchantments." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("Enchantments." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String ach : this.getConfig().getConfigurationSection("MaxLevel").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("MaxLevel." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("MaxLevel." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("MaxLevel." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String ach : this.getConfig().getConfigurationSection("Beds").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Beds." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Beds." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("Beds." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		for (String ach : this.getConfig().getConfigurationSection("Commands").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Commands." + ach + ".Name", "")))
+				achievementsList += "&5" + this.getConfig().getString("Commands." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else achievementsList += "&8§o" + this.getConfig().getString("Commands" + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		
+		player.sendMessage(ChatColor.GRAY + " " + icon + " " + ChatColor.translateAlternateColorCodes('&', achievementsList));
+		}
 	}
 
 	private void giveBook(Player player, String name) {
@@ -841,8 +973,8 @@ public class AdvancedAchievements extends JavaPlugin {
 							+ "\n" + bookSeparator + "\n"
 							+ achievements.get(i + 2);
 					currentAchievement = ChatColor
-							.translateAlternateColorCodes('&',
-									currentAchievement);
+							.translateAlternateColorCodes('&', "&0"
+									+ currentAchievement);
 					pages.add(currentAchievement);
 					i = i + 3;
 				} catch (Exception e) {
@@ -876,8 +1008,8 @@ public class AdvancedAchievements extends JavaPlugin {
 								+ bookSeparator + "\n"
 								+ achievements.get(i + 2);
 						currentAchievement = ChatColor
-								.translateAlternateColorCodes('&',
-										currentAchievement);
+								.translateAlternateColorCodes('&', "&0"
+										+ currentAchievement);
 						pages2.add(currentAchievement);
 						i = i + 3;
 					} catch (Exception e) {
@@ -911,8 +1043,8 @@ public class AdvancedAchievements extends JavaPlugin {
 								+ bookSeparator + "\n"
 								+ achievements.get(i + 2);
 						currentAchievement = ChatColor
-								.translateAlternateColorCodes('&',
-										currentAchievement);
+								.translateAlternateColorCodes('&', "&0"
+										+ currentAchievement);
 						pages3.add(currentAchievement);
 						i = i + 3;
 					} catch (Exception e) {
