@@ -1,0 +1,26 @@
+#============================================================#
+# +--------------------------------------------------------+ #
+# |           Advanced Achievements language file          | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+configuration-successfully-reloaded: "Configuration successfully reloaded."
+no-permissions: "You do not have the permission to do this."
+top-achievement: "Top achievement owners:"
+number-achievements: "Achievements received:"
+book-received: "You received your achievements book!"
+book-delay: "You must wait TIME seconds between each book reception!"
+player-offline: "The player PLAYER is offline!"
+achievement-already-received: "The player PLAYER has already received this achievement!"
+achievement-given: "Achievement given!"
+achievement-received: "PLAYER received the achievement:"
+achievement-new: "New Achievement:"
+item-reward-received: "You received an item reward!"
+money-reward-received: "You received: AMOUNT !"
+command-reward: "Reward command carried out!"
+book-name: "Achievements"
+aach-command-book: "Receive your achievements book."
+aach-command-stats: "Amount of achievements you have received."
+aach-command-top: "View achievements ranking."
+aach-command-reload: "Reload the plugin's configuration."
+aach-command-give: "Give the achievement ACH to the player NAME."

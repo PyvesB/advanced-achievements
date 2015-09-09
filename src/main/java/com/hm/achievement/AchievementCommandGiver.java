@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.language.Lang;
 
 public class AchievementCommandGiver implements Listener {
 	private AdvancedAchievements plugin;
@@ -31,14 +32,14 @@ public class AchievementCommandGiver implements Listener {
 
 		if (player == null) {
 
-			if (plugin.getLanguage().equals("fr"))
-				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "Le joueur " + args[2] + " n'est pas en ligne!");
-			else
-				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "The player " + args[2] + " is offline!");
+			sender.sendMessage(ChatColor.GRAY
+					+ "["
+					+ ChatColor.DARK_PURPLE
+					+ plugin.getIcon()
+					+ ChatColor.GRAY
+					+ "] "
+					+ Lang.PLAYER_OFFLINE.toString().replaceAll("PLAYER",
+							args[2]));
 
 			return;
 		}
@@ -47,16 +48,15 @@ public class AchievementCommandGiver implements Listener {
 					configAchievement + ".Name");
 			if (!plugin.isMultiCommand()
 					&& plugin.getDb().hasAchievement(player, name)) {
-				if (plugin.getLanguage().equals("fr"))
-					sender.sendMessage(ChatColor.GRAY + "["
-							+ ChatColor.DARK_PURPLE + plugin.getIcon()
-							+ ChatColor.GRAY + "] " + "Le joueur " + args[2]
-							+ " possède déjà ce succès !");
-				else
-					sender.sendMessage(ChatColor.GRAY + "["
-							+ ChatColor.DARK_PURPLE + plugin.getIcon()
-							+ ChatColor.GRAY + "] " + "The player " + args[2]
-							+ " has already received this achievement!");
+
+				sender.sendMessage(ChatColor.GRAY
+						+ "["
+						+ ChatColor.DARK_PURPLE
+						+ plugin.getIcon()
+						+ ChatColor.GRAY
+						+ "] "
+						+ Lang.ACHIEVEMENT_ALREADY_RECEIVED.toString().replace(
+								"PLAYER", args[2]));
 				return;
 			}
 
@@ -75,14 +75,9 @@ public class AchievementCommandGiver implements Listener {
 
 			plugin.getReward().checkConfig(player, configAchievement);
 
-			if (plugin.getLanguage().equals("fr"))
-				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "Succès donné!");
-			else
-				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "Achievement given!");
+			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
+					+ plugin.getIcon() + ChatColor.GRAY + "] "
+					+ Lang.ACHIEVEMENT_GIVEN);
 		}
 	}
 }

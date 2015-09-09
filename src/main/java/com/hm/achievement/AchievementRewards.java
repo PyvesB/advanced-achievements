@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import com.hm.achievement.language.Lang;
+
 public class AchievementRewards {
 
 	private AdvancedAchievements plugin;
@@ -28,14 +30,9 @@ public class AchievementRewards {
 		ItemStack item = new ItemStack(Material.getMaterial(plugin.getConfig()
 				.getString(ach + ".Reward.Item.Type", "stone").toUpperCase()),
 				amount);
-		if (plugin.getLanguage().equals("fr"))
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ plugin.getIcon() + ChatColor.GRAY + "] "
-					+ "Vous avez reçu une récompense!");
-		else
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ plugin.getIcon() + ChatColor.GRAY + "] "
-					+ "You received an item reward!");
+		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
+				+ plugin.getIcon() + ChatColor.GRAY + "] "
+				+ Lang.ITEM_REWARD_RECEIVED);
 		return item;
 	}
 
@@ -48,16 +45,16 @@ public class AchievementRewards {
 				plugin.getEconomy().depositPlayer(player.getName(), amtd);
 			else
 				plugin.getEconomy().depositPlayer(player, amtd);
-			if (plugin.getLanguage().equals("fr"))
-				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "Vous avez gagné : " + ChatColor.DARK_PURPLE + amtd
-						+ " " + plugin.getEconomy().currencyNamePlural() + "!");
-			else
-				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "You received: " + ChatColor.DARK_PURPLE + amtd + " "
-						+ plugin.getEconomy().currencyNamePlural() + "!");
+			player.sendMessage(ChatColor.GRAY
+					+ "["
+					+ ChatColor.DARK_PURPLE
+					+ plugin.getIcon()
+					+ ChatColor.GRAY
+					+ "] "
+					+ Lang.MONEY_REWARD_RECEIVED.toString().replace(
+							"AMOUNT",
+							"&5" + amtd + " "
+									+ plugin.getEconomy().currencyNamePlural()));
 		}
 	}
 
@@ -84,15 +81,11 @@ public class AchievementRewards {
 			command = command.replace("PLAYER", player.getName());
 			plugin.getServer().dispatchCommand(
 					plugin.getServer().getConsoleSender(), command);
-			if(! plugin.isRewardCommandNotif()) return;
-			if (plugin.getLanguage().equals("fr"))
-				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "Commande de récompense exécutée !"	);
-			else
-				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ plugin.getIcon() + ChatColor.GRAY + "] "
-						+ "Reward command carried out!");
+			if (!plugin.isRewardCommandNotif())
+				return;
+			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
+					+ plugin.getIcon() + ChatColor.GRAY + "] "
+					+ Lang.COMMAND_REWARD);
 
 		}
 

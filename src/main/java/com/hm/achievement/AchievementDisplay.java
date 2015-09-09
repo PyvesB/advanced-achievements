@@ -9,6 +9,8 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
 
+import com.hm.achievement.language.Lang;
+
 public class AchievementDisplay {
 
 	private AdvancedAchievements plugin;
@@ -21,36 +23,23 @@ public class AchievementDisplay {
 
 		name = ChatColor.translateAlternateColorCodes('&', name);
 		msg = ChatColor.translateAlternateColorCodes('&', msg);
-		if (plugin.getLanguage().equals("fr")) {
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ plugin.getIcon() + ChatColor.GRAY + "] "
-					+ "Nouveau succès : " + ChatColor.WHITE + name);
-			if (plugin.isChatMessage()) {
-				for (Player p : plugin.getServer().getOnlinePlayers()) {
-					if (!p.getName().equals(player.getName())) {
-						p.sendMessage(ChatColor.GRAY + "["
-								+ ChatColor.DARK_PURPLE + plugin.getIcon()
-								+ ChatColor.GRAY + "] " + player.getName()
-								+ " a obtenu le succès : " + ChatColor.WHITE
-								+ name);
-					}
-				}
-			}
-		}
 
-		else {
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ plugin.getIcon() + ChatColor.GRAY + "] "
-					+ "New Achievement: " + ChatColor.WHITE + name);
-			if (plugin.isChatMessage()) {
-				for (Player p : plugin.getServer().getOnlinePlayers()) {
-					if (!p.getName().equals(player.getName())) {
-						p.sendMessage(ChatColor.GRAY + "["
-								+ ChatColor.DARK_PURPLE + plugin.getIcon()
-								+ ChatColor.GRAY + "] " + player.getName()
-								+ " received the achievement: "
-								+ ChatColor.WHITE + name);
-					}
+		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
+				+ plugin.getIcon() + ChatColor.GRAY + "] "
+				+ Lang.ACHIVEMENT_NEW + " " + ChatColor.WHITE + name);
+		if (plugin.isChatMessage()) {
+			for (Player p : plugin.getServer().getOnlinePlayers()) {
+				if (!p.getName().equals(player.getName())) {
+					p.sendMessage(ChatColor.GRAY
+							+ "["
+							+ ChatColor.DARK_PURPLE
+							+ plugin.getIcon()
+							+ ChatColor.GRAY
+							+ "] "
+							+ Lang.ACHIEVEMENT_RECEIVED.toString().replace(
+									"PLAYER", player.getName()) + " "
+							+ ChatColor.WHITE + name);
+
 				}
 			}
 		}

@@ -9,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -32,21 +35,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.hm.achievement.db.SQLDatabases;
 import com.hm.achievement.db.SendPooledRequests;
+import com.hm.achievement.language.Lang;
 import com.hm.achievement.listener.AchieveArrowListener;
 import com.hm.achievement.listener.AchieveBedListener;
 import com.hm.achievement.listener.AchieveBlockListener;
 import com.hm.achievement.listener.AchieveBreakListener;
 import com.hm.achievement.listener.AchieveConnectionListener;
 import com.hm.achievement.listener.AchieveConsumeListener;
+import com.hm.achievement.listener.AchieveCraftListener;
 import com.hm.achievement.listener.AchieveDeathListener;
 import com.hm.achievement.listener.AchieveEnchantListener;
 import com.hm.achievement.listener.AchieveEntityListener;
 import com.hm.achievement.listener.AchieveFishListener;
-import com.hm.achievement.listener.AchieveCraftListener;
+import com.hm.achievement.listener.AchieveInventoryClickListener;
 import com.hm.achievement.listener.AchieveMilkListener;
 import com.hm.achievement.listener.AchieveShearListener;
 import com.hm.achievement.listener.AchieveSnowballEggsListener;
-import com.hm.achievement.listener.AchieveInventoryClickListener;
 import com.hm.achievement.listener.AchieveXPListener;
 
 /**
@@ -59,7 +63,7 @@ import com.hm.achievement.listener.AchieveXPListener;
  * https://github.com/PyvesB/AdvancedAchievements
  * 
  * @since April 2015
- * @version 1.6.2
+ * @version 1.7
  * @author DarkPyves
  */
 
@@ -80,7 +84,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchievementRewards reward;
 	private SQLDatabases db;
 	private AchievementDisplay achievementDisplay;
-	private String language;
 	private int time;
 	private int databaseVersion;
 	private HashMap<Player, Long> players;
@@ -107,6 +110,9 @@ public class AdvancedAchievements extends JavaPlugin {
 	private boolean databaseBackup;
 	private List<String> excludedWorldList;
 	private int topList;
+
+	public static YamlConfiguration LANG;
+	public static File LANG_FILE;
 
 	public AdvancedAchievements() {
 
@@ -302,9 +308,11 @@ public class AdvancedAchievements extends JavaPlugin {
 				this.getLogger().info("Successfully backed up database file.");
 
 			} catch (FileNotFoundException e) {
+				e.printStackTrace();
 				this.getLogger()
 						.severe("Error while backing up database file.");
 			} catch (IOException e) {
+				e.printStackTrace();
 				this.getLogger()
 						.severe("Error while backing up database file.");
 			}
@@ -312,9 +320,52 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	}
 
+	/**
+	 * Load the lang.yml file.
+	 * 
+	 * @return The lang.yml config.
+	 */
+	public void loadLang() {
+		File lang = new File(getDataFolder(), "lang.yml");
+		if (!lang.exists()) {
+			try {
+				getDataFolder().mkdir();
+				lang.createNewFile();
+				Reader defConfigStream = new InputStreamReader(
+						this.getResource("lang.yml"), "UTF8");
+				if (defConfigStream != null) {
+					YamlConfiguration defConfig = YamlConfiguration
+							.loadConfiguration(defConfigStream);
+					defConfig.save(lang);
+					Lang.setFile(defConfig);
+					return;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				this.getLogger().severe("Error while creating language file.");
+			}
+		}
+		YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
+		for (Lang item : Lang.values()) {
+			if (conf.getString(item.getPath()) == null) {
+				conf.set(item.getPath(), item.getDefault());
+			}
+		}
+		Lang.setFile(conf);
+		LANG = conf;
+		LANG_FILE = lang;
+		try {
+			conf.save(getLangFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.getLogger().severe("Error while saving language file.");
+		}
+	}
+
 	private void configurationLoad() {
 
 		backupConfigFile();
+		loadLang();
 
 		this.saveDefaultConfig();
 
@@ -440,7 +491,6 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		}
 
-
 		try {
 			reader = new BufferedReader(new FileReader(config));
 			StringBuilder configString = new StringBuilder("");
@@ -473,7 +523,6 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.getLogger().severe("Saving comments in config file failed.");
 		}
 
-		language = this.getConfig().getString("Language", "en").toLowerCase();
 		time = this.getConfig().getInt("Time", 900) * 1000;
 		retroVault = this.getConfig().getBoolean("RetroVault", false);
 		firework = this.getConfig().getBoolean("Firework", true);
@@ -596,7 +645,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			Player player = ((Player) sender);
 			String name = player.getName();
-			if (cmd.getName().equalsIgnoreCase("aach") && (args.length == 1)) {
+			if (cmd.getName().equalsIgnoreCase("aach") && (args.length == 1)
+					&& !args[0].equalsIgnoreCase("help")) {
 				if (args[0].equalsIgnoreCase("book")
 						&& player.hasPermission("achievement.book")) {
 
@@ -606,33 +656,14 @@ public class AdvancedAchievements extends JavaPlugin {
 					if (player.hasPermission("achievement.reload")) {
 						this.reloadConfig();
 						configurationLoad();
-						if (this.getLanguage().equals("fr"))
-							player.sendMessage(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] "
-									+ "Configuration rechargée avec succès. ");
-						else
-							player.sendMessage(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] "
-									+ "Configuration successfully reloaded.");
+						player.sendMessage(ChatColor.GRAY + "["
+								+ ChatColor.DARK_PURPLE + icon + ChatColor.GRAY
+								+ "] "
+								+ Lang.CONFIGURATION_SUCCESSFULLY_RELOADED);
 					} else {
-						if (this.getLanguage().equals("fr"))
-							player.sendMessage(ChatColor.GRAY
-									+ "["
-									+ ChatColor.DARK_PURPLE
-									+ icon
-									+ ChatColor.GRAY
-									+ "] "
-									+ "Vous n'avez pas la permission de faire cela. ");
-						else
-							player.sendMessage(ChatColor.GRAY
-									+ "["
-									+ ChatColor.DARK_PURPLE
-									+ icon
-									+ ChatColor.GRAY
-									+ "] "
-									+ "You do not have the permission to do this.");
+						player.sendMessage(ChatColor.GRAY + "["
+								+ ChatColor.DARK_PURPLE + icon + ChatColor.GRAY
+								+ "] " + Lang.NO_PERMS);
 					}
 				} else if (args[0].equalsIgnoreCase("stats")) {
 					getStats(player);
@@ -650,22 +681,15 @@ public class AdvancedAchievements extends JavaPlugin {
 				}
 
 				else {
-					if (this.getLanguage().equals("fr"))
-						player.sendMessage(ChatColor.GRAY
-								+ "["
-								+ ChatColor.DARK_PURPLE
-								+ icon
-								+ ChatColor.GRAY
-								+ "] "
-								+ "Vous n'avez pas la permission de faire cela. ");
-					else
-						player.sendMessage(ChatColor.GRAY + "["
-								+ ChatColor.DARK_PURPLE + icon + ChatColor.GRAY
-								+ "] "
-								+ "You do not have the permission to do this.");
+
+					player.sendMessage(ChatColor.GRAY + "["
+							+ ChatColor.DARK_PURPLE + icon + ChatColor.GRAY
+							+ "] " + Lang.NO_PERMS);
+
 				}
 
-			} else if (cmd.getName().equalsIgnoreCase("aach")) {
+			} else if (cmd.getName().equalsIgnoreCase("aach")
+					|| (args.length == 1) && !args[0].equalsIgnoreCase("help")) {
 
 				player.sendMessage((new StringBuilder())
 						.append(ChatColor.DARK_PURPLE)
@@ -680,94 +704,48 @@ public class AdvancedAchievements extends JavaPlugin {
 						.append(icon).append(ChatColor.GRAY).append("]")
 						.append(ChatColor.DARK_PURPLE).append("-=-=-=-=-")
 						.toString());
-				if (this.getLanguage().equals("fr"))
-					sender.sendMessage((new StringBuilder())
-							.append(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] ")
-							.append("/aach book").append(ChatColor.GRAY)
-							.append(" - Obtenir votre livre de succès.")
-							.toString());
-				else
-					sender.sendMessage((new StringBuilder())
-							.append(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] ")
-							.append(ChatColor.DARK_PURPLE + "/aach book")
-							.append(ChatColor.GRAY)
-							.append(" - Receive your achievements book.")
-							.toString());
-				if (this.getLanguage().equals("fr"))
-					sender.sendMessage((new StringBuilder())
-							.append(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] ")
-							.append("/aach stats").append(ChatColor.GRAY)
-							.append(" - Visionner son nombre total de succès.")
-							.toString());
-				else
-					sender.sendMessage((new StringBuilder())
-							.append(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] ")
-							.append(ChatColor.DARK_PURPLE + "/aach stats")
-							.append(ChatColor.GRAY)
-							.append(" - Amount of achievements you have received.")
-							.toString());
-				if (this.getLanguage().equals("fr"))
-					sender.sendMessage((new StringBuilder())
-							.append(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] ")
-							.append("/aach top").append(ChatColor.GRAY)
-							.append(" - Afficher le classement des succès.")
-							.toString());
-				else
-					sender.sendMessage((new StringBuilder())
-							.append(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] ")
-							.append(ChatColor.DARK_PURPLE + "/aach top")
-							.append(ChatColor.GRAY)
-							.append(" - View achievements ranking.").toString());
-				if (this.getLanguage().equals("fr"))
-					sender.sendMessage((new StringBuilder())
-							.append(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] ")
-							.append("/aach reload").append(ChatColor.GRAY)
-							.append(" - Recharger la configuration du plugin.")
-							.toString());
-				else
-					sender.sendMessage((new StringBuilder())
-							.append(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] ")
-							.append(ChatColor.DARK_PURPLE + "/aach reload")
-							.append(ChatColor.GRAY)
-							.append(" - Reload the plugin's configuration.")
-							.toString());
-				if (this.getLanguage().equals("fr"))
-					sender.sendMessage((new StringBuilder())
-							.append(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] ")
-							.append("/aach give §oach nom§r")
-							.append(ChatColor.GRAY)
-							.append(" - Donne le succès §oach §r")
-							.append(ChatColor.GRAY).append("au joueur §onom.")
-							.toString());
-				else
-					sender.sendMessage((new StringBuilder())
-							.append(ChatColor.GRAY + "["
-									+ ChatColor.DARK_PURPLE + icon
-									+ ChatColor.GRAY + "] ")
-							.append(ChatColor.DARK_PURPLE
-									+ "/aach give §oach name§r")
-							.append(ChatColor.GRAY)
-							.append(" - Give the achievement §oach §r")
-							.append(ChatColor.GRAY)
-							.append("to the player §oname.").toString());
+
+				sender.sendMessage((new StringBuilder())
+						.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
+								+ icon + ChatColor.GRAY + "] ")
+						.append(ChatColor.DARK_PURPLE + "/aach book")
+						.append(ChatColor.GRAY)
+						.append(" - " + Lang.AACH_COMMAND_BOOK).toString());
+
+				sender.sendMessage((new StringBuilder())
+						.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
+								+ icon + ChatColor.GRAY + "] ")
+						.append(ChatColor.DARK_PURPLE + "/aach stats")
+						.append(ChatColor.GRAY)
+						.append(" - " + Lang.AACH_COMMAND_STATS).toString());
+
+				sender.sendMessage((new StringBuilder())
+						.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
+								+ icon + ChatColor.GRAY + "] ")
+						.append(ChatColor.DARK_PURPLE + "/aach top")
+						.append(ChatColor.GRAY)
+						.append(" - " + Lang.AACH_COMMAND_TOP).toString());
+
+				sender.sendMessage((new StringBuilder())
+						.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
+								+ icon + ChatColor.GRAY + "] ")
+						.append(ChatColor.DARK_PURPLE + "/aach reload")
+						.append(ChatColor.GRAY)
+						.append(" - " + Lang.AACH_COMMAND_RELOAD).toString());
+
+				sender.sendMessage((new StringBuilder())
+						.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
+								+ icon + ChatColor.GRAY + "] ")
+						.append(ChatColor.DARK_PURPLE
+								+ "/aach give §oach name§r")
+						.append(ChatColor.GRAY)
+						.append(" - "
+								+ ChatColor.translateAlternateColorCodes('&',
+										Lang.AACH_COMMAND_GIVE.toString()
+												.replace("ACH", "§oach§r&7")
+												.replace("NAME", "§oname§r&7")))
+						.toString());
+
 				player.sendMessage((new StringBuilder())
 						.append(ChatColor.DARK_PURPLE)
 						.append("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
@@ -790,13 +768,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (timeAuthorisedTop())
 			achievementsTop = db.getTop(topList);
 
-		if (this.getLanguage().equals("fr"))
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ icon + ChatColor.GRAY + "] "
-					+ "Joueurs ayant obtenu le plus de succès :");
-		else
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ icon + ChatColor.GRAY + "] " + "Top achievement owners:");
+		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon
+				+ ChatColor.GRAY + "] " + Lang.TOP_ACHIEVEMENT);
 
 		for (int i = 0; i < achievementsTop.size(); i += 2) {
 			try {
@@ -822,17 +795,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	private void getStats(Player player) {
 
 		int achievements = db.countAchievements(player);
-		if (this.getLanguage().equals("fr"))
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ icon + ChatColor.GRAY + "] "
-					+ "Nombre de succès obtenus : " + ChatColor.DARK_PURPLE
-					+ achievements + ChatColor.GRAY + "/"
-					+ ChatColor.DARK_PURPLE + totalAchievements);
-		else
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ icon + ChatColor.GRAY + "] " + "Achievements received: "
-					+ ChatColor.DARK_PURPLE + achievements + ChatColor.GRAY
-					+ "/" + ChatColor.DARK_PURPLE + totalAchievements);
+
+		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon
+				+ ChatColor.GRAY + "] " + Lang.NUMBER_ACHIEVEMENTS + " "
+				+ ChatColor.DARK_PURPLE + achievements + ChatColor.GRAY + "/"
+				+ ChatColor.DARK_PURPLE + totalAchievements);
 
 	}
 
@@ -878,10 +845,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			bm.setPages(pages);
 
 			bm.setAuthor(name);
-			if (this.getLanguage().equals("fr"))
-				bm.setTitle("Livre de Succès");
-			else
-				bm.setTitle("Achievements");
+
+			bm.setTitle(Lang.BOOK_NAME.toString());
 
 			book.setItemMeta(bm);
 			if (player.getInventory().firstEmpty() != -1)
@@ -890,7 +855,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				for (ItemStack item : new ItemStack[] { book })
 					player.getWorld().dropItem(player.getLocation(), item);
 
-			if (i > 150) {
+			if (i > 149 && achievements.size() != 150) {
 				while (i < achievements.size() && i < 300) {
 					try {
 						String currentAchievement = achievements.get(i) + "\n"
@@ -914,10 +879,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				bm2.setPages(pages2);
 
 				bm2.setAuthor(name);
-				if (this.getLanguage().equals("fr"))
-					bm2.setTitle("Livre de Succès 2");
-				else
-					bm2.setTitle("Achievements 2");
+
+				bm2.setTitle(Lang.BOOK_NAME + " 2");
 
 				book2.setItemMeta(bm2);
 				if (player.getInventory().firstEmpty() != -1)
@@ -927,7 +890,7 @@ public class AdvancedAchievements extends JavaPlugin {
 						player.getWorld().dropItem(player.getLocation(), item);
 			}
 
-			if (i > 300) {
+			if (i > 299 && achievements.size() != 300) {
 				while (i < achievements.size() && i < 450) {
 					try {
 						String currentAchievement = achievements.get(i) + "\n"
@@ -951,10 +914,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				bm3.setPages(pages3);
 
 				bm3.setAuthor(name);
-				if (this.getLanguage().equals("fr"))
-					bm3.setTitle("Livre de Succès 3");
-				else
-					bm3.setTitle("Achievements 3");
+
+				bm3.setTitle(Lang.BOOK_NAME + " 3");
 
 				book3.setItemMeta(bm3);
 				if (player.getInventory().firstEmpty() != -1)
@@ -964,24 +925,18 @@ public class AdvancedAchievements extends JavaPlugin {
 						player.getWorld().dropItem(player.getLocation(), item);
 			}
 
-			if (this.getLanguage().equals("fr"))
-				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ icon + ChatColor.GRAY + "] "
-						+ "Vous avez reçu votre livre de succès!");
-			else
-				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ icon + ChatColor.GRAY + "] "
-						+ "You received your achievements book!");
+			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
+					+ icon + ChatColor.GRAY + "] " + Lang.BOOK_RECEIVED);
 		} else {
-			if (this.getLanguage().equals("fr"))
-				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ icon + ChatColor.GRAY + "] " + "Vous devez attendre "
-						+ time / 1000
-						+ " secondes entre chaque obtention de livre !");
-			else
-				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-						+ icon + ChatColor.GRAY + "] " + "You must wait "
-						+ time / 1000 + " seconds between each book reception!");
+
+			player.sendMessage(ChatColor.GRAY
+					+ "["
+					+ ChatColor.DARK_PURPLE
+					+ icon
+					+ ChatColor.GRAY
+					+ "] "
+					+ Lang.BOOK_DELAY.toString().replace("TIME",
+							"" + time / 1000));
 		}
 	}
 
@@ -1039,14 +994,6 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	public void setAchievementDisplay(AchievementDisplay achievementDisplay) {
 		this.achievementDisplay = achievementDisplay;
-	}
-
-	public String getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(String language) {
-		this.language = language;
 	}
 
 	public boolean isUpdateNeeded() {
@@ -1129,6 +1076,14 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	public void setRewardCommandNotif(boolean rewardCommandNotif) {
 		this.rewardCommandNotif = rewardCommandNotif;
+	}
+
+	public YamlConfiguration getLang() {
+		return LANG;
+	}
+
+	public File getLangFile() {
+		return LANG_FILE;
 	}
 
 }
