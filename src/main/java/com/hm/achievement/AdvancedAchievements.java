@@ -29,6 +29,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.map.MinecraftFont;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -800,6 +801,20 @@ public class AdvancedAchievements extends JavaPlugin {
 				+ ChatColor.GRAY + "] " + Lang.NUMBER_ACHIEVEMENTS + " "
 				+ ChatColor.DARK_PURPLE + achievements + ChatColor.GRAY + "/"
 				+ ChatColor.DARK_PURPLE + totalAchievements);
+		String barDisplay = "";
+		for (int i = 1; i <= 145; i++) {
+			if (i < (145 * achievements) / totalAchievements)
+				barDisplay = barDisplay + "&5|";
+			else {
+				barDisplay = barDisplay + "&8|";
+			}
+		}
+		this.getLogger().info("" + MinecraftFont.Font.getWidth(" "));
+		this.getLogger().info("" + MinecraftFont.Font.getWidth("|"));
+		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon
+				+ ChatColor.GRAY + "] " + "["
+				+ ChatColor.translateAlternateColorCodes('&', barDisplay)
+				+ ChatColor.GRAY + "]");
 
 	}
 
