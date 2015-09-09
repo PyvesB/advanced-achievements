@@ -78,6 +78,15 @@ public class AchievementCommandGiver implements Listener {
 			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
 					+ plugin.getIcon() + ChatColor.GRAY + "] "
 					+ Lang.ACHIEVEMENT_GIVEN);
+		} else {
+			sender.sendMessage(ChatColor.GRAY
+					+ "["
+					+ ChatColor.DARK_PURPLE
+					+ plugin.getIcon()
+					+ ChatColor.GRAY
+					+ "] "
+					+ Lang.ACHIEVEMENT_NOT_FOUND.toString().replace("PLAYER",
+							args[2]));
 		}
 	}
 }
