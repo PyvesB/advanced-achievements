@@ -70,7 +70,7 @@ StatsDetails: true
 #============================================================#
 
 # DO NOT CHANGE.
-DatabaseVersion: 4
+DatabaseVersion: 5
 
 # Database type, sqlite or mysql.
 DatabaseType: sqlite
@@ -228,6 +228,42 @@ ConsumedPotions:
   '100':
     Message: Drinking weird beverages all the time...
     Name: Alcoholic 
+    
+# Amount of time played on the server (received while reconnecting; in hours).
+PlayedTime:
+  '1':
+    Message: You played during one hour on the server!
+    Name: First Hour! 
+    
+# Distance walked by foot.
+DistanceFoot:
+  '10':
+    Message: 10 blocks by foot!
+    Name: Walked 10 blocks ! 
+    
+# Distance with a pig.
+DistancePig:
+  '10':
+    Message: 10 blocks with a pig!
+    Name: Pig!
+    
+# Distance with a horse.
+DistanceHorse:
+  '10':
+    Message: 10 blocks with a horse!
+    Name: Horse!
+    
+# Distance with a minecart.
+DistanceMinecart:
+  '10':
+    Message: 10 blocks with a minecart!
+    Name: Minecart!
+    
+# Distance with a boat.
+DistanceBoat:
+  '10':
+    Message: 10 blocks with a boat!
+    Name: Boat!
     
 #============================================================#
 # +--------------------------------------------------------+ #
