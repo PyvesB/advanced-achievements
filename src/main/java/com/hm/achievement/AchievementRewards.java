@@ -13,10 +13,15 @@ public class AchievementRewards {
 	private AdvancedAchievements plugin;
 
 	public AchievementRewards(AdvancedAchievements achievement) {
+
 		this.plugin = achievement;
 	}
 
+	/**
+	 * Check if achievement exists in configuration file.
+	 */
 	public Boolean checkAchievement(String ach) {
+
 		String check = plugin.getConfig().getString(ach + ".Message", "null");
 		if (check.equals("null")) {
 			return false;
@@ -25,35 +30,33 @@ public class AchievementRewards {
 		}
 	}
 
-	public ItemStack getItemReward(Player player, String ach, int amount) {
+	/**
+	 * Give item reward to a player (specified in configuration file).
+	 */
+	public ItemStack giveItemReward(Player player, String ach, int amount) {
 
 		ItemStack item;
-		if (plugin.getConfig().getKeys(true)
-				.contains(ach + ".Reward.Item.Type"))
-			item = new ItemStack(Material.getMaterial(plugin.getConfig()
-					.getString(ach + ".Reward.Item.Type", "stone")
+		// Old config syntax.
+		if (plugin.getConfig().getKeys(true).contains(ach + ".Reward.Item.Type"))
+			item = new ItemStack(Material.getMaterial(plugin.getConfig().getString(ach + ".Reward.Item.Type", "stone")
 					.toUpperCase()), amount);
 		else
-			item = new ItemStack(Material.getMaterial(plugin
-					.getConfig()
-					.getString(ach + ".Reward.Item", "stone")
+			// New config syntax.
+			item = new ItemStack(Material.getMaterial(plugin.getConfig().getString(ach + ".Reward.Item", "stone")
 					.toUpperCase()
-					.substring(
-							0,
-							plugin.getConfig()
-									.getString(ach + ".Reward.Item", "stone")
-									.indexOf(" "))), amount);
-		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-				+ plugin.getIcon() + ChatColor.GRAY + "] "
+					.substring(0, plugin.getConfig().getString(ach + ".Reward.Item", "stone").indexOf(" "))), amount);
+		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
 				+ Lang.ITEM_REWARD_RECEIVED);
 		return item;
 	}
 
 	@SuppressWarnings("deprecation")
 	public void rewardMoney(Player player, Integer amount) {
+
 		if (plugin.setupEconomy()) {
 			String price = Integer.toString(amount);
 			double amtd = Double.valueOf(price.trim());
+			// Deprecated method, was the only one existing prior to Vault 1.4.
 			if (plugin.isRetroVault())
 				plugin.getEconomy().depositPlayer(player.getName(), amtd);
 			else
@@ -68,13 +71,8 @@ public class AchievementRewards {
 						+ "] "
 						+ ChatColor.translateAlternateColorCodes(
 								'&',
-								Lang.MONEY_REWARD_RECEIVED.toString().replace(
-										"AMOUNT",
-										"&5"
-												+ amtd
-												+ " "
-												+ plugin.getEconomy()
-														.currencyNamePlural())));
+								Lang.MONEY_REWARD_RECEIVED.toString().replace("AMOUNT",
+										"&5" + amtd + " " + plugin.getEconomy().currencyNamePlural())));
 			else
 				player.sendMessage(ChatColor.GRAY
 						+ "["
@@ -82,67 +80,50 @@ public class AchievementRewards {
 						+ plugin.getIcon()
 						+ ChatColor.GRAY
 						+ "] "
-						+ ChatColor
-								.translateAlternateColorCodes(
-										'&',
-										Lang.MONEY_REWARD_RECEIVED
-												.toString()
-												.replace(
-														"AMOUNT",
-														"&5"
-																+ amtd
-																+ " "
-																+ plugin.getEconomy()
-																		.currencyNameSingular())));
+						+ ChatColor.translateAlternateColorCodes(
+								'&',
+								Lang.MONEY_REWARD_RECEIVED.toString().replace("AMOUNT",
+										"&5" + amtd + " " + plugin.getEconomy().currencyNameSingular())));
 		}
 	}
 
 	public void checkConfig(Player player, String configAchievement) {
 
-		int money = Math.max(
-				plugin.getConfig().getInt(configAchievement + ".Reward.Money",
-						0),
-				plugin.getConfig().getInt(
-						configAchievement + ".Reward.Money.Amount", 0));
+		// Supports both old and new plugin syntax.
+		int money = Math.max(plugin.getConfig().getInt(configAchievement + ".Reward.Money", 0), plugin.getConfig()
+				.getInt(configAchievement + ".Reward.Money.Amount", 0));
 
 		int itemAmount = 0;
-		if (plugin.getConfig().getKeys(true)
-				.contains(configAchievement + ".Reward.Item.Amount")) {
-			itemAmount = plugin.getConfig().getInt(
-					configAchievement + ".Reward.Item.Amount", 0);
-		} else if (plugin.getConfig().getKeys(true)
-				.contains(configAchievement + ".Reward.Item")) {
+		// Old config syntax.
+		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
+			itemAmount = plugin.getConfig().getInt(configAchievement + ".Reward.Item.Amount", 0);
+		} else if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.Item")) { // New
+																									// config
+																									// syntax.
 			int indexOfAmount = 0;
-			indexOfAmount = plugin.getConfig()
-					.getString(configAchievement + ".Reward.Item", "")
-					.indexOf(" ");
+			indexOfAmount = plugin.getConfig().getString(configAchievement + ".Reward.Item", "").indexOf(" ");
 			if (indexOfAmount != -1)
-				itemAmount = Integer.valueOf(plugin.getConfig()
-						.getString(configAchievement + ".Reward.Item", "")
+				itemAmount = Integer.valueOf(plugin.getConfig().getString(configAchievement + ".Reward.Item", "")
 						.substring(indexOfAmount + 1));
 		}
 
-		String command = plugin.getConfig().getString(
-				configAchievement + ".Reward.Command", "");
+		String command = plugin.getConfig().getString(configAchievement + ".Reward.Command", "");
 
 		if (money != 0) {
-			this.rewardMoney(player, money);
+			rewardMoney(player, money);
 		}
 		if (itemAmount != 0) {
-			ItemStack item = this.getItemReward(player, configAchievement,
-					itemAmount);
+			ItemStack item = this.giveItemReward(player, configAchievement, itemAmount);
 			PlayerInventory inv = player.getInventory();
 			inv.addItem(item);
 		}
 		if (!command.equals("")) {
 
 			command = command.replace("PLAYER", player.getName());
-			plugin.getServer().dispatchCommand(
-					plugin.getServer().getConsoleSender(), command);
+			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
 			if (!plugin.isRewardCommandNotif())
 				return;
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ plugin.getIcon() + ChatColor.GRAY + "] "
+			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
 					+ Lang.COMMAND_REWARD);
 
 		}

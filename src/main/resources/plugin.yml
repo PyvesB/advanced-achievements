@@ -1,20 +1,34 @@
 name: AdvancedAchievements
 main: com.hm.achievement.AdvancedAchievements
-version: 1.6.2
+version: 2.0
 author: DarkPyves
 softdepend: [Vault]
-description: A plugin that enables custom achievements and RP books on your server.
+load: POSTWORLD
+description: A plugin that enables unique and challenging achievements for your server!
+website: http://dev.bukkit.org/bukkit-plugins/advanced-achievements/
 commands:
   aach:
-    description: Main command.   
+    description: Main Advanced Achievements command, use it to list sub-commands. 
+    aliases: [advancedachievements,aachievements,aa]  
+    usage: /<command>
 permissions:
   achievement.get:
-    description: Allows receiving achievements.
+    description: Allows to receive achievements.
+    default: true
   achievement.book:
-    description: Allows receiving achievements books.
+    description: Allows to receive achievements books.
+    default: true
   achievement.reload:
     description: Allows to reload the plugin's configuration.
+    default: op
   achievement.give:
-    description: Allows giving achievements by command.
-
-
+    description: Allows to give achievements by command.
+    default: op
+  achievement.*:
+    description: Star notation of permissions, includes all of them.
+    default: op
+    children:
+      achievement.get: true
+      achievement.book: true
+      achievement.reload: true
+      achievement.give: true

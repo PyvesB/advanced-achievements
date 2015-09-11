@@ -1,25 +1,25 @@
-#============================================================#
-# +--------------------------------------------------------+ #
-# |        Advanced Achievements configuration 1.6.2       | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#==============================O==============================#
+# I---------------------------------------------------------I #
+# |    Advanced Achievements 2.0 configuration - Readme     | #
+# 1---------------------------------------------------------1 #
+#==============================o==============================#
 
 # You can use Minecraft chat colours in messages and names, but include ' ' around the text.
 # If you want to use a ' in a text, write two ' instead, and include additional ' ' around the whole text.
 # In command rewards, PLAYER designates the name of the player who just got the achievement.
 # Only spaces, no tabs. Don't forget the indents, plugin won't work otherwise! 
 # To check your file, use: yaml-online-parser.appspot.com
-# Available entities for the Kills section: hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
-# Available objects for rewards/Crafts/Places/Breaks: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
-# Original and commented file: dev.bukkit.org/bukkit-plugins/advanced-achievements/pages/configuration/
+# Available mobs for the Kills section: hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
+# Available items for rewards/Crafts/Places/Breaks: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+# Original file: dev.bukkit.org/bukkit-plugins/advanced-achievements/pages/configuration/
 
-#============================================================#
-# +--------------------------------------------------------+ #
-# |                    General settings                    | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#=============================O=O=============================#
+# II-------------------------------------------------------II #
+# |                    General  settings                    | #
+# 2---------------------------------------------------------2 #
+#=============================o=o=============================#
 
-# Time in seconds between each /aach book (server reload resets time).
+# Time in seconds between each /aach book.
 Time: 900
 
 # Check for update on plugin launch and notify when an OP joins the game.
@@ -43,16 +43,16 @@ ChatNotify: false
 # Separator between name, description and date on a book page.
 BookSeparator: ''
 
-# Prevent stats from increasing when player in creative mode.
-RestrictCreative: false
-
-# Display "Reward command carried out!" message when you set a command award for an achievement.
+# Display 'command-reward' message when a command reward is set for an achievement.
 RewardCommandNotif: true
 
 # Make a daily backup of your local database.
 DatabaseBackup: true
 
-# Prevent stats from increasing when player in a specific world (delete the [] before using).
+# Stop stats from increasing when player in creative mode (except Connections and PlayedTime).
+RestrictCreative: false
+
+# Stop stats from increasing when player in a specific world (delete the [] before using).
 ExcludedWorlds: []
 #  - yourWorld1
 #  - yourWorld2
@@ -63,11 +63,11 @@ TopList: 5
 # Display achievement details on /aach stats command.
 StatsDetails: true
 
-#============================================================#
-# +--------------------------------------------------------+ #
-# |                   Database settings                    | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#=============================OOO=============================#
+# III-----------------------------------------------------III #
+# |                    Database settings                    | #
+# 3---------------------------------------------------------3 #
+#=============================ooo=============================#
 
 # DO NOT CHANGE.
 DatabaseVersion: 5
@@ -81,11 +81,11 @@ MYSQL:
   User: root
   Password: root
 
-#============================================================#
-# +--------------------------------------------------------+ #
-# |                  Action achievements                   | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#============================OO=OO============================#
+# IV-------------------------------------------------------IV #
+# |                  Action  achievements                   | #
+# 4---------------------------------------------------------4 #
+#============================oo=oo============================#
 
 # When a player connects during the day.
 Connections:
@@ -123,11 +123,8 @@ Kills:
       Message: '&8The first time you killed a zombie!'
       Name: The Walking Dead
       Reward:
-        Money:
-          Amount: 1
-        Item:
-          Type: diamond
-          Amount: 1
+        Money: 1         
+        Item: diamond 1
           
 # When a specific item is crafted (specify item name, lower case).
 Crafts:
@@ -136,9 +133,8 @@ Crafts:
       Message: The first time you crafted a blade!
       Name: Blacksmith Apprentice
       Reward:
-        Money:
-          Amount: 1        
-
+        Money: 2
+      
 # When the player dies.
 Deaths:
   '1':
@@ -229,41 +225,41 @@ ConsumedPotions:
     Message: Drinking weird beverages all the time...
     Name: Alcoholic 
     
-# Amount of time played on the server (received while reconnecting; in hours).
+# Amount of time played on the server (in hours).
 PlayedTime:
   '1':
     Message: You played during one hour on the server!
-    Name: First Hour! 
+    Name: First Hour
     
-# Distance walked by foot.
+# When a distance is travelled by foot.
 DistanceFoot:
-  '10':
-    Message: 10 blocks by foot!
-    Name: Walked 10 blocks ! 
+  '1000':
+    Message: You travelled 1000 blocks by foot!
+    Name: Big Walker 
     
-# Distance with a pig.
+# When a distance is travelled on a pig.
 DistancePig:
-  '10':
-    Message: 10 blocks with a pig!
-    Name: Pig!
+  '100':
+    Message: You travelled 100 blocks on a pig!
+    Name: Carrot on a Stick Master
     
-# Distance with a horse.
+# When a distance is travelled on a horse.
 DistanceHorse:
-  '10':
-    Message: 10 blocks with a horse!
-    Name: Horse!
+  '500':
+    Message: You travelled 500 blocks on a horse!
+    Name: The Avener
     
-# Distance with a minecart.
+# When a distance is travelled in a minecart.
 DistanceMinecart:
-  '10':
-    Message: 10 blocks with a minecart!
-    Name: Minecart!
+  '100':
+    Message: You travelled 100 blocks in a minecart!
+    Name: Carting Fan
     
-# Distance with a boat.
+# When a distance is travelled in a boat.
 DistanceBoat:
-  '10':
-    Message: 10 blocks with a boat!
-    Name: Boat!
+  '200':
+    Message: You travelled 200 blocks in a boat!
+    Name: Great Sailor
     
 # When an item is dropped on the ground.
 ItemDrops:
@@ -271,23 +267,25 @@ ItemDrops:
     Message: You're killing the planet!
     Name: Polluter
     
-# When some soil is plowed with a hoe.
+# When soil is plowed with a hoe.
 HoePlowings:
   '10':
     Message: You plowed the ground 10 times!
     Name: Farmer
+    Reward:                 
+        Item: cocoa 15
     
 # When bone meal is used to fertilise plants.
 Fertilising:
-  '10':
-    Message: You used bone meal on plants 5 times!
+  '15':
+    Message: You used bone meal on plants 15 times!
     Name: Gardener
     
-#============================================================#
-# +--------------------------------------------------------+ #
-# |                  Command achievements                  | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#============================OOOOO============================#
+# V---------------------------------------------------------V #
+# |                  Command achievements                   | #
+# 5--------------------------ooooo--------------------------5 #
+#============================ooooo============================#
     
 # Let achievement commands be given several times.
 MultiCommand: true

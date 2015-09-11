@@ -13,12 +13,17 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.language.Lang;
 
 public class AchievementCommandGiver implements Listener {
+
 	private AdvancedAchievements plugin;
 
 	public AchievementCommandGiver(AdvancedAchievements plugin) {
+
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Give an achievement with an in game or console command.
+	 */
 	public void achievementGive(CommandSender sender, String args[]) {
 
 		String configAchievement = "Commands." + args[1];
@@ -30,63 +35,37 @@ public class AchievementCommandGiver implements Listener {
 			}
 		}
 
+		// If player not found or is offline.
 		if (player == null) {
 
-			sender.sendMessage(ChatColor.GRAY
-					+ "["
-					+ ChatColor.DARK_PURPLE
-					+ plugin.getIcon()
-					+ ChatColor.GRAY
-					+ "] "
-					+ Lang.PLAYER_OFFLINE.toString().replaceAll("PLAYER",
-							args[2]));
+			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
+					+ Lang.PLAYER_OFFLINE.toString().replaceAll("PLAYER", args[2]));
 
 			return;
 		}
 		if (plugin.getReward().checkAchievement(configAchievement)) {
-			String name = plugin.getConfig().getString(
-					configAchievement + ".Name");
-			if (!plugin.isMultiCommand()
-					&& plugin.getDb().hasAchievement(player, name)) {
+			String name = plugin.getConfig().getString(configAchievement + ".Name");
+			if (!plugin.isMultiCommand() && plugin.getDb().hasAchievement(player, name)) {
 
-				sender.sendMessage(ChatColor.GRAY
-						+ "["
-						+ ChatColor.DARK_PURPLE
-						+ plugin.getIcon()
-						+ ChatColor.GRAY
-						+ "] "
-						+ Lang.ACHIEVEMENT_ALREADY_RECEIVED.toString().replace(
-								"PLAYER", args[2]));
+				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY
+						+ "] " + Lang.ACHIEVEMENT_ALREADY_RECEIVED.toString().replace("PLAYER", args[2]));
 				return;
 			}
 
-			String msg = plugin.getConfig().getString(
-					configAchievement + ".Message");
-			plugin.getAchievementDisplay()
-					.displayAchievement(player, name, msg);
+			String msg = plugin.getConfig().getString(configAchievement + ".Message");
+			plugin.getAchievementDisplay().displayAchievement(player, name, msg);
 			Date now = new Date();
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-			plugin.getDb().registerAchievement(
-					player,
-					plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig()
-							.getString(configAchievement + ".Message"),
-					format.format(now));
+			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
+					plugin.getConfig().getString(configAchievement + ".Message"), format.format(now));
 
 			plugin.getReward().checkConfig(player, configAchievement);
 
-			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE
-					+ plugin.getIcon() + ChatColor.GRAY + "] "
+			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
 					+ Lang.ACHIEVEMENT_GIVEN);
 		} else {
-			sender.sendMessage(ChatColor.GRAY
-					+ "["
-					+ ChatColor.DARK_PURPLE
-					+ plugin.getIcon()
-					+ ChatColor.GRAY
-					+ "] "
-					+ Lang.ACHIEVEMENT_NOT_FOUND.toString().replace("PLAYER",
-							args[2]));
+			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
+					+ Lang.ACHIEVEMENT_NOT_FOUND.toString().replace("PLAYER", args[2]));
 		}
 	}
 }

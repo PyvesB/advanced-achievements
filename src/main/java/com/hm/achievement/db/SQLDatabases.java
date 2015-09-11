@@ -130,7 +130,7 @@ public class SQLDatabases {
 		return null;
 	}
 
-	public void initialize(AdvancedAchievements plugin) {
+	public void initialise(AdvancedAchievements plugin) {
 
 		SQLDatabases.plugin = plugin;
 		Connection conn = getSQLConnection();

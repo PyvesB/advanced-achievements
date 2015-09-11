@@ -29,45 +29,46 @@ public class AdvancedAchievementsUpdateChecker {
 
 	}
 
+	/**
+	 * Check if a new version of AdvancedAchievements is available.
+	 */
 	public boolean updateNeeded() {
 
 		try {
-			InputStream input = this.filesFeed.openConnection()
-					.getInputStream();
-			Document document = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder().parse(input);
+			InputStream input = this.filesFeed.openConnection().getInputStream();
+			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
 
 			Node latestFile = document.getElementsByTagName("item").item(0);
 			NodeList children = latestFile.getChildNodes();
 
-			version = children.item(1).getTextContent()
-					.replaceAll("[a-zA-Z ]", "");
+			version = children.item(1).getTextContent().replaceAll("[a-zA-Z ]", "");
 			url = children.item(3).getTextContent();
 
 			if (version.equals(plugin.getDescription().getVersion()))
 				return false;
 
 			else {
-				plugin.getLogger().info(
-						"Update available for Advanced Achievements: v" + version);
+				plugin.getLogger().info("Update available for Advanced Achievements: v" + version);
 				plugin.getLogger().info("Download at: " + url);
 				return true;
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+
+			plugin.getLogger().severe("Error while checking for AdvancedAchievements update.");
 		}
 		return false;
 
 	}
 
 	public String getVersion() {
+
 		return version;
 	}
 
 	public String getUrl() {
+
 		return url;
 	}
 
 }
-

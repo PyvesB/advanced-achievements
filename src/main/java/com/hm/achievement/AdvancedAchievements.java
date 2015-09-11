@@ -15,20 +15,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -62,21 +57,25 @@ import com.hm.achievement.metrics.MetricsLite;
 
 /**
  * A plugin that enables custom achievements and RP books on your Minecraft
- * server. Some minor parts of the code are based on Achievement plugin by
- * Death_marine and captainawesome7, under Federation of Lost Lawn Chairs
- * license (http://dev.bukkit.org/licenses/1332-federation-of-lost-lawn-chairs)
+ * server. Some minor parts of the code and ideas are based on Achievement
+ * plugin by Death_marine and captainawesome7, under Federation of Lost Lawn
+ * Chairs license
+ * (http://dev.bukkit.org/licenses/1332-federation-of-lost-lawn-chairs)
  * AdvancedAchievements is under GNU General Public License version 3. Please
  * visit the plugin's GitHub for more information :
  * https://github.com/PyvesB/AdvancedAchievements
  * 
  * @since April 2015
- * @version 1.7
+ * @version 2.0
  * @author DarkPyves
  */
 
 public class AdvancedAchievements extends JavaPlugin {
 
+	// Used for Vault plugin integration.
 	private Economy economy;
+
+	// Listeners, to monitor events and manage stats.
 	private AchieveBlockListener blockListener;
 	private AchieveEntityListener entityListener;
 	private AchieveCraftListener craftListener;
@@ -88,25 +87,35 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveConsumeListener eatenItemsListener;
 	private AchieveShearListener shearListener;
 	private AchieveMilkListener milkListener;
-	private AchievementRewards reward;
-	private SQLDatabases db;
-	private AchievementDisplay achievementDisplay;
-	private int time;
-	private int databaseVersion;
-	private HashMap<Player, Long> players;
 	private AchieveConnectionListener connectionListener;
-	private boolean updateNeeded;
+	private AchieveInventoryClickListener inventoryClickListener;
+	private AchieveEnchantListener enchantmentListener;
+	private AchieveXPListener xpListener;
+	private AchieveBedListener bedListener;
+	private AchieveQuitListener quitListener;
+	private AchieveWorldTPListener worldTPListener;
+	private AchieveDropListener dropListener;
+	private AchieveHoeFertiliseListener hoeFertiliseListener;
+
+	// Additional classes related to plugin modules.
+	private AchievementRewards reward;
+	private AchievementDisplay achievementDisplay;
+	private AchievementCommandGiver achievementCommandGiver;
+	private AchievementBookGiver achievementBookGiver;
 	private AdvancedAchievementsUpdateChecker updateChecker;
+
+	// Database related.
+	private SQLDatabases db;
+	private int databaseVersion;
+
+	// Plugin options and various parameters.
+	private HashMap<Player, Long> players;
+	private int bookTime;
 	private boolean retroVault;
 	private boolean firework;
 	private boolean sound;
 	private boolean chatNotify;
-	private AchievementCommandGiver achievementCommandGiver;
-	private AchieveInventoryClickListener inventoryClickListener;
-	private AchieveEnchantListener enchantmentListener;
 	private String icon;
-	private AchieveXPListener xpListener;
-	private AchieveBedListener bedListener;
 	private int totalAchievements;
 	private String bookSeparator;
 	private ArrayList<String> achievementsTop;
@@ -118,14 +127,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	private List<String> excludedWorldList;
 	private int topList;
 	private boolean statsDetails;
-	private AchieveQuitListener quitListener;
-	private AchieveWorldTPListener worldTPListener;
-	private AchieveDropListener dropListener;
-	private AchieveHoeFertiliseListener hoeFertiliseListener;
+	private boolean updateNeeded;
 
-	public static YamlConfiguration LANG;
-	public static File LANG_FILE;
-
+	/**
+	 * Constructor.
+	 */
 	public AdvancedAchievements() {
 
 		economy = null;
@@ -147,13 +153,14 @@ public class AdvancedAchievements extends JavaPlugin {
 		xpListener = new AchieveXPListener(this);
 		bedListener = new AchieveBedListener(this);
 		quitListener = new AchieveQuitListener(this);
-		worldTPListener = new AchieveWorldTPListener();
 		dropListener = new AchieveDropListener(this);
 		hoeFertiliseListener = new AchieveHoeFertiliseListener(this);
+		worldTPListener = new AchieveWorldTPListener();
 
 		achievementDisplay = new AchievementDisplay(this);
 		reward = new AchievementRewards(this);
 		achievementCommandGiver = new AchievementCommandGiver(this);
+		achievementBookGiver = new AchievementBookGiver(this);
 
 		db = new SQLDatabases();
 
@@ -161,45 +168,9 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	}
 
-	public void onDisable() {
-
-		new SendPooledRequests(this, false).sendRequests();
-
-		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			if (this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0
-					&& AchieveConnectionListener.getPlayTime().containsKey(player))
-				this.getDb().registerPlaytime(
-						player,
-						AchieveConnectionListener.getPlayTime().get(player) + System.currentTimeMillis()
-								- AchieveConnectionListener.getJoinTime().get(player));
-
-			if ((this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
-					|| this.getConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
-					|| this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
-					|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0 || this
-					.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0)
-					&& AchieveDistanceRunnable.getAchievementLocations().containsKey(player)) {
-				this.getDb().registerDistanceFoot(player,
-						AchieveDistanceRunnable.getAchievementDistancesFoot().get(player));
-
-				this.getDb().registerDistancePig(player,
-						AchieveDistanceRunnable.getAchievementDistancesPig().get(player));
-
-				this.getDb().registerDistanceHorse(player,
-						AchieveDistanceRunnable.getAchievementDistancesHorse().get(player));
-
-				this.getDb().registerDistanceBoat(player,
-						AchieveDistanceRunnable.getAchievementDistancesBoat().get(player));
-
-				this.getDb().registerDistanceMinecart(player,
-						AchieveDistanceRunnable.getAchievementDistancesMinecart().get(player));
-			}
-		}
-
-		this.getLogger().info("Remaining requests sent to database, plugin disabled.");
-
-	}
-
+	/**
+	 * Called when server is launched or reloaded.
+	 */
 	public void onEnable() {
 
 		if (!this.getDataFolder().exists())
@@ -207,8 +178,9 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		configurationLoad();
 
+		// Register listeners so they can monitor server events; if there are no
+		// config related achievements, listeners aren't registered.
 		PluginManager pm = getServer().getPluginManager();
-
 		if (this.getConfig().getConfigurationSection("Breaks").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("Places").getKeys(false).size() != 0)
 			pm.registerEvents(blockListener, this);
@@ -278,145 +250,49 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(quitListener, this);
 			pm.registerEvents(worldTPListener, this);
 		}
-		db.initialize(this);
 
+		// Initialise the SQLite/MySQL database.
+		db.initialise(this);
+
+		// Schedule a repeating task to group database queries for some frequent
+		// events.
 		Bukkit.getServer()
 				.getScheduler()
 				.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
 						new SendPooledRequests(this, true), 2400, 1200);
 
+		// Schedule a repeating task to monitor played time for each player (not
+		// directly related to an event).
 		Bukkit.getServer()
 				.getScheduler()
 				.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
 						new AchievePlayTimeRunnable(this), 6000, 6000);
 
+		// Schedule a repeating task to monitor distances travelled by each
+		// player (not
+		// directly related to an event).
 		Bukkit.getServer()
 				.getScheduler()
 				.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-						new AchieveDistanceRunnable(this), 600, 600);
+						new AchieveDistanceRunnable(this), 200, 200);
 
-		this.getLogger().info("AdvancedAchievements configurations and database successfully loaded!");
-	}
-
-	private void backupConfigFile() {
-
-		File original = new File(this.getDataFolder(), "config.yml");
-		File backup = new File(this.getDataFolder(), "config.yml.bak");
-		if (original.length() != backup.length() && original.length() != 0) {
-			try {
-				FileInputStream inStream = new FileInputStream(original);
-				FileOutputStream outStream;
-				outStream = new FileOutputStream(backup);
-
-				byte[] buffer = new byte[1024];
-
-				int length;
-				while ((length = inStream.read(buffer)) > 0) {
-					outStream.write(buffer, 0, length);
-				}
-
-				if (inStream != null)
-					inStream.close();
-				if (outStream != null)
-					outStream.close();
-				this.getLogger().info("Successfully backed up configuration file.");
-
-			} catch (FileNotFoundException e) {
-				this.getLogger().severe("Error while backing up config file.");
-			} catch (IOException e) {
-				this.getLogger().severe("Error while backing up config file.");
-			}
-		}
-
-	}
-
-	private void backupDBFile() {
-
-		if (!databaseBackup)
-			return;
-
-		File original = new File(this.getDataFolder(), "achievements.db");
-		File backup = new File(this.getDataFolder(), "achievements.db.bak");
-		if ((System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0)
-				&& original.length() != 0) {
-			try {
-				FileInputStream inStream = new FileInputStream(original);
-				FileOutputStream outStream;
-				outStream = new FileOutputStream(backup);
-
-				byte[] buffer = new byte[1024];
-
-				int length;
-				while ((length = inStream.read(buffer)) > 0) {
-					outStream.write(buffer, 0, length);
-				}
-
-				if (inStream != null)
-					inStream.close();
-				if (outStream != null)
-					outStream.close();
-				this.getLogger().info("Successfully backed up database file.");
-
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				this.getLogger().severe("Error while backing up database file.");
-			} catch (IOException e) {
-				e.printStackTrace();
-				this.getLogger().severe("Error while backing up database file.");
-			}
-		}
-
+		this.getLogger().info("AdvancedAchievements configurations, language file and database successfully loaded!");
 	}
 
 	/**
-	 * Load the lang.yml file.
-	 * 
-	 * @return The lang.yml config.
+	 * Load plugin configuration and set values to different parameters; load
+	 * language file and backup configuration and database files.
 	 */
-	public void loadLang() {
-
-		File lang = new File(getDataFolder(), "lang.yml");
-		if (!lang.exists()) {
-			try {
-				getDataFolder().mkdir();
-				lang.createNewFile();
-				Reader defConfigStream = new InputStreamReader(this.getResource("lang.yml"), "UTF8");
-				if (defConfigStream != null) {
-					YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-					defConfig.save(lang);
-					Lang.setFile(defConfig);
-					return;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-				this.getLogger().severe("Error while creating language file.");
-			}
-		}
-		YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
-		for (Lang item : Lang.values()) {
-			if (conf.getString(item.getPath()) == null) {
-				conf.set(item.getPath(), item.getDefault());
-			}
-		}
-		Lang.setFile(conf);
-		LANG = conf;
-		LANG_FILE = lang;
-		try {
-			conf.save(getLangFile());
-		} catch (IOException e) {
-			e.printStackTrace();
-			this.getLogger().severe("Error while saving language file.");
-		}
-	}
-
 	private void configurationLoad() {
 
-		backupConfigFile();
 		loadLang();
+
+		backupConfigFile();
+		backupLanguageFile();
 
 		this.saveDefaultConfig();
 
-		// Workaround to keep configuration file comments.
+		// Workaround to keep configuration file comments (Bukkit issue).
 		File config = new File(this.getDataFolder(), "config.yml");
 		BufferedReader reader = null;
 		try {
@@ -448,11 +324,11 @@ public class AdvancedAchievements extends JavaPlugin {
 			writer.close();
 			reader.close();
 		} catch (IOException e) {
-
 			this.getLogger().severe("Saving comments in config file failed.");
 		}
 
-		// Update configurations from older plugin versions.
+		// Update configurations from older plugin versions by adding missing
+		// parameters in config file.
 		if (!this.getConfig().getKeys(false).contains("CheckForUpdate")) {
 			this.getConfig().set("CheckForUpdate", true);
 			this.saveConfig();
@@ -572,11 +448,11 @@ public class AdvancedAchievements extends JavaPlugin {
 			writer.close();
 			reader.close();
 		} catch (IOException e) {
-
 			this.getLogger().severe("Saving comments in config file failed.");
 		}
 
-		time = this.getConfig().getInt("Time", 900) * 1000;
+		// Load parameters.
+		bookTime = this.getConfig().getInt("Time", 900) * 1000;
 		retroVault = this.getConfig().getBoolean("RetroVault", false);
 		firework = this.getConfig().getBoolean("Firework", true);
 		sound = this.getConfig().getBoolean("Sound", true);
@@ -594,12 +470,14 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		lastTopTime = 0;
 
+		// Check for available plugin update.
 		if (this.getConfig().getBoolean("CheckForUpdate", true)) {
 			updateChecker = new AdvancedAchievementsUpdateChecker(this,
 					"http://dev.bukkit.org/bukkit-plugins/advanced-achievements/files.rss");
 			updateNeeded = updateChecker.updateNeeded();
 		}
 
+		// Load Metrics Lite.
 		try {
 			MetricsLite metrics = new MetricsLite(this);
 			metrics.start();
@@ -609,8 +487,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		backupDBFile();
 
+		// Calculate the total number of achievements in the config file.
 		totalAchievements = 0;
-
 		totalAchievements += this.getConfig().getConfigurationSection("Connections").getKeys(false).size();
 		for (String item : this.getConfig().getConfigurationSection("Places").getKeys(false))
 			totalAchievements += this.getConfig().getConfigurationSection("Places." + item).getKeys(false).size();
@@ -635,9 +513,216 @@ public class AdvancedAchievements extends JavaPlugin {
 		totalAchievements += this.getConfig().getConfigurationSection("Beds").getKeys(false).size();
 		totalAchievements += this.getConfig().getConfigurationSection("MaxLevel").getKeys(false).size();
 		totalAchievements += this.getConfig().getConfigurationSection("ConsumedPotions").getKeys(false).size();
+		totalAchievements += this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size();
+		totalAchievements += this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size();
+		totalAchievements += this.getConfig().getConfigurationSection("DistancePig").getKeys(false).size();
+		totalAchievements += this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false).size();
+		totalAchievements += this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size();
+		totalAchievements += this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size();
+		totalAchievements += this.getConfig().getConfigurationSection("ItemDrops").getKeys(false).size();
+		totalAchievements += this.getConfig().getConfigurationSection("HoePlowings").getKeys(false).size();
+		totalAchievements += this.getConfig().getConfigurationSection("Fertilising").getKeys(false).size();
 		totalAchievements += this.getConfig().getConfigurationSection("Commands").getKeys(false).size();
 	}
 
+	/**
+	 * Backup configuration file (config.yml.bak).
+	 */
+	private void backupConfigFile() {
+
+		File original = new File(this.getDataFolder(), "config.yml");
+		File backup = new File(this.getDataFolder(), "config.yml.bak");
+		if (original.length() != backup.length() && original.length() != 0) {
+			try {
+				FileInputStream inStream = new FileInputStream(original);
+				FileOutputStream outStream;
+				outStream = new FileOutputStream(backup);
+
+				byte[] buffer = new byte[1024];
+
+				int length;
+				while ((length = inStream.read(buffer)) > 0) {
+					outStream.write(buffer, 0, length);
+				}
+
+				if (inStream != null)
+					inStream.close();
+				if (outStream != null)
+					outStream.close();
+				this.getLogger().info("Successfully backed up configuration file.");
+
+			} catch (FileNotFoundException e) {
+				this.getLogger().severe("Error while backing up config file.");
+			} catch (IOException e) {
+				this.getLogger().severe("Error while backing up config file.");
+			}
+		}
+
+	}
+
+	/**
+	 * Backup database file (achievements.db.bak).
+	 */
+	private void backupDBFile() {
+
+		if (!databaseBackup || !this.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("sqlite"))
+			return;
+
+		File original = new File(this.getDataFolder(), "achievements.db");
+		File backup = new File(this.getDataFolder(), "achievements.db.bak");
+
+		// Update only if previous file older than one day.
+		if ((System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0)
+				&& original.length() != 0) {
+			try {
+				FileInputStream inStream = new FileInputStream(original);
+				FileOutputStream outStream;
+				outStream = new FileOutputStream(backup);
+
+				byte[] buffer = new byte[1024];
+
+				int length;
+				while ((length = inStream.read(buffer)) > 0) {
+					outStream.write(buffer, 0, length);
+				}
+
+				if (inStream != null)
+					inStream.close();
+				if (outStream != null)
+					outStream.close();
+				this.getLogger().info("Successfully backed up database file.");
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				this.getLogger().severe("Error while backing up database file.");
+			} catch (IOException e) {
+				e.printStackTrace();
+				this.getLogger().severe("Error while backing up database file.");
+			}
+		}
+
+	}
+
+	/**
+	 * Load the lang.yml file.
+	 */
+	public void loadLang() {
+
+		File lang = new File(getDataFolder(), "lang.yml");
+		if (!lang.exists()) {
+			try {
+				getDataFolder().mkdir();
+				lang.createNewFile();
+				Reader defConfigStream = new InputStreamReader(this.getResource("lang.yml"), "UTF8");
+				if (defConfigStream != null) {
+					YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+					defConfig.save(lang);
+					Lang.setFile(defConfig);
+					return;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				this.getLogger().severe("Error while creating language file.");
+			}
+		}
+		YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
+		for (Lang item : Lang.values()) {
+			if (conf.getString(item.getPath()) == null) {
+				conf.set(item.getPath(), item.getDefault());
+			}
+		}
+		Lang.setFile(conf);
+		try {
+			conf.save(lang);
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.getLogger().severe("Error while saving language file.");
+		}
+	}
+
+	/**
+	 * Backup language file (lang.yml.bak).
+	 */
+	private void backupLanguageFile() {
+
+		File original = new File(this.getDataFolder(), "lang.yml");
+		File backup = new File(this.getDataFolder(), "lang.yml.bak");
+		if (original.length() != backup.length() && original.length() != 0) {
+			try {
+				FileInputStream inStream = new FileInputStream(original);
+				FileOutputStream outStream;
+				outStream = new FileOutputStream(backup);
+
+				byte[] buffer = new byte[1024];
+
+				int length;
+				while ((length = inStream.read(buffer)) > 0) {
+					outStream.write(buffer, 0, length);
+				}
+
+				if (inStream != null)
+					inStream.close();
+				if (outStream != null)
+					outStream.close();
+				this.getLogger().info("Successfully backed up language file.");
+
+			} catch (FileNotFoundException e) {
+				this.getLogger().severe("Error while backing up language file.");
+			} catch (IOException e) {
+				this.getLogger().severe("Error while backing up language file.");
+			}
+		}
+
+	}
+
+	/**
+	 * Called when server is stopped or reloaded.
+	 */
+	public void onDisable() {
+
+		// Send remaining stats for pooled events to the database.
+		new SendPooledRequests(this, false).sendRequests();
+
+		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+			// Send played time stats to the database.
+			if (this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0
+					&& AchieveConnectionListener.getPlayTime().containsKey(player))
+				this.getDb().registerPlaytime(
+						player,
+						AchieveConnectionListener.getPlayTime().get(player) + System.currentTimeMillis()
+								- AchieveConnectionListener.getJoinTime().get(player));
+
+			// Send travelled distance stats to the database.
+			if ((this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
+					|| this.getConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
+					|| this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
+					|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0 || this
+					.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0)
+					&& AchieveDistanceRunnable.getAchievementLocations().containsKey(player)) {
+				this.getDb().registerDistanceFoot(player,
+						AchieveDistanceRunnable.getAchievementDistancesFoot().get(player));
+
+				this.getDb().registerDistancePig(player,
+						AchieveDistanceRunnable.getAchievementDistancesPig().get(player));
+
+				this.getDb().registerDistanceHorse(player,
+						AchieveDistanceRunnable.getAchievementDistancesHorse().get(player));
+
+				this.getDb().registerDistanceBoat(player,
+						AchieveDistanceRunnable.getAchievementDistancesBoat().get(player));
+
+				this.getDb().registerDistanceMinecart(player,
+						AchieveDistanceRunnable.getAchievementDistancesMinecart().get(player));
+			}
+		}
+
+		this.getLogger().info("Remaining requests sent to database, plugin disabled.");
+
+	}
+
+	/**
+	 * Check if player is in a world in which achievements must not be received.
+	 */
 	public boolean isInExludedWorld(Player player) {
 
 		if (excludedWorldList.size() == 0)
@@ -651,6 +736,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		return false;
 	}
 
+	/**
+	 * Try to hook up with Vault.
+	 */
 	public boolean setupEconomy() {
 
 		try {
@@ -666,126 +754,140 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 	}
 
+	/**
+	 * Called when a player or the console enters a command.
+	 */
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]) {
 
-		if (sender instanceof Player) {
+		if (cmd.getName().equalsIgnoreCase("aach") && (args.length == 1) && !args[0].equalsIgnoreCase("help")) {
 
-			Player player = ((Player) sender);
-			String name = player.getName();
-			if (cmd.getName().equalsIgnoreCase("aach") && (args.length == 1) && !args[0].equalsIgnoreCase("help")) {
-				if (args[0].equalsIgnoreCase("book") && player.hasPermission("achievement.book")) {
+			if (args[0].equalsIgnoreCase("book") && sender.hasPermission("achievement.book")
+					&& sender instanceof Player) {
 
-					giveBook(player, name);
+				achievementBookGiver.giveBook(((Player) sender), ((Player) sender).getName());
 
-				} else if (args[0].equalsIgnoreCase("reload")) {
-					if (player.hasPermission("achievement.reload")) {
-						this.reloadConfig();
-						configurationLoad();
-						player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-								+ Lang.CONFIGURATION_SUCCESSFULLY_RELOADED);
-					} else {
-						player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-								+ Lang.NO_PERMS);
-					}
-				} else if (args[0].equalsIgnoreCase("stats")) {
-					getStats(player);
-				} else if (args[0].equalsIgnoreCase("top")) {
-					getTop(player);
-				}
+			} else if (args[0].equalsIgnoreCase("reload")) {
 
-			} else if (cmd.getName().equalsIgnoreCase("aach") && (args.length == 3) && args[0].equalsIgnoreCase("give")) {
+				if (sender.hasPermission("achievement.reload")) {
 
-				if (player.hasPermission("achievement.give")) {
+					this.reloadConfig();
+					configurationLoad();
+					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+							+ Lang.CONFIGURATION_SUCCESSFULLY_RELOADED);
 
-					achievementCommandGiver.achievementGive(sender, args);
+				} else {
 
-				}
-
-				else {
-
-					player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
 							+ Lang.NO_PERMS);
 
 				}
+			} else if (args[0].equalsIgnoreCase("stats") && sender instanceof Player) {
 
-			} else if (cmd.getName().equalsIgnoreCase("aach") || (args.length == 1)
-					&& !args[0].equalsIgnoreCase("help")) {
+				getStats((Player) sender);
 
-				player.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("-=-=-=-=-")
-						.append(ChatColor.GRAY).append("[").append(ChatColor.DARK_PURPLE).append(icon)
-						.append("§lAdvancedAchievements").append(" §lv" + this.getDescription().getVersion() + "§r")
-						.append(ChatColor.DARK_PURPLE).append(icon).append(ChatColor.GRAY).append("]")
-						.append(ChatColor.DARK_PURPLE).append("-=-=-=-=-").toString());
+			} else if (args[0].equalsIgnoreCase("top")) {
 
-				sender.sendMessage((new StringBuilder())
-						.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-						.append(ChatColor.DARK_PURPLE + "/aach book").append(ChatColor.GRAY)
-						.append(" - " + Lang.AACH_COMMAND_BOOK).toString());
+				getTop(sender);
 
-				sender.sendMessage((new StringBuilder())
-						.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-						.append(ChatColor.DARK_PURPLE + "/aach stats").append(ChatColor.GRAY)
-						.append(" - " + Lang.AACH_COMMAND_STATS).toString());
-
-				sender.sendMessage((new StringBuilder())
-						.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-						.append(ChatColor.DARK_PURPLE + "/aach top").append(ChatColor.GRAY)
-						.append(" - " + Lang.AACH_COMMAND_TOP).toString());
-
-				sender.sendMessage((new StringBuilder())
-						.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-						.append(ChatColor.DARK_PURPLE + "/aach reload").append(ChatColor.GRAY)
-						.append(" - " + Lang.AACH_COMMAND_RELOAD).toString());
-
-				sender.sendMessage((new StringBuilder())
-						.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-						.append(ChatColor.DARK_PURPLE + "/aach give §oach name§r")
-						.append(ChatColor.GRAY)
-						.append(" - "
-								+ ChatColor.translateAlternateColorCodes('&', Lang.AACH_COMMAND_GIVE.toString()
-										.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7"))).toString());
-
-				player.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE)
-						.append("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-").toString());
 			}
+		} else if (cmd.getName().equalsIgnoreCase("aach") && (args.length == 3) && args[0].equalsIgnoreCase("give")) {
+
+			if (sender.hasPermission("achievement.give")) {
+
+				achievementCommandGiver.achievementGive(sender, args);
+
+			} else {
+
+				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+						+ Lang.NO_PERMS);
+
+			}
+		} else if (cmd.getName().equalsIgnoreCase("aach") || (args.length == 1) && !args[0].equalsIgnoreCase("help")) {
+
+			sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("-=-=-=-=-")
+					.append(ChatColor.GRAY).append("[").append(ChatColor.DARK_PURPLE).append(icon)
+					.append("§lAdvancedAchievements").append(" §lv" + this.getDescription().getVersion() + "§r")
+					.append(ChatColor.DARK_PURPLE).append(icon).append(ChatColor.GRAY).append("]")
+					.append(ChatColor.DARK_PURPLE).append("-=-=-=-=-").toString());
+
+			sender.sendMessage((new StringBuilder())
+					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+					.append(ChatColor.DARK_PURPLE + "/aach book").append(ChatColor.GRAY)
+					.append(" - " + Lang.AACH_COMMAND_BOOK).toString());
+
+			sender.sendMessage((new StringBuilder())
+					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+					.append(ChatColor.DARK_PURPLE + "/aach stats").append(ChatColor.GRAY)
+					.append(" - " + Lang.AACH_COMMAND_STATS).toString());
+
+			sender.sendMessage((new StringBuilder())
+					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+					.append(ChatColor.DARK_PURPLE + "/aach top").append(ChatColor.GRAY)
+					.append(" - " + Lang.AACH_COMMAND_TOP).toString());
+
+			sender.sendMessage((new StringBuilder())
+					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+					.append(ChatColor.DARK_PURPLE + "/aach reload").append(ChatColor.GRAY)
+					.append(" - " + Lang.AACH_COMMAND_RELOAD).toString());
+
+			sender.sendMessage((new StringBuilder())
+					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+					.append(ChatColor.DARK_PURPLE + "/aach give §oach name§r")
+					.append(ChatColor.GRAY)
+					.append(" - "
+							+ ChatColor.translateAlternateColorCodes(
+									'&',
+									Lang.AACH_COMMAND_GIVE.toString().replace("ACH", "§oach§r&7")
+											.replace("NAME", "§oname§r&7"))).toString());
+
+			sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE)
+					.append("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-").toString());
 		}
 
-		else if (cmd.getName().equalsIgnoreCase("aach") && (args.length == 3) && args[0].equalsIgnoreCase("give")) {
-
-			achievementCommandGiver.achievementGive(sender, args);
-
-		}
 		return true;
 
 	}
 
-	private void getTop(Player player) {
+	/**
+	 * Get list of players with the most achievements.
+	 */
+	private void getTop(CommandSender sender) {
 
-		if (timeAuthorisedTop())
+		long currentTime = System.currentTimeMillis();
+		if (currentTime - lastTopTime >= 60000) {
+
 			achievementsTop = db.getTop(topList);
+			lastTopTime = System.currentTimeMillis();
+		}
 
-		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
 				+ Lang.TOP_ACHIEVEMENT);
 
 		for (int i = 0; i < achievementsTop.size(); i += 2) {
 			try {
-				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + (i + 2) / 2 + ChatColor.GRAY + "] "
+				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + (i + 2) / 2 + ChatColor.GRAY + "] "
 						+ Bukkit.getServer().getOfflinePlayer(UUID.fromString(achievementsTop.get(i))).getName()
 						+ " - " + achievementsTop.get(i + 1));
 			} catch (Exception ex) {
-				this.getLogger().warning("Name corresponding to UUID not found");
+				this.getLogger().warning("Top command: name corresponding to UUID not found.");
 			}
 		}
 
 	}
 
+	/**
+	 * Get statistics of the player.
+	 */
 	private void getStats(Player player) {
 
 		int achievements = db.countAchievements(player);
 
+		// Display number of achievements received and total achievements.
 		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
 				+ Lang.NUMBER_ACHIEVEMENTS + " " + ChatColor.DARK_PURPLE + achievements + ChatColor.GRAY + "/"
 				+ ChatColor.DARK_PURPLE + totalAchievements);
+
+		// Display progress bar.
 		String barDisplay = "";
 		for (int i = 1; i <= 145; i++) {
 			if (i < (145 * achievements) / totalAchievements)
@@ -797,6 +899,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] " + "["
 				+ ChatColor.translateAlternateColorCodes('&', barDisplay) + ChatColor.GRAY + "]");
 
+		// Display name of received achievements and name of missing
+		// achievements (goes through the entire config file).
 		if (statsDetails) {
 
 			String achievementsList = "";
@@ -1019,159 +1123,108 @@ public class AdvancedAchievements extends JavaPlugin {
 							+ this.getConfig().getString("Commands" + ach + ".Name", "")
 									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
 
+			for (String ach : this.getConfig().getConfigurationSection("PlayedTime").getKeys(false))
+				if (db.hasAchievement(player, this.getConfig().getString("PlayedTime." + ach + ".Name", "")))
+					achievementsList += "&5"
+							+ this.getConfig().getString("PlayedTime." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+				else
+					achievementsList += "&8§o"
+							+ this.getConfig().getString("PlayedTime." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+			for (String ach : this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false))
+				if (db.hasAchievement(player, this.getConfig().getString("DistanceFoot." + ach + ".Name", "")))
+					achievementsList += "&5"
+							+ this.getConfig().getString("DistanceFoot." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+				else
+					achievementsList += "&8§o"
+							+ this.getConfig().getString("DistanceFoot." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+			for (String ach : this.getConfig().getConfigurationSection("DistancePig").getKeys(false))
+				if (db.hasAchievement(player, this.getConfig().getString("DistancePig." + ach + ".Name", "")))
+					achievementsList += "&5"
+							+ this.getConfig().getString("DistancePig." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+				else
+					achievementsList += "&8§o"
+							+ this.getConfig().getString("DistancePig." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+			for (String ach : this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false))
+				if (db.hasAchievement(player, this.getConfig().getString("DistanceHorse." + ach + ".Name", "")))
+					achievementsList += "&5"
+							+ this.getConfig().getString("DistanceHorse." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+				else
+					achievementsList += "&8§o"
+							+ this.getConfig().getString("DistanceHorse." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+			for (String ach : this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false))
+				if (db.hasAchievement(player, this.getConfig().getString("DistanceMinecart." + ach + ".Name", "")))
+					achievementsList += "&5"
+							+ this.getConfig().getString("DistanceMinecart." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+				else
+					achievementsList += "&8§o"
+							+ this.getConfig().getString("DistanceMinecart." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+			for (String ach : this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false))
+				if (db.hasAchievement(player, this.getConfig().getString("DistanceBoat." + ach + ".Name", "")))
+					achievementsList += "&5"
+							+ this.getConfig().getString("DistanceBoat." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+				else
+					achievementsList += "&8§o"
+							+ this.getConfig().getString("DistanceBoat." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+			for (String ach : this.getConfig().getConfigurationSection("ItemDrops").getKeys(false))
+				if (db.hasAchievement(player, this.getConfig().getString("ItemDrops." + ach + ".Name", "")))
+					achievementsList += "&5"
+							+ this.getConfig().getString("ItemDrops." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+				else
+					achievementsList += "&8§o"
+							+ this.getConfig().getString("ItemDrops." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+			for (String ach : this.getConfig().getConfigurationSection("HoePlowings").getKeys(false))
+				if (db.hasAchievement(player, this.getConfig().getString("HoePlowings." + ach + ".Name", "")))
+					achievementsList += "&5"
+							+ this.getConfig().getString("HoePlowings." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+				else
+					achievementsList += "&8§o"
+							+ this.getConfig().getString("HoePlowings." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+			for (String ach : this.getConfig().getConfigurationSection("Fertilising").getKeys(false))
+				if (db.hasAchievement(player, this.getConfig().getString("Fertilising." + ach + ".Name", "")))
+					achievementsList += "&5"
+							+ this.getConfig().getString("Fertilising." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+				else
+					achievementsList += "&8§o"
+							+ this.getConfig().getString("Fertilising." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
 			player.sendMessage(ChatColor.GRAY + " " + icon + " "
 					+ ChatColor.translateAlternateColorCodes('&', achievementsList));
 		}
 	}
 
-	private void giveBook(Player player, String name) {
-
-		if (timeAuthorised(player)) {
-
-			if (sound)
-				player.getWorld().playSound(player.getLocation(), Sound.LEVEL_UP, 1, 0);
-
-			// Up to three achievement books can be generated (= 150
-			// achievements received by a player).
-			ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-			ItemStack book2 = new ItemStack(Material.WRITTEN_BOOK);
-			ItemStack book3 = new ItemStack(Material.WRITTEN_BOOK);
-			ArrayList<String> achievements = this.db.getAchievements(player);
-			ArrayList<String> pages = new ArrayList<String>();
-			ArrayList<String> pages2 = new ArrayList<String>();
-			ArrayList<String> pages3 = new ArrayList<String>();
-
-			int i = 0;
-			while (i < achievements.size() && i < 150) {
-				try {
-					String currentAchievement = achievements.get(i) + "\n" + bookSeparator + "\n"
-							+ achievements.get(i + 1) + "\n" + bookSeparator + "\n" + achievements.get(i + 2);
-					currentAchievement = ChatColor.translateAlternateColorCodes('&', "&0" + currentAchievement);
-					pages.add(currentAchievement);
-					i = i + 3;
-				} catch (Exception e) {
-					Logger log = this.getLogger();
-					log.severe("Error while creating book pages.");
-				}
-
-			}
-
-			BookMeta bm = (BookMeta) book.getItemMeta();
-
-			bm.setPages(pages);
-
-			bm.setAuthor(name);
-
-			bm.setTitle(Lang.BOOK_NAME.toString());
-
-			book.setItemMeta(bm);
-			if (player.getInventory().firstEmpty() != -1)
-				player.getInventory().addItem(new ItemStack[] { book });
-			else
-				for (ItemStack item : new ItemStack[] { book })
-					player.getWorld().dropItem(player.getLocation(), item);
-
-			if (i > 149 && achievements.size() != 150) {
-				while (i < achievements.size() && i < 300) {
-					try {
-						String currentAchievement = achievements.get(i) + "\n" + bookSeparator + "\n"
-								+ achievements.get(i + 1) + "\n" + bookSeparator + "\n" + achievements.get(i + 2);
-						currentAchievement = ChatColor.translateAlternateColorCodes('&', "&0" + currentAchievement);
-						pages2.add(currentAchievement);
-						i = i + 3;
-					} catch (Exception e) {
-						Logger log = this.getLogger();
-						log.severe("Error while creating book pages.");
-					}
-
-				}
-				BookMeta bm2 = (BookMeta) book2.getItemMeta();
-
-				bm2.setPages(pages2);
-
-				bm2.setAuthor(name);
-
-				bm2.setTitle(Lang.BOOK_NAME + " 2");
-
-				book2.setItemMeta(bm2);
-				if (player.getInventory().firstEmpty() != -1)
-					player.getInventory().addItem(new ItemStack[] { book2 });
-				else
-					for (ItemStack item : new ItemStack[] { book2 })
-						player.getWorld().dropItem(player.getLocation(), item);
-			}
-
-			if (i > 299 && achievements.size() != 300) {
-				while (i < achievements.size() && i < 450) {
-					try {
-						String currentAchievement = achievements.get(i) + "\n" + bookSeparator + "\n"
-								+ achievements.get(i + 1) + "\n" + bookSeparator + "\n" + achievements.get(i + 2);
-						currentAchievement = ChatColor.translateAlternateColorCodes('&', "&0" + currentAchievement);
-						pages3.add(currentAchievement);
-						i = i + 3;
-					} catch (Exception e) {
-						Logger log = this.getLogger();
-						log.severe("Error while creating book pages.");
-					}
-
-				}
-				BookMeta bm3 = (BookMeta) book3.getItemMeta();
-
-				bm3.setPages(pages3);
-
-				bm3.setAuthor(name);
-
-				bm3.setTitle(Lang.BOOK_NAME + " 3");
-
-				book3.setItemMeta(bm3);
-				if (player.getInventory().firstEmpty() != -1)
-					player.getInventory().addItem(new ItemStack[] { book3 });
-				else
-					for (ItemStack item : new ItemStack[] { book3 })
-						player.getWorld().dropItem(player.getLocation(), item);
-			}
-
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-					+ Lang.BOOK_RECEIVED);
-		} else {
-
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-					+ Lang.BOOK_DELAY.toString().replace("TIME", "" + time / 1000));
-		}
-	}
-
-	private boolean timeAuthorised(Player player) {
-
-		long currentTime = System.currentTimeMillis();
-		long lastBookTime = 0;
-		if (players.containsKey(player))
-			lastBookTime = players.get(player);
-		if (currentTime - lastBookTime < time)
-			return false;
-		players.put(player, currentTime);
-		return true;
-
-	}
-
-	private boolean timeAuthorisedTop() {
-
-		long currentTime = System.currentTimeMillis();
-		if (currentTime - lastTopTime < 60000)
-			return false;
-		else
-			lastTopTime = System.currentTimeMillis();
-		return true;
-
-	}
+	/**
+	 * Various getters and setters.
+	 */
 
 	public Economy getEconomy() {
 
 		return economy;
-	}
-
-	public void setEconomy(Economy economy) {
-
-		this.economy = economy;
 	}
 
 	public SQLDatabases getDb() {
@@ -1179,19 +1232,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		return db;
 	}
 
-	public void setDb(SQLDatabases db) {
-
-		this.db = db;
-	}
-
 	public AchievementRewards getReward() {
 
 		return reward;
-	}
-
-	public void setReward(AchievementRewards reward) {
-
-		this.reward = reward;
 	}
 
 	public AchievementDisplay getAchievementDisplay() {
@@ -1199,19 +1242,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		return achievementDisplay;
 	}
 
-	public void setAchievementDisplay(AchievementDisplay achievementDisplay) {
-
-		this.achievementDisplay = achievementDisplay;
-	}
-
 	public boolean isUpdateNeeded() {
 
 		return updateNeeded;
-	}
-
-	public void setUpdateNeeded(boolean updateNeeded) {
-
-		this.updateNeeded = updateNeeded;
 	}
 
 	public AdvancedAchievementsUpdateChecker getUpdateChecker() {
@@ -1219,29 +1252,14 @@ public class AdvancedAchievements extends JavaPlugin {
 		return updateChecker;
 	}
 
-	public void setUpdateChecker(AdvancedAchievementsUpdateChecker updateChecker) {
-
-		this.updateChecker = updateChecker;
-	}
-
 	public boolean isRetroVault() {
 
 		return retroVault;
 	}
 
-	public void setRetroVault(boolean retroVault) {
-
-		this.retroVault = retroVault;
-	}
-
 	public boolean isFirework() {
 
 		return firework;
-	}
-
-	public void setFirework(boolean firework) {
-
-		this.firework = firework;
 	}
 
 	public int getDatabaseVersion() {
@@ -1261,19 +1279,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		return icon;
 	}
 
-	public void setIcon(String icon) {
-
-		this.icon = icon;
-	}
-
 	public boolean isChatMessage() {
 
 		return chatNotify;
-	}
-
-	public void setChatMessage(boolean chatMessage) {
-
-		this.chatNotify = chatMessage;
 	}
 
 	public boolean isRestrictCreative() {
@@ -1281,19 +1289,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		return restrictCreative;
 	}
 
-	public void setRestrictCreative(boolean restrictCreative) {
-
-		this.restrictCreative = restrictCreative;
-	}
-
 	public boolean isMultiCommand() {
 
 		return multiCommand;
-	}
-
-	public void setMultiCommand(boolean multiCommand) {
-
-		this.multiCommand = multiCommand;
 	}
 
 	public boolean isRewardCommandNotif() {
@@ -1301,19 +1299,24 @@ public class AdvancedAchievements extends JavaPlugin {
 		return rewardCommandNotif;
 	}
 
-	public void setRewardCommandNotif(boolean rewardCommandNotif) {
+	public boolean isSound() {
 
-		this.rewardCommandNotif = rewardCommandNotif;
+		return sound;
 	}
 
-	public YamlConfiguration getLang() {
+	public String getBookSeparator() {
 
-		return LANG;
+		return bookSeparator;
 	}
 
-	public File getLangFile() {
+	public int getBookTime() {
 
-		return LANG_FILE;
+		return bookTime;
+	}
+
+	public HashMap<Player, Long> getPlayers() {
+
+		return players;
 	}
 
 }
