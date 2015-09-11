@@ -45,9 +45,11 @@ import com.hm.achievement.listener.AchieveConsumeListener;
 import com.hm.achievement.listener.AchieveCraftListener;
 import com.hm.achievement.listener.AchieveDeathListener;
 import com.hm.achievement.listener.AchieveDistanceRunnable;
+import com.hm.achievement.listener.AchieveDropListener;
 import com.hm.achievement.listener.AchieveEnchantListener;
 import com.hm.achievement.listener.AchieveEntityListener;
 import com.hm.achievement.listener.AchieveFishListener;
+import com.hm.achievement.listener.AchieveHoeFertiliseListener;
 import com.hm.achievement.listener.AchieveInventoryClickListener;
 import com.hm.achievement.listener.AchieveMilkListener;
 import com.hm.achievement.listener.AchievePlayTimeRunnable;
@@ -118,6 +120,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	private boolean statsDetails;
 	private AchieveQuitListener quitListener;
 	private AchieveWorldTPListener worldTPListener;
+	private AchieveDropListener dropListener;
+	private AchieveHoeFertiliseListener hoeFertiliseListener;
 
 	public static YamlConfiguration LANG;
 	public static File LANG_FILE;
@@ -144,6 +148,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		bedListener = new AchieveBedListener(this);
 		quitListener = new AchieveQuitListener(this);
 		worldTPListener = new AchieveWorldTPListener();
+		dropListener = new AchieveDropListener(this);
+		hoeFertiliseListener = new AchieveHoeFertiliseListener(this);
 
 		achievementDisplay = new AchievementDisplay(this);
 		reward = new AchievementRewards(this);
@@ -255,6 +261,13 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (this.getConfig().getConfigurationSection("Beds").getKeys(false).size() != 0)
 			pm.registerEvents(bedListener, this);
+
+		if (this.getConfig().getConfigurationSection("ItemDrops").getKeys(false).size() != 0)
+			pm.registerEvents(dropListener, this);
+
+		if (this.getConfig().getConfigurationSection("HoePlowings").getKeys(false).size() != 0
+				|| this.getConfig().getConfigurationSection("Fertilising").getKeys(false).size() != 0)
+			pm.registerEvents(hoeFertiliseListener, this);
 
 		if (this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0

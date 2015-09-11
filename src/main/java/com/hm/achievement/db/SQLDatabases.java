@@ -100,6 +100,12 @@ public class SQLDatabases {
 							+ "distanceminecart INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `distanceboat` (" + "playername char(36),"
 							+ "distanceboat INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+					st.execute("CREATE TABLE IF NOT EXISTS `drops` (" + "playername char(36)," + "drops INT UNSIGNED,"
+							+ "PRIMARY KEY (`playername`)" + ")");
+					st.execute("CREATE TABLE IF NOT EXISTS `hoeplowing` (" + "playername char(36),"
+							+ "hoeplowing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+					st.execute("CREATE TABLE IF NOT EXISTS `fertilising` (" + "playername char(36),"
+							+ "fertilising INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.close();
 					return conn;
 				} catch (IOException ex) {
@@ -195,6 +201,12 @@ public class SQLDatabases {
 						+ "distanceminecart INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 				st.execute("CREATE TABLE IF NOT EXISTS `distanceboat` (" + "playername char(36),"
 						+ "distanceboat INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+				st.execute("CREATE TABLE IF NOT EXISTS `drops` (" + "playername char(36)," + "drops INT UNSIGNED,"
+						+ "PRIMARY KEY (`playername`)" + ")");
+				st.execute("CREATE TABLE IF NOT EXISTS `hoeplowing` (" + "playername char(36),"
+						+ "hoeplowing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+				st.execute("CREATE TABLE IF NOT EXISTS `fertilising` (" + "playername char(36),"
+						+ "fertilising INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 				st.close();
 			}
 
@@ -248,6 +260,12 @@ public class SQLDatabases {
 							+ "distanceminecart INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `distanceboat` (" + "playername char(36),"
 							+ "distanceboat INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+					st.execute("CREATE TABLE IF NOT EXISTS `drops` (" + "playername char(36)," + "drops INT UNSIGNED,"
+							+ "PRIMARY KEY (`playername`)" + ")");
+					st.execute("CREATE TABLE IF NOT EXISTS `hoeplowing` (" + "playername char(36),"
+							+ "hoeplowing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+					st.execute("CREATE TABLE IF NOT EXISTS `fertilising` (" + "playername char(36),"
+							+ "fertilising INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.close();
 					plugin.setDatabaseVersion(5);
 				}
@@ -533,6 +551,72 @@ public class SQLDatabases {
 			rs.close();
 			conn.close();
 			return snowballs;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	public Integer getDrops(Player player) {
+
+		try {
+			Connection conn = getSQLConnection();
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT drops from `drops` WHERE playername = '" + player.getUniqueId()
+					+ "'");
+			Integer drops = 0;
+			while (rs.next()) {
+				drops = rs.getInt("drops");
+			}
+
+			st.close();
+			rs.close();
+			conn.close();
+			return drops;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+	
+	public Integer getHoePlowing(Player player) {
+
+		try {
+			Connection conn = getSQLConnection();
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT hoeplowing from `hoeplowing` WHERE playername = '" + player.getUniqueId()
+					+ "'");
+			Integer drops = 0;
+			while (rs.next()) {
+				drops = rs.getInt("hoeplowing");
+			}
+
+			st.close();
+			rs.close();
+			conn.close();
+			return drops;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+	
+	public Integer getFertilising(Player player) {
+
+		try {
+			Connection conn = getSQLConnection();
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT fertilising from `fertilising` WHERE playername = '" + player.getUniqueId()
+					+ "'");
+			Integer drops = 0;
+			while (rs.next()) {
+				drops = rs.getInt("fertilising");
+			}
+
+			st.close();
+			rs.close();
+			conn.close();
+			return drops;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 0;

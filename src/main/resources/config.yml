@@ -265,6 +265,24 @@ DistanceBoat:
     Message: 10 blocks with a boat!
     Name: Boat!
     
+# When an item is dropped on the ground.
+ItemDrops:
+  '15':
+    Message: You're killing the planet!
+    Name: Polluter
+    
+# When some soil is plowed with a hoe.
+HoePlowings:
+  '10':
+    Message: You plowed the ground 10 times!
+    Name: Farmer
+    
+# When bone meal is used to fertilise plants.
+Fertilising:
+  '10':
+    Message: You used bone meal on plants 5 times!
+    Name: Gardener
+    
 #============================================================#
 # +--------------------------------------------------------+ #
 # |                  Command achievements                  | #
