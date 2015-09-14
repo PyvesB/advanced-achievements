@@ -56,6 +56,7 @@ public class AdvancedAchievementsUpdateChecker {
 		} catch (Exception e) {
 
 			plugin.getLogger().severe("Error while checking for AdvancedAchievements update.");
+			plugin.setSuccessfulLoad(false);
 		}
 		return false;
 

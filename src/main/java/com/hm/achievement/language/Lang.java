@@ -10,10 +10,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public enum Lang {
     
     CONFIGURATION_SUCCESSFULLY_RELOADED("configuration-successfully-reloaded", "Configuration successfully reloaded."),
+    CONFIGURATION_RELOAD_FAILED("configuration-reload-failed", "Errors while reloading configuration. Please view logs for more details."),
     NO_PERMS("no-permissions", "You do not have the permission to do this."),
     TOP_ACHIEVEMENT("top-achievement", "Top achievement owners:"),
     PLAYER_RANK("player-rank", "Current rank:"),
-    NUMBER_ACHIEVEMENTS("number-achievements", "Achievements received: "),
+    NUMBER_ACHIEVEMENTS("number-achievements", "Achievements received:"),
     BOOK_RECEIVED("book-received","You received your achievements book!"),
     BOOK_DELAY("book-delay","You must wait TIME seconds between each book reception!"),
     PLAYER_OFFLINE("player-offline","The player PLAYER is offline!"),

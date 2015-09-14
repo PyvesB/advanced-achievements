@@ -31,6 +31,8 @@ public class SQLDatabases {
 						+ "&password=" + mysqlPassword);
 			} catch (SQLException e) {
 				plugin.getLogger().severe("Error while attempting to retrieve connection to database: " + e);
+				e.printStackTrace();
+				plugin.setSuccessfulLoad(false);
 			}
 			return null;
 		} else {
@@ -110,13 +112,19 @@ public class SQLDatabases {
 							+ "fertilising INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.close();
 					return conn;
-				} catch (IOException ex) {
-					plugin.getLogger().severe("File write error: achievements.db");
-				} catch (SQLException ex) {
-					plugin.getLogger().severe("SQLite exception on initialize: " + ex);
-				} catch (ClassNotFoundException ex) {
+				} catch (IOException e) {
+					plugin.getLogger().severe("Error while creating database file.");
+					e.printStackTrace();
+					plugin.setSuccessfulLoad(false);
+				} catch (SQLException e) {
+					plugin.getLogger().severe("SQLite exception on initialize: " + e);
+					e.printStackTrace();
+					plugin.setSuccessfulLoad(false);
+				} catch (ClassNotFoundException e) {
 					plugin.getLogger().severe(
 							"You need the SQLite JBDC library. Please download it and put it in /lib folder.");
+					e.printStackTrace();
+					plugin.setSuccessfulLoad(false);
 				}
 			}
 			try {
@@ -124,11 +132,15 @@ public class SQLDatabases {
 				Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
 				return conn;
 
-			} catch (SQLException ex) {
-				plugin.getLogger().severe("SQLite exception on initialize: " + ex);
-			} catch (ClassNotFoundException ex) {
+			} catch (SQLException e) {
+				plugin.getLogger().severe("SQLite exception on initialize: " + e);
+				e.printStackTrace();
+				plugin.setSuccessfulLoad(false);
+			} catch (ClassNotFoundException e) {
 				plugin.getLogger().severe(
 						"You need the SQLite JBDC library. Please download it and put it in /lib folder.");
+				e.printStackTrace();
+				plugin.setSuccessfulLoad(false);
 			}
 		}
 		return null;
@@ -285,6 +297,7 @@ public class SQLDatabases {
 
 		} catch (SQLException e) {
 			plugin.getLogger().severe("Error while initialising database: " + e);
+			plugin.setSuccessfulLoad(false);
 		}
 
 	}
@@ -456,7 +469,7 @@ public class SQLDatabases {
 		return new ArrayList<String>();
 
 	}
-	
+
 	public int getTotalPlayers() {
 
 		try {
@@ -478,14 +491,15 @@ public class SQLDatabases {
 		return 0;
 
 	}
-	
+
 	public int getRank(int numberAchievements) {
 
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st
-					.executeQuery("SELECT COUNT(*) FROM (SELECT COUNT(*) `number` FROM `achievements` GROUP BY playername) WHERE `number` >" + numberAchievements);
+					.executeQuery("SELECT COUNT(*) FROM (SELECT COUNT(*) `number` FROM `achievements` GROUP BY playername) WHERE `number` >"
+							+ numberAchievements);
 			int rank = 0;
 			while (rs.next()) {
 				rank = rs.getInt("COUNT(*)") + 1;

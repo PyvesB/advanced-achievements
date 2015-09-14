@@ -5,6 +5,7 @@
 #============================================================#
 
 configuration-successfully-reloaded: "Configuration successfully reloaded."
+configuration-reload-failed: "Errors while reloading configuration. Please view logs for more details."
 no-permissions: "You do not have the permission to do this."
 top-achievement: "Top achievement owners:"
 player-rank: "Current rank:"

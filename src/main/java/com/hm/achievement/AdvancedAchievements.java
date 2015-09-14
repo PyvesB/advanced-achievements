@@ -128,6 +128,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private List<String> excludedWorldList;
 	private int topList;
 	private boolean updateNeeded;
+	private boolean successfulLoad;
 
 	/**
 	 * Constructor.
@@ -279,7 +280,11 @@ public class AdvancedAchievements extends JavaPlugin {
 				.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
 						new AchieveDistanceRunnable(this), 200, 200);
 
-		this.getLogger().info("AdvancedAchievements configurations, language file and database successfully loaded!");
+		if (successfulLoad)
+			this.getLogger().info(
+					"AdvancedAchievements configurations, language file and database successfully loaded!");
+		else
+			this.getLogger().severe("Error(s) while loading plugin. Please view previous logs for more information.");
 	}
 
 	/**
@@ -287,6 +292,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * language file and backup configuration and database files.
 	 */
 	private void configurationLoad() {
+
+		successfulLoad = true;
 
 		loadLang();
 
@@ -327,7 +334,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			writer.close();
 			reader.close();
 		} catch (IOException e) {
-			this.getLogger().severe("Saving comments in config file failed.");
+			this.getLogger().severe("Saving comments in configuration file failed.");
+			successfulLoad = false;
 		}
 
 		// Update configurations from older plugin versions by adding missing
@@ -452,7 +460,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			writer.close();
 			reader.close();
 		} catch (IOException e) {
-			this.getLogger().severe("Saving comments in config file failed.");
+			this.getLogger().severe("Saving comments in configuration file failed.");
+			successfulLoad = false;
 		}
 
 		// Load parameters.
@@ -485,7 +494,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			MetricsLite metrics = new MetricsLite(this);
 			metrics.start();
 		} catch (IOException e) {
-			this.getLogger().severe("Metrics stats no sent.");
+			this.getLogger().severe("Error while sending Metrics statistics.");
+			successfulLoad = false;
 		}
 
 		backupDBFile();
@@ -555,9 +565,15 @@ public class AdvancedAchievements extends JavaPlugin {
 				this.getLogger().info("Successfully backed up configuration file.");
 
 			} catch (FileNotFoundException e) {
-				this.getLogger().severe("Error while backing up config file.");
+
+				this.getLogger().severe("Error while backing up configuration file.");
+				e.printStackTrace();
+				successfulLoad = false;
 			} catch (IOException e) {
-				this.getLogger().severe("Error while backing up config file.");
+
+				this.getLogger().severe("Error while backing up configuration file.");
+				e.printStackTrace();
+				successfulLoad = false;
 			}
 		}
 
@@ -596,11 +612,15 @@ public class AdvancedAchievements extends JavaPlugin {
 				this.getLogger().info("Successfully backed up database file.");
 
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+
 				this.getLogger().severe("Error while backing up database file.");
+				e.printStackTrace();
+				successfulLoad = false;
 			} catch (IOException e) {
-				e.printStackTrace();
+
 				this.getLogger().severe("Error while backing up database file.");
+				e.printStackTrace();
+				successfulLoad = false;
 			}
 		}
 
@@ -624,8 +644,10 @@ public class AdvancedAchievements extends JavaPlugin {
 					return;
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+
 				this.getLogger().severe("Error while creating language file.");
+				e.printStackTrace();
+				successfulLoad = false;
 			}
 		}
 		YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
@@ -638,8 +660,10 @@ public class AdvancedAchievements extends JavaPlugin {
 		try {
 			conf.save(lang);
 		} catch (IOException e) {
-			e.printStackTrace();
+
 			this.getLogger().severe("Error while saving language file.");
+			e.printStackTrace();
+			successfulLoad = false;
 		}
 	}
 
@@ -670,9 +694,15 @@ public class AdvancedAchievements extends JavaPlugin {
 				this.getLogger().info("Successfully backed up language file.");
 
 			} catch (FileNotFoundException e) {
+
 				this.getLogger().severe("Error while backing up language file.");
+				e.printStackTrace();
+				successfulLoad = false;
 			} catch (IOException e) {
+
 				this.getLogger().severe("Error while backing up language file.");
+				e.printStackTrace();
+				successfulLoad = false;
 			}
 		}
 
@@ -742,7 +772,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	/**
 	 * Try to hook up with Vault.
 	 */
-	public boolean setupEconomy() {
+	public boolean setUpEconomy() {
 
 		try {
 			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
@@ -753,6 +783,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			return (economy != null);
 		} catch (NoClassDefFoundError e) {
+			this.getLogger().severe("Attempt to hook up with Vault failed.");
 			return false;
 		}
 	}
@@ -775,8 +806,10 @@ public class AdvancedAchievements extends JavaPlugin {
 
 					this.reloadConfig();
 					configurationLoad();
-					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+					if (successfulLoad) sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
 							+ Lang.CONFIGURATION_SUCCESSFULLY_RELOADED);
+					else sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+							+ Lang.CONFIGURATION_RELOAD_FAILED);
 
 				} else {
 
@@ -1343,6 +1376,16 @@ public class AdvancedAchievements extends JavaPlugin {
 	public HashMap<Player, Long> getPlayers() {
 
 		return players;
+	}
+
+	public boolean isSuccessfulLoad() {
+
+		return successfulLoad;
+	}
+
+	public void setSuccessfulLoad(boolean successfulLoad) {
+
+		this.successfulLoad = successfulLoad;
 	}
 
 }

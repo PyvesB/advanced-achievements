@@ -53,7 +53,7 @@ public class AchievementRewards {
 	@SuppressWarnings("deprecation")
 	public void rewardMoney(Player player, Integer amount) {
 
-		if (plugin.setupEconomy()) {
+		if (plugin.setUpEconomy()) {
 			String price = Integer.toString(amount);
 			double amtd = Double.valueOf(price.trim());
 			// Deprecated method, was the only one existing prior to Vault 1.4.
