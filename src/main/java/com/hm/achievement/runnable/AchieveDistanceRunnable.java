@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.runnable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,11 +68,12 @@ public class AchieveDistanceRunnable implements Runnable {
 	public void refreshDistance(Player player) {
 
 		if (!achievementDistancesFoot.containsKey(player)) {
-			achievementDistancesBoat.put(player, plugin.getDb().registerDistanceBoat(player, (long) 0));
-			achievementDistancesMinecart.put(player, plugin.getDb().registerDistanceMinecart(player, (long) 0));
-			achievementDistancesPig.put(player, plugin.getDb().registerDistancePig(player, (long) 0));
-			achievementDistancesHorse.put(player, plugin.getDb().registerDistanceHorse(player, (long) 0));
-			achievementDistancesFoot.put(player, plugin.getDb().registerDistanceFoot(player, (long) 0));
+			achievementDistancesBoat.put(player, plugin.getDb().registerDistance(player, (long) 0, "distanceboat"));
+			achievementDistancesMinecart.put(player,
+					plugin.getDb().registerDistance(player, (long) 0, "distanceminecart"));
+			achievementDistancesPig.put(player, plugin.getDb().registerDistance(player, (long) 0, "distancepig"));
+			achievementDistancesHorse.put(player, plugin.getDb().registerDistance(player, (long) 0, "distancehorse"));
+			achievementDistancesFoot.put(player, plugin.getDb().registerDistance(player, (long) 0, "distancefoot"));
 
 			AchieveDistanceRunnable.getAchievementLocations().put(player, player.getLocation());
 		} else {
@@ -153,13 +154,10 @@ public class AchieveDistanceRunnable implements Runnable {
 
 	public void awardDistanceAchievement(Player player, int achievementDistance, String type) {
 
-		String name = plugin.getConfig().getString(type + achievementDistance + ".Name");
-		String msg = plugin.getConfig().getString(type + achievementDistance + ".Message");
-		plugin.getAchievementDisplay().displayAchievement(player, name, msg);
-		Date now = new Date();
+		plugin.getAchievementDisplay().displayAchievement(player, type + achievementDistance);
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		plugin.getDb().registerAchievement(player, plugin.getConfig().getString(type + achievementDistance + ".Name"),
-				plugin.getConfig().getString(type + achievementDistance + ".Message"), format.format(now));
+				plugin.getConfig().getString(type + achievementDistance + ".Message"), format.format(new Date()));
 		plugin.getReward().checkConfig(player, type + achievementDistance);
 	}
 
@@ -168,19 +166,9 @@ public class AchieveDistanceRunnable implements Runnable {
 		return achievementDistancesFoot;
 	}
 
-	public static void setAchievementDistancesFoot(HashMap<Player, Long> achievementDistancesFoot) {
-
-		AchieveDistanceRunnable.achievementDistancesFoot = achievementDistancesFoot;
-	}
-
 	public static HashMap<Player, Long> getAchievementDistancesHorse() {
 
 		return achievementDistancesHorse;
-	}
-
-	public static void setAchievementDistancesHorse(HashMap<Player, Long> achievementDistancesHorse) {
-
-		AchieveDistanceRunnable.achievementDistancesHorse = achievementDistancesHorse;
 	}
 
 	public static HashMap<Player, Long> getAchievementDistancesPig() {
@@ -188,19 +176,9 @@ public class AchieveDistanceRunnable implements Runnable {
 		return achievementDistancesPig;
 	}
 
-	public static void setAchievementDistancesPig(HashMap<Player, Long> achievementDistancesPig) {
-
-		AchieveDistanceRunnable.achievementDistancesPig = achievementDistancesPig;
-	}
-
 	public static HashMap<Player, Long> getAchievementDistancesBoat() {
 
 		return achievementDistancesBoat;
-	}
-
-	public static void setAchievementDistancesBoat(HashMap<Player, Long> achievementDistancesBoat) {
-
-		AchieveDistanceRunnable.achievementDistancesBoat = achievementDistancesBoat;
 	}
 
 	public static HashMap<Player, Long> getAchievementDistancesMinecart() {
@@ -208,19 +186,9 @@ public class AchieveDistanceRunnable implements Runnable {
 		return achievementDistancesMinecart;
 	}
 
-	public static void setAchievementDistancesMinecart(HashMap<Player, Long> achievementDistancesMinecart) {
-
-		AchieveDistanceRunnable.achievementDistancesMinecart = achievementDistancesMinecart;
-	}
-
 	public static HashMap<Player, Location> getAchievementLocations() {
 
 		return achievementLocations;
-	}
-
-	public static void setAchievementLocations(HashMap<Player, Location> achievementLocations) {
-
-		AchieveDistanceRunnable.achievementLocations = achievementLocations;
 	}
 
 }

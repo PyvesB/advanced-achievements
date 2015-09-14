@@ -17,6 +17,7 @@ public class AchieveBedListener implements Listener {
 	private AdvancedAchievements plugin;
 
 	public AchieveBedListener(AdvancedAchievements plugin) {
+
 		this.plugin = plugin;
 	}
 
@@ -25,29 +26,18 @@ public class AchieveBedListener implements Listener {
 
 		Player player = (Player) event.getPlayer();
 
-		if (!player.hasPermission("achievement.get")
-				|| plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
+				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
 		Integer bed = plugin.getDb().registerBed(player);
 		String configAchievement = "Beds." + bed;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
-			String name = plugin.getConfig().getString(
-					configAchievement + ".Name");
-			String msg = plugin.getConfig().getString(
-					configAchievement + ".Message");
-			plugin.getAchievementDisplay()
-					.displayAchievement(player, name, msg);
-			Date now = new Date();
+
+			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-			plugin.getDb().registerAchievement(
-					player,
-					plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig()
-							.getString(configAchievement + ".Message"),
-					format.format(now));
+			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
+					plugin.getConfig().getString(configAchievement + ".Message"), format.format(new Date()));
 			plugin.getReward().checkConfig(player, configAchievement);
 		}
 	}

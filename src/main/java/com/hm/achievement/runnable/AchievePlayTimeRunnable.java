@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.runnable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,6 +7,7 @@ import java.util.Date;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.listener.AchieveConnectionListener;
 
 public class AchievePlayTimeRunnable implements Runnable {
 
@@ -41,15 +42,12 @@ public class AchievePlayTimeRunnable implements Runnable {
 							&& !plugin.getDb().hasAchievement(player,
 									plugin.getConfig().getString("PlayedTime." + achievementPlayTime + ".Name"))) {
 
-						String name = plugin.getConfig().getString("PlayedTime." + achievementPlayTime + ".Name");
-						String msg = plugin.getConfig().getString("PlayedTime." + achievementPlayTime + ".Message");
-						plugin.getAchievementDisplay().displayAchievement(player, name, msg);
-						Date now = new Date();
+						plugin.getAchievementDisplay().displayAchievement(player, "PlayedTime." + achievementPlayTime);
 						SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 						plugin.getDb().registerAchievement(player,
 								plugin.getConfig().getString("PlayedTime." + achievementPlayTime + ".Name"),
 								plugin.getConfig().getString("PlayedTime." + achievementPlayTime + ".Message"),
-								format.format(now));
+								format.format(new Date()));
 						plugin.getReward().checkConfig(player, "PlayedTime." + achievementPlayTime);
 					}
 				}

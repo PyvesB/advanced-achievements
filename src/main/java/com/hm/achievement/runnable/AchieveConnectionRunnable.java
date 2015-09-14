@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.runnable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,8 +13,8 @@ public class AchieveConnectionRunnable implements Runnable {
 	private PlayerJoinEvent event;
 	private AdvancedAchievements plugin;
 
-	public AchieveConnectionRunnable(PlayerJoinEvent event,
-			AdvancedAchievements plugin) {
+	public AchieveConnectionRunnable(PlayerJoinEvent event, AdvancedAchievements plugin) {
+
 		this.event = event;
 		this.plugin = plugin;
 	}
@@ -27,26 +27,15 @@ public class AchieveConnectionRunnable implements Runnable {
 		Date now = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
-		if (!format.format(now)
-				.equals(plugin.getDb().getConnectionDate(player))) {
+		if (!format.format(now).equals(plugin.getDb().getConnectionDate(player))) {
 
-			Integer connections = plugin.getDb().registerConnection(player,
-					format.format(now));
+			Integer connections = plugin.getDb().registerConnection(player, format.format(now));
 			String configAchievement = "Connections." + connections;
 			if (plugin.getReward().checkAchievement(configAchievement)) {
-				String name = plugin.getConfig().getString(
-						configAchievement + ".Name");
-				String msg = plugin.getConfig().getString(
-						configAchievement + ".Message");
-				plugin.getAchievementDisplay().displayAchievement(player, name,
-						msg);
-				plugin.getDb().registerAchievement(
-						player,
-						plugin.getConfig().getString(
-								configAchievement + ".Name"),
-						plugin.getConfig().getString(
-								configAchievement + ".Message"),
-						format.format(now));
+
+				plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
+				plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
+						plugin.getConfig().getString(configAchievement + ".Message"), format.format(now));
 				plugin.getReward().checkConfig(player, configAchievement);
 			}
 		}

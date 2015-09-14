@@ -44,16 +44,16 @@ public class AchievementCommandGiver implements Listener {
 			return;
 		}
 		if (plugin.getReward().checkAchievement(configAchievement)) {
-			String name = plugin.getConfig().getString(configAchievement + ".Name");
-			if (!plugin.isMultiCommand() && plugin.getDb().hasAchievement(player, name)) {
+
+			if (!plugin.isMultiCommand()
+					&& plugin.getDb().hasAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"))) {
 
 				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY
 						+ "] " + Lang.ACHIEVEMENT_ALREADY_RECEIVED.toString().replace("PLAYER", args[2]));
 				return;
 			}
 
-			String msg = plugin.getConfig().getString(configAchievement + ".Message");
-			plugin.getAchievementDisplay().displayAchievement(player, name, msg);
+			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			Date now = new Date();
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),

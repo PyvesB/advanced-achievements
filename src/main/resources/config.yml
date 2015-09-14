@@ -60,16 +60,13 @@ ExcludedWorlds: []
 # Number of players displayed on /aach top command.
 TopList: 5
 
-# Display achievement details on /aach stats command.
-StatsDetails: true
-
 #=============================OOO=============================#
 # III-----------------------------------------------------III #
 # |                    Database settings                    | #
 # 3---------------------------------------------------------3 #
 #=============================ooo=============================#
 
-# DO NOT CHANGE.
+# DO NOT CHANGE OR DELETE.
 DatabaseVersion: 5
 
 # Database type, sqlite or mysql.

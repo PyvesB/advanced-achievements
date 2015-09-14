@@ -18,6 +18,9 @@ permissions:
   achievement.book:
     description: Allows to receive achievements books.
     default: true
+  achievement.list:
+    description: Allows to display  name of received and missing achievements.
+    default: true
   achievement.reload:
     description: Allows to reload the plugin's configuration.
     default: op
@@ -30,5 +33,6 @@ permissions:
     children:
       achievement.get: true
       achievement.book: true
+      achievement.list: true
       achievement.reload: true
       achievement.give: true

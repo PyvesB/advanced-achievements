@@ -15,10 +15,12 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.DatabasePools;
 
-public class AchieveEntityListener implements Listener {
+public class AchieveKillListener implements Listener {
+
 	private AdvancedAchievements plugin;
 
-	public AchieveEntityListener(AdvancedAchievements plugin) {
+	public AchieveKillListener(AdvancedAchievements plugin) {
+
 		this.plugin = plugin;
 	}
 
@@ -28,10 +30,8 @@ public class AchieveEntityListener implements Listener {
 		if (!(event.getEntity().getKiller() instanceof Player))
 			return;
 		Player player = (Player) event.getEntity().getKiller();
-		if (!player.hasPermission("achievement.get")
-				|| plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
+				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 		Entity entity = event.getEntity();
 
@@ -49,32 +49,20 @@ public class AchieveEntityListener implements Listener {
 			return;
 
 		Integer kills = 0;
-		if (!DatabasePools.getEntityDeathHashMap().containsKey(
-				player.getUniqueId().toString() + mobName))
+		if (!DatabasePools.getEntityDeathHashMap().containsKey(player.getUniqueId().toString() + mobName))
 			kills = plugin.getDb().getKills(player, mobName) + 1;
 		else
-			kills = DatabasePools.getEntityDeathHashMap().get(
-					player.getUniqueId().toString() + mobName) + 1;
+			kills = DatabasePools.getEntityDeathHashMap().get(player.getUniqueId().toString() + mobName) + 1;
 
-		DatabasePools.getEntityDeathHashMap().put(
-				player.getUniqueId().toString() + mobName, kills);
+		DatabasePools.getEntityDeathHashMap().put(player.getUniqueId().toString() + mobName, kills);
 
 		String configAchievement = "Kills." + mobName + "." + kills;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
-			String name = plugin.getConfig().getString(
-					configAchievement + ".Name");
-			String msg = plugin.getConfig().getString(
-					configAchievement + ".Message");
-			plugin.getAchievementDisplay()
-					.displayAchievement(player, name, msg);
-			Date now = new Date();
+
+			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-			plugin.getDb().registerAchievement(
-					player,
-					plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig()
-							.getString(configAchievement + ".Message"),
-					format.format(now));
+			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
+					plugin.getConfig().getString(configAchievement + ".Message"), format.format(new Date()));
 
 			plugin.getReward().checkConfig(player, configAchievement);
 		}

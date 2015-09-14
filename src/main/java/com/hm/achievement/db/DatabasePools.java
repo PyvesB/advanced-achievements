@@ -34,19 +34,9 @@ public class DatabasePools {
 		return arrowHashMap;
 	}
 
-	public static void setArrowHashMap(HashMap<String, Integer> arrowHashMap) {
-
-		DatabasePools.arrowHashMap = arrowHashMap;
-	}
-
 	public static HashMap<String, Integer> getBlockBreakHashMap() {
 
 		return blockBreakHashMap;
-	}
-
-	public static void setBlockBreakHashMap(HashMap<String, Integer> blockBreakHashMap) {
-
-		DatabasePools.blockBreakHashMap = blockBreakHashMap;
 	}
 
 	public static HashMap<String, Integer> getBlockPlaceHashMap() {
@@ -54,19 +44,9 @@ public class DatabasePools {
 		return blockPlaceHashMap;
 	}
 
-	public static void setBlockPlaceHashMap(HashMap<String, Integer> blockPlaceHashMap) {
-
-		DatabasePools.blockPlaceHashMap = blockPlaceHashMap;
-	}
-
 	public static HashMap<String, Integer> getEntityDeathHashMap() {
 
 		return entityDeathHashMap;
-	}
-
-	public static void setEntityDeathHashMap(HashMap<String, Integer> entityDeathHashMap) {
-
-		DatabasePools.entityDeathHashMap = entityDeathHashMap;
 	}
 
 	public static HashMap<String, Integer> getShearHashMap() {
@@ -74,19 +54,9 @@ public class DatabasePools {
 		return shearHashMap;
 	}
 
-	public static void setShearHashMap(HashMap<String, Integer> shearHashMap) {
-
-		DatabasePools.shearHashMap = shearHashMap;
-	}
-
 	public static HashMap<String, Integer> getSnowballHashMap() {
 
 		return snowballHashMap;
-	}
-
-	public static void setSnowballHashMap(HashMap<String, Integer> snowballHashMap) {
-
-		DatabasePools.snowballHashMap = snowballHashMap;
 	}
 
 	public static HashMap<String, Integer> getEggHashMap() {
@@ -94,19 +64,9 @@ public class DatabasePools {
 		return eggHashMap;
 	}
 
-	public static void setEggHashMap(HashMap<String, Integer> eggHashMap) {
-
-		DatabasePools.eggHashMap = eggHashMap;
-	}
-
 	public static HashMap<String, Integer> getDropHashMap() {
 
 		return dropHashMap;
-	}
-
-	public static void setDropHashMap(HashMap<String, Integer> dropHashMap) {
-
-		DatabasePools.dropHashMap = dropHashMap;
 	}
 
 	public static HashMap<String, Integer> getHoePlowingHashMap() {
@@ -114,19 +74,9 @@ public class DatabasePools {
 		return hoePlowingHashMap;
 	}
 
-	public static void setHoePlowingHashMap(HashMap<String, Integer> hoePlowingHashMap) {
-
-		DatabasePools.hoePlowingHashMap = hoePlowingHashMap;
-	}
-
 	public static HashMap<String, Integer> getFertiliseHashMap() {
 
 		return fertiliseHashMap;
-	}
-
-	public static void setFertiliseHashMap(HashMap<String, Integer> fertiliseHashMap) {
-
-		DatabasePools.fertiliseHashMap = fertiliseHashMap;
 	}
 
 }

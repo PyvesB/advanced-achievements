@@ -14,9 +14,11 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.DatabasePools;
 
 public class AchieveArrowListener implements Listener {
+
 	private AdvancedAchievements plugin;
 
 	public AchieveArrowListener(AdvancedAchievements plugin) {
+
 		this.plugin = plugin;
 	}
 
@@ -27,39 +29,25 @@ public class AchieveArrowListener implements Listener {
 			return;
 
 		Player player = (Player) event.getEntity();
-		if (!player.hasPermission("achievement.get")
-				|| plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
+				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
 		Integer arrows = 0;
-		if (!DatabasePools.getArrowHashMap().containsKey(
-				player.getUniqueId().toString()))
+		if (!DatabasePools.getArrowHashMap().containsKey(player.getUniqueId().toString()))
 			arrows = plugin.getDb().getArrows(player) + 1;
 		else
-			arrows = DatabasePools.getArrowHashMap().get(
-					player.getUniqueId().toString()) + 1;
+			arrows = DatabasePools.getArrowHashMap().get(player.getUniqueId().toString()) + 1;
 
-		DatabasePools.getArrowHashMap().put(player.getUniqueId().toString(),
-				arrows);
+		DatabasePools.getArrowHashMap().put(player.getUniqueId().toString(), arrows);
 
 		String configAchievement = "Arrows." + arrows;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
-			String name = plugin.getConfig().getString(
-					configAchievement + ".Name");
-			String msg = plugin.getConfig().getString(
-					configAchievement + ".Message");
-			plugin.getAchievementDisplay()
-					.displayAchievement(player, name, msg);
-			Date now = new Date();
+
+			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-			plugin.getDb().registerAchievement(
-					player,
-					plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig()
-							.getString(configAchievement + ".Message"),
-					format.format(now));
+			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
+					plugin.getConfig().getString(configAchievement + ".Message"), format.format(new Date()));
 
 			plugin.getReward().checkConfig(player, configAchievement);
 		}

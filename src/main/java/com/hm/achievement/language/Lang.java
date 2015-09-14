@@ -12,6 +12,7 @@ public enum Lang {
     CONFIGURATION_SUCCESSFULLY_RELOADED("configuration-successfully-reloaded", "Configuration successfully reloaded."),
     NO_PERMS("no-permissions", "You do not have the permission to do this."),
     TOP_ACHIEVEMENT("top-achievement", "Top achievement owners:"),
+    PLAYER_RANK("player-rank", "Current rank:"),
     NUMBER_ACHIEVEMENTS("number-achievements", "Achievements received: "),
     BOOK_RECEIVED("book-received","You received your achievements book!"),
     BOOK_DELAY("book-delay","You must wait TIME seconds between each book reception!"),
@@ -27,7 +28,8 @@ public enum Lang {
     BOOK_NAME("book-name", "Achievements"),
     AACH_COMMAND_BOOK("aach-command-book", "Receive your achievements book."),
     AACH_COMMAND_STATS("aach-command-stats", "Amount of achievements you have received."),
-    AACH_COMMAND_TOP("aach-command-top", "View achievements ranking."),
+    AACH_COMMAND_LIST("aach-command-list", "Display received and missing achievements."),
+    AACH_COMMAND_TOP("aach-command-top", "Display personal and global rankings."),
     AACH_COMMAND_RELOAD("aach-command-reload", "Reload the plugin's configuration."),
     AACH_COMMAND_GIVE("aach-command-give", "Give the achievement ACH to the player NAME.");
     

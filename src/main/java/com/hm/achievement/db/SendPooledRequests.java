@@ -88,8 +88,7 @@ public class SendPooledRequests implements Runnable {
 
 		} catch (SQLException e) {
 
-			plugin.getLogger().severe("Error while sending pooled requests to database.");
-			e.printStackTrace();
+			plugin.getLogger().severe("Error while sending pooled requests to database: " + e);
 		}
 	}
 }

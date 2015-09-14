@@ -24,7 +24,12 @@ public class AchievementDisplay {
 	 * When a player receives an achievement, display chat messages and set
 	 * firework.
 	 */
-	public void displayAchievement(Player player, String name, String msg) {
+	public void displayAchievement(Player player, String configAchievement) {
+		
+		String name = plugin.getConfig().getString(
+				configAchievement + ".Name");
+		String msg = plugin.getConfig().getString(
+				configAchievement + ".Message");
 
 		name = ChatColor.translateAlternateColorCodes('&', name);
 		msg = ChatColor.translateAlternateColorCodes('&', msg);

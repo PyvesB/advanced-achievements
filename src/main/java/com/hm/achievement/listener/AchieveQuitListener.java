@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.runnable.AchieveDistanceRunnable;
 
 public class AchieveQuitListener implements Listener {
 
@@ -29,28 +30,29 @@ public class AchieveQuitListener implements Listener {
 		AchieveConnectionListener.getJoinTime().remove(event.getPlayer());
 
 		if (AchieveDistanceRunnable.getAchievementDistancesFoot().containsKey(event.getPlayer())) {
-			plugin.getDb().registerDistanceFoot(event.getPlayer(),
-					AchieveDistanceRunnable.getAchievementDistancesFoot().get(event.getPlayer()));
+			plugin.getDb().registerDistance(event.getPlayer(),
+					AchieveDistanceRunnable.getAchievementDistancesFoot().get(event.getPlayer()), "distancefoot");
 
 			AchieveDistanceRunnable.getAchievementDistancesFoot().remove(event.getPlayer());
 
-			plugin.getDb().registerDistancePig(event.getPlayer(),
-					AchieveDistanceRunnable.getAchievementDistancesPig().get(event.getPlayer()));
+			plugin.getDb().registerDistance(event.getPlayer(),
+					AchieveDistanceRunnable.getAchievementDistancesPig().get(event.getPlayer()), "distancepig");
 
 			AchieveDistanceRunnable.getAchievementDistancesPig().remove(event.getPlayer());
 
-			plugin.getDb().registerDistanceHorse(event.getPlayer(),
-					AchieveDistanceRunnable.getAchievementDistancesHorse().get(event.getPlayer()));
+			plugin.getDb().registerDistance(event.getPlayer(),
+					AchieveDistanceRunnable.getAchievementDistancesHorse().get(event.getPlayer()), "distancehorse");
 
 			AchieveDistanceRunnable.getAchievementDistancesHorse().remove(event.getPlayer());
 
-			plugin.getDb().registerDistanceBoat(event.getPlayer(),
-					AchieveDistanceRunnable.getAchievementDistancesBoat().get(event.getPlayer()));
+			plugin.getDb().registerDistance(event.getPlayer(),
+					AchieveDistanceRunnable.getAchievementDistancesBoat().get(event.getPlayer()), "distanceboat");
 
 			AchieveDistanceRunnable.getAchievementDistancesBoat().remove(event.getPlayer());
 
-			plugin.getDb().registerDistanceMinecart(event.getPlayer(),
-					AchieveDistanceRunnable.getAchievementDistancesMinecart().get(event.getPlayer()));
+			plugin.getDb().registerDistance(event.getPlayer(),
+					AchieveDistanceRunnable.getAchievementDistancesMinecart().get(event.getPlayer()),
+					"distanceminecart");
 
 			AchieveDistanceRunnable.getAchievementDistancesMinecart().remove(event.getPlayer());
 			AchieveDistanceRunnable.getAchievementLocations().remove(event.getPlayer());

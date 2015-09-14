@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.runnable.AchieveConnectionRunnable;
 
 public class AchieveConnectionListener implements Listener {
 
@@ -34,8 +35,8 @@ public class AchieveConnectionListener implements Listener {
 					(new StringBuilder())
 							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY
 									+ "] ")
-							.append("New version available: v" + plugin.getUpdateChecker().getVersion()
-									+ " Download at: ").toString());
+							.append("Advanced Achievements, new version available: v"
+									+ plugin.getUpdateChecker().getVersion() + " Download at: ").toString());
 			event.getPlayer()
 					.sendMessage(
 							(new StringBuilder()).append(ChatColor.WHITE).append(plugin.getUpdateChecker().getUrl())
@@ -54,18 +55,9 @@ public class AchieveConnectionListener implements Listener {
 		return joinTime;
 	}
 
-	public static void setJoinTime(HashMap<Player, Long> joinTime) {
-
-		AchieveConnectionListener.joinTime = joinTime;
-	}
-
 	public static HashMap<Player, Long> getPlayTime() {
 
 		return playTime;
 	}
 
-	public static void setPlayTime(HashMap<Player, Long> playTime) {
-
-		AchieveConnectionListener.playTime = playTime;
-	}
 }

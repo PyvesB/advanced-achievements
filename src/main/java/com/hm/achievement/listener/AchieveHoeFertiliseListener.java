@@ -75,13 +75,11 @@ public class AchieveHoeFertiliseListener implements Listener {
 		} else
 			return;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
-			String name = plugin.getConfig().getString(configAchievement + ".Name");
-			String msg = plugin.getConfig().getString(configAchievement + ".Message");
-			plugin.getAchievementDisplay().displayAchievement(player, name, msg);
-			Date now = new Date();
+
+			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig().getString(configAchievement + ".Message"), format.format(now));
+					plugin.getConfig().getString(configAchievement + ".Message"), format.format(new Date()));
 
 			plugin.getReward().checkConfig(player, configAchievement);
 		}

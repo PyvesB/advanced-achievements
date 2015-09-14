@@ -13,9 +13,11 @@ import org.bukkit.event.player.PlayerFishEvent;
 import com.hm.achievement.AdvancedAchievements;
 
 public class AchieveFishListener implements Listener {
+
 	private AdvancedAchievements plugin;
 
 	public AchieveFishListener(AdvancedAchievements plugin) {
+
 		this.plugin = plugin;
 	}
 
@@ -25,29 +27,18 @@ public class AchieveFishListener implements Listener {
 		if (!(event.getState() == PlayerFishEvent.State.CAUGHT_FISH))
 			return;
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.get")
-				|| plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
+				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
 		Integer fish = plugin.getDb().registerFish(player);
 		String configAchievement = "Fish." + fish;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
-			String name = plugin.getConfig().getString(
-					configAchievement + ".Name");
-			String msg = plugin.getConfig().getString(
-					configAchievement + ".Message");
-			plugin.getAchievementDisplay()
-					.displayAchievement(player, name, msg);
-			Date now = new Date();
+
+			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-			plugin.getDb().registerAchievement(
-					player,
-					plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig()
-							.getString(configAchievement + ".Message"),
-					format.format(now));
+			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
+					plugin.getConfig().getString(configAchievement + ".Message"), format.format(new Date()));
 
 			plugin.getReward().checkConfig(player, configAchievement);
 
