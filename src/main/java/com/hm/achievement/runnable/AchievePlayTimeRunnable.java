@@ -28,6 +28,9 @@ public class AchievePlayTimeRunnable implements Runnable {
 		registerTimes();
 	}
 
+	/**
+	 * Update play times and store them into server's memory until player disconnects.
+	 */
 	public void registerTimes() {
 
 		for (Player player : AchieveConnectionListener.getJoinTime().keySet()) {

@@ -48,8 +48,8 @@ public class AdvancedAchievementsUpdateChecker {
 				return false;
 
 			else {
-				plugin.getLogger().info("Update available for Advanced Achievements: v" + version);
-				plugin.getLogger().info("Download at: " + url);
+				plugin.getLogger().info("Update available for Advanced Achievements: v" + version + ". Download at:");
+				plugin.getLogger().info(url);
 				return true;
 			}
 

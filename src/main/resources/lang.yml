@@ -6,25 +6,42 @@
 
 configuration-successfully-reloaded: "Configuration successfully reloaded."
 configuration-reload-failed: "Errors while reloading configuration. Please view logs for more details."
+
 no-permissions: "You do not have the permission to do this."
+
 top-achievement: "Top achievement owners:"
 player-rank: "Current rank:"
 number-achievements: "Achievements received:"
+
 book-received: "You received your achievements book!"
 book-delay: "You must wait TIME seconds between each book reception!"
+book-name: "Achievements"
+
 player-offline: "The player PLAYER is offline!"
 achievement-already-received: "The player PLAYER has already received this achievement!"
 achievement-not-found: "The specified achievement was not found."
 achievement-given: "Achievement given!"
 achievement-received: "PLAYER received the achievement:"
 achievement-new: "New Achievement:"
+
 item-reward-received: "You received an item reward!"
 money-reward-received: "You received: AMOUNT !"
 command-reward: "Reward command carried out!"
-book-name: "Achievements"
+
+
 aach-command-book: "Receive your achievements book."
 aach-command-stats: "Amount of achievements you have received."
 aach-command-list: "Display personal and global rankings."
 aach-command-top: "View achievements ranking."
-aach-command-reload: "Reload the plugin's configuration."
 aach-command-give: "Give the achievement ACH to the player NAME."
+aach-command-reload: "Reload the plugin's configuration."
+aach-command-info: "Display various information about the plugin."
+
+version-command-name: "Name:"
+version-command-version: "Version:"
+version-command-website: "Website:"
+version-command-author: "Author:"
+version-command-description: "Description:"
+version-command-description-details: "Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"
+version-command-vault: "Vault integration:"
+version-command-database: "Database type:"

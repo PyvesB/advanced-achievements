@@ -56,10 +56,11 @@ import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 
 /**
- * A plugin that enables custom achievements and RP books on your Minecraft
- * server. Some minor parts of the code and ideas are based on Achievement
- * plugin by Death_marine and captainawesome7, under Federation of Lost Lawn
- * Chairs license
+ * Advanced Achievements enables unique and challenging achievements on your
+ * server. Try to collect as many as you can, earn rewards, climb the rankings
+ * and receive RP books! Some minor parts of the code and ideas are based on
+ * Achievement plugin by Death_marine and captainawesome7, under Federation of
+ * Lost Lawn Chairs license
  * (http://dev.bukkit.org/licenses/1332-federation-of-lost-lawn-chairs)
  * AdvancedAchievements is under GNU General Public License version 3. Please
  * visit the plugin's GitHub for more information :
@@ -278,7 +279,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		Bukkit.getServer()
 				.getScheduler()
 				.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-						new AchieveDistanceRunnable(this), 200, 200);
+						new AchieveDistanceRunnable(this), 100, 100);
 
 		if (successfulLoad)
 			this.getLogger().info(
@@ -295,11 +296,10 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		successfulLoad = true;
 
-		loadLang();
-
 		backupConfigFile();
 		backupLanguageFile();
 
+		loadLang();
 		this.saveDefaultConfig();
 
 		// Workaround to keep configuration file comments (Bukkit issue).
@@ -806,10 +806,12 @@ public class AdvancedAchievements extends JavaPlugin {
 
 					this.reloadConfig();
 					configurationLoad();
-					if (successfulLoad) sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-							+ Lang.CONFIGURATION_SUCCESSFULLY_RELOADED);
-					else sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-							+ Lang.CONFIGURATION_RELOAD_FAILED);
+					if (successfulLoad)
+						sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+								+ Lang.CONFIGURATION_SUCCESSFULLY_RELOADED);
+					else
+						sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+								+ Lang.CONFIGURATION_RELOAD_FAILED);
 
 				} else {
 
@@ -836,6 +838,10 @@ public class AdvancedAchievements extends JavaPlugin {
 
 				getTop(sender);
 
+			} else if (args[0].equalsIgnoreCase("info")) {
+
+				getInfo(sender);
+
 			}
 		} else if (cmd.getName().equalsIgnoreCase("aach") && (args.length == 3) && args[0].equalsIgnoreCase("give")) {
 
@@ -851,11 +857,11 @@ public class AdvancedAchievements extends JavaPlugin {
 			}
 		} else if (cmd.getName().equalsIgnoreCase("aach") || (args.length == 1) && !args[0].equalsIgnoreCase("help")) {
 
-			sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("-=-=-=-=-=")
+			sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("-=-=-=-=-=-=-")
 					.append(ChatColor.GRAY).append("[").append(ChatColor.DARK_PURPLE).append(icon)
-					.append("§lAdvancedAchievements").append(" §lv" + this.getDescription().getVersion() + "§r")
-					.append(ChatColor.DARK_PURPLE).append(icon).append(ChatColor.GRAY).append("]")
-					.append(ChatColor.DARK_PURPLE).append("=-=-=-=-=-").toString());
+					.append("§lAdvanced Achievements").append(ChatColor.DARK_PURPLE).append(icon)
+					.append(ChatColor.GRAY).append("]").append(ChatColor.DARK_PURPLE).append("-=-=-=-=-=-=-")
+					.toString());
 
 			sender.sendMessage((new StringBuilder())
 					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
@@ -879,11 +885,6 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			sender.sendMessage((new StringBuilder())
 					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-					.append(ChatColor.DARK_PURPLE + "/aach reload").append(ChatColor.GRAY)
-					.append(" - " + Lang.AACH_COMMAND_RELOAD).toString());
-
-			sender.sendMessage((new StringBuilder())
-					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
 					.append(ChatColor.DARK_PURPLE + "/aach give §oach name§r")
 					.append(ChatColor.GRAY)
 					.append(" - "
@@ -892,8 +893,18 @@ public class AdvancedAchievements extends JavaPlugin {
 									Lang.AACH_COMMAND_GIVE.toString().replace("ACH", "§oach§r&7")
 											.replace("NAME", "§oname§r&7"))).toString());
 
+			sender.sendMessage((new StringBuilder())
+					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+					.append(ChatColor.DARK_PURPLE + "/aach reload").append(ChatColor.GRAY)
+					.append(" - " + Lang.AACH_COMMAND_RELOAD).toString());
+
+			sender.sendMessage((new StringBuilder())
+					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+					.append(ChatColor.DARK_PURPLE + "/aach info").append(ChatColor.GRAY)
+					.append(" - " + Lang.AACH_COMMAND_INFO).toString());
+
 			sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE)
-					.append("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-").toString());
+					.append("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-").toString());
 		}
 
 		return true;
@@ -969,16 +980,15 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		String achievementsList = "";
 
-		for (String section : this.getConfig().getConfigurationSection("Breaks").getKeys(false))
-			for (String ach : this.getConfig().getConfigurationSection("Breaks." + section).getKeys(false))
-				if (db.hasAchievement(player, this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")))
-					achievementsList += "&5"
-							+ this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")
-									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
-				else
-					achievementsList += "&8§o"
-							+ this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")
-									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+		for (String ach : this.getConfig().getConfigurationSection("Connections").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Connections." + ach + ".Name", "")))
+				achievementsList += "&5"
+						+ this.getConfig().getString("Connections." + ach + ".Name", "")
+								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else
+				achievementsList += "&8§o"
+						+ this.getConfig().getString("Connections." + ach + ".Name", "")
+								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
 
 		for (String section : this.getConfig().getConfigurationSection("Places").getKeys(false))
 			for (String ach : this.getConfig().getConfigurationSection("Places." + section).getKeys(false))
@@ -989,6 +999,17 @@ public class AdvancedAchievements extends JavaPlugin {
 				else
 					achievementsList += "&8§o"
 							+ this.getConfig().getString("Places." + section + "." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+		for (String section : this.getConfig().getConfigurationSection("Breaks").getKeys(false))
+			for (String ach : this.getConfig().getConfigurationSection("Breaks." + section).getKeys(false))
+				if (db.hasAchievement(player, this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")))
+					achievementsList += "&5"
+							+ this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")
+									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+				else
+					achievementsList += "&8§o"
+							+ this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")
 									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
 
 		for (String section : this.getConfig().getConfigurationSection("Kills").getKeys(false))
@@ -1033,16 +1054,6 @@ public class AdvancedAchievements extends JavaPlugin {
 						+ this.getConfig().getString("Arrows." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
 						+ " &7" + icon + " ";
 
-		for (String ach : this.getConfig().getConfigurationSection("Eggs").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Eggs." + ach + ".Name", "")))
-				achievementsList += "&5"
-						+ this.getConfig().getString("Eggs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ";
-			else
-				achievementsList += "&8§o"
-						+ this.getConfig().getString("Eggs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ";
-
 		for (String ach : this.getConfig().getConfigurationSection("Snowballs").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Snowballs." + ach + ".Name", "")))
 				achievementsList += "&5"
@@ -1052,6 +1063,16 @@ public class AdvancedAchievements extends JavaPlugin {
 				achievementsList += "&8§o"
 						+ this.getConfig().getString("Snowballs." + ach + ".Name", "")
 								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+		for (String ach : this.getConfig().getConfigurationSection("Eggs").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Eggs." + ach + ".Name", "")))
+				achievementsList += "&5"
+						+ this.getConfig().getString("Eggs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
+						+ " &7" + icon + " ";
+			else
+				achievementsList += "&8§o"
+						+ this.getConfig().getString("Eggs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
+						+ " &7" + icon + " ";
 
 		for (String ach : this.getConfig().getConfigurationSection("Fish").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Fish." + ach + ".Name", "")))
@@ -1071,16 +1092,6 @@ public class AdvancedAchievements extends JavaPlugin {
 			else
 				achievementsList += "&8§o"
 						+ this.getConfig().getString("ItemBreaks." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
-
-		for (String ach : this.getConfig().getConfigurationSection("ConsumedPotions").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")))
-				achievementsList += "&5"
-						+ this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
-			else
-				achievementsList += "&8§o"
-						+ this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")
 								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
 
 		for (String ach : this.getConfig().getConfigurationSection("EatenItems").getKeys(false))
@@ -1113,16 +1124,6 @@ public class AdvancedAchievements extends JavaPlugin {
 						+ this.getConfig().getString("Milk." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
 						+ " &7" + icon + " ";
 
-		for (String ach : this.getConfig().getConfigurationSection("Connections").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Connections." + ach + ".Name", "")))
-				achievementsList += "&5"
-						+ this.getConfig().getString("Connections." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
-			else
-				achievementsList += "&8§o"
-						+ this.getConfig().getString("Connections." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
-
 		for (String ach : this.getConfig().getConfigurationSection("Trades").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Trades." + ach + ".Name", "")))
 				achievementsList += "&5"
@@ -1153,16 +1154,6 @@ public class AdvancedAchievements extends JavaPlugin {
 						+ this.getConfig().getString("Enchantments." + ach + ".Name", "")
 								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
 
-		for (String ach : this.getConfig().getConfigurationSection("MaxLevel").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("MaxLevel." + ach + ".Name", "")))
-				achievementsList += "&5"
-						+ this.getConfig().getString("MaxLevel." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
-			else
-				achievementsList += "&8§o"
-						+ this.getConfig().getString("MaxLevel." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
-
 		for (String ach : this.getConfig().getConfigurationSection("Beds").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Beds." + ach + ".Name", "")))
 				achievementsList += "&5"
@@ -1173,14 +1164,24 @@ public class AdvancedAchievements extends JavaPlugin {
 						+ this.getConfig().getString("Beds." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
 						+ " &7" + icon + " ";
 
-		for (String ach : this.getConfig().getConfigurationSection("Commands").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Commands." + ach + ".Name", "")))
+		for (String ach : this.getConfig().getConfigurationSection("MaxLevel").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("MaxLevel." + ach + ".Name", "")))
 				achievementsList += "&5"
-						+ this.getConfig().getString("Commands." + ach + ".Name", "")
+						+ this.getConfig().getString("MaxLevel." + ach + ".Name", "")
 								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
 			else
 				achievementsList += "&8§o"
-						+ this.getConfig().getString("Commands" + ach + ".Name", "")
+						+ this.getConfig().getString("MaxLevel." + ach + ".Name", "")
+								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
+		for (String ach : this.getConfig().getConfigurationSection("ConsumedPotions").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")))
+				achievementsList += "&5"
+						+ this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")
+								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else
+				achievementsList += "&8§o"
+						+ this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")
 								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
 
 		for (String ach : this.getConfig().getConfigurationSection("PlayedTime").getKeys(false))
@@ -1273,8 +1274,53 @@ public class AdvancedAchievements extends JavaPlugin {
 						+ this.getConfig().getString("Fertilising." + ach + ".Name", "")
 								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
 
+		for (String ach : this.getConfig().getConfigurationSection("Commands").getKeys(false))
+			if (db.hasAchievement(player, this.getConfig().getString("Commands." + ach + ".Name", "")))
+				achievementsList += "&5"
+						+ this.getConfig().getString("Commands." + ach + ".Name", "")
+								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+			else
+				achievementsList += "&8§o"
+						+ this.getConfig().getString("Commands." + ach + ".Name", "")
+								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ";
+
 		player.sendMessage(ChatColor.GRAY + " " + icon + " "
 				+ ChatColor.translateAlternateColorCodes('&', achievementsList));
+	}
+
+	/**
+	 * Display information about the plugin.
+	 */
+	private void getInfo(CommandSender sender) {
+
+		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_NAME + " " + ChatColor.GRAY
+				+ this.getDescription().getName());
+		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VERSION + " " + ChatColor.GRAY
+				+ this.getDescription().getVersion());
+		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_WEBSITE + " " + ChatColor.GRAY
+				+ this.getDescription().getWebsite());
+		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_AUTHOR + " " + ChatColor.GRAY
+				+ this.getDescription().getAuthors().get(0));
+		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DESCRIPTION + " " + ChatColor.GRAY
+				+ Lang.VERSION_COMMAND_DESCRIPTION_DETAILS);
+		if (setUpEconomy())
+			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+					+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VAULT + " " + ChatColor.GRAY + "YES");
+		else
+			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+					+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VAULT + " " + ChatColor.GRAY + "NO");
+		if (this.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
+			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+					+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DATABASE + " " + ChatColor.GRAY + "MySQL");
+		else
+			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
+					+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DATABASE + " " + ChatColor.GRAY + "SQLite");
+
 	}
 
 	/**

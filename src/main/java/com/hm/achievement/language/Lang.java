@@ -32,7 +32,17 @@ public enum Lang {
     AACH_COMMAND_LIST("aach-command-list", "Display received and missing achievements."),
     AACH_COMMAND_TOP("aach-command-top", "Display personal and global rankings."),
     AACH_COMMAND_RELOAD("aach-command-reload", "Reload the plugin's configuration."),
-    AACH_COMMAND_GIVE("aach-command-give", "Give the achievement ACH to the player NAME.");
+    AACH_COMMAND_INFO("aach-command-info", "Display various information about the plugin."),
+    AACH_COMMAND_GIVE("aach-command-give", "Give the achievement ACH to the player NAME."),    
+    VERSION_COMMAND_NAME("version-command-name", "Name:"),
+    VERSION_COMMAND_VERSION("version-command-version", "Version:"),
+    VERSION_COMMAND_WEBSITE("version-command-website", "Website:"),
+    VERSION_COMMAND_AUTHOR("version-command-author", "Author:"),
+    VERSION_COMMAND_DESCRIPTION("version-command-description", "Description:"),
+    VERSION_COMMAND_DESCRIPTION_DETAILS("version-command-description-details", "Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"),
+    VERSION_COMMAND_VAULT("version-command-vault", "Vault integration:"),
+    VERSION_COMMAND_DATABASE("version-command-database", "Database type:");
+    
     
  
     private String path;

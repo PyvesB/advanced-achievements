@@ -23,6 +23,11 @@ public class SendPooledRequests implements Runnable {
 
 	}
 
+	/**
+	 * Sends a batch of requests to the database to deal with regular events and
+	 * prevent plugin from hitting server performance. Non event related
+	 * catgories (distances and play times) are not handled by pools.
+	 */
 	public void sendRequests() {
 
 		try {

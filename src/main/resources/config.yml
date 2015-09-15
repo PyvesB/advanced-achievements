@@ -222,7 +222,7 @@ ConsumedPotions:
     Message: Drinking weird beverages all the time...
     Name: Alcoholic 
     
-# Amount of time played on the server (in hours).
+# Amount of time played on the server (in hours, use integers).
 PlayedTime:
   '1':
     Message: You played during one hour on the server!

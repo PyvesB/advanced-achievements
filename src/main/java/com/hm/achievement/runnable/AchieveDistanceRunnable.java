@@ -67,6 +67,9 @@ public class AchieveDistanceRunnable implements Runnable {
 
 	public void refreshDistance(Player player) {
 
+		/**
+		 * Update distances and store them into server's memory until player disconnects.
+		 */
 		if (!achievementDistancesFoot.containsKey(player)) {
 			achievementDistancesBoat.put(player, plugin.getDb().registerDistance(player, (long) 0, "distanceboat"));
 			achievementDistancesMinecart.put(player,
