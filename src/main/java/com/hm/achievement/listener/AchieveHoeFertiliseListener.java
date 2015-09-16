@@ -37,9 +37,9 @@ public class AchieveHoeFertiliseListener implements Listener {
 			return;
 		String configAchievement = "";
 		if ((player.getItemInHand().getType() == Material.DIAMOND_HOE
-				|| player.getItemInHand().getType() == Material.GOLD_HOE
 				|| player.getItemInHand().getType() == Material.IRON_HOE
-				|| player.getItemInHand().getType() == Material.WOOD_HOE || player.getItemInHand().getType() == Material.STONE_HOE)
+				|| player.getItemInHand().getType() == Material.STONE_HOE
+				|| player.getItemInHand().getType() == Material.WOOD_HOE || player.getItemInHand().getType() == Material.GOLD_HOE)
 				&& (event.getClickedBlock().getType() == Material.GRASS || event.getClickedBlock().getType() == Material.DIRT)) {
 			Integer plowings = 0;
 			if (!DatabasePools.getHoePlowingHashMap().containsKey(player.getUniqueId().toString()))
@@ -52,17 +52,17 @@ public class AchieveHoeFertiliseListener implements Listener {
 			configAchievement = "HoePlowings." + plowings;
 
 		} else if (player.getItemInHand().isSimilar(new ItemStack(Material.INK_SACK, 1, (short) 15))
-				&& (event.getClickedBlock().getType() == Material.LONG_GRASS
+				&& (event.getClickedBlock().getType() == Material.GRASS
 						|| event.getClickedBlock().getType() == Material.SAPLING
-						|| event.getClickedBlock().getType() == Material.CARROT
-						|| event.getClickedBlock().getType() == Material.POTATO
 						|| event.getClickedBlock().getType() == Material.DOUBLE_PLANT
+						|| event.getClickedBlock().getType() == Material.POTATO
+						|| event.getClickedBlock().getType() == Material.CARROT
 						|| event.getClickedBlock().getType() == Material.CROPS
 						|| event.getClickedBlock().getType() == Material.PUMPKIN_STEM
 						|| event.getClickedBlock().getType() == Material.MELON_STEM
 						|| event.getClickedBlock().getType() == Material.BROWN_MUSHROOM
 						|| event.getClickedBlock().getType() == Material.RED_MUSHROOM
-						|| event.getClickedBlock().getType() == Material.COCOA || event.getClickedBlock().getType() == Material.GRASS)) {
+						|| event.getClickedBlock().getType() == Material.COCOA || event.getClickedBlock().getType() == Material.LONG_GRASS)) {
 			Integer fertilising = 0;
 			if (!DatabasePools.getFertiliseHashMap().containsKey(player.getUniqueId().toString()))
 				fertilising = plugin.getDb().getFertilising(player) + 1;

@@ -268,18 +268,24 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to monitor played time for each player (not
 		// directly related to an event).
-		Bukkit.getServer()
-				.getScheduler()
-				.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-						new AchievePlayTimeRunnable(this), 6000, 6000);
+		if (this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0)
+			Bukkit.getServer()
+					.getScheduler()
+					.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
+							new AchievePlayTimeRunnable(this), 6000, 6000);
 
 		// Schedule a repeating task to monitor distances travelled by each
 		// player (not
 		// directly related to an event).
-		Bukkit.getServer()
-				.getScheduler()
-				.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-						new AchieveDistanceRunnable(this), 100, 100);
+		if (this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
+				|| this.getConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
+				|| this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
+				|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
+				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0)
+			Bukkit.getServer()
+					.getScheduler()
+					.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
+							new AchieveDistanceRunnable(this), 100, 100);
 
 		if (successfulLoad)
 			this.getLogger().info(

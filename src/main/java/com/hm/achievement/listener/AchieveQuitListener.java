@@ -20,14 +20,15 @@ public class AchieveQuitListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onQuitEvent(PlayerQuitEvent event) {
 
-		if (AchieveConnectionListener.getJoinTime().containsKey(event.getPlayer()))
+		if (AchieveConnectionListener.getJoinTime().containsKey(event.getPlayer())) {
 			plugin.getDb().registerPlaytime(
 					event.getPlayer(),
 					AchieveConnectionListener.getPlayTime().get(event.getPlayer()) + System.currentTimeMillis()
 							- AchieveConnectionListener.getJoinTime().get(event.getPlayer()));
 
-		AchieveConnectionListener.getPlayTime().remove(event.getPlayer());
-		AchieveConnectionListener.getJoinTime().remove(event.getPlayer());
+			AchieveConnectionListener.getPlayTime().remove(event.getPlayer());
+			AchieveConnectionListener.getJoinTime().remove(event.getPlayer());
+		}
 
 		if (AchieveDistanceRunnable.getAchievementDistancesFoot().containsKey(event.getPlayer())) {
 			plugin.getDb().registerDistance(event.getPlayer(),
