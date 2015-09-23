@@ -1,6 +1,7 @@
 package com.hm.achievement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -15,10 +16,12 @@ import com.hm.achievement.language.Lang;
 public class AchievementBookGiver {
 
 	private AdvancedAchievements plugin;
+	private HashMap<Player, Long> players;
 
 	public AchievementBookGiver(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+		players = new HashMap<Player, Long>();
 	}
 
 	/**
@@ -28,11 +31,11 @@ public class AchievementBookGiver {
 
 		long currentTime = System.currentTimeMillis();
 		long lastBookTime = 0;
-		if (plugin.getPlayers().containsKey(player))
-			lastBookTime = plugin.getPlayers().get(player);
+		if (players.containsKey(player))
+			lastBookTime = players.get(player);
 		if (currentTime - lastBookTime < plugin.getBookTime())
 			return false;
-		plugin.getPlayers().put(player, currentTime);
+		players.put(player, currentTime);
 		return true;
 
 	}
@@ -192,4 +195,10 @@ public class AchievementBookGiver {
 					+ Lang.BOOK_DELAY.toString().replace("TIME", "" + plugin.getBookTime() / 1000));
 		}
 	}
+
+	public HashMap<Player, Long> getPlayers() {
+
+		return players;
+	}
+
 }

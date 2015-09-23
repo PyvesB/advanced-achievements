@@ -19,6 +19,9 @@ public class AchieveQuitListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onQuitEvent(PlayerQuitEvent event) {
+		
+		if (plugin.getAchievementBookGiver().getPlayers().containsKey(event.getPlayer()))
+			plugin.getAchievementBookGiver().getPlayers().remove(event.getPlayer());
 
 		if (AchieveConnectionListener.getJoinTime().containsKey(event.getPlayer())) {
 			plugin.getDb().registerPlaytime(
@@ -56,6 +59,7 @@ public class AchieveQuitListener implements Listener {
 					"distanceminecart");
 
 			AchieveDistanceRunnable.getAchievementDistancesMinecart().remove(event.getPlayer());
+			
 			AchieveDistanceRunnable.getAchievementLocations().remove(event.getPlayer());
 		}
 

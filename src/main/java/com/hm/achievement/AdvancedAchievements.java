@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -111,7 +110,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private int databaseVersion;
 
 	// Plugin options and various parameters.
-	private HashMap<Player, Long> players;
 	private int bookTime;
 	private boolean retroVault;
 	private boolean firework;
@@ -167,7 +165,6 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		db = new SQLDatabases();
 
-		players = new HashMap<Player, Long>();
 
 	}
 
@@ -1425,11 +1422,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		return bookTime;
 	}
 
-	public HashMap<Player, Long> getPlayers() {
-
-		return players;
-	}
-
 	public boolean isSuccessfulLoad() {
 
 		return successfulLoad;
@@ -1438,6 +1430,12 @@ public class AdvancedAchievements extends JavaPlugin {
 	public void setSuccessfulLoad(boolean successfulLoad) {
 
 		this.successfulLoad = successfulLoad;
+	}
+
+	
+	public AchievementBookGiver getAchievementBookGiver() {
+	
+		return achievementBookGiver;
 	}
 
 }
