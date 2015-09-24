@@ -133,7 +133,7 @@ public class AchievementRewards {
 
 			command = command.replace("PLAYER", player.getName());
 			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
-			if (!plugin.isRewardCommandNotif())
+			if (!plugin.isRewardCommandNotif() || Lang.COMMAND_REWARD.toString().equals(""))
 				return;
 			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
 					+ Lang.COMMAND_REWARD);

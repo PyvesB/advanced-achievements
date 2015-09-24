@@ -66,7 +66,7 @@ import com.hm.achievement.runnable.AchievePlayTimeRunnable;
  * https://github.com/PyvesB/AdvancedAchievements
  * 
  * @since April 2015
- * @version 2.0
+ * @version 2.1
  * @author DarkPyves
  */
 
@@ -164,7 +164,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		achievementBookGiver = new AchievementBookGiver(this);
 
 		db = new SQLDatabases();
-
 
 	}
 
@@ -408,12 +407,6 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		}
 
-		if (!this.getConfig().getKeys(false).contains("RewardCommandNotif")) {
-			this.getConfig().set("RewardCommandNotif", true);
-			this.saveConfig();
-
-		}
-
 		if (!this.getConfig().getKeys(false).contains("DatabaseBackup")) {
 			this.getConfig().set("DatabaseBackup", true);
 			this.saveConfig();
@@ -478,10 +471,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		bookSeparator = this.getConfig().getString("BookSeparator", "");
 		restrictCreative = this.getConfig().getBoolean("RestrictCreative", false);
 		multiCommand = this.getConfig().getBoolean("MultiCommand", true);
-		rewardCommandNotif = this.getConfig().getBoolean("RewardCommandNotif", true);
 		databaseBackup = this.getConfig().getBoolean("DatabaseBackup", true);
 		excludedWorldList = this.getConfig().getStringList("ExcludedWorlds");
 		topList = this.getConfig().getInt("TopList", 5);
+		// No longer available in default config, kept for compatibility with
+		// versions prior to 2.1.
+		rewardCommandNotif = this.getConfig().getBoolean("RewardCommandNotif", true);
 
 		lastTopTime = 0;
 
@@ -777,8 +772,9 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	public boolean setUpEconomy() {
 
-		if (economy != null) return true;
-		
+		if (economy != null)
+			return true;
+
 		try {
 			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
 					net.milkbowl.vault.economy.Economy.class);
@@ -1434,9 +1430,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		this.successfulLoad = successfulLoad;
 	}
 
-	
 	public AchievementBookGiver getAchievementBookGiver() {
-	
+
 		return achievementBookGiver;
 	}
 

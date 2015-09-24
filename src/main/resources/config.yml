@@ -43,12 +43,6 @@ ChatNotify: false
 # Separator between name, description and date on a book page.
 BookSeparator: ''
 
-# Display 'command-reward' message when a command reward is set for an achievement.
-RewardCommandNotif: true
-
-# Make a daily backup of your local database.
-DatabaseBackup: true
-
 # Stop stats from increasing when player in creative mode (except Connections and PlayedTime).
 RestrictCreative: false
 
@@ -68,6 +62,9 @@ TopList: 5
 
 # DO NOT CHANGE OR DELETE.
 DatabaseVersion: 5
+
+# Make a daily backup of your local database.
+DatabaseBackup: true
 
 # Database type, sqlite or mysql.
 DatabaseType: sqlite
