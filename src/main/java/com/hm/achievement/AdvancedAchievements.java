@@ -777,6 +777,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	public boolean setUpEconomy() {
 
+		if (economy != null) return true;
+		
 		try {
 			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
 					net.milkbowl.vault.economy.Economy.class);

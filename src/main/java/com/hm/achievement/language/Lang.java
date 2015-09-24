@@ -23,7 +23,7 @@ public enum Lang {
     ACHIEVEMENT_GIVEN("achievement-given","Achievement given!"),
     ACHIEVEMENT_RECEIVED("achievement-received","PLAYER received the achievement:"),
     ACHIVEMENT_NEW("achievement-new", "New Achievement:"),
-    ITEM_REWARD_RECEIVED("item-reward-received", "You received an item reward!"),
+    ITEM_REWARD_RECEIVED("item-reward-received", "You received an item reward:"),
     MONEY_REWARD_RECEIVED("money-reward-received", "You received: AMOUNT !"),
     COMMAND_REWARD("command-reward", "Reward command carried out!"),
     BOOK_NAME("book-name", "Achievements"),

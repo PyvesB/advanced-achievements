@@ -1,9 +1,12 @@
 package com.hm.achievement;
 
+import net.milkbowl.vault.item.Items;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 import com.hm.achievement.language.Lang;
 
 public class AchievementRewards {
@@ -43,8 +46,17 @@ public class AchievementRewards {
 			item = new ItemStack(Material.getMaterial(plugin.getConfig().getString(ach + ".Reward.Item", "stone")
 					.toUpperCase()
 					.substring(0, plugin.getConfig().getString(ach + ".Reward.Item", "stone").indexOf(" "))), amount);
+
+		if (plugin.setUpEconomy())
+			try {
+				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY
+						+ "] " + Lang.ITEM_REWARD_RECEIVED + " " + Items.itemByStack(item).getName());
+				return item;
+			} catch (Exception ex) {
+				// Do nothing, another message will be displayed just bellow.
+			}
 		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
-				+ Lang.ITEM_REWARD_RECEIVED);
+				+ Lang.ITEM_REWARD_RECEIVED + " " + item.getType().toString().replace("_", " ").toLowerCase());
 		return item;
 	}
 

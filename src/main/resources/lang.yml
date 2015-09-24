@@ -24,7 +24,7 @@ achievement-given: "Achievement given!"
 achievement-received: "PLAYER received the achievement:"
 achievement-new: "New Achievement:"
 
-item-reward-received: "You received an item reward!"
+item-reward-received: "You received an item reward:"
 money-reward-received: "You received: AMOUNT !"
 command-reward: "Reward command carried out!"
 
