@@ -25,11 +25,9 @@ public class AchievementDisplay {
 	 * firework.
 	 */
 	public void displayAchievement(Player player, String configAchievement) {
-		
-		String name = plugin.getConfig().getString(
-				configAchievement + ".Name");
-		String msg = plugin.getConfig().getString(
-				configAchievement + ".Message");
+
+		String name = plugin.getConfig().getString(configAchievement + ".Name");
+		String msg = plugin.getConfig().getString(configAchievement + ".Message");
 
 		name = ChatColor.translateAlternateColorCodes('&', name);
 		msg = ChatColor.translateAlternateColorCodes('&', msg);
@@ -57,12 +55,22 @@ public class AchievementDisplay {
 
 			Firework firework = player.getWorld().spawn(location, Firework.class);
 			FireworkMeta fireworkMeta = firework.getFireworkMeta();
-			FireworkEffect effect = FireworkEffect.builder().flicker(false).trail(false)
-					.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).with(Type.BALL_LARGE)
-					.withFade(Color.PURPLE).build();
+			FireworkEffect effect;
+			try {
+				effect = FireworkEffect.builder().flicker(false).trail(false)
+						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))
+						.with(Type.valueOf(plugin.getFireworkStyle().toUpperCase())).withFade(Color.PURPLE).build();
+			} catch (Exception ex) {
+				effect = FireworkEffect.builder().flicker(false).trail(false)
+						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).with(Type.BALL_LARGE)
+						.withFade(Color.PURPLE).build();
+				plugin.getLogger().severe(
+						"Error while loading FireworkStyle. Please check your config. Loading default style.");
+			}
 			fireworkMeta.addEffects(effect);
 			firework.setVelocity(player.getLocation().getDirection().multiply(0));
 			firework.setFireworkMeta(fireworkMeta);
+
 		}
 	}
 

@@ -19,6 +19,7 @@ import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -26,6 +27,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import com.hm.achievement.db.SQLDatabases;
 import com.hm.achievement.db.SendPooledRequests;
 import com.hm.achievement.language.Lang;
@@ -51,6 +53,7 @@ import com.hm.achievement.listener.AchieveSnowballEggsListener;
 import com.hm.achievement.listener.AchieveWorldTPListener;
 import com.hm.achievement.listener.AchieveXPListener;
 import com.hm.achievement.metrics.MetricsLite;
+import com.hm.achievement.particle.ParticleEffect;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 
@@ -128,6 +131,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	private int topList;
 	private boolean updateNeeded;
 	private boolean successfulLoad;
+	private boolean additionalEffects;
+	private String fireworkStyle;
 
 	/**
 	 * Constructor.
@@ -426,6 +431,19 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		}
 
+		// Added in version 2.1:
+		if (!this.getConfig().getKeys(false).contains("AdditionalEffects")) {
+			this.getConfig().set("AdditionalEffects", true);
+			this.saveConfig();
+
+		}
+		
+		if (!this.getConfig().getKeys(false).contains("FireworkStyle")) {
+			this.getConfig().set("FireworkStyle", "BALL_LARGE");
+			this.saveConfig();
+
+		}
+
 		// End of configuration updates.
 
 		try {
@@ -474,6 +492,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		databaseBackup = this.getConfig().getBoolean("DatabaseBackup", true);
 		excludedWorldList = this.getConfig().getStringList("ExcludedWorlds");
 		topList = this.getConfig().getInt("TopList", 5);
+		additionalEffects = this.getConfig().getBoolean("AdditionalEffects", true);
+		fireworkStyle = this.getConfig().getString("FireworkStyle", "BALL_LARGE");
 		// No longer available in default config, kept for compatibility with
 		// versions prior to 2.1.
 		rewardCommandNotif = this.getConfig().getBoolean("RewardCommandNotif", true);
@@ -918,6 +938,9 @@ public class AdvancedAchievements extends JavaPlugin {
 	private void getTop(CommandSender sender) {
 
 		long currentTime = System.currentTimeMillis();
+		int rank = Integer.MAX_VALUE;
+		if (sender instanceof Player)
+			rank = db.getRank(db.countAchievements((Player) sender));
 		if (currentTime - lastTopTime >= 60000) {
 
 			achievementsTop = db.getTop(topList);
@@ -929,16 +952,34 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		for (int i = 0; i < achievementsTop.size(); i += 2) {
 			try {
-				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + (i + 2) / 2 + ChatColor.GRAY + "] "
-						+ Bukkit.getServer().getOfflinePlayer(UUID.fromString(achievementsTop.get(i))).getName()
-						+ " - " + achievementsTop.get(i + 1));
+				String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(achievementsTop.get(i)))
+						.getName();
+				if (sender instanceof Player && rank < topList)
+					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + (i + 2) / 2 + ChatColor.GRAY
+							+ "] " + ChatColor.DARK_PURPLE + playerName + " - " + achievementsTop.get(i + 1));
+				else
+					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + (i + 2) / 2 + ChatColor.GRAY
+							+ "] " + playerName + " - " + achievementsTop.get(i + 1));
 			} catch (Exception ex) {
 				this.getLogger().warning("Top command: name corresponding to UUID not found.");
 			}
 		}
-
 		if (sender instanceof Player) {
-			int rank = db.getRank(db.countAchievements((Player) sender));
+
+			if (additionalEffects)
+				try {
+					if (additionalEffects)
+						// Play special effect when in top list.
+						ParticleEffect.REDSTONE.display(0, 1, 0, 1, 10000, ((Player) sender).getLocation(), 10000);
+
+				} catch (Exception ex) {
+					this.getLogger().severe("Error while displaying additional particle effects.");
+				}
+
+			if (sound)
+				// Play special sound when in top list.
+				((Player) sender).getWorld().playSound(((Player) sender).getLocation(), Sound.FIREWORK_TWINKLE, 1, 1);
+
 			int totalPlayers = db.getTotalPlayers();
 			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
 					+ Lang.PLAYER_RANK + " " + ChatColor.DARK_PURPLE + rank + ChatColor.GRAY + "/"
@@ -1433,6 +1474,16 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AchievementBookGiver getAchievementBookGiver() {
 
 		return achievementBookGiver;
+	}
+
+	public boolean isAdditionalEffects() {
+
+		return additionalEffects;
+	}
+
+	public String getFireworkStyle() {
+
+		return fireworkStyle;
 	}
 
 }

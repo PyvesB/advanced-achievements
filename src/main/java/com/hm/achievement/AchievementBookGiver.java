@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 import com.hm.achievement.language.Lang;
+import com.hm.achievement.particle.ParticleEffect;
 
 public class AchievementBookGiver {
 
@@ -46,6 +47,14 @@ public class AchievementBookGiver {
 	public void giveBook(Player player, String name) {
 
 		if (timeAuthorisedBook(player)) {
+
+			// Play special effect when receiving the book.
+			if (plugin.isAdditionalEffects())
+				try {
+					ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 1000);
+				} catch (Exception ex) {
+					plugin.getLogger().severe("Error while displaying additional particle effects.");
+				}
 
 			// Play special sound when receiving the book.
 			if (plugin.isSound())

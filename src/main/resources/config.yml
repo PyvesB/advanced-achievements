@@ -28,7 +28,13 @@ CheckForUpdate: true
 # Set to true to activate firework effects when a player receives an achievement.
 Firework: true
 
-# Set to true to activate sound effect when a player receives his book.
+# Choose BALL_LARGE, BALL, BURST, CREEPER or STAR.
+FireworkStyle: BALL_LARGE
+
+# Set to true to activate particle effects when receiving book and when player in top list.
+AdditionalEffects: true
+
+# Set to true to activate sound effects when receiving book and when player in top list.
 Sound: true
 
 # Set to true if you are using a version of Vault prior to 1.4.
