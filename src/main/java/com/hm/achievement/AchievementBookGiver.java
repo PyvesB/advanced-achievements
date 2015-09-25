@@ -51,7 +51,7 @@ public class AchievementBookGiver {
 			// Play special effect when receiving the book.
 			if (plugin.isAdditionalEffects())
 				try {
-					ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 1000);
+					ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 100);
 				} catch (Exception ex) {
 					plugin.getLogger().severe("Error while displaying additional particle effects.");
 				}

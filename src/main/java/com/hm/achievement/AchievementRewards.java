@@ -96,6 +96,25 @@ public class AchievementRewards {
 										"&5" + amtd + " " + plugin.getEconomy().currencyNameSingular())));
 		}
 	}
+	
+	public String getRewardType(String configAchievement){
+		
+		String rewardType = "";
+		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.Money"))
+			rewardType = "money";
+		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.Item"))
+			if(rewardType != "")
+				rewardType += ", " + "item";
+			else
+				rewardType = "item";
+		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.command"))
+			if(rewardType != "")
+				rewardType += ", " + "command";
+			else
+				rewardType = "command";
+		
+		return rewardType;
+	}
 
 	public void checkConfig(Player player, String configAchievement) {
 

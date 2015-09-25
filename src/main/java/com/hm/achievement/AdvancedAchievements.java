@@ -134,6 +134,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	private boolean additionalEffects;
 	private String fireworkStyle;
 
+	private boolean obfuscateNotReceived;
+
+	private boolean hideNotReceivedCategories;
+
 	/**
 	 * Constructor.
 	 */
@@ -437,9 +441,21 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.saveConfig();
 
 		}
-		
+
 		if (!this.getConfig().getKeys(false).contains("FireworkStyle")) {
 			this.getConfig().set("FireworkStyle", "BALL_LARGE");
+			this.saveConfig();
+
+		}
+
+		if (!this.getConfig().getKeys(false).contains("ObfuscateNotReceived")) {
+			this.getConfig().set("ObfuscateNotReceived", true);
+			this.saveConfig();
+
+		}
+
+		if (!this.getConfig().getKeys(false).contains("HideNotReceivedCategories")) {
+			this.getConfig().set("HideNotReceivedCategories", false);
 			this.saveConfig();
 
 		}
@@ -494,6 +510,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		topList = this.getConfig().getInt("TopList", 5);
 		additionalEffects = this.getConfig().getBoolean("AdditionalEffects", true);
 		fireworkStyle = this.getConfig().getString("FireworkStyle", "BALL_LARGE");
+		obfuscateNotReceived = this.getConfig().getBoolean("ObfuscateNotReceived", true);
+		hideNotReceivedCategories = this.getConfig().getBoolean("HideNotReceivedCategories", false);
 		// No longer available in default config, kept for compatibility with
 		// versions prior to 2.1.
 		rewardCommandNotif = this.getConfig().getBoolean("RewardCommandNotif", true);
@@ -966,19 +984,21 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 		if (sender instanceof Player) {
 
-			if (additionalEffects)
+			if (rank <= topList) {
 				try {
 					if (additionalEffects)
 						// Play special effect when in top list.
-						ParticleEffect.REDSTONE.display(0, 1, 0, 1, 10000, ((Player) sender).getLocation(), 10000);
+						ParticleEffect.REDSTONE.display(0, 2, 0, 1, 1000, ((Player) sender).getLocation(), 100);
 
 				} catch (Exception ex) {
 					this.getLogger().severe("Error while displaying additional particle effects.");
 				}
 
-			if (sound)
-				// Play special sound when in top list.
-				((Player) sender).getWorld().playSound(((Player) sender).getLocation(), Sound.FIREWORK_TWINKLE, 1, 1);
+				if (sound)
+					// Play special sound when in top list.
+					((Player) sender).getWorld().playSound(((Player) sender).getLocation(), Sound.FIREWORK_TWINKLE, 1,
+							1);
+			}
 
 			int totalPlayers = db.getTotalPlayers();
 			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
@@ -1021,313 +1041,563 @@ public class AdvancedAchievements extends JavaPlugin {
 	public void getList(Player player) {
 
 		StringBuilder achievementsList = new StringBuilder();
-
+		int numberInCategory = 0;
 		for (String ach : this.getConfig().getConfigurationSection("Connections").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Connections." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Connections." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Connections." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Connections." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Connections." + ach + ".Name", ""),
+						ach, reward.getRewardType("Connections." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("Connections." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("Connections." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_CONNECTIONS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String section : this.getConfig().getConfigurationSection("Places").getKeys(false))
 			for (String ach : this.getConfig().getConfigurationSection("Places." + section).getKeys(false))
-				if (db.hasAchievement(player, this.getConfig().getString("Places." + section + "." + ach + ".Name", "")))
-					achievementsList.append("&5"
-							+ this.getConfig().getString("Places." + section + "." + ach + ".Name", "")
-									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-				else
-					achievementsList.append("&8§o"
-							+ this.getConfig().getString("Places." + section + "." + ach + ".Name", "")
-									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+				if (db.hasAchievement(player, this.getConfig().getString("Places." + section + "." + ach + ".Name", ""))) {
+					numberInCategory++;
+					addHooverLine(achievementsList,
+							"&f" + this.getConfig().getString("Places." + section + "." + ach + ".Name", ""), ach,
+							reward.getRewardType("Places." + section + "." + ach));
+				} else
+					addHooverLine(achievementsList,
+							"&8§o"
+									+ this.getConfig().getString("Places." + section + "." + ach + ".Name", "")
+											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+							reward.getRewardType("Places." + section + "." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_PLACES + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String section : this.getConfig().getConfigurationSection("Breaks").getKeys(false))
 			for (String ach : this.getConfig().getConfigurationSection("Breaks." + section).getKeys(false))
-				if (db.hasAchievement(player, this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")))
-					achievementsList.append("&5"
-							+ this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")
-									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-				else
-					achievementsList.append("&8§o"
-							+ this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")
-									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+				if (db.hasAchievement(player, this.getConfig().getString("Breaks." + section + "." + ach + ".Name", ""))) {
+					numberInCategory++;
+					addHooverLine(achievementsList,
+							"&f" + this.getConfig().getString("Breaks." + section + "." + ach + ".Name", ""), ach,
+							reward.getRewardType("Breaks." + section + "." + ach));
+				} else
+					addHooverLine(achievementsList,
+							"&8§o"
+									+ this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")
+											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+							reward.getRewardType("Breaks." + section + "." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_BREAKS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String section : this.getConfig().getConfigurationSection("Kills").getKeys(false))
 			for (String ach : this.getConfig().getConfigurationSection("Kills." + section).getKeys(false))
-				if (db.hasAchievement(player, this.getConfig().getString("Kills." + section + "." + ach + ".Name", "")))
-					achievementsList.append("&5"
-							+ this.getConfig().getString("Kills." + section + "." + ach + ".Name", "")
-									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-				else
-					achievementsList.append("&8§o"
-							+ this.getConfig().getString("Kills." + section + "." + ach + ".Name", "")
-									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+				if (db.hasAchievement(player, this.getConfig().getString("Kills." + section + "." + ach + ".Name", ""))) {
+					numberInCategory++;
+					addHooverLine(achievementsList,
+							"&f" + this.getConfig().getString("Kills." + section + "." + ach + ".Name", ""), ach,
+							reward.getRewardType("Kills." + section + "." + ach));
+				} else
+					addHooverLine(achievementsList,
+							"&8§o"
+									+ this.getConfig().getString("Kills." + section + "." + ach + ".Name", "")
+											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+							reward.getRewardType("Kills." + section + "." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_KILLS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String section : this.getConfig().getConfigurationSection("Crafts").getKeys(false))
 			for (String ach : this.getConfig().getConfigurationSection("Crafts." + section).getKeys(false))
-				if (db.hasAchievement(player, this.getConfig().getString("Crafts." + section + "." + ach + ".Name", "")))
-					achievementsList.append("&5"
-							+ this.getConfig().getString("Crafts." + section + "." + ach + ".Name", "")
-									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-				else
-					achievementsList.append("&8§o"
-							+ this.getConfig().getString("Crafts." + section + "." + ach + ".Name", "")
-									.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+				if (db.hasAchievement(player, this.getConfig().getString("Crafts." + section + "." + ach + ".Name", ""))) {
+					numberInCategory++;
+					addHooverLine(achievementsList,
+							"&f" + this.getConfig().getString("Crafts." + section + "." + ach + ".Name", ""), ach,
+							reward.getRewardType("Crafts." + section + "." + ach));
+				} else
+					addHooverLine(achievementsList,
+							"&8§o"
+									+ this.getConfig().getString("Crafts." + section + "." + ach + ".Name", "")
+											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+							reward.getRewardType("Crafts." + section + "." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_CRAFTS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Deaths").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Deaths." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Deaths." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Deaths." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Deaths." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Deaths." + ach + ".Name", ""), ach,
+						reward.getRewardType("Deaths." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("Deaths." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("Deaths." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_DEATHS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Arrows").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Arrows." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Arrows." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Arrows." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Arrows." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Arrows." + ach + ".Name", ""), ach,
+						reward.getRewardType("Arrows." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("Arrows." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("Arrows." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ARROWS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Snowballs").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Snowballs." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Snowballs." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Snowballs." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Snowballs." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Snowballs." + ach + ".Name", ""),
+						ach, reward.getRewardType("Snowballs." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("Snowballs." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("Connections." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_SNOWBALLS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Eggs").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Eggs." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Eggs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Eggs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Eggs." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Eggs." + ach + ".Name", ""), ach,
+						reward.getRewardType("Eggs." + ach));
+			} else
+				addHooverLine(achievementsList, "&8§o"
+						+ this.getConfig().getString("Eggs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", ""),
+						ach, reward.getRewardType("Eggs." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_EGGS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Fish").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Fish." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Fish." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Fish." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Fish." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Fish." + ach + ".Name", ""), ach,
+						reward.getRewardType("Fish." + ach));
+			} else
+				addHooverLine(achievementsList, "&8§o"
+						+ this.getConfig().getString("Fish." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", ""),
+						ach, reward.getRewardType("Fish." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_FISH + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("ItemBreaks").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("ItemBreaks." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("ItemBreaks." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("ItemBreaks." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("ItemBreaks." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("ItemBreaks." + ach + ".Name", ""),
+						ach, reward.getRewardType("ItemBreaks." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("ItemBreaks." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("ItemBreaks." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ITEMBREAKS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("EatenItems").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("EatenItems." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("EatenItems." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("EatenItems." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("EatenItems." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("EatenItems." + ach + ".Name", ""),
+						ach, reward.getRewardType("EatenItems." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("EatenItems." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("EatenItems." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_EATENITEMS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Shear").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Shear." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Shear." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Shear." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Shear." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Shear." + ach + ".Name", ""), ach,
+						reward.getRewardType("Shear." + ach));
+			} else
+				addHooverLine(achievementsList, "&8§o"
+						+ this.getConfig().getString("Shear." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", ""),
+						ach, reward.getRewardType("Shear." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_SHEAR + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Milk").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Milk." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Milk." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Milk." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Milk." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Milk." + ach + ".Name", ""), ach,
+						reward.getRewardType("Milk." + ach));
+			} else
+				addHooverLine(achievementsList, "&8§o"
+						+ this.getConfig().getString("Milk." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", ""),
+						ach, reward.getRewardType("Milk." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_MILK + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Trades").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Trades." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Trades." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Trades." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Trades." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Trades." + ach + ".Name", ""), ach,
+						reward.getRewardType("Trades." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("Trades." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("Trades." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_TRADES + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("AnvilsUsed").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("AnvilsUsed." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("AnvilsUsed." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("AnvilsUsed." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("AnvilsUsed." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("AnvilsUsed." + ach + ".Name", ""),
+						ach, reward.getRewardType("AnvilsUsed." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("AnvilsUsed." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("AnvilsUsed." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ANVILS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Enchantments").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Enchantments." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Enchantments." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Enchantments." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Enchantments." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Enchantments." + ach + ".Name", ""),
+						ach, reward.getRewardType("Enchantments." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("Enchantments." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("Enchantments." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ENCHANTMENTS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Beds").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Beds." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Beds." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Beds." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", "")
-						+ " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Beds." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Beds." + ach + ".Name", ""), ach,
+						reward.getRewardType("Beds." + ach));
+			} else
+				addHooverLine(achievementsList, "&8§o"
+						+ this.getConfig().getString("Beds." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", ""),
+						ach, reward.getRewardType("Beds." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_BEDS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("MaxLevel").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("MaxLevel." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("MaxLevel." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("MaxLevel." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("MaxLevel." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("MaxLevel." + ach + ".Name", ""),
+						ach, reward.getRewardType("MaxLevel." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("MaxLevel." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("MaxLevel." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_MAXLEVEL + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("ConsumedPotions").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("ConsumedPotions." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList,
+						"&f" + this.getConfig().getString("ConsumedPotions." + ach + ".Name", ""), ach,
+						reward.getRewardType("ConsumedPotions." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("ConsumedPotions." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_POTIONS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("PlayedTime").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("PlayedTime." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("PlayedTime." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("PlayedTime." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("PlayedTime." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("PlayedTime." + ach + ".Name", ""),
+						ach, reward.getRewardType("PlayedTime." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("PlayedTime." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("PlayedTime." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_PLAYEDTIME + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("DistanceFoot." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("DistanceFoot." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("DistanceFoot." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("DistanceFoot." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("DistanceFoot." + ach + ".Name", ""),
+						ach, reward.getRewardType("DistanceFoot." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("DistanceFoot." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("Connections." + ach));
 
 		for (String ach : this.getConfig().getConfigurationSection("DistancePig").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("DistancePig." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("DistancePig." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("DistancePig." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("DistancePig." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("DistancePig." + ach + ".Name", ""),
+						ach, reward.getRewardType("DistancePig." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("DistancePig." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("DistancePig." + ach));
 
 		for (String ach : this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("DistanceHorse." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("DistanceHorse." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("DistanceHorse." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("DistanceHorse." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList,
+						"&f" + this.getConfig().getString("DistanceHorse." + ach + ".Name", ""), ach,
+						reward.getRewardType("DistanceHorse." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("DistanceHorse." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("DistanceHorse." + ach));
 
 		for (String ach : this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("DistanceMinecart." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("DistanceMinecart." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("DistanceMinecart." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("DistanceMinecart." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList,
+						"&f" + this.getConfig().getString("DistanceMinecart." + ach + ".Name", ""), ach,
+						reward.getRewardType("DistanceMinecart." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("DistanceMinecart." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("DistanceMinecart." + ach));
 
 		for (String ach : this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("DistanceBoat." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("DistanceBoat." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("DistanceBoat." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("DistanceBoat." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("DistanceBoat." + ach + ".Name", ""),
+						ach, reward.getRewardType("DistanceBoat." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("DistanceBoat." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("DistanceBoat." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_DISTANCE + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("ItemDrops").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("ItemDrops." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("ItemDrops." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("ItemDrops." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("ItemDrops." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("ItemDrops." + ach + ".Name", ""),
+						ach, reward.getRewardType("ItemDrops." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("ItemDrops." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("ItemDrops." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ITEMDROPS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("HoePlowings").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("HoePlowings." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("HoePlowings." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("HoePlowings." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("HoePlowings." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("HoePlowings" + ach + ".Name", ""),
+						ach, reward.getRewardType("HoePlowings." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("HoePlowings." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("HoePlowings." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_HOEPLOWINGS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Fertilising").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Fertilising." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Fertilising." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Fertilising." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Fertilising." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Fertilising." + ach + ".Name", ""),
+						ach, reward.getRewardType("Fertilising." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("Fertilising." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("Fertilising." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_FERTILISING + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
+		achievementsList.setLength(0);
+		numberInCategory = 0;
 
 		for (String ach : this.getConfig().getConfigurationSection("Commands").getKeys(false))
-			if (db.hasAchievement(player, this.getConfig().getString("Commands." + ach + ".Name", "")))
-				achievementsList.append("&5"
-						+ this.getConfig().getString("Commands." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
-			else
-				achievementsList.append("&8§o"
-						+ this.getConfig().getString("Commands." + ach + ".Name", "")
-								.replaceAll("&([a-f]|[0-9]){1}", "") + " &7" + icon + " ");
+			if (db.hasAchievement(player, this.getConfig().getString("Commands." + ach + ".Name", ""))) {
+				numberInCategory++;
+				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Commands." + ach + ".Name", ""),
+						ach, reward.getRewardType("Commands." + ach));
+			} else
+				addHooverLine(
+						achievementsList,
+						"&8§o"
+								+ this.getConfig().getString("Commands." + ach + ".Name", "")
+										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
+						reward.getRewardType("Commands." + ach));
+		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_COMMANDS + " " + " &7" + icon + " ",
+					achievementsList.substring(0, achievementsList.length() - 1));
 
-		player.sendMessage(ChatColor.GRAY + " " + icon + " "
-				+ ChatColor.translateAlternateColorCodes('&', achievementsList.toString()));
+	}
+
+	public StringBuilder addHooverLine(StringBuilder currentString, String name, String level, String reward) {
+
+		if (obfuscateNotReceived)
+			name = name.replace("&8§o", "&8§k");
+
+		if (reward != "")
+			currentString.append(name + " - " + Lang.LIST_AMOUNT + " " + level + " - " + Lang.LIST_REWARD + " "
+					+ reward + "\n");
+		else
+			currentString.append(name + " - " + Lang.LIST_AMOUNT + " " + level + "\n");
+
+		return currentString;
+
+	}
+
+	public void sendJsonMessage(Player player, String message, String hoover) {
+
+		String json = "{text:\"" + message + "\",hoverEvent:{action:show_text,value:[{text:\"" + hoover
+				+ "\",color:blue}]}}";
+		String v = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+		try {
+			// Parse the message
+			Object parsedMessage = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent$ChatSerializer")
+					.getMethod("a", String.class)
+					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
+			Object packetPlayOutChat = Class.forName("net.minecraft.server." + v + ".PacketPlayOutChat")
+					.getConstructor(Class.forName("net.minecraft.server." + v + ".IChatBaseComponent"))
+					.newInstance(parsedMessage);
+
+			// Drill down to the playerConnection which calls the sendPacket
+			// method
+			Object craftPlayer = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer").cast(player);
+			Object craftHandle = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer")
+					.getMethod("getHandle").invoke(craftPlayer);
+			Object playerConnection = Class.forName("net.minecraft.server." + v + ".EntityPlayer")
+					.getField("playerConnection").get(craftHandle);
+
+			// Send the message packet
+			Class.forName("net.minecraft.server." + v + ".PlayerConnection")
+					.getMethod("sendPacket", Class.forName("net.minecraft.server." + v + ".Packet"))
+					.invoke(playerConnection, packetPlayOutChat);
+		} catch (Exception ignore) {
+			ignore.printStackTrace();
+		}
 	}
 
 	/**
@@ -1341,9 +1611,11 @@ public class AdvancedAchievements extends JavaPlugin {
 		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
 				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VERSION + " " + ChatColor.GRAY
 				+ this.getDescription().getVersion());
-		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_WEBSITE + " " + ChatColor.GRAY
-				+ this.getDescription().getWebsite());
+		// sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE +
+		// icon + ChatColor.GRAY + "] "
+		// + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_WEBSITE + " " +
+		// ChatColor.GRAY
+		// + this.getDescription().getWebsite());
 		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
 				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_AUTHOR + " " + ChatColor.GRAY
 				+ this.getDescription().getAuthors().get(0));

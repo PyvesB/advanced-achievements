@@ -60,6 +60,12 @@ ExcludedWorlds: []
 # Number of players displayed on /aach top command.
 TopList: 5
 
+# Obfuscate achievements that have not yet been received in /aach list.
+ObfuscateNotReceived: true
+
+# Hide categories with no achievements received in /aach list.
+HideNotReceivedCategories: false
+
 #=============================OOO=============================#
 # III-----------------------------------------------------III #
 # |                    Database settings                    | #
