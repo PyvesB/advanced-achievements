@@ -97,25 +97,31 @@ public class AchievementRewards {
 		}
 	}
 	
+	/**
+	 * Return the type of an achievement reward.
+	 */
 	public String getRewardType(String configAchievement){
 		
 		String rewardType = "";
 		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.Money"))
-			rewardType = "money";
+			rewardType = Lang.LIST_REWARD_MONEY.toString();
 		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.Item"))
 			if(rewardType != "")
-				rewardType += ", " + "item";
+				rewardType += ", " + Lang.LIST_REWARD_ITEM;
 			else
-				rewardType = "item";
+				rewardType = Lang.LIST_REWARD_ITEM.toString();
 		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.command"))
 			if(rewardType != "")
-				rewardType += ", " + "command";
+				rewardType += ", " + Lang.LIST_REWARD_COMMAND;
 			else
-				rewardType = "command";
+				rewardType = Lang.LIST_REWARD_COMMAND.toString();
 		
 		return rewardType;
 	}
 
+	/**
+	 * Deal with rewards.
+	 */
 	public void checkConfig(Player player, String configAchievement) {
 
 		// Supports both old and new plugin syntax.

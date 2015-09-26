@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |    Advanced Achievements 2.0 configuration - Readme     | #
+# |    Advanced Achievements 2.1 configuration - Readme     | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -63,7 +63,7 @@ TopList: 5
 # Obfuscate achievements that have not yet been received in /aach list.
 ObfuscateNotReceived: true
 
-# Hide categories with no achievements received in /aach list.
+# Hide categories with no achievements yet received in /aach list.
 HideNotReceivedCategories: false
 
 #=============================OOO=============================#

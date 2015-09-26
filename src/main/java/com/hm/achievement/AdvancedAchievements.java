@@ -972,7 +972,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			try {
 				String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(achievementsTop.get(i)))
 						.getName();
-				if (sender instanceof Player && rank < topList)
+				// Name in purple if player in top list.
+				if (sender instanceof Player && rank == (i + 2) / 2)
 					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + (i + 2) / 2 + ChatColor.GRAY
 							+ "] " + ChatColor.DARK_PURPLE + playerName + " - " + achievementsTop.get(i + 1));
 				else
@@ -988,7 +989,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				try {
 					if (additionalEffects)
 						// Play special effect when in top list.
-						ParticleEffect.REDSTONE.display(0, 2, 0, 1, 1000, ((Player) sender).getLocation(), 100);
+						ParticleEffect.PORTAL.display(0, 1, 0, 0.1f, 500, ((Player) sender).getLocation(), 1);
 
 				} catch (Exception ex) {
 					this.getLogger().severe("Error while displaying additional particle effects.");
@@ -996,8 +997,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 				if (sound)
 					// Play special sound when in top list.
-					((Player) sender).getWorld().playSound(((Player) sender).getLocation(), Sound.FIREWORK_TWINKLE, 1,
-							1);
+					((Player) sender).getWorld().playSound(((Player) sender).getLocation(), Sound.FIREWORK_BLAST, 1,
+							0.6f);
 			}
 
 			int totalPlayers = db.getTotalPlayers();
@@ -1045,16 +1046,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Connections").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Connections." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Connections." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Connections." + ach + ".Name", ""),
 						ach, reward.getRewardType("Connections." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("Connections." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("Connections." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_CONNECTIONS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1064,16 +1065,16 @@ public class AdvancedAchievements extends JavaPlugin {
 			for (String ach : this.getConfig().getConfigurationSection("Places." + section).getKeys(false))
 				if (db.hasAchievement(player, this.getConfig().getString("Places." + section + "." + ach + ".Name", ""))) {
 					numberInCategory++;
-					addHooverLine(achievementsList,
+					addHoverLine(achievementsList,
 							"&f" + this.getConfig().getString("Places." + section + "." + ach + ".Name", ""), ach,
 							reward.getRewardType("Places." + section + "." + ach));
 				} else
-					addHooverLine(achievementsList,
+					addHoverLine(achievementsList,
 							"&8§o"
 									+ this.getConfig().getString("Places." + section + "." + ach + ".Name", "")
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Places." + section + "." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_PLACES + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1083,16 +1084,16 @@ public class AdvancedAchievements extends JavaPlugin {
 			for (String ach : this.getConfig().getConfigurationSection("Breaks." + section).getKeys(false))
 				if (db.hasAchievement(player, this.getConfig().getString("Breaks." + section + "." + ach + ".Name", ""))) {
 					numberInCategory++;
-					addHooverLine(achievementsList,
+					addHoverLine(achievementsList,
 							"&f" + this.getConfig().getString("Breaks." + section + "." + ach + ".Name", ""), ach,
 							reward.getRewardType("Breaks." + section + "." + ach));
 				} else
-					addHooverLine(achievementsList,
+					addHoverLine(achievementsList,
 							"&8§o"
 									+ this.getConfig().getString("Breaks." + section + "." + ach + ".Name", "")
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Breaks." + section + "." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_BREAKS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1102,16 +1103,16 @@ public class AdvancedAchievements extends JavaPlugin {
 			for (String ach : this.getConfig().getConfigurationSection("Kills." + section).getKeys(false))
 				if (db.hasAchievement(player, this.getConfig().getString("Kills." + section + "." + ach + ".Name", ""))) {
 					numberInCategory++;
-					addHooverLine(achievementsList,
+					addHoverLine(achievementsList,
 							"&f" + this.getConfig().getString("Kills." + section + "." + ach + ".Name", ""), ach,
 							reward.getRewardType("Kills." + section + "." + ach));
 				} else
-					addHooverLine(achievementsList,
+					addHoverLine(achievementsList,
 							"&8§o"
 									+ this.getConfig().getString("Kills." + section + "." + ach + ".Name", "")
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Kills." + section + "." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_KILLS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1121,16 +1122,16 @@ public class AdvancedAchievements extends JavaPlugin {
 			for (String ach : this.getConfig().getConfigurationSection("Crafts." + section).getKeys(false))
 				if (db.hasAchievement(player, this.getConfig().getString("Crafts." + section + "." + ach + ".Name", ""))) {
 					numberInCategory++;
-					addHooverLine(achievementsList,
+					addHoverLine(achievementsList,
 							"&f" + this.getConfig().getString("Crafts." + section + "." + ach + ".Name", ""), ach,
 							reward.getRewardType("Crafts." + section + "." + ach));
 				} else
-					addHooverLine(achievementsList,
+					addHoverLine(achievementsList,
 							"&8§o"
 									+ this.getConfig().getString("Crafts." + section + "." + ach + ".Name", "")
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Crafts." + section + "." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_CRAFTS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1139,16 +1140,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Deaths").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Deaths." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Deaths." + ach + ".Name", ""), ach,
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Deaths." + ach + ".Name", ""), ach,
 						reward.getRewardType("Deaths." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("Deaths." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("Deaths." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_DEATHS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1157,16 +1158,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Arrows").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Arrows." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Arrows." + ach + ".Name", ""), ach,
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Arrows." + ach + ".Name", ""), ach,
 						reward.getRewardType("Arrows." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("Arrows." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("Arrows." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ARROWS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1175,16 +1176,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Snowballs").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Snowballs." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Snowballs." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Snowballs." + ach + ".Name", ""),
 						ach, reward.getRewardType("Snowballs." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("Snowballs." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("Connections." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_SNOWBALLS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1193,13 +1194,13 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Eggs").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Eggs." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Eggs." + ach + ".Name", ""), ach,
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Eggs." + ach + ".Name", ""), ach,
 						reward.getRewardType("Eggs." + ach));
 			} else
-				addHooverLine(achievementsList, "&8§o"
+				addHoverLine(achievementsList, "&8§o"
 						+ this.getConfig().getString("Eggs." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", ""),
 						ach, reward.getRewardType("Eggs." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_EGGS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1208,13 +1209,13 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Fish").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Fish." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Fish." + ach + ".Name", ""), ach,
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Fish." + ach + ".Name", ""), ach,
 						reward.getRewardType("Fish." + ach));
 			} else
-				addHooverLine(achievementsList, "&8§o"
+				addHoverLine(achievementsList, "&8§o"
 						+ this.getConfig().getString("Fish." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", ""),
 						ach, reward.getRewardType("Fish." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_FISH + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1223,16 +1224,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("ItemBreaks").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("ItemBreaks." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("ItemBreaks." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("ItemBreaks." + ach + ".Name", ""),
 						ach, reward.getRewardType("ItemBreaks." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("ItemBreaks." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("ItemBreaks." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ITEMBREAKS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1241,16 +1242,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("EatenItems").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("EatenItems." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("EatenItems." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("EatenItems." + ach + ".Name", ""),
 						ach, reward.getRewardType("EatenItems." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("EatenItems." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("EatenItems." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_EATENITEMS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1259,13 +1260,13 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Shear").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Shear." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Shear." + ach + ".Name", ""), ach,
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Shear." + ach + ".Name", ""), ach,
 						reward.getRewardType("Shear." + ach));
 			} else
-				addHooverLine(achievementsList, "&8§o"
+				addHoverLine(achievementsList, "&8§o"
 						+ this.getConfig().getString("Shear." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", ""),
 						ach, reward.getRewardType("Shear." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_SHEAR + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1274,13 +1275,13 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Milk").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Milk." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Milk." + ach + ".Name", ""), ach,
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Milk." + ach + ".Name", ""), ach,
 						reward.getRewardType("Milk." + ach));
 			} else
-				addHooverLine(achievementsList, "&8§o"
+				addHoverLine(achievementsList, "&8§o"
 						+ this.getConfig().getString("Milk." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", ""),
 						ach, reward.getRewardType("Milk." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_MILK + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1289,16 +1290,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Trades").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Trades." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Trades." + ach + ".Name", ""), ach,
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Trades." + ach + ".Name", ""), ach,
 						reward.getRewardType("Trades." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("Trades." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("Trades." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_TRADES + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1307,16 +1308,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("AnvilsUsed").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("AnvilsUsed." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("AnvilsUsed." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("AnvilsUsed." + ach + ".Name", ""),
 						ach, reward.getRewardType("AnvilsUsed." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("AnvilsUsed." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("AnvilsUsed." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ANVILS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1325,16 +1326,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Enchantments").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Enchantments." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Enchantments." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Enchantments." + ach + ".Name", ""),
 						ach, reward.getRewardType("Enchantments." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("Enchantments." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("Enchantments." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ENCHANTMENTS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1343,13 +1344,13 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Beds").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Beds." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Beds." + ach + ".Name", ""), ach,
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Beds." + ach + ".Name", ""), ach,
 						reward.getRewardType("Beds." + ach));
 			} else
-				addHooverLine(achievementsList, "&8§o"
+				addHoverLine(achievementsList, "&8§o"
 						+ this.getConfig().getString("Beds." + ach + ".Name", "").replaceAll("&([a-f]|[0-9]){1}", ""),
 						ach, reward.getRewardType("Beds." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_BEDS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1358,16 +1359,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("MaxLevel").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("MaxLevel." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("MaxLevel." + ach + ".Name", ""),
-						ach, reward.getRewardType("MaxLevel." + ach));
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("MaxLevel." + ach + ".Name", ""), ach,
+						reward.getRewardType("MaxLevel." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("MaxLevel." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("MaxLevel." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_MAXLEVEL + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1376,17 +1377,17 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("ConsumedPotions").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("ConsumedPotions." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList,
-						"&f" + this.getConfig().getString("ConsumedPotions." + ach + ".Name", ""), ach,
+				addHoverLine(achievementsList, "&f"
+						+ this.getConfig().getString("ConsumedPotions." + ach + ".Name", ""), ach,
 						reward.getRewardType("ConsumedPotions." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("ConsumedPotions." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("ConsumedPotions." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_POTIONS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1395,16 +1396,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("PlayedTime").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("PlayedTime." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("PlayedTime." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("PlayedTime." + ach + ".Name", ""),
 						ach, reward.getRewardType("PlayedTime." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("PlayedTime." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("PlayedTime." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_PLAYEDTIME + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1413,10 +1414,10 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("DistanceFoot." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("DistanceFoot." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("DistanceFoot." + ach + ".Name", ""),
 						ach, reward.getRewardType("DistanceFoot." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("DistanceFoot." + ach + ".Name", "")
@@ -1426,10 +1427,10 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("DistancePig").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("DistancePig." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("DistancePig." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("DistancePig." + ach + ".Name", ""),
 						ach, reward.getRewardType("DistancePig." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("DistancePig." + ach + ".Name", "")
@@ -1439,11 +1440,10 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("DistanceHorse." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList,
-						"&f" + this.getConfig().getString("DistanceHorse." + ach + ".Name", ""), ach,
-						reward.getRewardType("DistanceHorse." + ach));
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("DistanceHorse." + ach + ".Name", ""),
+						ach, reward.getRewardType("DistanceHorse." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("DistanceHorse." + ach + ".Name", "")
@@ -1453,11 +1453,11 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("DistanceMinecart." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList,
+				addHoverLine(achievementsList,
 						"&f" + this.getConfig().getString("DistanceMinecart." + ach + ".Name", ""), ach,
 						reward.getRewardType("DistanceMinecart." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("DistanceMinecart." + ach + ".Name", "")
@@ -1467,16 +1467,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("DistanceBoat." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("DistanceBoat." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("DistanceBoat." + ach + ".Name", ""),
 						ach, reward.getRewardType("DistanceBoat." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("DistanceBoat." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("DistanceBoat." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_DISTANCE + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1485,16 +1485,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("ItemDrops").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("ItemDrops." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("ItemDrops." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("ItemDrops." + ach + ".Name", ""),
 						ach, reward.getRewardType("ItemDrops." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("ItemDrops." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("ItemDrops." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ITEMDROPS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1503,16 +1503,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("HoePlowings").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("HoePlowings." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("HoePlowings" + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("HoePlowings" + ach + ".Name", ""),
 						ach, reward.getRewardType("HoePlowings." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("HoePlowings." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("HoePlowings." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_HOEPLOWINGS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1521,16 +1521,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Fertilising").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Fertilising." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Fertilising." + ach + ".Name", ""),
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Fertilising." + ach + ".Name", ""),
 						ach, reward.getRewardType("Fertilising." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("Fertilising." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("Fertilising." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_FERTILISING + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 		achievementsList.setLength(0);
@@ -1539,22 +1539,25 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (String ach : this.getConfig().getConfigurationSection("Commands").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("Commands." + ach + ".Name", ""))) {
 				numberInCategory++;
-				addHooverLine(achievementsList, "&f" + this.getConfig().getString("Commands." + ach + ".Name", ""),
-						ach, reward.getRewardType("Commands." + ach));
+				addHoverLine(achievementsList, "&f" + this.getConfig().getString("Commands." + ach + ".Name", ""), ach,
+						reward.getRewardType("Commands." + ach));
 			} else
-				addHooverLine(
+				addHoverLine(
 						achievementsList,
 						"&8§o"
 								+ this.getConfig().getString("Commands." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 						reward.getRewardType("Commands." + ach));
-		if (achievementsList.length() > 0 && (numberInCategory != 0 ^ !hideNotReceivedCategories))
+		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_COMMANDS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
 
 	}
 
-	public StringBuilder addHooverLine(StringBuilder currentString, String name, String level, String reward) {
+	/**
+	 * Add an achievement line to the current hover box.
+	 */
+	public StringBuilder addHoverLine(StringBuilder currentString, String name, String level, String reward) {
 
 		if (obfuscateNotReceived)
 			name = name.replace("&8§o", "&8§k");
@@ -1569,34 +1572,48 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	}
 
-	public void sendJsonMessage(Player player, String message, String hoover) {
+	/**
+	 * Send a packet message to the server in order to display a hover. Parts of
+	 * this method were extracted from ELCHILEN0's AutoMessage plugin, under MIT
+	 * license (http://dev.bukkit.org/bukkit-plugins/automessage/). Thanks for
+	 * his help on this matter.
+	 */
+	public void sendJsonMessage(Player player, String message, String hover) {
 
-		String json = "{text:\"" + message + "\",hoverEvent:{action:show_text,value:[{text:\"" + hoover
+		// Build the json format string.
+		String json = "{text:\"" + message + "\",hoverEvent:{action:show_text,value:[{text:\"" + hover
 				+ "\",color:blue}]}}";
-		String v = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+
+		// Get the string corresponding to the server Minecraft version.
+		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+
 		try {
-			// Parse the message
-			Object parsedMessage = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent$ChatSerializer")
+			// Parse the json message.
+			Object parsedMessage = Class
+					.forName("net.minecraft.server." + version + ".IChatBaseComponent$ChatSerializer")
 					.getMethod("a", String.class)
 					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
-			Object packetPlayOutChat = Class.forName("net.minecraft.server." + v + ".PacketPlayOutChat")
-					.getConstructor(Class.forName("net.minecraft.server." + v + ".IChatBaseComponent"))
+			Object packetPlayOutChat = Class.forName("net.minecraft.server." + version + ".PacketPlayOutChat")
+					.getConstructor(Class.forName("net.minecraft.server." + version + ".IChatBaseComponent"))
 					.newInstance(parsedMessage);
 
-			// Drill down to the playerConnection which calls the sendPacket
-			// method
-			Object craftPlayer = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer").cast(player);
-			Object craftHandle = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer")
+			// Recuperate a CraftPlayer instance and its PlayerConnection
+			// instance.
+			Object craftPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer")
+					.cast(player);
+			Object craftHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer")
 					.getMethod("getHandle").invoke(craftPlayer);
-			Object playerConnection = Class.forName("net.minecraft.server." + v + ".EntityPlayer")
+			Object playerConnection = Class.forName("net.minecraft.server." + version + ".EntityPlayer")
 					.getField("playerConnection").get(craftHandle);
 
-			// Send the message packet
-			Class.forName("net.minecraft.server." + v + ".PlayerConnection")
-					.getMethod("sendPacket", Class.forName("net.minecraft.server." + v + ".Packet"))
+			// Send the message packet through the PlayerConnection.
+			Class.forName("net.minecraft.server." + version + ".PlayerConnection")
+					.getMethod("sendPacket", Class.forName("net.minecraft.server." + version + ".Packet"))
 					.invoke(playerConnection, packetPlayOutChat);
-		} catch (Exception ignore) {
-			ignore.printStackTrace();
+		} catch (Exception ex) {
+
+			this.getLogger().severe("Errors while trying to display hovers in /aach list command.");
+			ex.printStackTrace();
 		}
 	}
 
@@ -1611,11 +1628,11 @@ public class AdvancedAchievements extends JavaPlugin {
 		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
 				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VERSION + " " + ChatColor.GRAY
 				+ this.getDescription().getVersion());
-		// sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE +
-		// icon + ChatColor.GRAY + "] "
-		// + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_WEBSITE + " " +
-		// ChatColor.GRAY
-		// + this.getDescription().getWebsite());
+		 sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE +
+		 icon + ChatColor.GRAY + "] "
+		 + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_WEBSITE + " " +
+		 ChatColor.GRAY
+		 + this.getDescription().getWebsite());
 		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
 				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_AUTHOR + " " + ChatColor.GRAY
 				+ this.getDescription().getAuthors().get(0));
