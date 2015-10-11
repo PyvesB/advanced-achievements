@@ -69,7 +69,7 @@ import com.hm.achievement.runnable.AchievePlayTimeRunnable;
  * https://github.com/PyvesB/AdvancedAchievements
  * 
  * @since April 2015
- * @version 2.1
+ * @version 2.1.1
  * @author DarkPyves
  */
 
@@ -973,7 +973,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(achievementsTop.get(i)))
 						.getName();
 				// Name in purple if player in top list.
-				if (sender instanceof Player && rank == (i + 2) / 2)
+				if (sender instanceof Player && playerName.equals(((Player) sender).getName()))
 					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + (i + 2) / 2 + ChatColor.GRAY
 							+ "] " + ChatColor.DARK_PURPLE + playerName + " - " + achievementsTop.get(i + 1));
 				else
