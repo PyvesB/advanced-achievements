@@ -269,7 +269,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		Bukkit.getServer()
 				.getScheduler()
 				.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-						new SendPooledRequests(this, true), 2400, 1200);
+						new SendPooledRequests(this, true), 1200, 600);
 
 		// Schedule a repeating task to monitor played time for each player (not
 		// directly related to an event).
@@ -1184,7 +1184,7 @@ public class AdvancedAchievements extends JavaPlugin {
 						"&8§o"
 								+ this.getConfig().getString("Snowballs." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
-						reward.getRewardType("Connections." + ach));
+						reward.getRewardType("Snowballs." + ach));
 		if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
 			sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_SNOWBALLS + " " + " &7" + icon + " ",
 					achievementsList.substring(0, achievementsList.length() - 1));
@@ -1422,7 +1422,7 @@ public class AdvancedAchievements extends JavaPlugin {
 						"&8§o"
 								+ this.getConfig().getString("DistanceFoot." + ach + ".Name", "")
 										.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
-						reward.getRewardType("Connections." + ach));
+						reward.getRewardType("DistanceFoot." + ach));
 
 		for (String ach : this.getConfig().getConfigurationSection("DistancePig").getKeys(false))
 			if (db.hasAchievement(player, this.getConfig().getString("DistancePig." + ach + ".Name", ""))) {
