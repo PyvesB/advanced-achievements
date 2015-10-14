@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -902,45 +903,58 @@ public class AdvancedAchievements extends JavaPlugin {
 					.append(ChatColor.GRAY).append("]").append(ChatColor.DARK_PURPLE).append("-=-=-=-=-=-=-")
 					.toString());
 
-			sender.sendMessage((new StringBuilder())
-					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-					.append(ChatColor.DARK_PURPLE + "/aach book").append(ChatColor.GRAY)
-					.append(" - " + Lang.AACH_COMMAND_BOOK).toString());
+			sendJsonClickableMessage(
+					sender,
+					(new StringBuilder())
+							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+							.append(ChatColor.DARK_PURPLE + "/aach book").append(ChatColor.GRAY)
+							.append(" - " + Lang.AACH_COMMAND_BOOK).toString(), "/aach book");
 
-			sender.sendMessage((new StringBuilder())
-					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-					.append(ChatColor.DARK_PURPLE + "/aach stats").append(ChatColor.GRAY)
-					.append(" - " + Lang.AACH_COMMAND_STATS).toString());
+			sendJsonClickableMessage(
+					sender,
+					(new StringBuilder())
+							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+							.append(ChatColor.DARK_PURPLE + "/aach stats").append(ChatColor.GRAY)
+							.append(" - " + Lang.AACH_COMMAND_STATS).toString(), "/aach stats");
 
-			sender.sendMessage((new StringBuilder())
-					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-					.append(ChatColor.DARK_PURPLE + "/aach list").append(ChatColor.GRAY)
-					.append(" - " + Lang.AACH_COMMAND_LIST).toString());
+			sendJsonClickableMessage(
+					sender,
+					(new StringBuilder())
+							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+							.append(ChatColor.DARK_PURPLE + "/aach list").append(ChatColor.GRAY)
+							.append(" - " + Lang.AACH_COMMAND_LIST).toString(), "/aach list");
 
-			sender.sendMessage((new StringBuilder())
-					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-					.append(ChatColor.DARK_PURPLE + "/aach top").append(ChatColor.GRAY)
-					.append(" - " + Lang.AACH_COMMAND_TOP).toString());
+			sendJsonClickableMessage(
+					sender,
+					(new StringBuilder())
+							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+							.append(ChatColor.DARK_PURPLE + "/aach top").append(ChatColor.GRAY)
+							.append(" - " + Lang.AACH_COMMAND_TOP).toString(), "/aach top");
 
-			sender.sendMessage((new StringBuilder())
-					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-					.append(ChatColor.DARK_PURPLE + "/aach give §oach name§r")
-					.append(ChatColor.GRAY)
-					.append(" - "
-							+ ChatColor.translateAlternateColorCodes(
-									'&',
-									Lang.AACH_COMMAND_GIVE.toString().replace("ACH", "§oach§r&7")
-											.replace("NAME", "§oname§r&7"))).toString());
+			sendJsonClickableMessage(
+					sender,
+					(new StringBuilder())
+							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+							.append(ChatColor.DARK_PURPLE + "/aach give §oach name§r")
+							.append(ChatColor.GRAY)
+							.append(" - "
+									+ ChatColor.translateAlternateColorCodes('&', Lang.AACH_COMMAND_GIVE.toString()
+											.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7"))).toString(),
+					"/aach give ach name");
 
-			sender.sendMessage((new StringBuilder())
-					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-					.append(ChatColor.DARK_PURPLE + "/aach reload").append(ChatColor.GRAY)
-					.append(" - " + Lang.AACH_COMMAND_RELOAD).toString());
+			sendJsonClickableMessage(
+					sender,
+					(new StringBuilder())
+							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+							.append(ChatColor.DARK_PURPLE + "/aach reload").append(ChatColor.GRAY)
+							.append(" - " + Lang.AACH_COMMAND_RELOAD).toString(), "/aach reload");
 
-			sender.sendMessage((new StringBuilder())
-					.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-					.append(ChatColor.DARK_PURPLE + "/aach info").append(ChatColor.GRAY)
-					.append(" - " + Lang.AACH_COMMAND_INFO).toString());
+			sendJsonClickableMessage(
+					sender,
+					(new StringBuilder())
+							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+							.append(ChatColor.DARK_PURPLE + "/aach info").append(ChatColor.GRAY)
+							.append(" - " + Lang.AACH_COMMAND_INFO).toString(), "/aach info");
 
 			sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE)
 					.append("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-").toString());
@@ -1059,7 +1073,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Connections." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_CONNECTIONS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_CONNECTIONS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1081,7 +1095,7 @@ public class AdvancedAchievements extends JavaPlugin {
 												.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 								reward.getRewardType("Places." + section + "." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_PLACES + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_PLACES + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1103,7 +1117,7 @@ public class AdvancedAchievements extends JavaPlugin {
 												.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 								reward.getRewardType("Breaks." + section + "." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_BREAKS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_BREAKS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1125,7 +1139,7 @@ public class AdvancedAchievements extends JavaPlugin {
 												.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 								reward.getRewardType("Kills." + section + "." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_KILLS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_KILLS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1147,7 +1161,7 @@ public class AdvancedAchievements extends JavaPlugin {
 												.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 								reward.getRewardType("Crafts." + section + "." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_CRAFTS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_CRAFTS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1167,7 +1181,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Deaths." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_DEATHS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_DEATHS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1187,7 +1201,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Arrows." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ARROWS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_ARROWS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1207,7 +1221,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Snowballs." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_SNOWBALLS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_SNOWBALLS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1227,7 +1241,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Eggs." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_EGGS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_EGGS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1247,7 +1261,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Fish." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_FISH + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_FISH + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1268,7 +1282,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("ItemBreaks." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ITEMBREAKS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_ITEMBREAKS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1289,7 +1303,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("EatenItems." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_EATENITEMS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_EATENITEMS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1309,7 +1323,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Shear." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_SHEAR + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_SHEAR + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1329,7 +1343,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Milk." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_MILK + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_MILK + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1349,7 +1363,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Trades." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_TRADES + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_TRADES + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1370,7 +1384,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("AnvilsUsed." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ANVILS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_ANVILS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1391,7 +1405,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Enchantments." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ENCHANTMENTS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_ENCHANTMENTS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1411,7 +1425,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Beds." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_BEDS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_BEDS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1431,7 +1445,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("MaxLevel." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_MAXLEVEL + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_MAXLEVEL + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1452,7 +1466,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("ConsumedPotions." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_POTIONS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_POTIONS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1473,7 +1487,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("PlayedTime." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_PLAYEDTIME + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_PLAYEDTIME + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1550,7 +1564,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("DistanceBoat." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_DISTANCE + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_DISTANCE + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1570,7 +1584,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("ItemDrops." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_ITEMDROPS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_ITEMDROPS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1591,7 +1605,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("HoePlowings." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_HOEPLOWINGS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_HOEPLOWINGS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1612,7 +1626,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Fertilising." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_FERTILISING + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_FERTILISING + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 			achievementsList.setLength(0);
 			numberInCategory = 0;
@@ -1632,7 +1646,7 @@ public class AdvancedAchievements extends JavaPlugin {
 											.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
 							reward.getRewardType("Commands." + ach));
 			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonMessage(player, " &7" + icon + " " + Lang.LIST_COMMANDS + " " + " &7" + icon + " ",
+				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_COMMANDS + " " + " &7" + icon + " ",
 						achievementsList.substring(0, achievementsList.length() - 1));
 		}
 	}
@@ -1661,7 +1675,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * license (http://dev.bukkit.org/bukkit-plugins/automessage/). Thanks for
 	 * his help on this matter.
 	 */
-	public void sendJsonMessage(Player player, String message, String hover) {
+	public void sendJsonHoverMessage(Player player, String message, String hover) {
 
 		// Build the json format string.
 		String json = "{text:\"" + message + "\",hoverEvent:{action:show_text,value:[{text:\"" + hover
@@ -1671,33 +1685,67 @@ public class AdvancedAchievements extends JavaPlugin {
 		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
 
 		try {
-			// Parse the json message.
-			Object parsedMessage = Class
-					.forName("net.minecraft.server." + version + ".IChatBaseComponent$ChatSerializer")
-					.getMethod("a", String.class)
-					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
-			Object packetPlayOutChat = Class.forName("net.minecraft.server." + version + ".PacketPlayOutChat")
-					.getConstructor(Class.forName("net.minecraft.server." + version + ".IChatBaseComponent"))
-					.newInstance(parsedMessage);
-
-			// Recuperate a CraftPlayer instance and its PlayerConnection
-			// instance.
-			Object craftPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer")
-					.cast(player);
-			Object craftHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer")
-					.getMethod("getHandle").invoke(craftPlayer);
-			Object playerConnection = Class.forName("net.minecraft.server." + version + ".EntityPlayer")
-					.getField("playerConnection").get(craftHandle);
-
-			// Send the message packet through the PlayerConnection.
-			Class.forName("net.minecraft.server." + version + ".PlayerConnection")
-					.getMethod("sendPacket", Class.forName("net.minecraft.server." + version + ".Packet"))
-					.invoke(playerConnection, packetPlayOutChat);
+			sendPacket(player, json, version);
 		} catch (Exception ex) {
 
 			this.getLogger().severe("Errors while trying to display hovers in /aach list command.");
 			ex.printStackTrace();
 		}
+	}
+
+	/**
+	 * Send a packet message to the server in order to display a clickable
+	 * message. A suggestion command is then displayed in the chat. Parts of
+	 * this method were extracted from ELCHILEN0's AutoMessage plugin, under MIT
+	 * license (http://dev.bukkit.org/bukkit-plugins/automessage/). Thanks for
+	 * his help on this matter.
+	 */
+	public void sendJsonClickableMessage(CommandSender sender, String message, String command) {
+
+		// Build the json format string.
+		String json = "{text:\"" + message + "\",clickEvent:{action:suggest_command,value:\"" + command + "\"}}";
+
+		// Get the string corresponding to the server Minecraft version.
+		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+		if (sender instanceof Player)
+			try {
+				sendPacket((Player) sender, json, version);
+			} catch (Exception ex) {
+
+				this.getLogger()
+						.severe("Errors while trying to display clickable in /aach list command. Displaying standard message instead.");
+				sender.sendMessage(message);
+			}
+		else
+			sender.sendMessage(message);
+	}
+
+	/**
+	 * Send the packet.
+	 */
+	public void sendPacket(Player player, String json, String version) throws IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, ClassNotFoundException, InstantiationException,
+			NoSuchFieldException {
+
+		// Parse the json message.
+		Object parsedMessage = Class.forName("net.minecraft.server." + version + ".IChatBaseComponent$ChatSerializer")
+				.getMethod("a", String.class).invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
+		Object packetPlayOutChat = Class.forName("net.minecraft.server." + version + ".PacketPlayOutChat")
+				.getConstructor(Class.forName("net.minecraft.server." + version + ".IChatBaseComponent"))
+				.newInstance(parsedMessage);
+
+		// Recuperate a CraftPlayer instance and its PlayerConnection
+		// instance.
+		Object craftPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").cast(player);
+		Object craftHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer")
+				.getMethod("getHandle").invoke(craftPlayer);
+		Object playerConnection = Class.forName("net.minecraft.server." + version + ".EntityPlayer")
+				.getField("playerConnection").get(craftHandle);
+
+		// Send the message packet through the PlayerConnection.
+		Class.forName("net.minecraft.server." + version + ".PlayerConnection")
+				.getMethod("sendPacket", Class.forName("net.minecraft.server." + version + ".Packet"))
+				.invoke(playerConnection, packetPlayOutChat);
 	}
 
 	/**
