@@ -4,14 +4,14 @@
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
-# You can use Minecraft chat colours in messages and names, but include ' ' around the text.
+# You can use Minecraft chat colours in messages and names, but include ' ' around the whole text.
 # If you want to use a ' in a text, write two ' instead, and include additional ' ' around the whole text.
-# In command rewards, PLAYER designates the name of the player who just got the achievement.
+# In command rewards, PLAYER designates the name of the player who got the achievement.
 # Only spaces, no tabs. Don't forget the indents, plugin won't work otherwise! 
 # To check your file, use: yaml-online-parser.appspot.com
 # Available mobs for the Kills section: hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
 # Available items for rewards/Crafts/Places/Breaks: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
-# Original file: dev.bukkit.org/bukkit-plugins/advanced-achievements/pages/configuration/
+# Default file: dev.bukkit.org/bukkit-plugins/advanced-achievements/pages/configuration/
 
 #=============================O=O=============================#
 # II-------------------------------------------------------II #

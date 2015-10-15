@@ -2,8 +2,6 @@ package com.hm.achievement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Logger;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -82,8 +80,7 @@ public class AchievementBookGiver {
 					pages.add(currentAchievement);
 					i = i + 3;
 				} catch (Exception e) {
-					Logger log = plugin.getLogger();
-					log.severe("Error while creating book pages of book 1.");
+					plugin.getLogger().severe("Error while creating book pages of book 1.");
 				}
 
 			}
@@ -113,8 +110,7 @@ public class AchievementBookGiver {
 						pages2.add(currentAchievement);
 						i = i + 3;
 					} catch (Exception e) {
-						Logger log = plugin.getLogger();
-						log.severe("Error while creating book pages of book 2.");
+						plugin.getLogger().severe("Error while creating book pages of book 2.");
 					}
 
 				}
@@ -144,8 +140,7 @@ public class AchievementBookGiver {
 						pages3.add(currentAchievement);
 						i = i + 3;
 					} catch (Exception e) {
-						Logger log = plugin.getLogger();
-						log.severe("Error while creating book pages of book 3.");
+						plugin.getLogger().severe("Error while creating book pages of book 3.");
 					}
 
 				}
@@ -175,8 +170,7 @@ public class AchievementBookGiver {
 						pages4.add(currentAchievement);
 						i = i + 3;
 					} catch (Exception e) {
-						Logger log = plugin.getLogger();
-						log.severe("Error while creating book pages of book 4.");
+						plugin.getLogger().severe("Error while creating book pages of book 4.");
 					}
 
 				}

@@ -134,9 +134,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private boolean successfulLoad;
 	private boolean additionalEffects;
 	private String fireworkStyle;
-
 	private boolean obfuscateNotReceived;
-
 	private boolean hideNotReceivedCategories;
 
 	/**
@@ -1051,7 +1049,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	/**
 	 * Display name of received achievements and name of missing achievements
-	 * (goes through the entire config file).
+	 * (goes through the entire config file). Does not display category is
+	 * language file string is empty.
 	 */
 	public void getList(Player player) {
 
@@ -1688,7 +1687,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			sendPacket(player, json, version);
 		} catch (Exception ex) {
 
-			this.getLogger().severe("Errors while trying to display hovers in /aach list command.");
+			this.getLogger()
+					.severe("Errors while trying to display hovers in /aach list command. Is your server up-to-date with latest Spigot builds?");
 			ex.printStackTrace();
 		}
 	}
