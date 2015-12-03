@@ -836,7 +836,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			if (args[0].equalsIgnoreCase("book") && sender.hasPermission("achievement.book")
 					&& sender instanceof Player) {
 
-				achievementBookGiver.giveBook(((Player) sender), ((Player) sender).getName());
+				achievementBookGiver.giveBook(((Player) sender));
 
 			} else if (args[0].equalsIgnoreCase("reload")) {
 
