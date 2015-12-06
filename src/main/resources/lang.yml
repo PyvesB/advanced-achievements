@@ -33,7 +33,7 @@ aach-command-book: "Receive your achievements book."
 aach-command-stats: "Amount of achievements you have received."
 aach-command-list: "Display received and missing achievements."
 aach-command-top: "Display personal and global rankings."
-aach-command-give: "Give the achievement ACH to the player NAME."
+aach-command-give: "Give the achievement ACH to the &7player NAME."
 aach-command-reload: "Reload the plugin's configuration."
 aach-command-info: "Display various information about the plugin."
 

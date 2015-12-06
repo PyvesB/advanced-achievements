@@ -32,21 +32,19 @@ public class AchievementDisplay {
 		name = ChatColor.translateAlternateColorCodes('&', name);
 		msg = ChatColor.translateAlternateColorCodes('&', msg);
 
-		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
-				+ Lang.ACHIVEMENT_NEW + " " + ChatColor.WHITE + name);
+		player.sendMessage(plugin.getChatHeader() + Lang.ACHIVEMENT_NEW + " " + ChatColor.WHITE + name);
 		if (plugin.isChatMessage()) {
 			for (Player p : plugin.getServer().getOnlinePlayers()) {
 				if (!p.getName().equals(player.getName())) {
-					p.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY
-							+ "] " + Lang.ACHIEVEMENT_RECEIVED.toString().replace("PLAYER", player.getName()) + " "
+					p.sendMessage(plugin.getChatHeader()
+							+ Lang.ACHIEVEMENT_RECEIVED.toString().replace("PLAYER", player.getName()) + " "
 							+ ChatColor.WHITE + name);
 
 				}
 			}
 		}
 
-		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
-				+ ChatColor.WHITE + msg);
+		player.sendMessage(plugin.getChatHeader() + ChatColor.WHITE + msg);
 
 		if (plugin.isFirework()) {
 

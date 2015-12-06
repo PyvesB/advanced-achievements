@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -38,8 +37,7 @@ public class AchievementCommandGiver implements Listener {
 		// If player not found or is offline.
 		if (player == null) {
 
-			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
-					+ Lang.PLAYER_OFFLINE.toString().replaceAll("PLAYER", args[2]));
+			sender.sendMessage(plugin.getChatHeader() + Lang.PLAYER_OFFLINE.toString().replaceAll("PLAYER", args[2]));
 
 			return;
 		}
@@ -48,8 +46,8 @@ public class AchievementCommandGiver implements Listener {
 			if (!plugin.isMultiCommand()
 					&& plugin.getDb().hasAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"))) {
 
-				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY
-						+ "] " + Lang.ACHIEVEMENT_ALREADY_RECEIVED.toString().replace("PLAYER", args[2]));
+				sender.sendMessage(plugin.getChatHeader()
+						+ Lang.ACHIEVEMENT_ALREADY_RECEIVED.toString().replace("PLAYER", args[2]));
 				return;
 			}
 
@@ -61,11 +59,9 @@ public class AchievementCommandGiver implements Listener {
 
 			plugin.getReward().checkConfig(player, configAchievement);
 
-			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
-					+ Lang.ACHIEVEMENT_GIVEN);
+			sender.sendMessage(plugin.getChatHeader() + Lang.ACHIEVEMENT_GIVEN);
 		} else {
-			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
-					+ Lang.ACHIEVEMENT_NOT_FOUND.toString().replace("PLAYER", args[2]));
+			sender.sendMessage(plugin.getChatHeader() + Lang.ACHIEVEMENT_NOT_FOUND.toString().replace("PLAYER", args[2]));
 		}
 	}
 }

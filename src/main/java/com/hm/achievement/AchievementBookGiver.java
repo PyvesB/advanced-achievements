@@ -79,11 +79,10 @@ public class AchievementBookGiver {
 				while (i < achievements.size() && i < 600)
 					i = fillBook(achievements, player, i, 4);
 
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
-					+ Lang.BOOK_RECEIVED);
+			player.sendMessage(plugin.getChatHeader() + Lang.BOOK_RECEIVED);
 		} else {
 			// The player has already received a book recently.
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
+			player.sendMessage(plugin.getChatHeader()
 					+ Lang.BOOK_DELAY.toString().replace("TIME", "" + plugin.getBookTime() / 1000));
 		}
 	}

@@ -120,6 +120,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private boolean sound;
 	private boolean chatNotify;
 	private String icon;
+	private String chatHeader;
 	private int totalAchievements;
 	private String bookSeparator;
 	private ArrayList<String> achievementsTop;
@@ -500,6 +501,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		sound = this.getConfig().getBoolean("Sound", true);
 		databaseVersion = this.getConfig().getInt("DatabaseVersion", 1);
 		icon = this.getConfig().getString("Icon", "\u2618");
+		chatHeader = ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ";
 		chatNotify = this.getConfig().getBoolean("ChatNotify", false);
 		bookSeparator = this.getConfig().getString("BookSeparator", "");
 		restrictCreative = this.getConfig().getBoolean("RestrictCreative", false);
@@ -845,16 +847,13 @@ public class AdvancedAchievements extends JavaPlugin {
 					this.reloadConfig();
 					configurationLoad();
 					if (successfulLoad)
-						sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-								+ Lang.CONFIGURATION_SUCCESSFULLY_RELOADED);
+						sender.sendMessage(chatHeader + Lang.CONFIGURATION_SUCCESSFULLY_RELOADED);
 					else
-						sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-								+ Lang.CONFIGURATION_RELOAD_FAILED);
+						sender.sendMessage(chatHeader + Lang.CONFIGURATION_RELOAD_FAILED);
 
 				} else {
 
-					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-							+ Lang.NO_PERMS);
+					sender.sendMessage(chatHeader + Lang.NO_PERMS);
 
 				}
 			} else if (args[0].equalsIgnoreCase("stats") && sender instanceof Player) {
@@ -867,8 +866,7 @@ public class AdvancedAchievements extends JavaPlugin {
 					getList((Player) sender);
 				else {
 
-					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-							+ Lang.NO_PERMS);
+					sender.sendMessage(chatHeader + Lang.NO_PERMS);
 
 				}
 
@@ -889,8 +887,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			} else {
 
-				sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-						+ Lang.NO_PERMS);
+				sender.sendMessage(chatHeader + Lang.NO_PERMS);
 
 			}
 		} else if (cmd.getName().equalsIgnoreCase("aach") || (args.length == 1) && !args[0].equalsIgnoreCase("help")) {
@@ -903,36 +900,28 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			sendJsonClickableMessage(
 					sender,
-					(new StringBuilder())
-							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-							.append(ChatColor.DARK_PURPLE + "/aach book").append(ChatColor.GRAY)
-							.append(" - " + Lang.AACH_COMMAND_BOOK).toString(), "/aach book");
+					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach book")
+							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_BOOK).toString(), "/aach book");
+
+			sendJsonClickableMessage(
+					sender,
+					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach stats")
+							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_STATS).toString(), "/aach stats");
+
+			sendJsonClickableMessage(
+					sender,
+					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach list")
+							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_LIST).toString(), "/aach list");
+
+			sendJsonClickableMessage(
+					sender,
+					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach top")
+							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_TOP).toString(), "/aach top");
 
 			sendJsonClickableMessage(
 					sender,
 					(new StringBuilder())
-							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-							.append(ChatColor.DARK_PURPLE + "/aach stats").append(ChatColor.GRAY)
-							.append(" - " + Lang.AACH_COMMAND_STATS).toString(), "/aach stats");
-
-			sendJsonClickableMessage(
-					sender,
-					(new StringBuilder())
-							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-							.append(ChatColor.DARK_PURPLE + "/aach list").append(ChatColor.GRAY)
-							.append(" - " + Lang.AACH_COMMAND_LIST).toString(), "/aach list");
-
-			sendJsonClickableMessage(
-					sender,
-					(new StringBuilder())
-							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-							.append(ChatColor.DARK_PURPLE + "/aach top").append(ChatColor.GRAY)
-							.append(" - " + Lang.AACH_COMMAND_TOP).toString(), "/aach top");
-
-			sendJsonClickableMessage(
-					sender,
-					(new StringBuilder())
-							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
+							.append(chatHeader)
 							.append(ChatColor.DARK_PURPLE + "/aach give §oach name§r")
 							.append(ChatColor.GRAY)
 							.append(" - "
@@ -942,17 +931,13 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			sendJsonClickableMessage(
 					sender,
-					(new StringBuilder())
-							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-							.append(ChatColor.DARK_PURPLE + "/aach reload").append(ChatColor.GRAY)
-							.append(" - " + Lang.AACH_COMMAND_RELOAD).toString(), "/aach reload");
+					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach reload")
+							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_RELOAD).toString(), "/aach reload");
 
 			sendJsonClickableMessage(
 					sender,
-					(new StringBuilder())
-							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ")
-							.append(ChatColor.DARK_PURPLE + "/aach info").append(ChatColor.GRAY)
-							.append(" - " + Lang.AACH_COMMAND_INFO).toString(), "/aach info");
+					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach info")
+							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_INFO).toString(), "/aach info");
 
 			sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE)
 					.append("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-").toString());
@@ -977,8 +962,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			lastTopTime = System.currentTimeMillis();
 		}
 
-		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-				+ Lang.TOP_ACHIEVEMENT);
+		sender.sendMessage(chatHeader + Lang.TOP_ACHIEVEMENT);
 
 		for (int i = 0; i < achievementsTop.size(); i += 2) {
 			try {
@@ -1014,9 +998,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			}
 
 			int totalPlayers = db.getTotalPlayers();
-			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-					+ Lang.PLAYER_RANK + " " + ChatColor.DARK_PURPLE + rank + ChatColor.GRAY + "/"
-					+ ChatColor.DARK_PURPLE + totalPlayers);
+			sender.sendMessage(chatHeader + Lang.PLAYER_RANK + " " + ChatColor.DARK_PURPLE + rank + ChatColor.GRAY
+					+ "/" + ChatColor.DARK_PURPLE + totalPlayers);
 		}
 	}
 
@@ -1029,9 +1012,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		int achievements = db.countAchievements(player);
 
 		// Display number of achievements received and total achievements.
-		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-				+ Lang.NUMBER_ACHIEVEMENTS + " " + ChatColor.DARK_PURPLE + achievements + ChatColor.GRAY + "/"
-				+ ChatColor.DARK_PURPLE + totalAchievements);
+		player.sendMessage(chatHeader + Lang.NUMBER_ACHIEVEMENTS + " " + ChatColor.DARK_PURPLE + achievements
+				+ ChatColor.GRAY + "/" + ChatColor.DARK_PURPLE + totalAchievements);
 
 		// Display progress bar.
 		String barDisplay = "";
@@ -1042,8 +1024,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				barDisplay = barDisplay + "&8|";
 			}
 		}
-		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] " + "["
-				+ ChatColor.translateAlternateColorCodes('&', barDisplay) + ChatColor.GRAY + "]");
+		player.sendMessage(chatHeader + "[" + ChatColor.translateAlternateColorCodes('&', barDisplay) + ChatColor.GRAY
+				+ "]");
 
 	}
 
@@ -1713,7 +1695,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			} catch (Exception ex) {
 
 				this.getLogger()
-						.severe("Errors while trying to display clickable in /aach list command. Displaying standard message instead.");
+						.severe("Errors while trying to display clickable in /aach help command. Displaying standard message instead.");
 				sender.sendMessage(message);
 			}
 		else
@@ -1753,33 +1735,28 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	private void getInfo(CommandSender sender) {
 
-		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_NAME + " " + ChatColor.GRAY
+		sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_NAME + " " + ChatColor.GRAY
 				+ this.getDescription().getName());
-		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VERSION + " " + ChatColor.GRAY
+		sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VERSION + " " + ChatColor.GRAY
 				+ this.getDescription().getVersion());
-		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_WEBSITE + " " + ChatColor.GRAY
+		sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_WEBSITE + " " + ChatColor.GRAY
 				+ this.getDescription().getWebsite());
-		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_AUTHOR + " " + ChatColor.GRAY
+		sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_AUTHOR + " " + ChatColor.GRAY
 				+ this.getDescription().getAuthors().get(0));
-		sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-				+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DESCRIPTION + " " + ChatColor.GRAY
+		sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DESCRIPTION + " " + ChatColor.GRAY
 				+ Lang.VERSION_COMMAND_DESCRIPTION_DETAILS);
 		if (setUpEconomy())
-			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-					+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VAULT + " " + ChatColor.GRAY + "YES");
+			sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VAULT + " " + ChatColor.GRAY
+					+ "YES");
 		else
-			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-					+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VAULT + " " + ChatColor.GRAY + "NO");
+			sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VAULT + " " + ChatColor.GRAY
+					+ "NO");
 		if (this.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
-			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-					+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DATABASE + " " + ChatColor.GRAY + "MySQL");
+			sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DATABASE + " "
+					+ ChatColor.GRAY + "MySQL");
 		else
-			sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] "
-					+ ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DATABASE + " " + ChatColor.GRAY + "SQLite");
+			sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DATABASE + " "
+					+ ChatColor.GRAY + "SQLite");
 
 	}
 
@@ -1839,9 +1816,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		this.saveConfig();
 	}
 
-	public String getIcon() {
+	public String getChatHeader() {
 
-		return icon;
+		return chatHeader;
 	}
 
 	public boolean isChatMessage() {

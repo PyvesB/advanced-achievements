@@ -49,14 +49,14 @@ public class AchievementRewards {
 
 		if (plugin.setUpEconomy())
 			try {
-				player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY
-						+ "] " + Lang.ITEM_REWARD_RECEIVED + " " + Items.itemByStack(item).getName());
+				player.sendMessage(plugin.getChatHeader() + Lang.ITEM_REWARD_RECEIVED + " "
+						+ Items.itemByStack(item).getName());
 				return item;
 			} catch (Exception ex) {
 				// Do nothing, another message will be displayed just bellow.
 			}
-		player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
-				+ Lang.ITEM_REWARD_RECEIVED + " " + item.getType().toString().replace("_", " ").toLowerCase());
+		player.sendMessage(plugin.getChatHeader() + Lang.ITEM_REWARD_RECEIVED + " "
+				+ item.getType().toString().replace("_", " ").toLowerCase());
 		return item;
 	}
 
@@ -73,49 +73,39 @@ public class AchievementRewards {
 				plugin.getEconomy().depositPlayer(player, amtd);
 
 			if (amount > 1)
-				player.sendMessage(ChatColor.GRAY
-						+ "["
-						+ ChatColor.DARK_PURPLE
-						+ plugin.getIcon()
-						+ ChatColor.GRAY
-						+ "] "
+				player.sendMessage(plugin.getChatHeader()
 						+ ChatColor.translateAlternateColorCodes(
 								'&',
 								Lang.MONEY_REWARD_RECEIVED.toString().replace("AMOUNT",
 										"&5" + amtd + " " + plugin.getEconomy().currencyNamePlural())));
 			else
-				player.sendMessage(ChatColor.GRAY
-						+ "["
-						+ ChatColor.DARK_PURPLE
-						+ plugin.getIcon()
-						+ ChatColor.GRAY
-						+ "] "
+				player.sendMessage(plugin.getChatHeader()
 						+ ChatColor.translateAlternateColorCodes(
 								'&',
 								Lang.MONEY_REWARD_RECEIVED.toString().replace("AMOUNT",
 										"&5" + amtd + " " + plugin.getEconomy().currencyNameSingular())));
 		}
 	}
-	
+
 	/**
 	 * Return the type of an achievement reward.
 	 */
-	public String getRewardType(String configAchievement){
-		
+	public String getRewardType(String configAchievement) {
+
 		String rewardType = "";
 		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.Money"))
 			rewardType = Lang.LIST_REWARD_MONEY.toString();
 		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.Item"))
-			if(rewardType != "")
+			if (rewardType != "")
 				rewardType += ", " + Lang.LIST_REWARD_ITEM;
 			else
 				rewardType = Lang.LIST_REWARD_ITEM.toString();
 		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.command"))
-			if(rewardType != "")
+			if (rewardType != "")
 				rewardType += ", " + Lang.LIST_REWARD_COMMAND;
 			else
 				rewardType = Lang.LIST_REWARD_COMMAND.toString();
-		
+
 		return rewardType;
 	}
 
@@ -160,8 +150,7 @@ public class AchievementRewards {
 			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
 			if (!plugin.isRewardCommandNotif() || Lang.COMMAND_REWARD.toString().equals(""))
 				return;
-			player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY + "] "
-					+ Lang.COMMAND_REWARD);
+			player.sendMessage(plugin.getChatHeader() + Lang.COMMAND_REWARD);
 
 		}
 

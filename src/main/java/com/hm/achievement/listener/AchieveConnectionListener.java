@@ -33,8 +33,7 @@ public class AchieveConnectionListener implements Listener {
 		if (event.getPlayer().isOp() && plugin.isUpdateNeeded()) {
 			event.getPlayer().sendMessage(
 					(new StringBuilder())
-							.append(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + plugin.getIcon() + ChatColor.GRAY
-									+ "] ")
+							.append(plugin.getChatHeader())
 							.append("Advanced Achievements, new version available: v"
 									+ plugin.getUpdateChecker().getVersion() + " Download at: ").toString());
 			event.getPlayer()
