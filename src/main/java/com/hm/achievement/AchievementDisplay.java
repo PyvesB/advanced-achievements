@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 import com.hm.achievement.language.Lang;
+import com.hm.achievement.particle.PacketSender;
 
 public class AchievementDisplay {
 
@@ -17,6 +18,7 @@ public class AchievementDisplay {
 	private String fireworkStyle;
 	private boolean firework;
 	private boolean chatNotify;
+	private boolean titleScreen;
 
 	public AchievementDisplay(AdvancedAchievements achievement) {
 
@@ -24,6 +26,7 @@ public class AchievementDisplay {
 		fireworkStyle = plugin.getConfig().getString("FireworkStyle", "BALL_LARGE");
 		firework = plugin.getConfig().getBoolean("Firework", true);
 		chatNotify = plugin.getConfig().getBoolean("ChatNotify", false);
+		titleScreen = plugin.getConfig().getBoolean("TitleScreen", true);
 	}
 
 	/**
@@ -75,6 +78,16 @@ public class AchievementDisplay {
 			firework.setVelocity(player.getLocation().getDirection().multiply(0));
 			firework.setFireworkMeta(fireworkMeta);
 
+		}
+		if (titleScreen) {
+			try {
+				PacketSender.sendTitlePacket(player, "{text:\"" + name + "\"}", "{text:\"" + msg + "\"}");
+			} catch (Exception ex) {
+
+				plugin.getLogger().severe(
+						"Errors while trying to display achievement title. Is your server up-to-date ?");
+				ex.printStackTrace();
+			}
 		}
 	}
 

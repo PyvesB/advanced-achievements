@@ -135,11 +135,11 @@ public class ListCommand {
 				+ "\",color:blue}]}}";
 
 		try {
-			PacketSender.sendPacket(player, json);
+			PacketSender.sendChatPacket(player, json);
 		} catch (Exception ex) {
 
 			plugin.getLogger()
-					.severe("Errors while trying to display hovers in /aach list command. Is your server up-to-date with latest Spigot builds?");
+					.severe("Errors while trying to display hovers in /aach list command. Is your server up-to-date?");
 			ex.printStackTrace();
 		}
 	}

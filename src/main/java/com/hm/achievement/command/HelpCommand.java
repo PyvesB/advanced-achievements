@@ -78,7 +78,7 @@ public class HelpCommand {
 		// Get the string corresponding to the server Minecraft version.
 		if (sender instanceof Player)
 			try {
-				PacketSender.sendPacket((Player) sender, json);
+				PacketSender.sendChatPacket((Player) sender, json);
 			} catch (Exception ex) {
 
 				plugin.getLogger()

@@ -412,6 +412,12 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.saveConfig();
 		}
 
+		// Added in version 2.2:
+		if (!this.getConfig().getKeys(false).contains("TitleScreen")) {
+			this.getConfig().set("TitleScreen", true);
+			this.saveConfig();
+		}
+
 		// End of configuration updates.
 
 		try {
@@ -681,8 +687,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				this.getDb().updateAndGetDistance(player,
 						AchieveDistanceRunnable.getAchievementDistancesFoot().get(player), "distancefoot");
 
-				this.getDb().updateAndGetDistance(player, AchieveDistanceRunnable.getAchievementDistancesPig().get(player),
-						"distancepig");
+				this.getDb().updateAndGetDistance(player,
+						AchieveDistanceRunnable.getAchievementDistancesPig().get(player), "distancepig");
 
 				this.getDb().updateAndGetDistance(player,
 						AchieveDistanceRunnable.getAchievementDistancesHorse().get(player), "distancehorse");
