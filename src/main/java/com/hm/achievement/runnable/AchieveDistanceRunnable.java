@@ -42,19 +42,19 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		achievementsFoot = new ArrayList<Integer>();
 		for (String distance : plugin.getConfig().getConfigurationSection("DistanceFoot").getKeys(false))
-			achievementsFoot.add(Integer.valueOf(distance));
+			achievementsFoot.add(Integer.parseInt(distance) * Integer.parseInt(distance));
 		achievementsPig = new ArrayList<Integer>();
 		for (String distance : plugin.getConfig().getConfigurationSection("DistancePig").getKeys(false))
-			achievementsPig.add(Integer.valueOf(distance));
+			achievementsPig.add(Integer.parseInt(distance) * Integer.parseInt(distance));
 		achievementsHorse = new ArrayList<Integer>();
 		for (String distance : plugin.getConfig().getConfigurationSection("DistanceHorse").getKeys(false))
-			achievementsHorse.add(Integer.valueOf(distance));
+			achievementsHorse.add(Integer.parseInt(distance) * Integer.parseInt(distance));
 		achievementsMinecart = new ArrayList<Integer>();
 		for (String distance : plugin.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false))
-			achievementsMinecart.add(Integer.valueOf(distance));
+			achievementsMinecart.add(Integer.parseInt(distance) * Integer.parseInt(distance));
 		achievementsBoat = new ArrayList<Integer>();
 		for (String distance : plugin.getConfig().getConfigurationSection("DistanceBoat").getKeys(false))
-			achievementsBoat.add(Integer.valueOf(distance));
+			achievementsBoat.add(Integer.parseInt(distance) * Integer.parseInt(distance));
 	}
 
 	public void run() {
@@ -68,25 +68,25 @@ public class AchieveDistanceRunnable implements Runnable {
 	public void refreshDistance(Player player) {
 
 		/**
-		 * Update distances and store them into server's memory until player disconnects.
+		 * Update distances and store them into server's memory until player
+		 * disconnects.
 		 */
 		if (!achievementDistancesFoot.containsKey(player)) {
-			achievementDistancesBoat.put(player, plugin.getDb().updateAndGetDistance(player, (long) 0, "distanceboat"));
-			achievementDistancesMinecart.put(player,
-					plugin.getDb().updateAndGetDistance(player, (long) 0, "distanceminecart"));
-			achievementDistancesPig.put(player, plugin.getDb().updateAndGetDistance(player, (long) 0, "distancepig"));
-			achievementDistancesHorse.put(player, plugin.getDb().updateAndGetDistance(player, (long) 0, "distancehorse"));
-			achievementDistancesFoot.put(player, plugin.getDb().updateAndGetDistance(player, (long) 0, "distancefoot"));
+			achievementDistancesBoat.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distanceboat"));
+			achievementDistancesMinecart
+					.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distanceminecart"));
+			achievementDistancesPig.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancepig"));
+			achievementDistancesHorse.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancehorse"));
+			achievementDistancesFoot.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancefoot"));
 
 			AchieveDistanceRunnable.getAchievementLocations().put(player, player.getLocation());
 		} else {
 
 			if (player.isInsideVehicle()) {
 				if (player.getVehicle() instanceof Horse) {
-					achievementDistancesHorse.put(
-							player,
-							(long) (achievementDistancesHorse.get(player) + achievementLocations.get(player).distance(
-									player.getLocation())));
+					achievementDistancesHorse.put(player,
+							(long) (achievementDistancesHorse.get(player) + achievementLocations.get(player)
+									.distanceSquared(player.getLocation())));
 
 					for (int achievementDistance : achievementsHorse) {
 						if (achievementDistancesHorse.get(player) > achievementDistance
@@ -97,10 +97,9 @@ public class AchieveDistanceRunnable implements Runnable {
 
 					}
 				} else if (player.getVehicle() instanceof Pig) {
-					achievementDistancesPig.put(
-							player,
-							(long) (achievementDistancesPig.get(player) + achievementLocations.get(player).distance(
-									player.getLocation())));
+					achievementDistancesPig.put(player,
+							(long) (achievementDistancesPig.get(player) + achievementLocations.get(player)
+									.distanceSquared(player.getLocation())));
 
 					for (int achievementDistance : achievementsPig) {
 						if (achievementDistancesPig.get(player) > achievementDistance
@@ -112,7 +111,7 @@ public class AchieveDistanceRunnable implements Runnable {
 				} else if (player.getVehicle() instanceof Minecart) {
 					achievementDistancesMinecart.put(player,
 							(long) (achievementDistancesMinecart.get(player) + achievementLocations.get(player)
-									.distance(player.getLocation())));
+									.distanceSquared(player.getLocation())));
 
 					for (int achievementDistance : achievementsMinecart) {
 						if (achievementDistancesMinecart.get(player) > achievementDistance
@@ -124,10 +123,9 @@ public class AchieveDistanceRunnable implements Runnable {
 							awardDistanceAchievement(player, achievementDistance, "DistanceMinecart.");
 					}
 				} else if (player.getVehicle() instanceof Boat) {
-					achievementDistancesBoat.put(
-							player,
-							(long) (achievementDistancesBoat.get(player) + achievementLocations.get(player).distance(
-									player.getLocation())));
+					achievementDistancesBoat.put(player,
+							(long) (achievementDistancesBoat.get(player) + achievementLocations.get(player)
+									.distanceSquared(player.getLocation())));
 
 					for (int achievementDistance : achievementsBoat) {
 						if (achievementDistancesBoat.get(player) > achievementDistance
@@ -138,10 +136,9 @@ public class AchieveDistanceRunnable implements Runnable {
 					}
 				}
 			} else {
-				achievementDistancesFoot.put(
-						player,
-						(long) (achievementDistancesFoot.get(player) + achievementLocations.get(player).distance(
-								player.getLocation())));
+				achievementDistancesFoot.put(player,
+						(long) (achievementDistancesFoot.get(player) + achievementLocations.get(player)
+								.distanceSquared(player.getLocation())));
 
 				for (int achievementDistance : achievementsFoot) {
 					if (achievementDistancesFoot.get(player) > achievementDistance

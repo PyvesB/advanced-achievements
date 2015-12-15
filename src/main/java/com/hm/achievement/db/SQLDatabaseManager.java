@@ -700,22 +700,24 @@ public class SQLDatabaseManager {
 	/**
 	 * Update and return player's distance for a specific distance type.
 	 */
-	public Long updateAndGetDistance(Player player, Long distance, String type) {
+	public Long updateAndGetDistance(Player player, double squarredDistance, String type) {
 
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			Long newDistance = (long) 0;
-			if (distance == 0) {
+			if (squarredDistance == 0) {
 				ResultSet rs = st.executeQuery("SELECT " + type + " from `" + type + "` WHERE playername = '"
 						+ player.getUniqueId() + "'");
 				while (rs.next()) {
 					newDistance = rs.getLong(type);
 				}
 				rs.close();
-			} else if (distance != 0)
+			} else if (squarredDistance != 0) {
+				long distance = (long) Math.sqrt(squarredDistance);
 				st.execute("replace into `" + type + "` (playername, " + type + ") VALUES ('" + player.getUniqueId()
 						+ "', " + distance + ")");
+			}
 			st.close();
 			conn.close();
 			return newDistance;
