@@ -55,6 +55,7 @@ import com.hm.achievement.listener.AchieveWorldTPListener;
 import com.hm.achievement.listener.AchieveXPListener;
 import com.hm.achievement.metrics.MetricsLite;
 import com.hm.achievement.particle.ParticleEffect;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 
@@ -1122,11 +1123,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		String json = "{text:\"" + message + "\",hoverEvent:{action:show_text,value:[{text:\"" + hover
 				+ "\",color:blue}]}}";
 
-		// Get the string corresponding to the server Minecraft version.
-		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-
 		try {
-			sendPacket(player, json, version);
+			sendPacket(player, json);
 		} catch (Exception ex) {
 
 			this.getLogger()
@@ -1148,10 +1146,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		String json = "{text:\"" + message + "\",clickEvent:{action:suggest_command,value:\"" + command + "\"}}";
 
 		// Get the string corresponding to the server Minecraft version.
-		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
 		if (sender instanceof Player)
 			try {
-				sendPacket((Player) sender, json, version);
+				sendPacket((Player) sender, json);
 			} catch (Exception ex) {
 
 				this.getLogger()
@@ -1165,28 +1162,36 @@ public class AdvancedAchievements extends JavaPlugin {
 	/**
 	 * Send the packet.
 	 */
-	public void sendPacket(Player player, String json, String version) throws IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException, ClassNotFoundException, InstantiationException,
-			NoSuchFieldException {
+	public void sendPacket(Player player, String json) throws IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, ClassNotFoundException, InstantiationException, NoSuchFieldException {
 
-		// Parse the json message.
-		Object parsedMessage = Class.forName("net.minecraft.server." + version + ".IChatBaseComponent$ChatSerializer")
-				.getMethod("a", String.class).invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
-		Object packetPlayOutChat = Class.forName("net.minecraft.server." + version + ".PacketPlayOutChat")
-				.getConstructor(Class.forName("net.minecraft.server." + version + ".IChatBaseComponent"))
-				.newInstance(parsedMessage);
-
-		// Recuperate a CraftPlayer instance and its PlayerConnection
+		// Retrieve a CraftPlayer instance and its PlayerConnection
 		// instance.
-		Object craftPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").cast(player);
-		Object craftHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer")
-				.getMethod("getHandle").invoke(craftPlayer);
-		Object playerConnection = Class.forName("net.minecraft.server." + version + ".EntityPlayer")
+		Object craftPlayer = Class.forName(PackageType.CRAFTBUKKIT + ".entity.CraftPlayer").cast(player);
+		Object craftHandle = Class.forName(PackageType.CRAFTBUKKIT + ".entity.CraftPlayer").getMethod("getHandle")
+				.invoke(craftPlayer);
+		Object playerConnection = Class.forName(PackageType.MINECRAFT_SERVER + ".EntityPlayer")
 				.getField("playerConnection").get(craftHandle);
 
+		// Parse the json message.
+		Object parsedMessage;
+		try {
+			// Since 1.8.3
+			parsedMessage = Class.forName(PackageType.MINECRAFT_SERVER + ".IChatBaseComponent$ChatSerializer")
+					.getMethod("a", String.class)
+					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
+		} catch (ClassNotFoundException e) {
+			parsedMessage = Class.forName(PackageType.MINECRAFT_SERVER + ".ChatSerializer")
+					.getMethod("a", String.class)
+					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
+		}
+		Object packetPlayOutChat = Class.forName(PackageType.MINECRAFT_SERVER + ".PacketPlayOutChat")
+				.getConstructor(Class.forName(PackageType.MINECRAFT_SERVER + ".IChatBaseComponent"))
+				.newInstance(parsedMessage);
+
 		// Send the message packet through the PlayerConnection.
-		Class.forName("net.minecraft.server." + version + ".PlayerConnection")
-				.getMethod("sendPacket", Class.forName("net.minecraft.server." + version + ".Packet"))
+		Class.forName(PackageType.MINECRAFT_SERVER + ".PlayerConnection")
+				.getMethod("sendPacket", Class.forName(PackageType.MINECRAFT_SERVER + ".Packet"))
 				.invoke(playerConnection, packetPlayOutChat);
 	}
 
