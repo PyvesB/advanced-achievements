@@ -43,7 +43,7 @@ public class AchieveHoeFertiliseListener implements Listener {
 				&& (event.getClickedBlock().getType() == Material.GRASS || event.getClickedBlock().getType() == Material.DIRT)) {
 			Integer plowings = 0;
 			if (!DatabasePools.getHoePlowingHashMap().containsKey(player.getUniqueId().toString()))
-				plowings = plugin.getDb().getHoePlowing(player) + 1;
+				plowings = plugin.getDb().getNormalAchievementAmount(player, "hoeplowing") + 1;
 			else
 				plowings = DatabasePools.getHoePlowingHashMap().get(player.getUniqueId().toString()) + 1;
 
@@ -65,7 +65,7 @@ public class AchieveHoeFertiliseListener implements Listener {
 						|| event.getClickedBlock().getType() == Material.COCOA || event.getClickedBlock().getType() == Material.LONG_GRASS)) {
 			Integer fertilising = 0;
 			if (!DatabasePools.getFertiliseHashMap().containsKey(player.getUniqueId().toString()))
-				fertilising = plugin.getDb().getFertilising(player) + 1;
+				fertilising = plugin.getDb().getNormalAchievementAmount(player, "fertilising") + 1;
 			else
 				fertilising = DatabasePools.getFertiliseHashMap().get(player.getUniqueId().toString()) + 1;
 

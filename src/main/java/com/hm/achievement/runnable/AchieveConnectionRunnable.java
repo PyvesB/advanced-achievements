@@ -29,7 +29,7 @@ public class AchieveConnectionRunnable implements Runnable {
 
 		if (!format.format(now).equals(plugin.getDb().getConnectionDate(player))) {
 
-			Integer connections = plugin.getDb().registerConnection(player, format.format(now));
+			Integer connections = plugin.getDb().updateAndGetConnection(player, format.format(now));
 			String configAchievement = "Connections." + connections;
 			if (plugin.getReward().checkAchievement(configAchievement)) {
 

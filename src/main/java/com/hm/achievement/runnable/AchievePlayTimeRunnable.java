@@ -37,12 +37,12 @@ public class AchievePlayTimeRunnable implements Runnable {
 
 			if (!AchieveConnectionListener.getJoinTime().containsKey(player)) {
 				AchieveConnectionListener.getJoinTime().put(player, System.currentTimeMillis());
-				AchieveConnectionListener.getPlayTime().put(player, plugin.getDb().registerPlaytime(player, (long) 0));
+				AchieveConnectionListener.getPlayTime().put(player, plugin.getDb().updateAndGetPlaytime(player, (long) 0));
 			} else {
 				for (int achievementPlayTime : achievementPlayTimes) {
 					if (System.currentTimeMillis() - AchieveConnectionListener.getJoinTime().get(player)
 							+ AchieveConnectionListener.getPlayTime().get(player) > achievementPlayTime * 3600000
-							&& !plugin.getDb().hasAchievement(player,
+							&& !plugin.getDb().hasPlayerAchievement(player,
 									plugin.getConfig().getString("PlayedTime." + achievementPlayTime + ".Name"))) {
 
 						plugin.getAchievementDisplay().displayAchievement(player, "PlayedTime." + achievementPlayTime);

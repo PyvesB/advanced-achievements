@@ -14,10 +14,16 @@ import com.hm.achievement.language.Lang;
 public class AchievementDisplay {
 
 	private AdvancedAchievements plugin;
+	private String fireworkStyle;
+	private boolean firework;
+	private boolean chatNotify;
 
 	public AchievementDisplay(AdvancedAchievements achievement) {
 
 		this.plugin = achievement;
+		fireworkStyle = plugin.getConfig().getString("FireworkStyle", "BALL_LARGE");
+		firework = plugin.getConfig().getBoolean("Firework", true);
+		chatNotify = plugin.getConfig().getBoolean("ChatNotify", false);
 	}
 
 	/**
@@ -33,7 +39,7 @@ public class AchievementDisplay {
 		msg = ChatColor.translateAlternateColorCodes('&', msg);
 
 		player.sendMessage(plugin.getChatHeader() + Lang.ACHIVEMENT_NEW + " " + ChatColor.WHITE + name);
-		if (plugin.isChatMessage()) {
+		if (chatNotify) {
 			for (Player p : plugin.getServer().getOnlinePlayers()) {
 				if (!p.getName().equals(player.getName())) {
 					p.sendMessage(plugin.getChatHeader()
@@ -46,7 +52,7 @@ public class AchievementDisplay {
 
 		player.sendMessage(plugin.getChatHeader() + ChatColor.WHITE + msg);
 
-		if (plugin.isFirework()) {
+		if (firework) {
 
 			Location location = player.getLocation();
 			location.setY(location.getY() - 1);
@@ -57,7 +63,7 @@ public class AchievementDisplay {
 			try {
 				effect = FireworkEffect.builder().flicker(false).trail(false)
 						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))
-						.with(Type.valueOf(plugin.getFireworkStyle().toUpperCase())).withFade(Color.PURPLE).build();
+						.with(Type.valueOf(fireworkStyle.toUpperCase())).withFade(Color.PURPLE).build();
 			} catch (Exception ex) {
 				effect = FireworkEffect.builder().flicker(false).trail(false)
 						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).with(Type.BALL_LARGE)

@@ -31,7 +31,7 @@ public class AchieveDeathListener implements Listener {
 				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
-		Integer deaths = plugin.getDb().registerDeath(player);
+		Integer deaths = plugin.getDb().incrementAndGetNormalAchievement(player, "deaths");
 		String configAchievement = "Deaths." + deaths;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 

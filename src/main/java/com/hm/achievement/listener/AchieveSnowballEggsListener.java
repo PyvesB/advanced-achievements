@@ -39,7 +39,7 @@ public class AchieveSnowballEggsListener implements Listener {
 		if (event.getEntity() instanceof Snowball) {
 			Integer snowballs = 0;
 			if (!DatabasePools.getSnowballHashMap().containsKey(player.getUniqueId().toString()))
-				snowballs = plugin.getDb().getSnowballs(player) + 1;
+				snowballs = plugin.getDb().getNormalAchievementAmount(player, "snowballs") + 1;
 			else
 				snowballs = DatabasePools.getSnowballHashMap().get(player.getUniqueId().toString()) + 1;
 
@@ -49,7 +49,7 @@ public class AchieveSnowballEggsListener implements Listener {
 		} else {
 			Integer eggs = 0;
 			if (!DatabasePools.getEggHashMap().containsKey(player.getUniqueId().toString()))
-				eggs = plugin.getDb().getEggs(player) + 1;
+				eggs = plugin.getDb().getNormalAchievementAmount(player, "eggs") + 1;
 			else
 				eggs = DatabasePools.getEggHashMap().get(player.getUniqueId().toString()) + 1;
 

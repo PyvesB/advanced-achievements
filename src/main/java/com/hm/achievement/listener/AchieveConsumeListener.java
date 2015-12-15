@@ -32,11 +32,11 @@ public class AchieveConsumeListener implements Listener {
 		String configAchievement = "";
 
 		if (event.getItem().getType().name().equals("POTION")) {
-			Integer consumedPotions = plugin.getDb().registerPotions(player);
+			Integer consumedPotions = plugin.getDb().incrementAndGetNormalAchievement(player, "consumedPotions");
 			configAchievement = "ConsumedPotions." + consumedPotions;
 		} else {
 
-			Integer eatenItems = plugin.getDb().registerEatenItem(player);
+			Integer eatenItems = plugin.getDb().incrementAndGetNormalAchievement(player,"eatenitems");
 			configAchievement = "EatenItems." + eatenItems;
 		}
 		if (plugin.getReward().checkAchievement(configAchievement)) {

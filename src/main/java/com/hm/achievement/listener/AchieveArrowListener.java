@@ -35,7 +35,7 @@ public class AchieveArrowListener implements Listener {
 
 		Integer arrows = 0;
 		if (!DatabasePools.getArrowHashMap().containsKey(player.getUniqueId().toString()))
-			arrows = plugin.getDb().getArrows(player) + 1;
+			arrows = plugin.getDb().getNormalAchievementAmount(player, "arrows") + 1;
 		else
 			arrows = DatabasePools.getArrowHashMap().get(player.getUniqueId().toString()) + 1;
 

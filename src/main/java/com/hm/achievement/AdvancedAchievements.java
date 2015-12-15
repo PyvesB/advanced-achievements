@@ -11,16 +11,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,33 +26,12 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.hm.achievement.db.SQLDatabases;
-import com.hm.achievement.db.SendPooledRequests;
+import com.hm.achievement.command.*;
+import com.hm.achievement.listener.*;
+import com.hm.achievement.db.SQLDatabaseManager;
+import com.hm.achievement.db.PooledRequestsSender;
 import com.hm.achievement.language.Lang;
-import com.hm.achievement.listener.AchieveArrowListener;
-import com.hm.achievement.listener.AchieveBedListener;
-import com.hm.achievement.listener.AchieveBlockBreakListener;
-import com.hm.achievement.listener.AchieveBlockPlaceListener;
-import com.hm.achievement.listener.AchieveItemBreakListener;
-import com.hm.achievement.listener.AchieveConnectionListener;
-import com.hm.achievement.listener.AchieveConsumeListener;
-import com.hm.achievement.listener.AchieveCraftListener;
-import com.hm.achievement.listener.AchieveDeathListener;
-import com.hm.achievement.listener.AchieveDropListener;
-import com.hm.achievement.listener.AchieveEnchantListener;
-import com.hm.achievement.listener.AchieveKillListener;
-import com.hm.achievement.listener.AchieveFishListener;
-import com.hm.achievement.listener.AchieveHoeFertiliseListener;
-import com.hm.achievement.listener.AchieveTradeAnvilListener;
-import com.hm.achievement.listener.AchieveMilkListener;
-import com.hm.achievement.listener.AchieveQuitListener;
-import com.hm.achievement.listener.AchieveShearListener;
-import com.hm.achievement.listener.AchieveSnowballEggsListener;
-import com.hm.achievement.listener.AchieveWorldTPListener;
-import com.hm.achievement.listener.AchieveXPListener;
 import com.hm.achievement.metrics.MetricsLite;
-import com.hm.achievement.particle.ParticleEffect;
-import com.hm.achievement.particle.ReflectionUtils.PackageType;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 
@@ -71,7 +47,7 @@ import com.hm.achievement.runnable.AchievePlayTimeRunnable;
  * https://github.com/PyvesB/AdvancedAchievements
  * 
  * @since April 2015
- * @version 2.1.1
+ * @version 2.2
  * @author DarkPyves
  */
 
@@ -103,43 +79,32 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveDropListener dropListener;
 	private AchieveHoeFertiliseListener hoeFertiliseListener;
 
-	// Additional classes related to plugin modules.
+	// Additional classes related to plugin modules and commands.
 	private AchievementRewards reward;
 	private AchievementDisplay achievementDisplay;
-	private AchievementCommandGiver achievementCommandGiver;
-	private AchievementBookGiver achievementBookGiver;
+	private GiveCommand giveCommand;
+	private BookCommand bookCommand;
+	private TopCommand topCommand;
+	private ListCommand listCommand;
+	private StatsCommand statsCommand;
+	private InfoCommand infoCommand;
+	private HelpCommand helpCommand;
 	private AdvancedAchievementsUpdateChecker updateChecker;
 
 	// Database related.
-	private SQLDatabases db;
+	private SQLDatabaseManager db;
 	private int databaseVersion;
 
 	// Plugin options and various parameters.
-	private int bookTime;
-	private boolean retroVault;
-	private boolean firework;
-	private boolean sound;
-	private boolean chatNotify;
 	private String icon;
 	private String chatHeader;
-	private int totalAchievements;
-	private String bookSeparator;
-	private ArrayList<String> achievementsTop;
-	private long lastTopTime;
 	private boolean restrictCreative;
-	private boolean multiCommand;
-	private boolean rewardCommandNotif;
 	private boolean databaseBackup;
 	private List<String> excludedWorldList;
-	private int topList;
 	private boolean updateNeeded;
 	private boolean successfulLoad;
-	private boolean additionalEffects;
-	private String fireworkStyle;
-	private boolean obfuscateNotReceived;
-	private boolean hideNotReceivedCategories;
 
-	// Achievement types string arrays.
+	// Achievement types string arrays; constants.
 	private final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
 			"ItemBreaks", "EatenItems", "Shear", "Milk", "Trades", "AnvilsUsed", "Enchantments", "Beds", "MaxLevel",
 			"ConsumedPotions", "PlayedTime", "ItemDrops", "HoePlowings", "Fertilising", "Commands", };
@@ -176,12 +141,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		hoeFertiliseListener = new AchieveHoeFertiliseListener(this);
 		worldTPListener = new AchieveWorldTPListener();
 
-		achievementDisplay = new AchievementDisplay(this);
-		reward = new AchievementRewards(this);
-		achievementCommandGiver = new AchievementCommandGiver(this);
-		achievementBookGiver = new AchievementBookGiver(this);
-
-		db = new SQLDatabases();
+		db = new SQLDatabaseManager();
 
 	}
 
@@ -278,7 +238,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		Bukkit.getServer()
 				.getScheduler()
 				.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-						new SendPooledRequests(this, true), 1200, 600);
+						new PooledRequestsSender(this, true), 1200, 600);
 
 		// Schedule a repeating task to monitor played time for each player (not
 		// directly related to an event).
@@ -487,29 +447,23 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		// Load parameters.
-		bookTime = this.getConfig().getInt("Time", 900) * 1000;
-		retroVault = this.getConfig().getBoolean("RetroVault", false);
-		firework = this.getConfig().getBoolean("Firework", true);
-		sound = this.getConfig().getBoolean("Sound", true);
 		databaseVersion = this.getConfig().getInt("DatabaseVersion", 1);
 		icon = this.getConfig().getString("Icon", "\u2618");
 		chatHeader = ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ";
-		chatNotify = this.getConfig().getBoolean("ChatNotify", false);
-		bookSeparator = this.getConfig().getString("BookSeparator", "");
 		restrictCreative = this.getConfig().getBoolean("RestrictCreative", false);
-		multiCommand = this.getConfig().getBoolean("MultiCommand", true);
 		databaseBackup = this.getConfig().getBoolean("DatabaseBackup", true);
 		excludedWorldList = this.getConfig().getStringList("ExcludedWorlds");
-		topList = this.getConfig().getInt("TopList", 5);
-		additionalEffects = this.getConfig().getBoolean("AdditionalEffects", true);
-		fireworkStyle = this.getConfig().getString("FireworkStyle", "BALL_LARGE");
-		obfuscateNotReceived = this.getConfig().getBoolean("ObfuscateNotReceived", true);
-		hideNotReceivedCategories = this.getConfig().getBoolean("HideNotReceivedCategories", false);
-		// No longer available in default config, kept for compatibility with
-		// versions prior to 2.1.
-		rewardCommandNotif = this.getConfig().getBoolean("RewardCommandNotif", true);
 
-		lastTopTime = 0;
+		// Initialise command modules.
+		reward = new AchievementRewards(this);
+		achievementDisplay = new AchievementDisplay(this);
+		giveCommand = new GiveCommand(this);
+		bookCommand = new BookCommand(this);
+		topCommand = new TopCommand(this);
+		statsCommand = new StatsCommand(this);
+		infoCommand = new InfoCommand(this);
+		listCommand = new ListCommand(this);
+		helpCommand = new HelpCommand(this);
 
 		// Check for available plugin update.
 		if (this.getConfig().getBoolean("CheckForUpdate", true)) {
@@ -528,18 +482,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		backupDBFile();
-
-		// Calculate the total number of achievements in the config file.
-		totalAchievements = 0;
-
-		for (String type : NORMAL_ACHIEVEMENTS)
-			totalAchievements += this.getConfig().getConfigurationSection(type).getKeys(false).size();
-		for (String type : DISTANCE_ACHIEVEMENTS)
-			totalAchievements += this.getConfig().getConfigurationSection(type).getKeys(false).size();
-		for (String type : MULTIPLE_ACHIEVEMENTS)
-			for (String item : this.getConfig().getConfigurationSection(type).getKeys(false))
-				totalAchievements += this.getConfig().getConfigurationSection(type + "." + item).getKeys(false).size();
-
 	}
 
 	/**
@@ -718,13 +660,13 @@ public class AdvancedAchievements extends JavaPlugin {
 	public void onDisable() {
 
 		// Send remaining stats for pooled events to the database.
-		new SendPooledRequests(this, false).sendRequests();
+		new PooledRequestsSender(this, false).sendRequests();
 
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			// Send played time stats to the database.
 			if (this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0
 					&& AchieveConnectionListener.getPlayTime().containsKey(player))
-				this.getDb().registerPlaytime(
+				this.getDb().updateAndGetPlaytime(
 						player,
 						AchieveConnectionListener.getPlayTime().get(player) + System.currentTimeMillis()
 								- AchieveConnectionListener.getJoinTime().get(player));
@@ -736,19 +678,19 @@ public class AdvancedAchievements extends JavaPlugin {
 					|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0 || this
 					.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0)
 					&& AchieveDistanceRunnable.getAchievementLocations().containsKey(player)) {
-				this.getDb().registerDistance(player,
+				this.getDb().updateAndGetDistance(player,
 						AchieveDistanceRunnable.getAchievementDistancesFoot().get(player), "distancefoot");
 
-				this.getDb().registerDistance(player, AchieveDistanceRunnable.getAchievementDistancesPig().get(player),
+				this.getDb().updateAndGetDistance(player, AchieveDistanceRunnable.getAchievementDistancesPig().get(player),
 						"distancepig");
 
-				this.getDb().registerDistance(player,
+				this.getDb().updateAndGetDistance(player,
 						AchieveDistanceRunnable.getAchievementDistancesHorse().get(player), "distancehorse");
 
-				this.getDb().registerDistance(player,
+				this.getDb().updateAndGetDistance(player,
 						AchieveDistanceRunnable.getAchievementDistancesBoat().get(player), "distanceboat");
 
-				this.getDb().registerDistance(player,
+				this.getDb().updateAndGetDistance(player,
 						AchieveDistanceRunnable.getAchievementDistancesMinecart().get(player), "distanceminecart");
 			}
 		}
@@ -805,7 +747,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			if (args[0].equalsIgnoreCase("book") && sender.hasPermission("achievement.book")
 					&& sender instanceof Player) {
 
-				achievementBookGiver.giveBook(((Player) sender));
+				bookCommand.giveBook(((Player) sender));
 
 			} else if (args[0].equalsIgnoreCase("reload")) {
 
@@ -824,29 +766,29 @@ public class AdvancedAchievements extends JavaPlugin {
 				}
 			} else if (args[0].equalsIgnoreCase("stats") && sender instanceof Player) {
 
-				getStats((Player) sender);
+				statsCommand.getStats((Player) sender);
 
 			} else if (args[0].equalsIgnoreCase("list") && sender instanceof Player) {
 
 				if (sender.hasPermission("achievement.list")) {
-					getList((Player) sender);
+					listCommand.getList((Player) sender);
 				} else {
 
 					sender.sendMessage(chatHeader + Lang.NO_PERMS);
 				}
 			} else if (args[0].equalsIgnoreCase("top")) {
 
-				getTop(sender);
+				topCommand.getTop(sender);
 
 			} else if (args[0].equalsIgnoreCase("info")) {
 
-				getInfo(sender);
+				infoCommand.getInfo(sender);
 			}
 		} else if (cmd.getName().equalsIgnoreCase("aach") && (args.length == 3) && args[0].equalsIgnoreCase("give")) {
 
 			if (sender.hasPermission("achievement.give")) {
 
-				achievementCommandGiver.achievementGive(sender, args);
+				giveCommand.achievementGive(sender, args);
 
 			} else {
 
@@ -854,374 +796,10 @@ public class AdvancedAchievements extends JavaPlugin {
 			}
 		} else if (cmd.getName().equalsIgnoreCase("aach") || (args.length == 1) && !args[0].equalsIgnoreCase("help")) {
 
-			sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("-=-=-=-=-=-=-")
-					.append(ChatColor.GRAY).append("[").append(ChatColor.DARK_PURPLE).append(icon)
-					.append("§lAdvanced Achievements").append(ChatColor.DARK_PURPLE).append(icon)
-					.append(ChatColor.GRAY).append("]").append(ChatColor.DARK_PURPLE).append("-=-=-=-=-=-=-")
-					.toString());
-
-			sendJsonClickableMessage(
-					sender,
-					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach book")
-							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_BOOK).toString(), "/aach book");
-
-			sendJsonClickableMessage(
-					sender,
-					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach stats")
-							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_STATS).toString(), "/aach stats");
-
-			sendJsonClickableMessage(
-					sender,
-					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach list")
-							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_LIST).toString(), "/aach list");
-
-			sendJsonClickableMessage(
-					sender,
-					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach top")
-							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_TOP).toString(), "/aach top");
-
-			sendJsonClickableMessage(
-					sender,
-					(new StringBuilder())
-							.append(chatHeader)
-							.append(ChatColor.DARK_PURPLE + "/aach give §oach name§r")
-							.append(ChatColor.GRAY)
-							.append(" - "
-									+ ChatColor.translateAlternateColorCodes('&', Lang.AACH_COMMAND_GIVE.toString()
-											.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7"))).toString(),
-					"/aach give ach name");
-
-			sendJsonClickableMessage(
-					sender,
-					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach reload")
-							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_RELOAD).toString(), "/aach reload");
-
-			sendJsonClickableMessage(
-					sender,
-					(new StringBuilder()).append(chatHeader).append(ChatColor.DARK_PURPLE + "/aach info")
-							.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_INFO).toString(), "/aach info");
-
-			sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE)
-					.append("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-").toString());
+			helpCommand.getHelp(sender);
 		}
 
 		return true;
-
-	}
-
-	/**
-	 * Get list of players with the most achievements and diplay player's rank.
-	 */
-	private void getTop(CommandSender sender) {
-
-		long currentTime = System.currentTimeMillis();
-		int rank = Integer.MAX_VALUE;
-		if (sender instanceof Player)
-			rank = db.getRank(db.countAchievements((Player) sender));
-		if (currentTime - lastTopTime >= 60000) {
-
-			achievementsTop = db.getTop(topList);
-			lastTopTime = System.currentTimeMillis();
-		}
-
-		sender.sendMessage(chatHeader + Lang.TOP_ACHIEVEMENT);
-
-		for (int i = 0; i < achievementsTop.size(); i += 2) {
-			try {
-				String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(achievementsTop.get(i)))
-						.getName();
-				// Name in purple if player in top list.
-				if (sender instanceof Player && playerName.equals(((Player) sender).getName()))
-					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + (i + 2) / 2 + ChatColor.GRAY
-							+ "] " + ChatColor.DARK_PURPLE + playerName + " - " + achievementsTop.get(i + 1));
-				else
-					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + (i + 2) / 2 + ChatColor.GRAY
-							+ "] " + playerName + " - " + achievementsTop.get(i + 1));
-			} catch (Exception ex) {
-				this.getLogger().warning("Top command: name corresponding to UUID not found.");
-			}
-		}
-		if (sender instanceof Player) {
-
-			if (rank <= topList) {
-				try {
-					if (additionalEffects)
-						// Play special effect when in top list.
-						ParticleEffect.PORTAL.display(0, 1, 0, 0.1f, 500, ((Player) sender).getLocation(), 1);
-
-				} catch (Exception ex) {
-					this.getLogger().severe("Error while displaying additional particle effects.");
-				}
-
-				if (sound)
-					// Play special sound when in top list.
-					((Player) sender).getWorld().playSound(((Player) sender).getLocation(), Sound.FIREWORK_BLAST, 1,
-							0.6f);
-			}
-
-			int totalPlayers = db.getTotalPlayers();
-			sender.sendMessage(chatHeader + Lang.PLAYER_RANK + " " + ChatColor.DARK_PURPLE + rank + ChatColor.GRAY
-					+ "/" + ChatColor.DARK_PURPLE + totalPlayers);
-		}
-	}
-
-	/**
-	 * Get statistics of the player by displaying number of achievements
-	 * received and total number of achievements.
-	 */
-	private void getStats(Player player) {
-
-		int achievements = db.countAchievements(player);
-
-		// Display number of achievements received and total achievements.
-		player.sendMessage(chatHeader + Lang.NUMBER_ACHIEVEMENTS + " " + ChatColor.DARK_PURPLE + achievements
-				+ ChatColor.GRAY + "/" + ChatColor.DARK_PURPLE + totalAchievements);
-
-		// Display progress bar.
-		String barDisplay = "";
-		for (int i = 1; i <= 145; i++) {
-			if (i < (145 * achievements) / totalAchievements)
-				barDisplay = barDisplay + "&5|";
-			else {
-				barDisplay = barDisplay + "&8|";
-			}
-		}
-		player.sendMessage(chatHeader + "[" + ChatColor.translateAlternateColorCodes('&', barDisplay) + ChatColor.GRAY
-				+ "]");
-
-	}
-
-	/**
-	 * Display name of received achievements and name of missing achievements
-	 * (goes through the entire config file). Does not display category is
-	 * language file string is empty.
-	 */
-	public void getList(Player player) {
-
-		String[] normalAchievementTypesLanguage = { Lang.LIST_CONNECTIONS.toString(), Lang.LIST_DEATHS.toString(),
-				Lang.LIST_ARROWS.toString(), Lang.LIST_SNOWBALLS.toString(), Lang.LIST_EGGS.toString(),
-				Lang.LIST_FISH.toString(), Lang.LIST_ITEMBREAKS.toString(), Lang.LIST_EATENITEMS.toString(),
-				Lang.LIST_SHEAR.toString(), Lang.LIST_MILK.toString(), Lang.LIST_TRADES.toString(),
-				Lang.LIST_ANVILS.toString(), Lang.LIST_ENCHANTMENTS.toString(), Lang.LIST_BEDS.toString(),
-				Lang.LIST_MAXLEVEL.toString(), Lang.LIST_POTIONS.toString(), Lang.LIST_PLAYEDTIME.toString(),
-				Lang.LIST_ITEMDROPS.toString(), Lang.LIST_HOEPLOWINGS.toString(), Lang.LIST_FERTILISING.toString(),
-				Lang.LIST_COMMANDS.toString() };
-		String[] multipleAchievementTypesLanguage = { Lang.LIST_PLACES.toString(), Lang.LIST_BREAKS.toString(),
-				Lang.LIST_KILLS.toString(), Lang.LIST_CRAFTS.toString() };
-
-		StringBuilder achievementsList = new StringBuilder();
-		int numberInCategory = 0;
-
-		// Build list of achievements with multiple sub-categories.
-		for (int i = 0; i < MULTIPLE_ACHIEVEMENTS.length; i++)
-			if (!multipleAchievementTypesLanguage[i].equals("")) {
-				for (String section : this.getConfig().getConfigurationSection(MULTIPLE_ACHIEVEMENTS[i]).getKeys(false))
-					for (String ach : this.getConfig()
-							.getConfigurationSection(MULTIPLE_ACHIEVEMENTS[i] + "." + section).getKeys(false))
-						if (db.hasAchievement(
-								player,
-								this.getConfig().getString(
-										MULTIPLE_ACHIEVEMENTS[i] + "." + section + "." + ach + ".Name", ""))) {
-							numberInCategory++;
-							addHoverLine(
-									achievementsList,
-									"&f"
-											+ this.getConfig().getString(
-													MULTIPLE_ACHIEVEMENTS[i] + "." + section + "." + ach + ".Name", ""),
-									ach, reward.getRewardType(MULTIPLE_ACHIEVEMENTS[i] + "." + section + "." + ach));
-						} else
-							addHoverLine(
-									achievementsList,
-									"&8§o"
-											+ this.getConfig()
-													.getString(
-															MULTIPLE_ACHIEVEMENTS[i] + "." + section + "." + ach
-																	+ ".Name", "").replaceAll("&([a-f]|[0-9]){1}", ""),
-									ach, reward.getRewardType(MULTIPLE_ACHIEVEMENTS[i] + "." + section + "." + ach));
-				if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-					sendJsonHoverMessage(player, " &7" + icon + " " + multipleAchievementTypesLanguage[i] + " " + " &7"
-							+ icon + " ", achievementsList.substring(0, achievementsList.length() - 1));
-				achievementsList.setLength(0);
-				numberInCategory = 0;
-			}
-
-		// Build distance achievements list item.
-		if (!Lang.LIST_DISTANCE.toString().equals("")) {
-			for (String distanceType : DISTANCE_ACHIEVEMENTS)
-				for (String ach : this.getConfig().getConfigurationSection(distanceType).getKeys(false))
-					if (db.hasAchievement(player, this.getConfig().getString(distanceType + "." + ach + ".Name", ""))) {
-						numberInCategory++;
-						addHoverLine(achievementsList,
-								"&f" + this.getConfig().getString(distanceType + "." + ach + ".Name", ""), ach,
-								reward.getRewardType(distanceType + "." + ach));
-					} else
-						addHoverLine(
-								achievementsList,
-								"&8§o"
-										+ this.getConfig().getString(distanceType + "." + ach + ".Name", "")
-												.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
-								reward.getRewardType(distanceType + "." + ach));
-
-			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonHoverMessage(player, " &7" + icon + " " + Lang.LIST_DISTANCE + " " + " &7" + icon + " ",
-						achievementsList.substring(0, achievementsList.length() - 1));
-			achievementsList.setLength(0);
-			numberInCategory = 0;
-		}
-
-		// Build list of normal achievements.
-		for (int i = 0; i < NORMAL_ACHIEVEMENTS.length; i++)
-			if (!normalAchievementTypesLanguage[i].equals("")) {
-				for (String ach : this.getConfig().getConfigurationSection(NORMAL_ACHIEVEMENTS[i]).getKeys(false))
-					if (db.hasAchievement(player,
-							this.getConfig().getString(NORMAL_ACHIEVEMENTS[i] + "." + ach + ".Name", ""))) {
-						numberInCategory++;
-						addHoverLine(achievementsList,
-								"&f" + this.getConfig().getString(NORMAL_ACHIEVEMENTS[i] + "." + ach + ".Name", ""),
-								ach, reward.getRewardType(NORMAL_ACHIEVEMENTS[i] + "." + ach));
-					} else
-						addHoverLine(achievementsList,
-								"&8§o"
-										+ this.getConfig().getString(NORMAL_ACHIEVEMENTS[i] + "." + ach + ".Name", "")
-												.replaceAll("&([a-f]|[0-9]){1}", ""), ach,
-								reward.getRewardType(NORMAL_ACHIEVEMENTS[i] + "." + ach));
-				if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-					sendJsonHoverMessage(player, " &7" + icon + " " + normalAchievementTypesLanguage[i] + " " + " &7"
-							+ icon + " ", achievementsList.substring(0, achievementsList.length() - 1));
-				achievementsList.setLength(0);
-				numberInCategory = 0;
-			}
-	}
-
-	/**
-	 * Add an achievement line to the current hover box.
-	 */
-	public StringBuilder addHoverLine(StringBuilder currentString, String name, String level, String reward) {
-
-		if (obfuscateNotReceived)
-			name = name.replace("&8§o", "&8§k");
-
-		if (reward != "")
-			currentString.append(name + " - " + Lang.LIST_AMOUNT + " " + level + " - " + Lang.LIST_REWARD + " "
-					+ reward + "\n");
-		else
-			currentString.append(name + " - " + Lang.LIST_AMOUNT + " " + level + "\n");
-
-		return currentString;
-
-	}
-
-	/**
-	 * Send a packet message to the server in order to display a hover. Parts of
-	 * this method were extracted from ELCHILEN0's AutoMessage plugin, under MIT
-	 * license (http://dev.bukkit.org/bukkit-plugins/automessage/). Thanks for
-	 * his help on this matter.
-	 */
-	public void sendJsonHoverMessage(Player player, String message, String hover) {
-
-		// Build the json format string.
-		String json = "{text:\"" + message + "\",hoverEvent:{action:show_text,value:[{text:\"" + hover
-				+ "\",color:blue}]}}";
-
-		try {
-			sendPacket(player, json);
-		} catch (Exception ex) {
-
-			this.getLogger()
-					.severe("Errors while trying to display hovers in /aach list command. Is your server up-to-date with latest Spigot builds?");
-			ex.printStackTrace();
-		}
-	}
-
-	/**
-	 * Send a packet message to the server in order to display a clickable
-	 * message. A suggestion command is then displayed in the chat. Parts of
-	 * this method were extracted from ELCHILEN0's AutoMessage plugin, under MIT
-	 * license (http://dev.bukkit.org/bukkit-plugins/automessage/). Thanks for
-	 * his help on this matter.
-	 */
-	public void sendJsonClickableMessage(CommandSender sender, String message, String command) {
-
-		// Build the json format string.
-		String json = "{text:\"" + message + "\",clickEvent:{action:suggest_command,value:\"" + command + "\"}}";
-
-		// Get the string corresponding to the server Minecraft version.
-		if (sender instanceof Player)
-			try {
-				sendPacket((Player) sender, json);
-			} catch (Exception ex) {
-
-				this.getLogger()
-						.severe("Errors while trying to display clickable in /aach help command. Displaying standard message instead.");
-				sender.sendMessage(message);
-			}
-		else
-			sender.sendMessage(message);
-	}
-
-	/**
-	 * Send the packet.
-	 */
-	public void sendPacket(Player player, String json) throws IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, ClassNotFoundException, InstantiationException, NoSuchFieldException {
-
-		// Retrieve a CraftPlayer instance and its PlayerConnection
-		// instance.
-		Object craftPlayer = Class.forName(PackageType.CRAFTBUKKIT + ".entity.CraftPlayer").cast(player);
-		Object craftHandle = Class.forName(PackageType.CRAFTBUKKIT + ".entity.CraftPlayer").getMethod("getHandle")
-				.invoke(craftPlayer);
-		Object playerConnection = Class.forName(PackageType.MINECRAFT_SERVER + ".EntityPlayer")
-				.getField("playerConnection").get(craftHandle);
-
-		// Parse the json message.
-		Object parsedMessage;
-		try {
-			// Since 1.8.3
-			parsedMessage = Class.forName(PackageType.MINECRAFT_SERVER + ".IChatBaseComponent$ChatSerializer")
-					.getMethod("a", String.class)
-					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
-		} catch (ClassNotFoundException e) {
-			parsedMessage = Class.forName(PackageType.MINECRAFT_SERVER + ".ChatSerializer")
-					.getMethod("a", String.class)
-					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
-		}
-		Object packetPlayOutChat = Class.forName(PackageType.MINECRAFT_SERVER + ".PacketPlayOutChat")
-				.getConstructor(Class.forName(PackageType.MINECRAFT_SERVER + ".IChatBaseComponent"))
-				.newInstance(parsedMessage);
-
-		// Send the message packet through the PlayerConnection.
-		Class.forName(PackageType.MINECRAFT_SERVER + ".PlayerConnection")
-				.getMethod("sendPacket", Class.forName(PackageType.MINECRAFT_SERVER + ".Packet"))
-				.invoke(playerConnection, packetPlayOutChat);
-	}
-
-	/**
-	 * Display information about the plugin.
-	 */
-	private void getInfo(CommandSender sender) {
-
-		sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_NAME + " " + ChatColor.GRAY
-				+ this.getDescription().getName());
-		sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VERSION + " " + ChatColor.GRAY
-				+ this.getDescription().getVersion());
-		sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_WEBSITE + " " + ChatColor.GRAY
-				+ this.getDescription().getWebsite());
-		sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_AUTHOR + " " + ChatColor.GRAY
-				+ this.getDescription().getAuthors().get(0));
-		sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DESCRIPTION + " " + ChatColor.GRAY
-				+ Lang.VERSION_COMMAND_DESCRIPTION_DETAILS);
-		if (setUpEconomy())
-			sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VAULT + " " + ChatColor.GRAY
-					+ "YES");
-		else
-			sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VAULT + " " + ChatColor.GRAY
-					+ "NO");
-		if (this.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
-			sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DATABASE + " "
-					+ ChatColor.GRAY + "MySQL");
-		else
-			sender.sendMessage(chatHeader + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DATABASE + " "
-					+ ChatColor.GRAY + "SQLite");
 
 	}
 
@@ -1234,7 +812,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		return economy;
 	}
 
-	public SQLDatabases getDb() {
+	public SQLDatabaseManager getDb() {
 
 		return db;
 	}
@@ -1259,16 +837,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		return updateChecker;
 	}
 
-	public boolean isRetroVault() {
-
-		return retroVault;
-	}
-
-	public boolean isFirework() {
-
-		return firework;
-	}
-
 	public int getDatabaseVersion() {
 
 		return databaseVersion;
@@ -1286,39 +854,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		return chatHeader;
 	}
 
-	public boolean isChatMessage() {
-
-		return chatNotify;
-	}
-
 	public boolean isRestrictCreative() {
 
 		return restrictCreative;
-	}
-
-	public boolean isMultiCommand() {
-
-		return multiCommand;
-	}
-
-	public boolean isRewardCommandNotif() {
-
-		return rewardCommandNotif;
-	}
-
-	public boolean isSound() {
-
-		return sound;
-	}
-
-	public String getBookSeparator() {
-
-		return bookSeparator;
-	}
-
-	public int getBookTime() {
-
-		return bookTime;
 	}
 
 	public boolean isSuccessfulLoad() {
@@ -1331,19 +869,29 @@ public class AdvancedAchievements extends JavaPlugin {
 		this.successfulLoad = successfulLoad;
 	}
 
-	public AchievementBookGiver getAchievementBookGiver() {
+	public BookCommand getAchievementBookCommand() {
 
-		return achievementBookGiver;
+		return bookCommand;
 	}
 
-	public boolean isAdditionalEffects() {
+	public String getIcon() {
 
-		return additionalEffects;
+		return icon;
 	}
 
-	public String getFireworkStyle() {
+	public String[] getNORMAL_ACHIEVEMENTS() {
 
-		return fireworkStyle;
+		return NORMAL_ACHIEVEMENTS;
+	}
+
+	public String[] getDISTANCE_ACHIEVEMENTS() {
+
+		return DISTANCE_ACHIEVEMENTS;
+	}
+
+	public String[] getMULTIPLE_ACHIEVEMENTS() {
+
+		return MULTIPLE_ACHIEVEMENTS;
 	}
 
 }

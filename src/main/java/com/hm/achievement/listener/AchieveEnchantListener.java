@@ -29,7 +29,7 @@ public class AchieveEnchantListener implements Listener {
 				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
-		Integer enchantments = plugin.getDb().registerEnchantment(player);
+		Integer enchantments = plugin.getDb().incrementAndGetNormalAchievement(player, "enchantments");
 		String configAchievement = "Enchantments." + enchantments;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 

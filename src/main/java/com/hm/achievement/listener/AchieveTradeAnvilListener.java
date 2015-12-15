@@ -34,11 +34,11 @@ public class AchieveTradeAnvilListener implements Listener {
 
 		if (event.getInventory().getType().name().equals("MERCHANT")) {
 
-			Integer trades = plugin.getDb().registerTrade(player);
+			Integer trades = plugin.getDb().incrementAndGetNormalAchievement(player, "trades");
 			configAchievement = "Trades." + trades;
 
 		} else if (event.getInventory().getType().name().equals("ANVIL")) {
-			Integer anvils = plugin.getDb().registerAnvil(player);
+			Integer anvils = plugin.getDb().incrementAndGetNormalAchievement(player, "anvils");
 			configAchievement = "AnvilsUsed." + anvils;
 		}
 

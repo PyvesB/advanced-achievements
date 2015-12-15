@@ -33,11 +33,11 @@ public class AchieveXPListener implements Listener {
 		if ((1 - player.getExp()) * player.getExpToLevel() >= event.getAmount())
 			return;
 
-		Integer levels = plugin.getDb().registerXP(player);
+		Integer levels = plugin.getDb().incrementAndGetMaxLevel(player);
 		String configAchievement = "MaxLevel." + levels;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
-			if (plugin.getDb().hasAchievement(player, plugin.getConfig().getString(configAchievement + ".Name")))
+			if (plugin.getDb().hasPlayerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name")))
 				return;
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");

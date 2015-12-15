@@ -39,7 +39,7 @@ public class AchieveCraftListener implements Listener {
 			if (!plugin.getConfig().isConfigurationSection("Crafts." + craftName))
 				return;
 
-			Integer times = plugin.getDb().registerCraft(player, item);
+			Integer times = plugin.getDb().incrementAndGetCraft(player, item);
 			String configAchievement = "Crafts." + craftName + "." + times;
 			if (plugin.getReward().checkAchievement(configAchievement)) {
 

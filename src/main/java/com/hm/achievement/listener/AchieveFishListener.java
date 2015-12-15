@@ -31,7 +31,7 @@ public class AchieveFishListener implements Listener {
 				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
-		Integer fish = plugin.getDb().registerFish(player);
+		Integer fish = plugin.getDb().incrementAndGetNormalAchievement(player, "fish");
 		String configAchievement = "Fish." + fish;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 

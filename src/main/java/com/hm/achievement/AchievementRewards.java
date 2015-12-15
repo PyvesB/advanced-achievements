@@ -12,10 +12,16 @@ import com.hm.achievement.language.Lang;
 public class AchievementRewards {
 
 	private AdvancedAchievements plugin;
+	private boolean retroVault;
+	private boolean rewardCommandNotif;
 
 	public AchievementRewards(AdvancedAchievements achievement) {
 
 		this.plugin = achievement;
+		retroVault = plugin.getConfig().getBoolean("RetroVault", false);
+		// No longer available in default config, kept for compatibility with
+		// versions prior to 2.1.
+		rewardCommandNotif = plugin.getConfig().getBoolean("RewardCommandNotif", true);
 	}
 
 	/**
@@ -67,7 +73,7 @@ public class AchievementRewards {
 			String price = Integer.toString(amount);
 			double amtd = Double.valueOf(price.trim());
 			// Deprecated method, was the only one existing prior to Vault 1.4.
-			if (plugin.isRetroVault())
+			if (retroVault)
 				plugin.getEconomy().depositPlayer(player.getName(), amtd);
 			else
 				plugin.getEconomy().depositPlayer(player, amtd);
@@ -148,7 +154,7 @@ public class AchievementRewards {
 
 			command = command.replace("PLAYER", player.getName());
 			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
-			if (!plugin.isRewardCommandNotif() || Lang.COMMAND_REWARD.toString().equals(""))
+			if (! rewardCommandNotif || Lang.COMMAND_REWARD.toString().equals(""))
 				return;
 			player.sendMessage(plugin.getChatHeader() + Lang.COMMAND_REWARD);
 

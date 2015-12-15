@@ -32,7 +32,7 @@ public class AchieveMilkListener implements Listener {
 				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
-		Integer milks = plugin.getDb().registerMilk(player);
+		Integer milks = plugin.getDb().incrementAndGetNormalAchievement(player, "milks");
 		String configAchievement = "Milk." + milks;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 

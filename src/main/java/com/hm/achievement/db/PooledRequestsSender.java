@@ -6,11 +6,11 @@ import java.sql.Statement;
 
 import com.hm.achievement.AdvancedAchievements;
 
-public class SendPooledRequests implements Runnable {
+public class PooledRequestsSender implements Runnable {
 
 	private AdvancedAchievements plugin;
 
-	public SendPooledRequests(AdvancedAchievements plugin, boolean init) {
+	public PooledRequestsSender(AdvancedAchievements plugin, boolean init) {
 
 		if (init == true)
 			DatabasePools.databasePoolsInit();

@@ -1,4 +1,4 @@
-package com.hm.achievement;
+package com.hm.achievement.command;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,13 +11,15 @@ import org.bukkit.event.Listener;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.language.Lang;
 
-public class AchievementCommandGiver implements Listener {
+public class GiveCommand implements Listener {
 
 	private AdvancedAchievements plugin;
+	private Boolean multiCommand;
 
-	public AchievementCommandGiver(AdvancedAchievements plugin) {
+	public GiveCommand(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+		multiCommand = plugin.getConfig().getBoolean("MultiCommand", true);
 	}
 
 	/**
@@ -43,8 +45,8 @@ public class AchievementCommandGiver implements Listener {
 		}
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
-			if (!plugin.isMultiCommand()
-					&& plugin.getDb().hasAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"))) {
+			if (!multiCommand
+					&& plugin.getDb().hasPlayerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"))) {
 
 				sender.sendMessage(plugin.getChatHeader()
 						+ Lang.ACHIEVEMENT_ALREADY_RECEIVED.toString().replace("PLAYER", args[2]));
@@ -61,7 +63,8 @@ public class AchievementCommandGiver implements Listener {
 
 			sender.sendMessage(plugin.getChatHeader() + Lang.ACHIEVEMENT_GIVEN);
 		} else {
-			sender.sendMessage(plugin.getChatHeader() + Lang.ACHIEVEMENT_NOT_FOUND.toString().replace("PLAYER", args[2]));
+			sender.sendMessage(plugin.getChatHeader()
+					+ Lang.ACHIEVEMENT_NOT_FOUND.toString().replace("PLAYER", args[2]));
 		}
 	}
 }

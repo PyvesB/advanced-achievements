@@ -33,7 +33,7 @@ public class AchieveDropListener implements Listener {
 		String configAchievement = "";
 		Integer drops = 0;
 		if (!DatabasePools.getDropHashMap().containsKey(player.getUniqueId().toString()))
-			drops = plugin.getDb().getDrops(player) + 1;
+			drops = plugin.getDb().getNormalAchievementAmount(player, "drops") + 1;
 		else
 			drops = DatabasePools.getDropHashMap().get(player.getUniqueId().toString()) + 1;
 

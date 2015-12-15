@@ -32,7 +32,7 @@ public class AchieveShearListener implements Listener {
 
 		Integer shears = 0;
 		if (!DatabasePools.getShearHashMap().containsKey(player.getUniqueId().toString()))
-			shears = plugin.getDb().getShear(player) + 1;
+			shears = plugin.getDb().getNormalAchievementAmount(player, "shears") + 1;
 		else
 			shears = DatabasePools.getShearHashMap().get(player.getUniqueId().toString()) + 1;
 

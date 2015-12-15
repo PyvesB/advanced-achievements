@@ -30,7 +30,7 @@ public class AchieveBedListener implements Listener {
 				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
-		Integer bed = plugin.getDb().registerBed(player);
+		Integer bed = plugin.getDb().incrementAndGetNormalAchievement(player, "beds");
 		String configAchievement = "Beds." + bed;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 

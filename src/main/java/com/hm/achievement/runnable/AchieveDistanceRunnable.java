@@ -71,12 +71,12 @@ public class AchieveDistanceRunnable implements Runnable {
 		 * Update distances and store them into server's memory until player disconnects.
 		 */
 		if (!achievementDistancesFoot.containsKey(player)) {
-			achievementDistancesBoat.put(player, plugin.getDb().registerDistance(player, (long) 0, "distanceboat"));
+			achievementDistancesBoat.put(player, plugin.getDb().updateAndGetDistance(player, (long) 0, "distanceboat"));
 			achievementDistancesMinecart.put(player,
-					plugin.getDb().registerDistance(player, (long) 0, "distanceminecart"));
-			achievementDistancesPig.put(player, plugin.getDb().registerDistance(player, (long) 0, "distancepig"));
-			achievementDistancesHorse.put(player, plugin.getDb().registerDistance(player, (long) 0, "distancehorse"));
-			achievementDistancesFoot.put(player, plugin.getDb().registerDistance(player, (long) 0, "distancefoot"));
+					plugin.getDb().updateAndGetDistance(player, (long) 0, "distanceminecart"));
+			achievementDistancesPig.put(player, plugin.getDb().updateAndGetDistance(player, (long) 0, "distancepig"));
+			achievementDistancesHorse.put(player, plugin.getDb().updateAndGetDistance(player, (long) 0, "distancehorse"));
+			achievementDistancesFoot.put(player, plugin.getDb().updateAndGetDistance(player, (long) 0, "distancefoot"));
 
 			AchieveDistanceRunnable.getAchievementLocations().put(player, player.getLocation());
 		} else {
@@ -90,7 +90,7 @@ public class AchieveDistanceRunnable implements Runnable {
 
 					for (int achievementDistance : achievementsHorse) {
 						if (achievementDistancesHorse.get(player) > achievementDistance
-								&& !plugin.getDb().hasAchievement(player,
+								&& !plugin.getDb().hasPlayerAchievement(player,
 										plugin.getConfig().getString("DistanceHorse." + achievementDistance + ".Name")))
 
 							awardDistanceAchievement(player, achievementDistance, "DistanceHorse.");
@@ -104,7 +104,7 @@ public class AchieveDistanceRunnable implements Runnable {
 
 					for (int achievementDistance : achievementsPig) {
 						if (achievementDistancesPig.get(player) > achievementDistance
-								&& !plugin.getDb().hasAchievement(player,
+								&& !plugin.getDb().hasPlayerAchievement(player,
 										plugin.getConfig().getString("DistancePig." + achievementDistance + ".Name")))
 
 							awardDistanceAchievement(player, achievementDistance, "DistancePig.");
@@ -116,7 +116,7 @@ public class AchieveDistanceRunnable implements Runnable {
 
 					for (int achievementDistance : achievementsMinecart) {
 						if (achievementDistancesMinecart.get(player) > achievementDistance
-								&& !plugin.getDb().hasAchievement(
+								&& !plugin.getDb().hasPlayerAchievement(
 										player,
 										plugin.getConfig().getString(
 												"DistanceMinecart." + achievementDistance + ".Name")))
@@ -131,7 +131,7 @@ public class AchieveDistanceRunnable implements Runnable {
 
 					for (int achievementDistance : achievementsBoat) {
 						if (achievementDistancesBoat.get(player) > achievementDistance
-								&& !plugin.getDb().hasAchievement(player,
+								&& !plugin.getDb().hasPlayerAchievement(player,
 										plugin.getConfig().getString("DistanceBoat." + achievementDistance + ".Name")))
 
 							awardDistanceAchievement(player, achievementDistance, "DistanceBoat.");
@@ -145,7 +145,7 @@ public class AchieveDistanceRunnable implements Runnable {
 
 				for (int achievementDistance : achievementsFoot) {
 					if (achievementDistancesFoot.get(player) > achievementDistance
-							&& !plugin.getDb().hasAchievement(player,
+							&& !plugin.getDb().hasPlayerAchievement(player,
 									plugin.getConfig().getString("DistanceFoot." + achievementDistance + ".Name")))
 
 						awardDistanceAchievement(player, achievementDistance, "DistanceFoot.");

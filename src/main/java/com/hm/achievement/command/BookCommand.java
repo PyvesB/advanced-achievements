@@ -1,7 +1,8 @@
-package com.hm.achievement;
+package com.hm.achievement.command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -9,18 +10,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
+import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.language.Lang;
 import com.hm.achievement.particle.ParticleEffect;
 
-public class AchievementBookGiver {
+public class BookCommand {
 
 	private AdvancedAchievements plugin;
 	private HashMap<Player, Long> players;
+	private int bookTime;
+	private String bookSeparator;
+	private boolean additionalEffects;
+	private boolean sound;
 
-	public AchievementBookGiver(AdvancedAchievements plugin) {
+	public BookCommand(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 		players = new HashMap<Player, Long>();
+		bookTime = plugin.getConfig().getInt("Time", 900) * 1000;
+		bookSeparator = plugin.getConfig().getString("BookSeparator", "");
+		additionalEffects = plugin.getConfig().getBoolean("AdditionalEffects", true);
+		sound = plugin.getConfig().getBoolean("Sound", true);
 	}
 
 	/**
@@ -32,7 +42,7 @@ public class AchievementBookGiver {
 		long lastBookTime = 0;
 		if (players.containsKey(player))
 			lastBookTime = players.get(player);
-		if (currentTime - lastBookTime < plugin.getBookTime())
+		if (currentTime - lastBookTime < bookTime)
 			return false;
 		players.put(player, currentTime);
 		return true;
@@ -47,7 +57,7 @@ public class AchievementBookGiver {
 		if (timeAuthorisedBook(player)) {
 
 			// Play special effect when receiving the book.
-			if (plugin.isAdditionalEffects())
+			if (additionalEffects)
 				try {
 					ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 100);
 				} catch (Exception ex) {
@@ -55,10 +65,10 @@ public class AchievementBookGiver {
 				}
 
 			// Play special sound when receiving the book.
-			if (plugin.isSound())
+			if (sound)
 				player.getWorld().playSound(player.getLocation(), Sound.LEVEL_UP, 1, 0);
 
-			ArrayList<String> achievements = plugin.getDb().getAchievements(player);
+			ArrayList<String> achievements = plugin.getDb().getPlayerAchievementsList(player);
 
 			int i = 0;
 			// Up to four achievement books can be generated (= 200
@@ -83,7 +93,7 @@ public class AchievementBookGiver {
 		} else {
 			// The player has already received a book recently.
 			player.sendMessage(plugin.getChatHeader()
-					+ Lang.BOOK_DELAY.toString().replace("TIME", "" + plugin.getBookTime() / 1000));
+					+ Lang.BOOK_DELAY.toString().replace("TIME", "" + bookTime / 1000));
 		}
 	}
 
@@ -94,8 +104,8 @@ public class AchievementBookGiver {
 		BookMeta bm = (BookMeta) book.getItemMeta();
 
 		try {
-			String currentAchievement = achievements.get(i) + "\n" + plugin.getBookSeparator() + "\n"
-					+ achievements.get(i + 1) + "\n" + plugin.getBookSeparator() + "\n" + achievements.get(i + 2);
+			String currentAchievement = achievements.get(i) + "\n" + bookSeparator + "\n" + achievements.get(i + 1)
+					+ "\n" + bookSeparator + "\n" + achievements.get(i + 2);
 			currentAchievement = ChatColor.translateAlternateColorCodes('&', "&0" + currentAchievement);
 			pages.add(currentAchievement);
 			i = i + 3;

@@ -29,7 +29,7 @@ public class AchieveItemBreakListener implements Listener {
 				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
-		Integer itemBreaks = plugin.getDb().registerItemBreak(player);
+		Integer itemBreaks = plugin.getDb().incrementAndGetNormalAchievement(player, "itembreaks");
 		String configAchievement = "ItemBreaks." + itemBreaks;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
