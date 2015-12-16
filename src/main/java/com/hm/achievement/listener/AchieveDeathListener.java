@@ -3,7 +3,6 @@ package com.hm.achievement.listener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,8 +26,7 @@ public class AchieveDeathListener implements Listener {
 		if (!(event.getEntity() instanceof Player))
 			return;
 		Player player = (Player) event.getEntity();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.get") || plugin.isInExludedWorld(player))
 			return;
 
 		Integer deaths = plugin.getDb().incrementAndGetNormalAchievement(player, "deaths");

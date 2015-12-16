@@ -3,7 +3,6 @@ package com.hm.achievement.listener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,8 +27,7 @@ public class AchieveMilkListener implements Listener {
 		if (!(event.getItemStack().getType() == Material.MILK_BUCKET))
 			return;
 		Player player = (Player) event.getPlayer();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.get") || plugin.isInExludedWorld(player))
 			return;
 
 		Integer milks = plugin.getDb().incrementAndGetNormalAchievement(player, "milks");

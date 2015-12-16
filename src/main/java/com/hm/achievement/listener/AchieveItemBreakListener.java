@@ -3,7 +3,6 @@ package com.hm.achievement.listener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,8 +24,7 @@ public class AchieveItemBreakListener implements Listener {
 	public void onPlayerItemBreakEvent(PlayerItemBreakEvent event) {
 
 		Player player = (Player) event.getPlayer();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.get") || plugin.isInExludedWorld(player))
 			return;
 
 		Integer itemBreaks = plugin.getDb().incrementAndGetNormalAchievement(player, "itembreaks");
