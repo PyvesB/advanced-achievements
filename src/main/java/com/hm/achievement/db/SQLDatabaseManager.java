@@ -539,7 +539,7 @@ public class SQLDatabaseManager {
 	 * Increment and return value of a specific craft achievement statistic.
 	 */
 	@SuppressWarnings("deprecation")
-	public Integer incrementAndGetCraft(Player player, ItemStack item) {
+	public Integer updateAndGetCraft(Player player, ItemStack item, int amount) {
 
 		try {
 			Connection conn = getSQLConnection();
@@ -550,7 +550,7 @@ public class SQLDatabaseManager {
 			while (rs.next()) {
 				itemCrafts = rs.getInt("times");
 			}
-			Integer newCrafts = itemCrafts + 1;
+			Integer newCrafts = itemCrafts + amount;
 			st.execute("replace into `crafts` (playername, item, times) VALUES ('" + player.getUniqueId() + "',"
 					+ item.getTypeId() + ", " + newCrafts + ")");
 			st.close();
