@@ -1,5 +1,7 @@
 package com.hm.achievement.command;
 
+import java.util.HashMap;
+
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -11,12 +13,34 @@ public class ListCommand {
 	private AdvancedAchievements plugin;
 	private boolean hideNotReceivedCategories;
 	private boolean obfuscateNotReceived;
+	private int listTime;
+	private HashMap<Player, Long> players;
 
 	public ListCommand(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+		players = new HashMap<Player, Long>();
 		hideNotReceivedCategories = plugin.getConfig().getBoolean("HideNotReceivedCategories", false);
 		obfuscateNotReceived = plugin.getConfig().getBoolean("ObfuscateNotReceived", true);
+		listTime = plugin.getConfig().getInt("TimeList", 0) * 1000;
+	}
+
+	/**
+	 * Check is player hasn't done a list command too recently.
+	 */
+	private boolean timeAuthorisedList(Player player) {
+
+		if (listTime == 0)
+			return true;
+		long currentTime = System.currentTimeMillis();
+		long lastListTime = 0;
+		if (players.containsKey(player))
+			lastListTime = players.get(player);
+		if (currentTime - lastListTime < listTime)
+			return false;
+		players.put(player, currentTime);
+		return true;
+
 	}
 
 	/**
@@ -26,118 +50,125 @@ public class ListCommand {
 	 */
 	public void getList(Player player) {
 
-		String[] normalAchievementTypesLanguage = { Lang.LIST_CONNECTIONS.toString(), Lang.LIST_DEATHS.toString(),
-				Lang.LIST_ARROWS.toString(), Lang.LIST_SNOWBALLS.toString(), Lang.LIST_EGGS.toString(),
-				Lang.LIST_FISH.toString(), Lang.LIST_ITEMBREAKS.toString(), Lang.LIST_EATENITEMS.toString(),
-				Lang.LIST_SHEAR.toString(), Lang.LIST_MILK.toString(), Lang.LIST_TRADES.toString(),
-				Lang.LIST_ANVILS.toString(), Lang.LIST_ENCHANTMENTS.toString(), Lang.LIST_BEDS.toString(),
-				Lang.LIST_MAXLEVEL.toString(), Lang.LIST_POTIONS.toString(), Lang.LIST_PLAYEDTIME.toString(),
-				Lang.LIST_ITEMDROPS.toString(), Lang.LIST_HOEPLOWINGS.toString(), Lang.LIST_FERTILISING.toString(),
-				Lang.LIST_TAMING.toString(), Lang.LIST_BREWING.toString(), Lang.LIST_COMMANDS.toString() };
-		String[] multipleAchievementTypesLanguage = { Lang.LIST_PLACES.toString(), Lang.LIST_BREAKS.toString(),
-				Lang.LIST_KILLS.toString(), Lang.LIST_CRAFTS.toString() };
+		if (timeAuthorisedList(player)) {
+			String[] normalAchievementTypesLanguage = { Lang.LIST_CONNECTIONS.toString(), Lang.LIST_DEATHS.toString(),
+					Lang.LIST_ARROWS.toString(), Lang.LIST_SNOWBALLS.toString(), Lang.LIST_EGGS.toString(),
+					Lang.LIST_FISH.toString(), Lang.LIST_ITEMBREAKS.toString(), Lang.LIST_EATENITEMS.toString(),
+					Lang.LIST_SHEAR.toString(), Lang.LIST_MILK.toString(), Lang.LIST_TRADES.toString(),
+					Lang.LIST_ANVILS.toString(), Lang.LIST_ENCHANTMENTS.toString(), Lang.LIST_BEDS.toString(),
+					Lang.LIST_MAXLEVEL.toString(), Lang.LIST_POTIONS.toString(), Lang.LIST_PLAYEDTIME.toString(),
+					Lang.LIST_ITEMDROPS.toString(), Lang.LIST_HOEPLOWINGS.toString(), Lang.LIST_FERTILISING.toString(),
+					Lang.LIST_TAMING.toString(), Lang.LIST_BREWING.toString(), Lang.LIST_COMMANDS.toString() };
+			String[] multipleAchievementTypesLanguage = { Lang.LIST_PLACES.toString(), Lang.LIST_BREAKS.toString(),
+					Lang.LIST_KILLS.toString(), Lang.LIST_CRAFTS.toString() };
 
-		StringBuilder achievementsList = new StringBuilder();
-		int numberInCategory = 0;
+			StringBuilder achievementsList = new StringBuilder();
+			int numberInCategory = 0;
 
-		// Build list of achievements with multiple sub-categories.
-		for (int i = 0; i < plugin.getMULTIPLE_ACHIEVEMENTS().length; i++)
-			if (!multipleAchievementTypesLanguage[i].equals("")) {
-				for (String section : plugin.getConfig().getConfigurationSection(plugin.getMULTIPLE_ACHIEVEMENTS()[i])
-						.getKeys(false))
-					for (String ach : plugin.getConfig()
-							.getConfigurationSection(plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section)
+			// Build list of achievements with multiple sub-categories.
+			for (int i = 0; i < plugin.getMULTIPLE_ACHIEVEMENTS().length; i++)
+				if (!multipleAchievementTypesLanguage[i].equals("")) {
+					for (String section : plugin.getConfig()
+							.getConfigurationSection(plugin.getMULTIPLE_ACHIEVEMENTS()[i]).getKeys(false))
+						for (String ach : plugin.getConfig()
+								.getConfigurationSection(plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section)
+								.getKeys(false))
+							if (plugin.getDb().hasPlayerAchievement(
+									player,
+									plugin.getConfig().getString(
+											plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "." + ach + ".Name",
+											""))) {
+								numberInCategory++;
+								addHoverLine(
+										achievementsList,
+										"&f"
+												+ plugin.getConfig().getString(
+														plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "."
+																+ ach + ".Name", ""),
+										ach,
+										plugin.getReward().getRewardType(
+												plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "." + ach));
+							} else
+								addHoverLine(
+										achievementsList,
+										"&8§o"
+												+ plugin.getConfig()
+														.getString(
+																plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section
+																		+ "." + ach + ".Name", "")
+														.replaceAll("&([a-f]|[0-9]){1}", ""),
+										ach,
+										plugin.getReward().getRewardType(
+												plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "." + ach));
+					if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
+						sendJsonHoverMessage(player, " &7" + plugin.getIcon() + " "
+								+ multipleAchievementTypesLanguage[i] + " " + " &7" + plugin.getIcon() + " ",
+								achievementsList.substring(0, achievementsList.length() - 1));
+					achievementsList.setLength(0);
+					numberInCategory = 0;
+				}
+
+			// Build distance achievements list item.
+			if (!Lang.LIST_DISTANCE.toString().equals("")) {
+				for (String distanceType : plugin.getDISTANCE_ACHIEVEMENTS())
+					for (String ach : plugin.getConfig().getConfigurationSection(distanceType).getKeys(false))
+						if (plugin.getDb().hasPlayerAchievement(player,
+								plugin.getConfig().getString(distanceType + "." + ach + ".Name", ""))) {
+							numberInCategory++;
+							addHoverLine(achievementsList,
+									"&f" + plugin.getConfig().getString(distanceType + "." + ach + ".Name", ""), ach,
+									plugin.getReward().getRewardType(distanceType + "." + ach));
+						} else
+							addHoverLine(achievementsList,
+									"&8§o"
+											+ plugin.getConfig().getString(distanceType + "." + ach + ".Name", "")
+													.replaceAll("&([a-f]|[0-9]){1}", ""), ach, plugin.getReward()
+											.getRewardType(distanceType + "." + ach));
+
+				if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
+					sendJsonHoverMessage(player, " &7" + plugin.getIcon() + " " + Lang.LIST_DISTANCE + " " + " &7"
+							+ plugin.getIcon() + " ", achievementsList.substring(0, achievementsList.length() - 1));
+				achievementsList.setLength(0);
+				numberInCategory = 0;
+			}
+
+			// Build list of normal achievements.
+			for (int i = 0; i < plugin.getNORMAL_ACHIEVEMENTS().length; i++)
+				if (!normalAchievementTypesLanguage[i].equals("")) {
+					for (String ach : plugin.getConfig().getConfigurationSection(plugin.getNORMAL_ACHIEVEMENTS()[i])
 							.getKeys(false))
-						if (plugin.getDb()
-								.hasPlayerAchievement(
-										player,
-										plugin.getConfig().getString(
-												plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "." + ach
-														+ ".Name", ""))) {
+						if (plugin.getDb().hasPlayerAchievement(
+								player,
+								plugin.getConfig().getString(plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach + ".Name",
+										""))) {
 							numberInCategory++;
 							addHoverLine(
 									achievementsList,
 									"&f"
 											+ plugin.getConfig().getString(
-													plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "." + ach
-															+ ".Name", ""),
-									ach,
-									plugin.getReward().getRewardType(
-											plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "." + ach));
+													plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach + ".Name", ""), ach,
+									plugin.getReward().getRewardType(plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach));
 						} else
 							addHoverLine(
 									achievementsList,
 									"&8§o"
 											+ plugin.getConfig()
 													.getString(
-															plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "."
-																	+ ach + ".Name", "")
-													.replaceAll("&([a-f]|[0-9]){1}", ""),
-									ach,
-									plugin.getReward().getRewardType(
-											plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "." + ach));
-				if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-					sendJsonHoverMessage(player, " &7" + plugin.getIcon() + " " + multipleAchievementTypesLanguage[i]
-							+ " " + " &7" + plugin.getIcon() + " ",
-							achievementsList.substring(0, achievementsList.length() - 1));
-				achievementsList.setLength(0);
-				numberInCategory = 0;
-			}
-
-		// Build distance achievements list item.
-		if (!Lang.LIST_DISTANCE.toString().equals("")) {
-			for (String distanceType : plugin.getDISTANCE_ACHIEVEMENTS())
-				for (String ach : plugin.getConfig().getConfigurationSection(distanceType).getKeys(false))
-					if (plugin.getDb().hasPlayerAchievement(player,
-							plugin.getConfig().getString(distanceType + "." + ach + ".Name", ""))) {
-						numberInCategory++;
-						addHoverLine(achievementsList,
-								"&f" + plugin.getConfig().getString(distanceType + "." + ach + ".Name", ""), ach,
-								plugin.getReward().getRewardType(distanceType + "." + ach));
-					} else
-						addHoverLine(achievementsList,
-								"&8§o"
-										+ plugin.getConfig().getString(distanceType + "." + ach + ".Name", "")
-												.replaceAll("&([a-f]|[0-9]){1}", ""), ach, plugin.getReward()
-										.getRewardType(distanceType + "." + ach));
-
-			if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-				sendJsonHoverMessage(player,
-						" &7" + plugin.getIcon() + " " + Lang.LIST_DISTANCE + " " + " &7" + plugin.getIcon() + " ",
-						achievementsList.substring(0, achievementsList.length() - 1));
-			achievementsList.setLength(0);
-			numberInCategory = 0;
+															plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach + ".Name",
+															"").replaceAll("&([a-f]|[0-9]){1}", ""), ach, plugin
+											.getReward().getRewardType(plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach));
+					if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
+						sendJsonHoverMessage(player, " &7" + plugin.getIcon() + " " + normalAchievementTypesLanguage[i]
+								+ " " + " &7" + plugin.getIcon() + " ",
+								achievementsList.substring(0, achievementsList.length() - 1));
+					achievementsList.setLength(0);
+					numberInCategory = 0;
+				}
+		} else {
+			// The player has already done a list command recently.
+			player.sendMessage(plugin.getChatHeader()
+					+ Lang.LIST_DELAY.toString().replace("TIME", "" + listTime / 1000));
 		}
-
-		// Build list of normal achievements.
-		for (int i = 0; i < plugin.getNORMAL_ACHIEVEMENTS().length; i++)
-			if (!normalAchievementTypesLanguage[i].equals("")) {
-				for (String ach : plugin.getConfig().getConfigurationSection(plugin.getNORMAL_ACHIEVEMENTS()[i])
-						.getKeys(false))
-					if (plugin.getDb().hasPlayerAchievement(player,
-							plugin.getConfig().getString(plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach + ".Name", ""))) {
-						numberInCategory++;
-						addHoverLine(
-								achievementsList,
-								"&f"
-										+ plugin.getConfig().getString(
-												plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach + ".Name", ""), ach,
-								plugin.getReward().getRewardType(plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach));
-					} else
-						addHoverLine(
-								achievementsList,
-								"&8§o"
-										+ plugin.getConfig()
-												.getString(plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach + ".Name", "")
-												.replaceAll("&([a-f]|[0-9]){1}", ""), ach, plugin.getReward()
-										.getRewardType(plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach));
-				if (achievementsList.length() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories))
-					sendJsonHoverMessage(player, " &7" + plugin.getIcon() + " " + normalAchievementTypesLanguage[i]
-							+ " " + " &7" + plugin.getIcon() + " ",
-							achievementsList.substring(0, achievementsList.length() - 1));
-				achievementsList.setLength(0);
-				numberInCategory = 0;
-			}
 	}
 
 	/**
@@ -178,6 +209,11 @@ public class ListCommand {
 
 		return currentString;
 
+	}
+
+	public HashMap<Player, Long> getPlayers() {
+
+		return players;
 	}
 
 }

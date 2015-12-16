@@ -434,6 +434,16 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.saveConfig();
 		}
 
+		if (!this.getConfig().getKeys(false).contains("TimeBook")) {
+			this.getConfig().set("TimeBook", this.getConfig().getInt("Time", 900));
+			this.saveConfig();
+		}
+
+		if (!this.getConfig().getKeys(false).contains("TimeList")) {
+			this.getConfig().set("TimeList", 0);
+			this.saveConfig();
+		}
+
 		// End of configuration updates.
 
 		try {
@@ -898,6 +908,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	public BookCommand getAchievementBookCommand() {
 
 		return bookCommand;
+	}
+
+	public ListCommand getAchievementListCommand() {
+
+		return listCommand;
 	}
 
 	public String getIcon() {

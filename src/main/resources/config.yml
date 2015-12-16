@@ -20,7 +20,10 @@
 #=============================o=o=============================#
 
 # Time in seconds between each /aach book.
-Time: 900
+TimeBook: 900
+
+# Time in seconds between each /aach list.
+TimeList: 0
 
 # Check for update on plugin launch and notify when an OP joins the game.
 CheckForUpdate: true

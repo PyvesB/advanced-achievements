@@ -17,6 +17,7 @@ public enum Lang {
     NUMBER_ACHIEVEMENTS("number-achievements", "Achievements received:"),
     BOOK_RECEIVED("book-received","You received your achievements book!"),
     BOOK_DELAY("book-delay","You must wait TIME seconds between each book reception!"),
+    LIST_DELAY("list-delay","You must wait TIME seconds between each list command!"),
     PLAYER_OFFLINE("player-offline","The player PLAYER is offline!"),
     ACHIEVEMENT_ALREADY_RECEIVED("achievement-already-received", "The player PLAYER has already received this achievement!"),
     ACHIEVEMENT_NOT_FOUND("achievement-not-found", "The specified achievement was not found."),

@@ -22,6 +22,9 @@ public class AchieveQuitListener implements Listener {
 		
 		if (plugin.getAchievementBookCommand().getPlayers().containsKey(event.getPlayer()))
 			plugin.getAchievementBookCommand().getPlayers().remove(event.getPlayer());
+		
+		if (plugin.getAchievementListCommand().getPlayers().containsKey(event.getPlayer()))
+			plugin.getAchievementListCommand().getPlayers().remove(event.getPlayer());
 
 		if (AchieveConnectionListener.getJoinTime().containsKey(event.getPlayer())) {
 			plugin.getDb().updateAndGetPlaytime(

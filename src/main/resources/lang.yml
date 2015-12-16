@@ -15,6 +15,7 @@ number-achievements: "Achievements received:"
 
 book-received: "You received your achievements book!"
 book-delay: "You must wait TIME seconds between each book reception!"
+list-delay: "You must wait TIME seconds between each list command!"
 book-name: "Achievements"
 
 player-offline: "The player PLAYER is offline!"

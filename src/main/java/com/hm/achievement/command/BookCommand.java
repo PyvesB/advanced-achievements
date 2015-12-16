@@ -27,7 +27,7 @@ public class BookCommand {
 
 		this.plugin = plugin;
 		players = new HashMap<Player, Long>();
-		bookTime = plugin.getConfig().getInt("Time", 900) * 1000;
+		bookTime = plugin.getConfig().getInt("TimeBook", 0) * 1000;
 		bookSeparator = plugin.getConfig().getString("BookSeparator", "");
 		additionalEffects = plugin.getConfig().getBoolean("AdditionalEffects", true);
 		sound = plugin.getConfig().getBoolean("Sound", true);
@@ -74,20 +74,16 @@ public class BookCommand {
 			// Up to four achievement books can be generated (= 200
 			// achievements received by a player).
 			if (i == 0)
-				while (i < achievements.size() && i < 150)
-					i = fillBook(achievements, player, i, 1);
+				i = fillBook(achievements, player, i, 150, 1);
 
 			if (i > 149 && achievements.size() != 150)
-				while (i < achievements.size() && i < 300)
-					i = fillBook(achievements, player, i, 2);
+				i = fillBook(achievements, player, i, 300, 2);
 
 			if (i > 299 && achievements.size() != 300)
-				while (i < achievements.size() && i < 450)
-					i = fillBook(achievements, player, i, 3);
+				i = fillBook(achievements, player, i, 450, 3);
 
 			if (i > 449 && achievements.size() != 450)
-				while (i < achievements.size() && i < 600)
-					i = fillBook(achievements, player, i, 4);
+				i = fillBook(achievements, player, i, 600, 4);
 
 			player.sendMessage(plugin.getChatHeader() + Lang.BOOK_RECEIVED);
 		} else {
@@ -97,18 +93,20 @@ public class BookCommand {
 		}
 	}
 
-	private int fillBook(ArrayList<String> achievements, Player player, int i, int bookNumber) {
+	private int fillBook(ArrayList<String> achievements, Player player, int i, int max, int bookNumber) {
 
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 		ArrayList<String> pages = new ArrayList<String>();
 		BookMeta bm = (BookMeta) book.getItemMeta();
 
 		try {
-			String currentAchievement = achievements.get(i) + "\n" + bookSeparator + "\n" + achievements.get(i + 1)
-					+ "\n" + bookSeparator + "\n" + achievements.get(i + 2);
-			currentAchievement = ChatColor.translateAlternateColorCodes('&', "&0" + currentAchievement);
-			pages.add(currentAchievement);
-			i = i + 3;
+			while (i < achievements.size() && i < max) {
+				String currentAchievement = achievements.get(i) + "\n" + bookSeparator + "\n" + achievements.get(i + 1)
+						+ "\n" + bookSeparator + "\n" + achievements.get(i + 2);
+				currentAchievement = ChatColor.translateAlternateColorCodes('&', "&0" + currentAchievement);
+				pages.add(currentAchievement);
+				i = i + 3;
+			}
 		} catch (Exception e) {
 			plugin.getLogger().severe("Error while creating book pages of book " + bookNumber + ".");
 		}
