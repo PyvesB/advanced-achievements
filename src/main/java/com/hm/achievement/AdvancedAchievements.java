@@ -70,7 +70,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveShearListener shearListener;
 	private AchieveMilkListener milkListener;
 	private AchieveConnectionListener connectionListener;
-	private AchieveTradeAnvilListener inventoryClickListener;
+	private AchieveTradeAnvilBrewListener inventoryClickListener;
 	private AchieveEnchantListener enchantmentListener;
 	private AchieveXPListener xpListener;
 	private AchieveBedListener bedListener;
@@ -79,7 +79,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveDropListener dropListener;
 	private AchieveHoeFertiliseListener hoeFertiliseListener;
 	private AchieveTameListener tameListener;
-	private AchieveBrewListener brewListener;
 
 	// Additional classes related to plugin modules and commands.
 	private AchievementRewards reward;
@@ -139,7 +138,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		shearListener = new AchieveShearListener(this);
 		milkListener = new AchieveMilkListener(this);
 		connectionListener = new AchieveConnectionListener(this);
-		inventoryClickListener = new AchieveTradeAnvilListener(this);
+		inventoryClickListener = new AchieveTradeAnvilBrewListener(this);
 		enchantmentListener = new AchieveEnchantListener(this);
 		xpListener = new AchieveXPListener(this);
 		bedListener = new AchieveBedListener(this);
@@ -209,7 +208,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(connectionListener, this);
 
 		if (this.getConfig().getConfigurationSection("Trades").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("AnvilsUsed").getKeys(false).size() != 0)
+				|| this.getConfig().getConfigurationSection("AnvilsUsed").getKeys(false).size() != 0
+				|| this.getConfig().getConfigurationSection("Brewing").getKeys(false).size() != 0)
 			pm.registerEvents(inventoryClickListener, this);
 
 		if (this.getConfig().getConfigurationSection("Enchantments").getKeys(false).size() != 0)
@@ -226,9 +226,6 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (this.getConfig().getConfigurationSection("Taming").getKeys(false).size() != 0)
 			pm.registerEvents(tameListener, this);
-
-		if (this.getConfig().getConfigurationSection("Brewing").getKeys(false).size() != 0)
-			pm.registerEvents(brewListener, this);
 
 		if (this.getConfig().getConfigurationSection("HoePlowings").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("Fertilising").getKeys(false).size() != 0)

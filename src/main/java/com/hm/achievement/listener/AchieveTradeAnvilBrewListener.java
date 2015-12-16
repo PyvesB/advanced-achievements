@@ -12,11 +12,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
-public class AchieveTradeAnvilListener implements Listener {
+public class AchieveTradeAnvilBrewListener implements Listener {
 
 	private AdvancedAchievements plugin;
 
-	public AchieveTradeAnvilListener(AdvancedAchievements plugin) {
+	public AchieveTradeAnvilBrewListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 	}
@@ -24,7 +24,8 @@ public class AchieveTradeAnvilListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryClickEvent(InventoryClickEvent event) {
 
-		if (!(event.getRawSlot() == 2) || event.getCurrentItem().getType().name().equals("AIR"))
+		if (event.getRawSlot() != 0 && event.getRawSlot() != 1 && event.getRawSlot() != 2
+				|| event.getCurrentItem().getType().name().equals("AIR"))
 			return;
 		Player player = (Player) event.getWhoClicked();
 		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
@@ -32,17 +33,19 @@ public class AchieveTradeAnvilListener implements Listener {
 			return;
 		String configAchievement = "";
 
-		if (event.getInventory().getType().name().equals("MERCHANT")) {
-
+		if (event.getRawSlot() == 2 && event.getInventory().getType().name().equals("MERCHANT")) {
 			Integer trades = plugin.getDb().incrementAndGetNormalAchievement(player, "trades");
 			configAchievement = "Trades." + trades;
 
-		} else if (event.getInventory().getType().name().equals("ANVIL")) {
+		} else if (event.getRawSlot() == 2 && event.getInventory().getType().name().equals("ANVIL")) {
 			Integer anvils = plugin.getDb().incrementAndGetNormalAchievement(player, "anvils");
 			configAchievement = "AnvilsUsed." + anvils;
-		}
 
-		else
+		} else if (event.getInventory().getType().name().equals("BREWING")) {
+			Integer brewings = plugin.getDb().incrementAndGetNormalAchievement(player, "brewing");
+			configAchievement = "Brewing." + brewings;
+
+		} else
 			return;
 
 		if (plugin.getReward().checkAchievement(configAchievement)) {

@@ -22,7 +22,7 @@ public class AchieveTameListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerShearEntityEvent(EntityTameEvent event) {
+	public void onPlayerTameEvent(EntityTameEvent event) {
 
 		if (!(event.getOwner() instanceof Player))
 			return;
