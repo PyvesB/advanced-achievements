@@ -169,8 +169,18 @@ public class SQLDatabaseManager {
 							+ "hoeplowing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `fertilising` (" + "playername char(36),"
 							+ "fertilising INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+					st.execute("CREATE TABLE IF NOT EXISTS `brewing` (" + "playername char(36),"
+							+ "brewing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.close();
 					plugin.setDatabaseVersion(5);
+				}
+				// Added in version 2.2:
+				if (plugin.getDatabaseVersion() == 5) {
+					Statement st = conn.createStatement();
+					st.execute("CREATE TABLE IF NOT EXISTS `tames` (" + "playername char(36)," + "tames INT UNSIGNED,"
+							+ "PRIMARY KEY (`playername`)" + ")");
+					st.close();
+					plugin.setDatabaseVersion(6);
 				}
 			}
 			conn.close();
@@ -244,6 +254,10 @@ public class SQLDatabaseManager {
 		st.execute("CREATE TABLE IF NOT EXISTS `hoeplowing` (" + "playername char(36)," + "hoeplowing INT UNSIGNED,"
 				+ "PRIMARY KEY (`playername`)" + ")");
 		st.execute("CREATE TABLE IF NOT EXISTS `fertilising` (" + "playername char(36)," + "fertilising INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.execute("CREATE TABLE IF NOT EXISTS `tames` (" + "playername char(36)," + "tames INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.execute("CREATE TABLE IF NOT EXISTS `brewing` (" + "playername char(36)," + "brewing INT UNSIGNED,"
 				+ "PRIMARY KEY (`playername`)" + ")");
 	}
 

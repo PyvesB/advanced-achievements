@@ -79,7 +79,7 @@ TitleScreen: true
 #=============================ooo=============================#
 
 # DO NOT CHANGE OR DELETE.
-DatabaseVersion: 5
+DatabaseVersion: 6
 
 # Make a daily backup of your local database.
 DatabaseBackup: true
@@ -308,6 +308,18 @@ Fertilising:
   '15':
     Message: You used bone meal on plants 15 times!
     Name: Gardener
+    
+# When an animal is tamed.
+Taming:
+  '1':
+    Message: You tamed your first animal!
+    Name: Tamer
+    
+# When a potion is brewed.
+Brewing:
+  '1':
+    Message: You brewed your first potion!
+    Name: Alchemist
     
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #

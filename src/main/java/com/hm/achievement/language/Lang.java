@@ -72,6 +72,8 @@ public enum Lang {
     LIST_ITEMDROPS("list-itemdrops", "Items Dropped"),
     LIST_HOEPLOWINGS("list-hoeplowings", "Surface Plowed"),
     LIST_FERTILISING("list-fertilising", "Plants Fertilised"),
+    LIST_TAMING("list-taming", "Animals Tamed"),
+    LIST_BREWING("list-brewing", "Potions Brewed"),
     LIST_COMMANDS("list-commands", "Other Achievements");
     
     

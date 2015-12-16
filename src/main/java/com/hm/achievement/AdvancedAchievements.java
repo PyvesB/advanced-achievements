@@ -78,6 +78,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveWorldTPListener worldTPListener;
 	private AchieveDropListener dropListener;
 	private AchieveHoeFertiliseListener hoeFertiliseListener;
+	private AchieveTameListener tameListener;
+	private AchieveBrewListener brewListener;
 
 	// Additional classes related to plugin modules and commands.
 	private AchievementRewards reward;
@@ -110,7 +112,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	// Achievement types string arrays; constants.
 	private final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
 			"ItemBreaks", "EatenItems", "Shear", "Milk", "Trades", "AnvilsUsed", "Enchantments", "Beds", "MaxLevel",
-			"ConsumedPotions", "PlayedTime", "ItemDrops", "HoePlowings", "Fertilising", "Commands", };
+			"ConsumedPotions", "PlayedTime", "ItemDrops", "HoePlowings", "Fertilising", "Taming", "Brewing", "Commands" };
 	private final String[] DISTANCE_ACHIEVEMENTS = { "DistanceFoot", "DistancePig", "DistanceHorse",
 			"DistanceMinecart", "DistanceBoat" };
 	private final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
@@ -144,6 +146,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		quitListener = new AchieveQuitListener(this);
 		dropListener = new AchieveDropListener(this);
 		hoeFertiliseListener = new AchieveHoeFertiliseListener(this);
+		tameListener = new AchieveTameListener(this);
 		worldTPListener = new AchieveWorldTPListener();
 
 		db = new SQLDatabaseManager();
@@ -220,6 +223,12 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (this.getConfig().getConfigurationSection("ItemDrops").getKeys(false).size() != 0)
 			pm.registerEvents(dropListener, this);
+
+		if (this.getConfig().getConfigurationSection("Taming").getKeys(false).size() != 0)
+			pm.registerEvents(tameListener, this);
+
+		if (this.getConfig().getConfigurationSection("Brewing").getKeys(false).size() != 0)
+			pm.registerEvents(brewListener, this);
 
 		if (this.getConfig().getConfigurationSection("HoePlowings").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("Fertilising").getKeys(false).size() != 0)
@@ -422,7 +431,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.getConfig().set("TitleScreen", true);
 			this.saveConfig();
 		}
-		
+
 		if (!this.getConfig().getKeys(false).contains("Color")) {
 			this.getConfig().set("Color", "5");
 			this.saveConfig();
@@ -473,7 +482,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		playtimeTaskInterval = this.getConfig().getInt("PlaytimeTaskInterval", 300);
 		distanceTaskInterval = this.getConfig().getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = this.getConfig().getInt("PooledRequestsTaskInterval", 60);
-		
 
 		// Initialise command modules.
 		reward = new AchievementRewards(this);
@@ -900,9 +908,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		return icon;
 	}
 
-	
 	public ChatColor getColor() {
-	
+
 		return color;
 	}
 
