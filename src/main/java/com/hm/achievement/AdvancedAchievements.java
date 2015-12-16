@@ -103,6 +103,9 @@ public class AdvancedAchievements extends JavaPlugin {
 	private List<String> excludedWorldList;
 	private boolean updateNeeded;
 	private boolean successfulLoad;
+	private int playtimeTaskInterval;
+	private int distanceTaskInterval;
+	private int pooledRequestsTaskInterval;
 
 	// Achievement types string arrays; constants.
 	private final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
@@ -238,7 +241,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		Bukkit.getServer()
 				.getScheduler()
 				.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-						new PooledRequestsSender(this, true), 1200, 600);
+						new PooledRequestsSender(this, true), pooledRequestsTaskInterval * 40,
+						pooledRequestsTaskInterval * 20);
 
 		// Schedule a repeating task to monitor played time for each player (not
 		// directly related to an event).
@@ -246,7 +250,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			Bukkit.getServer()
 					.getScheduler()
 					.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-							new AchievePlayTimeRunnable(this), 6000, 6000);
+							new AchievePlayTimeRunnable(this), playtimeTaskInterval * 20, playtimeTaskInterval * 20);
 
 		// Schedule a repeating task to monitor distances travelled by each
 		// player (not
@@ -259,7 +263,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			Bukkit.getServer()
 					.getScheduler()
 					.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-							new AchieveDistanceRunnable(this), 100, 100);
+							new AchieveDistanceRunnable(this), distanceTaskInterval * 40, distanceTaskInterval * 20);
 
 		if (successfulLoad)
 			this.getLogger().info(
@@ -459,6 +463,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		restrictCreative = this.getConfig().getBoolean("RestrictCreative", false);
 		databaseBackup = this.getConfig().getBoolean("DatabaseBackup", true);
 		excludedWorldList = this.getConfig().getStringList("ExcludedWorlds");
+		playtimeTaskInterval = this.getConfig().getInt("PlaytimeTaskInterval", 300);
+		distanceTaskInterval = this.getConfig().getInt("DistanceTaskInterval", 5);
+		pooledRequestsTaskInterval = this.getConfig().getInt("PooledRequestsTaskInterval", 60);
 
 		// Initialise command modules.
 		reward = new AchievementRewards(this);

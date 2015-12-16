@@ -89,12 +89,28 @@ MYSQL:
   Database: 'jdbc:mysql://localhost:3306/minecraft'
   User: root
   Password: root
-
+  
 #============================OO=OO============================#
 # IV-------------------------------------------------------IV #
-# |                  Action  achievements                   | #
+# |                  Performance settings                   | #
 # 4---------------------------------------------------------4 #
 #============================oo=oo============================#
+
+# DO NOT CHANGE THE FOLLOWING UNLESS YOU ARE AN EXPERIENCED USER. The intervals are in seconds.
+# Frequency of play time checks for players. Smaller values give more precision but more CPU usage.
+PlaytimeTaskInterval: 300
+
+# Calculates distance travelled by players. Smaller values give more precision but more CPU usage.
+DistanceTaskInterval: 5
+
+# Frequency of some statistics writes to the database.
+PooledRequestsTaskInterval: 60
+
+#============================OOOOO============================#
+# V---------------------------------------------------------V #
+# |                  Action  achievements                   | #
+# 5---------------------------------------------------------5 #
+#============================ooooo============================#
 
 # When a player connects during the day.
 Connections:
@@ -290,11 +306,11 @@ Fertilising:
     Message: You used bone meal on plants 15 times!
     Name: Gardener
     
-#============================OOOOO============================#
-# V---------------------------------------------------------V #
+#===========================OOO=OOO===========================#
+# VI-------------------------------------------------------VI #
 # |                  Command achievements                   | #
-# 5--------------------------ooooo--------------------------5 #
-#============================ooooo============================#
+# 6-------------------------ooo-ooo-------------------------6 #
+#===========================ooo=ooo===========================#
     
 # Let achievement commands be given several times.
 MultiCommand: true
