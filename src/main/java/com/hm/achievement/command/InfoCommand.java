@@ -20,27 +20,27 @@ public class InfoCommand {
 	 */
 	public void getInfo(CommandSender sender) {
 
-		sender.sendMessage(plugin.getChatHeader() + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_NAME + " "
+		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_NAME + " "
 				+ ChatColor.GRAY + plugin.getDescription().getName());
-		sender.sendMessage(plugin.getChatHeader() + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VERSION + " "
+		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_VERSION + " "
 				+ ChatColor.GRAY + plugin.getDescription().getVersion());
-		sender.sendMessage(plugin.getChatHeader() + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_WEBSITE + " "
+		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_WEBSITE + " "
 				+ ChatColor.GRAY + plugin.getDescription().getWebsite());
-		sender.sendMessage(plugin.getChatHeader() + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_AUTHOR + " "
+		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_AUTHOR + " "
 				+ ChatColor.GRAY + plugin.getDescription().getAuthors().get(0));
-		sender.sendMessage(plugin.getChatHeader() + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DESCRIPTION + " "
+		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_DESCRIPTION + " "
 				+ ChatColor.GRAY + Lang.VERSION_COMMAND_DESCRIPTION_DETAILS);
 		if (plugin.setUpEconomy())
-			sender.sendMessage(plugin.getChatHeader() + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VAULT + " "
+			sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_VAULT + " "
 					+ ChatColor.GRAY + "YES");
 		else
-			sender.sendMessage(plugin.getChatHeader() + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_VAULT + " "
+			sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_VAULT + " "
 					+ ChatColor.GRAY + "NO");
 		if (plugin.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
-			sender.sendMessage(plugin.getChatHeader() + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DATABASE + " "
+			sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_DATABASE + " "
 					+ ChatColor.GRAY + "MySQL");
 		else
-			sender.sendMessage(plugin.getChatHeader() + ChatColor.DARK_PURPLE + Lang.VERSION_COMMAND_DATABASE + " "
+			sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_DATABASE + " "
 					+ ChatColor.GRAY + "SQLite");
 
 	}

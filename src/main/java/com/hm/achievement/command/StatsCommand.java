@@ -34,8 +34,8 @@ public class StatsCommand {
 		int achievements = plugin.getDb().getPlayerAchievementsAmount(player);
 
 		// Display number of achievements received and total achievements.
-		player.sendMessage(plugin.getChatHeader() + Lang.NUMBER_ACHIEVEMENTS + " " + ChatColor.DARK_PURPLE
-				+ achievements + ChatColor.GRAY + "/" + ChatColor.DARK_PURPLE + totalAchievements);
+		player.sendMessage(plugin.getChatHeader() + Lang.NUMBER_ACHIEVEMENTS + " " + plugin.getColor()
+				+ achievements + ChatColor.GRAY + "/" + plugin.getColor() + totalAchievements);
 
 		// Display progress bar.
 		String barDisplay = "";

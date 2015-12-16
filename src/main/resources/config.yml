@@ -43,6 +43,9 @@ RetroVault: false
 # Set the icon of the plugin (default: shamrock, "\u2618").
 Icon: "\u2618"
 
+# Set the color of the plugin (default: 5, dark purple).
+Color: '5'
+
 # Notify other connected players when an achievement is received.
 ChatNotify: false
 

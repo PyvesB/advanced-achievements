@@ -115,6 +115,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			"DistanceMinecart", "DistanceBoat" };
 	private final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
 
+	private ChatColor color;
+
 	/**
 	 * Constructor.
 	 */
@@ -253,8 +255,7 @@ public class AdvancedAchievements extends JavaPlugin {
 							new AchievePlayTimeRunnable(this), playtimeTaskInterval * 20, playtimeTaskInterval * 20);
 
 		// Schedule a repeating task to monitor distances travelled by each
-		// player (not
-		// directly related to an event).
+		// player (not directly related to an event).
 		if (this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
@@ -421,6 +422,11 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.getConfig().set("TitleScreen", true);
 			this.saveConfig();
 		}
+		
+		if (!this.getConfig().getKeys(false).contains("Color")) {
+			this.getConfig().set("Color", "5");
+			this.saveConfig();
+		}
 
 		// End of configuration updates.
 
@@ -459,13 +465,15 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Load parameters.
 		databaseVersion = this.getConfig().getInt("DatabaseVersion", 1);
 		icon = this.getConfig().getString("Icon", "\u2618");
-		chatHeader = ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + icon + ChatColor.GRAY + "] ";
+		color = ChatColor.getByChar(this.getConfig().getString("Color", "5").toCharArray()[0]);
+		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
 		restrictCreative = this.getConfig().getBoolean("RestrictCreative", false);
 		databaseBackup = this.getConfig().getBoolean("DatabaseBackup", true);
 		excludedWorldList = this.getConfig().getStringList("ExcludedWorlds");
 		playtimeTaskInterval = this.getConfig().getInt("PlaytimeTaskInterval", 300);
 		distanceTaskInterval = this.getConfig().getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = this.getConfig().getInt("PooledRequestsTaskInterval", 60);
+		
 
 		// Initialise command modules.
 		reward = new AchievementRewards(this);
@@ -890,6 +898,12 @@ public class AdvancedAchievements extends JavaPlugin {
 	public String getIcon() {
 
 		return icon;
+	}
+
+	
+	public ChatColor getColor() {
+	
+		return color;
 	}
 
 	public String[] getNORMAL_ACHIEVEMENTS() {

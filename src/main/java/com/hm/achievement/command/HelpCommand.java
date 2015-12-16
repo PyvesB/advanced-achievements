@@ -19,47 +19,53 @@ public class HelpCommand {
 
 	public void getHelp(CommandSender sender) {
 
-		sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("-=-=-=-=-=-=-")
-				.append(ChatColor.GRAY).append("[").append(ChatColor.DARK_PURPLE).append(plugin.getIcon())
-				.append("§lAdvanced Achievements").append(ChatColor.DARK_PURPLE).append(plugin.getIcon())
-				.append(ChatColor.GRAY).append("]").append(ChatColor.DARK_PURPLE).append("-=-=-=-=-=-=-").toString());
+		sender.sendMessage((new StringBuilder()).append(plugin.getColor()).append("-=-=-=-=-=-=-")
+				.append(ChatColor.GRAY).append("[").append(plugin.getColor()).append(plugin.getIcon())
+				.append("§lAdvanced Achievements").append(plugin.getColor()).append(plugin.getIcon())
+				.append(ChatColor.GRAY).append("]").append(plugin.getColor()).append("-=-=-=-=-=-=-").toString());
 
-		sendJsonClickableMessage(sender,
-				(new StringBuilder()).append(plugin.getChatHeader()).append(ChatColor.DARK_PURPLE + "/aach book")
+		sendJsonClickableMessage(
+				sender,
+				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach book")
 						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_BOOK).toString(), "/aach book");
 
-		sendJsonClickableMessage(sender,
-				(new StringBuilder()).append(plugin.getChatHeader()).append(ChatColor.DARK_PURPLE + "/aach stats")
+		sendJsonClickableMessage(
+				sender,
+				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach stats")
 						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_STATS).toString(), "/aach stats");
 
-		sendJsonClickableMessage(sender,
-				(new StringBuilder()).append(plugin.getChatHeader()).append(ChatColor.DARK_PURPLE + "/aach list")
+		sendJsonClickableMessage(
+				sender,
+				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach list")
 						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_LIST).toString(), "/aach list");
 
-		sendJsonClickableMessage(sender,
-				(new StringBuilder()).append(plugin.getChatHeader()).append(ChatColor.DARK_PURPLE + "/aach top")
+		sendJsonClickableMessage(
+				sender,
+				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach top")
 						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_TOP).toString(), "/aach top");
 
 		sendJsonClickableMessage(
 				sender,
 				(new StringBuilder())
 						.append(plugin.getChatHeader())
-						.append(ChatColor.DARK_PURPLE + "/aach give §oach name§r")
+						.append(plugin.getColor() + "/aach give §oach name§r")
 						.append(ChatColor.GRAY)
 						.append(" - "
 								+ ChatColor.translateAlternateColorCodes('&', Lang.AACH_COMMAND_GIVE.toString()
 										.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7"))).toString(),
 				"/aach give ach name");
 
-		sendJsonClickableMessage(sender,
-				(new StringBuilder()).append(plugin.getChatHeader()).append(ChatColor.DARK_PURPLE + "/aach reload")
+		sendJsonClickableMessage(
+				sender,
+				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach reload")
 						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_RELOAD).toString(), "/aach reload");
 
-		sendJsonClickableMessage(sender,
-				(new StringBuilder()).append(plugin.getChatHeader()).append(ChatColor.DARK_PURPLE + "/aach info")
+		sendJsonClickableMessage(
+				sender,
+				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach info")
 						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_INFO).toString(), "/aach info");
 
-		sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE)
+		sender.sendMessage((new StringBuilder()).append(plugin.getColor())
 				.append("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-").toString());
 	}
 
