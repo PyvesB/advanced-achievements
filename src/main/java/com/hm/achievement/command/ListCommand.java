@@ -29,8 +29,7 @@ public class ListCommand {
 	 * Check is player hasn't done a list command too recently.
 	 */
 	private boolean timeAuthorisedList(Player player) {
-
-		if (listTime == 0)
+		if (player.isOp() || listTime == 0)
 			return true;
 		long currentTime = System.currentTimeMillis();
 		long lastListTime = 0;
@@ -50,7 +49,7 @@ public class ListCommand {
 	 */
 	public void getList(Player player) {
 
-		if (!player.isOp() && timeAuthorisedList(player)) {
+		if (timeAuthorisedList(player)) {
 			String[] normalAchievementTypesLanguage = { Lang.LIST_CONNECTIONS.toString(), Lang.LIST_DEATHS.toString(),
 					Lang.LIST_ARROWS.toString(), Lang.LIST_SNOWBALLS.toString(), Lang.LIST_EGGS.toString(),
 					Lang.LIST_FISH.toString(), Lang.LIST_ITEMBREAKS.toString(), Lang.LIST_EATENITEMS.toString(),

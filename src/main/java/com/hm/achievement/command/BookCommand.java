@@ -38,6 +38,8 @@ public class BookCommand {
 	 */
 	private boolean timeAuthorisedBook(Player player) {
 
+		if (player.isOp())
+			return true;
 		long currentTime = System.currentTimeMillis();
 		long lastBookTime = 0;
 		if (players.containsKey(player))
