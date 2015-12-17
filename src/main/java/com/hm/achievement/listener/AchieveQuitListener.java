@@ -26,7 +26,8 @@ public class AchieveQuitListener implements Listener {
 		plugin.getAchievementBookCommand().getPlayers().remove(event.getPlayer());
 		plugin.getAchievementListCommand().getPlayers().remove(event.getPlayer());
 
-		if (plugin.getAchieveDistanceRunnable() != null) {
+		if (plugin.getAchieveDistanceRunnable() != null
+				&& plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().containsKey(event.getPlayer())) {
 			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsFoot())
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
 			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsHorse())
@@ -72,7 +73,8 @@ public class AchieveQuitListener implements Listener {
 				plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(event.getPlayer());
 			}
 		}
-		if (plugin.getAchievePlayTimeRunnable() != null) {
+		if (plugin.getAchievePlayTimeRunnable() != null
+				&& plugin.getConnectionListener().getJoinTime().containsKey(event.getPlayer())) {
 			plugin.getDb().updateAndGetPlaytime(
 					event.getPlayer(),
 					plugin.getConnectionListener().getPlayTime().get(event.getPlayer()) + System.currentTimeMillis()
