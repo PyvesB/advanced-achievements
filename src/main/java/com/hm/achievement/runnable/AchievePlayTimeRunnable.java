@@ -24,10 +24,6 @@ public class AchievePlayTimeRunnable implements Runnable {
 
 		extractAchievementsFromConfig(plugin);
 
-		playerAchievements = new HashSet<?>[achievementPlayTimes.length];
-		for (int i = 0; i < playerAchievements.length; ++i)
-			playerAchievements[i] = new HashSet<Player>();
-
 	}
 
 	/**
@@ -40,6 +36,11 @@ public class AchievePlayTimeRunnable implements Runnable {
 		for (String playedTime : plugin.getConfig().getConfigurationSection("PlayedTime").getKeys(false)) {
 			achievementPlayTimes[i] = Integer.valueOf(playedTime);
 		}
+
+		playerAchievements = new HashSet<?>[achievementPlayTimes.length];
+		for (i = 0; i < playerAchievements.length; ++i)
+			playerAchievements[i] = new HashSet<Player>();
+
 	}
 
 	public void run() {
@@ -55,25 +56,32 @@ public class AchievePlayTimeRunnable implements Runnable {
 	public void registerTimes() {
 
 		for (Player player : plugin.getConnectionListener().getJoinTime().keySet()) {
+			// Extra check in case server was reloaded and players did not
+			// reconnect.
+			if (!plugin.getConnectionListener().getJoinTime().containsKey(player)) {
+				plugin.getConnectionListener().getJoinTime().put(player, System.currentTimeMillis());
+				plugin.getConnectionListener().getPlayTime()
+						.put(player, plugin.getDb().updateAndGetPlaytime(player, 0L));
+			} else {
+				for (int i = 0; i < achievementPlayTimes.length; i++) {
+					if (System.currentTimeMillis() - plugin.getConnectionListener().getJoinTime().get(player)
+							+ plugin.getConnectionListener().getPlayTime().get(player) > achievementPlayTimes[i] * 3600000
+							&& !playerAchievements[i].contains(player)) {
+						if (!plugin.getDb().hasPlayerAchievement(player,
+								plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"))) {
 
-			for (int i = 0; i < achievementPlayTimes.length; i++) {
-				if (System.currentTimeMillis() - plugin.getConnectionListener().getJoinTime().get(player)
-						+ plugin.getConnectionListener().getPlayTime().get(player) > achievementPlayTimes[i] * 3600000
-						&& !playerAchievements[i].contains(player)) {
-					if (!plugin.getDb().hasPlayerAchievement(player,
-							plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"))) {
+							plugin.getAchievementDisplay().displayAchievement(player,
+									"PlayedTime." + achievementPlayTimes[i]);
+							SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+							plugin.getDb().registerAchievement(player,
+									plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"),
+									plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Message"),
+									format.format(new Date()));
+							plugin.getReward().checkConfig(player, "PlayedTime." + achievementPlayTimes[i]);
 
-						plugin.getAchievementDisplay().displayAchievement(player,
-								"PlayedTime." + achievementPlayTimes[i]);
-						SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-						plugin.getDb().registerAchievement(player,
-								plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"),
-								plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Message"),
-								format.format(new Date()));
-						plugin.getReward().checkConfig(player, "PlayedTime." + achievementPlayTimes[i]);
-
+						}
+						((HashSet<Player>) playerAchievements[i]).add(player);
 					}
-					((HashSet<Player>) playerAchievements[i]).add(player);
 				}
 			}
 		}
