@@ -50,7 +50,7 @@ public class ListCommand {
 	 */
 	public void getList(Player player) {
 
-		if (timeAuthorisedList(player)) {
+		if (!player.isOp() && timeAuthorisedList(player)) {
 			String[] normalAchievementTypesLanguage = { Lang.LIST_CONNECTIONS.toString(), Lang.LIST_DEATHS.toString(),
 					Lang.LIST_ARROWS.toString(), Lang.LIST_SNOWBALLS.toString(), Lang.LIST_EGGS.toString(),
 					Lang.LIST_FISH.toString(), Lang.LIST_ITEMBREAKS.toString(), Lang.LIST_EATENITEMS.toString(),

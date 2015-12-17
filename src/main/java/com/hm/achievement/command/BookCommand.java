@@ -54,7 +54,7 @@ public class BookCommand {
 	 */
 	public void giveBook(Player player) {
 
-		if (timeAuthorisedBook(player)) {
+		if (!player.isOp() && timeAuthorisedBook(player)) {
 
 			// Play special effect when receiving the book.
 			if (additionalEffects)
