@@ -24,8 +24,8 @@ public class InfoCommand {
 				+ ChatColor.GRAY + plugin.getDescription().getName());
 		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_VERSION + " "
 				+ ChatColor.GRAY + plugin.getDescription().getVersion());
-//		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_WEBSITE + " "
-//				+ ChatColor.GRAY + plugin.getDescription().getWebsite());
+		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_WEBSITE + " "
+				+ ChatColor.GRAY + plugin.getDescription().getWebsite());
 		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_AUTHOR + " "
 				+ ChatColor.GRAY + plugin.getDescription().getAuthors().get(0));
 		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_DESCRIPTION + " "
