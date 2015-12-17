@@ -17,8 +17,8 @@ public class AchieveConnectionListener implements Listener {
 
 	private AdvancedAchievements plugin;
 
-	private static HashMap<Player, Long> joinTime;
-	private static HashMap<Player, Long> playTime;
+	private HashMap<Player, Long> joinTime;
+	private HashMap<Player, Long> playTime;
 
 	public AchieveConnectionListener(AdvancedAchievements plugin) {
 
@@ -42,6 +42,29 @@ public class AchieveConnectionListener implements Listener {
 									.toString());
 		}
 
+		if (plugin.getAchievePlayTimeRunnable() != null) {
+			plugin.getConnectionListener().getJoinTime().put(event.getPlayer(), System.currentTimeMillis());
+			plugin.getConnectionListener().getPlayTime()
+					.put(event.getPlayer(), plugin.getDb().updateAndGetPlaytime(event.getPlayer(), 0L));
+		}
+
+		if (plugin.getAchieveDistanceRunnable() != null) {
+			plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat()
+					.put(event.getPlayer(), plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distanceboat"));
+			plugin.getAchieveDistanceRunnable()
+					.getAchievementDistancesMinecart()
+					.put(event.getPlayer(),
+							plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distanceminecart"));
+			plugin.getAchieveDistanceRunnable().getAchievementDistancesPig()
+					.put(event.getPlayer(), plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancepig"));
+			plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse()
+					.put(event.getPlayer(), plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancehorse"));
+			plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot()
+					.put(event.getPlayer(), plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancefoot"));
+
+			plugin.getAchieveDistanceRunnable().getPlayerLocations()
+					.put(event.getPlayer(), event.getPlayer().getLocation());
+		}
 		Bukkit.getServer()
 				.getScheduler()
 				.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
@@ -49,12 +72,12 @@ public class AchieveConnectionListener implements Listener {
 
 	}
 
-	public static HashMap<Player, Long> getJoinTime() {
+	public HashMap<Player, Long> getJoinTime() {
 
 		return joinTime;
 	}
 
-	public static HashMap<Player, Long> getPlayTime() {
+	public HashMap<Player, Long> getPlayTime() {
 
 		return playTime;
 	}

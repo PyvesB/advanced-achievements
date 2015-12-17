@@ -6,21 +6,29 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import com.hm.achievement.runnable.AchieveDistanceRunnable;
+import com.hm.achievement.AdvancedAchievements;
 
 public class AchieveWorldTPListener implements Listener {
+
+	private AdvancedAchievements plugin;
+
+	public AchieveWorldTPListener(AdvancedAchievements plugin) {
+
+		this.plugin = plugin;
+	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void worldJoin(PlayerChangedWorldEvent event) {
 
-		AchieveDistanceRunnable.getAchievementLocations().put(event.getPlayer(), event.getPlayer().getLocation());
+		plugin.getAchieveDistanceRunnable().getPlayerLocations()
+				.put(event.getPlayer(), event.getPlayer().getLocation());
 
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void playerTeleport(PlayerTeleportEvent event) {
 
-		AchieveDistanceRunnable.getAchievementLocations().put(event.getPlayer(), event.getTo());
+		plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer(), event.getTo());
 
 	}
 

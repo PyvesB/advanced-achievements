@@ -1,25 +1,31 @@
 package com.hm.achievement.runnable;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.listener.AchieveConnectionListener;
 
 public class AchievePlayTimeRunnable implements Runnable {
 
 	private AdvancedAchievements plugin;
-	private ArrayList<Integer> achievementPlayTimes;
+	private int[] achievementPlayTimes;
+	private HashSet<?>[] playerAchievements;
 
 	public AchievePlayTimeRunnable(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-		achievementPlayTimes = new ArrayList<Integer>();
-		for (String playedTime : plugin.getConfig().getConfigurationSection("PlayedTime").getKeys(false))
-			achievementPlayTimes.add(Integer.valueOf(playedTime));
+		achievementPlayTimes = new int[plugin.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size()];
+		int i = 0;
+		for (String playedTime : plugin.getConfig().getConfigurationSection("PlayedTime").getKeys(false)) {
+			achievementPlayTimes[i] = Integer.valueOf(playedTime);
+		}
+
+		playerAchievements = new HashSet<?>[achievementPlayTimes.length];
+		for (i = 0; i < playerAchievements.length; ++i)
+			playerAchievements[i] = new HashSet<Player>();
 
 	}
 
@@ -29,33 +35,40 @@ public class AchievePlayTimeRunnable implements Runnable {
 	}
 
 	/**
-	 * Update play times and store them into server's memory until player disconnects.
+	 * Update play times and store them into server's memory until player
+	 * disconnects.
 	 */
+	@SuppressWarnings("unchecked")
 	public void registerTimes() {
 
-		for (Player player : AchieveConnectionListener.getJoinTime().keySet()) {
+		for (Player player : plugin.getConnectionListener().getJoinTime().keySet()) {
 
-			if (!AchieveConnectionListener.getJoinTime().containsKey(player)) {
-				AchieveConnectionListener.getJoinTime().put(player, System.currentTimeMillis());
-				AchieveConnectionListener.getPlayTime().put(player, plugin.getDb().updateAndGetPlaytime(player, (long) 0));
-			} else {
-				for (int achievementPlayTime : achievementPlayTimes) {
-					if (System.currentTimeMillis() - AchieveConnectionListener.getJoinTime().get(player)
-							+ AchieveConnectionListener.getPlayTime().get(player) > achievementPlayTime * 3600000
-							&& !plugin.getDb().hasPlayerAchievement(player,
-									plugin.getConfig().getString("PlayedTime." + achievementPlayTime + ".Name"))) {
+			for (int i = 0; i < achievementPlayTimes.length; i++) {
+				if (System.currentTimeMillis() - plugin.getConnectionListener().getJoinTime().get(player)
+						+ plugin.getConnectionListener().getPlayTime().get(player) > achievementPlayTimes[i] * 3600000
+						&& !playerAchievements[i].contains(player)) {
+					if (!plugin.getDb().hasPlayerAchievement(player,
+							plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"))) {
 
-						plugin.getAchievementDisplay().displayAchievement(player, "PlayedTime." + achievementPlayTime);
+						plugin.getAchievementDisplay().displayAchievement(player,
+								"PlayedTime." + achievementPlayTimes[i]);
 						SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 						plugin.getDb().registerAchievement(player,
-								plugin.getConfig().getString("PlayedTime." + achievementPlayTime + ".Name"),
-								plugin.getConfig().getString("PlayedTime." + achievementPlayTime + ".Message"),
+								plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"),
+								plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Message"),
 								format.format(new Date()));
-						plugin.getReward().checkConfig(player, "PlayedTime." + achievementPlayTime);
+						plugin.getReward().checkConfig(player, "PlayedTime." + achievementPlayTimes[i]);
+
 					}
+					((HashSet<Player>) playerAchievements[i]).add(player);
 				}
 			}
 		}
+	}
+
+	public HashSet<?>[] getPlayerAchievements() {
+
+		return playerAchievements;
 	}
 
 }

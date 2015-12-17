@@ -17,7 +17,7 @@ import com.hm.achievement.AdvancedAchievements;
 
 public class SQLDatabaseManager {
 
-	private static AdvancedAchievements plugin;
+	private AdvancedAchievements plugin;
 
 	/**
 	 * Retrieve SQL connection to database.
@@ -94,7 +94,7 @@ public class SQLDatabaseManager {
 	 */
 	public void initialise(AdvancedAchievements plugin) {
 
-		SQLDatabaseManager.plugin = plugin;
+		this.plugin = plugin;
 		Connection conn = getSQLConnection();
 		if (conn == null) {
 			plugin.getLogger().severe("Could not establish SQL connection. Disabling Advanced Achievement.");
@@ -690,18 +690,19 @@ public class SQLDatabaseManager {
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT playedtime from `playedtime` WHERE playername = '"
-					+ player.getUniqueId() + "'");
-			Integer prev = 0;
-			while (rs.next()) {
-				prev = rs.getInt("playedtime");
-			}
-			Long newPlayedTime = prev + time;
-			if (time != 0)
+			long newPlayedTime = 0;
+			if (time == 0) {
+				ResultSet rs = st.executeQuery("SELECT playedtime from `playedtime` WHERE playername = '"
+						+ player.getUniqueId() + "'");
+				newPlayedTime = 0;
+				while (rs.next()) {
+					newPlayedTime = rs.getLong("playedtime");
+				}
+				rs.close();
+			} else
 				st.execute("replace into `playedtime` (playername, playedtime) VALUES ('" + player.getUniqueId()
-						+ "', " + newPlayedTime + ")");
+						+ "', " + time + ")");
 			st.close();
-			rs.close();
 			conn.close();
 			return newPlayedTime;
 		} catch (SQLException e) {
@@ -714,32 +715,29 @@ public class SQLDatabaseManager {
 	/**
 	 * Update and return player's distance for a specific distance type.
 	 */
-	public Long updateAndGetDistance(Player player, double squarredDistance, String type) {
+	public Integer updateAndGetDistance(Player player, Integer distance, String type) {
 
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
-			Long newDistance = (long) 0;
-			if (squarredDistance == 0) {
+			int newDistance = 0;
+			if (distance == 0) {
 				ResultSet rs = st.executeQuery("SELECT " + type + " from `" + type + "` WHERE playername = '"
 						+ player.getUniqueId() + "'");
 				while (rs.next()) {
-					newDistance = rs.getLong(type);
+					newDistance = rs.getInt(type);
 				}
 				rs.close();
-			} else if (squarredDistance != 0) {
-				long distance = (long) Math.sqrt(squarredDistance);
+			} else
 				st.execute("replace into `" + type + "` (playername, " + type + ") VALUES ('" + player.getUniqueId()
 						+ "', " + distance + ")");
-			}
 			st.close();
 			conn.close();
 			return newDistance;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while handling " + type + " registration: " + e);
-			return (long) 0;
+			return 0;
 		}
 
 	}
-
 }
