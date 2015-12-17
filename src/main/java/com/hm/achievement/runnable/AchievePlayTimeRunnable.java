@@ -11,22 +11,35 @@ import com.hm.achievement.AdvancedAchievements;
 public class AchievePlayTimeRunnable implements Runnable {
 
 	private AdvancedAchievements plugin;
+	// List of achievements extracted from configuration.
 	private int[] achievementPlayTimes;
+	// Set corresponding to whether a player has obtained a specific
+	// play time achievement.
+	// Used as pseudo-caching system to reduce load on database.
 	private HashSet<?>[] playerAchievements;
 
 	public AchievePlayTimeRunnable(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+
+		extractAchievementsFromConfig(plugin);
+
+		playerAchievements = new HashSet<?>[achievementPlayTimes.length];
+		for (int i = 0; i < playerAchievements.length; ++i)
+			playerAchievements[i] = new HashSet<Player>();
+
+	}
+
+	/**
+	 * Load list of achievements from configuration.
+	 */
+	public void extractAchievementsFromConfig(AdvancedAchievements plugin) {
+
 		achievementPlayTimes = new int[plugin.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size()];
 		int i = 0;
 		for (String playedTime : plugin.getConfig().getConfigurationSection("PlayedTime").getKeys(false)) {
 			achievementPlayTimes[i] = Integer.valueOf(playedTime);
 		}
-
-		playerAchievements = new HashSet<?>[achievementPlayTimes.length];
-		for (i = 0; i < playerAchievements.length; ++i)
-			playerAchievements[i] = new HashSet<Player>();
-
 	}
 
 	public void run() {

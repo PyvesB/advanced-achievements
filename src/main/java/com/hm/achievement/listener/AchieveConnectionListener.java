@@ -30,6 +30,7 @@ public class AchieveConnectionListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 
+		// Check if OP to display new version message if needed.
 		if (event.getPlayer().isOp() && plugin.isUpdateNeeded()) {
 			event.getPlayer().sendMessage(
 					(new StringBuilder())
@@ -42,12 +43,14 @@ public class AchieveConnectionListener implements Listener {
 									.toString());
 		}
 
+		// Initialise play time data for the player.
 		if (plugin.getAchievePlayTimeRunnable() != null) {
 			plugin.getConnectionListener().getJoinTime().put(event.getPlayer(), System.currentTimeMillis());
 			plugin.getConnectionListener().getPlayTime()
 					.put(event.getPlayer(), plugin.getDb().updateAndGetPlaytime(event.getPlayer(), 0L));
 		}
 
+		// Initialise distances data for the player.
 		if (plugin.getAchieveDistanceRunnable() != null) {
 			plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat()
 					.put(event.getPlayer(), plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distanceboat"));
@@ -65,6 +68,9 @@ public class AchieveConnectionListener implements Listener {
 			plugin.getAchieveDistanceRunnable().getPlayerLocations()
 					.put(event.getPlayer(), event.getPlayer().getLocation());
 		}
+
+		// Schedule delayed task to check if player has a new Connections
+		// achievement.
 		Bukkit.getServer()
 				.getScheduler()
 				.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),

@@ -18,16 +18,21 @@ import com.hm.achievement.AdvancedAchievements;
 public class AchieveDistanceRunnable implements Runnable {
 
 	private AdvancedAchievements plugin;
+	// Lists of achievements extracted from configuration.
 	private int[] achievementsFoot;
 	private int[] achievementsPig;
 	private int[] achievementsHorse;
 	private int[] achievementsMinecart;
 	private int[] achievementsBoat;
+	// Sets corresponding to whether a player has obtained a specific
+	// distance achievement.
+	// Used as pseudo-caching system to reduce load on database.
 	private HashSet<?>[] playerAchievementsFoot;
 	private HashSet<?>[] playerAchievementsHorse;
 	private HashSet<?>[] playerAchievementsPig;
 	private HashSet<?>[] playerAchievementsMinecart;
 	private HashSet<?>[] playerAchievementsBoat;
+	// HashMaps containing distance statistics for each player.
 	private HashMap<Player, Integer> distancesFoot;
 	private HashMap<Player, Integer> distancesHorse;
 	private HashMap<Player, Integer> distancesPig;
@@ -44,6 +49,35 @@ public class AchieveDistanceRunnable implements Runnable {
 		distancesBoat = new HashMap<Player, Integer>();
 		distancesMinecart = new HashMap<Player, Integer>();
 		playerLocations = new HashMap<Player, Location>();
+
+		extractAchievementsFromConfig(plugin);
+
+		int i;
+		playerAchievementsFoot = new HashSet<?>[achievementsFoot.length];
+		for (i = 0; i < playerAchievementsFoot.length; ++i)
+			playerAchievementsFoot[i] = new HashSet<Player>();
+
+		playerAchievementsHorse = new HashSet<?>[achievementsHorse.length];
+		for (i = 0; i < playerAchievementsHorse.length; ++i)
+			playerAchievementsHorse[i] = new HashSet<Player>();
+
+		playerAchievementsPig = new HashSet<?>[achievementsPig.length];
+		for (i = 0; i < playerAchievementsPig.length; ++i)
+			playerAchievementsPig[i] = new HashSet<Player>();
+
+		playerAchievementsBoat = new HashSet<?>[achievementsBoat.length];
+		for (i = 0; i < playerAchievementsBoat.length; ++i)
+			playerAchievementsBoat[i] = new HashSet<Player>();
+
+		playerAchievementsMinecart = new HashSet<?>[achievementsMinecart.length];
+		for (i = 0; i < playerAchievementsMinecart.length; ++i)
+			playerAchievementsMinecart[i] = new HashSet<Player>();
+	}
+
+	/**
+	 * Load list of achievements from configuration.
+	 */
+	public void extractAchievementsFromConfig(AdvancedAchievements plugin) {
 
 		achievementsFoot = new int[plugin.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size()];
 		int i = 0;
@@ -76,26 +110,6 @@ public class AchieveDistanceRunnable implements Runnable {
 			achievementsBoat[i] = Integer.parseInt(distance);
 			i++;
 		}
-
-		playerAchievementsFoot = new HashSet<?>[achievementsFoot.length];
-		for (i = 0; i < playerAchievementsFoot.length; ++i)
-			playerAchievementsFoot[i] = new HashSet<Player>();
-
-		playerAchievementsHorse = new HashSet<?>[achievementsHorse.length];
-		for (i = 0; i < playerAchievementsHorse.length; ++i)
-			playerAchievementsHorse[i] = new HashSet<Player>();
-
-		playerAchievementsPig = new HashSet<?>[achievementsPig.length];
-		for (i = 0; i < playerAchievementsPig.length; ++i)
-			playerAchievementsPig[i] = new HashSet<Player>();
-
-		playerAchievementsBoat = new HashSet<?>[achievementsBoat.length];
-		for (i = 0; i < playerAchievementsBoat.length; ++i)
-			playerAchievementsBoat[i] = new HashSet<Player>();
-
-		playerAchievementsMinecart = new HashSet<?>[achievementsMinecart.length];
-		for (i = 0; i < playerAchievementsMinecart.length; ++i)
-			playerAchievementsMinecart[i] = new HashSet<Player>();
 	}
 
 	public void run() {
@@ -107,12 +121,12 @@ public class AchieveDistanceRunnable implements Runnable {
 	}
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * Update distances and store them into server's memory until player
+	 * disconnects.
+	 */
 	public void refreshDistance(Player player) {
 
-		/**
-		 * Update distances and store them into server's memory until player
-		 * disconnects.
-		 */
 		if (player.getLocation().equals(playerLocations.get(player)))
 			return;
 

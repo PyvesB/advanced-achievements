@@ -118,8 +118,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	private final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
 
 	// Plugin runnable classes.
-	private AchieveDistanceRunnable achieveDistanceRunnable;
-	private AchievePlayTimeRunnable achievePlayTimeRunnable;
+	private AchieveDistanceRunnable achieveDistanceRunnable = null;
+	private AchievePlayTimeRunnable achievePlayTimeRunnable = null;
 
 	/**
 	 * Constructor.
@@ -507,6 +507,10 @@ public class AdvancedAchievements extends JavaPlugin {
 		infoCommand = new InfoCommand(this);
 		listCommand = new ListCommand(this);
 		helpCommand = new HelpCommand(this);
+		
+		// Reload achievements in distance and play time runnables only on reload.
+		if(achieveDistanceRunnable != null) achieveDistanceRunnable.extractAchievementsFromConfig(this);
+		if(achievePlayTimeRunnable != null) achievePlayTimeRunnable.extractAchievementsFromConfig(this);
 
 		// Check for available plugin update.
 		if (this.getConfig().getBoolean("CheckForUpdate", true)) {
