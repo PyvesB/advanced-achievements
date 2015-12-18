@@ -1,0 +1,81 @@
+#============================================================#
+# +--------------------------------------------------------+ #
+# |       Advanced Achievements French language file       | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+configuration-successfully-reloaded: Configuration rechargée avec succès.
+configuration-reload-failed: Erreur(s) lors du rechargement des configurations. Merci de consulter les logs détaillés pour plus d'informations.
+
+no-permissions: Vous n'avez pas la permission de faire cela.
+
+top-achievement: 'Joueurs ayant obtenu le plus de succès :'
+player-rank: 'Classement actuel :'
+number-achievements: 'Nombre de succès obtenus :'
+
+book-received: Vous avez reçu votre livre de succès!
+book-delay: Vous devez attendre TIME secondes entre chaque obtention de livre !
+list-delay: Vous devez attendre TIME secondes entre chaque /aach list !
+book-name: Livre de Succès
+
+player-offline: Le joueur PLAYER n'est pas en ligne !
+achievement-already-received: Le joueur PLAYER possède déjà ce succès !
+achievement-given: Succès donné !
+achievement-received: 'PLAYER a reçu le succès :'
+achievement-not-found: Succès introuvable. Vérifiez son orthographe.
+achievement-new: 'Nouveau succès :'
+
+item-reward-received: 'Vous avez reçu une récompense :'
+money-reward-received: 'Vous avez gagné : AMOUNT !'
+command-reward: Commande de récompense exécutée !
+
+aach-command-book: Obtenir votre livre de succès.
+aach-command-stats: Visualiser son nombre total de succès.
+aach-command-top: Afficher le classement des succès.
+aach-command-reload: Recharger la configuration du plugin.
+aach-command-give: Donner le succès ACH au joueur NAME.
+aach-command-info: Afficher des informations à propos du plugin.
+aach-command-list: Afficher les succès reçus et manquants.
+
+version-command-name: 'Nom :'
+version-command-version: 'Version :'
+version-command-website: 'Site :'
+version-command-author: 'Auteur :'
+version-command-description: 'Description :'
+version-command-description-details: Advanced Achievements ajoute des succès uniques au serveur. Essayez d'en obtenir le plus possible, récoltez des récompenses, montez dans le classement et collectionnez vos livres !
+version-command-vault: 'Intégration avec Vault :'
+version-command-database: 'Type de la BDD :'
+
+list-reward: 'Récompense(s) :'
+list-reward-money: POs
+list-reward-item: objet
+list-reward-command: objet spécial
+list-amount: 'Niveau :'
+list-connections: Connexions
+list-places: Blocs Placés
+list-breaks: Blocs Cassés
+list-kills: Entités Tuées
+list-crafts: Objets Fabriqués
+list-deaths: Nombre de Morts
+list-arrows: Flèches Tirées
+list-snowballs: Boules de Neige Envoyées
+list-eggs: Oeufs Envoyés
+list-fish: Poissons Attrapés
+list-itembreaks: Objets Cassés
+list-eatenitems: Nourriture Avalée
+list-shear: Moutons Tondus
+list-milk: Vaches Traites
+list-trades: Commerce avec Villageois
+list-anvils: Enclumes Utilisées
+list-enchantments: Objets Enchantés
+list-beds: Lits Utilisés
+list-maxlevel: Niveau Maximum Atteint
+list-potions: Potions Consommées
+list-distance: Distances Parcourues
+list-itemdrops: Objets Jetés
+list-hoeplowings: Parcelles Labourées
+list-fertilising: Plantes Fertilisées
+list-playedtime: Time Played
+list-taming: Animaux Domptés
+list-brewing: Potions Préparées
+list-commands: Autres Succès

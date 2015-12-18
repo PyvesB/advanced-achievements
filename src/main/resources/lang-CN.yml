@@ -1,0 +1,43 @@
+#============================================================#
+# +--------------------------------------------------------+ #
+# |      Advanced Achievements Chinese language file       | #
+# |                      By DoloStar                       | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+configuration-successfully-reloaded: "\u914d\u7f6e\u52a0\u8f7d\u6210\u529f"
+configuration-reload-failed: "\u914d\u7f6e\u91cd\u8f7d\u51fa\u9519,\u8bf7\u67e5\u770b\
+  log\u65e5\u5fd7\u4ee5\u83b7\u5f97\u66f4\u591a\u4fe1\u606f"
+no-permissions: "\u4f60\u6ca1\u6709\u6743\u9650\u8fd9\u4e48\u505a"
+top-achievement: "\u6210\u5c31\u6392\u884c\u699c"
+player-rank: "\u73b0\u5728\u7684\u6392\u540d:"
+number-achievements: "\u5df2\u83b7\u5f97\u7684\u6210\u5c31:"
+book-received: "\u4f60\u83b7\u5f97\u4e86\u4f60\u7684\u6210\u5c31\u4e66"
+book-delay: "\u4f60\u5fc5\u987b\u7b49\u5f85TIME\u79d2\u624d\u80fd\u518d\u6b21\u9886\
+  \u53d6"
+book-name: "\u6210\u5c31\u8bb0\u5f55\u4e66"
+player-offline: "\u8be5\u73a9\u5bb6\u4e0d\u5728\u7ebf"
+achievement-already-received: "\u8be5\u73a9\u5bb6\u4ee5\u83b7\u5f97\u8be5\u6210\u5c31"
+achievement-not-found: "\u672a\u627e\u5230\u6307\u5b9a\u7684\u6210\u5c31"
+achievement-given: "\u5df2\u7ed9\u4e88\u6210\u5c31"
+achievement-received: "\u8be5\u73a9\u5bb6\u5df2\u83b7\u5f97\u6210\u5c31"
+achievement-new: "\u65b0\u6210\u5c31:"
+item-reward-received: "\u4f60\u83b7\u5f97\u4e86\u7269\u54c1\u5956\u52b1"
+money-reward-received: "\u4f60\u83b7\u5f97\u4e86\u91d1\u94b1\u5956\u52b1:AMOUNT"
+command-reward: "\u6307\u4ee4\u5956\u52b1!"
+aach-command-book: "\u83b7\u53d6\u8bb0\u5f55\u6210\u5c31\u7684\u4e66\u672c"
+aach-command-stats: "\u67e5\u770b\u4f60\u5df2\u83b7\u5f97\u7684\u6210\u5c31"
+aach-command-list: "\u663e\u793a\u6240\u6709\u6210\u5c31"
+aach-command-top: "\u67e5\u770b\u6210\u5c31\u6392\u884c\u699c"
+aach-command-give: "\u7ed9\u4e88\u73a9\u5bb6\u4e00\u4e2a\u6210\u5c31"
+aach-command-reload: "\u91cd\u8f7d\u63d2\u4ef6"
+aach-command-info: "\u67e5\u770b\u63d2\u4ef6\u4fe1\u606f"
+version-command-name: "\u540d\u5b57:"
+version-command-version: "\u7248\u672c:"
+version-command-website: "\u7f51\u7ad9:"
+version-command-author: "\u4f5c\u8005:"
+version-command-description: "\u4ecb\u7ecd:"
+version-command-description-details: "\u529f\u80fd\u5f3a\u5927,\u914d\u7f6e\u7b80\u5355\
+  \u7684\u81ea\u5b9a\u4e49\u6210\u5c31\u63d2\u4ef6"
+version-command-vault: 'Vault integration:'
+version-command-database: "\u6570\u636e\u5e93\u7c7b\u578b:"
