@@ -56,7 +56,7 @@ public class BookCommand {
 	 */
 	public void giveBook(Player player) {
 
-		if (!player.isOp() && timeAuthorisedBook(player)) {
+		if (timeAuthorisedBook(player)) {
 
 			// Play special effect when receiving the book.
 			if (additionalEffects)
@@ -73,7 +73,7 @@ public class BookCommand {
 			ArrayList<String> achievements = plugin.getDb().getPlayerAchievementsList(player);
 
 			int i = 0;
-			// Up to four achievement books can be generated (= 200
+			// Up to five achievement books can be generated (= 250
 			// achievements received by a player).
 			if (i == 0)
 				i = fillBook(achievements, player, i, 150, 1);
@@ -86,6 +86,9 @@ public class BookCommand {
 
 			if (i > 449 && achievements.size() != 450)
 				i = fillBook(achievements, player, i, 600, 4);
+
+			if (i > 599 && achievements.size() != 600)
+				i = fillBook(achievements, player, i, 750, 5);
 
 			player.sendMessage(plugin.getChatHeader() + Lang.BOOK_RECEIVED);
 		} else {

@@ -498,7 +498,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		restrictCreative = this.getConfig().getBoolean("RestrictCreative", false);
 		databaseBackup = this.getConfig().getBoolean("DatabaseBackup", true);
 		excludedWorldList = this.getConfig().getStringList("ExcludedWorlds");
-		playtimeTaskInterval = this.getConfig().getInt("PlaytimeTaskInterval", 300);
+		playtimeTaskInterval = this.getConfig().getInt("PlaytimeTaskInterval", 150);
 		distanceTaskInterval = this.getConfig().getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = this.getConfig().getInt("PooledRequestsTaskInterval", 60);
 

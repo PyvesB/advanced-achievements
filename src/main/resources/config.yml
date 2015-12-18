@@ -104,7 +104,7 @@ MYSQL:
 
 # DO NOT CHANGE THE FOLLOWING UNLESS YOU ARE AN EXPERIENCED USER. The intervals are in seconds.
 # Frequency of play time checks for players. Smaller values give more precision but more CPU usage.
-PlaytimeTaskInterval: 300
+PlaytimeTaskInterval: 150
 
 # Calculates distance travelled by players. Smaller values give more precision but more CPU usage.
 DistanceTaskInterval: 5
