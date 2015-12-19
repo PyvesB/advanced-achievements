@@ -81,7 +81,6 @@ public class HelpCommand {
 		// Build the json format string.
 		String json = "{text:\"" + message + "\",clickEvent:{action:suggest_command,value:\"" + command + "\"}}";
 
-		// Get the string corresponding to the server Minecraft version.
 		if (sender instanceof Player)
 			try {
 				PacketSender.sendChatPacket((Player) sender, json);
