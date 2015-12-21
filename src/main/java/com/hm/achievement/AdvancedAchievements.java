@@ -47,7 +47,7 @@ import com.hm.achievement.runnable.AchievePlayTimeRunnable;
  * https://github.com/PyvesB/AdvancedAchievements
  * 
  * @since April 2015
- * @version 2.2
+ * @version 2.2.1
  * @author DarkPyves
  */
 

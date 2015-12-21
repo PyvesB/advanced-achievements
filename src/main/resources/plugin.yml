@@ -1,6 +1,6 @@
 name: AdvancedAchievements
 main: com.hm.achievement.AdvancedAchievements
-version: 2.2
+version: 2.2.1
 author: DarkPyves
 softdepend: [Vault]
 load: POSTWORLD
