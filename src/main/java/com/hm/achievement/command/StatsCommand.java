@@ -34,20 +34,22 @@ public class StatsCommand {
 		int achievements = plugin.getDb().getPlayerAchievementsAmount(player);
 
 		// Display number of achievements received and total achievements.
-		player.sendMessage(plugin.getChatHeader() + Lang.NUMBER_ACHIEVEMENTS + " " + plugin.getColor()
-				+ achievements + ChatColor.GRAY + "/" + plugin.getColor() + totalAchievements);
+		player.sendMessage(plugin.getChatHeader() + Lang.NUMBER_ACHIEVEMENTS + " " + plugin.getColor() + achievements
+				+ ChatColor.GRAY + "/" + plugin.getColor() + totalAchievements);
 
 		// Display progress bar.
-		String barDisplay = "";
-		for (int i = 1; i <= 145; i++) {
-			if (i < (145 * achievements) / totalAchievements)
-				barDisplay = barDisplay + "&5|";
-			else {
-				barDisplay = barDisplay + "&8|";
+		if (totalAchievements > 0) {
+			String barDisplay = "";
+			for (int i = 1; i <= 145; i++) {
+				if (i < (145 * achievements) / totalAchievements)
+					barDisplay = barDisplay + "&5|";
+				else {
+					barDisplay = barDisplay + "&8|";
+				}
 			}
+			player.sendMessage(plugin.getChatHeader() + "[" + ChatColor.translateAlternateColorCodes('&', barDisplay)
+					+ ChatColor.GRAY + "]");
 		}
-		player.sendMessage(plugin.getChatHeader() + "[" + ChatColor.translateAlternateColorCodes('&', barDisplay)
-				+ ChatColor.GRAY + "]");
 
 	}
 }
