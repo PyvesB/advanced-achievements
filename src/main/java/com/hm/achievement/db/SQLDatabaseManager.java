@@ -169,8 +169,6 @@ public class SQLDatabaseManager {
 							+ "hoeplowing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `fertilising` (" + "playername char(36),"
 							+ "fertilising INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-					st.execute("CREATE TABLE IF NOT EXISTS `brewing` (" + "playername char(36),"
-							+ "brewing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.close();
 					plugin.setDatabaseVersion(5);
 				}
@@ -181,6 +179,14 @@ public class SQLDatabaseManager {
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.close();
 					plugin.setDatabaseVersion(6);
+				}
+				// Version 2.2 fix:
+				if (plugin.getDatabaseVersion() == 6) {
+					Statement st = conn.createStatement();
+					st.execute("CREATE TABLE IF NOT EXISTS `brewing` (" + "playername char(36),"
+							+ "brewing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+					st.close();
+					plugin.setDatabaseVersion(7);
 				}
 			}
 			conn.close();
