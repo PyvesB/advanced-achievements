@@ -27,6 +27,9 @@ permissions:
   achievement.give:
     description: Allows to give achievements by command.
     default: op
+  achievement.check:
+    description: Allows to check if achievements were received by players.
+    default: op
   achievement.*:
     description: Star notation of permissions, includes all of them.
     default: op
@@ -36,3 +39,4 @@ permissions:
       achievement.list: true
       achievement.reload: true
       achievement.give: true
+      achievement.check: true

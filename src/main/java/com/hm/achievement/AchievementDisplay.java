@@ -41,7 +41,7 @@ public class AchievementDisplay {
 		name = ChatColor.translateAlternateColorCodes('&', name);
 		msg = ChatColor.translateAlternateColorCodes('&', msg);
 
-		player.sendMessage(plugin.getChatHeader() + Lang.ACHIVEMENT_NEW + " " + ChatColor.WHITE + name);
+		player.sendMessage(plugin.getChatHeader() + Lang.ACHIEVEMENT_NEW + " " + ChatColor.WHITE + name);
 		if (chatNotify) {
 			for (Player p : plugin.getServer().getOnlinePlayers()) {
 				if (!p.getName().equals(player.getName())) {

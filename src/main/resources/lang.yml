@@ -25,6 +25,9 @@ achievement-given: "Achievement given!"
 achievement-received: "PLAYER received the achievement:"
 achievement-new: "New Achievement:"
 
+check-achievement-true: "PLAYER has received the achievement ACH!",
+check-achievements-false: "PLAYER has not received the achievement ACH!"
+
 item-reward-received: "You received an item reward:"
 money-reward-received: "You received: AMOUNT !"
 command-reward: "Reward command carried out!"
@@ -37,6 +40,7 @@ aach-command-top: "Display personal and global rankings."
 aach-command-give: "Give the achievement ACH to the &7player NAME."
 aach-command-reload: "Reload the plugin's configuration."
 aach-command-info: "Display various information about the plugin."
+aach-command-check: "Check if player NAME has &7received ACH."
 
 version-command-name: "Name:"
 version-command-version: "Version:"

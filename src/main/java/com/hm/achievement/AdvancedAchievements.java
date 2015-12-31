@@ -90,6 +90,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private StatsCommand statsCommand;
 	private InfoCommand infoCommand;
 	private HelpCommand helpCommand;
+	private CheckCommand checkCommand;
 	private AdvancedAchievementsUpdateChecker updateChecker;
 
 	// Database related.
@@ -112,9 +113,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	// Achievement types string arrays; constants.
 	private final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
 			"ItemBreaks", "EatenItems", "Shear", "Milk", "Trades", "AnvilsUsed", "Enchantments", "Beds", "MaxLevel",
-			"ConsumedPotions", "PlayedTime", "ItemDrops", "HoePlowings", "Fertilising", "Taming", "Brewing", "Commands" };
-	private final String[] DISTANCE_ACHIEVEMENTS = { "DistanceFoot", "DistancePig", "DistanceHorse",
-			"DistanceMinecart", "DistanceBoat" };
+			"ConsumedPotions", "PlayedTime", "ItemDrops", "HoePlowings", "Fertilising", "Taming", "Brewing",
+			"Commands" };
+	private final String[] DISTANCE_ACHIEVEMENTS = { "DistanceFoot", "DistancePig", "DistanceHorse", "DistanceMinecart",
+			"DistanceBoat" };
 	private final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
 
 	// Plugin runnable classes.
@@ -254,20 +256,17 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to group database queries for some frequent
 		// events.
-		Bukkit.getServer()
-				.getScheduler()
-				.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-						new PooledRequestsSender(this, true), pooledRequestsTaskInterval * 40,
-						pooledRequestsTaskInterval * 20);
+		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(
+				Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), new PooledRequestsSender(this, true),
+				pooledRequestsTaskInterval * 40, pooledRequestsTaskInterval * 20);
 
 		// Schedule a repeating task to monitor played time for each player (not
 		// directly related to an event).
 		if (this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
 			achievePlayTimeRunnable = new AchievePlayTimeRunnable(this);
-			Bukkit.getServer()
-					.getScheduler()
-					.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-							achievePlayTimeRunnable, playtimeTaskInterval * 10, playtimeTaskInterval * 20);
+			Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(
+					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achievePlayTimeRunnable,
+					playtimeTaskInterval * 10, playtimeTaskInterval * 20);
 		}
 
 		// Schedule a repeating task to monitor distances travelled by each
@@ -278,15 +277,14 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
 			achieveDistanceRunnable = new AchieveDistanceRunnable(this);
-			Bukkit.getServer()
-					.getScheduler()
-					.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-							achieveDistanceRunnable, distanceTaskInterval * 40, distanceTaskInterval * 20);
+			Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(
+					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achieveDistanceRunnable,
+					distanceTaskInterval * 40, distanceTaskInterval * 20);
 		}
 
 		if (successfulLoad)
-			this.getLogger().info(
-					"AdvancedAchievements configurations, language file and database successfully loaded!");
+			this.getLogger()
+					.info("AdvancedAchievements configurations, language file and database successfully loaded!");
 		else
 			this.getLogger().severe("Error(s) while loading plugin. Please view previous logs for more information.");
 	}
@@ -512,6 +510,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		infoCommand = new InfoCommand(this);
 		listCommand = new ListCommand(this);
 		helpCommand = new HelpCommand(this);
+		checkCommand = new CheckCommand(this);
 
 		// Reload achievements in distance and play time runnables only on
 		// reload.
@@ -720,10 +719,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (achievePlayTimeRunnable != null)
 			for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 				if (connectionListener.getPlayTime().containsKey(player))
-					this.getDb().updateAndGetPlaytime(
-							player,
-							connectionListener.getPlayTime().get(player) + System.currentTimeMillis()
-									- connectionListener.getJoinTime().get(player));
+					this.getDb().updateAndGetPlaytime(player, connectionListener.getPlayTime().get(player)
+							+ System.currentTimeMillis() - connectionListener.getJoinTime().get(player));
 
 				// Send travelled distance stats to the database.
 				if (achieveDistanceRunnable != null) {
@@ -772,8 +769,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			return true;
 
 		try {
-			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
-					net.milkbowl.vault.economy.Economy.class);
+			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
+					.getRegistration(net.milkbowl.vault.economy.Economy.class);
 			if (economyProvider != null) {
 				economy = economyProvider.getProvider();
 			}
@@ -790,7 +787,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]) {
 
-		if (cmd.getName().equalsIgnoreCase("aach") && (args.length == 1) && !args[0].equalsIgnoreCase("help")) {
+		if (!cmd.getName().equalsIgnoreCase("aach"))
+			return false;
+
+		if ((args.length == 1) && !args[0].equalsIgnoreCase("help")) {
 
 			if (args[0].equalsIgnoreCase("book") && sender.hasPermission("achievement.book")
 					&& sender instanceof Player) {
@@ -832,7 +832,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 				infoCommand.getInfo(sender);
 			}
-		} else if (cmd.getName().equalsIgnoreCase("aach") && (args.length == 3) && args[0].equalsIgnoreCase("give")) {
+		} else if ((args.length == 3) && args[0].equalsIgnoreCase("give")) {
 
 			if (sender.hasPermission("achievement.give")) {
 
@@ -842,7 +842,18 @@ public class AdvancedAchievements extends JavaPlugin {
 
 				sender.sendMessage(chatHeader + Lang.NO_PERMS);
 			}
-		} else if (cmd.getName().equalsIgnoreCase("aach") || (args.length == 1) && !args[0].equalsIgnoreCase("help")) {
+
+		} else if ((args.length >= 3) && args[0].equalsIgnoreCase("check")) {
+
+			if (sender.hasPermission("achievement.check")) {
+				
+				checkCommand.achievementCheck(sender, args);
+
+			} else {
+
+				sender.sendMessage(chatHeader + Lang.NO_PERMS);
+			}
+		} else {
 
 			helpCommand.getHelp(sender);
 		}

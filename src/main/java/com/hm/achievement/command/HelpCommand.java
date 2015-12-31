@@ -24,46 +24,47 @@ public class HelpCommand {
 				.append("§lAdvanced Achievements").append(plugin.getColor()).append(plugin.getIcon())
 				.append(ChatColor.GRAY).append("]").append(plugin.getColor()).append("-=-=-=-=-=-=-").toString());
 
-		sendJsonClickableMessage(
-				sender,
+		sendJsonClickableMessage(sender,
 				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach book")
-						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_BOOK).toString(), "/aach book");
+						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_BOOK).toString(),
+				"/aach book");
 
-		sendJsonClickableMessage(
-				sender,
+		sendJsonClickableMessage(sender,
 				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach stats")
-						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_STATS).toString(), "/aach stats");
+						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_STATS).toString(),
+				"/aach stats");
 
-		sendJsonClickableMessage(
-				sender,
+		sendJsonClickableMessage(sender,
 				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach list")
-						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_LIST).toString(), "/aach list");
+						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_LIST).toString(),
+				"/aach list");
 
-		sendJsonClickableMessage(
-				sender,
+		sendJsonClickableMessage(sender,
 				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach top")
-						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_TOP).toString(), "/aach top");
+						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_TOP).toString(),
+				"/aach top");
 
-		sendJsonClickableMessage(
-				sender,
-				(new StringBuilder())
-						.append(plugin.getChatHeader())
-						.append(plugin.getColor() + "/aach give §oach name§r")
-						.append(ChatColor.GRAY)
-						.append(" - "
-								+ ChatColor.translateAlternateColorCodes('&', Lang.AACH_COMMAND_GIVE.toString()
-										.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7"))).toString(),
-				"/aach give ach name");
+		sendJsonClickableMessage(sender, (new StringBuilder()).append(plugin.getChatHeader())
+				.append(plugin.getColor() + "/aach give §oach name§r").append(ChatColor.GRAY)
+				.append(" - " + ChatColor.translateAlternateColorCodes('&',
+						Lang.AACH_COMMAND_GIVE.toString().replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")))
+				.toString(), "/aach give ach name");
 
-		sendJsonClickableMessage(
-				sender,
+		sendJsonClickableMessage(sender, (new StringBuilder()).append(plugin.getChatHeader())
+				.append(plugin.getColor() + "/aach check §oach name§r").append(ChatColor.GRAY)
+				.append(" - " + ChatColor.translateAlternateColorCodes('&',
+						Lang.AACH_COMMAND_CHECK.toString().replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")))
+				.toString(), "/aach check ach name");
+
+		sendJsonClickableMessage(sender,
 				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach reload")
-						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_RELOAD).toString(), "/aach reload");
+						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_RELOAD).toString(),
+				"/aach reload");
 
-		sendJsonClickableMessage(
-				sender,
+		sendJsonClickableMessage(sender,
 				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach info")
-						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_INFO).toString(), "/aach info");
+						.append(ChatColor.GRAY).append(" - " + Lang.AACH_COMMAND_INFO).toString(),
+				"/aach info");
 
 		sender.sendMessage((new StringBuilder()).append(plugin.getColor())
 				.append("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-").toString());
@@ -86,8 +87,8 @@ public class HelpCommand {
 				PacketSender.sendChatPacket((Player) sender, json);
 			} catch (Exception ex) {
 
-				plugin.getLogger()
-						.severe("Errors while trying to display clickable in /aach help command. Displaying standard message instead.");
+				plugin.getLogger().severe(
+						"Errors while trying to display clickable in /aach help command. Displaying standard message instead.");
 				sender.sendMessage(message);
 			}
 		else
