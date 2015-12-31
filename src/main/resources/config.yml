@@ -141,7 +141,7 @@ Breaks:
       Message: '&1The first time you went mining!'
       Name: Cobble!
       Reward:
-        Command: give PLAYER 158 10
+        Command: give PLAYER 158 10; give PLAYER 126 5
   log:
     '100':
       Message: '&2You have cut 100 logs!'

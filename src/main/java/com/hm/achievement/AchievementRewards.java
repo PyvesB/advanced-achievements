@@ -45,18 +45,19 @@ public class AchievementRewards {
 		ItemStack item;
 		// Old config syntax.
 		if (plugin.getConfig().getKeys(true).contains(ach + ".Reward.Item.Type"))
-			item = new ItemStack(Material.getMaterial(plugin.getConfig().getString(ach + ".Reward.Item.Type", "stone")
-					.toUpperCase()), amount);
+			item = new ItemStack(Material.getMaterial(
+					plugin.getConfig().getString(ach + ".Reward.Item.Type", "stone").toUpperCase()), amount);
 		else
 			// New config syntax.
-			item = new ItemStack(Material.getMaterial(plugin.getConfig().getString(ach + ".Reward.Item", "stone")
-					.toUpperCase()
-					.substring(0, plugin.getConfig().getString(ach + ".Reward.Item", "stone").indexOf(" "))), amount);
+			item = new ItemStack(
+					Material.getMaterial(plugin.getConfig().getString(ach + ".Reward.Item", "stone").toUpperCase()
+							.substring(0, plugin.getConfig().getString(ach + ".Reward.Item", "stone").indexOf(" "))),
+					amount);
 
 		if (plugin.setUpEconomy())
 			try {
-				player.sendMessage(plugin.getChatHeader() + Lang.ITEM_REWARD_RECEIVED + " "
-						+ Items.itemByStack(item).getName());
+				player.sendMessage(
+						plugin.getChatHeader() + Lang.ITEM_REWARD_RECEIVED + " " + Items.itemByStack(item).getName());
 				return item;
 			} catch (Exception ex) {
 				// Do nothing, another message will be displayed just bellow.
@@ -80,16 +81,12 @@ public class AchievementRewards {
 
 			if (amount > 1)
 				player.sendMessage(plugin.getChatHeader()
-						+ ChatColor.translateAlternateColorCodes(
-								'&',
-								Lang.MONEY_REWARD_RECEIVED.toString().replace("AMOUNT",
-										"&5" + amtd + " " + plugin.getEconomy().currencyNamePlural())));
+						+ ChatColor.translateAlternateColorCodes('&', Lang.MONEY_REWARD_RECEIVED.toString()
+								.replace("AMOUNT", "&5" + amtd + " " + plugin.getEconomy().currencyNamePlural())));
 			else
 				player.sendMessage(plugin.getChatHeader()
-						+ ChatColor.translateAlternateColorCodes(
-								'&',
-								Lang.MONEY_REWARD_RECEIVED.toString().replace("AMOUNT",
-										"&5" + amtd + " " + plugin.getEconomy().currencyNameSingular())));
+						+ ChatColor.translateAlternateColorCodes('&', Lang.MONEY_REWARD_RECEIVED.toString()
+								.replace("AMOUNT", "&5" + amtd + " " + plugin.getEconomy().currencyNameSingular())));
 		}
 	}
 
@@ -121,8 +118,8 @@ public class AchievementRewards {
 	public void checkConfig(Player player, String configAchievement) {
 
 		// Supports both old and new plugin syntax.
-		int money = Math.max(plugin.getConfig().getInt(configAchievement + ".Reward.Money", 0), plugin.getConfig()
-				.getInt(configAchievement + ".Reward.Money.Amount", 0));
+		int money = Math.max(plugin.getConfig().getInt(configAchievement + ".Reward.Money", 0),
+				plugin.getConfig().getInt(configAchievement + ".Reward.Money.Amount", 0));
 
 		int itemAmount = 0;
 		// Old config syntax.
@@ -138,7 +135,7 @@ public class AchievementRewards {
 						.substring(indexOfAmount + 1));
 		}
 
-		String command = plugin.getConfig().getString(configAchievement + ".Reward.Command", "");
+		String commandReward = plugin.getConfig().getString(configAchievement + ".Reward.Command", "");
 
 		if (money != 0) {
 			rewardMoney(player, money);
@@ -150,11 +147,14 @@ public class AchievementRewards {
 			else
 				player.getWorld().dropItem(player.getLocation(), item);
 		}
-		if (!command.equals("")) {
+		if (!commandReward.equals("")) {
 
-			command = command.replace("PLAYER", player.getName());
-			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
-			if (! rewardCommandNotif || Lang.COMMAND_REWARD.toString().equals(""))
+			commandReward = commandReward.replace("PLAYER", player.getName());
+			// Multiple reward command can be set, separated by a semicolon and space.
+			String[] commands = commandReward.split("; ");
+			for (String command : commands)
+				plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
+			if (!rewardCommandNotif || Lang.COMMAND_REWARD.toString().equals(""))
 				return;
 			player.sendMessage(plugin.getChatHeader() + Lang.COMMAND_REWARD);
 

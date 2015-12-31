@@ -18,7 +18,7 @@ public class DeleteCommand implements Listener {
 	}
 
 	/**
-	 * Check if a player has received an achievement with an in game or console
+	 *Delete an achievements from a player with an in game or console
 	 * command.
 	 */
 	public void achievementDelete(CommandSender sender, String args[]) {
