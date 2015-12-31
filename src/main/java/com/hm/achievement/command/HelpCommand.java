@@ -55,6 +55,12 @@ public class HelpCommand {
 				.append(" - " + ChatColor.translateAlternateColorCodes('&',
 						Lang.AACH_COMMAND_CHECK.toString().replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")))
 				.toString(), "/aach check ach name");
+		
+		sendJsonClickableMessage(sender, (new StringBuilder()).append(plugin.getChatHeader())
+				.append(plugin.getColor() + "/aach delete §oach name§r").append(ChatColor.GRAY)
+				.append(" - " + ChatColor.translateAlternateColorCodes('&',
+						Lang.AACH_COMMAND_DELETE.toString().replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")))
+				.toString(), "/aach delete ach name");
 
 		sendJsonClickableMessage(sender,
 				(new StringBuilder()).append(plugin.getChatHeader()).append(plugin.getColor() + "/aach reload")

@@ -8,11 +8,11 @@ import org.bukkit.event.Listener;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.language.Lang;
 
-public class CheckCommand implements Listener {
+public class DeleteCommand implements Listener {
 
 	private AdvancedAchievements plugin;
 
-	public CheckCommand(AdvancedAchievements plugin) {
+	public DeleteCommand(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 	}
@@ -21,7 +21,7 @@ public class CheckCommand implements Listener {
 	 * Check if a player has received an achievement with an in game or console
 	 * command.
 	 */
-	public void achievementCheck(CommandSender sender, String args[]) {
+	public void achievementDelete(CommandSender sender, String args[]) {
 
 		String achievementName = "";
 		for (int i = 1; i < args.length - 1; i++) {
@@ -37,7 +37,7 @@ public class CheckCommand implements Listener {
 				break;
 			}
 		}
-		
+
 		// If player not found or is offline.
 		if (player == null) {
 
@@ -46,11 +46,14 @@ public class CheckCommand implements Listener {
 			return;
 		}
 
-		if (plugin.getDb().hasPlayerAchievement(player, achievementName))
-			sender.sendMessage(plugin.getChatHeader() + Lang.CHECK_ACHIEVEMENT_TRUE.toString()
-					.replaceAll("PLAYER", args[args.length - 1]).replaceAll("ACH", achievementName));
-		else
+		if (! plugin.getDb().hasPlayerAchievement(player, achievementName))
 			sender.sendMessage(plugin.getChatHeader() + Lang.CHECK_ACHIEVEMENT_FALSE.toString()
 					.replaceAll("PLAYER", args[args.length - 1]).replaceAll("ACH", achievementName));
+		else{
+			plugin.getDb().deletePlayerAchievement(player, achievementName);
+			sender.sendMessage(plugin.getChatHeader() + Lang.DELETE_ACHIEVEMENT.toString()
+					.replaceAll("PLAYER", args[args.length - 1]).replaceAll("ACH", achievementName));
+		}
 	}
 }
+

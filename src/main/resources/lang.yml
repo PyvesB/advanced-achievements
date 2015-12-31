@@ -27,6 +27,7 @@ achievement-new: "New Achievement:"
 
 check-achievement-true: "PLAYER has received the achievement ACH!",
 check-achievements-false: "PLAYER has not received the achievement ACH!"
+delete-achievements: "The achievement ACH was deleted from PLAYER."
 
 item-reward-received: "You received an item reward:"
 money-reward-received: "You received: AMOUNT !"
@@ -37,10 +38,12 @@ aach-command-book: "Receive your achievements book."
 aach-command-stats: "Amount of achievements you have received."
 aach-command-list: "Display received and missing achievements."
 aach-command-top: "Display personal and global rankings."
-aach-command-give: "Give the achievement ACH to the &7player NAME."
+aach-command-give: "Give achievement ACH to &7player NAME."
 aach-command-reload: "Reload the plugin's configuration."
 aach-command-info: "Display various information about the plugin."
 aach-command-check: "Check if player NAME has &7received ACH."
+aach-command-delete: "Delete achievement ACH from &7player NAME."
+
 
 version-command-name: "Name:"
 version-command-version: "Version:"

@@ -30,6 +30,9 @@ permissions:
   achievement.check:
     description: Allows to check if achievements were received by players.
     default: op
+  achievement.delete:
+    description: Allows to delete achievements by command.
+    default: op
   achievement.*:
     description: Star notation of permissions, includes all of them.
     default: op
@@ -40,3 +43,4 @@ permissions:
       achievement.reload: true
       achievement.give: true
       achievement.check: true
+      achievement.delete: true

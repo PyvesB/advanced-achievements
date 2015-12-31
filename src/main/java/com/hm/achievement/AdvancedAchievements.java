@@ -91,6 +91,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private InfoCommand infoCommand;
 	private HelpCommand helpCommand;
 	private CheckCommand checkCommand;
+	private DeleteCommand deleteCommand;
 	private AdvancedAchievementsUpdateChecker updateChecker;
 
 	// Database related.
@@ -511,6 +512,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		listCommand = new ListCommand(this);
 		helpCommand = new HelpCommand(this);
 		checkCommand = new CheckCommand(this);
+		deleteCommand = new DeleteCommand(this);
 
 		// Reload achievements in distance and play time runnables only on
 		// reload.
@@ -831,6 +833,9 @@ public class AdvancedAchievements extends JavaPlugin {
 			} else if (args[0].equalsIgnoreCase("info")) {
 
 				infoCommand.getInfo(sender);
+			} else {
+				
+				helpCommand.getHelp(sender);
 			}
 		} else if ((args.length == 3) && args[0].equalsIgnoreCase("give")) {
 
@@ -848,6 +853,17 @@ public class AdvancedAchievements extends JavaPlugin {
 			if (sender.hasPermission("achievement.check")) {
 				
 				checkCommand.achievementCheck(sender, args);
+
+			} else {
+
+				sender.sendMessage(chatHeader + Lang.NO_PERMS);
+			}
+			
+		} else if ((args.length >= 3) && args[0].equalsIgnoreCase("delete")) {
+
+			if (sender.hasPermission("achievement.delete")) {
+				
+				deleteCommand.achievementDelete(sender, args);
 
 			} else {
 
