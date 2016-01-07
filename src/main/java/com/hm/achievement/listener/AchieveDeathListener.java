@@ -3,6 +3,7 @@ package com.hm.achievement.listener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.hm.achievement.event.PlayerAchievementEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,6 +38,9 @@ public class AchieveDeathListener implements Listener {
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
 					plugin.getConfig().getString(configAchievement + ".Message"), format.format(new Date()));
+
+			plugin.getServer().getPluginManager().callEvent(new PlayerAchievementEvent(player, configAchievement));
+
 			plugin.getReward().checkConfig(player, configAchievement);
 		}
 	}
