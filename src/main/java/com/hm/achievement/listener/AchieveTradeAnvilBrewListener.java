@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.language.Lang;
 
 public class AchieveTradeAnvilBrewListener implements Listener {
 
@@ -24,12 +25,21 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryClickEvent(InventoryClickEvent event) {
 
+		// Not relevant for trade, anvil, or brewing events, but used for the
+		// /aach list command to avoid adding an additional event handler.
+		if (event.getInventory().getName().equals(Lang.LIST_GUI_TITLE.toString())) {
+			event.setCancelled(true);
+			return;
+		}
+
 		if (event.getRawSlot() != 0 && event.getRawSlot() != 1 && event.getRawSlot() != 2
 				|| event.getCurrentItem().getType().name().equals("AIR"))
 			return;
+
 		Player player = (Player) event.getWhoClicked();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.get")
+				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player))
 			return;
 		String configAchievement = "";
 

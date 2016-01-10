@@ -48,6 +48,7 @@ public enum Lang {
     VERSION_COMMAND_DESCRIPTION_DETAILS("version-command-description-details", "Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"),
     VERSION_COMMAND_VAULT("version-command-vault", "Vault integration:"),
     VERSION_COMMAND_DATABASE("version-command-database", "Database type:"),
+    LIST_GUI_TITLE("list-gui-title", "&5§lAchievements List"),
     LIST_REWARD("list-reward", "Reward:"),
     LIST_REWARD_MONEY("list-reward-money", "money"),
     LIST_REWARD_ITEM("list-reward-item", "item"),
