@@ -20,25 +20,16 @@ public class ListCommand {
 	private boolean obfuscateNotReceived;
 	private int listTime;
 	private HashMap<Player, Long> players;
-	// Get messages for language file.
-	private String[] normalAchievementTypesLanguage = { Lang.LIST_CONNECTIONS.toString(), Lang.LIST_DEATHS.toString(),
-			Lang.LIST_ARROWS.toString(), Lang.LIST_SNOWBALLS.toString(), Lang.LIST_EGGS.toString(),
-			Lang.LIST_FISH.toString(), Lang.LIST_ITEMBREAKS.toString(), Lang.LIST_EATENITEMS.toString(),
-			Lang.LIST_SHEAR.toString(), Lang.LIST_MILK.toString(), Lang.LIST_TRADES.toString(),
-			Lang.LIST_ANVILS.toString(), Lang.LIST_ENCHANTMENTS.toString(), Lang.LIST_BEDS.toString(),
-			Lang.LIST_MAXLEVEL.toString(), Lang.LIST_POTIONS.toString(), Lang.LIST_PLAYEDTIME.toString(),
-			Lang.LIST_ITEMDROPS.toString(), Lang.LIST_HOEPLOWINGS.toString(), Lang.LIST_FERTILISING.toString(),
-			Lang.LIST_TAMING.toString(), Lang.LIST_BREWING.toString(), Lang.LIST_COMMANDS.toString() };
 
-	private String[] multipleAchievementTypesLanguage = { Lang.LIST_PLACES.toString(), Lang.LIST_BREAKS.toString(),
-			Lang.LIST_KILLS.toString(), Lang.LIST_CRAFTS.toString() };
+	// Messages for language file.
+	private String[] normalAchievementTypesLanguage;
+	private String[] multipleAchievementTypesLanguage;
 
-	// Get list of item stacks for GUI.
-	private ItemStack[] multipleAchievementTypesMaterial = { new ItemStack(Material.SMOOTH_BRICK),
+	// Get lists of item stacks for GUI.
+	private static final ItemStack[] MULTIPLE_ACHIEVEMENT_TYPES_MATERIAL = { new ItemStack(Material.SMOOTH_BRICK),
 			new ItemStack(Material.SMOOTH_BRICK, 1, (short) 2), new ItemStack(Material.BONE),
 			new ItemStack(Material.WORKBENCH) };
-
-	private ItemStack[] normalAchievementTypesMaterial = { new ItemStack(Material.BOOK_AND_QUILL),
+	private static final ItemStack[] NORMAL_ACHIEVEMENT_TYPES_MATERIAL = { new ItemStack(Material.BOOK_AND_QUILL),
 			new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW), new ItemStack(Material.SNOW_BALL),
 			new ItemStack(Material.EGG), new ItemStack(Material.RAW_FISH, 1, (short) 3), new ItemStack(Material.FLINT),
 			new ItemStack(Material.MELON), new ItemStack(Material.SHEARS), new ItemStack(Material.MILK_BUCKET),
@@ -55,6 +46,19 @@ public class ListCommand {
 		hideNotReceivedCategories = plugin.getConfig().getBoolean("HideNotReceivedCategories", false);
 		obfuscateNotReceived = plugin.getConfig().getBoolean("ObfuscateNotReceived", true);
 		listTime = plugin.getConfig().getInt("TimeList", 0) * 1000;
+
+		normalAchievementTypesLanguage = new String[] { Lang.LIST_CONNECTIONS.toString(), Lang.LIST_DEATHS.toString(),
+				Lang.LIST_ARROWS.toString(), Lang.LIST_SNOWBALLS.toString(), Lang.LIST_EGGS.toString(),
+				Lang.LIST_FISH.toString(), Lang.LIST_ITEMBREAKS.toString(), Lang.LIST_EATENITEMS.toString(),
+				Lang.LIST_SHEAR.toString(), Lang.LIST_MILK.toString(), Lang.LIST_TRADES.toString(),
+				Lang.LIST_ANVILS.toString(), Lang.LIST_ENCHANTMENTS.toString(), Lang.LIST_BEDS.toString(),
+				Lang.LIST_MAXLEVEL.toString(), Lang.LIST_POTIONS.toString(), Lang.LIST_PLAYEDTIME.toString(),
+				Lang.LIST_ITEMDROPS.toString(), Lang.LIST_HOEPLOWINGS.toString(), Lang.LIST_FERTILISING.toString(),
+				Lang.LIST_TAMING.toString(), Lang.LIST_BREWING.toString(), Lang.LIST_COMMANDS.toString() };
+
+		multipleAchievementTypesLanguage = new String[] { Lang.LIST_PLACES.toString(), Lang.LIST_BREAKS.toString(),
+				Lang.LIST_KILLS.toString(), Lang.LIST_CRAFTS.toString() };
+
 	}
 
 	/**
@@ -93,36 +97,39 @@ public class ListCommand {
 			int numberOfCategories = 0;
 
 			// Build list of achievements with multiple sub-categories in GUI.
-			for (int i = 0; i < plugin.getMULTIPLE_ACHIEVEMENTS().length; i++)
+			for (int i = 0; i < AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length; i++)
 				if (!multipleAchievementTypesLanguage[i].equals("")) {
 					// Create item stack that will be displayed in the GUI.
-					ItemStack connections = multipleAchievementTypesMaterial[i];
+					ItemStack connections = MULTIPLE_ACHIEVEMENT_TYPES_MATERIAL[i];
 					ItemMeta connectionsMeta = connections.getItemMeta();
 					ArrayList<String> lore = new ArrayList<String>();
 					for (String section : plugin.getConfig()
-							.getConfigurationSection(plugin.getMULTIPLE_ACHIEVEMENTS()[i]).getKeys(false))
+							.getConfigurationSection(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i]).getKeys(false))
 						for (String ach : plugin.getConfig()
-								.getConfigurationSection(plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section)
+								.getConfigurationSection(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i] + "." + section)
 								.getKeys(false))
 							if (plugin.getDb().hasPlayerAchievement(player, plugin.getConfig().getString(
-									plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "." + ach + ".Name", ""))) {
+									AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i] + "." + section + "." + ach + ".Name",
+									""))) {
 								numberInCategory++;
 								lore.add(ChatColor.translateAlternateColorCodes('&',
 										buildLoreString(
 												"&f" + plugin.getConfig()
-														.getString(plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section
-																+ "." + ach + ".Name", ""),
+														.getString(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i] + "."
+																+ section + "." + ach + ".Name", ""),
 												ach,
-												plugin.getReward().getRewardType(plugin.getMULTIPLE_ACHIEVEMENTS()[i]
-														+ "." + section + "." + ach))));
+												plugin.getReward()
+														.getRewardType(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i]
+																+ "." + section + "." + ach))));
 							} else
 								lore.add(ChatColor.translateAlternateColorCodes('&', buildLoreString(
 										"&8§o" + plugin.getConfig()
-												.getString(plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "."
-														+ ach + ".Name", "")
+												.getString(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i] + "." + section
+														+ "." + ach + ".Name", "")
 												.replaceAll("&([a-f]|[0-9]){1}", ""),
-										ach, plugin.getReward().getRewardType(
-												plugin.getMULTIPLE_ACHIEVEMENTS()[i] + "." + section + "." + ach))));
+										ach,
+										plugin.getReward().getRewardType(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i]
+												+ "." + section + "." + ach))));
 					if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
 						connectionsMeta.setDisplayName(
 								ChatColor.translateAlternateColorCodes('&', "&7" + plugin.getIcon() + " "
@@ -144,7 +151,7 @@ public class ListCommand {
 				ItemStack connections = new ItemStack(Material.SADDLE);
 				ItemMeta connectionsMeta = connections.getItemMeta();
 				ArrayList<String> lore = new ArrayList<String>();
-				for (String distanceType : plugin.getDISTANCE_ACHIEVEMENTS())
+				for (String distanceType : AdvancedAchievements.DISTANCE_ACHIEVEMENTS)
 					for (String ach : plugin.getConfig().getConfigurationSection(distanceType).getKeys(false))
 						if (plugin.getDb().hasPlayerAchievement(player,
 								plugin.getConfig().getString(distanceType + "." + ach + ".Name", ""))) {
@@ -176,35 +183,33 @@ public class ListCommand {
 			}
 
 			// Build list of normal achievements in GUI.
-			for (int i = 0; i < plugin.getNORMAL_ACHIEVEMENTS().length; i++)
+			for (int i = 0; i < AdvancedAchievements.NORMAL_ACHIEVEMENTS.length; i++)
 				if (!normalAchievementTypesLanguage[i].equals("")) {
 					// Create item stack that will be displayed in the GUI.
-					ItemStack connections = normalAchievementTypesMaterial[i];
+					ItemStack connections = NORMAL_ACHIEVEMENT_TYPES_MATERIAL[i];
 					ItemMeta connectionsMeta = connections.getItemMeta();
 					ArrayList<String> lore = new ArrayList<String>();
-					for (String ach : plugin.getConfig().getConfigurationSection(plugin.getNORMAL_ACHIEVEMENTS()[i])
-							.getKeys(false))
+					for (String ach : plugin.getConfig()
+							.getConfigurationSection(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i]).getKeys(false))
 						if (plugin.getDb().hasPlayerAchievement(player, plugin.getConfig()
-								.getString(plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach + ".Name", ""))) {
+								.getString(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + "." + ach + ".Name", ""))) {
 							numberInCategory++;
-							lore.add(
-									ChatColor.translateAlternateColorCodes('&',
-											buildLoreString(
-													"&f" + plugin.getConfig()
-															.getString(plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach
-																	+ ".Name", ""),
-													ach, plugin.getReward().getRewardType(
-															plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach))));
+							lore.add(ChatColor.translateAlternateColorCodes('&',
+									buildLoreString(
+											"&f" + plugin.getConfig()
+													.getString(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + "." + ach
+															+ ".Name", ""),
+											ach, plugin.getReward().getRewardType(
+													AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + "." + ach))));
 						} else
-							lore.add(
-									ChatColor.translateAlternateColorCodes('&',
-											buildLoreString(
-													"&8§o" + plugin.getConfig()
-															.getString(plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach
-																	+ ".Name", "")
-															.replaceAll("&([a-f]|[0-9]){1}", ""),
-													ach, plugin.getReward().getRewardType(
-															plugin.getNORMAL_ACHIEVEMENTS()[i] + "." + ach))));
+							lore.add(ChatColor.translateAlternateColorCodes('&',
+									buildLoreString(
+											"&8§o" + plugin.getConfig()
+													.getString(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + "." + ach
+															+ ".Name", "")
+													.replaceAll("&([a-f]|[0-9]){1}", ""),
+											ach, plugin.getReward().getRewardType(
+													AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + "." + ach))));
 					if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
 						connectionsMeta.setDisplayName(
 								ChatColor.translateAlternateColorCodes('&', "&7" + plugin.getIcon() + " "

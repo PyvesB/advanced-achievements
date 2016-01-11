@@ -112,13 +112,13 @@ public class AdvancedAchievements extends JavaPlugin {
 	private int pooledRequestsTaskInterval;
 
 	// Achievement types string arrays; constants.
-	private final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
+	public static final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
 			"ItemBreaks", "EatenItems", "Shear", "Milk", "Trades", "AnvilsUsed", "Enchantments", "Beds", "MaxLevel",
 			"ConsumedPotions", "PlayedTime", "ItemDrops", "HoePlowings", "Fertilising", "Taming", "Brewing",
 			"Commands" };
-	private final String[] DISTANCE_ACHIEVEMENTS = { "DistanceFoot", "DistancePig", "DistanceHorse", "DistanceMinecart",
-			"DistanceBoat" };
-	private final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
+	public static final String[] DISTANCE_ACHIEVEMENTS = { "DistanceFoot", "DistancePig", "DistanceHorse",
+			"DistanceMinecart", "DistanceBoat" };
+	public static final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
 
 	// Plugin runnable classes.
 	private AchieveDistanceRunnable achieveDistanceRunnable = null;
@@ -834,7 +834,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 				infoCommand.getInfo(sender);
 			} else {
-				
+
 				helpCommand.getHelp(sender);
 			}
 		} else if ((args.length == 3) && args[0].equalsIgnoreCase("give")) {
@@ -851,18 +851,18 @@ public class AdvancedAchievements extends JavaPlugin {
 		} else if ((args.length >= 3) && args[0].equalsIgnoreCase("check")) {
 
 			if (sender.hasPermission("achievement.check")) {
-				
+
 				checkCommand.achievementCheck(sender, args);
 
 			} else {
 
 				sender.sendMessage(chatHeader + Lang.NO_PERMS);
 			}
-			
+
 		} else if ((args.length >= 3) && args[0].equalsIgnoreCase("delete")) {
 
 			if (sender.hasPermission("achievement.delete")) {
-				
+
 				deleteCommand.achievementDelete(sender, args);
 
 			} else {
@@ -977,21 +977,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	public ChatColor getColor() {
 
 		return color;
-	}
-
-	public String[] getNORMAL_ACHIEVEMENTS() {
-
-		return NORMAL_ACHIEVEMENTS;
-	}
-
-	public String[] getDISTANCE_ACHIEVEMENTS() {
-
-		return DISTANCE_ACHIEVEMENTS;
-	}
-
-	public String[] getMULTIPLE_ACHIEVEMENTS() {
-
-		return MULTIPLE_ACHIEVEMENTS;
 	}
 
 }
