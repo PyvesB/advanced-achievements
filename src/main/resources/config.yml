@@ -82,7 +82,7 @@ TitleScreen: true
 #=============================ooo=============================#
 
 # DO NOT CHANGE OR DELETE.
-DatabaseVersion: 8
+DatabaseVersion: 0
 
 # Make a daily backup of your local database.
 DatabaseBackup: true

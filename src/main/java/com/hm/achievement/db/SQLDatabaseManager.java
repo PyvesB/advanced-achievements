@@ -106,18 +106,20 @@ public class SQLDatabaseManager {
 
 		}
 		try {
-			if (plugin.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql")) {
-				Statement st = conn.createStatement();
+			Statement st = conn.createStatement();
+			if (plugin.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql")
+					&& plugin.getDatabaseVersion() == 0) {
+
 				st.execute("CREATE TABLE IF NOT EXISTS `achievements` (" + "playername char(36),"
 						+ "achievement varchar(64)," + "description varchar(128)," + "date varchar(10),"
 						+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
 				initialiseTables(st);
-				st.close();
-			} else {
-				// Update old SQLite database versions.
+				plugin.setDatabaseVersion(8);
+			}
+			// Update old SQLite database versions.
+			switch (plugin.getDatabaseVersion()) {
 				// Added in version 1.3:
-				if (plugin.getDatabaseVersion() == 1) {
-					Statement st = conn.createStatement();
+				case 1: {
 					st.execute("CREATE TABLE IF NOT EXISTS `trades` (" + "playername char(36)," + "trades INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `anvils` (" + "playername char(36)," + "anvils INT UNSIGNED,"
@@ -125,12 +127,9 @@ public class SQLDatabaseManager {
 					st.execute("CREATE TABLE IF NOT EXISTS `enchantments` (" + "playername char(36),"
 							+ "enchantments INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 
-					st.close();
-					plugin.setDatabaseVersion(2);
 				}
-				// Added in version 1.4:
-				if (plugin.getDatabaseVersion() == 2) {
-					Statement st = conn.createStatement();
+					// Added in version 1.4:
+				case 2: {
 					st.execute("CREATE TABLE IF NOT EXISTS `eggs` (" + "playername char(36)," + "eggs INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `levels` (" + "playername char(36)," + "levels INT UNSIGNED,"
@@ -138,21 +137,14 @@ public class SQLDatabaseManager {
 					st.execute("CREATE TABLE IF NOT EXISTS `beds` (" + "playername char(36)," + "beds INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
 					st.close();
-					plugin.setDatabaseVersion(3);
-
 				}
-				// Added in version 1.5:
-				if (plugin.getDatabaseVersion() == 3) {
-					Statement st = conn.createStatement();
+					// Added in version 1.5:
+				case 3: {
 					st.execute("CREATE TABLE IF NOT EXISTS `consumedpotions` (" + "playername char(36),"
 							+ "consumedpotions INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-					st.close();
-					plugin.setDatabaseVersion(4);
-
 				}
-				// Added in version 2.0:
-				if (plugin.getDatabaseVersion() == 4) {
-					Statement st = conn.createStatement();
+					// Added in version 2.0:
+				case 4: {
 					st.execute("CREATE TABLE IF NOT EXISTS `playedtime` (" + "playername char(36),"
 							+ "playedtime INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `distancefoot` (" + "playername char(36),"
@@ -171,34 +163,29 @@ public class SQLDatabaseManager {
 							+ "hoeplowing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.execute("CREATE TABLE IF NOT EXISTS `fertilising` (" + "playername char(36),"
 							+ "fertilising INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-					st.close();
-					plugin.setDatabaseVersion(5);
 				}
-				// Added in version 2.2:
-				if (plugin.getDatabaseVersion() == 5) {
-					Statement st = conn.createStatement();
+					// Added in version 2.2:
+				case 5: {
 					st.execute("CREATE TABLE IF NOT EXISTS `tames` (" + "playername char(36)," + "tames INT UNSIGNED,"
 							+ "PRIMARY KEY (`playername`)" + ")");
-					st.close();
-					plugin.setDatabaseVersion(6);
 				}
-				// Version 2.2 fix:
-				if (plugin.getDatabaseVersion() == 6) {
-					Statement st = conn.createStatement();
+					// Version 2.2 fix:
+				case 6: {
 					st.execute("CREATE TABLE IF NOT EXISTS `brewing` (" + "playername char(36),"
 							+ "brewing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-					st.close();
-					plugin.setDatabaseVersion(7);
 				}
-				// Added in version 2.3:
-				if (plugin.getDatabaseVersion() == 7) {
-					Statement st = conn.createStatement();
+					// Added in version 2.3:
+				case 7: {
 					st.execute("CREATE TABLE IF NOT EXISTS `fireworks` (" + "playername char(36),"
 							+ "fireworks INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-					st.close();
+
 					plugin.setDatabaseVersion(8);
+					break;
 				}
+				default:
+					break;
 			}
+			st.close();
 			conn.close();
 
 		} catch (SQLException e) {
@@ -502,11 +489,11 @@ public class SQLDatabaseManager {
 			achievement = achievement.replace("'", "''");
 			desc = desc.replace("'", "''");
 			if (plugin.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
-				st.execute("replace into `achievements` (playername, achievement, description, date) VALUES ('"
+				st.execute("INSERT INTO `achievements` (playername, achievement, description, date) VALUES ('"
 						+ player.getUniqueId() + "','" + achievement + "','" + desc + "','" + format.format(new Date())
 						+ "')");
 			else
-				st.execute("replace into `achievements` (playername, achievement, desc, date) VALUES ('"
+				st.execute("INSERT INTO `achievements` (playername, achievement, desc, date) VALUES ('"
 						+ player.getUniqueId() + "','" + achievement + "','" + desc + "','" + format.format(new Date())
 						+ "')");
 			st.close();
@@ -575,7 +562,7 @@ public class SQLDatabaseManager {
 				prev = rs.getInt(table);
 			}
 			Integer amount = prev + 1;
-			st.execute("replace into `" + table + "` (playername, " + table + ") VALUES ('" + player.getUniqueId()
+			st.execute("REPLACE INTO `" + table + "` (playername, " + table + ") VALUES ('" + player.getUniqueId()
 					+ "', " + amount + ")");
 			st.close();
 			rs.close();
@@ -603,7 +590,7 @@ public class SQLDatabaseManager {
 				itemCrafts = rs.getInt("times");
 			}
 			Integer newCrafts = itemCrafts + amount;
-			st.execute("replace into `crafts` (playername, item, times) VALUES ('" + player.getUniqueId() + "',"
+			st.execute("REPLACE INTO `crafts` (playername, item, times) VALUES ('" + player.getUniqueId() + "',"
 					+ item.getTypeId() + ", " + newCrafts + ")");
 			st.close();
 			rs.close();
@@ -626,7 +613,7 @@ public class SQLDatabaseManager {
 			Statement st = conn.createStatement();
 
 			Integer newLevels = player.getLevel() + 1;
-			st.execute("replace into `levels` (playername, levels) VALUES ('" + player.getUniqueId() + "', " + newLevels
+			st.execute("REPLACE INTO `levels` (playername, levels) VALUES ('" + player.getUniqueId() + "', " + newLevels
 					+ ")");
 			st.close();
 			conn.close();
@@ -707,7 +694,7 @@ public class SQLDatabaseManager {
 				prev = rs.getInt("connections");
 			}
 			Integer newConnections = prev + 1;
-			st.execute("replace into `connections` (playername, connections, date) VALUES ('" + player.getUniqueId()
+			st.execute("REPLACE INTO `connections` (playername, connections, date) VALUES ('" + player.getUniqueId()
 					+ "', " + newConnections + ", '" + date + "')");
 			st.close();
 			rs.close();
@@ -738,7 +725,7 @@ public class SQLDatabaseManager {
 				}
 				rs.close();
 			} else
-				st.execute("replace into `playedtime` (playername, playedtime) VALUES ('" + player.getUniqueId() + "', "
+				st.execute("REPLACE INTO `playedtime` (playername, playedtime) VALUES ('" + player.getUniqueId() + "', "
 						+ time + ")");
 			st.close();
 			conn.close();
@@ -767,7 +754,7 @@ public class SQLDatabaseManager {
 				}
 				rs.close();
 			} else
-				st.execute("replace into `" + type + "` (playername, " + type + ") VALUES ('" + player.getUniqueId()
+				st.execute("REPLACE INTO `" + type + "` (playername, " + type + ") VALUES ('" + player.getUniqueId()
 						+ "', " + distance + ")");
 			st.close();
 			conn.close();

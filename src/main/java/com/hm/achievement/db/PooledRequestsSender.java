@@ -35,47 +35,47 @@ public class PooledRequestsSender implements Runnable {
 			Statement st = conn.createStatement();
 
 			for (String player : DatabasePools.getArrowHashMap().keySet())
-				st.addBatch("replace into `arrows` (playername, arrows) VALUES ('" + player + "', "
+				st.addBatch("REPLACE INTO `arrows` (playername, arrows) VALUES ('" + player + "', "
 						+ DatabasePools.getArrowHashMap().get(player) + ")");
 
 			for (String player : DatabasePools.getShearHashMap().keySet())
-				st.addBatch("replace into `shears` (playername, shears) VALUES ('" + player + "', "
+				st.addBatch("REPLACE INTO `shears` (playername, shears) VALUES ('" + player + "', "
 						+ DatabasePools.getShearHashMap().get(player) + ")");
 
 			for (String player : DatabasePools.getSnowballHashMap().keySet())
-				st.addBatch("replace into `snowballs` (playername, snowballs) VALUES ('" + player + "', "
+				st.addBatch("REPLACE INTO `snowballs` (playername, snowballs) VALUES ('" + player + "', "
 						+ DatabasePools.getSnowballHashMap().get(player) + ")");
 
 			for (String player : DatabasePools.getEggHashMap().keySet())
-				st.addBatch("replace into `eggs` (playername, eggs) VALUES ('" + player + "', "
+				st.addBatch("REPLACE INTO `eggs` (playername, eggs) VALUES ('" + player + "', "
 						+ DatabasePools.getEggHashMap().get(player) + ")");
 
 			for (String player : DatabasePools.getBlockBreakHashMap().keySet())
-				st.addBatch("replace into `breaks` (playername, blockid, breaks) VALUES ('" + player.substring(0, 36)
+				st.addBatch("REPLACE INTO `breaks` (playername, blockid, breaks) VALUES ('" + player.substring(0, 36)
 						+ "'," + player.substring(36) + ", " + DatabasePools.getBlockBreakHashMap().get(player) + ")");
 
 			for (String player : DatabasePools.getBlockPlaceHashMap().keySet())
-				st.addBatch("replace into `places` (playername, blockid, places) VALUES ('" + player.substring(0, 36)
+				st.addBatch("REPLACE INTO `places` (playername, blockid, places) VALUES ('" + player.substring(0, 36)
 						+ "'," + player.substring(36) + ", " + DatabasePools.getBlockPlaceHashMap().get(player) + ")");
 
 			for (String player : DatabasePools.getEntityDeathHashMap().keySet())
-				st.addBatch("replace into `kills` (playername, mobname, kills) VALUES ('" + player.substring(0, 36)
+				st.addBatch("REPLACE INTO `kills` (playername, mobname, kills) VALUES ('" + player.substring(0, 36)
 						+ "', '" + player.substring(36) + "', " + DatabasePools.getEntityDeathHashMap().get(player)
 						+ ")");
 
 			for (String player : DatabasePools.getDropHashMap().keySet())
-				st.addBatch("replace into `drops` (playername, drops) VALUES ('" + player + "', "
+				st.addBatch("REPLACE INTO `drops` (playername, drops) VALUES ('" + player + "', "
 						+ DatabasePools.getDropHashMap().get(player) + ")");
 
 			for (String player : DatabasePools.getHoePlowingHashMap().keySet())
-				st.addBatch("replace into `hoeplowing` (playername, hoeplowing) VALUES ('" + player + "', "
+				st.addBatch("REPLACE INTO `hoeplowing` (playername, hoeplowing) VALUES ('" + player + "', "
 						+ DatabasePools.getHoePlowingHashMap().get(player) + ")");
 
 			for (String player : DatabasePools.getFertiliseHashMap().keySet())
-				st.addBatch("replace into `fertilising` (playername, fertilising) VALUES ('" + player + "', "
+				st.addBatch("REPLACE INTO `fertilising` (playername, fertilising) VALUES ('" + player + "', "
 						+ DatabasePools.getFertiliseHashMap().get(player) + ")");
 			for (String player : DatabasePools.getFireworkHashMap().keySet())
-				st.addBatch("replace into `fireworks` (playername, fireworks) VALUES ('" + player + "', "
+				st.addBatch("REPLACE INTO `fireworks` (playername, fireworks) VALUES ('" + player + "', "
 						+ DatabasePools.getFireworkHashMap().get(player) + ")");
 
 			st.executeBatch();
@@ -83,28 +83,28 @@ public class PooledRequestsSender implements Runnable {
 			st.close();
 			conn.close();
 
-			// Clear entries in HashMaps for players who have quit the server.
-			for (String playerUUID : DatabasePools.getQuitHashSet()) {
-
-				DatabasePools.getEntityDeathHashMap().remove(playerUUID);
-				DatabasePools.getBlockPlaceHashMap().remove(playerUUID);
-				DatabasePools.getBlockBreakHashMap().remove(playerUUID);
-				DatabasePools.getEggHashMap().remove(playerUUID);
-				DatabasePools.getSnowballHashMap().remove(playerUUID);
-				DatabasePools.getShearHashMap().remove(playerUUID);
-				DatabasePools.getArrowHashMap().remove(playerUUID);
-				DatabasePools.getDropHashMap().remove(playerUUID);
-				DatabasePools.getHoePlowingHashMap().remove(playerUUID);
-				DatabasePools.getFertiliseHashMap().remove(playerUUID);
-				DatabasePools.getFireworkHashMap().remove(playerUUID);
-			}
-
-			DatabasePools.getQuitHashSet().clear();
-
 		} catch (SQLException e) {
 
 			plugin.getLogger().severe("Error while sending pooled requests to database: " + e);
 			e.printStackTrace();
 		}
+
+		// Clear entries in HashMaps for players who have quit the server.
+		for (String playerUUID : DatabasePools.getQuitHashSet()) {
+
+			DatabasePools.getEntityDeathHashMap().remove(playerUUID);
+			DatabasePools.getBlockPlaceHashMap().remove(playerUUID);
+			DatabasePools.getBlockBreakHashMap().remove(playerUUID);
+			DatabasePools.getEggHashMap().remove(playerUUID);
+			DatabasePools.getSnowballHashMap().remove(playerUUID);
+			DatabasePools.getShearHashMap().remove(playerUUID);
+			DatabasePools.getArrowHashMap().remove(playerUUID);
+			DatabasePools.getDropHashMap().remove(playerUUID);
+			DatabasePools.getHoePlowingHashMap().remove(playerUUID);
+			DatabasePools.getFertiliseHashMap().remove(playerUUID);
+			DatabasePools.getFireworkHashMap().remove(playerUUID);
+		}
+
+		DatabasePools.getQuitHashSet().clear();
 	}
 }
