@@ -3,7 +3,6 @@ package com.hm.achievement;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
@@ -56,11 +55,21 @@ public class AdvancedAchievementsUpdateChecker {
 			if (version.equals(plugin.getDescription().getVersion()))
 				return false;
 
-			else {
-				plugin.getLogger().info("Update available for Advanced Achievements: v" + version
-						+ ". Download at one of the following locations:");
-				plugin.getLogger().info(BUKKIT_DONWLOAD_URL);
-				plugin.getLogger().info(SPIGOT_DONWLOAD_URL);
+			String[] pluginVersion = plugin.getDescription().getVersion().split("\\.");
+
+			String[] onlineVersion = version.split("\\.");
+
+			for (int i = 0; i < Math.min(pluginVersion.length, onlineVersion.length); i++) {
+				if (Integer.parseInt(pluginVersion[i]) > Integer.parseInt(onlineVersion[i]))
+					return false;
+				else if (Integer.parseInt(pluginVersion[i]) < Integer.parseInt(onlineVersion[i])) {
+					logUpdate();
+					return true;
+				}
+			}
+
+			if (pluginVersion.length < onlineVersion.length) {
+				logUpdate();
 				return true;
 			}
 
@@ -71,6 +80,14 @@ public class AdvancedAchievementsUpdateChecker {
 		}
 		return false;
 
+	}
+
+	private void logUpdate() {
+
+		plugin.getLogger().info("Update available for Advanced Achievements: v" + version
+				+ ". Download at one of the following locations:");
+		plugin.getLogger().info(BUKKIT_DONWLOAD_URL);
+		plugin.getLogger().info(SPIGOT_DONWLOAD_URL);
 	}
 
 	public String getVersion() {
