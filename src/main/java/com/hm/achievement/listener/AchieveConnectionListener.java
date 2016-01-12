@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.AdvancedAchievementsUpdateChecker;
 import com.hm.achievement.runnable.AchieveConnectionRunnable;
 
 public class AchieveConnectionListener implements Listener {
@@ -31,50 +32,48 @@ public class AchieveConnectionListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 
 		// Check if OP to display new version message if needed.
-		if (event.getPlayer().isOp() && plugin.isUpdateNeeded()) {
-			event.getPlayer().sendMessage(
-					(new StringBuilder())
-							.append(plugin.getChatHeader())
-							.append("Advanced Achievements, new version available: v"
-									+ plugin.getUpdateChecker().getVersion() + " Download at: ").toString());
+		if (event.getPlayer().isOp() && plugin.getUpdateChecker().isUpdateNeeded()) {
 			event.getPlayer()
-					.sendMessage(
-							(new StringBuilder()).append(ChatColor.WHITE).append(plugin.getUpdateChecker().getUrl())
-									.toString());
+					.sendMessage((new StringBuilder()).append(plugin.getChatHeader()).append(
+							"Update available for Advanced Achievements: v" + plugin.getUpdateChecker().getVersion())
+					.toString());
+			event.getPlayer().sendMessage((new StringBuilder()).append(plugin.getChatHeader())
+					.append("Download at one of the following locations:").toString());
+			event.getPlayer().sendMessage((new StringBuilder()).append(ChatColor.GRAY)
+					.append(AdvancedAchievementsUpdateChecker.BUKKIT_DONWLOAD_URL).toString());
+			event.getPlayer().sendMessage((new StringBuilder()).append(ChatColor.GRAY)
+					.append(AdvancedAchievementsUpdateChecker.SPIGOT_DONWLOAD_URL).toString());
 		}
 
 		// Initialise play time data for the player.
 		if (plugin.getAchievePlayTimeRunnable() != null) {
 			plugin.getConnectionListener().getJoinTime().put(event.getPlayer(), System.currentTimeMillis());
-			plugin.getConnectionListener().getPlayTime()
-					.put(event.getPlayer(), plugin.getDb().updateAndGetPlaytime(event.getPlayer(), 0L));
+			plugin.getConnectionListener().getPlayTime().put(event.getPlayer(),
+					plugin.getDb().updateAndGetPlaytime(event.getPlayer(), 0L));
 		}
 
 		// Initialise distances data for the player.
 		if (plugin.getAchieveDistanceRunnable() != null) {
-			plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat()
-					.put(event.getPlayer(), plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distanceboat"));
-			plugin.getAchieveDistanceRunnable()
-					.getAchievementDistancesMinecart()
-					.put(event.getPlayer(),
-							plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distanceminecart"));
-			plugin.getAchieveDistanceRunnable().getAchievementDistancesPig()
-					.put(event.getPlayer(), plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancepig"));
-			plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse()
-					.put(event.getPlayer(), plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancehorse"));
-			plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot()
-					.put(event.getPlayer(), plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancefoot"));
+			plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().put(event.getPlayer(),
+					plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distanceboat"));
+			plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().put(event.getPlayer(),
+					plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distanceminecart"));
+			plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().put(event.getPlayer(),
+					plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancepig"));
+			plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().put(event.getPlayer(),
+					plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancehorse"));
+			plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().put(event.getPlayer(),
+					plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancefoot"));
 
-			plugin.getAchieveDistanceRunnable().getPlayerLocations()
-					.put(event.getPlayer(), event.getPlayer().getLocation());
+			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer(),
+					event.getPlayer().getLocation());
 		}
 
 		// Schedule delayed task to check if player has a new Connections
 		// achievement.
-		Bukkit.getServer()
-				.getScheduler()
-				.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-						new AchieveConnectionRunnable(event, plugin), 100);
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
+				Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
+				new AchieveConnectionRunnable(event, plugin), 100);
 
 	}
 

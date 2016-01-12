@@ -105,7 +105,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private boolean restrictCreative;
 	private boolean databaseBackup;
 	private List<String> excludedWorldList;
-	private boolean updateNeeded;
 	private boolean successfulLoad;
 	private int playtimeTaskInterval;
 	private int distanceTaskInterval;
@@ -523,9 +522,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Check for available plugin update.
 		if (this.getConfig().getBoolean("CheckForUpdate", true)) {
-			updateChecker = new AdvancedAchievementsUpdateChecker(this,
-					"http://dev.bukkit.org/bukkit-plugins/advanced-achievements/files.rss");
-			updateNeeded = updateChecker.updateNeeded();
+			updateChecker = new AdvancedAchievementsUpdateChecker(this);
 		}
 
 		// Load Metrics Lite.
@@ -900,11 +897,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AchievementDisplay getAchievementDisplay() {
 
 		return achievementDisplay;
-	}
-
-	public boolean isUpdateNeeded() {
-
-		return updateNeeded;
 	}
 
 	public AdvancedAchievementsUpdateChecker getUpdateChecker() {

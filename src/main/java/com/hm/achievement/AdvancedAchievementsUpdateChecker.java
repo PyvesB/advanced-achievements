@@ -13,43 +13,54 @@ import org.w3c.dom.NodeList;
 public class AdvancedAchievementsUpdateChecker {
 
 	private AdvancedAchievements plugin;
-	private URL filesFeed;
 	private String version;
-	private String url;
+	private boolean updateNeeded;
 
-	public AdvancedAchievementsUpdateChecker(AdvancedAchievements plugin, String url) {
+	// Address of the rss feed to retrieve most recent version number.
+	private static final String URL = "http://dev.bukkit.org/bukkit-plugins/advanced-achievements/files.rss";
+
+	// Addresses of the project's download pages.
+	public static final String BUKKIT_DONWLOAD_URL = "- dev.bukkit.org/bukkit-plugins/advanced-achievements";
+	public static final String SPIGOT_DONWLOAD_URL = "- spigotmc.org/resources/advanced-achievements.6239";
+
+	public AdvancedAchievementsUpdateChecker(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-
-		try {
-			this.filesFeed = new URL(url);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
+		updateNeeded = checkForUpdate();
 
 	}
 
 	/**
-	 * Check if a new version of AdvancedAchievements is available.
+	 * Check if a new version of AdvancedAchievements is available, and log in
+	 * console if new version found.
 	 */
-	public boolean updateNeeded() {
+	private boolean checkForUpdate() {
+
+		URL filesFeed = null;
 
 		try {
-			InputStream input = this.filesFeed.openConnection().getInputStream();
+			filesFeed = new URL(URL);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			InputStream input = filesFeed.openConnection().getInputStream();
 			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
 
 			Node latestFile = document.getElementsByTagName("item").item(0);
 			NodeList children = latestFile.getChildNodes();
 
 			version = children.item(1).getTextContent().replaceAll("[a-zA-Z ]", "");
-			url = children.item(3).getTextContent();
 
 			if (version.equals(plugin.getDescription().getVersion()))
 				return false;
 
 			else {
-				plugin.getLogger().info("Update available for Advanced Achievements: v" + version + ". Download at:");
-				plugin.getLogger().info(url);
+				plugin.getLogger().info("Update available for Advanced Achievements: v" + version
+						+ ". Download at one of the following locations:");
+				plugin.getLogger().info(BUKKIT_DONWLOAD_URL);
+				plugin.getLogger().info(SPIGOT_DONWLOAD_URL);
 				return true;
 			}
 
@@ -67,9 +78,9 @@ public class AdvancedAchievementsUpdateChecker {
 		return version;
 	}
 
-	public String getUrl() {
+	public boolean isUpdateNeeded() {
 
-		return url;
+		return updateNeeded;
 	}
 
 }
