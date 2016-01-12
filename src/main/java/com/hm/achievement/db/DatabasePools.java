@@ -14,6 +14,7 @@ public class DatabasePools {
 	private static HashMap<String, Integer> dropHashMap;
 	private static HashMap<String, Integer> hoePlowingHashMap;
 	private static HashMap<String, Integer> fertiliseHashMap;
+	private static HashMap<String, Integer> fireworkHashMap;
 
 	public static void databasePoolsInit() {
 
@@ -27,6 +28,7 @@ public class DatabasePools {
 		dropHashMap = new HashMap<String, Integer>();
 		hoePlowingHashMap = new HashMap<String, Integer>();
 		fertiliseHashMap = new HashMap<String, Integer>();
+		fireworkHashMap = new HashMap<String, Integer>();
 	}
 
 	public static HashMap<String, Integer> getArrowHashMap() {
@@ -77,6 +79,11 @@ public class DatabasePools {
 	public static HashMap<String, Integer> getFertiliseHashMap() {
 
 		return fertiliseHashMap;
+	}
+
+	public static HashMap<String, Integer> getFireworkHashMap() {
+
+		return fireworkHashMap;
 	}
 
 }

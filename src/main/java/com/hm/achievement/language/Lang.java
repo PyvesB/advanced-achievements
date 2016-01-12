@@ -81,6 +81,7 @@ public enum Lang {
     LIST_FERTILISING("list-fertilising", "Plants Fertilised"),
     LIST_TAMING("list-taming", "Animals Tamed"),
     LIST_BREWING("list-brewing", "Potions Brewed"),
+    LIST_FIREWORKS("list-fireworks", "Fireworks Launched"),
     LIST_COMMANDS("list-commands", "Other Achievements");
     
     

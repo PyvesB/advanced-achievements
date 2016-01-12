@@ -74,6 +74,9 @@ public class PooledRequestsSender implements Runnable {
 			for (String player : DatabasePools.getFertiliseHashMap().keySet())
 				st.addBatch("replace into `fertilising` (playername, fertilising) VALUES ('" + player + "', "
 						+ DatabasePools.getFertiliseHashMap().get(player) + ")");
+			for (String player : DatabasePools.getFireworkHashMap().keySet())
+				st.addBatch("replace into `fireworks` (playername, fireworks) VALUES ('" + player + "', "
+						+ DatabasePools.getFireworkHashMap().get(player) + ")");
 
 			st.executeBatch();
 
@@ -90,6 +93,7 @@ public class PooledRequestsSender implements Runnable {
 			DatabasePools.getDropHashMap().clear();
 			DatabasePools.getHoePlowingHashMap().clear();
 			DatabasePools.getFertiliseHashMap().clear();
+			DatabasePools.getFireworkHashMap().clear();
 
 		} catch (SQLException e) {
 

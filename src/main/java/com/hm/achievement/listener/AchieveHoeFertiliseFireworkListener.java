@@ -16,11 +16,11 @@ import org.bukkit.inventory.ItemStack;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.DatabasePools;
 
-public class AchieveHoeFertiliseListener implements Listener {
+public class AchieveHoeFertiliseFireworkListener implements Listener {
 
 	private AdvancedAchievements plugin;
 
-	public AchieveHoeFertiliseListener(AdvancedAchievements plugin) {
+	public AchieveHoeFertiliseFireworkListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 	}
@@ -32,15 +32,18 @@ public class AchieveHoeFertiliseListener implements Listener {
 			return;
 
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.get")
+				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player))
 			return;
 		String configAchievement = "";
 		if ((player.getItemInHand().getType() == Material.DIAMOND_HOE
 				|| player.getItemInHand().getType() == Material.IRON_HOE
 				|| player.getItemInHand().getType() == Material.STONE_HOE
-				|| player.getItemInHand().getType() == Material.WOOD_HOE || player.getItemInHand().getType() == Material.GOLD_HOE)
-				&& (event.getClickedBlock().getType() == Material.GRASS || event.getClickedBlock().getType() == Material.DIRT)) {
+				|| player.getItemInHand().getType() == Material.WOOD_HOE
+				|| player.getItemInHand().getType() == Material.GOLD_HOE)
+				&& (event.getClickedBlock().getType() == Material.GRASS
+						|| event.getClickedBlock().getType() == Material.DIRT)) {
 			Integer plowings = 0;
 			if (!DatabasePools.getHoePlowingHashMap().containsKey(player.getUniqueId().toString()))
 				plowings = plugin.getDb().getNormalAchievementAmount(player, "hoeplowing") + 1;
@@ -62,7 +65,8 @@ public class AchieveHoeFertiliseListener implements Listener {
 						|| event.getClickedBlock().getType() == Material.MELON_STEM
 						|| event.getClickedBlock().getType() == Material.BROWN_MUSHROOM
 						|| event.getClickedBlock().getType() == Material.RED_MUSHROOM
-						|| event.getClickedBlock().getType() == Material.COCOA || event.getClickedBlock().getType() == Material.LONG_GRASS)) {
+						|| event.getClickedBlock().getType() == Material.COCOA
+						|| event.getClickedBlock().getType() == Material.LONG_GRASS)) {
 			Integer fertilising = 0;
 			if (!DatabasePools.getFertiliseHashMap().containsKey(player.getUniqueId().toString()))
 				fertilising = plugin.getDb().getNormalAchievementAmount(player, "fertilising") + 1;
@@ -72,6 +76,17 @@ public class AchieveHoeFertiliseListener implements Listener {
 			DatabasePools.getFertiliseHashMap().put(player.getUniqueId().toString(), fertilising);
 
 			configAchievement = "Fertilising." + fertilising;
+		} else if (player.getItemInHand().getType() == Material.FIREWORK) {
+			Integer fireworks = 0;
+			if (!DatabasePools.getFireworkHashMap().containsKey(player.getUniqueId().toString()))
+				fireworks = plugin.getDb().getNormalAchievementAmount(player, "fireworks") + 1;
+			else
+				fireworks = DatabasePools.getFireworkHashMap().get(player.getUniqueId().toString()) + 1;
+
+			DatabasePools.getFireworkHashMap().put(player.getUniqueId().toString(), fireworks);
+
+			configAchievement = "Fireworks." + fireworks;
+
 		} else
 			return;
 		if (plugin.getReward().checkAchievement(configAchievement)) {

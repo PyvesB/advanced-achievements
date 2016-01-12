@@ -188,6 +188,14 @@ public class SQLDatabaseManager {
 					st.close();
 					plugin.setDatabaseVersion(7);
 				}
+				// Added in version 2.3:
+				if (plugin.getDatabaseVersion() == 7) {
+					Statement st = conn.createStatement();
+					st.execute("CREATE TABLE IF NOT EXISTS `fireworks` (" + "playername char(36)," + "fireworks INT UNSIGNED,"
+							+ "PRIMARY KEY (`playername`)" + ")");
+					st.close();
+					plugin.setDatabaseVersion(8);
+				}
 			}
 			conn.close();
 
@@ -264,6 +272,8 @@ public class SQLDatabaseManager {
 		st.execute("CREATE TABLE IF NOT EXISTS `tames` (" + "playername char(36)," + "tames INT UNSIGNED,"
 				+ "PRIMARY KEY (`playername`)" + ")");
 		st.execute("CREATE TABLE IF NOT EXISTS `brewing` (" + "playername char(36)," + "brewing INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.execute("CREATE TABLE IF NOT EXISTS `fireworks` (" + "playername char(36)," + "fireworks INT UNSIGNED,"
 				+ "PRIMARY KEY (`playername`)" + ")");
 	}
 

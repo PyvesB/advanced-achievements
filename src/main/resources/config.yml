@@ -82,7 +82,7 @@ TitleScreen: true
 #=============================ooo=============================#
 
 # DO NOT CHANGE OR DELETE.
-DatabaseVersion: 7
+DatabaseVersion: 8
 
 # Make a daily backup of your local database.
 DatabaseBackup: true
@@ -323,6 +323,12 @@ Brewing:
   '1':
     Message: You brewed your first potion!
     Name: Alchemist
+    
+# When a firework is launched.
+Fireworks:
+  '10':
+    Message: You launched 10 fireworks!
+    Name: Pyrotechnist
     
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #

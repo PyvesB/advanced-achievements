@@ -37,7 +37,8 @@ public class ListCommand {
 			new ItemStack(Material.BED), new ItemStack(Material.EXP_BOTTLE), new ItemStack(Material.GLASS_BOTTLE),
 			new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.STONE_HOE),
 			new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.CARROT_STICK),
-			new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.BOOKSHELF) };
+			new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
+			new ItemStack(Material.BOOKSHELF) };
 
 	public ListCommand(AdvancedAchievements plugin) {
 
@@ -54,7 +55,8 @@ public class ListCommand {
 				Lang.LIST_ANVILS.toString(), Lang.LIST_ENCHANTMENTS.toString(), Lang.LIST_BEDS.toString(),
 				Lang.LIST_MAXLEVEL.toString(), Lang.LIST_POTIONS.toString(), Lang.LIST_PLAYEDTIME.toString(),
 				Lang.LIST_ITEMDROPS.toString(), Lang.LIST_HOEPLOWINGS.toString(), Lang.LIST_FERTILISING.toString(),
-				Lang.LIST_TAMING.toString(), Lang.LIST_BREWING.toString(), Lang.LIST_COMMANDS.toString() };
+				Lang.LIST_TAMING.toString(), Lang.LIST_BREWING.toString(), Lang.LIST_FIREWORKS.toString(),
+				Lang.LIST_COMMANDS.toString() };
 
 		multipleAchievementTypesLanguage = new String[] { Lang.LIST_PLACES.toString(), Lang.LIST_BREAKS.toString(),
 				Lang.LIST_KILLS.toString(), Lang.LIST_CRAFTS.toString() };

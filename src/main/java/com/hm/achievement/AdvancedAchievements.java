@@ -77,7 +77,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveQuitListener quitListener;
 	private AchieveWorldTPListener worldTPListener;
 	private AchieveDropListener dropListener;
-	private AchieveHoeFertiliseListener hoeFertiliseListener;
+	private AchieveHoeFertiliseFireworkListener hoeFertiliseListener;
 	private AchieveTameListener tameListener;
 
 	// Additional classes related to plugin modules and commands.
@@ -114,7 +114,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	public static final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
 			"ItemBreaks", "EatenItems", "Shear", "Milk", "Trades", "AnvilsUsed", "Enchantments", "Beds", "MaxLevel",
 			"ConsumedPotions", "PlayedTime", "ItemDrops", "HoePlowings", "Fertilising", "Taming", "Brewing",
-			"Commands" };
+			"Fireworks", "Commands" };
 	public static final String[] DISTANCE_ACHIEVEMENTS = { "DistanceFoot", "DistancePig", "DistanceHorse",
 			"DistanceMinecart", "DistanceBoat" };
 	public static final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
@@ -149,7 +149,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		bedListener = new AchieveBedListener(this);
 		quitListener = new AchieveQuitListener(this);
 		dropListener = new AchieveDropListener(this);
-		hoeFertiliseListener = new AchieveHoeFertiliseListener(this);
+		hoeFertiliseListener = new AchieveHoeFertiliseFireworkListener(this);
 		tameListener = new AchieveTameListener(this);
 		worldTPListener = new AchieveWorldTPListener(this);
 
@@ -233,7 +233,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(tameListener, this);
 
 		if (this.getConfig().getConfigurationSection("HoePlowings").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("Fertilising").getKeys(false).size() != 0)
+				|| this.getConfig().getConfigurationSection("Fertilising").getKeys(false).size() != 0
+				|| this.getConfig().getConfigurationSection("Fireworks").getKeys(false).size() != 0)
 			pm.registerEvents(hoeFertiliseListener, this);
 
 		if (this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0
