@@ -1,8 +1,5 @@
 package com.hm.achievement.listener;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -32,9 +29,8 @@ public class AchieveItemBreakListener implements Listener {
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig().getString(configAchievement + ".Message"), format.format(new Date()));
+					plugin.getConfig().getString(configAchievement + ".Message"));
 
 			plugin.getReward().checkConfig(player, configAchievement);
 		}

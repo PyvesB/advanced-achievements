@@ -7,7 +7,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -191,8 +193,8 @@ public class SQLDatabaseManager {
 				// Added in version 2.3:
 				if (plugin.getDatabaseVersion() == 7) {
 					Statement st = conn.createStatement();
-					st.execute("CREATE TABLE IF NOT EXISTS `fireworks` (" + "playername char(36)," + "fireworks INT UNSIGNED,"
-							+ "PRIMARY KEY (`playername`)" + ")");
+					st.execute("CREATE TABLE IF NOT EXISTS `fireworks` (" + "playername char(36),"
+							+ "fireworks INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 					st.close();
 					plugin.setDatabaseVersion(8);
 				}
@@ -491,19 +493,22 @@ public class SQLDatabaseManager {
 	/**
 	 * Register a new achievement for a player.
 	 */
-	public void registerAchievement(Player player, String achievement, String desc, String date) {
+	public void registerAchievement(Player player, String achievement, String desc) {
 
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
+			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			achievement = achievement.replace("'", "''");
 			desc = desc.replace("'", "''");
 			if (plugin.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
 				st.execute("replace into `achievements` (playername, achievement, description, date) VALUES ('"
-						+ player.getUniqueId() + "','" + achievement + "','" + desc + "','" + date + "')");
+						+ player.getUniqueId() + "','" + achievement + "','" + desc + "','" + format.format(new Date())
+						+ "')");
 			else
 				st.execute("replace into `achievements` (playername, achievement, desc, date) VALUES ('"
-						+ player.getUniqueId() + "','" + achievement + "','" + desc + "','" + date + "')");
+						+ player.getUniqueId() + "','" + achievement + "','" + desc + "','" + format.format(new Date())
+						+ "')");
 			st.close();
 			conn.close();
 

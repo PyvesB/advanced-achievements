@@ -1,7 +1,5 @@
 package com.hm.achievement.runnable;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -224,9 +222,8 @@ public class AchieveDistanceRunnable implements Runnable {
 	public void awardDistanceAchievement(Player player, int achievementDistance, String type) {
 
 		plugin.getAchievementDisplay().displayAchievement(player, type + achievementDistance);
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		plugin.getDb().registerAchievement(player, plugin.getConfig().getString(type + achievementDistance + ".Name"),
-				plugin.getConfig().getString(type + achievementDistance + ".Message"), format.format(new Date()));
+				plugin.getConfig().getString(type + achievementDistance + ".Message"));
 		plugin.getReward().checkConfig(player, type + achievementDistance);
 	}
 

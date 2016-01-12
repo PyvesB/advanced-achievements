@@ -35,7 +35,7 @@ public class AchieveConnectionRunnable implements Runnable {
 
 				plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 				plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
-						plugin.getConfig().getString(configAchievement + ".Message"), format.format(now));
+						plugin.getConfig().getString(configAchievement + ".Message"));
 				plugin.getReward().checkConfig(player, configAchievement);
 			}
 		}

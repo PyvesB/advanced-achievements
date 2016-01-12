@@ -1,7 +1,5 @@
 package com.hm.achievement.runnable;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
 
 import org.bukkit.Bukkit;
@@ -76,11 +74,9 @@ public class AchievePlayTimeRunnable implements Runnable {
 
 						plugin.getAchievementDisplay().displayAchievement(player,
 								"PlayedTime." + achievementPlayTimes[i]);
-						SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 						plugin.getDb().registerAchievement(player,
 								plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"),
-								plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Message"),
-								format.format(new Date()));
+								plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Message"));
 						plugin.getReward().checkConfig(player, "PlayedTime." + achievementPlayTimes[i]);
 
 					}

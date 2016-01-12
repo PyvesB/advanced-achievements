@@ -1,8 +1,5 @@
 package com.hm.achievement.command;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -54,11 +51,8 @@ public class GiveCommand implements Listener {
 			}
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			Date now = new Date();
-			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig().getString(configAchievement + ".Message"), format.format(now));
-
+					plugin.getConfig().getString(configAchievement + ".Message"));
 			plugin.getReward().checkConfig(player, configAchievement);
 
 			sender.sendMessage(plugin.getChatHeader() + Lang.ACHIEVEMENT_GIVEN);
