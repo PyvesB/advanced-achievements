@@ -33,16 +33,11 @@ public class AchieveConnectionListener implements Listener {
 
 		// Check if OP to display new version message if needed.
 		if (event.getPlayer().isOp() && plugin.getUpdateChecker().isUpdateNeeded()) {
-			event.getPlayer()
-					.sendMessage((new StringBuilder()).append(plugin.getChatHeader()).append(
-							"Update available for Advanced Achievements: v" + plugin.getUpdateChecker().getVersion())
-					.toString());
-			event.getPlayer().sendMessage((new StringBuilder()).append(plugin.getChatHeader())
-					.append("Download at one of the following locations:").toString());
-			event.getPlayer().sendMessage((new StringBuilder()).append(ChatColor.GRAY)
-					.append(AdvancedAchievementsUpdateChecker.BUKKIT_DONWLOAD_URL).toString());
-			event.getPlayer().sendMessage((new StringBuilder()).append(ChatColor.GRAY)
-					.append(AdvancedAchievementsUpdateChecker.SPIGOT_DONWLOAD_URL).toString());
+			event.getPlayer().sendMessage(plugin.getChatHeader() + "Update available for Advanced Achievements: v"
+					+ plugin.getUpdateChecker().getVersion());
+			event.getPlayer().sendMessage(plugin.getChatHeader() + "Download at one of the following locations:");
+			event.getPlayer().sendMessage(ChatColor.GRAY + AdvancedAchievementsUpdateChecker.BUKKIT_DONWLOAD_URL);
+			event.getPlayer().sendMessage(ChatColor.GRAY + AdvancedAchievementsUpdateChecker.SPIGOT_DONWLOAD_URL);
 		}
 
 		// Initialise play time data for the player.
