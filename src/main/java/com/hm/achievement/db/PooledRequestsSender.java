@@ -83,17 +83,23 @@ public class PooledRequestsSender implements Runnable {
 			st.close();
 			conn.close();
 
-			DatabasePools.getEntityDeathHashMap().clear();
-			DatabasePools.getBlockPlaceHashMap().clear();
-			DatabasePools.getBlockBreakHashMap().clear();
-			DatabasePools.getEggHashMap().clear();
-			DatabasePools.getSnowballHashMap().clear();
-			DatabasePools.getShearHashMap().clear();
-			DatabasePools.getArrowHashMap().clear();
-			DatabasePools.getDropHashMap().clear();
-			DatabasePools.getHoePlowingHashMap().clear();
-			DatabasePools.getFertiliseHashMap().clear();
-			DatabasePools.getFireworkHashMap().clear();
+			// Clear entries in HashMaps for players who have quit the server.
+			for (String playerUUID : DatabasePools.getQuitHashSet()) {
+
+				DatabasePools.getEntityDeathHashMap().remove(playerUUID);
+				DatabasePools.getBlockPlaceHashMap().remove(playerUUID);
+				DatabasePools.getBlockBreakHashMap().remove(playerUUID);
+				DatabasePools.getEggHashMap().remove(playerUUID);
+				DatabasePools.getSnowballHashMap().remove(playerUUID);
+				DatabasePools.getShearHashMap().remove(playerUUID);
+				DatabasePools.getArrowHashMap().remove(playerUUID);
+				DatabasePools.getDropHashMap().remove(playerUUID);
+				DatabasePools.getHoePlowingHashMap().remove(playerUUID);
+				DatabasePools.getFertiliseHashMap().remove(playerUUID);
+				DatabasePools.getFireworkHashMap().remove(playerUUID);
+			}
+
+			DatabasePools.getQuitHashSet().clear();
 
 		} catch (SQLException e) {
 

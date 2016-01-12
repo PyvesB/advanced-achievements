@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveQuitListener implements Listener {
 
@@ -22,7 +23,10 @@ public class AchieveQuitListener implements Listener {
 	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onQuitEvent(PlayerQuitEvent event) {
-
+		
+		// Add UUID of player in quitHashSet so that his statistics are cleared for the data pools.
+		DatabasePools.getQuitHashSet().add(event.getPlayer().getUniqueId().toString());
+		
 		plugin.getAchievementBookCommand().getPlayers().remove(event.getPlayer());
 		plugin.getAchievementListCommand().getPlayers().remove(event.getPlayer());
 

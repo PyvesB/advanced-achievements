@@ -1,9 +1,11 @@
 package com.hm.achievement.db;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class DatabasePools {
 
+	// Statistics of the different players; keys correspond to UUIDs.
 	private static HashMap<String, Integer> arrowHashMap;
 	private static HashMap<String, Integer> blockBreakHashMap;
 	private static HashMap<String, Integer> blockPlaceHashMap;
@@ -15,6 +17,9 @@ public class DatabasePools {
 	private static HashMap<String, Integer> hoePlowingHashMap;
 	private static HashMap<String, Integer> fertiliseHashMap;
 	private static HashMap<String, Integer> fireworkHashMap;
+	
+	// Players who have quit the server since last pool sending.
+	private static HashSet<String> quitHashSet;
 
 	public static void databasePoolsInit() {
 
@@ -29,6 +34,8 @@ public class DatabasePools {
 		hoePlowingHashMap = new HashMap<String, Integer>();
 		fertiliseHashMap = new HashMap<String, Integer>();
 		fireworkHashMap = new HashMap<String, Integer>();
+		
+		quitHashSet = new HashSet<String>();
 	}
 
 	public static HashMap<String, Integer> getArrowHashMap() {
@@ -84,6 +91,11 @@ public class DatabasePools {
 	public static HashMap<String, Integer> getFireworkHashMap() {
 
 		return fireworkHashMap;
+	}
+
+	public static HashSet<String> getQuitHashSet() {
+
+		return quitHashSet;
 	}
 
 }
