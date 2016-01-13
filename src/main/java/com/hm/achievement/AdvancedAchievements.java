@@ -116,9 +116,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	public static final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
 			"ItemBreaks", "EatenItems", "Shear", "Milk", "Trades", "AnvilsUsed", "Enchantments", "Beds", "MaxLevel",
 			"ConsumedPotions", "PlayedTime", "ItemDrops", "HoePlowings", "Fertilising", "Taming", "Brewing",
-			"Fireworks", "Commands" };
-	public static final String[] DISTANCE_ACHIEVEMENTS = { "DistanceFoot", "DistancePig", "DistanceHorse",
-			"DistanceMinecart", "DistanceBoat" };
+			"Fireworks", "DistanceFoot", "DistancePig", "DistanceHorse",
+			"DistanceMinecart", "DistanceBoat", "Commands" };
 	public static final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
 
 	// Plugin runnable classes.

@@ -17,8 +17,6 @@ public class StatsCommand {
 		// Calculate the total number of achievements in the config file.
 		for (String type : AdvancedAchievements.NORMAL_ACHIEVEMENTS)
 			totalAchievements += plugin.getConfig().getConfigurationSection(type).getKeys(false).size();
-		for (String type : AdvancedAchievements.DISTANCE_ACHIEVEMENTS)
-			totalAchievements += plugin.getConfig().getConfigurationSection(type).getKeys(false).size();
 		for (String type : AdvancedAchievements.MULTIPLE_ACHIEVEMENTS)
 			for (String item : plugin.getConfig().getConfigurationSection(type).getKeys(false))
 				totalAchievements += plugin.getConfig().getConfigurationSection(type + "." + item).getKeys(false)

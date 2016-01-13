@@ -106,7 +106,7 @@ MYSQL:
 # Frequency of play time checks for players. Smaller values give more precision but more CPU usage.
 PlaytimeTaskInterval: 150
 
-# Calculates distance travelled by players. Smaller values give more precision but more CPU usage.
+# Calculates distance traveled by players. Smaller values give more precision but more CPU usage.
 DistanceTaskInterval: 5
 
 # Frequency of some statistics writes to the database.
@@ -262,34 +262,34 @@ PlayedTime:
     Message: You played during one hour on the server!
     Name: First Hour
     
-# When a distance is travelled by foot.
+# When a distance is traveled by foot.
 DistanceFoot:
   '1000':
-    Message: You travelled 1000 blocks by foot!
+    Message: You traveled 1000 blocks by foot!
     Name: Big Walker 
     
-# When a distance is travelled on a pig.
+# When a distance is traveled on a pig.
 DistancePig:
   '100':
-    Message: You travelled 100 blocks on a pig!
+    Message: You traveled 100 blocks on a pig!
     Name: Carrot on a Stick Master
     
-# When a distance is travelled on a horse.
+# When a distance is traveled on a horse.
 DistanceHorse:
   '500':
-    Message: You travelled 500 blocks on a horse!
+    Message: You traveled 500 blocks on a horse!
     Name: The Avener
     
-# When a distance is travelled in a minecart.
+# When a distance is traveled in a minecart.
 DistanceMinecart:
   '100':
-    Message: You travelled 100 blocks in a minecart!
+    Message: You traveled 100 blocks in a minecart!
     Name: Carting Fan
     
-# When a distance is travelled in a boat.
+# When a distance is traveled in a boat.
 DistanceBoat:
   '200':
-    Message: You travelled 200 blocks in a boat!
+    Message: You traveled 200 blocks in a boat!
     Name: Great Sailor
     
 # When an item is dropped on the ground.

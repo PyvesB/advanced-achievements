@@ -36,9 +36,10 @@ public class ListCommand {
 			new ItemStack(Material.EMERALD), new ItemStack(Material.ANVIL), new ItemStack(Material.ENCHANTMENT_TABLE),
 			new ItemStack(Material.BED), new ItemStack(Material.EXP_BOTTLE), new ItemStack(Material.GLASS_BOTTLE),
 			new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.STONE_HOE),
-			new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.CARROT_STICK),
+			new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.LEASH),
 			new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
-			new ItemStack(Material.BOOKSHELF) };
+			new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK), new ItemStack(Material.SADDLE),
+			new ItemStack(Material.MINECART), new ItemStack(Material.BOAT), new ItemStack(Material.BOOKSHELF) };
 
 	public ListCommand(AdvancedAchievements plugin) {
 
@@ -56,7 +57,9 @@ public class ListCommand {
 				Lang.LIST_MAXLEVEL.toString(), Lang.LIST_POTIONS.toString(), Lang.LIST_PLAYEDTIME.toString(),
 				Lang.LIST_ITEMDROPS.toString(), Lang.LIST_HOEPLOWINGS.toString(), Lang.LIST_FERTILISING.toString(),
 				Lang.LIST_TAMING.toString(), Lang.LIST_BREWING.toString(), Lang.LIST_FIREWORKS.toString(),
-				Lang.LIST_COMMANDS.toString() };
+				Lang.LIST_DISTANCE_FOOT.toString(), Lang.LIST_DISTANCE_PIG.toString(),
+				Lang.LIST_DISTANCE_HORSE.toString(), Lang.LIST_DISTANCE_MINECART.toString(),
+				Lang.LIST_DISTANCE_BOAT.toString(), Lang.LIST_COMMANDS.toString() };
 
 		multipleAchievementTypesLanguage = new String[] { Lang.LIST_PLACES.toString(), Lang.LIST_BREAKS.toString(),
 				Lang.LIST_KILLS.toString(), Lang.LIST_CRAFTS.toString() };
@@ -146,43 +149,6 @@ public class ListCommand {
 					lore.clear();
 					numberInCategory = 0;
 				}
-
-			// Build distance achievements list item in GUI.
-			if (!Lang.LIST_DISTANCE.toString().equals("")) {
-				// Create item stack that will be displayed in the GUI.
-				ItemStack connections = new ItemStack(Material.SADDLE);
-				ItemMeta connectionsMeta = connections.getItemMeta();
-				ArrayList<String> lore = new ArrayList<String>();
-				for (String distanceType : AdvancedAchievements.DISTANCE_ACHIEVEMENTS)
-					for (String ach : plugin.getConfig().getConfigurationSection(distanceType).getKeys(false))
-						if (plugin.getDb().hasPlayerAchievement(player,
-								plugin.getConfig().getString(distanceType + "." + ach + ".Name", ""))) {
-							numberInCategory++;
-							lore.add(
-									ChatColor.translateAlternateColorCodes('&',
-											buildLoreString(
-													"&f" + plugin.getConfig()
-															.getString(distanceType + "." + ach + ".Name", ""),
-													ach, plugin.getReward().getRewardType(distanceType + "." + ach))));
-						} else
-							lore.add(ChatColor.translateAlternateColorCodes('&', buildLoreString(
-									"&8§o" + plugin.getConfig().getString(distanceType + "." + ach + ".Name", "")
-											.replaceAll("&([a-f]|[0-9]){1}", ""),
-									ach, plugin.getReward().getRewardType(distanceType + "." + ach))));
-
-				if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
-					connectionsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-							" &7" + plugin.getIcon() + " " + Lang.LIST_DISTANCE + " " + "&7" + plugin.getIcon() + " "));
-					connectionsMeta.setLore(lore);
-					connections.setItemMeta(connectionsMeta);
-
-					guiInv.setItem(numberOfCategories, connections);
-					numberOfCategories++;
-
-				}
-				lore.clear();
-				numberInCategory = 0;
-			}
 
 			// Build list of normal achievements in GUI.
 			for (int i = 0; i < AdvancedAchievements.NORMAL_ACHIEVEMENTS.length; i++)
