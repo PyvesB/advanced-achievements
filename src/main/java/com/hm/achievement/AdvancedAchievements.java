@@ -116,8 +116,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	public static final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
 			"ItemBreaks", "EatenItems", "Shear", "Milk", "Trades", "AnvilsUsed", "Enchantments", "Beds", "MaxLevel",
 			"ConsumedPotions", "PlayedTime", "ItemDrops", "HoePlowings", "Fertilising", "Taming", "Brewing",
-			"Fireworks", "DistanceFoot", "DistancePig", "DistanceHorse",
-			"DistanceMinecart", "DistanceBoat", "Commands" };
+			"Fireworks", "DistanceFoot", "DistancePig", "DistanceHorse", "DistanceMinecart", "DistanceBoat",
+			"Commands" };
 	public static final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
 
 	// Plugin runnable classes.
@@ -735,29 +735,32 @@ public class AdvancedAchievements extends JavaPlugin {
 		new PooledRequestsSender(this, false).sendRequests();
 
 		if (achievePlayTimeRunnable != null)
-			for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-				if (connectionListener.getPlayTime().containsKey(player))
-					this.getDb().updateAndGetPlaytime(player, connectionListener.getPlayTime().get(player)
-							+ System.currentTimeMillis() - connectionListener.getJoinTime().get(player));
+			for (Player player : connectionListener.getPlayTime().keySet())
+				this.getDb().updateAndGetPlaytime(player, connectionListener.getPlayTime().get(player)
+						+ System.currentTimeMillis() - connectionListener.getJoinTime().get(player));
 
-				// Send travelled distance stats to the database.
-				if (achieveDistanceRunnable != null) {
-					this.getDb().updateAndGetDistance(player,
-							achieveDistanceRunnable.getAchievementDistancesFoot().get(player), "distancefoot");
+		// Send traveled distance stats to the database.
+		if (achieveDistanceRunnable != null) {
+			for (Player player : achieveDistanceRunnable.getAchievementDistancesFoot().keySet())
+				this.getDb().updateAndGetDistance(player,
+						achieveDistanceRunnable.getAchievementDistancesFoot().get(player), "distancefoot");
 
-					this.getDb().updateAndGetDistance(player,
-							achieveDistanceRunnable.getAchievementDistancesPig().get(player), "distancepig");
+			for (Player player : achieveDistanceRunnable.getAchievementDistancesPig().keySet())
+				this.getDb().updateAndGetDistance(player,
+						achieveDistanceRunnable.getAchievementDistancesPig().get(player), "distancepig");
 
-					this.getDb().updateAndGetDistance(player,
-							achieveDistanceRunnable.getAchievementDistancesHorse().get(player), "distancehorse");
+			for (Player player : achieveDistanceRunnable.getAchievementDistancesHorse().keySet())
+				this.getDb().updateAndGetDistance(player,
+						achieveDistanceRunnable.getAchievementDistancesHorse().get(player), "distancehorse");
 
-					this.getDb().updateAndGetDistance(player,
-							achieveDistanceRunnable.getAchievementDistancesBoat().get(player), "distanceboat");
+			for (Player player : achieveDistanceRunnable.getAchievementDistancesBoat().keySet())
+				this.getDb().updateAndGetDistance(player,
+						achieveDistanceRunnable.getAchievementDistancesBoat().get(player), "distanceboat");
 
-					this.getDb().updateAndGetDistance(player,
-							achieveDistanceRunnable.getAchievementDistancesMinecart().get(player), "distanceminecart");
-				}
-			}
+			for (Player player : achieveDistanceRunnable.getAchievementDistancesMinecart().keySet())
+				this.getDb().updateAndGetDistance(player,
+						achieveDistanceRunnable.getAchievementDistancesMinecart().get(player), "distanceminecart");
+		}
 
 		this.getLogger().info("Remaining requests sent to database, plugin disabled.");
 
