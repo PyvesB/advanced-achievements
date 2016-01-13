@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -319,14 +320,10 @@ public class AdvancedAchievements extends JavaPlugin {
 			String currentLine;
 
 			while ((currentLine = reader.readLine()) != null) {
-				if (currentLine.startsWith("#")) {
-					currentLine = currentLine.replace(" ", "$");
-					currentLine = currentLine.replace(":", "&");
-					currentLine = currentLine.replace(".", "%");
+				if (currentLine.length() > 0 && currentLine.charAt(0) == '#') {
 
-					currentLine = "COMMENT" + currentLine;
-					currentLine = currentLine + ": true";
-
+					currentLine = "COMMENT" + currentLine.replace(" ", "$").replace(":", "&").replace(".", "%")
+							+ ": true";
 				}
 				configString.append(currentLine + "\n");
 			}
@@ -469,14 +466,11 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			while ((currentLine = reader.readLine()) != null) {
 				if (currentLine.startsWith("COMMENT")) {
-					currentLine = currentLine.replace("COMMENT", "");
-					currentLine = currentLine.replace(": true", "");
-					currentLine = currentLine.replace("$", " ");
-					currentLine = currentLine.replace("&", ":");
-					currentLine = currentLine.replace("%", ".");
+					currentLine = currentLine.replace("COMMENT", "").replace(": true", "").replace("$", " ")
+							.replace("&", ":").replace("%", ".");
 					configString.append(currentLine + "\n");
 
-				} else if (!currentLine.startsWith("#"))
+				} else if (currentLine.length() > 0 && currentLine.charAt(0) != '#' || currentLine.length() == 0)
 					configString.append(currentLine + "\n");
 			}
 
@@ -736,31 +730,26 @@ public class AdvancedAchievements extends JavaPlugin {
 		new PooledRequestsSender(this, false).sendRequests();
 
 		if (achievePlayTimeRunnable != null)
-			for (Player player : connectionListener.getPlayTime().keySet())
-				this.getDb().updateAndGetPlaytime(player, connectionListener.getPlayTime().get(player)
-						+ System.currentTimeMillis() - connectionListener.getJoinTime().get(player));
+			for (Entry<Player, Long> entry : connectionListener.getPlayTime().entrySet())
+				this.getDb().updateAndGetPlaytime(entry.getKey(), entry.getValue() + System.currentTimeMillis()
+						- connectionListener.getJoinTime().get(entry.getKey()));
 
 		// Send traveled distance stats to the database.
 		if (achieveDistanceRunnable != null) {
-			for (Player player : achieveDistanceRunnable.getAchievementDistancesFoot().keySet())
-				this.getDb().updateAndGetDistance(player,
-						achieveDistanceRunnable.getAchievementDistancesFoot().get(player), "distancefoot");
+			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesFoot().entrySet())
+				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distancefoot");
 
-			for (Player player : achieveDistanceRunnable.getAchievementDistancesPig().keySet())
-				this.getDb().updateAndGetDistance(player,
-						achieveDistanceRunnable.getAchievementDistancesPig().get(player), "distancepig");
+			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesPig().entrySet())
+				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distancepig");
 
-			for (Player player : achieveDistanceRunnable.getAchievementDistancesHorse().keySet())
-				this.getDb().updateAndGetDistance(player,
-						achieveDistanceRunnable.getAchievementDistancesHorse().get(player), "distancehorse");
+			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesHorse().entrySet())
+				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distancehorse");
 
-			for (Player player : achieveDistanceRunnable.getAchievementDistancesBoat().keySet())
-				this.getDb().updateAndGetDistance(player,
-						achieveDistanceRunnable.getAchievementDistancesBoat().get(player), "distanceboat");
+			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesBoat().entrySet())
+				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distanceboat");
 
-			for (Player player : achieveDistanceRunnable.getAchievementDistancesMinecart().keySet())
-				this.getDb().updateAndGetDistance(player,
-						achieveDistanceRunnable.getAchievementDistancesMinecart().get(player), "distanceminecart");
+			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesMinecart().entrySet())
+				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distanceminecart");
 		}
 
 		this.getLogger().info("Remaining requests sent to database, plugin disabled.");

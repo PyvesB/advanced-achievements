@@ -56,8 +56,8 @@ public class AchieveCraftListener implements Listener {
 			String configAchievement;
 			for (String threshold : plugin.getConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))
 				if (times >= Integer.parseInt(threshold) && !plugin.getDb().hasPlayerAchievement(player,
-						plugin.getConfig().getString("Crafts." + craftName + "." + threshold + "." + "Name"))) {
-					configAchievement = "Crafts." + craftName + "." + threshold;
+						plugin.getConfig().getString("Crafts." + craftName + '.' + threshold + '.' + "Name"))) {
+					configAchievement = "Crafts." + craftName + '.' + threshold;
 					if (plugin.getReward().checkAchievement(configAchievement)) {
 
 						plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

@@ -54,11 +54,11 @@ public class TopCommand {
 						.getName();
 				// Name in purple if player in top list.
 				if (sender instanceof Player && playerName.equals(((Player) sender).getName()))
-					sender.sendMessage(ChatColor.GRAY + "[" + plugin.getColor() + (i + 2) / 2 + ChatColor.GRAY
-							+ "] " + plugin.getColor() + playerName + " - " + achievementsTop.get(i + 1));
+					sender.sendMessage(ChatColor.GRAY + "[" + plugin.getColor() + ((i + 2) >> 1) + ChatColor.GRAY + "] "
+							+ plugin.getColor() + playerName + " - " + achievementsTop.get(i + 1));
 				else
-					sender.sendMessage(ChatColor.GRAY + "[" + plugin.getColor() + (i + 2) / 2 + ChatColor.GRAY
-							+ "] " + playerName + " - " + achievementsTop.get(i + 1));
+					sender.sendMessage(ChatColor.GRAY + "[" + plugin.getColor() + ((i + 2) >> 1) + ChatColor.GRAY + "] "
+							+ playerName + " - " + achievementsTop.get(i + 1));
 			} catch (Exception ex) {
 				plugin.getLogger().warning("Top command: name corresponding to UUID not found.");
 			}

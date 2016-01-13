@@ -42,7 +42,7 @@ public class AchieveBlockPlaceListener implements Listener {
 
 		DatabasePools.getBlockPlaceHashMap().put(player.getUniqueId().toString() + block.getTypeId(), places);
 
-		String configAchievement = "Places." + blockName + "." + places;
+		String configAchievement = "Places." + blockName + '.' + places;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

@@ -42,7 +42,7 @@ public class AchieveBlockBreakListener implements Listener {
 
 		DatabasePools.getBlockBreakHashMap().put(player.getUniqueId().toString() + block.getTypeId(), breaks);
 
-		String configAchievement = "Breaks." + blockName + "." + breaks;
+		String configAchievement = "Breaks." + blockName + '.' + breaks;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

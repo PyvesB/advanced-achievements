@@ -99,12 +99,12 @@ public class AchievementRewards {
 		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.Money"))
 			rewardType = Lang.LIST_REWARD_MONEY.toString();
 		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.Item"))
-			if (rewardType != "")
+			if (rewardType.length() != 0)
 				rewardType += ", " + Lang.LIST_REWARD_ITEM;
 			else
 				rewardType = Lang.LIST_REWARD_ITEM.toString();
 		if (plugin.getConfig().getKeys(true).contains(configAchievement + ".Reward.command"))
-			if (rewardType != "")
+			if (rewardType.length() != 0)
 				rewardType += ", " + Lang.LIST_REWARD_COMMAND;
 			else
 				rewardType = Lang.LIST_REWARD_COMMAND.toString();
@@ -147,14 +147,15 @@ public class AchievementRewards {
 			else
 				player.getWorld().dropItem(player.getLocation(), item);
 		}
-		if (!commandReward.equals("")) {
+		if (commandReward.length() != 0) {
 
 			commandReward = commandReward.replace("PLAYER", player.getName());
-			// Multiple reward command can be set, separated by a semicolon and space.
+			// Multiple reward command can be set, separated by a semicolon and
+			// space.
 			String[] commands = commandReward.split("; ");
 			for (String command : commands)
 				plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
-			if (!rewardCommandNotif || Lang.COMMAND_REWARD.toString().equals(""))
+			if (!rewardCommandNotif || Lang.COMMAND_REWARD.toString().length() == 0)
 				return;
 			player.sendMessage(plugin.getChatHeader() + Lang.COMMAND_REWARD);
 

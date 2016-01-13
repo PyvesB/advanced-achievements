@@ -19,7 +19,7 @@ public class StatsCommand {
 			totalAchievements += plugin.getConfig().getConfigurationSection(type).getKeys(false).size();
 		for (String type : AdvancedAchievements.MULTIPLE_ACHIEVEMENTS)
 			for (String item : plugin.getConfig().getConfigurationSection(type).getKeys(false))
-				totalAchievements += plugin.getConfig().getConfigurationSection(type + "." + item).getKeys(false)
+				totalAchievements += plugin.getConfig().getConfigurationSection(type + '.' + item).getKeys(false)
 						.size();
 	}
 

@@ -53,7 +53,7 @@ public class AchieveKillListener implements Listener {
 
 		DatabasePools.getEntityDeathHashMap().put(player.getUniqueId().toString() + mobName, kills);
 
-		String configAchievement = "Kills." + mobName + "." + kills;
+		String configAchievement = "Kills." + mobName + '.' + kills;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

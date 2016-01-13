@@ -3,6 +3,7 @@ package com.hm.achievement.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map.Entry;
 
 import com.hm.achievement.AdvancedAchievements;
 
@@ -34,49 +35,51 @@ public class PooledRequestsSender implements Runnable {
 			Connection conn = plugin.getDb().getSQLConnection();
 			Statement st = conn.createStatement();
 
-			for (String player : DatabasePools.getArrowHashMap().keySet())
-				st.addBatch("REPLACE INTO `arrows` (playername, arrows) VALUES ('" + player + "', "
-						+ DatabasePools.getArrowHashMap().get(player) + ")");
+			for (Entry<String, Integer> entry : DatabasePools.getArrowHashMap().entrySet())
+				st.addBatch("REPLACE INTO `arrows` (playername, arrows) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
 
-			for (String player : DatabasePools.getShearHashMap().keySet())
-				st.addBatch("REPLACE INTO `shears` (playername, shears) VALUES ('" + player + "', "
-						+ DatabasePools.getShearHashMap().get(player) + ")");
+			for (Entry<String, Integer> entry : DatabasePools.getShearHashMap().entrySet())
+				st.addBatch("REPLACE INTO `shears` (playername, shears) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
 
-			for (String player : DatabasePools.getSnowballHashMap().keySet())
-				st.addBatch("REPLACE INTO `snowballs` (playername, snowballs) VALUES ('" + player + "', "
-						+ DatabasePools.getSnowballHashMap().get(player) + ")");
+			for (Entry<String, Integer> entry : DatabasePools.getSnowballHashMap().entrySet())
+				st.addBatch("REPLACE INTO `snowballs` (playername, snowballs) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
 
-			for (String player : DatabasePools.getEggHashMap().keySet())
-				st.addBatch("REPLACE INTO `eggs` (playername, eggs) VALUES ('" + player + "', "
-						+ DatabasePools.getEggHashMap().get(player) + ")");
+			for (Entry<String, Integer> entry : DatabasePools.getEggHashMap().entrySet())
+				st.addBatch("REPLACE INTO `eggs` (playername, eggs) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
 
-			for (String player : DatabasePools.getBlockBreakHashMap().keySet())
-				st.addBatch("REPLACE INTO `breaks` (playername, blockid, breaks) VALUES ('" + player.substring(0, 36)
-						+ "'," + player.substring(36) + ", " + DatabasePools.getBlockBreakHashMap().get(player) + ")");
+			for (Entry<String, Integer> entry : DatabasePools.getBlockBreakHashMap().entrySet())
+				st.addBatch("REPLACE INTO `breaks` (playername, blockid, breaks) VALUES ('"
+						+ entry.getKey().substring(0, 36) + "'," + entry.getKey().substring(36) + ", "
+						+ entry.getValue() + ")");
 
-			for (String player : DatabasePools.getBlockPlaceHashMap().keySet())
-				st.addBatch("REPLACE INTO `places` (playername, blockid, places) VALUES ('" + player.substring(0, 36)
-						+ "'," + player.substring(36) + ", " + DatabasePools.getBlockPlaceHashMap().get(player) + ")");
+			for (Entry<String, Integer> entry : DatabasePools.getBlockPlaceHashMap().entrySet())
+				st.addBatch("REPLACE INTO `places` (playername, blockid, places) VALUES ('"
+						+ entry.getKey().substring(0, 36) + "'," + entry.getKey().substring(36) + ", "
+						+ entry.getValue() + ")");
 
-			for (String player : DatabasePools.getEntityDeathHashMap().keySet())
-				st.addBatch("REPLACE INTO `kills` (playername, mobname, kills) VALUES ('" + player.substring(0, 36)
-						+ "', '" + player.substring(36) + "', " + DatabasePools.getEntityDeathHashMap().get(player)
-						+ ")");
+			for (Entry<String, Integer> entry : DatabasePools.getEntityDeathHashMap().entrySet())
+				st.addBatch(
+						"REPLACE INTO `kills` (playername, mobname, kills) VALUES ('" + entry.getKey().substring(0, 36)
+								+ "', '" + entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 
-			for (String player : DatabasePools.getDropHashMap().keySet())
-				st.addBatch("REPLACE INTO `drops` (playername, drops) VALUES ('" + player + "', "
-						+ DatabasePools.getDropHashMap().get(player) + ")");
+			for (Entry<String, Integer> entry : DatabasePools.getDropHashMap().entrySet())
+				st.addBatch("REPLACE INTO `drops` (playername, drops) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
 
-			for (String player : DatabasePools.getHoePlowingHashMap().keySet())
-				st.addBatch("REPLACE INTO `hoeplowing` (playername, hoeplowing) VALUES ('" + player + "', "
-						+ DatabasePools.getHoePlowingHashMap().get(player) + ")");
+			for (Entry<String, Integer> entry : DatabasePools.getHoePlowingHashMap().entrySet())
+				st.addBatch("REPLACE INTO `hoeplowing` (playername, hoeplowing) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
 
-			for (String player : DatabasePools.getFertiliseHashMap().keySet())
-				st.addBatch("REPLACE INTO `fertilising` (playername, fertilising) VALUES ('" + player + "', "
-						+ DatabasePools.getFertiliseHashMap().get(player) + ")");
-			for (String player : DatabasePools.getFireworkHashMap().keySet())
-				st.addBatch("REPLACE INTO `fireworks` (playername, fireworks) VALUES ('" + player + "', "
-						+ DatabasePools.getFireworkHashMap().get(player) + ")");
+			for (Entry<String, Integer> entry : DatabasePools.getFertiliseHashMap().entrySet())
+				st.addBatch("REPLACE INTO `fertilising` (playername, fertilising) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
+			for (Entry<String, Integer> entry : DatabasePools.getFireworkHashMap().entrySet())
+				st.addBatch("REPLACE INTO `fireworks` (playername, fireworks) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
 
 			st.executeBatch();
 
@@ -91,16 +94,16 @@ public class PooledRequestsSender implements Runnable {
 
 		// Clear entries in HashMaps for players who have quit the server.
 
-			DatabasePools.getEntityDeathHashMap().clear();
-			DatabasePools.getBlockPlaceHashMap().clear();
-			DatabasePools.getBlockBreakHashMap().clear();
-			DatabasePools.getEggHashMap().clear();
-			DatabasePools.getSnowballHashMap().clear();
-			DatabasePools.getShearHashMap().clear();
-			DatabasePools.getArrowHashMap().clear();
-			DatabasePools.getDropHashMap().clear();
-			DatabasePools.getHoePlowingHashMap().clear();
-			DatabasePools.getFertiliseHashMap().clear();
+		DatabasePools.getEntityDeathHashMap().clear();
+		DatabasePools.getBlockPlaceHashMap().clear();
+		DatabasePools.getBlockBreakHashMap().clear();
+		DatabasePools.getEggHashMap().clear();
+		DatabasePools.getSnowballHashMap().clear();
+		DatabasePools.getShearHashMap().clear();
+		DatabasePools.getArrowHashMap().clear();
+		DatabasePools.getDropHashMap().clear();
+		DatabasePools.getHoePlowingHashMap().clear();
+		DatabasePools.getFertiliseHashMap().clear();
 		DatabasePools.getFireworkHashMap().clear();
 
 	}
