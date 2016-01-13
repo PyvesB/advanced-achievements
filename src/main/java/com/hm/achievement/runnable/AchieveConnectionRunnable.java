@@ -22,6 +22,9 @@ public class AchieveConnectionRunnable implements Runnable {
 	public void run() {
 
 		Player player = (Player) event.getPlayer();
+		// Check if player is still online.
+		if (!player.isOnline())
+			return;
 		if (!player.hasPermission("achievement.count.connections"))
 			return;
 		Date now = new Date();
