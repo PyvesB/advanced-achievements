@@ -1,101 +1,91 @@
 package com.hm.achievement.db;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DatabasePools {
 
 	// Statistics of the different players; keys correspond to UUIDs.
-	private static HashMap<String, Integer> arrowHashMap;
-	private static HashMap<String, Integer> blockBreakHashMap;
-	private static HashMap<String, Integer> blockPlaceHashMap;
-	private static HashMap<String, Integer> entityDeathHashMap;
-	private static HashMap<String, Integer> shearHashMap;
-	private static HashMap<String, Integer> snowballHashMap;
-	private static HashMap<String, Integer> eggHashMap;
-	private static HashMap<String, Integer> dropHashMap;
-	private static HashMap<String, Integer> hoePlowingHashMap;
-	private static HashMap<String, Integer> fertiliseHashMap;
-	private static HashMap<String, Integer> fireworkHashMap;
-	
-	// Players who have quit the server since last pool sending.
-	private static HashSet<String> quitHashSet;
+	private static Map<String, Integer> arrowHashMap;
+	private static Map<String, Integer> blockBreakHashMap;
+	private static Map<String, Integer> blockPlaceHashMap;
+	private static Map<String, Integer> entityDeathHashMap;
+	private static Map<String, Integer> shearHashMap;
+	private static Map<String, Integer> snowballHashMap;
+	private static Map<String, Integer> eggHashMap;
+	private static Map<String, Integer> dropHashMap;
+	private static Map<String, Integer> hoePlowingHashMap;
+	private static Map<String, Integer> fertiliseHashMap;
+	private static Map<String, Integer> fireworkHashMap;
 
 	public static void databasePoolsInit() {
 
-		arrowHashMap = new HashMap<String, Integer>();
-		blockBreakHashMap = new HashMap<String, Integer>();
-		blockPlaceHashMap = new HashMap<String, Integer>();
-		entityDeathHashMap = new HashMap<String, Integer>();
-		shearHashMap = new HashMap<String, Integer>();
-		snowballHashMap = new HashMap<String, Integer>();
-		eggHashMap = new HashMap<String, Integer>();
-		dropHashMap = new HashMap<String, Integer>();
-		hoePlowingHashMap = new HashMap<String, Integer>();
-		fertiliseHashMap = new HashMap<String, Integer>();
-		fireworkHashMap = new HashMap<String, Integer>();
-		
-		quitHashSet = new HashSet<String>();
+		arrowHashMap = new ConcurrentHashMap <String, Integer>();
+		blockBreakHashMap = new ConcurrentHashMap <String, Integer>();
+		blockPlaceHashMap = new ConcurrentHashMap <String, Integer>();
+		entityDeathHashMap = new ConcurrentHashMap <String, Integer>();
+		shearHashMap = new ConcurrentHashMap <String, Integer>();
+		snowballHashMap = new ConcurrentHashMap <String, Integer>();
+		eggHashMap = new ConcurrentHashMap <String, Integer>();
+		dropHashMap = new ConcurrentHashMap <String, Integer>();
+		hoePlowingHashMap = new ConcurrentHashMap <String, Integer>();
+		fertiliseHashMap = new ConcurrentHashMap <String, Integer>();
+		fireworkHashMap = new ConcurrentHashMap <String, Integer>();
 	}
 
-	public static HashMap<String, Integer> getArrowHashMap() {
+	public static Map<String, Integer> getArrowHashMap() {
 
 		return arrowHashMap;
 	}
 
-	public static HashMap<String, Integer> getBlockBreakHashMap() {
+	public static Map<String, Integer> getBlockBreakHashMap() {
 
 		return blockBreakHashMap;
 	}
 
-	public static HashMap<String, Integer> getBlockPlaceHashMap() {
+	public static Map<String, Integer> getBlockPlaceHashMap() {
 
 		return blockPlaceHashMap;
 	}
 
-	public static HashMap<String, Integer> getEntityDeathHashMap() {
+	public static Map<String, Integer> getEntityDeathHashMap() {
 
 		return entityDeathHashMap;
 	}
 
-	public static HashMap<String, Integer> getShearHashMap() {
+	public static Map<String, Integer> getShearHashMap() {
 
 		return shearHashMap;
 	}
 
-	public static HashMap<String, Integer> getSnowballHashMap() {
+	public static Map<String, Integer> getSnowballHashMap() {
 
 		return snowballHashMap;
 	}
 
-	public static HashMap<String, Integer> getEggHashMap() {
+	public static Map<String, Integer> getEggHashMap() {
 
 		return eggHashMap;
 	}
 
-	public static HashMap<String, Integer> getDropHashMap() {
+	public static Map<String, Integer> getDropHashMap() {
 
 		return dropHashMap;
 	}
 
-	public static HashMap<String, Integer> getHoePlowingHashMap() {
+	public static Map<String, Integer> getHoePlowingHashMap() {
 
 		return hoePlowingHashMap;
 	}
 
-	public static HashMap<String, Integer> getFertiliseHashMap() {
+	public static Map<String, Integer> getFertiliseHashMap() {
 
 		return fertiliseHashMap;
 	}
 
-	public static HashMap<String, Integer> getFireworkHashMap() {
+	public static Map<String, Integer> getFireworkHashMap() {
 
 		return fireworkHashMap;
-	}
-
-	public static HashSet<String> getQuitHashSet() {
-
-		return quitHashSet;
 	}
 
 }

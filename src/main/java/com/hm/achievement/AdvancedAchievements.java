@@ -154,13 +154,14 @@ public class AdvancedAchievements extends JavaPlugin {
 		tameListener = new AchieveTameListener(this);
 		worldTPListener = new AchieveWorldTPListener(this);
 
-		db = new SQLDatabaseManager();
+		db = new SQLDatabaseManager(this);
 
 	}
 
 	/**
 	 * Called when server is launched or reloaded.
 	 */
+	@SuppressWarnings("deprecation")
 	public void onEnable() {
 
 		if (!this.getDataFolder().exists())
@@ -258,7 +259,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to group database queries for some frequent
 		// events.
-		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(
+		Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(
 				Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), new PooledRequestsSender(this, true),
 				pooledRequestsTaskInterval * 40, pooledRequestsTaskInterval * 20);
 
