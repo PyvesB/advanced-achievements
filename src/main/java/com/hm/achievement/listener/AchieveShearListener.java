@@ -22,13 +22,13 @@ public class AchieveShearListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
 
-		Player player = (Player) event.getPlayer();
+		Player player = event.getPlayer();
 		if (!player.hasPermission("achievement.count.shears")
 				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		Integer shears = 0;
+		int shears;
 		if (!DatabasePools.getShearHashMap().containsKey(player.getUniqueId().toString()))
 			shears = plugin.getDb().getNormalAchievementAmount(player, "shears") + 1;
 		else

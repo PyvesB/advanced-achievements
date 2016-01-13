@@ -29,7 +29,7 @@ public class AchieveTameListener implements Listener {
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		Integer tames = plugin.getDb().incrementAndGetNormalAchievement(player, "tames");
+		int tames = plugin.getDb().incrementAndGetNormalAchievement(player, "tames");
 
 		String configAchievement = "Taming." + tames;
 		if (plugin.getReward().checkAchievement(configAchievement)) {

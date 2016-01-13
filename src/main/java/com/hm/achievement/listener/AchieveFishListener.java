@@ -29,7 +29,7 @@ public class AchieveFishListener implements Listener {
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		Integer fish = plugin.getDb().incrementAndGetNormalAchievement(player, "fish");
+		int fish = plugin.getDb().incrementAndGetNormalAchievement(player, "fish");
 		String configAchievement = "Fish." + fish;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 

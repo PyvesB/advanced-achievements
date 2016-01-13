@@ -26,7 +26,7 @@ public class AchieveDeathListener implements Listener {
 		if (!player.hasPermission("achievement.count.deaths") || plugin.isInExludedWorld(player))
 			return;
 
-		Integer deaths = plugin.getDb().incrementAndGetNormalAchievement(player, "deaths");
+		int deaths = plugin.getDb().incrementAndGetNormalAchievement(player, "deaths");
 		String configAchievement = "Deaths." + deaths;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 

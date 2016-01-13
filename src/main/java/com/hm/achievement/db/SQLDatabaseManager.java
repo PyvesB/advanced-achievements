@@ -281,14 +281,14 @@ public class SQLDatabaseManager {
 	/**
 	 * Get number of player's kills for a specific mob.
 	 */
-	public Integer getKills(Player player, String mobname) {
+	public int getKills(Player player, String mobname) {
 
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery("SELECT kills from `kills` WHERE playername = '" + player.getUniqueId()
 					+ "' AND mobname = '" + mobname + "'");
-			Integer entityKills = 0;
+			int entityKills = 0;
 			while (rs.next()) {
 				entityKills = rs.getInt("kills");
 			}
@@ -307,11 +307,11 @@ public class SQLDatabaseManager {
 	 * Get number of player's places for a specific block.
 	 */
 	@SuppressWarnings("deprecation")
-	public Integer getPlaces(Player player, Block block) {
+	public int getPlaces(Player player, Block block) {
 
 		try {
 			Connection conn = getSQLConnection();
-			Integer blockBreaks = 0;
+			int blockBreaks = 0;
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery("SELECT places from `places` WHERE playername = '" + player.getUniqueId()
 					+ "' AND blockid = " + block.getTypeId() + "");
@@ -333,11 +333,11 @@ public class SQLDatabaseManager {
 	 * Get number of player's breaks for a specific block.
 	 */
 	@SuppressWarnings("deprecation")
-	public Integer getBreaks(Player player, Block block) {
+	public int getBreaks(Player player, Block block) {
 
 		try {
 			Connection conn = getSQLConnection();
-			Integer blockBreaks = 0;
+			int blockBreaks = 0;
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery("SELECT breaks FROM `breaks` WHERE playername = '" + player.getUniqueId()
 					+ "' AND blockid = " + block.getTypeId());
@@ -562,18 +562,18 @@ public class SQLDatabaseManager {
 	/**
 	 * Increment and return value of a normal achievement statistic.
 	 */
-	public Integer incrementAndGetNormalAchievement(Player player, String table) {
+	public int incrementAndGetNormalAchievement(Player player, String table) {
 
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(
 					"SELECT " + table + " from `" + table + "` WHERE playername = '" + player.getUniqueId() + "'");
-			Integer prev = 0;
+			int prev = 0;
 			while (rs.next()) {
 				prev = rs.getInt(table);
 			}
-			Integer amount = prev + 1;
+			int amount = prev + 1;
 			st.execute("REPLACE INTO `" + table + "` (playername, " + table + ") VALUES ('" + player.getUniqueId()
 					+ "', " + amount + ")");
 			st.close();
@@ -590,18 +590,18 @@ public class SQLDatabaseManager {
 	 * Increment and return value of a specific craft achievement statistic.
 	 */
 	@SuppressWarnings("deprecation")
-	public Integer updateAndGetCraft(Player player, ItemStack item, int amount) {
+	public int updateAndGetCraft(Player player, ItemStack item, int amount) {
 
 		try {
 			Connection conn = getSQLConnection();
-			Integer itemCrafts = 0;
+			int itemCrafts = 0;
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery("SELECT times FROM `crafts` WHERE playername = '" + player.getUniqueId()
 					+ "' AND item = " + item.getTypeId());
 			while (rs.next()) {
 				itemCrafts = rs.getInt("times");
 			}
-			Integer newCrafts = itemCrafts + amount;
+			int newCrafts = itemCrafts + amount;
 			st.execute("REPLACE INTO `crafts` (playername, item, times) VALUES ('" + player.getUniqueId() + "',"
 					+ item.getTypeId() + ", " + newCrafts + ")");
 			st.close();
@@ -618,13 +618,13 @@ public class SQLDatabaseManager {
 	/**
 	 * Increment and return value of player's max level.
 	 */
-	public Integer incrementAndGetMaxLevel(Player player) {
+	public int incrementAndGetMaxLevel(Player player) {
 
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 
-			Integer newLevels = player.getLevel() + 1;
+			int newLevels = player.getLevel() + 1;
 			st.execute("REPLACE INTO `levels` (playername, levels) VALUES ('" + player.getUniqueId() + "', " + newLevels
 					+ ")");
 			st.close();
@@ -639,14 +639,14 @@ public class SQLDatabaseManager {
 	/**
 	 * Get the amount of a normal achievement statistic.
 	 */
-	public Integer getNormalAchievementAmount(Player player, String table) {
+	public int getNormalAchievementAmount(Player player, String table) {
 
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(
 					"SELECT " + table + " from `" + table + "` WHERE playername = '" + player.getUniqueId() + "'");
-			Integer amount = 0;
+			int amount = 0;
 			while (rs.next()) {
 				amount = rs.getInt(table);
 			}
@@ -694,18 +694,18 @@ public class SQLDatabaseManager {
 	 * Update player's number of connections and last connection date and return
 	 * number of connections.
 	 */
-	public Integer updateAndGetConnection(Player player, String date) {
+	public int updateAndGetConnection(Player player, String date) {
 
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(
 					"SELECT connections from `connections` WHERE playername = '" + player.getUniqueId() + "'");
-			Integer prev = 0;
+			int prev = 0;
 			while (rs.next()) {
 				prev = rs.getInt("connections");
 			}
-			Integer newConnections = prev + 1;
+			int newConnections = prev + 1;
 			st.execute("REPLACE INTO `connections` (playername, connections, date) VALUES ('" + player.getUniqueId()
 					+ "', " + newConnections + ", '" + date + "')");
 			st.close();
@@ -722,7 +722,7 @@ public class SQLDatabaseManager {
 	/**
 	 * Update and return player's playtime.
 	 */
-	public Long updateAndGetPlaytime(Player player, Long time) {
+	public long updateAndGetPlaytime(Player player, long time) {
 
 		try {
 			Connection conn = getSQLConnection();
@@ -744,7 +744,7 @@ public class SQLDatabaseManager {
 			return newPlayedTime;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while handling play time registration: " + e);
-			return (long) 0;
+			return 0L;
 		}
 
 	}
@@ -752,7 +752,7 @@ public class SQLDatabaseManager {
 	/**
 	 * Update and return player's distance for a specific distance type.
 	 */
-	public Integer updateAndGetDistance(Player player, Integer distance, String type) {
+	public int updateAndGetDistance(Player player, int distance, String type) {
 
 		try {
 			Connection conn = getSQLConnection();

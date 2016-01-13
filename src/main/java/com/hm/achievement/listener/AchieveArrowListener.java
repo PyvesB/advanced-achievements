@@ -31,7 +31,7 @@ public class AchieveArrowListener implements Listener {
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		Integer arrows = 0;
+		int arrows;
 		if (!DatabasePools.getArrowHashMap().containsKey(player.getUniqueId().toString()))
 			arrows = plugin.getDb().getNormalAchievementAmount(player, "arrows") + 1;
 		else

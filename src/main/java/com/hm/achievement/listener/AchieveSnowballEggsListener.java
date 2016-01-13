@@ -31,9 +31,9 @@ public class AchieveSnowballEggsListener implements Listener {
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
-		String configAchievement = "";
+		String configAchievement;
 		if (player.hasPermission("achievement.count.snowballs") && event.getEntity() instanceof Snowball) {
-			Integer snowballs = 0;
+			int snowballs;
 			if (!DatabasePools.getSnowballHashMap().containsKey(player.getUniqueId().toString()))
 				snowballs = plugin.getDb().getNormalAchievementAmount(player, "snowballs") + 1;
 			else
@@ -43,7 +43,7 @@ public class AchieveSnowballEggsListener implements Listener {
 
 			configAchievement = "Snowballs." + snowballs;
 		} else if (player.hasPermission("achievement.count.eggs")) {
-			Integer eggs = 0;
+			int eggs;
 			if (!DatabasePools.getEggHashMap().containsKey(player.getUniqueId().toString()))
 				eggs = plugin.getDb().getNormalAchievementAmount(player, "eggs") + 1;
 			else

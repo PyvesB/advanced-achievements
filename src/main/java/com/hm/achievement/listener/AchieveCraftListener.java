@@ -52,7 +52,7 @@ public class AchieveCraftListener implements Listener {
 				amount *= max;
 			}
 
-			Integer times = plugin.getDb().updateAndGetCraft(player, item, amount);
+			int times = plugin.getDb().updateAndGetCraft(player, item, amount);
 			String configAchievement;
 			for (String threshold : plugin.getConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))
 				if (times >= Integer.parseInt(threshold) && !plugin.getDb().hasPlayerAchievement(player,

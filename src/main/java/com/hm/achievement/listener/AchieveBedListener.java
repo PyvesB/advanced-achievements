@@ -21,14 +21,14 @@ public class AchieveBedListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerBedEnterEvent(PlayerBedEnterEvent event) {
 
-		Player player = (Player) event.getPlayer();
+		Player player = event.getPlayer();
 
 		if (!player.hasPermission("achievement.count.beds")
 				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		Integer bed = plugin.getDb().incrementAndGetNormalAchievement(player, "beds");
+		int bed = plugin.getDb().incrementAndGetNormalAchievement(player, "beds");
 		String configAchievement = "Beds." + bed;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 

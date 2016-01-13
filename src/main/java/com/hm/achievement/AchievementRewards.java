@@ -68,7 +68,7 @@ public class AchievementRewards {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void rewardMoney(Player player, Integer amount) {
+	public void rewardMoney(Player player, int amount) {
 
 		if (plugin.setUpEconomy()) {
 			String price = Integer.toString(amount);

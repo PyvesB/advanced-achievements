@@ -34,7 +34,7 @@ public class AchieveBlockPlaceListener implements Listener {
 		if (!plugin.getConfig().isConfigurationSection("Places." + blockName))
 			return;
 
-		Integer places = 0;
+		int places = 0;
 		if (!DatabasePools.getBlockPlaceHashMap().containsKey(player.getUniqueId().toString() + block.getTypeId()))
 			places = plugin.getDb().getPlaces(player, block) + 1;
 		else

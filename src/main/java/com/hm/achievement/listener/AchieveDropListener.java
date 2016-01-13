@@ -27,8 +27,8 @@ public class AchieveDropListener implements Listener {
 				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
-		String configAchievement = "";
-		Integer drops = 0;
+		String configAchievement;
+		int drops;
 		if (!DatabasePools.getDropHashMap().containsKey(player.getUniqueId().toString()))
 			drops = plugin.getDb().getNormalAchievementAmount(player, "drops") + 1;
 		else

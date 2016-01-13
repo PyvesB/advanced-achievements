@@ -31,7 +31,7 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 		Player player = event.getPlayer();
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
-		String configAchievement = "";
+		String configAchievement;
 		if (player.hasPermission("achievement.count.hoeplowings")
 				&& (player.getItemInHand().getType() == Material.DIAMOND_HOE
 						|| player.getItemInHand().getType() == Material.IRON_HOE
@@ -40,7 +40,7 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 						|| player.getItemInHand().getType() == Material.GOLD_HOE)
 				&& (event.getClickedBlock().getType() == Material.GRASS
 						|| event.getClickedBlock().getType() == Material.DIRT)) {
-			Integer plowings = 0;
+			int plowings;
 			if (!DatabasePools.getHoePlowingHashMap().containsKey(player.getUniqueId().toString()))
 				plowings = plugin.getDb().getNormalAchievementAmount(player, "hoeplowing") + 1;
 			else
@@ -64,7 +64,7 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 						|| event.getClickedBlock().getType() == Material.RED_MUSHROOM
 						|| event.getClickedBlock().getType() == Material.COCOA
 						|| event.getClickedBlock().getType() == Material.LONG_GRASS)) {
-			Integer fertilising = 0;
+			int fertilising;
 			if (!DatabasePools.getFertiliseHashMap().containsKey(player.getUniqueId().toString()))
 				fertilising = plugin.getDb().getNormalAchievementAmount(player, "fertilising") + 1;
 			else
@@ -75,7 +75,7 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 			configAchievement = "Fertilising." + fertilising;
 		} else if (player.hasPermission("achievement.count.fireworks")
 				&& player.getItemInHand().getType() == Material.FIREWORK) {
-			Integer fireworks = 0;
+			int fireworks;
 			if (!DatabasePools.getFireworkHashMap().containsKey(player.getUniqueId().toString()))
 				fireworks = plugin.getDb().getNormalAchievementAmount(player, "fireworks") + 1;
 			else
@@ -87,6 +87,7 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 
 		} else
 			return;
+
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

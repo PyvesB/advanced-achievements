@@ -45,7 +45,7 @@ public class AchieveKillListener implements Listener {
 				|| !player.hasPermission("achievement.count.kills." + mobName))
 			return;
 
-		Integer kills = 0;
+		int kills;
 		if (!DatabasePools.getEntityDeathHashMap().containsKey(player.getUniqueId().toString() + mobName))
 			kills = plugin.getDb().getKills(player, mobName) + 1;
 		else

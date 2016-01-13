@@ -34,7 +34,7 @@ public class AchieveBlockBreakListener implements Listener {
 		if (!plugin.getConfig().isConfigurationSection("Breaks." + blockName))
 			return;
 
-		Integer breaks = 0;
+		int breaks;
 		if (!DatabasePools.getBlockBreakHashMap().containsKey(player.getUniqueId().toString() + block.getTypeId()))
 			breaks = plugin.getDb().getBreaks(player, block) + 1;
 		else
