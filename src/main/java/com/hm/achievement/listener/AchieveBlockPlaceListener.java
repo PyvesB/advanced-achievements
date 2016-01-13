@@ -25,11 +25,12 @@ public class AchieveBlockPlaceListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 		Block block = event.getBlock();
 		String blockName = block.getType().name().toLowerCase();
+		if (!player.hasPermission("achievement.count.places." + blockName))
+			return;
 		if (!plugin.getConfig().isConfigurationSection("Places." + blockName))
 			return;
 

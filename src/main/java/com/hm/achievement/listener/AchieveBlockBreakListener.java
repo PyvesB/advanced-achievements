@@ -25,11 +25,12 @@ public class AchieveBlockBreakListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 		Block block = event.getBlock();
 		String blockName = block.getType().name().toLowerCase();
+		if (!player.hasPermission("achievement.count.breaks." + blockName))
+			return;
 		if (!plugin.getConfig().isConfigurationSection("Breaks." + blockName))
 			return;
 

@@ -11,10 +11,7 @@ commands:
     description: Main Advanced Achievements command, use it to list sub-commands. 
     aliases: [advancedachievements,aachievements,aa]  
     usage: /<command>
-permissions:
-  achievement.get:
-    description: Allows to receive achievements.
-    default: true
+permissions:  
   achievement.book:
     description: Allows to receive achievements books.
     default: true
@@ -43,4 +40,96 @@ permissions:
       achievement.reload: true
       achievement.give: true
       achievement.check: true
-      achievement.delete: true
+      achievement.delete: true  
+  achievement.count.connections:
+    description: Allows connection statistics in database to increase.
+    default: true
+  achievement.count.arrows:
+    description: Allows arrow statistics in database to increase.
+    default: true
+  achievement.count.beds:
+    description: Allows bed statistics in database to increase.
+    default: true
+  achievement.count.consumedpotions:
+    description: Allows consumed potions statistics in database to increase.
+    default: true
+  achievement.count.eatenitems:
+    description: Allows eaten items statistics in database to increase.
+    default: true
+  achievement.count.eatenitems:
+    description: Allows eaten items statistics in database to increase.
+    default: true
+  achievement.count.eatenitems:
+    description: Allows eaten items statistics in database to increase.
+    default: true
+  achievement.count.deaths:
+    description: Allows death statistics in database to increase.
+    default: true
+  achievement.count.itemdrops:
+    description: Allows item drops statistics in database to increase.
+    default: true
+  achievement.count.enchantments:
+    description: Allows enchantment statistics in database to increase.
+    default: true
+  achievement.count.fish:
+    description: Allows fish statistics in database to increase.
+    default: true
+  achievement.count.hoeplowings:
+    description: Allows hoe plowings statistics in database to increase.
+    default: true
+  achievement.count.fertilising:
+    description: Allows fertilising statistics in database to increase.
+    default: true
+  achievement.count.fireworks:
+    description: Allows firework statistics in database to increase.
+    default: true
+  achievement.count.itembreaks:
+    description: Allows item breaks statistics in database to increase.
+    default: true
+  achievement.count.milk:
+    description: Allows milk statistics in database to increase.
+    default: true
+  achievement.count.shears:
+    description: Allows shear statistics in database to increase.
+    default: true
+  achievement.count.snowballs:
+    description: Allows snowball statistics in database to increase.
+    default: true
+  achievement.count.eggs:
+    description: Allows egg statistics in database to increase.
+    default: true
+  achievement.count.taming:
+    description: Allows taming statistics in database to increase.
+    default: true
+  achievement.count.trades:
+    description: Allows trades statistics in database to increase.
+    default: true
+  achievement.count.anvilsused:
+    description: Allows anvils used statistics in database to increase.
+    default: true
+  achievement.count.brewing:
+    description: Allows brewing statistics in database to increase.
+    default: true
+  achievement.count.maxlevel:
+    description: Allows max level statistics in database to increase.
+    default: true
+  achievement.count.playedtime:
+    description: Allows played time statistics in database to increase.
+    default: true
+  achievement.count.distancefoot:
+    description: Allows foot distance statistics in database to increase.
+    default: true
+  achievement.count.distanceboat:
+    description: Allows boat distance statistics in database to increase.
+    default: true
+  achievement.count.distanceminecart:
+    description: Allows minecart distance statistics in database to increase.
+    default: true
+  achievement.count.distancehorse:
+    description: Allows horse distance statistics in database to increase.
+    default: true
+  achievement.count.distancepig:
+    description: Allows pig distance statistics in database to increase.
+    default: true
+# Additional permissions are available for the breaks, places, crafts and kills categories.
+# They depend on the sub-categories defined; for instance for stone breaks: achievement.count.breaks.stone

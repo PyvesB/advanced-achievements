@@ -22,7 +22,7 @@ public class AchieveConnectionRunnable implements Runnable {
 	public void run() {
 
 		Player player = (Player) event.getPlayer();
-		if (!player.hasPermission("achievement.get"))
+		if (!player.hasPermission("achievement.count.connections"))
 			return;
 		Date now = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");

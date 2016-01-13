@@ -21,7 +21,7 @@ public class AchieveItemBreakListener implements Listener {
 	public void onPlayerItemBreakEvent(PlayerItemBreakEvent event) {
 
 		Player player = (Player) event.getPlayer();
-		if (!player.hasPermission("achievement.get") || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.count.itembreaks") || plugin.isInExludedWorld(player))
 			return;
 
 		Integer itemBreaks = plugin.getDb().incrementAndGetNormalAchievement(player, "itembreaks");

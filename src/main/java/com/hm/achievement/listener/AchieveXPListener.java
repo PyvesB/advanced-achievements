@@ -23,8 +23,9 @@ public class AchieveXPListener implements Listener {
 
 		Player player = (Player) event.getPlayer();
 
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.count.maxlevel")
+				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player))
 			return;
 
 		if ((1 - player.getExp()) * player.getExpToLevel() >= event.getAmount())

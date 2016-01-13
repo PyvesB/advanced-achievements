@@ -23,7 +23,7 @@ public class AchieveDeathListener implements Listener {
 		if (!(event.getEntity() instanceof Player))
 			return;
 		Player player = (Player) event.getEntity();
-		if (!player.hasPermission("achievement.get") || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.count.deaths") || plugin.isInExludedWorld(player))
 			return;
 
 		Integer deaths = plugin.getDb().incrementAndGetNormalAchievement(player, "deaths");

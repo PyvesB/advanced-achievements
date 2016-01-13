@@ -24,7 +24,7 @@ public class AchieveMilkListener implements Listener {
 		if (!(event.getItemStack().getType() == Material.MILK_BUCKET))
 			return;
 		Player player = (Player) event.getPlayer();
-		if (!player.hasPermission("achievement.get") || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.count.milk") || plugin.isInExludedWorld(player))
 			return;
 
 		Integer milks = plugin.getDb().incrementAndGetNormalAchievement(player, "milks");

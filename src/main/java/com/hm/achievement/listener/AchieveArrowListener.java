@@ -26,8 +26,9 @@ public class AchieveArrowListener implements Listener {
 			return;
 
 		Player player = (Player) event.getEntity();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.count.arrows")
+				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player))
 			return;
 
 		Integer arrows = 0;

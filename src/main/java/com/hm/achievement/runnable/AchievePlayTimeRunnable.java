@@ -59,6 +59,10 @@ public class AchievePlayTimeRunnable implements Runnable {
 	@SuppressWarnings("unchecked")
 	public void registerTimes(Player player) {
 
+		// Do not register any times if player does not have permission.
+		if (!player.hasPermission("achievement.count.playedtime"))
+			return;
+
 		// Extra check in case server was reloaded and players did not
 		// reconnect.
 		if (!plugin.getConnectionListener().getJoinTime().containsKey(player)) {

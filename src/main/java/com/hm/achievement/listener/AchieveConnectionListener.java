@@ -41,24 +41,36 @@ public class AchieveConnectionListener implements Listener {
 		}
 
 		// Initialise play time data for the player.
-		if (plugin.getAchievePlayTimeRunnable() != null) {
+		// If runnable is null, no played time achievements have been set, no
+		// need to store data.
+		// If player doesn't have permissions, no need to store data.
+		if (plugin.getAchievePlayTimeRunnable() != null
+				&& event.getPlayer().hasPermission("achievement.count.playedtime")) {
 			plugin.getConnectionListener().getJoinTime().put(event.getPlayer(), System.currentTimeMillis());
 			plugin.getConnectionListener().getPlayTime().put(event.getPlayer(),
 					plugin.getDb().updateAndGetPlaytime(event.getPlayer(), 0L));
 		}
 
 		// Initialise distances data for the player.
+		// If runnable is null, no distance achievements have been set, no
+		// need to store data.
+		// If player doesn't have permissions, no need to store data.
 		if (plugin.getAchieveDistanceRunnable() != null) {
-			plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().put(event.getPlayer(),
-					plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distanceboat"));
-			plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().put(event.getPlayer(),
-					plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distanceminecart"));
-			plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().put(event.getPlayer(),
-					plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancepig"));
-			plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().put(event.getPlayer(),
-					plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancehorse"));
-			plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().put(event.getPlayer(),
-					plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancefoot"));
+			if (event.getPlayer().hasPermission("achievement.count.distanceboat"))
+				plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().put(event.getPlayer(),
+						plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distanceboat"));
+			if (event.getPlayer().hasPermission("achievement.count.distanceminecart"))
+				plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().put(event.getPlayer(),
+						plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distanceminecart"));
+			if (event.getPlayer().hasPermission("achievement.count.distancepig"))
+				plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().put(event.getPlayer(),
+						plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancepig"));
+			if (event.getPlayer().hasPermission("achievement.count.distancehorse"))
+				plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().put(event.getPlayer(),
+						plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancehorse"));
+			if (event.getPlayer().hasPermission("achievement.count.distancefoot"))
+				plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().put(event.getPlayer(),
+						plugin.getDb().updateAndGetDistance(event.getPlayer(), 0, "distancefoot"));
 
 			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer(),
 					event.getPlayer().getLocation());

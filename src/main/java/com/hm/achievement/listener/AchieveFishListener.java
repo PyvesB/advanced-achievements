@@ -24,8 +24,9 @@ public class AchieveFishListener implements Listener {
 		if (!(event.getState() == PlayerFishEvent.State.CAUGHT_FISH))
 			return;
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.count.fish")
+				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player))
 			return;
 
 		Integer fish = plugin.getDb().incrementAndGetNormalAchievement(player, "fish");

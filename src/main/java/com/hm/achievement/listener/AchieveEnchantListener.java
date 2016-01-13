@@ -22,8 +22,9 @@ public class AchieveEnchantListener implements Listener {
 	public void onEnchantItemEvent(EnchantItemEvent event) {
 
 		Player player = event.getEnchanter();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.count.enchantments")
+				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player))
 			return;
 
 		Integer enchantments = plugin.getDb().incrementAndGetNormalAchievement(player, "enchantments");

@@ -22,6 +22,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -304,6 +306,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		loadLang();
 		this.saveDefaultConfig();
 
+		registerPermissions();
+
 		// Workaround to keep configuration file comments (Bukkit issue).
 		File config = new File(this.getDataFolder(), "config.yml");
 		BufferedReader reader = null;
@@ -536,6 +540,21 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		backupDBFile();
+	}
+
+	/**
+	 * Register permissions that depend on the user's configuration file (based
+	 * on multiple type achievements; for instance for stone breaks,
+	 * achievement.count.breaks.stone will be registered).
+	 */
+	private void registerPermissions() {
+
+		for (int i = 0; i < MULTIPLE_ACHIEVEMENTS.length; i++)
+			for (String section : this.getConfig().getConfigurationSection(MULTIPLE_ACHIEVEMENTS[i]).getKeys(false))
+				this.getServer().getPluginManager()
+						.addPermission(new Permission(
+								"achievement.count." + MULTIPLE_ACHIEVEMENTS[i].toLowerCase() + "." + section,
+								PermissionDefault.TRUE));
 	}
 
 	/**

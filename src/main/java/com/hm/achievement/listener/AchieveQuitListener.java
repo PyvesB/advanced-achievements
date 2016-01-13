@@ -23,10 +23,11 @@ public class AchieveQuitListener implements Listener {
 	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onQuitEvent(PlayerQuitEvent event) {
-		
-		// Add UUID of player in quitHashSet so that his statistics are cleared for the data pools.
+
+		// Add UUID of player in quitHashSet so that his statistics are cleared
+		// for the data pools.
 		DatabasePools.getQuitHashSet().add(event.getPlayer().getUniqueId().toString());
-		
+
 		plugin.getAchievementBookCommand().getPlayers().remove(event.getPlayer());
 		plugin.getAchievementListCommand().getPlayers().remove(event.getPlayer());
 
@@ -49,38 +50,40 @@ public class AchieveQuitListener implements Listener {
 						"distancefoot");
 
 				plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().remove(event.getPlayer());
-
+			}
+			if (plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().containsKey(event.getPlayer())) {
 				plugin.getDb().updateAndGetDistance(event.getPlayer(),
 						plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().get(event.getPlayer()),
 						"distancepig");
 
 				plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().remove(event.getPlayer());
-
+			}
+			if (plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().containsKey(event.getPlayer())) {
 				plugin.getDb().updateAndGetDistance(event.getPlayer(),
 						plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().get(event.getPlayer()),
 						"distancehorse");
 
 				plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().remove(event.getPlayer());
-
+			}
+			if (plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().containsKey(event.getPlayer())) {
 				plugin.getDb().updateAndGetDistance(event.getPlayer(),
 						plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().get(event.getPlayer()),
 						"distanceboat");
 
 				plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().remove(event.getPlayer());
-
+			}
+			if (plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().containsKey(event.getPlayer())) {
 				plugin.getDb().updateAndGetDistance(event.getPlayer(),
 						plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().get(event.getPlayer()),
 						"distanceminecart");
 
 				plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().remove(event.getPlayer());
-
-				plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(event.getPlayer());
 			}
+			plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(event.getPlayer());
 		}
 		if (plugin.getAchievePlayTimeRunnable() != null
 				&& plugin.getConnectionListener().getJoinTime().containsKey(event.getPlayer())) {
-			plugin.getDb().updateAndGetPlaytime(
-					event.getPlayer(),
+			plugin.getDb().updateAndGetPlaytime(event.getPlayer(),
 					plugin.getConnectionListener().getPlayTime().get(event.getPlayer()) + System.currentTimeMillis()
 							- plugin.getConnectionListener().getJoinTime().get(event.getPlayer()));
 

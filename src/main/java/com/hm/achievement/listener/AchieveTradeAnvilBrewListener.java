@@ -34,21 +34,22 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 			return;
 
 		Player player = (Player) event.getWhoClicked();
-		if (!player.hasPermission("achievement.get")
-				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 		String configAchievement = "";
 
-		if (event.getRawSlot() == 2 && event.getInventory().getType().name().equals("MERCHANT")) {
+		if (player.hasPermission("achievement.count.trades") && event.getRawSlot() == 2
+				&& event.getInventory().getType().name().equals("MERCHANT")) {
 			Integer trades = plugin.getDb().incrementAndGetNormalAchievement(player, "trades");
 			configAchievement = "Trades." + trades;
 
-		} else if (event.getRawSlot() == 2 && event.getInventory().getType().name().equals("ANVIL")) {
+		} else if (player.hasPermission("achievement.count.anvilsused") && event.getRawSlot() == 2
+				&& event.getInventory().getType().name().equals("ANVIL")) {
 			Integer anvils = plugin.getDb().incrementAndGetNormalAchievement(player, "anvils");
 			configAchievement = "AnvilsUsed." + anvils;
 
-		} else if (event.getInventory().getType().name().equals("BREWING")) {
+		} else if (player.hasPermission("achievement.count.brewing")
+				&& event.getInventory().getType().name().equals("BREWING")) {
 			Integer brewings = plugin.getDb().incrementAndGetNormalAchievement(player, "brewing");
 			configAchievement = "Brewing." + brewings;
 

@@ -23,7 +23,7 @@ public class AchieveDropListener implements Listener {
 	public void onDropEvent(PlayerDropItemEvent event) {
 
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
+		if (!player.hasPermission("achievement.count.itemdrops") || plugin.isRestrictCreative()
 				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 

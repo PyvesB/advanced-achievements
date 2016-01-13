@@ -29,16 +29,15 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 			return;
 
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.get")
-				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 		String configAchievement = "";
-		if ((player.getItemInHand().getType() == Material.DIAMOND_HOE
-				|| player.getItemInHand().getType() == Material.IRON_HOE
-				|| player.getItemInHand().getType() == Material.STONE_HOE
-				|| player.getItemInHand().getType() == Material.WOOD_HOE
-				|| player.getItemInHand().getType() == Material.GOLD_HOE)
+		if (player.hasPermission("achievement.count.hoeplowings")
+				&& (player.getItemInHand().getType() == Material.DIAMOND_HOE
+						|| player.getItemInHand().getType() == Material.IRON_HOE
+						|| player.getItemInHand().getType() == Material.STONE_HOE
+						|| player.getItemInHand().getType() == Material.WOOD_HOE
+						|| player.getItemInHand().getType() == Material.GOLD_HOE)
 				&& (event.getClickedBlock().getType() == Material.GRASS
 						|| event.getClickedBlock().getType() == Material.DIRT)) {
 			Integer plowings = 0;
@@ -51,7 +50,8 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 
 			configAchievement = "HoePlowings." + plowings;
 
-		} else if (player.getItemInHand().isSimilar(new ItemStack(Material.INK_SACK, 1, (short) 15))
+		} else if (player.hasPermission("achievement.count.fertilising")
+				&& player.getItemInHand().isSimilar(new ItemStack(Material.INK_SACK, 1, (short) 15))
 				&& (event.getClickedBlock().getType() == Material.GRASS
 						|| event.getClickedBlock().getType() == Material.SAPLING
 						|| event.getClickedBlock().getType() == Material.DOUBLE_PLANT
@@ -73,7 +73,8 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 			DatabasePools.getFertiliseHashMap().put(player.getUniqueId().toString(), fertilising);
 
 			configAchievement = "Fertilising." + fertilising;
-		} else if (player.getItemInHand().getType() == Material.FIREWORK) {
+		} else if (player.hasPermission("achievement.count.fireworks")
+				&& player.getItemInHand().getType() == Material.FIREWORK) {
 			Integer fireworks = 0;
 			if (!DatabasePools.getFireworkHashMap().containsKey(player.getUniqueId().toString()))
 				fireworks = plugin.getDb().getNormalAchievementAmount(player, "fireworks") + 1;

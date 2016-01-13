@@ -23,8 +23,9 @@ public class AchieveBedListener implements Listener {
 
 		Player player = (Player) event.getPlayer();
 
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.count.beds")
+				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player))
 			return;
 
 		Integer bed = plugin.getDb().incrementAndGetNormalAchievement(player, "beds");

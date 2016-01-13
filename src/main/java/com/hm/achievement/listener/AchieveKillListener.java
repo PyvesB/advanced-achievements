@@ -27,8 +27,7 @@ public class AchieveKillListener implements Listener {
 		if (!(event.getEntity().getKiller() instanceof Player))
 			return;
 		Player player = (Player) event.getEntity().getKiller();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 		Entity entity = event.getEntity();
 
@@ -42,7 +41,8 @@ public class AchieveKillListener implements Listener {
 		} else {
 			mobName = entity.getType().name().toLowerCase();
 		}
-		if (!plugin.getConfig().isConfigurationSection("Kills." + mobName))
+		if (!plugin.getConfig().isConfigurationSection("Kills." + mobName)
+				|| !player.hasPermission("achievement.count.kills." + mobName))
 			return;
 
 		Integer kills = 0;

@@ -10,7 +10,6 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
-
 import com.hm.achievement.AdvancedAchievements;
 
 public class AchieveDistanceRunnable implements Runnable {
@@ -125,24 +124,43 @@ public class AchieveDistanceRunnable implements Runnable {
 	 */
 	public void refreshDistance(Player player) {
 
-		// Extra check in case server was reloaded and players did not
+		// Extra checks in case server was reloaded and players did not
 		// reconnect.
-		if (!distancesFoot.containsKey(player)) {
-			distancesBoat.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distanceboat"));
-			distancesMinecart.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distanceminecart"));
-			distancesPig.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancepig"));
-			distancesHorse.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancehorse"));
+		// Do not register distances if player does not have relevant
+		// permission.
+		boolean firstRetrieveFromDatabase = false;
+		if (!distancesFoot.containsKey(player) && player.hasPermission("achievement.count.distancefoot")) {
 			distancesFoot.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancefoot"));
+			firstRetrieveFromDatabase = true;
+		}
+		if (!distancesBoat.containsKey(player) && player.hasPermission("achievement.count.distanceboat")) {
+			distancesBoat.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distanceboat"));
+			firstRetrieveFromDatabase = true;
+		}
+		if (!distancesMinecart.containsKey(player) && player.hasPermission("achievement.count.distanceminecart")) {
+			distancesMinecart.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distanceminecart"));
+			firstRetrieveFromDatabase = true;
+		}
+		if (!distancesPig.containsKey(player) && player.hasPermission("achievement.count.distancepig")) {
+			distancesPig.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancepig"));
+			firstRetrieveFromDatabase = true;
+		}
+		if (!distancesHorse.containsKey(player) && player.hasPermission("achievement.count.distancehorse")) {
+			distancesHorse.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancehorse"));
+			firstRetrieveFromDatabase = true;
+		}
 
+		if (firstRetrieveFromDatabase)
 			playerLocations.put(player, player.getLocation());
-		} else {
+		// Distances will be updated during next scheduled run.
+		else {
 			if (player.getLocation().equals(playerLocations.get(player)))
 				return;
 
 			if (player.isInsideVehicle()) {
-				if (player.getVehicle() instanceof Horse) {
-					distancesHorse.put(player, (int) (distancesHorse.get(player) + playerLocations.get(player)
-							.distance(player.getLocation())));
+				if (player.getVehicle() instanceof Horse && player.hasPermission("achievement.count.distancehorse")) {
+					distancesHorse.put(player, (int) (distancesHorse.get(player)
+							+ playerLocations.get(player).distance(player.getLocation())));
 
 					for (int i = 0; i < achievementsHorse.length; i++) {
 						if (distancesHorse.get(player) > achievementsHorse[i]
@@ -154,13 +172,14 @@ public class AchieveDistanceRunnable implements Runnable {
 							((HashSet<Player>) playerAchievementsHorse[i]).add(player);
 						}
 					}
-				} else if (player.getVehicle() instanceof Pig) {
-					distancesPig.put(player,
-							(int) (distancesPig.get(player) + playerLocations.get(player)
-									.distance(player.getLocation())));
+				} else if (player.getVehicle() instanceof Pig
+						&& player.hasPermission("achievement.count.distancepig")) {
+					distancesPig.put(player, (int) (distancesPig.get(player)
+							+ playerLocations.get(player).distance(player.getLocation())));
 
 					for (int i = 0; i < achievementsPig.length; i++) {
-						if (distancesPig.get(player) > achievementsPig[i] && !playerAchievementsPig[i].contains(player)) {
+						if (distancesPig.get(player) > achievementsPig[i]
+								&& !playerAchievementsPig[i].contains(player)) {
 							if (!plugin.getDb().hasPlayerAchievement(player,
 									plugin.getConfig().getString("DistancePig." + achievementsPig[i] + ".Name")))
 								awardDistanceAchievement(player, achievementsPig[i], "DistancePig.");
@@ -168,27 +187,25 @@ public class AchieveDistanceRunnable implements Runnable {
 							((HashSet<Player>) playerAchievementsPig[i]).add(player);
 						}
 					}
-				} else if (player.getVehicle() instanceof Minecart) {
-					distancesMinecart.put(player, (int) (distancesMinecart.get(player) + playerLocations.get(player)
-							.distance(player.getLocation())));
+				} else if (player.getVehicle() instanceof Minecart
+						&& player.hasPermission("achievement.count.distanceminecart")) {
+					distancesMinecart.put(player, (int) (distancesMinecart.get(player)
+							+ playerLocations.get(player).distance(player.getLocation())));
 
 					for (int i = 0; i < achievementsMinecart.length; i++) {
 						if (distancesMinecart.get(player) > achievementsMinecart[i]
 								&& !playerAchievementsMinecart[i].contains(player)) {
-							if (!plugin.getDb().hasPlayerAchievement(
-									player,
-									plugin.getConfig().getString(
-											"DistanceMinecart." + achievementsMinecart[i] + ".Name")))
+							if (!plugin.getDb().hasPlayerAchievement(player, plugin.getConfig()
+									.getString("DistanceMinecart." + achievementsMinecart[i] + ".Name")))
 								awardDistanceAchievement(player, achievementsMinecart[i], "DistanceMinecart.");
 
 							((HashSet<Player>) playerAchievementsMinecart[i]).add(player);
 						}
 					}
-				} else if (player.getVehicle() instanceof Boat) {
-					distancesBoat.put(
-							player,
-							(int) (distancesBoat.get(player) + playerLocations.get(player).distance(
-									player.getLocation())));
+				} else if (player.getVehicle() instanceof Boat
+						&& player.hasPermission("achievement.count.distanceboat")) {
+					distancesBoat.put(player, (int) (distancesBoat.get(player)
+							+ playerLocations.get(player).distance(player.getLocation())));
 
 					for (int i = 0; i < achievementsBoat.length; i++) {
 						if (distancesBoat.get(player) > achievementsBoat[i]
@@ -201,12 +218,13 @@ public class AchieveDistanceRunnable implements Runnable {
 						}
 					}
 				}
-			} else {
+			} else if (player.hasPermission("achievement.count.distancefoot")) {
 				distancesFoot.put(player,
 						(int) (distancesFoot.get(player) + playerLocations.get(player).distance(player.getLocation())));
 
 				for (int i = 0; i < achievementsFoot.length; i++) {
-					if (distancesFoot.get(player) > achievementsFoot[i] && !playerAchievementsFoot[i].contains(player)) {
+					if (distancesFoot.get(player) > achievementsFoot[i]
+							&& !playerAchievementsFoot[i].contains(player)) {
 						if (!plugin.getDb().hasPlayerAchievement(player,
 								plugin.getConfig().getString("DistanceFoot." + achievementsFoot[i] + ".Name")))
 							awardDistanceAchievement(player, achievementsFoot[i], "DistanceFoot.");

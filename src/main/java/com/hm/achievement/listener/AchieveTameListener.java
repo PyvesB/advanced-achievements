@@ -24,8 +24,9 @@ public class AchieveTameListener implements Listener {
 		if (!(event.getOwner() instanceof Player))
 			return;
 		Player player = (Player) event.getOwner();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!player.hasPermission("achievement.count.taming")
+				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player))
 			return;
 
 		Integer tames = plugin.getDb().incrementAndGetNormalAchievement(player, "tames");

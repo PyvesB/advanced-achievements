@@ -22,20 +22,21 @@ public class AchieveConsumeListener implements Listener {
 	public void onPlayerItemConsumeEvent(PlayerItemConsumeEvent event) {
 
 		Player player = (Player) event.getPlayer();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
 		String configAchievement = "";
 
-		if (event.getItem().getType().name().equals("POTION")) {
+		if (player.hasPermission("achievement.count.consumedpotions")
+				&& event.getItem().getType().name().equals("POTION")) {
 			Integer consumedPotions = plugin.getDb().incrementAndGetNormalAchievement(player, "consumedPotions");
 			configAchievement = "ConsumedPotions." + consumedPotions;
-		} else {
-
-			Integer eatenItems = plugin.getDb().incrementAndGetNormalAchievement(player,"eatenitems");
+		} else if (player.hasPermission("achievement.count.eatenitems")) {
+			Integer eatenItems = plugin.getDb().incrementAndGetNormalAchievement(player, "eatenitems");
 			configAchievement = "EatenItems." + eatenItems;
-		}
+		} else
+			return;
+
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

@@ -27,13 +27,14 @@ public class AchieveCraftListener implements Listener {
 			return;
 
 		Player player = (Player) event.getWhoClicked();
-		if (!player.hasPermission("achievement.get") || plugin.isRestrictCreative()
-				&& player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 		try {
 
 			ItemStack item = event.getRecipe().getResult();
 			String craftName = item.getType().name().toLowerCase();
+			if (!player.hasPermission("achievement.count.crafts." + craftName))
+				return;
 			if (!plugin.getConfig().isConfigurationSection("Crafts." + craftName))
 				return;
 
@@ -54,16 +55,15 @@ public class AchieveCraftListener implements Listener {
 			Integer times = plugin.getDb().updateAndGetCraft(player, item, amount);
 			String configAchievement;
 			for (String threshold : plugin.getConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))
-				if (times >= Integer.parseInt(threshold)
-						&& !plugin.getDb().hasPlayerAchievement(player,
-								plugin.getConfig().getString("Crafts." + craftName + "." + threshold + "." + "Name"))) {
+				if (times >= Integer.parseInt(threshold) && !plugin.getDb().hasPlayerAchievement(player,
+						plugin.getConfig().getString("Crafts." + craftName + "." + threshold + "." + "Name"))) {
 					configAchievement = "Crafts." + craftName + "." + threshold;
 					if (plugin.getReward().checkAchievement(configAchievement)) {
 
 						plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-						plugin.getDb()
-								.registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
-										plugin.getConfig().getString(configAchievement + ".Message"));
+						plugin.getDb().registerAchievement(player,
+								plugin.getConfig().getString(configAchievement + ".Name"),
+								plugin.getConfig().getString(configAchievement + ".Message"));
 						plugin.getReward().checkConfig(player, configAchievement);
 
 					}
