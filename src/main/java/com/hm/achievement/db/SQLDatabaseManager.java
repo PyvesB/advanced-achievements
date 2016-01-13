@@ -20,7 +20,7 @@ import com.hm.achievement.AdvancedAchievements;
 public class SQLDatabaseManager {
 
 	private AdvancedAchievements plugin;
-	String dataHandler;
+	boolean sqliteDatabase;
 	String mysqlDatabase;
 	String mysqlUser;
 	String mysqlPassword;
@@ -35,7 +35,7 @@ public class SQLDatabaseManager {
 	 */
 	public Connection getSQLConnection() {
 
-		if (dataHandler.equalsIgnoreCase("mysql")) {
+		if (!sqliteDatabase) {
 			try {
 				return DriverManager.getConnection(
 						mysqlDatabase + "?autoReconnect=true&user=" + mysqlUser + "&password=" + mysqlPassword);
@@ -51,7 +51,6 @@ public class SQLDatabaseManager {
 			if (!dbfile.exists()) {
 				try {
 					dbfile.createNewFile();
-					Class.forName("org.sqlite.JDBC");
 					Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
 					Statement st = conn.createStatement();
 					// Important: "desc" keyword only allowed in SQLite.
@@ -70,25 +69,13 @@ public class SQLDatabaseManager {
 					plugin.getLogger().severe("SQLite exception on initialize: " + e);
 					e.printStackTrace();
 					plugin.setSuccessfulLoad(false);
-				} catch (ClassNotFoundException e) {
-					plugin.getLogger()
-							.severe("You need the SQLite JBDC library. Please download it and put it in /lib folder.");
-					e.printStackTrace();
-					plugin.setSuccessfulLoad(false);
 				}
 			}
 			try {
-				Class.forName("org.sqlite.JDBC");
-				Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
-				return conn;
+				return DriverManager.getConnection("jdbc:sqlite:" + dbfile);
 
 			} catch (SQLException e) {
 				plugin.getLogger().severe("SQLite exception on initialize: " + e);
-				e.printStackTrace();
-				plugin.setSuccessfulLoad(false);
-			} catch (ClassNotFoundException e) {
-				plugin.getLogger()
-						.severe("You need the SQLite JBDC library. Please download it and put it in /lib folder.");
 				e.printStackTrace();
 				plugin.setSuccessfulLoad(false);
 			}
@@ -97,14 +84,28 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Initialise database system.
+	 * Initialise database system and plugin settings.
 	 */
 	public void initialise(AdvancedAchievements plugin) {
 
-		dataHandler = plugin.getConfig().getString("DatabaseType", "sqlite");
+		String dataHandler = plugin.getConfig().getString("DatabaseType", "sqlite");
+		if (dataHandler.equalsIgnoreCase("mysql"))
+			sqliteDatabase = false;
+		else
+			sqliteDatabase = true;
 		mysqlDatabase = plugin.getConfig().getString("MYSQL.Database", "jdbc:mysql://localhost:3306/minecraft");
 		mysqlUser = plugin.getConfig().getString("MYSQL.User", "root");
 		mysqlPassword = plugin.getConfig().getString("MYSQL.Password", "root");
+
+		try {
+			if (sqliteDatabase)
+				Class.forName("org.sqlite.JDBC");
+		} catch (ClassNotFoundException e) {
+			plugin.getLogger()
+					.severe("You need the SQLite JBDC library. Please download it and put it in /lib folder.");
+			e.printStackTrace();
+			plugin.setSuccessfulLoad(false);
+		}
 
 		Connection conn = getSQLConnection();
 		if (conn == null) {
