@@ -2,7 +2,6 @@ package com.hm.achievement.db;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class DatabasePools {
 
@@ -20,35 +19,20 @@ public class DatabasePools {
 	private static Map<String, Integer> fertiliseHashMap;
 	private static Map<String, Integer> fireworkHashMap;
 
-	public static void databasePoolsInit(boolean asyncThread) {
+	public static void databasePoolsInit() {
 
-		if (asyncThread) {
-			arrowHashMap = new ConcurrentHashMap<String, Integer>();
-			blockBreakHashMap = new ConcurrentHashMap<String, Integer>();
-			blockPlaceHashMap = new ConcurrentHashMap<String, Integer>();
-			entityDeathHashMap = new ConcurrentHashMap<String, Integer>();
-			eatenItemsHashMap = new ConcurrentHashMap<String, Integer>();
-			shearHashMap = new ConcurrentHashMap<String, Integer>();
-			snowballHashMap = new ConcurrentHashMap<String, Integer>();
-			eggHashMap = new ConcurrentHashMap<String, Integer>();
-			dropHashMap = new ConcurrentHashMap<String, Integer>();
-			hoePlowingHashMap = new ConcurrentHashMap<String, Integer>();
-			fertiliseHashMap = new ConcurrentHashMap<String, Integer>();
-			fireworkHashMap = new ConcurrentHashMap<String, Integer>();
-		} else {
-			arrowHashMap = new HashMap<String, Integer>();
-			blockBreakHashMap = new HashMap<String, Integer>();
-			blockPlaceHashMap = new HashMap<String, Integer>();
-			entityDeathHashMap = new HashMap<String, Integer>();
-			eatenItemsHashMap = new HashMap<String, Integer>();
-			shearHashMap = new HashMap<String, Integer>();
-			snowballHashMap = new HashMap<String, Integer>();
-			eggHashMap = new HashMap<String, Integer>();
-			dropHashMap = new HashMap<String, Integer>();
-			hoePlowingHashMap = new HashMap<String, Integer>();
-			fertiliseHashMap = new HashMap<String, Integer>();
-			fireworkHashMap = new HashMap<String, Integer>();
-		}
+		arrowHashMap = new HashMap<String, Integer>();
+		blockBreakHashMap = new HashMap<String, Integer>();
+		blockPlaceHashMap = new HashMap<String, Integer>();
+		entityDeathHashMap = new HashMap<String, Integer>();
+		eatenItemsHashMap = new HashMap<String, Integer>();
+		shearHashMap = new HashMap<String, Integer>();
+		snowballHashMap = new HashMap<String, Integer>();
+		eggHashMap = new HashMap<String, Integer>();
+		dropHashMap = new HashMap<String, Integer>();
+		hoePlowingHashMap = new HashMap<String, Integer>();
+		fertiliseHashMap = new HashMap<String, Integer>();
+		fireworkHashMap = new HashMap<String, Integer>();
 	}
 
 	public static Map<String, Integer> getArrowHashMap() {

@@ -87,9 +87,6 @@ DatabaseVersion: 0
 # Make a daily backup of your local database.
 DatabaseBackup: true
 
-# Send pooled requests on asynchronous thread.
-AsyncThread: true
-
 # Database type, sqlite or mysql.
 DatabaseType: sqlite
 

@@ -121,7 +121,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private boolean successfulLoad;
 	private int playtimeTaskInterval;
 	private int distanceTaskInterval;
-	private boolean asyncThread;
 
 	// Achievement types string arrays; constants.
 	public static final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
@@ -174,7 +173,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	/**
 	 * Called when server is launched or reloaded.
 	 */
-	@SuppressWarnings("deprecation")
 	public void onEnable() {
 
 		// Beginning of plugin enabling.
@@ -279,14 +277,9 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to group database queries for some frequent
 		// events.
-		if (asyncThread)
-			Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(
-					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), new PooledRequestsSender(this, true),
-					pooledRequestsTaskInterval * 40, pooledRequestsTaskInterval * 20);
-		else
-			Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(
-					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), new PooledRequestsSender(this, true),
-					pooledRequestsTaskInterval * 40, pooledRequestsTaskInterval * 20);
+		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(
+				Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), new PooledRequestsSender(this, true),
+				pooledRequestsTaskInterval * 40, pooledRequestsTaskInterval * 20);
 
 		// Schedule a repeating task to monitor played time for each player (not
 		// directly related to an event).
@@ -478,12 +471,6 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.saveConfig();
 		}
 
-		// Added in version 2.3:
-		if (!this.getConfig().getKeys(false).contains("AsyncThread")) {
-			this.getConfig().set("AsyncThread", true);
-			this.saveConfig();
-		}
-
 		// End of configuration updates.
 
 		try {
@@ -526,7 +513,6 @@ public class AdvancedAchievements extends JavaPlugin {
 			excludedWorldList.add(world);
 		playtimeTaskInterval = this.getConfig().getInt("PlaytimeTaskInterval", 150);
 		distanceTaskInterval = this.getConfig().getInt("DistanceTaskInterval", 5);
-		asyncThread = this.getConfig().getBoolean("AsyncThread", true);
 
 		registerPermissions();
 
@@ -1010,11 +996,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	public ChatColor getColor() {
 
 		return color;
-	}
-
-	public boolean isAsyncThread() {
-
-		return asyncThread;
 	}
 
 }

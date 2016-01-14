@@ -32,10 +32,10 @@ public class InfoCommand {
 				+ ChatColor.GRAY + Lang.VERSION_COMMAND_DESCRIPTION_DETAILS);
 		if (plugin.setUpEconomy())
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_VAULT + " "
-					+ ChatColor.GREEN + "YES");
+					+ ChatColor.GRAY + "YES");
 		else
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_VAULT + " "
-					+ ChatColor.RED + "NO");
+					+ ChatColor.GRAY + "NO");
 		if (plugin.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_DATABASE + " "
 					+ ChatColor.GRAY + "MySQL");
