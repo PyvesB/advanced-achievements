@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveConsumeListener implements Listener {
 
@@ -32,7 +33,13 @@ public class AchieveConsumeListener implements Listener {
 			int consumedPotions = plugin.getDb().incrementAndGetNormalAchievement(player, "consumedPotions");
 			configAchievement = "ConsumedPotions." + consumedPotions;
 		} else if (player.hasPermission("achievement.count.eatenitems")) {
-			int eatenItems = plugin.getDb().incrementAndGetNormalAchievement(player, "eatenitems");
+			int eatenItems;
+			if (!DatabasePools.getEatenItemsHashMap().containsKey(player.getUniqueId().toString()))
+				eatenItems = plugin.getDb().getNormalAchievementAmount(player, "eatenitems") + 1;
+			else
+				eatenItems = DatabasePools.getEatenItemsHashMap().get(player.getUniqueId().toString()) + 1;
+
+			DatabasePools.getEatenItemsHashMap().put(player.getUniqueId().toString(), eatenItems);
 			configAchievement = "EatenItems." + eatenItems;
 		} else
 			return;

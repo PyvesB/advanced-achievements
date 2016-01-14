@@ -10,6 +10,7 @@ public class DatabasePools {
 	private static Map<String, Integer> blockBreakHashMap;
 	private static Map<String, Integer> blockPlaceHashMap;
 	private static Map<String, Integer> entityDeathHashMap;
+	private static Map<String, Integer> eatenItemsHashMap;
 	private static Map<String, Integer> shearHashMap;
 	private static Map<String, Integer> snowballHashMap;
 	private static Map<String, Integer> eggHashMap;
@@ -24,6 +25,7 @@ public class DatabasePools {
 		blockBreakHashMap = new ConcurrentHashMap <String, Integer>();
 		blockPlaceHashMap = new ConcurrentHashMap <String, Integer>();
 		entityDeathHashMap = new ConcurrentHashMap <String, Integer>();
+		eatenItemsHashMap = new ConcurrentHashMap <String, Integer>();
 		shearHashMap = new ConcurrentHashMap <String, Integer>();
 		snowballHashMap = new ConcurrentHashMap <String, Integer>();
 		eggHashMap = new ConcurrentHashMap <String, Integer>();
@@ -51,6 +53,16 @@ public class DatabasePools {
 	public static Map<String, Integer> getEntityDeathHashMap() {
 
 		return entityDeathHashMap;
+	}
+
+	public static Map<String, Integer> getEatenItemsHashMap() {
+
+		return eatenItemsHashMap;
+	}
+
+	public static void setEatenItemsHashMap(Map<String, Integer> eatenItemsHashMap) {
+
+		DatabasePools.eatenItemsHashMap = eatenItemsHashMap;
 	}
 
 	public static Map<String, Integer> getShearHashMap() {

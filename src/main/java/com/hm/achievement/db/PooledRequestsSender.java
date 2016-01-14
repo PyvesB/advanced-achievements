@@ -43,6 +43,10 @@ public class PooledRequestsSender implements Runnable {
 				st.addBatch("REPLACE INTO `shears` (playername, shears) VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
 
+			for (Entry<String, Integer> entry : DatabasePools.getEatenItemsHashMap().entrySet())
+				st.addBatch("REPLACE INTO `eatenitems` (playername, eatenitems) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
+
 			for (Entry<String, Integer> entry : DatabasePools.getSnowballHashMap().entrySet())
 				st.addBatch("REPLACE INTO `snowballs` (playername, snowballs) VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
@@ -97,6 +101,7 @@ public class PooledRequestsSender implements Runnable {
 		DatabasePools.getEntityDeathHashMap().clear();
 		DatabasePools.getBlockPlaceHashMap().clear();
 		DatabasePools.getBlockBreakHashMap().clear();
+		DatabasePools.getEatenItemsHashMap().clear();
 		DatabasePools.getEggHashMap().clear();
 		DatabasePools.getSnowballHashMap().clear();
 		DatabasePools.getShearHashMap().clear();
