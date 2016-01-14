@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -107,7 +109,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private String chatHeader;
 	private boolean restrictCreative;
 	private boolean databaseBackup;
-	private List<String> excludedWorldList;
+	private Set<String> excludedWorldList;
 	private boolean successfulLoad;
 	private int playtimeTaskInterval;
 	private int distanceTaskInterval;
@@ -154,6 +156,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		hoeFertiliseListener = new AchieveHoeFertiliseFireworkListener(this);
 		tameListener = new AchieveTameListener(this);
 		worldTPListener = new AchieveWorldTPListener(this);
+		
+		excludedWorldList = new HashSet<String>();
 
 		db = new SQLDatabaseManager(this);
 
@@ -494,7 +498,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
 		restrictCreative = this.getConfig().getBoolean("RestrictCreative", false);
 		databaseBackup = this.getConfig().getBoolean("DatabaseBackup", true);
-		excludedWorldList = this.getConfig().getStringList("ExcludedWorlds");
+		for (String world : this.getConfig().getStringList("ExcludedWorlds"))
+			excludedWorldList.add(world);
 		playtimeTaskInterval = this.getConfig().getInt("PlaytimeTaskInterval", 150);
 		distanceTaskInterval = this.getConfig().getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = this.getConfig().getInt("PooledRequestsTaskInterval", 60);
@@ -764,14 +769,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	public boolean isInExludedWorld(Player player) {
 
-		if (excludedWorldList.size() == 0)
+		if (excludedWorldList.isEmpty())
 			return false;
 
-		for (String world : excludedWorldList)
-			if (player.getWorld().getName().equals(world))
-				return true;
-
-		return false;
+		return excludedWorldList.contains(player.getWorld().getName());
 	}
 
 	/**

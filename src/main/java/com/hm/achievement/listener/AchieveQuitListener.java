@@ -27,7 +27,7 @@ public class AchieveQuitListener implements Listener {
 		plugin.getAchievementListCommand().getPlayers().remove(event.getPlayer());
 
 		if (plugin.getAchieveDistanceRunnable() != null
-				&& plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().containsKey(event.getPlayer())) {
+				&& plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(event.getPlayer()) != null) {
 			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsFoot())
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
 			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsHorse())
@@ -39,51 +39,38 @@ public class AchieveQuitListener implements Listener {
 			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsMinecart())
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
 
-			if (plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().containsKey(event.getPlayer())) {
-				plugin.getDb().updateAndGetDistance(event.getPlayer(),
-						plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().get(event.getPlayer()),
-						"distancefoot");
+			Integer distance;
 
-				plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().remove(event.getPlayer());
-			}
-			if (plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().containsKey(event.getPlayer())) {
-				plugin.getDb().updateAndGetDistance(event.getPlayer(),
-						plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().get(event.getPlayer()),
-						"distancepig");
+			distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().remove(event.getPlayer());
+			if (distance != null)
+				plugin.getDb().updateAndGetDistance(event.getPlayer(), distance, "distancefoot");
 
-				plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().remove(event.getPlayer());
-			}
-			if (plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().containsKey(event.getPlayer())) {
-				plugin.getDb().updateAndGetDistance(event.getPlayer(),
-						plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().get(event.getPlayer()),
-						"distancehorse");
+			distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().remove(event.getPlayer());
+			if (distance != null)
+				plugin.getDb().updateAndGetDistance(event.getPlayer(), distance, "distancepig");
 
-				plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().remove(event.getPlayer());
-			}
-			if (plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().containsKey(event.getPlayer())) {
-				plugin.getDb().updateAndGetDistance(event.getPlayer(),
-						plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().get(event.getPlayer()),
-						"distanceboat");
+			distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().remove(event.getPlayer());
+			if (distance != null)
+				plugin.getDb().updateAndGetDistance(event.getPlayer(), distance, "distancehorse");
 
-				plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().remove(event.getPlayer());
-			}
-			if (plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().containsKey(event.getPlayer())) {
-				plugin.getDb().updateAndGetDistance(event.getPlayer(),
-						plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().get(event.getPlayer()),
-						"distanceminecart");
+			distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().remove(event.getPlayer());
+			if (distance != null)
+				plugin.getDb().updateAndGetDistance(event.getPlayer(), distance, "distanceboat");
 
-				plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().remove(event.getPlayer());
-			}
-			plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(event.getPlayer());
+			distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().remove(event.getPlayer());
+			if (distance != null)
+				plugin.getDb().updateAndGetDistance(event.getPlayer(), distance, "distanceminecart");
 		}
-		if (plugin.getAchievePlayTimeRunnable() != null
-				&& plugin.getConnectionListener().getJoinTime().containsKey(event.getPlayer())) {
-			plugin.getDb().updateAndGetPlaytime(event.getPlayer(),
-					plugin.getConnectionListener().getPlayTime().get(event.getPlayer()) + System.currentTimeMillis()
-							- plugin.getConnectionListener().getJoinTime().get(event.getPlayer()));
 
-			plugin.getConnectionListener().getPlayTime().remove(event.getPlayer());
-			plugin.getConnectionListener().getJoinTime().remove(event.getPlayer());
+		if (plugin.getAchievePlayTimeRunnable() != null) {
+
+			Long playTime = plugin.getConnectionListener().getPlayTime().remove(event.getPlayer());
+			Long joinTime = plugin.getConnectionListener().getJoinTime().remove(event.getPlayer());
+
+			if (playTime != null && joinTime != null)
+				plugin.getDb().updateAndGetPlaytime(event.getPlayer(),
+						playTime + System.currentTimeMillis() - joinTime);
+
 			for (HashSet<?> playerHashSet : plugin.getAchievePlayTimeRunnable().getPlayerAchievements())
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
 		}

@@ -27,8 +27,8 @@ public class AchieveConsumeListener implements Listener {
 
 		String configAchievement;
 
-		if (player.hasPermission("achievement.count.consumedpotions")
-				&& event.getItem().getType().name().equals("POTION")) {
+		if (event.getItem().getType().name().equals("POTION")
+				&& player.hasPermission("achievement.count.consumedpotions")) {
 			int consumedPotions = plugin.getDb().incrementAndGetNormalAchievement(player, "consumedPotions");
 			configAchievement = "ConsumedPotions." + consumedPotions;
 		} else if (player.hasPermission("achievement.count.eatenitems")) {
