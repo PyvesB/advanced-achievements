@@ -19,7 +19,7 @@ public class AchieveTameListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerTameEvent(EntityTameEvent event) {
+	public void onPlayerTame(EntityTameEvent event) {
 
 		if (!(event.getOwner() instanceof Player))
 			return;

@@ -27,7 +27,7 @@ public class PooledRequestsSender implements Runnable {
 	/**
 	 * Sends a batch of requests to the database to deal with regular events and
 	 * prevent plugin from hitting server performance. Non event related
-	 * catgories (distances and play times) are not handled by pools.
+	 * categories (distances and play times) are not handled by pools.
 	 */
 	public void sendRequests() {
 
@@ -51,6 +51,22 @@ public class PooledRequestsSender implements Runnable {
 				st.addBatch("REPLACE INTO `eggs` (playername, eggs) VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
 
+			for (Entry<String, Integer> entry : DatabasePools.getDropHashMap().entrySet())
+				st.addBatch("REPLACE INTO `drops` (playername, drops) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
+
+			for (Entry<String, Integer> entry : DatabasePools.getHoePlowingHashMap().entrySet())
+				st.addBatch("REPLACE INTO `hoeplowing` (playername, hoeplowing) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
+
+			for (Entry<String, Integer> entry : DatabasePools.getFertiliseHashMap().entrySet())
+				st.addBatch("REPLACE INTO `fertilising` (playername, fertilising) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
+
+			for (Entry<String, Integer> entry : DatabasePools.getFireworkHashMap().entrySet())
+				st.addBatch("REPLACE INTO `fireworks` (playername, fireworks) VALUES ('" + entry.getKey() + "', "
+						+ entry.getValue() + ")");
+
 			for (Entry<String, Integer> entry : DatabasePools.getBlockBreakHashMap().entrySet())
 				st.addBatch("REPLACE INTO `breaks` (playername, blockid, breaks) VALUES ('"
 						+ entry.getKey().substring(0, 36) + "'," + entry.getKey().substring(36) + ", "
@@ -66,21 +82,6 @@ public class PooledRequestsSender implements Runnable {
 						"REPLACE INTO `kills` (playername, mobname, kills) VALUES ('" + entry.getKey().substring(0, 36)
 								+ "', '" + entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getDropHashMap().entrySet())
-				st.addBatch("REPLACE INTO `drops` (playername, drops) VALUES ('" + entry.getKey() + "', "
-						+ entry.getValue() + ")");
-
-			for (Entry<String, Integer> entry : DatabasePools.getHoePlowingHashMap().entrySet())
-				st.addBatch("REPLACE INTO `hoeplowing` (playername, hoeplowing) VALUES ('" + entry.getKey() + "', "
-						+ entry.getValue() + ")");
-
-			for (Entry<String, Integer> entry : DatabasePools.getFertiliseHashMap().entrySet())
-				st.addBatch("REPLACE INTO `fertilising` (playername, fertilising) VALUES ('" + entry.getKey() + "', "
-						+ entry.getValue() + ")");
-			for (Entry<String, Integer> entry : DatabasePools.getFireworkHashMap().entrySet())
-				st.addBatch("REPLACE INTO `fireworks` (playername, fireworks) VALUES ('" + entry.getKey() + "', "
-						+ entry.getValue() + ")");
-
 			st.executeBatch();
 
 			st.close();
@@ -92,8 +93,7 @@ public class PooledRequestsSender implements Runnable {
 			e.printStackTrace();
 		}
 
-		// Clear entries in HashMaps for players who have quit the server.
-
+		// Clear entries in HashMaps.
 		DatabasePools.getEntityDeathHashMap().clear();
 		DatabasePools.getBlockPlaceHashMap().clear();
 		DatabasePools.getBlockBreakHashMap().clear();

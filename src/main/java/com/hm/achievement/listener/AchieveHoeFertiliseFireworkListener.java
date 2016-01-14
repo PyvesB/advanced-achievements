@@ -23,7 +23,7 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onDropEvent(PlayerInteractEvent event) {
+	public void onPlayerInteract(PlayerInteractEvent event) {
 
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;

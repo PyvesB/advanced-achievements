@@ -30,8 +30,8 @@ public class AchievementDisplay {
 	}
 
 	/**
-	 * When a player receives an achievement, display chat messages and set
-	 * firework.
+	 * Display chat messages, screen title and set firework when a player
+	 * receives an achievement,
 	 */
 	public void displayAchievement(Player player, String configAchievement) {
 
@@ -43,6 +43,9 @@ public class AchievementDisplay {
 		plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + name);
 
 		player.sendMessage(plugin.getChatHeader() + Lang.ACHIEVEMENT_NEW + " " + ChatColor.WHITE + name);
+
+		// Notify other online players that the player has received an
+		// achievement.
 		if (chatNotify) {
 			for (Player p : plugin.getServer().getOnlinePlayers()) {
 				if (!p.getName().equals(player.getName())) {
@@ -64,6 +67,8 @@ public class AchievementDisplay {
 			Firework firework = player.getWorld().spawn(location, Firework.class);
 			FireworkMeta fireworkMeta = firework.getFireworkMeta();
 			FireworkEffect effect;
+			// Firework style must be one of the following: BALL_LARGE, BALL,
+			// BURST, CREEPER or STAR.
 			try {
 				effect = FireworkEffect.builder().flicker(false).trail(false)
 						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))

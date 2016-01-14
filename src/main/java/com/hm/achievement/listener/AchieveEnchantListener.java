@@ -19,7 +19,7 @@ public class AchieveEnchantListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onEnchantItemEvent(EnchantItemEvent event) {
+	public void onEnchantItem(EnchantItemEvent event) {
 
 		Player player = event.getEnchanter();
 		if (!player.hasPermission("achievement.count.enchantments")

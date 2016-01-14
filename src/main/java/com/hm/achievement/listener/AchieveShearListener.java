@@ -20,7 +20,7 @@ public class AchieveShearListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
+	public void onPlayerShearEntity(PlayerShearEntityEvent event) {
 
 		Player player = event.getPlayer();
 		if (!player.hasPermission("achievement.count.shears")

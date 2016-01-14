@@ -19,7 +19,7 @@ public class AchieveBedListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerBedEnterEvent(PlayerBedEnterEvent event) {
+	public void onPlayerBedEnter(PlayerBedEnterEvent event) {
 
 		Player player = event.getPlayer();
 

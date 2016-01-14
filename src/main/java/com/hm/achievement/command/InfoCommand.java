@@ -16,12 +16,12 @@ public class InfoCommand {
 	}
 
 	/**
-	 * Display information about the plugin.
+	 * Display various information about the plugin to the command sender.
 	 */
 	public void getInfo(CommandSender sender) {
 
-		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_NAME + " "
-				+ ChatColor.GRAY + plugin.getDescription().getName());
+		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_NAME + " " + ChatColor.GRAY
+				+ plugin.getDescription().getName());
 		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_VERSION + " "
 				+ ChatColor.GRAY + plugin.getDescription().getVersion());
 		sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_WEBSITE + " "
@@ -32,10 +32,10 @@ public class InfoCommand {
 				+ ChatColor.GRAY + Lang.VERSION_COMMAND_DESCRIPTION_DETAILS);
 		if (plugin.setUpEconomy())
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_VAULT + " "
-					+ ChatColor.GRAY + "YES");
+					+ ChatColor.GREEN + "YES");
 		else
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_VAULT + " "
-					+ ChatColor.GRAY + "NO");
+					+ ChatColor.RED + "NO");
 		if (plugin.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor() + Lang.VERSION_COMMAND_DATABASE + " "
 					+ ChatColor.GRAY + "MySQL");

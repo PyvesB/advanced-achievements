@@ -21,7 +21,7 @@ public class AchieveCraftListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onInventoryCraft(CraftItemEvent event) {
+	public void onCraftItem(CraftItemEvent event) {
 
 		if (!(event.getWhoClicked() instanceof Player) || event.getAction().name().equals("NOTHING"))
 			return;

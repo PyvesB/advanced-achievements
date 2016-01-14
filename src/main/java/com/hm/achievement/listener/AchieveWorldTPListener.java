@@ -18,10 +18,10 @@ public class AchieveWorldTPListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void worldJoin(PlayerChangedWorldEvent event) {
+	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
 
-		plugin.getAchieveDistanceRunnable().getPlayerLocations()
-				.put(event.getPlayer(), event.getPlayer().getLocation());
+		plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer(),
+				event.getPlayer().getLocation());
 
 	}
 

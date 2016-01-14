@@ -17,11 +17,13 @@ import com.hm.achievement.particle.ParticleEffect;
 public class BookCommand {
 
 	private AdvancedAchievements plugin;
-	private HashMap<Player, Long> players;
 	private int bookTime;
 	private String bookSeparator;
 	private boolean additionalEffects;
 	private boolean sound;
+
+	// Corresponds to times at which players have received their books.
+	private HashMap<Player, Long> players;
 
 	public BookCommand(AdvancedAchievements plugin) {
 
@@ -34,7 +36,8 @@ public class BookCommand {
 	}
 
 	/**
-	 * Check is player hasn't received a book too recently.
+	 * Check is player hasn't received a book too recently (with "too recently"
+	 * being defined in configuration file).
 	 */
 	private boolean timeAuthorisedBook(Player player) {
 
@@ -52,7 +55,8 @@ public class BookCommand {
 	}
 
 	/**
-	 * Give an achievements book to the player.
+	 * Give an achievements book to the player, or several books depending on
+	 * the number of achievements.
 	 */
 	public void giveBook(Player player) {
 
@@ -93,11 +97,14 @@ public class BookCommand {
 			player.sendMessage(plugin.getChatHeader() + Lang.BOOK_RECEIVED);
 		} else {
 			// The player has already received a book recently.
-			player.sendMessage(plugin.getChatHeader()
-					+ Lang.BOOK_DELAY.toString().replace("TIME", "" + bookTime / 1000));
+			player.sendMessage(
+					plugin.getChatHeader() + Lang.BOOK_DELAY.toString().replace("TIME", "" + bookTime / 1000));
 		}
 	}
 
+	/**
+	 * Construct the pages of a book.
+	 */
 	private int fillBook(ArrayList<String> achievements, Player player, int i, int max, int bookNumber) {
 
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);

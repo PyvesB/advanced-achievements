@@ -15,12 +15,14 @@ import com.hm.achievement.AdvancedAchievements;
 public class AchieveDistanceRunnable implements Runnable {
 
 	private AdvancedAchievements plugin;
+
 	// Lists of achievements extracted from configuration.
 	private int[] achievementsFoot;
 	private int[] achievementsPig;
 	private int[] achievementsHorse;
 	private int[] achievementsMinecart;
 	private int[] achievementsBoat;
+
 	// Sets corresponding to whether a player has obtained a specific
 	// distance achievement.
 	// Used as pseudo-caching system to reduce load on database.
@@ -29,6 +31,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	private HashSet<?>[] playerAchievementsPig;
 	private HashSet<?>[] playerAchievementsMinecart;
 	private HashSet<?>[] playerAchievementsBoat;
+
 	// HashMaps containing distance statistics for each player.
 	private HashMap<Player, Integer> distancesFoot;
 	private HashMap<Player, Integer> distancesHorse;
@@ -152,8 +155,11 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		if (firstRetrieveFromDatabase)
 			playerLocations.put(player, player.getLocation());
-		// Distances will be updated during next scheduled run.
+
+		// Update distances in HashMaps and make checks to award achievements,
+		// using cached data.
 		else {
+			// Check if player has not moved since last run.
 			if (player.getLocation().equals(playerLocations.get(player)))
 				return;
 
@@ -233,6 +239,7 @@ public class AchieveDistanceRunnable implements Runnable {
 					}
 				}
 			}
+			// Update player's location.
 			playerLocations.put(player, player.getLocation());
 		}
 	}

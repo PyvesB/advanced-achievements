@@ -19,7 +19,7 @@ public class AchieveConsumeListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerItemConsumeEvent(PlayerItemConsumeEvent event) {
+	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
 
 		Player player = event.getPlayer();
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))

@@ -38,6 +38,7 @@ public class AchieveBlockPlaceListener implements Listener {
 		if (!DatabasePools.getBlockPlaceHashMap().containsKey(player.getUniqueId().toString() + block.getTypeId()))
 			places = plugin.getDb().getPlaces(player, block) + 1;
 		else
+			// Concatenate player name and block ID to put in HashMap.
 			places = DatabasePools.getBlockPlaceHashMap().get(player.getUniqueId().toString() + block.getTypeId()) + 1;
 
 		DatabasePools.getBlockPlaceHashMap().put(player.getUniqueId().toString() + block.getTypeId(), places);

@@ -21,11 +21,13 @@ public class AchieveQuitListener implements Listener {
 
 	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onQuitEvent(PlayerQuitEvent event) {
+	public void onPlayerQuit(PlayerQuitEvent event) {
 
+		// Clean HashMaps for commands.
 		plugin.getAchievementBookCommand().getPlayers().remove(event.getPlayer());
 		plugin.getAchievementListCommand().getPlayers().remove(event.getPlayer());
 
+		// Clean HashSets cache.
 		if (plugin.getAchieveDistanceRunnable() != null
 				&& plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(event.getPlayer()) != null) {
 			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsFoot())
@@ -39,9 +41,10 @@ public class AchieveQuitListener implements Listener {
 			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsMinecart())
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
 
-			Integer distance;
+			// Update database statistics for distances and clean HashMaps.
 
-			distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().remove(event.getPlayer());
+			Integer distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot()
+					.remove(event.getPlayer());
 			if (distance != null)
 				plugin.getDb().updateAndGetDistance(event.getPlayer(), distance, "distancefoot");
 
@@ -63,6 +66,8 @@ public class AchieveQuitListener implements Listener {
 		}
 
 		if (plugin.getAchievePlayTimeRunnable() != null) {
+
+			// Update database statistics for played time and clean HashMaps.
 
 			Long playTime = plugin.getConnectionListener().getPlayTime().remove(event.getPlayer());
 			Long joinTime = plugin.getConnectionListener().getJoinTime().remove(event.getPlayer());

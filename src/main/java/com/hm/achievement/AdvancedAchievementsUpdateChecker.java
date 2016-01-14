@@ -55,10 +55,13 @@ public class AdvancedAchievementsUpdateChecker {
 			if (version.equals(plugin.getDescription().getVersion()))
 				return false;
 
+			// Version of current plugin.
 			String[] pluginVersion = plugin.getDescription().getVersion().split("\\.");
 
+			// Version of Bukkit's latest file.
 			String[] onlineVersion = version.split("\\.");
 
+			// Compare version numbers.
 			for (int i = 0; i < Math.min(pluginVersion.length, onlineVersion.length); i++) {
 				if (Integer.parseInt(pluginVersion[i]) > Integer.parseInt(onlineVersion[i]))
 					return false;
@@ -68,6 +71,8 @@ public class AdvancedAchievementsUpdateChecker {
 				}
 			}
 
+			// Additional check (for instance pluginVersion = 2.2 and
+			// onlineVersion = 2.2.1).
 			if (pluginVersion.length < onlineVersion.length) {
 				logUpdate();
 				return true;

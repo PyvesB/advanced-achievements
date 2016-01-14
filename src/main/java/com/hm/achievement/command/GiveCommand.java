@@ -25,6 +25,8 @@ public class GiveCommand implements Listener {
 	public void achievementGive(CommandSender sender, String args[]) {
 
 		String configAchievement = "Commands." + args[1];
+
+		// Retrieve player instance with his name.
 		Player player = null;
 		for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
 			if (currentPlayer.getName().equalsIgnoreCase(args[2])) {
@@ -42,8 +44,10 @@ public class GiveCommand implements Listener {
 		}
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
-			if (!multiCommand
-					&& plugin.getDb().hasPlayerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"))) {
+			// Check whether player has already received achievement and cannot
+			// receive it again.
+			if (!multiCommand && plugin.getDb().hasPlayerAchievement(player,
+					plugin.getConfig().getString(configAchievement + ".Name"))) {
 
 				sender.sendMessage(plugin.getChatHeader()
 						+ Lang.ACHIEVEMENT_ALREADY_RECEIVED.toString().replace("PLAYER", args[2]));
@@ -57,8 +61,8 @@ public class GiveCommand implements Listener {
 
 			sender.sendMessage(plugin.getChatHeader() + Lang.ACHIEVEMENT_GIVEN);
 		} else {
-			sender.sendMessage(plugin.getChatHeader()
-					+ Lang.ACHIEVEMENT_NOT_FOUND.toString().replace("PLAYER", args[2]));
+			sender.sendMessage(
+					plugin.getChatHeader() + Lang.ACHIEVEMENT_NOT_FOUND.toString().replace("PLAYER", args[2]));
 		}
 	}
 }

@@ -19,7 +19,7 @@ public class AchieveMilkListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerBucketFillEvent(PlayerBucketFillEvent event) {
+	public void onPlayerBucketFill(PlayerBucketFillEvent event) {
 
 		if (!(event.getItemStack().getType() == Material.MILK_BUCKET))
 			return;

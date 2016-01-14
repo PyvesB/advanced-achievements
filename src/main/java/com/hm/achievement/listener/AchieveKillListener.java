@@ -49,6 +49,7 @@ public class AchieveKillListener implements Listener {
 		if (!DatabasePools.getEntityDeathHashMap().containsKey(player.getUniqueId().toString() + mobName))
 			kills = plugin.getDb().getKills(player, mobName) + 1;
 		else
+			// Concatenate player name and block ID to put in HashMap.
 			kills = DatabasePools.getEntityDeathHashMap().get(player.getUniqueId().toString() + mobName) + 1;
 
 		DatabasePools.getEntityDeathHashMap().put(player.getUniqueId().toString() + mobName, kills);

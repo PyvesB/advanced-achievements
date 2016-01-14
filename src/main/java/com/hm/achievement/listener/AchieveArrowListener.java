@@ -20,7 +20,7 @@ public class AchieveArrowListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onEntityShootBowEvent(EntityShootBowEvent event) {
+	public void onEntityShootBow(EntityShootBowEvent event) {
 
 		if (!(event.getEntity() instanceof Player))
 			return;

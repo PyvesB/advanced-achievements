@@ -22,7 +22,7 @@ public class AchieveSnowballEggsListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onProjectileLaunchEvent(ProjectileLaunchEvent event) {
+	public void onProjectileLaunch(ProjectileLaunchEvent event) {
 
 		if (!(event.getEntity() instanceof Snowball) && !(event.getEntity() instanceof Egg)
 				|| !(event.getEntity().getShooter() instanceof Player))

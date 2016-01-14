@@ -20,7 +20,7 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onInventoryClickEvent(InventoryClickEvent event) {
+	public void onInventoryClick(InventoryClickEvent event) {
 
 		// Not relevant for trade, anvil, or brewing events, but used for the
 		// /aach list command to avoid adding an additional event handler.

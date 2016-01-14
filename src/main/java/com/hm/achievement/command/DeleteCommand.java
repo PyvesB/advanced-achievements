@@ -18,11 +18,11 @@ public class DeleteCommand implements Listener {
 	}
 
 	/**
-	 *Delete an achievements from a player with an in game or console
-	 * command.
+	 * Delete an achievements from a player with an in game or console command.
 	 */
 	public void achievementDelete(CommandSender sender, String args[]) {
 
+		// Parse command to separate achievement name and name of player.
 		String achievementName = "";
 		for (int i = 1; i < args.length - 1; i++) {
 			if (i != args.length - 2)
@@ -30,6 +30,8 @@ public class DeleteCommand implements Listener {
 			else
 				achievementName += args[i];
 		}
+
+		// Retrieve player instance with his name.
 		Player player = null;
 		for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
 			if (currentPlayer.getName().equalsIgnoreCase(args[args.length - 1])) {
@@ -46,14 +48,13 @@ public class DeleteCommand implements Listener {
 			return;
 		}
 
-		if (! plugin.getDb().hasPlayerAchievement(player, achievementName))
+		if (!plugin.getDb().hasPlayerAchievement(player, achievementName))
 			sender.sendMessage(plugin.getChatHeader() + Lang.CHECK_ACHIEVEMENT_FALSE.toString()
 					.replaceAll("PLAYER", args[args.length - 1]).replaceAll("ACH", achievementName));
-		else{
+		else {
 			plugin.getDb().deletePlayerAchievement(player, achievementName);
 			sender.sendMessage(plugin.getChatHeader() + Lang.DELETE_ACHIEVEMENT.toString()
 					.replaceAll("PLAYER", args[args.length - 1]).replaceAll("ACH", achievementName));
 		}
 	}
 }
-

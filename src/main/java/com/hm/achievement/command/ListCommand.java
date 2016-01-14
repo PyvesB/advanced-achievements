@@ -21,6 +21,8 @@ public class ListCommand {
 	private boolean hideNotReceivedCategories;
 	private boolean obfuscateNotReceived;
 	private int listTime;
+
+	// Corresponds to times at which players have entered list commands.
 	private HashMap<Player, Long> players;
 
 	// Messages for language file.
@@ -30,7 +32,7 @@ public class ListCommand {
 	// Pattern to delete colors if achievement not yet received.
 	private static final Pattern REGEX_PATTERN = Pattern.compile("&([a-f]|[0-9]){1}");
 
-	// Get lists of item stacks for GUI.
+	// Get lists of item stacks for items displayed in the GUI.
 	private static final ItemStack[] MULTIPLE_ACHIEVEMENT_TYPES_MATERIAL = { new ItemStack(Material.SMOOTH_BRICK),
 			new ItemStack(Material.SMOOTH_BRICK, 1, (short) 2), new ItemStack(Material.BONE),
 			new ItemStack(Material.WORKBENCH) };
@@ -72,7 +74,8 @@ public class ListCommand {
 	}
 
 	/**
-	 * Check is player hasn't done a list command too recently.
+	 * Check is player hasn't done a list command too recently (with
+	 * "too recently" being defined in configuration file).
 	 */
 	private boolean timeAuthorisedList(Player player) {
 
@@ -113,11 +116,16 @@ public class ListCommand {
 					ItemStack connections = MULTIPLE_ACHIEVEMENT_TYPES_MATERIAL[i];
 					ItemMeta connectionsMeta = connections.getItemMeta();
 					ArrayList<String> lore = new ArrayList<String>();
+					// Iterate through all sub-categories in achievement
+					// category.
 					for (String section : plugin.getConfig()
 							.getConfigurationSection(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i]).getKeys(false))
+						// Iterate through all achievements in sub-category.
 						for (String ach : plugin.getConfig()
 								.getConfigurationSection(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i] + '.' + section)
 								.getKeys(false))
+							// Check if player has received achievement and
+							// build message accordingly.
 							if (plugin.getDb().hasPlayerAchievement(player, plugin.getConfig().getString(
 									AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i] + '.' + section + '.' + ach + ".Name",
 									""))) {
@@ -140,6 +148,7 @@ public class ListCommand {
 												.replaceAll(REGEX_PATTERN.pattern(), ""), ach,
 										plugin.getReward().getRewardType(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i]
 												+ '.' + section + '.' + ach))));
+					// Set lore for the current category item in GUI.
 					if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
 						connectionsMeta.setDisplayName(
 								ChatColor.translateAlternateColorCodes('&', "&7" + plugin.getIcon() + " "
@@ -162,8 +171,11 @@ public class ListCommand {
 					ItemStack connections = NORMAL_ACHIEVEMENT_TYPES_MATERIAL[i];
 					ItemMeta connectionsMeta = connections.getItemMeta();
 					ArrayList<String> lore = new ArrayList<String>();
+					// Iterate through all achievements in category.
 					for (String ach : plugin.getConfig()
 							.getConfigurationSection(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i]).getKeys(false))
+						// Check if player has received achievement and
+						// build message accordingly.
 						if (plugin.getDb().hasPlayerAchievement(player, plugin.getConfig()
 								.getString(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach + ".Name", ""))) {
 							numberInCategory++;
@@ -183,6 +195,7 @@ public class ListCommand {
 													.replaceAll(REGEX_PATTERN.pattern(), ""),
 											ach, plugin.getReward().getRewardType(
 													AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach))));
+					// Set lore for the current category item in GUI.
 					if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
 						connectionsMeta.setDisplayName(
 								ChatColor.translateAlternateColorCodes('&', "&7" + plugin.getIcon() + " "
@@ -197,7 +210,7 @@ public class ListCommand {
 					lore.clear();
 					numberInCategory = 0;
 				}
-
+			// Display GUI to the player.
 			player.openInventory(guiInv);
 		} else {
 			// The player has already done a list command recently.

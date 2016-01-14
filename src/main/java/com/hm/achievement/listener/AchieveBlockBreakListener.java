@@ -38,6 +38,7 @@ public class AchieveBlockBreakListener implements Listener {
 		if (!DatabasePools.getBlockBreakHashMap().containsKey(player.getUniqueId().toString() + block.getTypeId()))
 			breaks = plugin.getDb().getBreaks(player, block) + 1;
 		else
+			// Concatenate player name and block ID to put in HashMap.
 			breaks = DatabasePools.getBlockBreakHashMap().get(player.getUniqueId().toString() + block.getTypeId()) + 1;
 
 		DatabasePools.getBlockBreakHashMap().put(player.getUniqueId().toString() + block.getTypeId(), breaks);

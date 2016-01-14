@@ -23,6 +23,7 @@ public class CheckCommand implements Listener {
 	 */
 	public void achievementCheck(CommandSender sender, String args[]) {
 
+		// Parse command to separate achievement name and name of player.
 		String achievementName = "";
 		for (int i = 1; i < args.length - 1; i++) {
 			if (i != args.length - 2)
@@ -30,6 +31,8 @@ public class CheckCommand implements Listener {
 			else
 				achievementName += args[i];
 		}
+
+		// Retrieve player instance with his name.
 		Player player = null;
 		for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
 			if (currentPlayer.getName().equalsIgnoreCase(args[args.length - 1])) {
@@ -37,7 +40,7 @@ public class CheckCommand implements Listener {
 				break;
 			}
 		}
-		
+
 		// If player not found or is offline.
 		if (player == null) {
 

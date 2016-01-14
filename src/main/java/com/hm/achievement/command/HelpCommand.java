@@ -17,6 +17,9 @@ public class HelpCommand {
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Display plugin help to the command sender.
+	 */
 	public void getHelp(CommandSender sender) {
 
 		sender.sendMessage(plugin.getColor() + "-=-=-=-=-=-=-" + ChatColor.GRAY + "[" + plugin.getColor()

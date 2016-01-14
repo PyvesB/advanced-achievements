@@ -19,7 +19,7 @@ public class AchieveXPListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerExpChangeEvent(PlayerExpChangeEvent event) {
+	public void onPlayerExpChange(PlayerExpChangeEvent event) {
 
 		Player player = event.getPlayer();
 

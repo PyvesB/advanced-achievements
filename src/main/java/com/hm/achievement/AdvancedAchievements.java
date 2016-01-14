@@ -102,18 +102,18 @@ public class AdvancedAchievements extends JavaPlugin {
 	// Database related.
 	private SQLDatabaseManager db;
 	private int databaseVersion;
+	private int pooledRequestsTaskInterval;
+	private boolean databaseBackup;
 
 	// Plugin options and various parameters.
 	private String icon;
 	private ChatColor color;
 	private String chatHeader;
 	private boolean restrictCreative;
-	private boolean databaseBackup;
 	private Set<String> excludedWorldList;
 	private boolean successfulLoad;
 	private int playtimeTaskInterval;
 	private int distanceTaskInterval;
-	private int pooledRequestsTaskInterval;
 
 	// Achievement types string arrays; constants.
 	public static final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
@@ -169,6 +169,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	@SuppressWarnings("deprecation")
 	public void onEnable() {
 
+		// Beginning of plugin enabling.
 		long startTime = System.currentTimeMillis();
 
 		if (!this.getDataFolder().exists())
@@ -305,7 +306,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	/**
 	 * Load plugin configuration and set values to different parameters; load
-	 * language file and backup configuration and database files.
+	 * language file and backup configuration and database files. Register
+	 * permissions. Initialise command modules.
 	 */
 	private void configurationLoad() {
 
@@ -554,6 +556,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		for (int i = 0; i < MULTIPLE_ACHIEVEMENTS.length; i++)
 			for (String section : this.getConfig().getConfigurationSection(MULTIPLE_ACHIEVEMENTS[i]).getKeys(false)) {
+				// Bukkit only allows permissions to be set once, so must do
+				// additional check for /aach reload correctness.
 				if (this.getServer().getPluginManager().getPermission(
 						"achievement.count." + MULTIPLE_ACHIEVEMENTS[i].toLowerCase() + "." + section) == null)
 					this.getServer().getPluginManager()
@@ -737,6 +741,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Send remaining stats for pooled events to the database.
 		new PooledRequestsSender(this, false).sendRequests();
 
+		// Send played time stats to the database.
 		if (achievePlayTimeRunnable != null)
 			for (Entry<Player, Long> entry : connectionListener.getPlayTime().entrySet())
 				this.getDb().updateAndGetPlaytime(entry.getKey(), entry.getValue() + System.currentTimeMillis()
@@ -798,7 +803,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Called when a player or the console enters a command.
+	 * Called when a player or the console enters a command. Handles command
+	 * directly or dispatches to one of the command modules.
 	 */
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]) {
 
@@ -891,9 +897,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	}
 
-	/**
-	 * Various getters and setters.
-	 */
+	// Various getters and setters. Names are self-explanatory.
 
 	public Economy getEconomy() {
 
@@ -928,6 +932,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	public void setDatabaseVersion(int databaseVersion) {
 
 		this.databaseVersion = databaseVersion;
+		// Save changes in the configuration file.
 		this.getConfig().set("DatabaseVersion", databaseVersion);
 		this.saveConfig();
 	}

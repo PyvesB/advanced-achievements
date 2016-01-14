@@ -38,22 +38,23 @@ public class AchievementRewards {
 	}
 
 	/**
-	 * Give item reward to a player (specified in configuration file).
+	 * Get item reward to a player (specified in configuration file).
 	 */
-	public ItemStack giveItemReward(Player player, String ach, int amount) {
+	public ItemStack getItemReward(Player player, String ach, int amount) {
 
 		ItemStack item;
 		// Old config syntax.
 		if (plugin.getConfig().getKeys(true).contains(ach + ".Reward.Item.Type"))
 			item = new ItemStack(Material.getMaterial(
 					plugin.getConfig().getString(ach + ".Reward.Item.Type", "stone").toUpperCase()), amount);
+		// New config syntax.
 		else
-			// New config syntax.
 			item = new ItemStack(
 					Material.getMaterial(plugin.getConfig().getString(ach + ".Reward.Item", "stone").toUpperCase()
 							.substring(0, plugin.getConfig().getString(ach + ".Reward.Item", "stone").indexOf(" "))),
 					amount);
 
+		// Display Vault name of object if available.
 		if (plugin.setUpEconomy())
 			try {
 				player.sendMessage(
@@ -67,6 +68,9 @@ public class AchievementRewards {
 		return item;
 	}
 
+	/**
+	 * Give money reward to a player (specified in configuration file).
+	 */
 	@SuppressWarnings("deprecation")
 	public void rewardMoney(Player player, int amount) {
 
@@ -79,6 +83,8 @@ public class AchievementRewards {
 			else
 				plugin.getEconomy().depositPlayer(player, amtd);
 
+			// If player has set different currency names depending on name,
+			// adapt message accordingly.
 			if (amount > 1)
 				player.sendMessage(plugin.getChatHeader()
 						+ ChatColor.translateAlternateColorCodes('&', Lang.MONEY_REWARD_RECEIVED.toString()
@@ -91,7 +97,8 @@ public class AchievementRewards {
 	}
 
 	/**
-	 * Return the type of an achievement reward.
+	 * Return the type of an achievement reward with strings coming from
+	 * language file.
 	 */
 	public String getRewardType(String configAchievement) {
 
@@ -113,7 +120,7 @@ public class AchievementRewards {
 	}
 
 	/**
-	 * Deal with rewards.
+	 * Main reward manager (deals with configuration).
 	 */
 	public void checkConfig(Player player, String configAchievement) {
 
@@ -141,7 +148,7 @@ public class AchievementRewards {
 			rewardMoney(player, money);
 		}
 		if (itemAmount != 0) {
-			ItemStack item = this.giveItemReward(player, configAchievement, itemAmount);
+			ItemStack item = this.getItemReward(player, configAchievement, itemAmount);
 			if (player.getInventory().firstEmpty() != -1)
 				player.getInventory().addItem(item);
 			else

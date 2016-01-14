@@ -18,7 +18,7 @@ public class AchieveItemBreakListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerItemBreakEvent(PlayerItemBreakEvent event) {
+	public void onPlayerItemBreak(PlayerItemBreakEvent event) {
 
 		Player player = event.getPlayer();
 		if (!player.hasPermission("achievement.count.itembreaks") || plugin.isInExludedWorld(player))

@@ -32,7 +32,7 @@ public class TopCommand {
 	}
 
 	/**
-	 * Get list of players with the most achievements and diplay player's rank.
+	 * Get list of players with the most achievements and display player's rank.
 	 */
 	public void getTop(CommandSender sender) {
 
