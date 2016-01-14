@@ -501,11 +501,11 @@ public class SQLDatabaseManager {
 			achievement = achievement.replace("'", "''");
 			desc = desc.replace("'", "''");
 			if (plugin.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
-				st.execute("INSERT INTO `achievements` (playername, achievement, description, date) VALUES ('"
+				st.execute("REPLACE INTO `achievements` (playername, achievement, description, date) VALUES ('"
 						+ player.getUniqueId() + "','" + achievement + "','" + desc + "','" + format.format(new Date())
 						+ "')");
 			else
-				st.execute("INSERT INTO `achievements` (playername, achievement, desc, date) VALUES ('"
+				st.execute("REPLACE INTO `achievements` (playername, achievement, desc, date) VALUES ('"
 						+ player.getUniqueId() + "','" + achievement + "','" + desc + "','" + format.format(new Date())
 						+ "')");
 			st.close();
