@@ -43,16 +43,23 @@ import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 /**
  * Advanced Achievements enables unique and challenging achievements on your
  * server. Try to collect as many as you can, earn rewards, climb the rankings
- * and receive RP books! Some minor parts of the code and ideas are based on
- * Achievement plugin by Death_marine and captainawesome7, under Federation of
- * Lost Lawn Chairs license
- * (http://dev.bukkit.org/licenses/1332-federation-of-lost-lawn-chairs)
+ * and receive RP books!
+ * 
+ * Some minor parts of the code and ideas are based on Achievement plugin by
+ * Death_marine and captainawesome7, under Federation of Lost Lawn Chairs
+ * license (http://dev.bukkit.org/licenses/1332-federation-of-lost-lawn-chairs).
+ * 
  * AdvancedAchievements is under GNU General Public License version 3. Please
  * visit the plugin's GitHub for more information :
  * https://github.com/PyvesB/AdvancedAchievements
  * 
+ * Official plugin's server: hellominecraft.fr
+ * 
+ * Bukkit project page: dev.bukkit.org/bukkit-plugins/advanced-achievements
+ * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
+ * 
  * @since April 2015
- * @version 2.2.2
+ * @version 2.3
  * @author DarkPyves
  */
 

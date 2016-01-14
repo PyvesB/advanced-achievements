@@ -38,11 +38,11 @@ public class ListCommand {
 			new ItemStack(Material.WORKBENCH) };
 	private static final ItemStack[] NORMAL_ACHIEVEMENT_TYPES_MATERIAL = { new ItemStack(Material.BOOK_AND_QUILL),
 			new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW), new ItemStack(Material.SNOW_BALL),
-			new ItemStack(Material.EGG), new ItemStack(Material.RAW_FISH, 1, (short) 3), new ItemStack(Material.FLINT),
+			new ItemStack(Material.EGG), new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FLINT),
 			new ItemStack(Material.MELON), new ItemStack(Material.SHEARS), new ItemStack(Material.MILK_BUCKET),
 			new ItemStack(Material.EMERALD), new ItemStack(Material.ANVIL), new ItemStack(Material.ENCHANTMENT_TABLE),
 			new ItemStack(Material.BED), new ItemStack(Material.EXP_BOTTLE), new ItemStack(Material.GLASS_BOTTLE),
-			new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.STONE_HOE),
+			new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.GOLD_HOE),
 			new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.LEASH),
 			new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
 			new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK), new ItemStack(Material.SADDLE),
