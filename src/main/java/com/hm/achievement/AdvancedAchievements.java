@@ -544,11 +544,14 @@ public class AdvancedAchievements extends JavaPlugin {
 	private void registerPermissions() {
 
 		for (int i = 0; i < MULTIPLE_ACHIEVEMENTS.length; i++)
-			for (String section : this.getConfig().getConfigurationSection(MULTIPLE_ACHIEVEMENTS[i]).getKeys(false))
-				this.getServer().getPluginManager()
-						.addPermission(new Permission(
-								"achievement.count." + MULTIPLE_ACHIEVEMENTS[i].toLowerCase() + "." + section,
-								PermissionDefault.TRUE));
+			for (String section : this.getConfig().getConfigurationSection(MULTIPLE_ACHIEVEMENTS[i]).getKeys(false)) {
+				if (this.getServer().getPluginManager().getPermission(
+						"achievement.count." + MULTIPLE_ACHIEVEMENTS[i].toLowerCase() + "." + section) == null)
+					this.getServer().getPluginManager()
+							.addPermission(new Permission(
+									"achievement.count." + MULTIPLE_ACHIEVEMENTS[i].toLowerCase() + "." + section,
+									PermissionDefault.TRUE));
+			}
 	}
 
 	/**
