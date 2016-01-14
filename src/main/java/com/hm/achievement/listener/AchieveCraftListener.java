@@ -29,49 +29,43 @@ public class AchieveCraftListener implements Listener {
 		Player player = (Player) event.getWhoClicked();
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
-		try {
 
-			ItemStack item = event.getRecipe().getResult();
-			String craftName = item.getType().name().toLowerCase();
-			if (!player.hasPermission("achievement.count.crafts." + craftName))
-				return;
-			if (!plugin.getConfig().isConfigurationSection("Crafts." + craftName))
-				return;
+		ItemStack item = event.getRecipe().getResult();
+		String craftName = item.getType().name().toLowerCase();
+		if (!player.hasPermission("achievement.count.crafts." + craftName))
+			return;
+		if (!plugin.getConfig().isConfigurationSection("Crafts." + craftName))
+			return;
 
-			int amount = item.getAmount();
-			if (event.isShiftClick()) {
-				int max = event.getInventory().getMaxStackSize();
-				ItemStack[] matrix = event.getInventory().getMatrix();
-				for (ItemStack itemStack : matrix) {
-					if (itemStack != null && !itemStack.getType().equals(Material.AIR)) {
-						int tmp = itemStack.getAmount();
-						if (tmp < max && tmp > 0)
-							max = tmp;
-					}
+		int amount = item.getAmount();
+		if (event.isShiftClick()) {
+			int max = event.getInventory().getMaxStackSize();
+			ItemStack[] matrix = event.getInventory().getMatrix();
+			for (ItemStack itemStack : matrix) {
+				if (itemStack != null && !itemStack.getType().equals(Material.AIR)) {
+					int tmp = itemStack.getAmount();
+					if (tmp < max && tmp > 0)
+						max = tmp;
 				}
-				amount *= max;
 			}
-
-			int times = plugin.getDb().updateAndGetCraft(player, item, amount);
-			String configAchievement;
-			for (String threshold : plugin.getConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))
-				if (times >= Integer.parseInt(threshold) && !plugin.getDb().hasPlayerAchievement(player,
-						plugin.getConfig().getString("Crafts." + craftName + '.' + threshold + '.' + "Name"))) {
-					configAchievement = "Crafts." + craftName + '.' + threshold;
-					if (plugin.getReward().checkAchievement(configAchievement)) {
-
-						plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-						plugin.getDb().registerAchievement(player,
-								plugin.getConfig().getString(configAchievement + ".Name"),
-								plugin.getConfig().getString(configAchievement + ".Message"));
-						plugin.getReward().checkConfig(player, configAchievement);
-
-					}
-				}
-		} catch (Exception e) {
-
-			plugin.getLogger().severe("Error while dealing with crafting event.");
-			e.printStackTrace();
+			amount *= max;
 		}
+
+		int times = plugin.getDb().updateAndGetCraft(player, item, amount);
+		String configAchievement;
+		for (String threshold : plugin.getConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))
+			if (times >= Integer.parseInt(threshold) && !plugin.getDb().hasPlayerAchievement(player,
+					plugin.getConfig().getString("Crafts." + craftName + '.' + threshold + '.' + "Name"))) {
+				configAchievement = "Crafts." + craftName + '.' + threshold;
+				if (plugin.getReward().checkAchievement(configAchievement)) {
+
+					plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
+					plugin.getDb().registerAchievement(player,
+							plugin.getConfig().getString(configAchievement + ".Name"),
+							plugin.getConfig().getString(configAchievement + ".Message"));
+					plugin.getReward().checkConfig(player, configAchievement);
+
+				}
+			}
 	}
 }

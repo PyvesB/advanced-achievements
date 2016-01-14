@@ -84,8 +84,7 @@ public class AdvancedAchievementsUpdateChecker {
 
 	private void logUpdate() {
 
-		plugin.getLogger().info("Update available for Advanced Achievements: v" + version
-				+ ". Download at one of the following locations:");
+		plugin.getLogger().info("Update available: v" + version + ". Download at one of the following:");
 		plugin.getLogger().info(BUKKIT_DONWLOAD_URL);
 		plugin.getLogger().info(SPIGOT_DONWLOAD_URL);
 	}

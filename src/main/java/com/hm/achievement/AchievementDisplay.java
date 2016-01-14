@@ -35,11 +35,12 @@ public class AchievementDisplay {
 	 */
 	public void displayAchievement(Player player, String configAchievement) {
 
-		String name = plugin.getConfig().getString(configAchievement + ".Name");
-		String msg = plugin.getConfig().getString(configAchievement + ".Message");
+		String name = ChatColor.translateAlternateColorCodes('&',
+				plugin.getConfig().getString(configAchievement + ".Name"));
+		String msg = ChatColor.translateAlternateColorCodes('&',
+				plugin.getConfig().getString(configAchievement + ".Message"));
 
-		name = ChatColor.translateAlternateColorCodes('&', name);
-		msg = ChatColor.translateAlternateColorCodes('&', msg);
+		plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + name);
 
 		player.sendMessage(plugin.getChatHeader() + Lang.ACHIEVEMENT_NEW + " " + ChatColor.WHITE + name);
 		if (chatNotify) {
@@ -71,8 +72,8 @@ public class AchievementDisplay {
 				effect = FireworkEffect.builder().flicker(false).trail(false)
 						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).with(Type.BALL_LARGE)
 						.withFade(Color.PURPLE).build();
-				plugin.getLogger().severe(
-						"Error while loading FireworkStyle. Please check your config. Loading default style.");
+				plugin.getLogger()
+						.severe("Error while loading FireworkStyle. Please check your config. Loading default style.");
 			}
 			fireworkMeta.addEffects(effect);
 			firework.setVelocity(player.getLocation().getDirection().multiply(0));
@@ -84,8 +85,8 @@ public class AchievementDisplay {
 				PacketSender.sendTitlePacket(player, "{text:\"" + name + "\"}", "{text:\"" + msg + "\"}");
 			} catch (Exception ex) {
 
-				plugin.getLogger().severe(
-						"Errors while trying to display achievement title. Is your server up-to-date ?");
+				plugin.getLogger()
+						.severe("Errors while trying to display achievement screen title. Is your server up-to-date?");
 				ex.printStackTrace();
 			}
 		}

@@ -33,9 +33,8 @@ public class AchieveConnectionListener implements Listener {
 
 		// Check if OP to display new version message if needed.
 		if (event.getPlayer().isOp() && plugin.getUpdateChecker().isUpdateNeeded()) {
-			event.getPlayer().sendMessage(plugin.getChatHeader() + "Update available for Advanced Achievements: v"
-					+ plugin.getUpdateChecker().getVersion());
-			event.getPlayer().sendMessage(plugin.getChatHeader() + "Download at one of the following locations:");
+			event.getPlayer().sendMessage(plugin.getChatHeader() + "Update available: v"
+					+ plugin.getUpdateChecker().getVersion() + ". Download at one of the following:");
 			event.getPlayer().sendMessage(ChatColor.GRAY + AdvancedAchievementsUpdateChecker.BUKKIT_DONWLOAD_URL);
 			event.getPlayer().sendMessage(ChatColor.GRAY + AdvancedAchievementsUpdateChecker.SPIGOT_DONWLOAD_URL);
 		}

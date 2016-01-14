@@ -156,7 +156,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		hoeFertiliseListener = new AchieveHoeFertiliseFireworkListener(this);
 		tameListener = new AchieveTameListener(this);
 		worldTPListener = new AchieveWorldTPListener(this);
-		
+
 		excludedWorldList = new HashSet<String>();
 
 		db = new SQLDatabaseManager(this);
@@ -169,10 +169,14 @@ public class AdvancedAchievements extends JavaPlugin {
 	@SuppressWarnings("deprecation")
 	public void onEnable() {
 
+		long startTime = System.currentTimeMillis();
+
 		if (!this.getDataFolder().exists())
 			this.getDataFolder().mkdir();
 
 		configurationLoad();
+
+		this.getLogger().info("Registering listeners...");
 
 		// Register listeners so they can monitor server events; if there are no
 		// config related achievements, listeners aren't registered.
@@ -259,6 +263,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0)
 			pm.registerEvents(worldTPListener, this);
 
+		this.getLogger().info("Initialising database and launching scheduled tasks...");
+
 		// Initialise the SQLite/MySQL database.
 		db.initialise(this);
 
@@ -291,8 +297,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		if (successfulLoad)
-			this.getLogger()
-					.info("AdvancedAchievements configurations, language file and database successfully loaded!");
+			this.getLogger().info("Plugin successfully enabled and ready to run! Took "
+					+ (System.currentTimeMillis() - startTime) + "ms.");
 		else
 			this.getLogger().severe("Error(s) while loading plugin. Please view previous logs for more information.");
 	}
@@ -305,13 +311,12 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		successfulLoad = true;
 
+		this.getLogger().info("Backing up and loading configuration files...");
 		backupConfigFile();
 		backupLanguageFile();
 
 		loadLang();
 		this.saveDefaultConfig();
-
-		registerPermissions();
 
 		// Workaround to keep configuration file comments (Bukkit issue).
 		File config = new File(this.getDataFolder(), "config.yml");
@@ -332,9 +337,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				configString.append(currentLine + "\n");
 			}
 
-			BufferedWriter writer = null;
-
-			writer = new BufferedWriter(new FileWriter(config));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(config));
 
 			writer.write(configString.toString());
 			writer.flush();
@@ -478,9 +481,7 @@ public class AdvancedAchievements extends JavaPlugin {
 					configString.append(currentLine + "\n");
 			}
 
-			BufferedWriter writer = null;
-
-			writer = new BufferedWriter(new FileWriter(config));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(config));
 
 			writer.write(configString.toString());
 			writer.flush();
@@ -490,6 +491,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.getLogger().severe("Saving comments in configuration file failed.");
 			successfulLoad = false;
 		}
+
+		this.getLogger().info("Loading configs, registering permissions and initialising command modules...");
 
 		// Load parameters.
 		databaseVersion = this.getConfig().getInt("DatabaseVersion", 1);
@@ -502,7 +505,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			excludedWorldList.add(world);
 		playtimeTaskInterval = this.getConfig().getInt("PlaytimeTaskInterval", 150);
 		distanceTaskInterval = this.getConfig().getInt("DistanceTaskInterval", 5);
-		pooledRequestsTaskInterval = this.getConfig().getInt("PooledRequestsTaskInterval", 60);
+
+		registerPermissions();
 
 		// Initialise command modules.
 		reward = new AchievementRewards(this);
@@ -518,7 +522,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		deleteCommand = new DeleteCommand(this);
 
 		// Reload achievements in distance and play time runnables only on
-		// reload.
+		// plugin reload.
 		if (achieveDistanceRunnable != null)
 			achieveDistanceRunnable.extractAchievementsFromConfig(this);
 		if (achievePlayTimeRunnable != null)
@@ -583,12 +587,10 @@ public class AdvancedAchievements extends JavaPlugin {
 					inStream.close();
 				if (outStream != null)
 					outStream.close();
-				this.getLogger().info("Successfully backed up configuration file.");
 
 			} catch (FileNotFoundException e) {
 
-				this.getLogger().severe("Error while backing up configuration file.");
-				e.printStackTrace();
+				this.getLogger().severe("Error while backing up configuration: file not found.");
 				successfulLoad = false;
 			} catch (IOException e) {
 
@@ -614,6 +616,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Update only if previous file older than one day.
 		if ((System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0)
 				&& original.length() != 0) {
+			this.getLogger().info("Backing up database file...");
 			try {
 				FileInputStream inStream = new FileInputStream(original);
 				FileOutputStream outStream;
@@ -630,12 +633,10 @@ public class AdvancedAchievements extends JavaPlugin {
 					inStream.close();
 				if (outStream != null)
 					outStream.close();
-				this.getLogger().info("Successfully backed up database file.");
 
 			} catch (FileNotFoundException e) {
 
-				this.getLogger().severe("Error while backing up database file.");
-				e.printStackTrace();
+				this.getLogger().severe("Error while backing up database: file not found.");
 				successfulLoad = false;
 			} catch (IOException e) {
 
@@ -712,11 +713,10 @@ public class AdvancedAchievements extends JavaPlugin {
 					inStream.close();
 				if (outStream != null)
 					outStream.close();
-				this.getLogger().info("Successfully backed up language file.");
 
 			} catch (FileNotFoundException e) {
 
-				this.getLogger().severe("Error while backing up language file.");
+				this.getLogger().severe("Error while backing up language: file not found");
 				e.printStackTrace();
 				successfulLoad = false;
 			} catch (IOException e) {
