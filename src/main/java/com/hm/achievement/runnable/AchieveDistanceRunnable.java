@@ -127,121 +127,132 @@ public class AchieveDistanceRunnable implements Runnable {
 	 */
 	public void refreshDistance(Player player) {
 
-		// Extra checks in case server was reloaded and players did not
-		// reconnect.
-		// Do not register distances if player does not have relevant
-		// permission.
-		boolean firstRetrieveFromDatabase = false;
-		if (!distancesFoot.containsKey(player) && player.hasPermission("achievement.count.distancefoot")) {
-			distancesFoot.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancefoot"));
-			firstRetrieveFromDatabase = true;
-		}
-		if (!distancesBoat.containsKey(player) && player.hasPermission("achievement.count.distanceboat")) {
-			distancesBoat.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distanceboat"));
-			firstRetrieveFromDatabase = true;
-		}
-		if (!distancesMinecart.containsKey(player) && player.hasPermission("achievement.count.distanceminecart")) {
-			distancesMinecart.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distanceminecart"));
-			firstRetrieveFromDatabase = true;
-		}
-		if (!distancesPig.containsKey(player) && player.hasPermission("achievement.count.distancepig")) {
-			distancesPig.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancepig"));
-			firstRetrieveFromDatabase = true;
-		}
-		if (!distancesHorse.containsKey(player) && player.hasPermission("achievement.count.distancehorse")) {
-			distancesHorse.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancehorse"));
-			firstRetrieveFromDatabase = true;
-		}
+		Location previousLocation = playerLocations.get(player);
 
-		if (firstRetrieveFromDatabase)
+		// If player location not found, add it in table.
+		if (previousLocation == null) {
 			playerLocations.put(player, player.getLocation());
+			return;
+		}
 
-		// Update distances in HashMaps and make checks to award achievements,
-		// using cached data.
-		else {
-			// Check if player has not moved since last run.
-			if (player.getLocation().equals(playerLocations.get(player)))
-				return;
+		// Distance difference since last runnable.
+		int difference = (int) previousLocation.distance(player.getLocation());
 
-			if (player.isInsideVehicle()) {
-				if (player.getVehicle() instanceof Horse && player.hasPermission("achievement.count.distancehorse")) {
-					distancesHorse.put(player, (int) (distancesHorse.get(player)
-							+ playerLocations.get(player).distance(player.getLocation())));
+		// Check if player has not moved since last run.
+		if (difference == 0)
+			return;
 
-					for (int i = 0; i < achievementsHorse.length; i++) {
-						if (distancesHorse.get(player) > achievementsHorse[i]
-								&& !playerAchievementsHorse[i].contains(player)) {
-							if (!plugin.getDb().hasPlayerAchievement(player,
-									plugin.getConfig().getString("DistanceHorse." + achievementsHorse[i] + ".Name")))
-								awardDistanceAchievement(player, achievementsHorse[i], "DistanceHorse.");
+		if (player.isInsideVehicle()) {
+			if (player.getVehicle() instanceof Horse && player.hasPermission("achievement.count.distancehorse")) {
 
-							((HashSet<Player>) playerAchievementsHorse[i]).add(player);
-						}
-					}
-				} else if (player.getVehicle() instanceof Pig
-						&& player.hasPermission("achievement.count.distancepig")) {
-					distancesPig.put(player, (int) (distancesPig.get(player)
-							+ playerLocations.get(player).distance(player.getLocation())));
+				Integer distance = distancesHorse.get(player);
 
-					for (int i = 0; i < achievementsPig.length; i++) {
-						if (distancesPig.get(player) > achievementsPig[i]
-								&& !playerAchievementsPig[i].contains(player)) {
-							if (!plugin.getDb().hasPlayerAchievement(player,
-									plugin.getConfig().getString("DistancePig." + achievementsPig[i] + ".Name")))
-								awardDistanceAchievement(player, achievementsPig[i], "DistancePig.");
+				if (distance == null) {
+					distancesHorse.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancehorse"));
+					return;
+				}
 
-							((HashSet<Player>) playerAchievementsPig[i]).add(player);
-						}
-					}
-				} else if (player.getVehicle() instanceof Minecart
-						&& player.hasPermission("achievement.count.distanceminecart")) {
-					distancesMinecart.put(player, (int) (distancesMinecart.get(player)
-							+ playerLocations.get(player).distance(player.getLocation())));
+				distance += difference;
+				distancesHorse.put(player, distance);
 
-					for (int i = 0; i < achievementsMinecart.length; i++) {
-						if (distancesMinecart.get(player) > achievementsMinecart[i]
-								&& !playerAchievementsMinecart[i].contains(player)) {
-							if (!plugin.getDb().hasPlayerAchievement(player, plugin.getConfig()
-									.getString("DistanceMinecart." + achievementsMinecart[i] + ".Name")))
-								awardDistanceAchievement(player, achievementsMinecart[i], "DistanceMinecart.");
+				for (int i = 0; i < achievementsHorse.length; i++) {
+					if (distance > achievementsHorse[i] && !playerAchievementsHorse[i].contains(player)) {
+						if (!plugin.getDb().hasPlayerAchievement(player,
+								plugin.getConfig().getString("DistanceHorse." + achievementsHorse[i] + ".Name")))
+							awardDistanceAchievement(player, achievementsHorse[i], "DistanceHorse.");
 
-							((HashSet<Player>) playerAchievementsMinecart[i]).add(player);
-						}
-					}
-				} else if (player.getVehicle() instanceof Boat
-						&& player.hasPermission("achievement.count.distanceboat")) {
-					distancesBoat.put(player, (int) (distancesBoat.get(player)
-							+ playerLocations.get(player).distance(player.getLocation())));
-
-					for (int i = 0; i < achievementsBoat.length; i++) {
-						if (distancesBoat.get(player) > achievementsBoat[i]
-								&& !playerAchievementsBoat[i].contains(player)) {
-							if (!plugin.getDb().hasPlayerAchievement(player,
-									plugin.getConfig().getString("DistanceBoat." + achievementsBoat[i] + ".Name")))
-								awardDistanceAchievement(player, achievementsBoat[i], "DistanceBoat.");
-
-							((HashSet<Player>) playerAchievementsBoat[i]).add(player);
-						}
+						((HashSet<Player>) playerAchievementsHorse[i]).add(player);
 					}
 				}
-			} else if (player.hasPermission("achievement.count.distancefoot")) {
-				distancesFoot.put(player,
-						(int) (distancesFoot.get(player) + playerLocations.get(player).distance(player.getLocation())));
+			} else if (player.getVehicle() instanceof Pig && player.hasPermission("achievement.count.distancepig")) {
 
-				for (int i = 0; i < achievementsFoot.length; i++) {
-					if (distancesFoot.get(player) > achievementsFoot[i]
-							&& !playerAchievementsFoot[i].contains(player)) {
+				Integer distance = distancesPig.get(player);
+
+				if (distance == null) {
+					distancesPig.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancepig"));
+					return;
+				}
+
+				distance += difference;
+
+				for (int i = 0; i < achievementsPig.length; i++) {
+					if (distance > achievementsPig[i] && !playerAchievementsPig[i].contains(player)) {
 						if (!plugin.getDb().hasPlayerAchievement(player,
-								plugin.getConfig().getString("DistanceFoot." + achievementsFoot[i] + ".Name")))
-							awardDistanceAchievement(player, achievementsFoot[i], "DistanceFoot.");
+								plugin.getConfig().getString("DistancePig." + achievementsPig[i] + ".Name")))
+							awardDistanceAchievement(player, achievementsPig[i], "DistancePig.");
 
-						((HashSet<Player>) playerAchievementsFoot[i]).add(player);
+						((HashSet<Player>) playerAchievementsPig[i]).add(player);
+					}
+				}
+			} else if (player.getVehicle() instanceof Minecart
+					&& player.hasPermission("achievement.count.distanceminecart")) {
+
+				Integer distance = distancesMinecart.get(player);
+
+				if (distance == null) {
+					distancesMinecart.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distanceminecart"));
+					return;
+				}
+
+				distance += difference;
+				distancesMinecart.put(player, distance);
+
+				for (int i = 0; i < achievementsMinecart.length; i++) {
+					if (distance > achievementsMinecart[i] && !playerAchievementsMinecart[i].contains(player)) {
+						if (!plugin.getDb().hasPlayerAchievement(player,
+								plugin.getConfig().getString("DistanceMinecart." + achievementsMinecart[i] + ".Name")))
+							awardDistanceAchievement(player, achievementsMinecart[i], "DistanceMinecart.");
+
+						((HashSet<Player>) playerAchievementsMinecart[i]).add(player);
+					}
+				}
+			} else if (player.getVehicle() instanceof Boat && player.hasPermission("achievement.count.distanceboat")) {
+
+				Integer distance = distancesBoat.get(player);
+
+				if (distance == null) {
+					distancesBoat.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distanceboat"));
+					return;
+				}
+
+				distance += difference;
+				distancesBoat.put(player, distance);
+
+				for (int i = 0; i < achievementsBoat.length; i++) {
+					if (distance > achievementsBoat[i] && !playerAchievementsBoat[i].contains(player)) {
+						if (!plugin.getDb().hasPlayerAchievement(player,
+								plugin.getConfig().getString("DistanceBoat." + achievementsBoat[i] + ".Name")))
+							awardDistanceAchievement(player, achievementsBoat[i], "DistanceBoat.");
+
+						((HashSet<Player>) playerAchievementsBoat[i]).add(player);
 					}
 				}
 			}
-			// Update player's location.
-			playerLocations.put(player, player.getLocation());
+		} else if (player.hasPermission("achievement.count.distancefoot")) {
+
+			Integer distance = distancesFoot.get(player);
+
+			if (distance == null) {
+				distancesFoot.put(player, plugin.getDb().updateAndGetDistance(player, 0, "distancefoot"));
+				return;
+			}
+
+			distance += difference;
+			distancesFoot.put(player, distance);
+
+			for (int i = 0; i < achievementsFoot.length; i++) {
+				if (distance > achievementsFoot[i] && !playerAchievementsFoot[i].contains(player)) {
+					if (!plugin.getDb().hasPlayerAchievement(player,
+							plugin.getConfig().getString("DistanceFoot." + achievementsFoot[i] + ".Name")))
+						awardDistanceAchievement(player, achievementsFoot[i], "DistanceFoot.");
+
+					((HashSet<Player>) playerAchievementsFoot[i]).add(player);
+				}
+			}
 		}
+		// Update player's location.
+		playerLocations.put(player, player.getLocation());
+
 	}
 
 	public void awardDistanceAchievement(Player player, int achievementDistance, String type) {

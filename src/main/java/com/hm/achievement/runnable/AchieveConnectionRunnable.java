@@ -4,24 +4,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
-
 import com.hm.achievement.AdvancedAchievements;
 
 public class AchieveConnectionRunnable implements Runnable {
 
-	private PlayerJoinEvent event;
+	private Player player;
 	private AdvancedAchievements plugin;
 
-	public AchieveConnectionRunnable(PlayerJoinEvent event, AdvancedAchievements plugin) {
+	public AchieveConnectionRunnable(Player player, AdvancedAchievements plugin) {
 
-		this.event = event;
+		this.player = player;
 		this.plugin = plugin;
 	}
 
 	public void run() {
 
-		Player player = (Player) event.getPlayer();
 		// Check if player is still online.
 		if (!player.isOnline())
 			return;

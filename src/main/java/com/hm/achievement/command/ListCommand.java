@@ -138,7 +138,8 @@ public class ListCommand {
 												ach,
 												plugin.getReward()
 														.getRewardType(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i]
-																+ '.' + section + '.' + ach))));
+																+ '.' + section + '.' + ach),
+												i)));
 							} else
 								lore.add(ChatColor.translateAlternateColorCodes('&',
 										buildLoreString(
@@ -147,7 +148,7 @@ public class ListCommand {
 																+ section + '.' + ach + ".Name", "")
 												.replaceAll(REGEX_PATTERN.pattern(), ""), ach,
 										plugin.getReward().getRewardType(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i]
-												+ '.' + section + '.' + ach))));
+												+ '.' + section + '.' + ach), i)));
 					// Set lore for the current category item in GUI.
 					if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
 						connectionsMeta.setDisplayName(
@@ -185,7 +186,8 @@ public class ListCommand {
 													.getString(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach
 															+ ".Name", ""),
 											ach, plugin.getReward().getRewardType(
-													AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach))));
+													AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach),
+											i)));
 						} else
 							lore.add(ChatColor.translateAlternateColorCodes('&',
 									buildLoreString(
@@ -194,7 +196,8 @@ public class ListCommand {
 															+ ".Name", "")
 													.replaceAll(REGEX_PATTERN.pattern(), ""),
 											ach, plugin.getReward().getRewardType(
-													AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach))));
+													AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach),
+											i)));
 					// Set lore for the current category item in GUI.
 					if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
 						connectionsMeta.setDisplayName(
@@ -222,20 +225,36 @@ public class ListCommand {
 	/**
 	 * Create achievement line for item lore.
 	 */
-	public String buildLoreString(String name, String level, String reward) {
+	public String buildLoreString(String name, String level, String reward, int number) {
+
+		// For command achievements, no level set.
+		if (number == normalAchievementTypesLanguage.length - 1) {
+			// Display reward with obfuscate effect.
+			if (reward.length() != 0 && obfuscateNotReceived)
+				return "&8§k" + name + " |" + Lang.LIST_REWARD + " " + reward;
+			// Display reward without obfuscate effect.
+			else if (reward.length() != 0 && !obfuscateNotReceived)
+				return "&8§o" + name + " |" + Lang.LIST_REWARD + " " + reward;
+			// Display obfuscate effect without reward.
+			else if (obfuscateNotReceived)
+				return "&8§k" + name;
+			// Display no reward and no obfuscate effect.
+			else
+				return "&8§o" + name;
+		}
 
 		// Display reward with obfuscate effect.
 		if (reward.length() != 0 && obfuscateNotReceived)
-			return "&8§k" + name + " - " + Lang.LIST_AMOUNT + " " + level + " - " + Lang.LIST_REWARD + " " + reward;
+			return "&8§k" + name + " |" + Lang.LIST_AMOUNT + " " + level + " |" + Lang.LIST_REWARD + " " + reward;
 		// Display reward without obfuscate effect.
 		else if (reward.length() != 0 && !obfuscateNotReceived)
-			return "&8§o" + name + " - " + Lang.LIST_AMOUNT + " " + level + " - " + Lang.LIST_REWARD + " " + reward;
+			return "&8§o" + name + " |" + Lang.LIST_AMOUNT + " " + level + " |" + Lang.LIST_REWARD + " " + reward;
 		// Display obfuscate effect without reward.
 		else if (obfuscateNotReceived)
-			return "&8§k" + name + " - " + Lang.LIST_AMOUNT + " " + level;
+			return "&8§k" + name + " |" + Lang.LIST_AMOUNT + " " + level;
 		// Display no reward and no obfuscate effect.
 		else
-			return "&8§o" + name + " - " + Lang.LIST_AMOUNT + " " + level;
+			return "&8§o" + name + " |" + Lang.LIST_AMOUNT + " " + level;
 
 	}
 
