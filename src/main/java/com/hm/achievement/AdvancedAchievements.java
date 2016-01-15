@@ -513,6 +513,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			excludedWorldList.add(world);
 		playtimeTaskInterval = this.getConfig().getInt("PlaytimeTaskInterval", 150);
 		distanceTaskInterval = this.getConfig().getInt("DistanceTaskInterval", 5);
+		pooledRequestsTaskInterval = this.getConfig().getInt("PooledRequestsTaskInterval", 60);
 
 		registerPermissions();
 
