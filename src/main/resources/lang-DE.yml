@@ -53,11 +53,11 @@ version-command-vault: 'Vault integration:'
 version-command-database: 'Database type:'
 
 list-gui-title: '&5Liste aller Achievements'
-list-reward: ' &rBelohnung:'
+list-reward: ' Belohnung:'
 list-reward-money: Geld
 list-reward-item: Items
 list-reward-command: Anderes
-list-amount: ' - &k'
+list-amount: ' Lvl:'
 list-connections: Verbindungen
 list-places: Bloecke platziert
 list-breaks: Bloecke zerstoert
