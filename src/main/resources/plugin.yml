@@ -1,6 +1,6 @@
 name: AdvancedAchievements
 main: com.hm.achievement.AdvancedAchievements
-version: 2.3
+version: 2.3.1
 author: DarkPyves
 softdepend: [Vault]
 load: POSTWORLD
@@ -52,21 +52,15 @@ permissions:
     default: true
   achievement.count.consumedpotions:
     description: Allows consumed potions statistics in database to increase.
-    default: true
+    default: true 
   achievement.count.eatenitems:
-    description: Allows eaten items statistics in database to increase.
-    default: true
-  achievement.count.eatenitems:
-    description: Allows eaten items statistics in database to increase.
-    default: true
-  achievement.count.eatenitems:
-    description: Allows eaten items statistics in database to increase.
+    description: Allows eaten item statistics in database to increase.
     default: true
   achievement.count.deaths:
     description: Allows death statistics in database to increase.
     default: true
   achievement.count.itemdrops:
-    description: Allows item drops statistics in database to increase.
+    description: Allows item drop statistics in database to increase.
     default: true
   achievement.count.enchantments:
     description: Allows enchantment statistics in database to increase.
@@ -75,7 +69,7 @@ permissions:
     description: Allows fish statistics in database to increase.
     default: true
   achievement.count.hoeplowings:
-    description: Allows hoe plowings statistics in database to increase.
+    description: Allows hoe plowing statistics in database to increase.
     default: true
   achievement.count.fertilising:
     description: Allows fertilising statistics in database to increase.
@@ -89,7 +83,7 @@ permissions:
   achievement.count.milk:
     description: Allows milk statistics in database to increase.
     default: true
-  achievement.count.shears:
+  achievement.count.shear:
     description: Allows shear statistics in database to increase.
     default: true
   achievement.count.snowballs:
@@ -102,7 +96,7 @@ permissions:
     description: Allows taming statistics in database to increase.
     default: true
   achievement.count.trades:
-    description: Allows trades statistics in database to increase.
+    description: Allows trade statistics in database to increase.
     default: true
   achievement.count.anvilsused:
     description: Allows anvils used statistics in database to increase.

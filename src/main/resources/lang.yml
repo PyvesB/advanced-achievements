@@ -25,7 +25,7 @@ achievement-given: "Achievement given!"
 achievement-received: "PLAYER received the achievement:"
 achievement-new: "New Achievement:"
 
-check-achievement-true: "PLAYER has received the achievement ACH!",
+check-achievement-true: "PLAYER has received the achievement ACH!"
 check-achievements-false: "PLAYER has not received the achievement ACH!"
 delete-achievements: "The achievement ACH was deleted from PLAYER."
 
