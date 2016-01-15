@@ -52,7 +52,7 @@ version-command-description-details: Advanced Achievements ajoute des succès uni
 version-command-vault: 'Intégration avec Vault :'
 version-command-database: 'Type de la BDD :'
 
-
+list-gui-title: "&5§lListe de Succès"
 list-reward: 'Récompense(s) :'
 list-reward-money: POs
 list-reward-item: objet
@@ -78,11 +78,16 @@ list-enchantments: Objets Enchantés
 list-beds: Lits Utilisés
 list-maxlevel: Niveau Maximum Atteint
 list-potions: Potions Consommées
-list-distance: Distances Parcourues
+list-distance-foot: Distance Parcourue à Pied
+list-distance-pig: Distance Parcourue sur un Cochon
+list-distance-horse: Distance Parcourue à Cheval
+list-distance-minecart: Distance Parcourue en Minecart
+list-distance-boat: Distance Parcourue en Bateau
 list-itemdrops: Objets Jetés
 list-hoeplowings: Parcelles Labourées
 list-fertilising: Plantes Fertilisées
 list-playedtime: Time Played
 list-taming: Animaux Domptés
 list-brewing: Potions Préparées
+list-fireworks: Feux d'Artifice Lancés
 list-commands: Autres Succès

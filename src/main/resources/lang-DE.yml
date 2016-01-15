@@ -1,0 +1,93 @@
+#============================================================#
+# +--------------------------------------------------------+ #
+# |       Advanced Achievements German language file       | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+configuration-successfully-reloaded: Konfiguration neu geladen!
+configuration-reload-failed: Fehler beim neu laden des Plugins!
+
+no-permissions: Du hast nicht die Erlaubnis dies zu tun.
+
+top-achievement: 'Top Achievement Sammler:'
+player-rank: 'Aktueller Rang:'
+number-achievements: 'Achievements erhalten:'
+
+book-received: Du hast dein Achievement Buch erhalten!
+book-delay: Du musst TIME Sekunden warten!
+list-delay: Du musst TIME Sekunden warten!
+book-name: Achievements
+
+player-offline: Der Spieler PLAYER ist offline!
+achievement-already-received: PLAYER hat dieses Achievement bereits!
+achievement-not-found: Das Spezifische Achievement wurde nicht gefunden.
+achievement-given: Achievement übertragen!
+achievement-received: 'PLAYER erhielt das Achievement:'
+achievement-new: 'Neues Achievement:'
+
+check-achievement-true: PLAYER hat das Achievement ACH erhalten!
+check-achievements-false: PLAYER besitzt das Achievement ACH nicht!
+delete-achievements: Das Achievement ACH wurde von PLAYER gelöscht.
+
+item-reward-received: 'Du hast ein Item erhalten:'
+money-reward-received: 'Du erhaelst: AMOUNT !'
+command-reward: Belohnung wurde ueberliefert!
+
+aach-command-book: Erhalte dein Achievement-Buch.
+aach-command-stats: Anzahl der erhaltenen Achievements.
+aach-command-list: Zeige alle Achievements an.
+aach-command-top: Zeige alle Rankings an.
+aach-command-give: Gebe Achievement ACH zu &7Spieler NAME.
+aach-command-reload: Lade das Plugin neu.
+aach-command-info: Zeige diverse Informationen des Plugins an.
+aach-command-check: Pruefe ob NAME das Achievement &7ACH besitzt.
+aach-command-delete: Lösche ACH von &7 NAME.
+
+version-command-name: 'Name:'
+version-command-version: 'Version:'
+version-command-website: 'Website:'
+version-command-author: 'Author:'
+version-command-description: 'Description:'
+version-command-description-details: Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!
+version-command-vault: 'Vault integration:'
+version-command-database: 'Database type:'
+
+list-gui-title: '&5Liste aller Achievements'
+list-reward: ' &rBelohnung:'
+list-reward-money: Geld
+list-reward-item: Items
+list-reward-command: Anderes
+list-amount: ' - &k'
+list-connections: Verbindungen
+list-places: Bloecke platziert
+list-breaks: Bloecke zerstoert
+list-kills: Mobs getoetet
+list-crafts: Items gecrafted
+list-deaths: Anzahl der Tode
+list-arrows: Pfeile geschossen
+list-snowballs: Schneebaelle geworfen
+list-eggs: Eier geworfen
+list-fish: Fische geangelt
+list-itembreaks: Items zerstoert
+list-eatenitems: Items Egegessen
+list-shear: Schafe geschoren
+list-milk: Kuehe gemolken
+list-trades: Anzahl der Handel
+list-anvils: Ambosse genutzt
+list-enchantments: Items verzaubert
+list-beds: Betten betreten
+list-maxlevel: Level erreicht
+list-potions: Tränke getrunken
+list-distance-foot: Distanz via Fuss
+list-distance-pig: Distanz via Schwein
+list-distance-horse: Distanz via Pferd
+list-distance-minecart: Distanz via Minecart
+list-distance-boat: Distanz via Boot
+list-itemdrops: Items weggeworfen
+list-hoeplowings: Ackerboeden erstellt
+list-fertilising: Knochenmehl genutzt
+list-taming: Tiere gezaehmt
+list-brewing: Traenke gebraut
+list-fireworks: Feuerwerke gezuendet
+list-commands: Easter-Eggs
+list-playedtime: Spielzeit
