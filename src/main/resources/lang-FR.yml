@@ -53,11 +53,11 @@ version-command-vault: 'Intégration avec Vault :'
 version-command-database: 'Type de la BDD :'
 
 list-gui-title: "&5§lListe de Succès"
-list-reward: 'Récompense(s) :'
+list-reward: ' Récompense :'
 list-reward-money: POs
 list-reward-item: objet
 list-reward-command: objet spécial
-list-amount: 'Niveau :'
+list-amount: ' Niv. :'
 list-connections: Connexions
 list-places: Blocs Placés
 list-breaks: Blocs Cassés
