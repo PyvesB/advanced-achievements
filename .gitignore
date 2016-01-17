@@ -1,0 +1,11 @@
+# Compiled source #
+*.class
+
+# Eclipse files #
+.settings
+.classpath
+.project
+
+# Target jars #
+target
+
