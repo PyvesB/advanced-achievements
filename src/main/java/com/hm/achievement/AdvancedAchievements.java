@@ -62,7 +62,7 @@ import com.hm.achievement.runnable.AchievePlayTimeRunnable;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 2.3.1
+ * @version 2.3.2
  * @author DarkPyves
  */
 
