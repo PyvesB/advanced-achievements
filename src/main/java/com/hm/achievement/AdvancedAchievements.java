@@ -31,10 +31,12 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.hm.achievement.command.*;
 import com.hm.achievement.listener.*;
 import com.hm.achievement.db.SQLDatabaseManager;
+import com.hm.achievement.db.PooledRequestsSenderAsync;
 import com.hm.achievement.db.PooledRequestsSenderSync;
 import com.hm.achievement.language.Lang;
 import com.hm.achievement.metrics.MetricsLite;
@@ -112,6 +114,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private int databaseVersion;
 	private int pooledRequestsTaskInterval;
 	private boolean databaseBackup;
+	private boolean asyncPooledRequestsSender;
 
 	// Plugin options and various parameters.
 	private String icon;
@@ -134,6 +137,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	// Plugin runnable classes.
 	private AchieveDistanceRunnable achieveDistanceRunnable = null;
 	private AchievePlayTimeRunnable achievePlayTimeRunnable = null;
+
+	// Bukkit scheduler tasks.
+	private BukkitTask pooledRequestsSenderTask;
+	private BukkitTask playedTimeTask;
+	private BukkitTask distanceTask;
 
 	/**
 	 * Constructor.
@@ -277,16 +285,23 @@ public class AdvancedAchievements extends JavaPlugin {
 		db.initialise();
 
 		// Schedule a repeating task to group database queries for some frequent
-		// events.
-		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(
-				Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), new PooledRequestsSenderSync(this, true),
-				pooledRequestsTaskInterval * 40, pooledRequestsTaskInterval * 20);
+		// events. Choose between asynchronous task and synchronous task.
+		if (asyncPooledRequestsSender)
+			pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(
+					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
+					new PooledRequestsSenderAsync(this, true), pooledRequestsTaskInterval * 40,
+					pooledRequestsTaskInterval * 20);
+		else
+			pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimer(
+					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
+					new PooledRequestsSenderSync(this, true), pooledRequestsTaskInterval * 40,
+					pooledRequestsTaskInterval * 20);
 
 		// Schedule a repeating task to monitor played time for each player (not
 		// directly related to an event).
 		if (this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
 			achievePlayTimeRunnable = new AchievePlayTimeRunnable(this);
-			Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(
+			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achievePlayTimeRunnable,
 					playtimeTaskInterval * 10, playtimeTaskInterval * 20);
 		}
@@ -299,7 +314,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
 			achieveDistanceRunnable = new AchieveDistanceRunnable(this);
-			Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(
+			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achieveDistanceRunnable,
 					distanceTaskInterval * 40, distanceTaskInterval * 20);
 		}
@@ -472,6 +487,12 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.saveConfig();
 		}
 
+		// Added in version 2.3.2:
+		if (!this.getConfig().getKeys(false).contains("AsyncPooledRequestsSender")) {
+			this.getConfig().set("AsyncPooledRequestsSender", true);
+			this.saveConfig();
+		}
+
 		// End of configuration updates.
 
 		try {
@@ -515,6 +536,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		playtimeTaskInterval = this.getConfig().getInt("PlaytimeTaskInterval", 150);
 		distanceTaskInterval = this.getConfig().getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = this.getConfig().getInt("PooledRequestsTaskInterval", 60);
+		asyncPooledRequestsSender = this.getConfig().getBoolean("AsyncPooledRequestsSender", true);
 
 		registerPermissions();
 
@@ -745,6 +767,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Called when server is stopped or reloaded.
 	 */
 	public void onDisable() {
+		
+		// Cancel scheduled tasks.
+		pooledRequestsSenderTask.cancel();
+		playedTimeTask.cancel();
+		distanceTask.cancel();
 
 		// Send remaining stats for pooled events to the database.
 		new PooledRequestsSenderSync(this, false).sendRequests();
@@ -772,7 +799,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesMinecart().entrySet())
 				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distanceminecart");
 		}
-		
+
 		try {
 			this.getDb().getSQLConnection().close();
 		} catch (SQLException e) {
@@ -1005,6 +1032,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	public ChatColor getColor() {
 
 		return color;
+	}
+
+	public boolean isAsyncPooledRequestsSender() {
+
+		return asyncPooledRequestsSender;
 	}
 
 }

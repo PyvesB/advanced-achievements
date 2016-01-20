@@ -112,6 +112,9 @@ DistanceTaskInterval: 5
 # Frequency of some statistics writes to the database.
 PooledRequestsTaskInterval: 60
 
+# Enable multithreading for some statistics writes to the database.
+AsyncPooledRequestsSender: true
+
 #============================OOOOO============================#
 # V---------------------------------------------------------V #
 # |                  Action  achievements                   | #

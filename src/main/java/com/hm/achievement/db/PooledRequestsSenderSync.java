@@ -14,7 +14,7 @@ public class PooledRequestsSenderSync implements Runnable {
 	public PooledRequestsSenderSync(AdvancedAchievements plugin, boolean init) {
 
 		if (init == true)
-			DatabasePools.databasePoolsInit();
+			DatabasePools.databasePoolsInit(plugin.isAsyncPooledRequestsSender());
 		this.plugin = plugin;
 	}
 
@@ -27,7 +27,10 @@ public class PooledRequestsSenderSync implements Runnable {
 	/**
 	 * Sends a batch of requests to the database to deal with regular events and
 	 * prevent plugin from hitting server performance. Non event related
-	 * categories (distances and play times) are not handled by pools.
+	 * categories (distances and play times) are not handled by pools. 
+	 * 
+	 * Queries are batched for optimisation and HashMaps are cleared to prevent 
+	 * same writes during next task if statistics did not change.
 	 */
 	public void sendRequests() {
 
@@ -89,7 +92,7 @@ public class PooledRequestsSenderSync implements Runnable {
 
 		} catch (SQLException e) {
 
-			plugin.getLogger().severe("Error while sending pooled requests to database: " + e);
+			plugin.getLogger().severe("Error while sending sync pooled requests to database: " + e);
 			e.printStackTrace();
 		}
 
