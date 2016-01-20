@@ -90,9 +90,9 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveXPListener xpListener;
 	private AchieveBedListener bedListener;
 	private AchieveQuitListener quitListener;
-	private AchieveWorldTPListener worldTPListener;
+	private AchieveTeleportListener teleportListener;
 	private AchieveDropListener dropListener;
-	private AchieveHoeFertiliseFireworkListener hoeFertiliseListener;
+	private AchieveHoeFertiliseFireworkListener hoeFertiliseFireworkListener;
 	private AchieveTameListener tameListener;
 
 	// Additional classes related to plugin modules and commands.
@@ -169,9 +169,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		bedListener = new AchieveBedListener(this);
 		quitListener = new AchieveQuitListener(this);
 		dropListener = new AchieveDropListener(this);
-		hoeFertiliseListener = new AchieveHoeFertiliseFireworkListener(this);
+		hoeFertiliseFireworkListener = new AchieveHoeFertiliseFireworkListener(this);
 		tameListener = new AchieveTameListener(this);
-		worldTPListener = new AchieveWorldTPListener(this);
+		teleportListener = new AchieveTeleportListener(this);
 
 		excludedWorldList = new HashSet<String>();
 
@@ -262,7 +262,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (this.getConfig().getConfigurationSection("HoePlowings").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("Fertilising").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("Fireworks").getKeys(false).size() != 0)
-			pm.registerEvents(hoeFertiliseListener, this);
+			pm.registerEvents(hoeFertiliseFireworkListener, this);
 
 		if (this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
@@ -277,7 +277,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0)
-			pm.registerEvents(worldTPListener, this);
+			pm.registerEvents(teleportListener, this);
 
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
 
