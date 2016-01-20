@@ -39,7 +39,7 @@ public class TopCommand {
 		long currentTime = System.currentTimeMillis();
 		int rank = Integer.MAX_VALUE;
 		if (sender instanceof Player)
-			rank = plugin.getDb().getRank(plugin.getDb().getPlayerAchievementsAmount((Player) sender));
+			rank = plugin.getDb().getPlayerRank((Player) sender);
 		if (currentTime - lastTopTime >= 60000) {
 
 			achievementsTop = plugin.getDb().getTopList(topList);

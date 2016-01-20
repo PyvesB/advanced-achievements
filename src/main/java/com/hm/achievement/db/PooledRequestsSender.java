@@ -36,54 +36,54 @@ public class PooledRequestsSender implements Runnable {
 			Statement st = conn.createStatement();
 
 			for (Entry<String, Integer> entry : DatabasePools.getArrowHashMap().entrySet())
-				st.addBatch("REPLACE INTO `arrows` (playername, arrows) VALUES ('" + entry.getKey() + "', "
+				st.addBatch("INSERT OR REPLACE INTO `arrows` VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getShearHashMap().entrySet())
-				st.addBatch("REPLACE INTO `shears` (playername, shears) VALUES ('" + entry.getKey() + "', "
+				st.addBatch("INSERT OR REPLACE INTO `shears` VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getEatenItemsHashMap().entrySet())
-				st.addBatch("REPLACE INTO `eatenitems` (playername, eatenitems) VALUES ('" + entry.getKey() + "', "
+				st.addBatch("INSERT OR REPLACE INTO `eatenitems` VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getSnowballHashMap().entrySet())
-				st.addBatch("REPLACE INTO `snowballs` (playername, snowballs) VALUES ('" + entry.getKey() + "', "
+				st.addBatch("INSERT OR REPLACE INTO `snowballs` VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getEggHashMap().entrySet())
-				st.addBatch("REPLACE INTO `eggs` (playername, eggs) VALUES ('" + entry.getKey() + "', "
+				st.addBatch("INSERT OR REPLACE INTO `eggs` VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getDropHashMap().entrySet())
-				st.addBatch("REPLACE INTO `drops` (playername, drops) VALUES ('" + entry.getKey() + "', "
+				st.addBatch("INSERT OR REPLACE INTO `drops` VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getHoePlowingHashMap().entrySet())
-				st.addBatch("REPLACE INTO `hoeplowing` (playername, hoeplowing) VALUES ('" + entry.getKey() + "', "
+				st.addBatch("INSERT OR REPLACE INTO `hoeplowing` VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getFertiliseHashMap().entrySet())
-				st.addBatch("REPLACE INTO `fertilising` (playername, fertilising) VALUES ('" + entry.getKey() + "', "
+				st.addBatch("INSERT OR REPLACE INTO `fertilising` VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getFireworkHashMap().entrySet())
-				st.addBatch("REPLACE INTO `fireworks` (playername, fireworks) VALUES ('" + entry.getKey() + "', "
+				st.addBatch("INSERT OR REPLACE INTO `fireworks` VALUES ('" + entry.getKey() + "', "
 						+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getBlockBreakHashMap().entrySet())
-				st.addBatch("REPLACE INTO `breaks` (playername, blockid, breaks) VALUES ('"
+				st.addBatch("INSERT OR REPLACE INTO `breaks` VALUES ('"
 						+ entry.getKey().substring(0, 36) + "'," + entry.getKey().substring(36) + ", "
 						+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getBlockPlaceHashMap().entrySet())
-				st.addBatch("REPLACE INTO `places` (playername, blockid, places) VALUES ('"
+				st.addBatch("INSERT OR REPLACE INTO `places` VALUES ('"
 						+ entry.getKey().substring(0, 36) + "'," + entry.getKey().substring(36) + ", "
 						+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getEntityDeathHashMap().entrySet())
 				st.addBatch(
-						"REPLACE INTO `kills` (playername, mobname, kills) VALUES ('" + entry.getKey().substring(0, 36)
+						"INSERT OR REPLACE INTO `kills` VALUES ('" + entry.getKey().substring(0, 36)
 								+ "', '" + entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 
 			st.executeBatch();

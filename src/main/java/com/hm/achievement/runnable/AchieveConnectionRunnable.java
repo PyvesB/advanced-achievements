@@ -27,7 +27,7 @@ public class AchieveConnectionRunnable implements Runnable {
 		Date now = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
-		if (!format.format(now).equals(plugin.getDb().getConnectionDate(player))) {
+		if (!format.format(now).equals(plugin.getDb().getPlayerConnectionDate(player))) {
 
 			int connections = plugin.getDb().updateAndGetConnection(player, format.format(now));
 			String configAchievement = "Connections." + connections;

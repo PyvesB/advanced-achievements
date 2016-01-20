@@ -20,10 +20,10 @@ import com.hm.achievement.AdvancedAchievements;
 public class SQLDatabaseManager {
 
 	private AdvancedAchievements plugin;
-	boolean sqliteDatabase;
-	String mysqlDatabase;
-	String mysqlUser;
-	String mysqlPassword;
+	private boolean sqliteDatabase;
+	private String mysqlDatabase;
+	private String mysqlUser;
+	private String mysqlPassword;
 
 	public SQLDatabaseManager(AdvancedAchievements plugin) {
 
@@ -31,71 +31,11 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Retrieve SQL connection to MySQL or SQLite database.
-	 */
-	public Connection getSQLConnection() {
-
-		if (!sqliteDatabase) {
-			try {
-				return DriverManager.getConnection(
-						mysqlDatabase + "?autoReconnect=true&user=" + mysqlUser + "&password=" + mysqlPassword);
-			} catch (SQLException e) {
-				plugin.getLogger().severe("Error while attempting to retrieve connection to database: " + e);
-				e.printStackTrace();
-				plugin.setSuccessfulLoad(false);
-			}
-			return null;
-		} else {
-
-			File dbfile = new File(plugin.getDataFolder(), "achievements.db");
-			if (!dbfile.exists()) {
-				try {
-					dbfile.createNewFile();
-					Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
-					Statement st = conn.createStatement();
-					// Important: "desc" keyword only allowed in SQLite.
-					// "description" used in MySQL.
-					st.execute("CREATE TABLE IF NOT EXISTS `achievements` (" + "playername char(36),"
-							+ "achievement varchar(64)," + "desc varchar(128)," + "date varchar(10),"
-							+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
-					initialiseTables(st);
-					st.close();
-					return conn;
-				} catch (IOException e) {
-					plugin.getLogger().severe("Error while creating database file.");
-					e.printStackTrace();
-					plugin.setSuccessfulLoad(false);
-				} catch (SQLException e) {
-					plugin.getLogger().severe("SQLite exception on initialize: " + e);
-					e.printStackTrace();
-					plugin.setSuccessfulLoad(false);
-				}
-			}
-			try {
-				return DriverManager.getConnection("jdbc:sqlite:" + dbfile);
-
-			} catch (SQLException e) {
-				plugin.getLogger().severe("SQLite exception on initialize: " + e);
-				e.printStackTrace();
-				plugin.setSuccessfulLoad(false);
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Initialise database system and plugin settings.
 	 */
-	public void initialise(AdvancedAchievements plugin) {
+	public void initialise() {
 
-		String dataHandler = plugin.getConfig().getString("DatabaseType", "sqlite");
-		if (dataHandler.equalsIgnoreCase("mysql"))
-			sqliteDatabase = false;
-		else
-			sqliteDatabase = true;
-		mysqlDatabase = plugin.getConfig().getString("MYSQL.Database", "jdbc:mysql://localhost:3306/minecraft");
-		mysqlUser = plugin.getConfig().getString("MYSQL.User", "root");
-		mysqlPassword = plugin.getConfig().getString("MYSQL.Password", "root");
+		configurationLoad();
 
 		try {
 			if (sqliteDatabase)
@@ -206,6 +146,23 @@ public class SQLDatabaseManager {
 	}
 
 	/**
+	 * Load plugin configuration and set values to different parameters relevant
+	 * to the database system.
+	 */
+	public void configurationLoad() {
+
+		String dataHandler = plugin.getConfig().getString("DatabaseType", "sqlite");
+		if (dataHandler.equalsIgnoreCase("mysql")) {
+			sqliteDatabase = false;
+			mysqlDatabase = plugin.getConfig().getString("MYSQL.Database", "jdbc:mysql://localhost:3306/minecraft");
+			mysqlUser = plugin.getConfig().getString("MYSQL.User", "root");
+			mysqlPassword = plugin.getConfig().getString("MYSQL.Password", "root");
+		} else
+			sqliteDatabase = true;
+
+	}
+
+	/**
 	 * Initialise database tables.
 	 */
 	private void initialiseTables(Statement st) throws SQLException {
@@ -279,6 +236,59 @@ public class SQLDatabaseManager {
 	}
 
 	/**
+	 * Retrieve SQL connection to MySQL or SQLite database.
+	 */
+	public Connection getSQLConnection() {
+
+		if (!sqliteDatabase) {
+			try {
+				return DriverManager.getConnection(
+						mysqlDatabase + "?autoReconnect=true&user=" + mysqlUser + "&password=" + mysqlPassword);
+			} catch (SQLException e) {
+				plugin.getLogger().severe("Error while attempting to retrieve connection to database: " + e);
+				e.printStackTrace();
+				plugin.setSuccessfulLoad(false);
+			}
+			return null;
+		} else {
+
+			File dbfile = new File(plugin.getDataFolder(), "achievements.db");
+			if (!dbfile.exists()) {
+				try {
+					dbfile.createNewFile();
+					Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
+					Statement st = conn.createStatement();
+					// Important: "desc" keyword only allowed in SQLite.
+					// "description" used in MySQL.
+					st.execute("CREATE TABLE IF NOT EXISTS `achievements` (" + "playername char(36),"
+							+ "achievement varchar(64)," + "desc varchar(128)," + "date varchar(10),"
+							+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
+					initialiseTables(st);
+					st.close();
+					return conn;
+				} catch (IOException e) {
+					plugin.getLogger().severe("Error while creating database file.");
+					e.printStackTrace();
+					plugin.setSuccessfulLoad(false);
+				} catch (SQLException e) {
+					plugin.getLogger().severe("SQLite exception on initialize: " + e);
+					e.printStackTrace();
+					plugin.setSuccessfulLoad(false);
+				}
+			}
+			try {
+				return DriverManager.getConnection("jdbc:sqlite:" + dbfile);
+
+			} catch (SQLException e) {
+				plugin.getLogger().severe("SQLite exception on initialize: " + e);
+				e.printStackTrace();
+				plugin.setSuccessfulLoad(false);
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Get number of player's kills for a specific mob.
 	 */
 	public int getKills(Player player, String mobname) {
@@ -286,7 +296,7 @@ public class SQLDatabaseManager {
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT kills from `kills` WHERE playername = '" + player.getUniqueId()
+			ResultSet rs = st.executeQuery("SELECT kills FROM `kills` WHERE playername = '" + player.getUniqueId()
 					+ "' AND mobname = '" + mobname + "'");
 			int entityKills = 0;
 			while (rs.next()) {
@@ -313,7 +323,7 @@ public class SQLDatabaseManager {
 			Connection conn = getSQLConnection();
 			int blockBreaks = 0;
 			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT places from `places` WHERE playername = '" + player.getUniqueId()
+			ResultSet rs = st.executeQuery("SELECT places FROM `places` WHERE playername = '" + player.getUniqueId()
 					+ "' AND blockid = " + block.getTypeId() + "");
 			while (rs.next()) {
 				blockBreaks = rs.getInt("places");
@@ -446,8 +456,7 @@ public class SQLDatabaseManager {
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
-			ResultSet rs = st
-					.executeQuery("SELECT COUNT(*) FROM (SELECT COUNT(*)  FROM `achievements` GROUP BY playername)");
+			ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM `achievements`)");
 			int players = 0;
 			while (rs.next()) {
 				players = rs.getInt("COUNT(*)");
@@ -466,14 +475,20 @@ public class SQLDatabaseManager {
 	/**
 	 * Get the rank of a player given his number of achievements.
 	 */
-	public int getRank(int numberAchievements) {
+	public int getPlayerRank(Player player) {
 
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(
+					"SELECT COUNT(*) FROM `achievements` WHERE playername = '" + player.getUniqueId() + "'");
+			int achievementsAmount = 0;
+			if (rs.next()) {
+				achievementsAmount = rs.getInt(1);
+			}
+			rs = st.executeQuery(
 					"SELECT COUNT(*) FROM (SELECT COUNT(*) `number` FROM `achievements` GROUP BY playername) WHERE `number` >"
-							+ numberAchievements);
+							+ achievementsAmount);
 			int rank = 0;
 			while (rs.next()) {
 				rank = rs.getInt("COUNT(*)") + 1;
@@ -500,14 +515,8 @@ public class SQLDatabaseManager {
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			achievement = achievement.replace("'", "''");
 			desc = desc.replace("'", "''");
-			if (plugin.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
-				st.execute("REPLACE INTO `achievements` (playername, achievement, description, date) VALUES ('"
-						+ player.getUniqueId() + "','" + achievement + "','" + desc + "','" + format.format(new Date())
-						+ "')");
-			else
-				st.execute("REPLACE INTO `achievements` (playername, achievement, desc, date) VALUES ('"
-						+ player.getUniqueId() + "','" + achievement + "','" + desc + "','" + format.format(new Date())
-						+ "')");
+			st.execute("INSERT OR REPLACE INTO `achievements` VALUES ('" + player.getUniqueId() + "','" + achievement
+					+ "','" + desc + "','" + format.format(new Date()) + "')");
 			st.close();
 			conn.close();
 
@@ -568,14 +577,14 @@ public class SQLDatabaseManager {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(
-					"SELECT " + table + " from `" + table + "` WHERE playername = '" + player.getUniqueId() + "'");
+					"SELECT " + table + " FROM `" + table + "` WHERE playername = '" + player.getUniqueId() + "'");
 			int prev = 0;
 			while (rs.next()) {
 				prev = rs.getInt(table);
 			}
 			int amount = prev + 1;
-			st.execute("REPLACE INTO `" + table + "` (playername, " + table + ") VALUES ('" + player.getUniqueId()
-					+ "', " + amount + ")");
+			st.execute(
+					"INSERT OR REPLACE INTO `" + table + "` VALUES ('" + player.getUniqueId() + "', " + amount + ")");
 			st.close();
 			rs.close();
 			conn.close();
@@ -602,8 +611,8 @@ public class SQLDatabaseManager {
 				itemCrafts = rs.getInt("times");
 			}
 			int newCrafts = itemCrafts + amount;
-			st.execute("REPLACE INTO `crafts` (playername, item, times) VALUES ('" + player.getUniqueId() + "',"
-					+ item.getTypeId() + ", " + newCrafts + ")");
+			st.execute("INSERT OR REPLACE INTO `crafts` VALUES ('" + player.getUniqueId() + "'," + item.getTypeId()
+					+ ", " + newCrafts + ")");
 			st.close();
 			rs.close();
 			conn.close();
@@ -625,8 +634,7 @@ public class SQLDatabaseManager {
 			Statement st = conn.createStatement();
 
 			int newLevels = player.getLevel() + 1;
-			st.execute("REPLACE INTO `levels` (playername, levels) VALUES ('" + player.getUniqueId() + "', " + newLevels
-					+ ")");
+			st.execute("INSERT OR REPLACE INTO `levels` VALUES ('" + player.getUniqueId() + "', " + newLevels + ")");
 			st.close();
 			conn.close();
 			return newLevels;
@@ -645,7 +653,7 @@ public class SQLDatabaseManager {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(
-					"SELECT " + table + " from `" + table + "` WHERE playername = '" + player.getUniqueId() + "'");
+					"SELECT " + table + " FROM `" + table + "` WHERE playername = '" + player.getUniqueId() + "'");
 			int amount = 0;
 			while (rs.next()) {
 				amount = rs.getInt(table);
@@ -663,14 +671,14 @@ public class SQLDatabaseManager {
 	/**
 	 * Get a player's last connection date.
 	 */
-	public String getConnectionDate(Player player) {
+	public String getPlayerConnectionDate(Player player) {
 
 		String date = null;
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st
-					.executeQuery("SELECT date from `connections` WHERE playername = '" + player.getUniqueId() + "'");
+					.executeQuery("SELECT date FROM `connections` WHERE playername = '" + player.getUniqueId() + "'");
 			while (rs.next())
 				date = rs.getString("date");
 			st.close();
@@ -700,14 +708,14 @@ public class SQLDatabaseManager {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(
-					"SELECT connections from `connections` WHERE playername = '" + player.getUniqueId() + "'");
+					"SELECT connections FROM `connections` WHERE playername = '" + player.getUniqueId() + "'");
 			int prev = 0;
 			while (rs.next()) {
 				prev = rs.getInt("connections");
 			}
 			int newConnections = prev + 1;
-			st.execute("REPLACE INTO `connections` (playername, connections, date) VALUES ('" + player.getUniqueId()
-					+ "', " + newConnections + ", '" + date + "')");
+			st.execute("INSERT OR REPLACE INTO `connections` VALUES ('" + player.getUniqueId() + "', " + newConnections
+					+ ", '" + date + "')");
 			st.close();
 			rs.close();
 			conn.close();
@@ -730,15 +738,14 @@ public class SQLDatabaseManager {
 			long newPlayedTime = 0;
 			if (time == 0) {
 				ResultSet rs = st.executeQuery(
-						"SELECT playedtime from `playedtime` WHERE playername = '" + player.getUniqueId() + "'");
+						"SELECT playedtime FROM `playedtime` WHERE playername = '" + player.getUniqueId() + "'");
 				newPlayedTime = 0;
 				while (rs.next()) {
 					newPlayedTime = rs.getLong("playedtime");
 				}
 				rs.close();
 			} else
-				st.execute("REPLACE INTO `playedtime` (playername, playedtime) VALUES ('" + player.getUniqueId() + "', "
-						+ time + ")");
+				st.execute("INSERT OR REPLACE INTO `playedtime` VALUES ('" + player.getUniqueId() + "', " + time + ")");
 			st.close();
 			conn.close();
 			return newPlayedTime;
@@ -760,14 +767,14 @@ public class SQLDatabaseManager {
 			int newDistance = 0;
 			if (distance == 0) {
 				ResultSet rs = st.executeQuery(
-						"SELECT " + type + " from `" + type + "` WHERE playername = '" + player.getUniqueId() + "'");
+						"SELECT " + type + " FROM `" + type + "` WHERE playername = '" + player.getUniqueId() + "'");
 				while (rs.next()) {
 					newDistance = rs.getInt(type);
 				}
 				rs.close();
 			} else
-				st.execute("REPLACE INTO `" + type + "` (playername, " + type + ") VALUES ('" + player.getUniqueId()
-						+ "', " + distance + ")");
+				st.execute("INSERT OR REPLACE INTO `" + type + "` VALUES ('" + player.getUniqueId() + "', " + distance
+						+ ")");
 			st.close();
 			conn.close();
 			return newDistance;

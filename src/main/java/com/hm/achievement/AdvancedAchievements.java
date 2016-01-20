@@ -273,7 +273,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
 
 		// Initialise the SQLite/MySQL database.
-		db.initialise(this);
+		db.initialise();
 
 		// Schedule a repeating task to group database queries for some frequent
 		// events.
@@ -551,6 +551,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			successfulLoad = false;
 		}
 
+		db.configurationLoad();
 		backupDBFile();
 	}
 
