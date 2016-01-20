@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +35,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.hm.achievement.command.*;
 import com.hm.achievement.listener.*;
 import com.hm.achievement.db.SQLDatabaseManager;
-import com.hm.achievement.db.PooledRequestsSender;
+import com.hm.achievement.db.PooledRequestsSenderSync;
 import com.hm.achievement.language.Lang;
 import com.hm.achievement.metrics.MetricsLite;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
@@ -278,7 +279,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Schedule a repeating task to group database queries for some frequent
 		// events.
 		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(
-				Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), new PooledRequestsSender(this, true),
+				Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), new PooledRequestsSenderSync(this, true),
 				pooledRequestsTaskInterval * 40, pooledRequestsTaskInterval * 20);
 
 		// Schedule a repeating task to monitor played time for each player (not
@@ -551,7 +552,6 @@ public class AdvancedAchievements extends JavaPlugin {
 			successfulLoad = false;
 		}
 
-		db.configurationLoad();
 		backupDBFile();
 	}
 
@@ -619,7 +619,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	private void backupDBFile() {
 
-		if (!databaseBackup || !this.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("sqlite"))
+		if (!databaseBackup || this.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
 			return;
 
 		File original = new File(this.getDataFolder(), "achievements.db");
@@ -747,7 +747,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	public void onDisable() {
 
 		// Send remaining stats for pooled events to the database.
-		new PooledRequestsSender(this, false).sendRequests();
+		new PooledRequestsSenderSync(this, false).sendRequests();
 
 		// Send played time stats to the database.
 		if (achievePlayTimeRunnable != null)
@@ -771,6 +771,13 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesMinecart().entrySet())
 				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distanceminecart");
+		}
+		
+		try {
+			this.getDb().getSQLConnection().close();
+		} catch (SQLException e) {
+			this.getLogger().severe("Error while closing connection to database.");
+			e.printStackTrace();
 		}
 
 		this.getLogger().info("Remaining requests sent to database, plugin disabled.");
