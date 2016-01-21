@@ -21,6 +21,10 @@ public class AchieveDeathListener implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent event) {
 
 		Player player = event.getEntity();
+
+		if (player == null)
+			return;
+
 		if (!player.hasPermission("achievement.count.deaths") || plugin.isInExludedWorld(player))
 			return;
 

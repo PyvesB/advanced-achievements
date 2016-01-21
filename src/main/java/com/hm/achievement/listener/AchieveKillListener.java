@@ -25,6 +25,10 @@ public class AchieveKillListener implements Listener {
 	public void onEntityDeath(EntityDeathEvent event) {
 
 		Player player = event.getEntity().getKiller();
+
+		if (player == null)
+			return;
+
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 		Entity entity = event.getEntity();
