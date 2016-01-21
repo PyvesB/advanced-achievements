@@ -111,7 +111,6 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	// Database related.
 	private SQLDatabaseManager db;
-	private int databaseVersion;
 	private int pooledRequestsTaskInterval;
 	private boolean databaseBackup;
 	private boolean asyncPooledRequestsSender;
@@ -397,11 +396,6 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("DatabaseVersion")) {
-			this.getConfig().set("DatabaseVersion", 1);
-			this.saveConfig();
-		}
-
 		if (!this.getConfig().getKeys(false).contains("Icon")) {
 			this.getConfig().set("Icon", "\u2618");
 			this.saveConfig();
@@ -525,7 +519,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		this.getLogger().info("Loading configs, registering permissions and initialising command modules...");
 
 		// Load parameters.
-		databaseVersion = this.getConfig().getInt("DatabaseVersion", 1);
 		icon = this.getConfig().getString("Icon", "\u2618");
 		color = ChatColor.getByChar(this.getConfig().getString("Color", "5").toCharArray()[0]);
 		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
@@ -767,11 +760,14 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Called when server is stopped or reloaded.
 	 */
 	public void onDisable() {
-		
+
 		// Cancel scheduled tasks.
-		pooledRequestsSenderTask.cancel();
-		playedTimeTask.cancel();
-		distanceTask.cancel();
+		if (pooledRequestsSenderTask != null)
+			pooledRequestsSenderTask.cancel();
+		if (playedTimeTask != null)
+			playedTimeTask.cancel();
+		if (distanceTask != null)
+			distanceTask.cancel();
 
 		// Send remaining stats for pooled events to the database.
 		new PooledRequestsSenderSync(this, false).sendRequests();
@@ -801,7 +797,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		try {
-			this.getDb().getSQLConnection().close();
+			if (this.getDb().getSQLConnection() != null)
+				this.getDb().getSQLConnection().close();
 		} catch (SQLException e) {
 			this.getLogger().severe("Error while closing connection to database.");
 			e.printStackTrace();
@@ -964,19 +961,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AdvancedAchievementsUpdateChecker getUpdateChecker() {
 
 		return updateChecker;
-	}
-
-	public int getDatabaseVersion() {
-
-		return databaseVersion;
-	}
-
-	public void setDatabaseVersion(int databaseVersion) {
-
-		this.databaseVersion = databaseVersion;
-		// Save changes in the configuration file.
-		this.getConfig().set("DatabaseVersion", databaseVersion);
-		this.saveConfig();
 	}
 
 	public String getChatHeader() {

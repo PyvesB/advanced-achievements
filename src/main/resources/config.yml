@@ -81,9 +81,6 @@ TitleScreen: true
 # 3---------------------------------------------------------3 #
 #=============================ooo=============================#
 
-# DO NOT CHANGE OR DELETE.
-DatabaseVersion: 0
-
 # Make a daily backup of your local database.
 DatabaseBackup: true
 
@@ -348,3 +345,9 @@ Commands:
   yourAch1:
     Message: You took part in the special event!
     Name: Special Event Achievement!
+    
+#===========================OOOOOOO===========================#
+# VII-----------------------------------------------------VII #
+# |          Parameters to appear in future version         | #
+# 7---------------------------------------------------------7 #
+#===========================ooooooo===========================#

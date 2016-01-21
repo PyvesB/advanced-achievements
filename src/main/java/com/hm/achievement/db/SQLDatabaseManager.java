@@ -36,7 +36,7 @@ public class SQLDatabaseManager {
 	 * Initialise database system and plugin settings.
 	 */
 	public void initialise() {
-		
+
 		// Load plugin settings.
 		configurationLoad();
 
@@ -96,148 +96,75 @@ public class SQLDatabaseManager {
 
 		Statement st = sqlConnection.createStatement();
 		// Update old database versions.
-		switch (plugin.getDatabaseVersion()) {
-			case 0: {
-				st.addBatch("CREATE TABLE IF NOT EXISTS `achievements` (" + "playername char(36),"
-						+ "achievement varchar(64)," + "description varchar(128)," + "date varchar(10),"
-						+ "PRIMARY KEY (`playername`, `achievement`)" + ")");
-				st.addBatch(
-						"CREATE TABLE IF NOT EXISTS `breaks` (" + "playername char(36)," + "blockid SMALLINT UNSIGNED,"
-								+ "breaks INT UNSIGNED," + "PRIMARY KEY(`playername`, `blockid`)" + ")");
-				st.addBatch(
-						"CREATE TABLE IF NOT EXISTS `places` (" + "playername char(36)," + "blockid SMALLINT UNSIGNED,"
-								+ "places INT UNSIGNED," + "PRIMARY KEY(`playername`, `blockid`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `kills` (" + "playername char(36)," + "mobname varchar(32),"
-						+ "kills INT UNSIGNED," + "PRIMARY KEY (`playername`, `mobname`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `crafts` (" + "playername char(36)," + "item SMALLINT UNSIGNED,"
-						+ "times INT UNSIGNED," + "PRIMARY KEY (`playername`, `item`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `deaths` (" + "playername char(36)," + "deaths INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `arrows` (" + "playername char(36)," + "arrows INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `snowballs` (" + "playername char(36),"
-						+ "snowballs INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `eggs` (" + "playername char(36)," + "eggs INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `fish` (" + "playername char(36)," + "fish INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `itembreaks` (" + "playername char(36),"
-						+ "itembreaks INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `eatenitems` (" + "playername char(36),"
-						+ "eatenitems INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `shears` (" + "playername char(36)," + "shears INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `milks` (" + "playername char(36)," + "milks INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `connections` (" + "playername char(36),"
-						+ "connections INT UNSIGNED," + "date varchar(10)," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `trades` (" + "playername char(36)," + "trades INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `anvils` (" + "playername char(36)," + "anvils INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `enchantments` (" + "playername char(36),"
-						+ "enchantments INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `levels` (" + "playername char(36)," + "levels INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `beds` (" + "playername char(36)," + "beds INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `consumedpotions` (" + "playername char(36),"
-						+ "consumedpotions INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `playedtime` (" + "playername char(36),"
-						+ "playedtime INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `distancefoot` (" + "playername char(36),"
-						+ "distancefoot INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `distancepig` (" + "playername char(36),"
-						+ "distancepig INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `distancehorse` (" + "playername char(36),"
-						+ "distancehorse INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `distanceminecart` (" + "playername char(36),"
-						+ "distanceminecart INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `distanceboat` (" + "playername char(36),"
-						+ "distanceboat INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `drops` (" + "playername char(36)," + "drops INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `hoeplowing` (" + "playername char(36),"
-						+ "hoeplowing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `fertilising` (" + "playername char(36),"
-						+ "fertilising INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `tames` (" + "playername char(36)," + "tames INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `brewing` (" + "playername char(36)," + "brewing INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.addBatch("CREATE TABLE IF NOT EXISTS `fireworks` (" + "playername char(36),"
-						+ "fireworks INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `achievements` (" + "playername char(36)," + "achievement varchar(64),"
+				+ "description varchar(128)," + "date varchar(10)," + "PRIMARY KEY (`playername`, `achievement`)"
+				+ ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `breaks` (" + "playername char(36)," + "blockid SMALLINT UNSIGNED,"
+				+ "breaks INT UNSIGNED," + "PRIMARY KEY(`playername`, `blockid`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `places` (" + "playername char(36)," + "blockid SMALLINT UNSIGNED,"
+				+ "places INT UNSIGNED," + "PRIMARY KEY(`playername`, `blockid`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `kills` (" + "playername char(36)," + "mobname varchar(32),"
+				+ "kills INT UNSIGNED," + "PRIMARY KEY (`playername`, `mobname`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `crafts` (" + "playername char(36)," + "item SMALLINT UNSIGNED,"
+				+ "times INT UNSIGNED," + "PRIMARY KEY (`playername`, `item`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `deaths` (" + "playername char(36)," + "deaths INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `arrows` (" + "playername char(36)," + "arrows INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `snowballs` (" + "playername char(36)," + "snowballs INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `eggs` (" + "playername char(36)," + "eggs INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `fish` (" + "playername char(36)," + "fish INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `itembreaks` (" + "playername char(36)," + "itembreaks INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `eatenitems` (" + "playername char(36)," + "eatenitems INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `shears` (" + "playername char(36)," + "shears INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `milks` (" + "playername char(36)," + "milks INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `connections` (" + "playername char(36)," + "connections INT UNSIGNED,"
+				+ "date varchar(10)," + "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `trades` (" + "playername char(36)," + "trades INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `anvils` (" + "playername char(36)," + "anvils INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `enchantments` (" + "playername char(36),"
+				+ "enchantments INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `levels` (" + "playername char(36)," + "levels INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `beds` (" + "playername char(36)," + "beds INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `consumedpotions` (" + "playername char(36),"
+				+ "consumedpotions INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `playedtime` (" + "playername char(36)," + "playedtime INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `distancefoot` (" + "playername char(36),"
+				+ "distancefoot INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `distancepig` (" + "playername char(36)," + "distancepig INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `distancehorse` (" + "playername char(36),"
+				+ "distancehorse INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `distanceminecart` (" + "playername char(36),"
+				+ "distanceminecart INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `distanceboat` (" + "playername char(36),"
+				+ "distanceboat INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `drops` (" + "playername char(36)," + "drops INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `hoeplowing` (" + "playername char(36)," + "hoeplowing INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `fertilising` (" + "playername char(36)," + "fertilising INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `tames` (" + "playername char(36)," + "tames INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `brewing` (" + "playername char(36)," + "brewing INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `fireworks` (" + "playername char(36)," + "fireworks INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
 
-				st.executeBatch();
-				break;
-			}
-				// Added in version 1.3:
-			case 1: {
-				st.execute("CREATE TABLE IF NOT EXISTS `trades` (" + "playername char(36)," + "trades INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `anvils` (" + "playername char(36)," + "anvils INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `enchantments` (" + "playername char(36),"
-						+ "enchantments INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-
-			}
-				// Added in version 1.4:
-			case 2: {
-				st.execute("CREATE TABLE IF NOT EXISTS `eggs` (" + "playername char(36)," + "eggs INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `levels` (" + "playername char(36)," + "levels INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `beds` (" + "playername char(36)," + "beds INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.close();
-			}
-				// Added in version 1.5:
-			case 3: {
-				st.execute("CREATE TABLE IF NOT EXISTS `consumedpotions` (" + "playername char(36),"
-						+ "consumedpotions INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-			}
-				// Added in version 2.0:
-			case 4: {
-				st.execute("CREATE TABLE IF NOT EXISTS `playedtime` (" + "playername char(36),"
-						+ "playedtime INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `distancefoot` (" + "playername char(36),"
-						+ "distancefoot INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `distancepig` (" + "playername char(36),"
-						+ "distancepig INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `distancehorse` (" + "playername char(36),"
-						+ "distancehorse INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `distanceminecart` (" + "playername char(36),"
-						+ "distanceminecart INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `distanceboat` (" + "playername char(36),"
-						+ "distanceboat INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `drops` (" + "playername char(36)," + "drops INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `hoeplowing` (" + "playername char(36),"
-						+ "hoeplowing INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-				st.execute("CREATE TABLE IF NOT EXISTS `fertilising` (" + "playername char(36),"
-						+ "fertilising INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-			}
-				// Added in version 2.2:
-			case 5: {
-				st.execute("CREATE TABLE IF NOT EXISTS `tames` (" + "playername char(36)," + "tames INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-			}
-				// Version 2.2.2 fix:
-			case 6: {
-				st.execute("CREATE TABLE IF NOT EXISTS `brewing` (" + "playername char(36)," + "brewing INT UNSIGNED,"
-						+ "PRIMARY KEY (`playername`)" + ")");
-			}
-				// Added in version 2.3:
-			case 7: {
-				st.execute("CREATE TABLE IF NOT EXISTS `fireworks` (" + "playername char(36),"
-						+ "fireworks INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
-
-				plugin.setDatabaseVersion(8);
-				break;
-			}
-			default:
-				break;
-		}
+		st.executeBatch();
 		st.close();
 
 	}

@@ -132,7 +132,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		// If player location not found, add it in table.
 		// If player has changed world, ignore previous location; evaluating
 		// distance would give an exception.
-		if (previousLocation == null || !previousLocation.getWorld().equals(player.getWorld())) {
+		if (previousLocation == null || !previousLocation.getWorld().getName().equals(player.getWorld().getName())) {
 			playerLocations.put(player, player.getLocation());
 			return;
 		}
