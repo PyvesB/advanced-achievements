@@ -181,6 +181,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	/**
 	 * Called when server is launched or reloaded.
 	 */
+	@Override
 	public void onEnable() {
 
 		// Beginning of plugin enabling.
@@ -759,6 +760,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	/**
 	 * Called when server is stopped or reloaded.
 	 */
+	@Override
 	public void onDisable() {
 
 		// Cancel scheduled tasks.
@@ -845,6 +847,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Called when a player or the console enters a command. Handles command
 	 * directly or dispatches to one of the command modules.
 	 */
+	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]) {
 
 		if (!cmd.getName().equalsIgnoreCase("aach"))

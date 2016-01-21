@@ -18,6 +18,7 @@ public class PooledRequestsSenderAsync implements Runnable {
 		this.plugin = plugin;
 	}
 
+	@Override
 	public void run() {
 
 		sendRequests();
