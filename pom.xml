@@ -4,6 +4,14 @@
 	<groupId>com.hm.achievement</groupId>
 	<artifactId>AdvancedAchievements</artifactId>
 	<version>2.3.2</version>
+	<url>https://github.com/PyvesB/AdvancedAchievements</url>
+	<name>AdvancedAchievements</name>
+	<description>A Minecraft plugin that brings unique and challenging achievements on your server! Books, GUI, rankings, rewards, effects and more!</description>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/PyvesB/AdvancedAchievements/issues</url>
+	</issueManagement>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -42,6 +50,5 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
 
 </project>
