@@ -30,8 +30,11 @@ permissions:
   achievement.delete:
     description: Allows to delete achievements by command.
     default: op
+  achievement.update:
+    description: Allows to be notified when a plugin update is available and CheckForUpdate is set to true in config.
+    default: op
   achievement.*:
-    description: Star notation of permissions, includes all of them.
+    description: Star notation of permissions, includes all the above ones and disables book and list commands delays.
     default: op
     children:
       achievement.get: true
@@ -40,7 +43,8 @@ permissions:
       achievement.reload: true
       achievement.give: true
       achievement.check: true
-      achievement.delete: true  
+      achievement.delete: true
+      achievement.update: true  
   achievement.count.connections:
     description: Allows connection statistics in database to increase.
     default: true

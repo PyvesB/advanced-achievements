@@ -79,7 +79,7 @@ public class ListCommand {
 	 */
 	private boolean timeAuthorisedList(Player player) {
 
-		if (player.isOp() || listTime == 0)
+		if (player.hasPermission("achievement.*") || listTime == 0)
 			return true;
 		long currentTime = System.currentTimeMillis();
 		long lastListTime = 0;

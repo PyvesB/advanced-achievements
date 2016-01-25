@@ -41,7 +41,7 @@ public class BookCommand {
 	 */
 	private boolean timeAuthorisedBook(Player player) {
 
-		if (player.isOp())
+		if (player.hasPermission("achievement.*"))
 			return true;
 		long currentTime = System.currentTimeMillis();
 		long lastBookTime = 0;

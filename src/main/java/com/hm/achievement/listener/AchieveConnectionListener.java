@@ -32,7 +32,8 @@ public class AchieveConnectionListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 
 		// Check if OP to display new version message if needed.
-		if (event.getPlayer().isOp() && plugin.getUpdateChecker().isUpdateNeeded()) {
+		if (plugin.getUpdateChecker() != null && plugin.getUpdateChecker().isUpdateNeeded()
+				&& event.getPlayer().hasPermission("achievement.update")) {
 			event.getPlayer().sendMessage(plugin.getChatHeader() + "Update available: v"
 					+ plugin.getUpdateChecker().getVersion() + ". Download at one of the following:");
 			event.getPlayer().sendMessage(ChatColor.GRAY + AdvancedAchievementsUpdateChecker.BUKKIT_DONWLOAD_URL);
