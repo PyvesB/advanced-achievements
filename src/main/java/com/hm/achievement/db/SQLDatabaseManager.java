@@ -444,7 +444,7 @@ public class SQLDatabaseManager {
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			achievement = achievement.replace("'", "''");
 			desc = desc.replace("'", "''");
-			st.execute("INSERT OR REPLACE INTO `achievements` VALUES ('" + player.getUniqueId() + "','" + achievement
+			st.execute("REPLACE INTO `achievements` VALUES ('" + player.getUniqueId() + "','" + achievement
 					+ "','" + desc + "','" + format.format(new Date()) + "')");
 			st.close();
 
@@ -512,7 +512,7 @@ public class SQLDatabaseManager {
 			}
 			int amount = prev + 1;
 			st.execute(
-					"INSERT OR REPLACE INTO `" + table + "` VALUES ('" + player.getUniqueId() + "', " + amount + ")");
+					"REPLACE INTO `" + table + "` VALUES ('" + player.getUniqueId() + "', " + amount + ")");
 			st.close();
 			rs.close();
 
@@ -539,7 +539,7 @@ public class SQLDatabaseManager {
 				itemCrafts = rs.getInt("times");
 			}
 			int newCrafts = itemCrafts + amount;
-			st.execute("INSERT OR REPLACE INTO `crafts` VALUES ('" + player.getUniqueId() + "'," + item.getTypeId()
+			st.execute("REPLACE INTO `crafts` VALUES ('" + player.getUniqueId() + "'," + item.getTypeId()
 					+ ", " + newCrafts + ")");
 			st.close();
 			rs.close();
@@ -562,7 +562,7 @@ public class SQLDatabaseManager {
 			Statement st = conn.createStatement();
 
 			int newLevels = player.getLevel() + 1;
-			st.execute("INSERT OR REPLACE INTO `levels` VALUES ('" + player.getUniqueId() + "', " + newLevels + ")");
+			st.execute("REPLACE INTO `levels` VALUES ('" + player.getUniqueId() + "', " + newLevels + ")");
 			st.close();
 
 			return newLevels;
@@ -641,7 +641,7 @@ public class SQLDatabaseManager {
 				prev = rs.getInt("connections");
 			}
 			int newConnections = prev + 1;
-			st.execute("INSERT OR REPLACE INTO `connections` VALUES ('" + player.getUniqueId() + "', " + newConnections
+			st.execute("REPLACE INTO `connections` VALUES ('" + player.getUniqueId() + "', " + newConnections
 					+ ", '" + date + "')");
 			st.close();
 			rs.close();
@@ -672,7 +672,7 @@ public class SQLDatabaseManager {
 				}
 				rs.close();
 			} else
-				st.execute("INSERT OR REPLACE INTO `playedtime` VALUES ('" + player.getUniqueId() + "', " + time + ")");
+				st.execute("REPLACE INTO `playedtime` VALUES ('" + player.getUniqueId() + "', " + time + ")");
 			st.close();
 
 			return newPlayedTime;
@@ -700,7 +700,7 @@ public class SQLDatabaseManager {
 				}
 				rs.close();
 			} else
-				st.execute("INSERT OR REPLACE INTO `" + type + "` VALUES ('" + player.getUniqueId() + "', " + distance
+				st.execute("REPLACE INTO `" + type + "` VALUES ('" + player.getUniqueId() + "', " + distance
 						+ ")");
 			st.close();
 
