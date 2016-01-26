@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.hm.achievement.AdvancedAchievements;
 
@@ -39,6 +40,10 @@ public class PooledRequestsSenderAsync implements Runnable {
 	 * Enumerations return elements reflecting the state of the hash table at
 	 * some point at or since the creation of the enumeration, and therefore the
 	 * (atomic) remove method can be used within them.
+	 * 
+	 * The cast operations are necessary to ensure compatibility with Java
+	 * versions prior to Java 8 (Map interface did not support remove(key,
+	 * value) before then).
 	 */
 	public void sendRequests() {
 
@@ -47,75 +52,78 @@ public class PooledRequestsSenderAsync implements Runnable {
 			Statement st = conn.createStatement();
 
 			for (Entry<String, Integer> entry : DatabasePools.getArrowHashMap().entrySet()) {
-				st.execute(
-						"INSERT OR REPLACE INTO `arrows` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				DatabasePools.getArrowHashMap().remove(entry.getKey(), entry.getValue());
+				st.execute("REPLACE INTO `arrows` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getArrowHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getShearHashMap().entrySet()) {
-				st.execute(
-						"INSERT OR REPLACE INTO `shears` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				DatabasePools.getShearHashMap().remove(entry.getKey(), entry.getValue());
+				st.execute("REPLACE INTO `shears` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getShearHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getEatenItemsHashMap().entrySet()) {
-				st.execute("INSERT OR REPLACE INTO `eatenitems` VALUES ('" + entry.getKey() + "', "
-						+ entry.getValue() + ")");
-				DatabasePools.getEatenItemsHashMap().remove(entry.getKey(), entry.getValue());
+				st.execute("REPLACE INTO `eatenitems` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getEatenItemsHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getSnowballHashMap().entrySet()) {
-				st.execute("INSERT OR REPLACE INTO `snowballs` VALUES ('" + entry.getKey() + "', "
-						+ entry.getValue() + ")");
-				DatabasePools.getSnowballHashMap().remove(entry.getKey(), entry.getValue());
+				st.execute("REPLACE INTO `snowballs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getSnowballHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getEggHashMap().entrySet()) {
-				st.execute(
-						"INSERT OR REPLACE INTO `eggs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				DatabasePools.getEggHashMap().remove(entry.getKey(), entry.getValue());
+				st.execute("REPLACE INTO `eggs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getEggHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getDropHashMap().entrySet()) {
-				st.execute(
-						"INSERT OR REPLACE INTO `drops` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				DatabasePools.getDropHashMap().remove(entry.getKey(), entry.getValue());
+				st.execute("REPLACE INTO `drops` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getDropHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getHoePlowingHashMap().entrySet()) {
-				st.execute("INSERT OR REPLACE INTO `hoeplowing` VALUES ('" + entry.getKey() + "', "
-						+ entry.getValue() + ")");
-				DatabasePools.getHoePlowingHashMap().remove(entry.getKey(), entry.getValue());
+				st.execute("REPLACE INTO `hoeplowing` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getHoePlowingHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getFertiliseHashMap().entrySet()) {
-				st.execute("INSERT OR REPLACE INTO `fertilising` VALUES ('" + entry.getKey() + "', "
-						+ entry.getValue() + ")");
-				DatabasePools.getFertiliseHashMap().remove(entry.getKey(), entry.getValue());
+				st.execute("REPLACE INTO `fertilising` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getFertiliseHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getFireworkHashMap().entrySet()) {
-				st.execute("INSERT OR REPLACE INTO `fireworks` VALUES ('" + entry.getKey() + "', "
-						+ entry.getValue() + ")");
-				DatabasePools.getFireworkHashMap().remove(entry.getKey(), entry.getValue());
+				st.execute("REPLACE INTO `fireworks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getFireworkHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getBlockBreakHashMap().entrySet()) {
-				st.execute("INSERT OR REPLACE INTO `breaks` VALUES ('" + entry.getKey().substring(0, 36) + "',"
+				st.execute("REPLACE INTO `breaks` VALUES ('" + entry.getKey().substring(0, 36) + "',"
 						+ entry.getKey().substring(36) + ", " + entry.getValue() + ")");
-				DatabasePools.getBlockBreakHashMap().remove(entry.getKey(), entry.getValue());
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getBlockBreakHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getBlockPlaceHashMap().entrySet()) {
-				st.execute("INSERT OR REPLACE INTO `places` VALUES ('" + entry.getKey().substring(0, 36) + "',"
+				st.execute("REPLACE INTO `places` VALUES ('" + entry.getKey().substring(0, 36) + "',"
 						+ entry.getKey().substring(36) + ", " + entry.getValue() + ")");
-				DatabasePools.getBlockPlaceHashMap().remove(entry.getKey(), entry.getValue());
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getBlockPlaceHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getEntityDeathHashMap().entrySet()) {
-				st.execute("INSERT OR REPLACE INTO `kills` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
+				st.execute("REPLACE INTO `kills` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
-				DatabasePools.getEntityDeathHashMap().remove(entry.getKey(), entry.getValue());
+				((ConcurrentHashMap<String, Integer>) DatabasePools.getEntityDeathHashMap()).remove(entry.getKey(),
+						entry.getValue());
 			}
 
 			st.close();

@@ -109,7 +109,7 @@ DistanceTaskInterval: 5
 # Frequency of some statistics writes to the database.
 PooledRequestsTaskInterval: 60
 
-# Enable multithreading for most database write operations (/!\ set to false if using Java version prior to 8).
+# Enable multithreading for most database write operations.
 AsyncPooledRequestsSender: true
 
 #============================OOOOO============================#

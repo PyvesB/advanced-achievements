@@ -286,14 +286,6 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to group database queries for some frequent
 		// events. Choose between asynchronous task and synchronous task.
-		double javaVersion = Double.parseDouble(System.getProperty("java.specification.version"));
-		
-		if (asyncPooledRequestsSender && javaVersion < 1.8){
-			asyncPooledRequestsSender = false;
-			this.getLogger().warning("Old version of Java found (" + javaVersion
-					+ "). AsyncPooledRequestsSender disabled regardless of value specified in config.");
-		}
-
 		if (asyncPooledRequestsSender)
 			pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
