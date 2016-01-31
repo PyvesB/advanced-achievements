@@ -1,0 +1,94 @@
+#============================================================#
+# +--------------------------------------------------------+ #
+# |Advanced Achievements Brazilian Portuguese language file| #
+# |                     By bruno10223                      | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+configuration-successfully-reloaded: Configuration successfully reloaded.
+configuration-reload-failed: Errors while reloading configuration. Please view logs for more details.
+
+no-permissions: You do not have the permission to do this.
+
+top-achievement: 'Top achievement owners:'
+player-rank: 'Rank Atual:'
+number-achievements: 'Achievements received:'
+
+book-received: You received your achievements book!
+book-delay: Você deve esperar TIME segundos entre cada recepção livro!
+list-delay: Você deve esperar TIME segundos entre cada comando lista!
+book-name: Achievements
+
+player-offline: O jogador PLAYER está offline !
+achievement-already-received: O jogador PLAYER já recebeu essa conquista !
+achievement-not-found: A achievement especificado não foi encontrado .
+achievement-given: Achievement dado!
+achievement-received: 'PLAYER recebeu a achievement:'
+achievement-new: 'Nova Conquista:'
+
+check-achievement-true: PLAYER recebeu a achievement ACH!
+check-achievements-false: PLAYER não recebeu a achievement ACH!
+delete-achievements: The achievement ACH was deleted from PLAYER.
+
+item-reward-received: 'Voce recebeu um premio:'
+money-reward-received: 'Voce Recebeu: AMOUNT !'
+command-reward: Comando recompensa realizado !
+
+aach-command-book: Receba o seu livro de achievements
+aach-command-stats: Quantidade de achievements que você recebeu.
+aach-command-list: Display received and missing achievements.
+aach-command-top: Display personal and global rankings.
+aach-command-give: Give achievement ACH to player &7NAME.
+aach-command-reload: Reload the plugin's configuration.
+aach-command-info: Display various information about the plugin.
+aach-command-check: Check if player NAME has &7received ACH.
+aach-command-delete: Delete achievement ACH from &7player NAME.
+
+version-command-name: 'Name:'
+version-command-version: 'Version:'
+version-command-website: 'Website:'
+version-command-author: 'Author:'
+version-command-description: 'Description:'
+version-command-description-details: Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!
+version-command-vault: 'Vault integration:'
+version-command-database: 'Database type:'
+
+list-gui-title: '&5?lAchievements List'
+list-reward: ' Recompensa:'
+list-reward-money: Dinheiro
+list-reward-item: item
+list-reward-command: Outro
+list-amount: ' Lvl:'
+list-connections: Conectado
+list-places: Blocos colocados
+list-breaks: Blocos quebrados
+list-kills: Mobs Mortos
+list-crafts: Items Craftados
+list-deaths: Numero de mortes
+list-arrows: Tiros de flechas
+list-snowballs: Tiros de Snollballs
+list-eggs: Tiros de ovos
+list-fish: Peixes pescados
+list-itembreaks: Items quebrados
+list-eatenitems: Items Comidos
+list-shear: Ovelhas tosquiadas
+list-milk: Vacas Ordenhadas
+list-trades: Número de Negócios
+list-anvils: Bigorna usadas
+list-enchantments: Items Encantados
+list-beds: Camas Entroduzidas
+list-maxlevel: Nível Máximo Atingido
+list-potions: Potions Consumidas
+list-distance-foot: Distancia andada a pé
+list-distance-pig: Distancia andada em um porco
+list-distance-horse: Distancia andada em um cavalo
+list-distance-minecart: Distancia andada em um minecart
+list-distance-boat: Distancia andada em um barco
+list-itemdrops: Items Dropados
+list-hoeplowings: terras aradas
+list-fertilising: Plantas fertilizadas
+list-taming: Animais domesticados
+list-brewing: Poçoes fabricadas
+list-fireworks: Fogos lançados
+list-commands: Outros Achievements
+list-playedtime: Tempo Jogado
