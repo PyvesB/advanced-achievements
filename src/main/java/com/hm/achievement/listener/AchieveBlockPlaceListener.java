@@ -29,10 +29,14 @@ public class AchieveBlockPlaceListener implements Listener {
 			return;
 		Block block = event.getBlock();
 		String blockName = block.getType().name().toLowerCase();
-		if (!player.hasPermission("achievement.count.places." + blockName))
-			return;
-		if (!plugin.getConfig().isConfigurationSection("Places." + blockName))
-			return;
+		if (player.hasPermission("achievement.count.places." + blockName + ":" + block.getData()) && plugin.getConfig().isConfigurationSection("Places." + blockName + ":" + block.getData()))
+			blockName += ":" + block.getData();
+		else {
+			if (!player.hasPermission("achievement.count.places." + blockName))
+				return;
+			if (!plugin.getConfig().isConfigurationSection("Places." + blockName))
+				return;
+		}
 
 		int places = 0;
 		if (!DatabasePools.getBlockPlaceHashMap().containsKey(player.getUniqueId().toString() + block.getTypeId()))
