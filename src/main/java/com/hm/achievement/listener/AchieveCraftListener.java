@@ -32,10 +32,14 @@ public class AchieveCraftListener implements Listener {
 
 		ItemStack item = event.getRecipe().getResult();
 		String craftName = item.getType().name().toLowerCase();
-		if (!player.hasPermission("achievement.count.crafts." + craftName))
-			return;
-		if (!plugin.getConfig().isConfigurationSection("Crafts." + craftName))
-			return;
+		if (player.hasPermission("achievement.count.crafts." + craftName + ":" + item.getDurability()) && plugin.getConfig().isConfigurationSection("Crafts." + craftName + ":" + item.getDurability()))
+			craftName += ":" + item.getDurability();
+		else {
+			if (!player.hasPermission("achievement.count.crafts." + craftName))
+				return;
+			if (!plugin.getConfig().isConfigurationSection("Crafts." + craftName))
+				return;
+		}
 
 		int amount = item.getAmount();
 		if (event.isShiftClick()) {
