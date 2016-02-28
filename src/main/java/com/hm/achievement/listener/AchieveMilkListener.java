@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveMilkListener implements Listener {
 
@@ -27,7 +28,14 @@ public class AchieveMilkListener implements Listener {
 		if (!player.hasPermission("achievement.count.milk") || plugin.isInExludedWorld(player))
 			return;
 
-		int milks = plugin.getDb().incrementAndGetNormalAchievement(player, "milks");
+		int milks;
+		if (!DatabasePools.getMilkHashMap().containsKey(player.getUniqueId().toString()))
+			milks = plugin.getDb().getNormalAchievementAmount(player, "milks") + 1;
+		else
+			milks = DatabasePools.getMilkHashMap().get(player.getUniqueId().toString()) + 1;
+
+		DatabasePools.getMilkHashMap().put(player.getUniqueId().toString(), milks);
+		
 		String configAchievement = "Milk." + milks;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 

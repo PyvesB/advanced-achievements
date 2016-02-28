@@ -12,11 +12,11 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.DatabasePools;
 
-public class AchieveSnowballEggsListener implements Listener {
+public class AchieveSnowballEggListener implements Listener {
 
 	private AdvancedAchievements plugin;
 
-	public AchieveSnowballEggsListener(AdvancedAchievements plugin) {
+	public AchieveSnowballEggListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 	}

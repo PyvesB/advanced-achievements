@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveDeathListener implements Listener {
 
@@ -28,7 +29,14 @@ public class AchieveDeathListener implements Listener {
 		if (!player.hasPermission("achievement.count.deaths") || plugin.isInExludedWorld(player))
 			return;
 
-		int deaths = plugin.getDb().incrementAndGetNormalAchievement(player, "deaths");
+		int deaths;
+		if (!DatabasePools.getDeathHashMap().containsKey(player.getUniqueId().toString()))
+			deaths = plugin.getDb().getNormalAchievementAmount(player, "deaths") + 1;
+		else
+			deaths = DatabasePools.getDeathHashMap().get(player.getUniqueId().toString()) + 1;
+
+		DatabasePools.getDeathHashMap().put(player.getUniqueId().toString(), deaths);
+		
 		String configAchievement = "Deaths." + deaths;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 

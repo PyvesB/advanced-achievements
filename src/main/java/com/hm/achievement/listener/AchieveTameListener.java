@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTameEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveTameListener implements Listener {
 
@@ -29,7 +30,13 @@ public class AchieveTameListener implements Listener {
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		int tames = plugin.getDb().incrementAndGetNormalAchievement(player, "tames");
+		int tames;
+		if (!DatabasePools.getTameHashMap().containsKey(player.getUniqueId().toString()))
+			tames = plugin.getDb().getNormalAchievementAmount(player, "tames") + 1;
+		else
+			tames = DatabasePools.getTameHashMap().get(player.getUniqueId().toString()) + 1;
+
+		DatabasePools.getTameHashMap().put(player.getUniqueId().toString(), tames);
 
 		String configAchievement = "Taming." + tames;
 		if (plugin.getReward().checkAchievement(configAchievement)) {

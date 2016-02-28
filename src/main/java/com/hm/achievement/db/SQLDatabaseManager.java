@@ -497,37 +497,10 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Increment and return value of a normal achievement statistic.
-	 */
-	public int incrementAndGetNormalAchievement(Player player, String table) {
-
-		try {
-			Connection conn = getSQLConnection();
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery(
-					"SELECT " + table + " FROM `" + table + "` WHERE playername = '" + player.getUniqueId() + "'");
-			int prev = 0;
-			while (rs.next()) {
-				prev = rs.getInt(table);
-			}
-			int amount = prev + 1;
-			st.execute(
-					"REPLACE INTO `" + table + "` VALUES ('" + player.getUniqueId() + "', " + amount + ")");
-			st.close();
-			rs.close();
-
-			return amount;
-		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while handling " + table + " event: " + e);
-			return 0;
-		}
-	}
-
-	/**
 	 * Increment and return value of a specific craft achievement statistic.
 	 */
 	@SuppressWarnings("deprecation")
-	public int updateAndGetCraft(Player player, ItemStack item, int amount) {
+	public int getCrafts(Player player, ItemStack item) {
 
 		try {
 			Connection conn = getSQLConnection();
@@ -538,38 +511,15 @@ public class SQLDatabaseManager {
 			while (rs.next()) {
 				itemCrafts = rs.getInt("times");
 			}
-			int newCrafts = itemCrafts + amount;
-			st.execute("REPLACE INTO `crafts` VALUES ('" + player.getUniqueId() + "'," + item.getTypeId()
-					+ ", " + newCrafts + ")");
 			st.close();
 			rs.close();
 
-			return newCrafts;
+			return itemCrafts;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while handling craft event: " + e);
 			return 0;
 		}
 
-	}
-
-	/**
-	 * Increment and return value of player's max level.
-	 */
-	public int incrementAndGetMaxLevel(Player player) {
-
-		try {
-			Connection conn = getSQLConnection();
-			Statement st = conn.createStatement();
-
-			int newLevels = player.getLevel() + 1;
-			st.execute("REPLACE INTO `levels` VALUES ('" + player.getUniqueId() + "', " + newLevels + ")");
-			st.close();
-
-			return newLevels;
-		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while handling XP event: " + e);
-			return 0;
-		}
 	}
 
 	/**

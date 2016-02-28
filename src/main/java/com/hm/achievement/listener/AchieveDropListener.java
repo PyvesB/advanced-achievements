@@ -28,7 +28,6 @@ public class AchieveDropListener implements Listener {
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		String configAchievement;
 		int drops;
 		if (!DatabasePools.getDropHashMap().containsKey(player.getUniqueId().toString()))
 			drops = plugin.getDb().getNormalAchievementAmount(player, "drops") + 1;
@@ -37,7 +36,7 @@ public class AchieveDropListener implements Listener {
 
 		DatabasePools.getDropHashMap().put(player.getUniqueId().toString(), drops);
 
-		configAchievement = "ItemDrops." + drops;
+		String configAchievement = "ItemDrops." + drops;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

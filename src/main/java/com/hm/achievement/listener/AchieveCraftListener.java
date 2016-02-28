@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveCraftListener implements Listener {
 
@@ -32,7 +33,8 @@ public class AchieveCraftListener implements Listener {
 
 		ItemStack item = event.getRecipe().getResult();
 		String craftName = item.getType().name().toLowerCase();
-		if (player.hasPermission("achievement.count.crafts." + craftName + ":" + item.getDurability()) && plugin.getConfig().isConfigurationSection("Crafts." + craftName + ":" + item.getDurability()))
+		if (player.hasPermission("achievement.count.crafts." + craftName + ":" + item.getDurability())
+				&& plugin.getConfig().isConfigurationSection("Crafts." + craftName + ":" + item.getDurability()))
 			craftName += ":" + item.getDurability();
 		else {
 			if (!player.hasPermission("achievement.count.crafts." + craftName))
@@ -55,7 +57,14 @@ public class AchieveCraftListener implements Listener {
 			amount *= max;
 		}
 
-		int times = plugin.getDb().updateAndGetCraft(player, item, amount);
+		int times;
+		if (!DatabasePools.getCraftHashMap().containsKey(player.getUniqueId().toString()))
+			times = plugin.getDb().getCrafts(player, item) + amount;
+		else
+			times = DatabasePools.getCraftHashMap().get(player.getUniqueId().toString()) + amount;
+
+		DatabasePools.getCraftHashMap().put(player.getUniqueId().toString(), times);
+		
 		String configAchievement;
 		for (String threshold : plugin.getConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))
 			if (times >= Integer.parseInt(threshold) && !plugin.getDb().hasPlayerAchievement(player,

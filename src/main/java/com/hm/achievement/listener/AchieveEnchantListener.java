@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveEnchantListener implements Listener {
 
@@ -27,7 +28,14 @@ public class AchieveEnchantListener implements Listener {
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		int enchantments = plugin.getDb().incrementAndGetNormalAchievement(player, "enchantments");
+		int enchantments;
+		if (!DatabasePools.getEnchantmentHashMap().containsKey(player.getUniqueId().toString()))
+			enchantments = plugin.getDb().getNormalAchievementAmount(player, "enchantments") + 1;
+		else
+			enchantments = DatabasePools.getEnchantmentHashMap().get(player.getUniqueId().toString()) + 1;
+
+		DatabasePools.getEnchantmentHashMap().put(player.getUniqueId().toString(), enchantments);
+		
 		String configAchievement = "Enchantments." + enchantments;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 

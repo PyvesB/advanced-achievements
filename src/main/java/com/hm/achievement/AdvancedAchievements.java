@@ -72,29 +72,29 @@ public class AdvancedAchievements extends JavaPlugin {
 	private Economy economy;
 
 	// Listeners, to monitor events and manage stats.
-	private AchieveBlockPlaceListener blockPlaceListener;
-	private AchieveBlockBreakListener blockBreakListener;
-	private AchieveKillListener entityListener;
-	private AchieveCraftListener craftListener;
+	private AchieveConnectionListener connectionListener;
 	private AchieveDeathListener deathListener;
 	private AchieveArrowListener arrowListener;
-	private AchieveSnowballEggsListener snowballListener;
+	private AchieveSnowballEggListener snowballEggListener;
 	private AchieveFishListener fishListener;
 	private AchieveItemBreakListener itemBreakListener;
-	private AchieveConsumeListener eatenItemsListener;
+	private AchieveConsumeListener consumeListener;
 	private AchieveShearListener shearListener;
 	private AchieveMilkListener milkListener;
-	private AchieveConnectionListener connectionListener;
 	private AchieveTradeAnvilBrewListener inventoryClickListener;
 	private AchieveEnchantListener enchantmentListener;
-	private AchieveXPListener xpListener;
 	private AchieveBedListener bedListener;
-	private AchieveQuitListener quitListener;
-	private AchieveTeleportListener teleportListener;
+	private AchieveXPListener xpListener;
 	private AchieveDropListener dropListener;
 	private AchieveHoeFertiliseFireworkListener hoeFertiliseFireworkListener;
 	private AchieveTameListener tameListener;
-
+	private AchieveBlockPlaceListener blockPlaceListener;
+	private AchieveBlockBreakListener blockBreakListener;
+	private AchieveKillListener killListener;
+	private AchieveCraftListener craftListener;
+	private AchieveQuitListener quitListener;
+	private AchieveTeleportListener teleportListener;
+	
 	// Additional classes related to plugin modules and commands.
 	private AchievementRewards reward;
 	private AchievementDisplay achievementDisplay;
@@ -151,14 +151,14 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		blockPlaceListener = new AchieveBlockPlaceListener(this);
 		blockBreakListener = new AchieveBlockBreakListener(this);
-		entityListener = new AchieveKillListener(this);
+		killListener = new AchieveKillListener(this);
 		craftListener = new AchieveCraftListener(this);
 		deathListener = new AchieveDeathListener(this);
 		arrowListener = new AchieveArrowListener(this);
-		snowballListener = new AchieveSnowballEggsListener(this);
+		snowballEggListener = new AchieveSnowballEggListener(this);
 		fishListener = new AchieveFishListener(this);
 		itemBreakListener = new AchieveItemBreakListener(this);
-		eatenItemsListener = new AchieveConsumeListener(this);
+		consumeListener = new AchieveConsumeListener(this);
 		shearListener = new AchieveShearListener(this);
 		milkListener = new AchieveMilkListener(this);
 		connectionListener = new AchieveConnectionListener(this);
@@ -204,7 +204,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(blockBreakListener, this);
 
 		if (this.getConfig().getConfigurationSection("Kills").getKeys(false).size() != 0)
-			pm.registerEvents(entityListener, this);
+			pm.registerEvents(killListener, this);
 
 		if (this.getConfig().getConfigurationSection("Crafts").getKeys(false).size() != 0)
 			pm.registerEvents(craftListener, this);
@@ -217,7 +217,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (this.getConfig().getConfigurationSection("Snowballs").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("Eggs").getKeys(false).size() != 0)
-			pm.registerEvents(snowballListener, this);
+			pm.registerEvents(snowballEggListener, this);
 
 		if (this.getConfig().getConfigurationSection("Fish").getKeys(false).size() != 0)
 			pm.registerEvents(fishListener, this);
@@ -227,7 +227,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (this.getConfig().getConfigurationSection("ConsumedPotions").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("EatenItems").getKeys(false).size() != 0)
-			pm.registerEvents(eatenItemsListener, this);
+			pm.registerEvents(consumeListener, this);
 
 		if (this.getConfig().getConfigurationSection("Shear").getKeys(false).size() != 0)
 			pm.registerEvents(shearListener, this);

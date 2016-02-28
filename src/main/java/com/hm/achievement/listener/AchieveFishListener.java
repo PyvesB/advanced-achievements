@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.DatabasePools;
 
 public class AchieveFishListener implements Listener {
 
@@ -29,7 +30,14 @@ public class AchieveFishListener implements Listener {
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		int fish = plugin.getDb().incrementAndGetNormalAchievement(player, "fish");
+		int fish;
+		if (!DatabasePools.getFishHashMap().containsKey(player.getUniqueId().toString()))
+			fish = plugin.getDb().getNormalAchievementAmount(player, "fish") + 1;
+		else
+			fish = DatabasePools.getFishHashMap().get(player.getUniqueId().toString()) + 1;
+
+		DatabasePools.getFishHashMap().put(player.getUniqueId().toString(), fish);
+		
 		String configAchievement = "Fish." + fish;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
