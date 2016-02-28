@@ -436,7 +436,31 @@ public class SQLDatabaseManager {
 	/**
 	 * Register a new achievement for a player.
 	 */
-	public void registerAchievement(Player player, String achievement, String desc) {
+	public void registerAchievement(Player player, final String achievement, final String desc) {
+
+		final String name = player.getUniqueId().toString();
+
+		if (plugin.isAsyncPooledRequestsSender())
+			new Thread() { // Avoid using Bukkit API scheduler, as a
+							// reload/restart could kill the async task before
+							// write to database has occured.
+
+				@Override
+				public void run() {
+
+					registerAchievementToDB(achievement, desc, name);
+				}
+
+			}.start();
+		else
+			registerAchievementToDB(achievement, desc, name);
+
+	}
+
+	/**
+	 * Write to DB to register new achievement for a player.
+	 */
+	private void registerAchievementToDB(String achievement, String desc, String name) {
 
 		try {
 			Connection conn = getSQLConnection();
@@ -444,14 +468,13 @@ public class SQLDatabaseManager {
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			achievement = achievement.replace("'", "''");
 			desc = desc.replace("'", "''");
-			st.execute("REPLACE INTO `achievements` VALUES ('" + player.getUniqueId() + "','" + achievement
-					+ "','" + desc + "','" + format.format(new Date()) + "')");
+			st.execute("REPLACE INTO `achievements` VALUES ('" + name + "','" + achievement + "','" + desc + "','"
+					+ format.format(new Date()) + "')");
 			st.close();
 
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while registering achievement: " + e);
 		}
-
 	}
 
 	/**
@@ -579,20 +602,43 @@ public class SQLDatabaseManager {
 	 * Update player's number of connections and last connection date and return
 	 * number of connections.
 	 */
-	public int updateAndGetConnection(Player player, String date) {
+	public int updateAndGetConnection(Player player, final String date) {
 
+		final String name = player.getUniqueId().toString();
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(
-					"SELECT connections FROM `connections` WHERE playername = '" + player.getUniqueId() + "'");
+					"SELECT connections FROM `connections` WHERE playername = '" + name + "'");
 			int prev = 0;
 			while (rs.next()) {
 				prev = rs.getInt("connections");
 			}
-			int newConnections = prev + 1;
-			st.execute("REPLACE INTO `connections` VALUES ('" + player.getUniqueId() + "', " + newConnections
-					+ ", '" + date + "')");
+			final int newConnections = prev + 1;
+			if (!plugin.isAsyncPooledRequestsSender())
+				st.execute("REPLACE INTO `connections` VALUES ('" + name + "', " + newConnections
+						+ ", '" + date + "')");
+			else{
+				new Thread() { // Avoid using Bukkit API scheduler, as a
+					// reload/restart could kill the async task before
+					// write to database has occured.
+
+					@Override
+					public void run() {
+
+						Connection conn = getSQLConnection();
+						Statement st;
+						try {
+							st = conn.createStatement();
+							st.execute("REPLACE INTO `connections` VALUES ('" + name + "', " + newConnections
+									+ ", '" + date + "')");
+							st.close();
+						} catch (SQLException e) {
+							plugin.getLogger().severe("SQL error while handling connection event on async task: " + e);
+						}
+					}
+				}.start();
+			}
 			st.close();
 			rs.close();
 
@@ -607,23 +653,47 @@ public class SQLDatabaseManager {
 	/**
 	 * Update and return player's playtime.
 	 */
-	public long updateAndGetPlaytime(Player player, long time) {
+	public long updateAndGetPlaytime(Player player, final long time) {
 
+		final String name = player.getUniqueId().toString();
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			long newPlayedTime = 0;
 			if (time == 0) {
-				ResultSet rs = st.executeQuery(
-						"SELECT playedtime FROM `playedtime` WHERE playername = '" + player.getUniqueId() + "'");
+				ResultSet rs = st.executeQuery("SELECT playedtime FROM `playedtime` WHERE playername = '" + name + "'");
 				newPlayedTime = 0;
 				while (rs.next()) {
 					newPlayedTime = rs.getLong("playedtime");
 				}
 				rs.close();
-			} else
-				st.execute("REPLACE INTO `playedtime` VALUES ('" + player.getUniqueId() + "', " + time + ")");
+			} else if (!plugin.isAsyncPooledRequestsSender()) {
+				st.execute("REPLACE INTO `playedtime` VALUES ('" + name + "', " + time + ")");
+			}
 			st.close();
+
+			// Write asynchronously to database using a new statement.
+			if (time != 0 && plugin.isAsyncPooledRequestsSender()) {
+				new Thread() { // Avoid using Bukkit API scheduler, as a
+					// reload/restart could kill the async task before
+					// write to database has occured.
+
+					@Override
+					public void run() {
+
+						Connection conn = getSQLConnection();
+						Statement st;
+						try {
+							st = conn.createStatement();
+							st.execute("REPLACE INTO `playedtime` VALUES ('" + name + "', " + time + ")");
+							st.close();
+						} catch (SQLException e) {
+							plugin.getLogger()
+									.severe("SQL error while handling play time registration on async task: " + e);
+						}
+					}
+				}.start();
+			}
 
 			return newPlayedTime;
 		} catch (SQLException e) {
@@ -636,24 +706,48 @@ public class SQLDatabaseManager {
 	/**
 	 * Update and return player's distance for a specific distance type.
 	 */
-	public int updateAndGetDistance(Player player, int distance, String type) {
+	public int updateAndGetDistance(Player player, final int distance, final String type) {
 
+		final String name = player.getUniqueId().toString();
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			int newDistance = 0;
 			if (distance == 0) {
-				ResultSet rs = st.executeQuery(
-						"SELECT " + type + " FROM `" + type + "` WHERE playername = '" + player.getUniqueId() + "'");
+				ResultSet rs = st
+						.executeQuery("SELECT " + type + " FROM `" + type + "` WHERE playername = '" + name + "'");
 				while (rs.next()) {
 					newDistance = rs.getInt(type);
 				}
 				rs.close();
-			} else
-				st.execute("REPLACE INTO `" + type + "` VALUES ('" + player.getUniqueId() + "', " + distance
-						+ ")");
+			} else if (!plugin.isAsyncPooledRequestsSender()) {
+				// Write synchronously to database using same statement.
+				st.execute("REPLACE INTO `" + type + "` VALUES ('" + name + "', " + distance + ")");
+			}
 			st.close();
 
+			// Write asynchronously to database using a new statement.
+			if (distance != 0 && plugin.isAsyncPooledRequestsSender()) {
+				new Thread() { // Avoid using Bukkit API scheduler, as a
+					// reload/restart could kill the async task before
+					// write to database has occured.
+
+					@Override
+					public void run() {
+
+						Connection conn = getSQLConnection();
+						Statement st;
+						try {
+							st = conn.createStatement();
+							st.execute("REPLACE INTO `" + type + "` VALUES ('" + name + "', " + distance + ")");
+							st.close();
+						} catch (SQLException e) {
+							plugin.getLogger()
+									.severe("SQL error while handling " + type + " registration on async task: " + e);
+						}
+					}
+				}.start();
+			}
 			return newDistance;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while handling " + type + " registration: " + e);
