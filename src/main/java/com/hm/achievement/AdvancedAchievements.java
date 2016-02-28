@@ -94,7 +94,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveCraftListener craftListener;
 	private AchieveQuitListener quitListener;
 	private AchieveTeleportListener teleportListener;
-	
+
 	// Additional classes related to plugin modules and commands.
 	private AchievementRewards reward;
 	private AchievementDisplay achievementDisplay;
@@ -134,8 +134,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	public static final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
 
 	// Plugin runnable classes.
-	private AchieveDistanceRunnable achieveDistanceRunnable = null;
-	private AchievePlayTimeRunnable achievePlayTimeRunnable = null;
+	private AchieveDistanceRunnable achieveDistanceRunnable;
+	private AchievePlayTimeRunnable achievePlayTimeRunnable;
 
 	// Bukkit scheduler tasks.
 	private BukkitTask pooledRequestsSenderTask;
@@ -146,31 +146,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Constructor.
 	 */
 	public AdvancedAchievements() {
-
-		economy = null;
-
-		blockPlaceListener = new AchieveBlockPlaceListener(this);
-		blockBreakListener = new AchieveBlockBreakListener(this);
-		killListener = new AchieveKillListener(this);
-		craftListener = new AchieveCraftListener(this);
-		deathListener = new AchieveDeathListener(this);
-		arrowListener = new AchieveArrowListener(this);
-		snowballEggListener = new AchieveSnowballEggListener(this);
-		fishListener = new AchieveFishListener(this);
-		itemBreakListener = new AchieveItemBreakListener(this);
-		consumeListener = new AchieveConsumeListener(this);
-		shearListener = new AchieveShearListener(this);
-		milkListener = new AchieveMilkListener(this);
-		connectionListener = new AchieveConnectionListener(this);
-		inventoryClickListener = new AchieveTradeAnvilBrewListener(this);
-		enchantmentListener = new AchieveEnchantListener(this);
-		xpListener = new AchieveXPListener(this);
-		bedListener = new AchieveBedListener(this);
-		quitListener = new AchieveQuitListener(this);
-		dropListener = new AchieveDropListener(this);
-		hoeFertiliseFireworkListener = new AchieveHoeFertiliseFireworkListener(this);
-		tameListener = new AchieveTameListener(this);
-		teleportListener = new AchieveTeleportListener(this);
 
 		excludedWorldList = new HashSet<String>();
 
@@ -197,87 +172,133 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Register listeners so they can monitor server events; if there are no
 		// config related achievements, listeners aren't registered.
 		PluginManager pm = getServer().getPluginManager();
-		if (this.getConfig().getConfigurationSection("Places").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Places").getKeys(false).size() != 0) {
+			blockPlaceListener = new AchieveBlockPlaceListener(this);
 			pm.registerEvents(blockPlaceListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Breaks").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Breaks").getKeys(false).size() != 0) {
+			blockBreakListener = new AchieveBlockBreakListener(this);
 			pm.registerEvents(blockBreakListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Kills").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Kills").getKeys(false).size() != 0) {
+			killListener = new AchieveKillListener(this);
 			pm.registerEvents(killListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Crafts").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Crafts").getKeys(false).size() != 0) {
+			craftListener = new AchieveCraftListener(this);
 			pm.registerEvents(craftListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Deaths").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Deaths").getKeys(false).size() != 0) {
+			deathListener = new AchieveDeathListener(this);
 			pm.registerEvents(deathListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Arrows").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Arrows").getKeys(false).size() != 0) {
+			arrowListener = new AchieveArrowListener(this);
 			pm.registerEvents(arrowListener, this);
+		}
 
 		if (this.getConfig().getConfigurationSection("Snowballs").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("Eggs").getKeys(false).size() != 0)
+				|| this.getConfig().getConfigurationSection("Eggs").getKeys(false).size() != 0) {
+			snowballEggListener = new AchieveSnowballEggListener(this);
 			pm.registerEvents(snowballEggListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Fish").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Fish").getKeys(false).size() != 0) {
+			fishListener = new AchieveFishListener(this);
 			pm.registerEvents(fishListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("ItemBreaks").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("ItemBreaks").getKeys(false).size() != 0) {
+			itemBreakListener = new AchieveItemBreakListener(this);
 			pm.registerEvents(itemBreakListener, this);
+		}
 
 		if (this.getConfig().getConfigurationSection("ConsumedPotions").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("EatenItems").getKeys(false).size() != 0)
+				|| this.getConfig().getConfigurationSection("EatenItems").getKeys(false).size() != 0) {
+			consumeListener = new AchieveConsumeListener(this);
 			pm.registerEvents(consumeListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Shear").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Shear").getKeys(false).size() != 0) {
+			shearListener = new AchieveShearListener(this);
 			pm.registerEvents(shearListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Milk").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Milk").getKeys(false).size() != 0) {
+			milkListener = new AchieveMilkListener(this);
 			pm.registerEvents(milkListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Connections").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0)
+		if (this.getConfig().getBoolean("CheckForUpdate", true)
+				|| this.getConfig().getConfigurationSection("Connections").getKeys(false).size() != 0
+				|| this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
+			connectionListener = new AchieveConnectionListener(this);
 			pm.registerEvents(connectionListener, this);
+		}
 
 		if (this.getConfig().getConfigurationSection("Trades").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("AnvilsUsed").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("Brewing").getKeys(false).size() != 0)
+				|| this.getConfig().getConfigurationSection("Brewing").getKeys(false).size() != 0) {
+			inventoryClickListener = new AchieveTradeAnvilBrewListener(this);
 			pm.registerEvents(inventoryClickListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Enchantments").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Enchantments").getKeys(false).size() != 0) {
+			enchantmentListener = new AchieveEnchantListener(this);
 			pm.registerEvents(enchantmentListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("MaxLevel").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("MaxLevel").getKeys(false).size() != 0) {
+			xpListener = new AchieveXPListener(this);
 			pm.registerEvents(xpListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Beds").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Beds").getKeys(false).size() != 0) {
+			bedListener = new AchieveBedListener(this);
 			pm.registerEvents(bedListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("ItemDrops").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("ItemDrops").getKeys(false).size() != 0) {
+			dropListener = new AchieveDropListener(this);
 			pm.registerEvents(dropListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("Taming").getKeys(false).size() != 0)
+		if (this.getConfig().getConfigurationSection("Taming").getKeys(false).size() != 0) {
+			tameListener = new AchieveTameListener(this);
 			pm.registerEvents(tameListener, this);
+		}
 
 		if (this.getConfig().getConfigurationSection("HoePlowings").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("Fertilising").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("Fireworks").getKeys(false).size() != 0)
+				|| this.getConfig().getConfigurationSection("Fireworks").getKeys(false).size() != 0) {
+			hoeFertiliseFireworkListener = new AchieveHoeFertiliseFireworkListener(this);
 			pm.registerEvents(hoeFertiliseFireworkListener, this);
+		}
 
-		if (this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0
+		if (this.getConfig().getConfigurationSection("MaxLevel").getKeys(false).size() != 0
+				|| this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0)
+				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
+			quitListener = new AchieveQuitListener(this);
 			pm.registerEvents(quitListener, this);
+		}
 
 		if (this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
 				|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0)
+				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
+			teleportListener = new AchieveTeleportListener(this);
 			pm.registerEvents(teleportListener, this);
+		}
 
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
 
@@ -547,12 +568,14 @@ public class AdvancedAchievements extends JavaPlugin {
 		checkCommand = new CheckCommand(this);
 		deleteCommand = new DeleteCommand(this);
 
-		// Reload achievements in distance and play time runnables only on
-		// plugin reload.
+		// Reload achievements in distance, max level and play time runnables
+		// only on plugin reload.
 		if (achieveDistanceRunnable != null)
 			achieveDistanceRunnable.extractAchievementsFromConfig(this);
 		if (achievePlayTimeRunnable != null)
 			achievePlayTimeRunnable.extractAchievementsFromConfig(this);
+		if (xpListener != null)
+			xpListener.extractAchievementsFromConfig(this);
 
 		// Check for available plugin update.
 		if (this.getConfig().getBoolean("CheckForUpdate", true)) {
@@ -1009,6 +1032,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AchieveConnectionListener getConnectionListener() {
 
 		return connectionListener;
+	}
+
+	public AchieveXPListener getXpListener() {
+
+		return xpListener;
 	}
 
 	public String getIcon() {

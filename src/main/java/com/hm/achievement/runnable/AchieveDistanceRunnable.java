@@ -258,7 +258,7 @@ public class AchieveDistanceRunnable implements Runnable {
 
 	}
 
-	public void awardDistanceAchievement(Player player, int achievementDistance, String type) {
+	private void awardDistanceAchievement(Player player, int achievementDistance, String type) {
 
 		plugin.getAchievementDisplay().displayAchievement(player, type + achievementDistance);
 		plugin.getDb().registerAchievement(player, plugin.getConfig().getString(type + achievementDistance + ".Name"),

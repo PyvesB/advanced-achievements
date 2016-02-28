@@ -79,5 +79,10 @@ public class AchieveQuitListener implements Listener {
 			for (HashSet<?> playerHashSet : plugin.getAchievePlayTimeRunnable().getPlayerAchievements())
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
 		}
+		
+		if (plugin.getXpListener() != null) {
+			for (HashSet<?> playerHashSet : plugin.getXpListener().getPlayerAchievements())
+				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
+		}
 	}
 }
