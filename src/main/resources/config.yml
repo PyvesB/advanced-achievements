@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |    Advanced Achievements 2.3.3 configuration - Readme   | #
+# |     Advanced Achievements 2.4 configuration - Readme    | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -109,7 +109,7 @@ DistanceTaskInterval: 5
 # Frequency of some statistics writes to the database.
 PooledRequestsTaskInterval: 60
 
-# Enable multithreading for most database write operations.
+# Enable multithreading for database write operations.
 AsyncPooledRequestsSender: true
 
 #============================OOOOO============================#
@@ -142,9 +142,9 @@ Breaks:
       Name: Cobble!
       Reward:
         Command: give PLAYER 158 10; give PLAYER 126 5
-  log:
+  log_2:1:
     '100':
-      Message: '&2You have cut 100 logs!'
+      Message: '&2You have cut dark oak 100 logs!'
       Name: Wood Cutter
               
 # When a specific mob is killed (specify mob name or 'player', lower case).

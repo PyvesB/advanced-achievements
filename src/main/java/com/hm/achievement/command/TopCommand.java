@@ -75,10 +75,19 @@ public class TopCommand {
 					plugin.getLogger().severe("Error while displaying additional particle effects.");
 				}
 
-				if (sound)
-					// Play special sound when in top list.
-					((Player) sender).getWorld().playSound(((Player) sender).getLocation(), Sound.FIREWORK_BLAST, 1,
-							0.6f);
+				// Play special sound when in top list.
+				if (sound) {
+					// Simple and fast check to compare versions. Might need to be
+					// updated in the future depending on how the Minecraft versions
+					// change in the future.
+					int version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
+					if (version < 9) // Old enum for versions prior to Minecraft 1.9.
+						((Player) sender).getWorld().playSound(((Player) sender).getLocation(),
+								Sound.valueOf("FIREWORK_BLAST"), 1, 0.6f);
+					else
+						((Player) sender).getWorld().playSound(((Player) sender).getLocation(),
+								Sound.ENTITY_FIREWORK_BLAST, 1, 0.6f);
+				}
 			}
 
 			int totalPlayers = plugin.getDb().getTotalPlayers();

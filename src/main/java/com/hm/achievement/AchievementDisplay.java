@@ -5,12 +5,14 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 import com.hm.achievement.language.Lang;
 import com.hm.achievement.particle.PacketSender;
+import com.hm.achievement.particle.ParticleEffect;
 
 public class AchievementDisplay {
 
@@ -62,32 +64,42 @@ public class AchievementDisplay {
 		if (firework) {
 
 			Location location = player.getLocation();
-			location.setY(location.getY() - 1);
 
-			Firework firework = player.getWorld().spawn(location, Firework.class);
-			FireworkMeta fireworkMeta = firework.getFireworkMeta();
-			FireworkEffect effect;
-			// Firework style must be one of the following: BALL_LARGE, BALL,
-			// BURST, CREEPER or STAR.
 			try {
-				effect = FireworkEffect.builder().flicker(false).trail(false)
-						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))
-						.with(Type.valueOf(fireworkStyle.toUpperCase())).withFade(Color.PURPLE).build();
-			} catch (Exception ex) {
-				effect = FireworkEffect.builder().flicker(false).trail(false)
-						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).with(Type.BALL_LARGE)
-						.withFade(Color.PURPLE).build();
-				plugin.getLogger()
-						.severe("Error while loading FireworkStyle. Please check your config. Loading default style.");
-			}
-			fireworkMeta.addEffects(effect);
-			firework.setVelocity(player.getLocation().getDirection().multiply(0));
-			firework.setFireworkMeta(fireworkMeta);
+				location.setY(location.getY() - 1);
 
+				Firework firework = player.getWorld().spawn(location, Firework.class);
+				FireworkMeta fireworkMeta = firework.getFireworkMeta();
+				FireworkEffect effect;
+				// Firework style must be one of the following: BALL_LARGE,
+				// BALL,
+				// BURST, CREEPER or STAR.
+				try {
+					effect = FireworkEffect.builder().flicker(false).trail(false)
+							.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))
+							.with(Type.valueOf(fireworkStyle.toUpperCase())).withFade(Color.PURPLE).build();
+				} catch (Exception ex) {
+					effect = FireworkEffect.builder().flicker(false).trail(false)
+							.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).with(Type.BALL_LARGE)
+							.withFade(Color.PURPLE).build();
+					plugin.getLogger().severe(
+							"Error while loading FireworkStyle. Please check your config. Loading default style.");
+				}
+				fireworkMeta.addEffects(effect);
+				firework.setVelocity(player.getLocation().getDirection().multiply(0));
+				firework.setFireworkMeta(fireworkMeta);
+
+			} catch (IllegalArgumentException e) {
+
+				player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_LAUNCH, 1, 0.6f);
+				ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, location, 1);
+				player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_BLAST, 1, 0.6f);
+				player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_TWINKLE, 1, 0.6f);
+			}
 		}
 		if (titleScreen) {
 			try {
-				PacketSender.sendTitlePacket(player, "{text:\"" + name + "\"}", "{text:\"" + msg + "\"}");
+				PacketSender.sendTitlePacket(player, "{\"text\":\"" + name + "\"}", "{\"text\":\"" + msg + "\"}");
 			} catch (Exception ex) {
 
 				plugin.getLogger()

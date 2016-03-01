@@ -75,8 +75,7 @@ public class HelpCommand {
 	public void sendJsonClickableMessage(CommandSender sender, String message, String command) {
 
 		// Build the json format string.
-		String json = "{text:\"" + message + "\",clickEvent:{action:suggest_command,value:\"" + command + "\"}}";
-
+		String json = "{\"text\":\"" + message + "\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"" + command + "\"}}";
 		if (sender instanceof Player)
 			try {
 				PacketSender.sendChatPacket((Player) sender, json);

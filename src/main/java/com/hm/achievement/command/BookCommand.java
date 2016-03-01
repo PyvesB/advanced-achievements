@@ -3,6 +3,7 @@ package com.hm.achievement.command;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -69,10 +70,19 @@ public class BookCommand {
 				} catch (Exception ex) {
 					plugin.getLogger().severe("Error while displaying additional particle effects.");
 				}
-
+			
 			// Play special sound when receiving the book.
-			if (sound)
-				player.getWorld().playSound(player.getLocation(), Sound.LEVEL_UP, 1, 0);
+			if (sound) {
+				// Simple and fast check to compare versions. Might need to be
+				// updated in the future depending on how the Minecraft versions
+				// change in the future.
+				int version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
+				if (version < 9) // Old enum for versions prior to Minecraft
+									// 1.9.
+					player.getWorld().playSound(player.getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
+				else
+					player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 0);
+			}
 
 			ArrayList<String> achievements = plugin.getDb().getPlayerAchievementsList(player);
 
