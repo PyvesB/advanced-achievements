@@ -188,6 +188,7 @@ public class AchieveDistanceRunnable implements Runnable {
 				}
 
 				distance += difference;
+				distancesPig.put(uuid, distance);
 
 				for (int i = 0; i < achievementsPig.length; i++) {
 					if (distance > achievementsPig[i] && !playerAchievementsPig[i].contains(player)) {
