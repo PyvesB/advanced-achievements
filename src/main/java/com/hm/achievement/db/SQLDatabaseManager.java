@@ -217,7 +217,9 @@ public class SQLDatabaseManager {
 			for (int id : ids)
 				// Convert from ID to Material name.
 				materials.add(Material.getMaterial(id).name().toLowerCase());
-			conn.setAutoCommit(false);
+			conn.setAutoCommit(false); // Prevent from doing any commits before
+										// entire transaction is ready.
+			// Create new table.
 			if (!tableName.equals("crafts"))
 				st.execute("CREATE TABLE `tempTable` (" + "playername char(36)," + "blockid varchar(64)," + tableName
 						+ " INT UNSIGNED," + "PRIMARY KEY(`playername`, `blockid`)" + ")");
@@ -225,6 +227,8 @@ public class SQLDatabaseManager {
 				st.execute("CREATE TABLE `tempTable` (" + "playername char(36)," + "item varchar(64),"
 						+ "crafts INT UNSIGNED," + "PRIMARY KEY(`playername`, `item`)" + ")");
 
+			// Populate new table with contents of the old one and material
+			// strings.
 			PreparedStatement prep = conn.prepareStatement("INSERT INTO `tempTable` VALUES (?,?,?);");
 			for (int i = 0; i < uuids.size(); ++i) {
 				prep.setString(1, uuids.get(i));
@@ -237,7 +241,7 @@ public class SQLDatabaseManager {
 
 			st.execute("DROP TABLE `" + tableName + "`");
 			st.execute("ALTER TABLE `tempTable` RENAME TO `" + tableName + "`");
-			conn.commit();
+			conn.commit(); // Commit entire transaction.
 			conn.setAutoCommit(true);
 			st.close();
 			rs.close();

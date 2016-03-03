@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |     Advanced Achievements 2.4 configuration - Readme    | #
+# |    Advanced Achievements 2.4.1 configuration - Readme   | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -145,7 +145,7 @@ Breaks:
   log_2:1:
     '100':
       Message: '&2You have cut dark oak 100 logs!'
-      Name: Wood Cutter
+      Name: Dark Oak Cutter
               
 # When a specific mob is killed (specify mob name or 'player', lower case).
 Kills:
