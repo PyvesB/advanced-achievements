@@ -59,11 +59,11 @@ public class AchieveCraftListener implements Listener {
 
 		int times;
 		if (!DatabasePools.getCraftHashMap().containsKey(player.getUniqueId().toString()))
-			times = plugin.getDb().getCrafts(player, item) + amount;
+			times = plugin.getDb().getCrafts(player, craftName) + amount;
 		else
-			times = DatabasePools.getCraftHashMap().get(player.getUniqueId().toString()) + amount;
+			times = DatabasePools.getCraftHashMap().get(player.getUniqueId().toString() + craftName) + amount;
 
-		DatabasePools.getCraftHashMap().put(player.getUniqueId().toString(), times);
+		DatabasePools.getCraftHashMap().put(player.getUniqueId().toString() + craftName, times);
 		
 		String configAchievement;
 		for (String threshold : plugin.getConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))

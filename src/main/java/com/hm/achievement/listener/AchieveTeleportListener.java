@@ -20,7 +20,8 @@ public class AchieveTeleportListener implements Listener {
 	public void playerTeleport(PlayerTeleportEvent event) {
 
 		// Update location of player if he teleports somewhere else.
-		plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer(), event.getTo());
+		plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer(),
+				event.getTo());
 
 	}
 

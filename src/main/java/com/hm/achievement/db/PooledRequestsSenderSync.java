@@ -104,12 +104,12 @@ public class PooledRequestsSenderSync implements Runnable {
 				st.addBatch("REPLACE INTO `fireworks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getBlockPlaceHashMap().entrySet())
-				st.addBatch("REPLACE INTO `places` VALUES ('" + entry.getKey().substring(0, 36) + "',"
-						+ entry.getKey().substring(36) + ", " + entry.getValue() + ")");
+				st.addBatch("REPLACE INTO `places` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
+						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getBlockBreakHashMap().entrySet())
-				st.addBatch("REPLACE INTO `breaks` VALUES ('" + entry.getKey().substring(0, 36) + "',"
-						+ entry.getKey().substring(36) + ", " + entry.getValue() + ")");
+				st.addBatch("REPLACE INTO `breaks` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
+						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getKillHashMap().entrySet())
 				st.addBatch("REPLACE INTO `kills` VALUES ('" + entry.getKey().substring(0, 36) + "', '"

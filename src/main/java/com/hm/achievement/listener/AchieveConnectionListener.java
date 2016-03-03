@@ -1,10 +1,11 @@
 package com.hm.achievement.listener;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,14 +19,19 @@ public class AchieveConnectionListener implements Listener {
 
 	private AdvancedAchievements plugin;
 
-	private HashMap<Player, Long> joinTime;
-	private HashMap<Player, Long> playTime;
+	private Map<String, Long> joinTime;
+	private Map<String, Long> playTime;
 
 	public AchieveConnectionListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-		joinTime = new HashMap<Player, Long>();
-		playTime = new HashMap<Player, Long>();
+		if (plugin.isAsyncPooledRequestsSender()) {
+			joinTime = new ConcurrentHashMap<String, Long>();
+			playTime = new ConcurrentHashMap<String, Long>();
+		} else {
+			joinTime = new HashMap<String, Long>();
+			playTime = new HashMap<String, Long>();
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -46,9 +52,10 @@ public class AchieveConnectionListener implements Listener {
 		// If player doesn't have permissions, no need to store data.
 		if (plugin.getAchievePlayTimeRunnable() != null
 				&& event.getPlayer().hasPermission("achievement.count.playedtime")) {
-			plugin.getConnectionListener().getJoinTime().put(event.getPlayer(), System.currentTimeMillis());
-			plugin.getConnectionListener().getPlayTime().put(event.getPlayer(),
-					plugin.getDb().updateAndGetPlaytime(event.getPlayer(), 0L));
+			plugin.getConnectionListener().getJoinTime().put(event.getPlayer().getUniqueId().toString(),
+					System.currentTimeMillis());
+			plugin.getConnectionListener().getPlayTime().put(event.getPlayer().getUniqueId().toString(),
+					plugin.getDb().updateAndGetPlaytime(event.getPlayer().getUniqueId().toString(), 0L));
 		}
 
 		// Schedule delayed task to check if player has a new Connections
@@ -59,12 +66,12 @@ public class AchieveConnectionListener implements Listener {
 
 	}
 
-	public HashMap<Player, Long> getJoinTime() {
+	public Map<String, Long> getJoinTime() {
 
 		return joinTime;
 	}
 
-	public HashMap<Player, Long> getPlayTime() {
+	public Map<String, Long> getPlayTime() {
 
 		return playTime;
 	}

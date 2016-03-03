@@ -62,7 +62,7 @@ import com.hm.achievement.runnable.AchievePlayTimeRunnable;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 2.4
+ * @version 2.4.1
  * @author DarkPyves
  */
 
@@ -797,27 +797,28 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Send remaining stats for pooled events to the database.
 		new PooledRequestsSenderSync(this, false).sendRequests();
 
-		// Send played time stats to the database.
+		// Send played time stats to the database, forcing synchronous writes.
 		if (achievePlayTimeRunnable != null)
-			for (Entry<Player, Long> entry : connectionListener.getPlayTime().entrySet())
+			for (Entry<String, Long> entry : connectionListener.getPlayTime().entrySet())
 				this.getDb().updateAndGetPlaytime(entry.getKey(), entry.getValue() + System.currentTimeMillis()
 						- connectionListener.getJoinTime().get(entry.getKey()));
 
-		// Send traveled distance stats to the database.
+		// Send traveled distance stats to the database, forcing synchronous
+		// writes.
 		if (achieveDistanceRunnable != null) {
-			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesFoot().entrySet())
+			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesFoot().entrySet())
 				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distancefoot");
 
-			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesPig().entrySet())
+			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesPig().entrySet())
 				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distancepig");
 
-			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesHorse().entrySet())
+			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesHorse().entrySet())
 				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distancehorse");
 
-			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesBoat().entrySet())
+			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesBoat().entrySet())
 				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distanceboat");
 
-			for (Entry<Player, Integer> entry : achieveDistanceRunnable.getAchievementDistancesMinecart().entrySet())
+			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesMinecart().entrySet())
 				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distanceminecart");
 		}
 

@@ -179,15 +179,15 @@ public class PooledRequestsSenderAsync implements Runnable {
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getBlockPlaceHashMap().entrySet()) {
-				st.execute("REPLACE INTO `places` VALUES ('" + entry.getKey().substring(0, 36) + "',"
-						+ entry.getKey().substring(36) + ", " + entry.getValue() + ")");
+				st.execute("REPLACE INTO `places` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
+						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 				((ConcurrentHashMap<String, Integer>) DatabasePools.getBlockPlaceHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : DatabasePools.getBlockBreakHashMap().entrySet()) {
-				st.execute("REPLACE INTO `breaks` VALUES ('" + entry.getKey().substring(0, 36) + "',"
-						+ entry.getKey().substring(36) + ", " + entry.getValue() + ")");
+				st.execute("REPLACE INTO `breaks` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
+						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 				((ConcurrentHashMap<String, Integer>) DatabasePools.getBlockBreakHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,9 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.bukkit.block.Block;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
 
@@ -68,6 +68,29 @@ public class SQLDatabaseManager {
 			plugin.setSuccessfulLoad(false);
 		}
 
+		// Check if using old database prior to version 2.4.1.
+		String type = "";
+		try {
+			Connection conn = getSQLConnection();
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT `blockid` FROM `breaks`");
+			type = rs.getMetaData().getColumnTypeName(1);
+			st.close();
+			rs.close();
+
+		} catch (SQLException e) {
+			plugin.getLogger().severe("SQL error while trying to update old DB: " + e);
+		}
+
+		// Old column type was integer for SQLite and smallint unsigned for
+		// MySQL.
+		if (type.equalsIgnoreCase("integer") || type.equalsIgnoreCase("smallint unsigned")) {
+			plugin.getLogger().warning("Updating database tables, please wait...");
+			updateOldDB("breaks");
+			updateOldDB("crafts");
+			updateOldDB("places");
+		}
+
 	}
 
 	/**
@@ -95,18 +118,17 @@ public class SQLDatabaseManager {
 	private void initialiseTables() throws SQLException {
 
 		Statement st = sqlConnection.createStatement();
-		// Update old database versions.
+
 		st.addBatch("CREATE TABLE IF NOT EXISTS `achievements` (" + "playername char(36)," + "achievement varchar(64),"
-				+ "description varchar(128)," + "date varchar(10)," + "PRIMARY KEY (`playername`, `achievement`)"
-				+ ")");
-		st.addBatch("CREATE TABLE IF NOT EXISTS `breaks` (" + "playername char(36)," + "blockid SMALLINT UNSIGNED,"
+				+ "description varchar(128)," + "date char(10)," + "PRIMARY KEY (`playername`, `achievement`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `breaks` (" + "playername char(36)," + "blockid varchar(32),"
 				+ "breaks INT UNSIGNED," + "PRIMARY KEY(`playername`, `blockid`)" + ")");
-		st.addBatch("CREATE TABLE IF NOT EXISTS `places` (" + "playername char(36)," + "blockid SMALLINT UNSIGNED,"
+		st.addBatch("CREATE TABLE IF NOT EXISTS `places` (" + "playername char(36)," + "blockid varchar(32),"
 				+ "places INT UNSIGNED," + "PRIMARY KEY(`playername`, `blockid`)" + ")");
 		st.addBatch("CREATE TABLE IF NOT EXISTS `kills` (" + "playername char(36)," + "mobname varchar(32),"
 				+ "kills INT UNSIGNED," + "PRIMARY KEY (`playername`, `mobname`)" + ")");
-		st.addBatch("CREATE TABLE IF NOT EXISTS `crafts` (" + "playername char(36)," + "item SMALLINT UNSIGNED,"
-				+ "times INT UNSIGNED," + "PRIMARY KEY (`playername`, `item`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `crafts` (" + "playername char(36)," + "item varchar(32),"
+				+ "crafts INT UNSIGNED," + "PRIMARY KEY (`playername`, `item`)" + ")");
 		st.addBatch("CREATE TABLE IF NOT EXISTS `deaths` (" + "playername char(36)," + "deaths INT UNSIGNED,"
 				+ "PRIMARY KEY (`playername`)" + ")");
 		st.addBatch("CREATE TABLE IF NOT EXISTS `arrows` (" + "playername char(36)," + "arrows INT UNSIGNED,"
@@ -167,6 +189,62 @@ public class SQLDatabaseManager {
 		st.executeBatch();
 		st.close();
 
+	}
+
+	/**
+	 * Update the database tables for break, craft and place achievements (from
+	 * int to varchar for identification column). The tables are now using
+	 * material names and no longer item IDs, which are deprecated; this also
+	 * allows to store extra data information, extending the number of items
+	 * available for the user.
+	 */
+	@SuppressWarnings("deprecation")
+	private void updateOldDB(String tableName) {
+
+		try {
+			Connection conn = getSQLConnection();
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT * FROM `" + tableName + "`");
+			ArrayList<String> uuids = new ArrayList<String>();
+			ArrayList<Integer> ids = new ArrayList<Integer>();
+			ArrayList<Integer> amounts = new ArrayList<Integer>();
+			ArrayList<String> materials = new ArrayList<String>();
+			while (rs.next()) {
+				uuids.add(rs.getString(1));
+				ids.add(rs.getInt(2));
+				amounts.add(rs.getInt(3));
+			}
+			for (int id : ids)
+				// Convert from ID to Material name.
+				materials.add(Material.getMaterial(id).name().toLowerCase());
+			conn.setAutoCommit(false);
+			if (!tableName.equals("crafts"))
+				st.execute("CREATE TABLE `tempTable` (" + "playername char(36)," + "blockid varchar(64)," + tableName
+						+ " INT UNSIGNED," + "PRIMARY KEY(`playername`, `blockid`)" + ")");
+			else
+				st.execute("CREATE TABLE `tempTable` (" + "playername char(36)," + "item varchar(64),"
+						+ "crafts INT UNSIGNED," + "PRIMARY KEY(`playername`, `item`)" + ")");
+
+			PreparedStatement prep = conn.prepareStatement("INSERT INTO `tempTable` VALUES (?,?,?);");
+			for (int i = 0; i < uuids.size(); ++i) {
+				prep.setString(1, uuids.get(i));
+				prep.setString(2, materials.get(i));
+				prep.setInt(3, amounts.get(i));
+				prep.addBatch();
+			}
+
+			prep.executeBatch();
+
+			st.execute("DROP TABLE `" + tableName + "`");
+			st.execute("ALTER TABLE `tempTable` RENAME TO `" + tableName + "`");
+			conn.commit();
+			conn.setAutoCommit(true);
+			st.close();
+			rs.close();
+
+		} catch (SQLException e) {
+			plugin.getLogger().severe("SQL error while updating old DB: " + e);
+		}
 	}
 
 	/**
@@ -249,15 +327,14 @@ public class SQLDatabaseManager {
 	/**
 	 * Get number of player's places for a specific block.
 	 */
-	@SuppressWarnings("deprecation")
-	public int getPlaces(Player player, Block block) {
+	public int getPlaces(Player player, String block) {
 
 		try {
 			Connection conn = getSQLConnection();
 			int blockBreaks = 0;
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery("SELECT places FROM `places` WHERE playername = '" + player.getUniqueId()
-					+ "' AND blockid = " + block.getTypeId() + "");
+					+ "' AND blockid = '" + block + "'");
 			while (rs.next()) {
 				blockBreaks = rs.getInt("places");
 			}
@@ -275,15 +352,14 @@ public class SQLDatabaseManager {
 	/**
 	 * Get number of player's breaks for a specific block.
 	 */
-	@SuppressWarnings("deprecation")
-	public int getBreaks(Player player, Block block) {
+	public int getBreaks(Player player, String block) {
 
 		try {
 			Connection conn = getSQLConnection();
 			int blockBreaks = 0;
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery("SELECT breaks FROM `breaks` WHERE playername = '" + player.getUniqueId()
-					+ "' AND blockid = " + block.getTypeId());
+					+ "' AND blockid = '" + block + "'");
 			while (rs.next()) {
 				blockBreaks = rs.getInt("breaks");
 			}
@@ -296,6 +372,31 @@ public class SQLDatabaseManager {
 			plugin.getLogger().severe("SQL error while retrieving block break stats: " + e);
 			return 0;
 		}
+	}
+
+	/**
+	 * Increment and return value of a specific craft achievement statistic.
+	 */
+	public int getCrafts(Player player, String item) {
+
+		try {
+			Connection conn = getSQLConnection();
+			int itemCrafts = 0;
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT crafts FROM `crafts` WHERE playername = '" + player.getUniqueId()
+					+ "' AND item = '" + item + "'");
+			while (rs.next()) {
+				itemCrafts = rs.getInt("crafts");
+			}
+			st.close();
+			rs.close();
+
+			return itemCrafts;
+		} catch (SQLException e) {
+			plugin.getLogger().severe("SQL error while handling craft event: " + e);
+			return 0;
+		}
+
 	}
 
 	/**
@@ -520,32 +621,6 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Increment and return value of a specific craft achievement statistic.
-	 */
-	@SuppressWarnings("deprecation")
-	public int getCrafts(Player player, ItemStack item) {
-
-		try {
-			Connection conn = getSQLConnection();
-			int itemCrafts = 0;
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT times FROM `crafts` WHERE playername = '" + player.getUniqueId()
-					+ "' AND item = " + item.getTypeId());
-			while (rs.next()) {
-				itemCrafts = rs.getInt("times");
-			}
-			st.close();
-			rs.close();
-
-			return itemCrafts;
-		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while handling craft event: " + e);
-			return 0;
-		}
-
-	}
-
-	/**
 	 * Get the amount of a normal achievement statistic.
 	 */
 	public int getNormalAchievementAmount(Player player, String table) {
@@ -608,17 +683,16 @@ public class SQLDatabaseManager {
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery(
-					"SELECT connections FROM `connections` WHERE playername = '" + name + "'");
+			ResultSet rs = st.executeQuery("SELECT connections FROM `connections` WHERE playername = '" + name + "'");
 			int prev = 0;
 			while (rs.next()) {
 				prev = rs.getInt("connections");
 			}
 			final int newConnections = prev + 1;
 			if (!plugin.isAsyncPooledRequestsSender())
-				st.execute("REPLACE INTO `connections` VALUES ('" + name + "', " + newConnections
-						+ ", '" + date + "')");
-			else{
+				st.execute(
+						"REPLACE INTO `connections` VALUES ('" + name + "', " + newConnections + ", '" + date + "')");
+			else {
 				new Thread() { // Avoid using Bukkit API scheduler, as a
 					// reload/restart could kill the async task before
 					// write to database has occured.
@@ -630,8 +704,8 @@ public class SQLDatabaseManager {
 						Statement st;
 						try {
 							st = conn.createStatement();
-							st.execute("REPLACE INTO `connections` VALUES ('" + name + "', " + newConnections
-									+ ", '" + date + "')");
+							st.execute("REPLACE INTO `connections` VALUES ('" + name + "', " + newConnections + ", '"
+									+ date + "')");
 							st.close();
 						} catch (SQLException e) {
 							plugin.getLogger().severe("SQL error while handling connection event on async task: " + e);
@@ -653,9 +727,8 @@ public class SQLDatabaseManager {
 	/**
 	 * Update and return player's playtime.
 	 */
-	public long updateAndGetPlaytime(Player player, final long time) {
+	public long updateAndGetPlaytime(String name, long time) {
 
-		final String name = player.getUniqueId().toString();
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
@@ -667,33 +740,10 @@ public class SQLDatabaseManager {
 					newPlayedTime = rs.getLong("playedtime");
 				}
 				rs.close();
-			} else if (!plugin.isAsyncPooledRequestsSender()) {
+			} else {
 				st.execute("REPLACE INTO `playedtime` VALUES ('" + name + "', " + time + ")");
 			}
 			st.close();
-
-			// Write asynchronously to database using a new statement.
-			if (time != 0 && plugin.isAsyncPooledRequestsSender()) {
-				new Thread() { // Avoid using Bukkit API scheduler, as a
-					// reload/restart could kill the async task before
-					// write to database has occured.
-
-					@Override
-					public void run() {
-
-						Connection conn = getSQLConnection();
-						Statement st;
-						try {
-							st = conn.createStatement();
-							st.execute("REPLACE INTO `playedtime` VALUES ('" + name + "', " + time + ")");
-							st.close();
-						} catch (SQLException e) {
-							plugin.getLogger()
-									.severe("SQL error while handling play time registration on async task: " + e);
-						}
-					}
-				}.start();
-			}
 
 			return newPlayedTime;
 		} catch (SQLException e) {
@@ -706,9 +756,8 @@ public class SQLDatabaseManager {
 	/**
 	 * Update and return player's distance for a specific distance type.
 	 */
-	public int updateAndGetDistance(Player player, final int distance, final String type) {
+	public int updateAndGetDistance(String name, int distance, String type) {
 
-		final String name = player.getUniqueId().toString();
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
@@ -720,34 +769,11 @@ public class SQLDatabaseManager {
 					newDistance = rs.getInt(type);
 				}
 				rs.close();
-			} else if (!plugin.isAsyncPooledRequestsSender()) {
-				// Write synchronously to database using same statement.
+			} else {
 				st.execute("REPLACE INTO `" + type + "` VALUES ('" + name + "', " + distance + ")");
 			}
 			st.close();
 
-			// Write asynchronously to database using a new statement.
-			if (distance != 0 && plugin.isAsyncPooledRequestsSender()) {
-				new Thread() { // Avoid using Bukkit API scheduler, as a
-					// reload/restart could kill the async task before
-					// write to database has occured.
-
-					@Override
-					public void run() {
-
-						Connection conn = getSQLConnection();
-						Statement st;
-						try {
-							st = conn.createStatement();
-							st.execute("REPLACE INTO `" + type + "` VALUES ('" + name + "', " + distance + ")");
-							st.close();
-						} catch (SQLException e) {
-							plugin.getLogger()
-									.severe("SQL error while handling " + type + " registration on async task: " + e);
-						}
-					}
-				}.start();
-			}
 			return newDistance;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while handling " + type + " registration: " + e);

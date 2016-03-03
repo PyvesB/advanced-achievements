@@ -2,6 +2,7 @@ package com.hm.achievement.listener;
 
 import java.util.HashSet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,6 +24,8 @@ public class AchieveQuitListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 
+		final String playerUUID = event.getPlayer().getUniqueId().toString();
+
 		// Clean HashMaps for commands.
 		plugin.getAchievementBookCommand().getPlayers().remove(event.getPlayer());
 		plugin.getAchievementListCommand().getPlayers().remove(event.getPlayer());
@@ -42,44 +45,108 @@ public class AchieveQuitListener implements Listener {
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
 
 			// Update database statistics for distances and clean HashMaps.
+			if (plugin.isAsyncPooledRequestsSender()) {
+				Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
-			Integer distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot()
-					.remove(event.getPlayer());
-			if (distance != null)
-				plugin.getDb().updateAndGetDistance(event.getPlayer(), distance, "distancefoot");
+					@Override
+					public void run() {
 
-			distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().remove(event.getPlayer());
-			if (distance != null)
-				plugin.getDb().updateAndGetDistance(event.getPlayer(), distance, "distancepig");
+						// Items must be removed from HashMaps after write to DB
+						// has finished in order to invalidate any data read in
+						// the meantime if the player reconnects (possible as
+						// this is an async task).
+						Integer distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot()
+								.get(playerUUID);
+						if (distance != null)
+							plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancefoot");
+						plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().remove(playerUUID);
 
-			distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().remove(event.getPlayer());
-			if (distance != null)
-				plugin.getDb().updateAndGetDistance(event.getPlayer(), distance, "distancehorse");
+						distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().get(playerUUID);
+						if (distance != null)
+							plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancepig");
+						plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().remove(playerUUID);
 
-			distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().remove(event.getPlayer());
-			if (distance != null)
-				plugin.getDb().updateAndGetDistance(event.getPlayer(), distance, "distanceboat");
+						distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().get(playerUUID);
+						if (distance != null)
+							plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancehorse");
+						plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().remove(playerUUID);
 
-			distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().remove(event.getPlayer());
-			if (distance != null)
-				plugin.getDb().updateAndGetDistance(event.getPlayer(), distance, "distanceminecart");
+						distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().get(playerUUID);
+						if (distance != null)
+							plugin.getDb().updateAndGetDistance(playerUUID, distance, "distanceboat");
+						plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().remove(playerUUID);
+
+						distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart()
+								.get(playerUUID);
+						if (distance != null)
+							plugin.getDb().updateAndGetDistance(playerUUID, distance, "distanceminecart");
+						plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().remove(playerUUID);
+					}
+				});
+			} else {
+				// Items can be removed from HashMaps directly.
+				Integer distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().remove(playerUUID);
+				if (distance != null)
+					plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancefoot");
+
+				distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesPig().remove(playerUUID);
+				if (distance != null)
+					plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancepig");
+
+				distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse().remove(playerUUID);
+				if (distance != null)
+					plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancehorse");
+
+				distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat().remove(playerUUID);
+				if (distance != null)
+					plugin.getDb().updateAndGetDistance(playerUUID, distance, "distanceboat");
+
+				distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().remove(playerUUID);
+				if (distance != null)
+					plugin.getDb().updateAndGetDistance(playerUUID, distance, "distanceminecart");
+			}
 		}
 
 		if (plugin.getAchievePlayTimeRunnable() != null) {
+			// Update database statistics for played time and clean
+			// HashMaps.
+			if (plugin.isAsyncPooledRequestsSender()) {
 
-			// Update database statistics for played time and clean HashMaps.
+				Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
-			Long playTime = plugin.getConnectionListener().getPlayTime().remove(event.getPlayer());
-			Long joinTime = plugin.getConnectionListener().getJoinTime().remove(event.getPlayer());
+					@Override
+					public void run() {
 
-			if (playTime != null && joinTime != null)
-				plugin.getDb().updateAndGetPlaytime(event.getPlayer(),
-						playTime + System.currentTimeMillis() - joinTime);
+						// Items must be removed from HashMaps after write to DB
+						// has finished in order to invalidate any data read in
+						// the meantime if the player reconnects (possible as
+						// this is an async task).
+						Long playTime = plugin.getConnectionListener().getPlayTime().get(playerUUID);
+						Long joinTime = plugin.getConnectionListener().getJoinTime().get(playerUUID);
+
+						if (playTime != null && joinTime != null)
+							plugin.getDb().updateAndGetPlaytime(playerUUID,
+									playTime + System.currentTimeMillis() - joinTime);
+
+						plugin.getConnectionListener().getPlayTime().remove(playerUUID);
+						plugin.getConnectionListener().getJoinTime().remove(playerUUID);
+					}
+
+				});
+			} else {
+				// Items can be removed from HashMaps directly.
+				Long playTime = plugin.getConnectionListener().getPlayTime().remove(playerUUID);
+				Long joinTime = plugin.getConnectionListener().getJoinTime().remove(playerUUID);
+
+				if (playTime != null && joinTime != null)
+					plugin.getDb().updateAndGetPlaytime(playerUUID, playTime + System.currentTimeMillis() - joinTime);
+
+			}
 
 			for (HashSet<?> playerHashSet : plugin.getAchievePlayTimeRunnable().getPlayerAchievements())
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
 		}
-		
+
 		if (plugin.getXpListener() != null) {
 			for (HashSet<?> playerHashSet : plugin.getXpListener().getPlayerAchievements())
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());

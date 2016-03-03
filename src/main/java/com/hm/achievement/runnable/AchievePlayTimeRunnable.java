@@ -64,15 +64,18 @@ public class AchievePlayTimeRunnable implements Runnable {
 		if (!player.hasPermission("achievement.count.playedtime"))
 			return;
 
+		String uuid = player.getUniqueId().toString();
+
 		// Extra check in case server was reloaded and players did not
-		// reconnect.
-		if (!plugin.getConnectionListener().getJoinTime().containsKey(player)) {
-			plugin.getConnectionListener().getJoinTime().put(player, System.currentTimeMillis());
-			plugin.getConnectionListener().getPlayTime().put(player, plugin.getDb().updateAndGetPlaytime(player, 0L));
+		// reconnect; in that case the values are no longer in HashTables and
+		// must be rewritten.
+		if (!plugin.getConnectionListener().getJoinTime().containsKey(uuid)) {
+			plugin.getConnectionListener().getJoinTime().put(uuid, System.currentTimeMillis());
+			plugin.getConnectionListener().getPlayTime().put(uuid, plugin.getDb().updateAndGetPlaytime(uuid, 0L));
 		} else {
 			for (int i = 0; i < achievementPlayTimes.length; i++) {
-				if (System.currentTimeMillis() - plugin.getConnectionListener().getJoinTime().get(player)
-						+ plugin.getConnectionListener().getPlayTime().get(player) > achievementPlayTimes[i] * 3600000
+				if (System.currentTimeMillis() - plugin.getConnectionListener().getJoinTime().get(uuid)
+						+ plugin.getConnectionListener().getPlayTime().get(uuid) > achievementPlayTimes[i] * 3600000L
 						&& !playerAchievements[i].contains(player)) {
 					if (!plugin.getDb().hasPlayerAchievement(player,
 							plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"))) {

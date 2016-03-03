@@ -28,8 +28,10 @@ public class AchieveBlockPlaceListener implements Listener {
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 		Block block = event.getBlock();
+
 		String blockName = block.getType().name().toLowerCase();
-		if (player.hasPermission("achievement.count.places." + blockName + ":" + block.getData()) && plugin.getConfig().isConfigurationSection("Places." + blockName + ":" + block.getData()))
+		if (player.hasPermission("achievement.count.places." + blockName + ":" + block.getData())
+				&& plugin.getConfig().isConfigurationSection("Places." + blockName + ":" + block.getData()))
 			blockName += ":" + block.getData();
 		else {
 			if (!player.hasPermission("achievement.count.places." + blockName))
@@ -39,13 +41,13 @@ public class AchieveBlockPlaceListener implements Listener {
 		}
 
 		int places = 0;
-		if (!DatabasePools.getBlockPlaceHashMap().containsKey(player.getUniqueId().toString() + block.getTypeId()))
-			places = plugin.getDb().getPlaces(player, block) + 1;
+		if (!DatabasePools.getBlockPlaceHashMap().containsKey(player.getUniqueId().toString() + blockName))
+			places = plugin.getDb().getPlaces(player, blockName) + 1;
 		else
 			// Concatenate player name and block ID to put in HashMap.
-			places = DatabasePools.getBlockPlaceHashMap().get(player.getUniqueId().toString() + block.getTypeId()) + 1;
+			places = DatabasePools.getBlockPlaceHashMap().get(player.getUniqueId().toString() + blockName) + 1;
 
-		DatabasePools.getBlockPlaceHashMap().put(player.getUniqueId().toString() + block.getTypeId(), places);
+		DatabasePools.getBlockPlaceHashMap().put(player.getUniqueId().toString() + blockName, places);
 
 		String configAchievement = "Places." + blockName + '.' + places;
 		if (plugin.getReward().checkAchievement(configAchievement)) {
