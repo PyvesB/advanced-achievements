@@ -83,7 +83,7 @@ public class PooledRequestsSenderSync implements Runnable {
 
 			for (Entry<String, Integer> entry : DatabasePools.getConsumedPotionsHashMap().entrySet())
 				st.addBatch(
-						"REPLACE INTO `consumedPotions` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+						"REPLACE INTO `consumedpotions` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : DatabasePools.getDropHashMap().entrySet())
 				st.addBatch("REPLACE INTO `drops` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");

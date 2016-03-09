@@ -32,7 +32,7 @@ public class AchieveConsumeListener implements Listener {
 				&& player.hasPermission("achievement.count.consumedpotions")) {
 			int consumedPotions;
 			if (!DatabasePools.getConsumedPotionsHashMap().containsKey(player.getUniqueId().toString()))
-				consumedPotions = plugin.getDb().getNormalAchievementAmount(player, "consumedPotions") + 1;
+				consumedPotions = plugin.getDb().getNormalAchievementAmount(player, "consumedpotions") + 1;
 			else
 				consumedPotions = DatabasePools.getConsumedPotionsHashMap().get(player.getUniqueId().toString()) + 1;
 

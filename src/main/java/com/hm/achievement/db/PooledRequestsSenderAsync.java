@@ -137,7 +137,7 @@ public class PooledRequestsSenderAsync implements Runnable {
 
 			for (Entry<String, Integer> entry : DatabasePools.getConsumedPotionsHashMap().entrySet()) {
 				st.execute(
-						"REPLACE INTO `consumedPotions` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+						"REPLACE INTO `consumedpotions` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 				((ConcurrentHashMap<String, Integer>) DatabasePools.getConsumedPotionsHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
