@@ -464,11 +464,11 @@ public class SQLDatabaseManager {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(
-					"SELECT playername, COUNT(*) FROM `achievements` GROUP BY playername ORDER BY COUNT(*) DESC LIMIT "
+					"SELECT playername 'player', COUNT(*) FROM `achievements` GROUP BY playername ORDER BY COUNT(*) DESC LIMIT "
 							+ listLength);
 			ArrayList<String> topList = new ArrayList<String>();
 			while (rs.next()) {
-				topList.add(rs.getString("playername"));
+				topList.add(rs.getString("player"));
 				topList.add("" + rs.getInt("COUNT(*)"));
 			}
 			st.close();
