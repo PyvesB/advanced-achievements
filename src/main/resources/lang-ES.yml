@@ -1,0 +1,96 @@
+#============================================================#
+# +--------------------------------------------------------+ #
+# |       Advanced Achievements Spanish language file       | #
+# |                     By Segysmundo                       | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+configuration-successfully-reloaded: "Configuraci\xf3n recargada satisfactoriamente."
+configuration-reload-failed: "Ha ocurrido un error mientras recargaba la configuraci\xf3\
+  n. Por favor revisa el log para m\xe1s detalles."
+  
+no-permissions: No tienes permiso para hacer eso.
+
+top-achievement: "Top usuarios con m\xe1s logros:"
+player-rank: 'Rango actual:'
+number-achievements: 'Logros recibidos:'
+
+book-received: Has recibido tu libro de logros!
+book-delay: Debes esperar TIME segundos entre cada uso del libro!
+list-delay: Debes esperar TIME segundos entre cada uso del comando list!
+book-name: Logros
+
+player-offline: "El jugador PLAYER est\xe1 desconectado!"
+achievement-already-received: El jugador PLAYER ya ha recibido ese logro!
+achievement-not-found: El logro especificado no ha sido encontrado.
+achievement-given: Logro otorgado!
+achievement-received: 'PLAYER ha recibido el logro:'
+achievement-new: 'Nuevo logro:'
+
+check-achievement-true: PLAYER ha recibido el logro ACH!
+check-achievements-false: PLAYER no ha recibido el logro ACH!
+delete-achievements: El logro ACH ha sido eliminado de PLAYER.
+
+item-reward-received: 'Has recibido un objeto como recompensa:'
+money-reward-received: 'Has recibido: AMOUNT !'
+command-reward: Se ha llevado a cabo el comando reward!
+
+aach-command-book: Recibe tu libro de logros.
+aach-command-stats: Cantidad de logros que has recibido.
+aach-command-list: Muestra logros completados y restantes.
+aach-command-top: Muestra el ranking personal y global.
+aach-command-give: Otorga el logro ACH al jugador &7NAME.
+aach-command-reload: "Recarga la configuraci\xf3n del plugin."
+aach-command-info: "Muestra informaci\xf3n variada del plugin."
+aach-command-check: Comprueba si el jugador NAME &7ha recibido ACH.
+aach-command-delete: Elimina el logro ACH del jugador &7NAME.
+version-command-name: 'Nombre:'
+version-command-version: "Versi\xf3n:"
+version-command-website: "P\xe1gina Web:"
+version-command-author: 'Autor:'
+version-command-description: "Descripci\xf3n:"
+version-command-description-details: "Advanced Achievements habilita logros \xfanicos\
+  \ y desafiantes. Intenta conseguir tantos como puedas, obt\xe9n recompensas, escala\
+  \ en los rankings y recibe libros de Rol!"
+version-command-vault: "Integraci\xf3n Vault:"
+version-command-database: 'Tipo de base de datos:'
+
+list-gui-title: "&5\ufffdLista de Logros"
+list-reward: ' Recompensa:'
+list-reward-money: dinero
+list-reward-item: objeto
+list-reward-command: otro
+list-amount: ' Lvl:'
+list-connections: Conexiones
+list-places: Bloques Colocados
+list-breaks: Bloques Rotos
+list-kills: Entidades Asesinadas
+list-crafts: Objetos Construidos
+list-deaths: "N\xfamero de Muertes"
+list-arrows: Flechas Disparadas
+list-snowballs: Bolas de Nieve Lanzadas
+list-eggs: Huevos Lanzados
+list-fish: Peces Pescados
+list-itembreaks: Objetos Rotos
+list-eatenitems: Objetos Comidos
+list-shear: Ovejas Esquiladas
+list-milk: "Vacas Orde\xf1adas"
+list-trades: "N\xfamero de comercios"
+list-anvils: Yunques Usados
+list-enchantments: Objetos Encantados
+list-beds: Camas Usadas
+list-maxlevel: "Lvl M\xe1ximo Alcanzado"
+list-potions: Pociones Consumidas
+list-distance-foot: Distancia Viajada a Pie
+list-distance-pig: Distancia Viajada en Cerdo
+list-distance-horse: Distancia Viajada a Caballo
+list-distance-minecart: Distancia Viajada en Vagoneta
+list-distance-boat: Distancia Viajada en Barca
+list-itemdrops: Objetos Soltados
+list-hoeplowings: Superficies Cultivadas
+list-fertilising: Plantas Fertilizadas
+list-taming: Animales Domesticados
+list-brewing: Pociones Creadas
+list-fireworks: Fuegos Artificiales Lanzados
+list-commands: Otros Logros
+list-playedtime: Tiempo Jugado
