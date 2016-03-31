@@ -69,7 +69,7 @@ public class AchieveXPListener implements Listener {
 			return;
 
 		for (int i = 0; i < achievementsMaxLevel.length; i++) {
-			if (event.getNewLevel() > achievementsMaxLevel[i] && !playerAchievements[i].contains(player)) {
+			if (event.getNewLevel() >= achievementsMaxLevel[i] && !playerAchievements[i].contains(player)) {
 				if (!plugin.getDb().hasPlayerAchievement(player,
 						plugin.getConfig().getString("MaxLevel." + achievementsMaxLevel[i] + ".Name"))) {
 					plugin.getAchievementDisplay().displayAchievement(player, "MaxLevel." + achievementsMaxLevel[i]);
