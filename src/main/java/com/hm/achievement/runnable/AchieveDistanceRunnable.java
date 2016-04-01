@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Horse;
@@ -149,6 +150,11 @@ public class AchieveDistanceRunnable implements Runnable {
 			return;
 		}
 
+		// If player is in restricted creative mode or is in a blocked world,
+		// don't update distances.
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+			return;
+
 		// Distance difference since last runnable.
 		int difference = (int) previousLocation.distance(player.getLocation());
 
@@ -243,7 +249,7 @@ public class AchieveDistanceRunnable implements Runnable {
 					}
 				}
 			}
-		} else if (player.hasPermission("achievement.count.distancefoot")) {
+		} else if (player.hasPermission("achievement.count.distancefoot") && !player.isFlying()) {
 
 			Integer distance = distancesFoot.get(uuid);
 
