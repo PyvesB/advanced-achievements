@@ -15,19 +15,19 @@ player-rank: 'Rank Atual:'
 number-achievements: 'Achievements received:'
 
 book-received: You received your achievements book!
-book-delay: Você deve esperar TIME segundos entre cada recepção livro!
-list-delay: Você deve esperar TIME segundos entre cada comando lista!
+book-delay: VocÃª deve esperar TIME segundos entre cada recepÃ§Ã£o livro!
+list-delay: VocÃª deve esperar TIME segundos entre cada comando lista!
 book-name: Achievements
 
-player-offline: O jogador PLAYER está offline !
-achievement-already-received: O jogador PLAYER já recebeu essa conquista !
-achievement-not-found: A achievement especificado não foi encontrado .
+player-offline: O jogador PLAYER estÃ¡ offline !
+achievement-already-received: O jogador PLAYER jÃ¡ recebeu essa conquista !
+achievement-not-found: A achievement especificado nÃ£o foi encontrado .
 achievement-given: Achievement dado!
 achievement-received: 'PLAYER recebeu a achievement:'
 achievement-new: 'Nova Conquista:'
 
 check-achievement-true: PLAYER recebeu a achievement ACH!
-check-achievements-false: PLAYER não recebeu a achievement ACH!
+check-achievements-false: PLAYER nÃ£o recebeu a achievement ACH!
 delete-achievements: The achievement ACH was deleted from PLAYER.
 
 item-reward-received: 'Voce recebeu um premio:'
@@ -35,7 +35,7 @@ money-reward-received: 'Voce Recebeu: AMOUNT !'
 command-reward: Comando recompensa realizado !
 
 aach-command-book: Receba o seu livro de achievements
-aach-command-stats: Quantidade de achievements que você recebeu.
+aach-command-stats: Quantidade de achievements que vocÃª recebeu.
 aach-command-list: Display received and missing achievements.
 aach-command-top: Display personal and global rankings.
 aach-command-give: Give achievement ACH to player &7NAME.
@@ -73,13 +73,13 @@ list-itembreaks: Items quebrados
 list-eatenitems: Items Comidos
 list-shear: Ovelhas tosquiadas
 list-milk: Vacas Ordenhadas
-list-trades: Número de Negócios
+list-trades: NÃºmero de NegÃ³cios
 list-anvils: Bigorna usadas
 list-enchantments: Items Encantados
 list-beds: Camas Entroduzidas
-list-maxlevel: Nível Máximo Atingido
+list-maxlevel: NÃ­vel MÃ¡ximo Atingido
 list-potions: Potions Consumidas
-list-distance-foot: Distancia andada a pé
+list-distance-foot: Distancia andada a pÃ©
 list-distance-pig: Distancia andada em um porco
 list-distance-horse: Distancia andada em um cavalo
 list-distance-minecart: Distancia andada em um minecart
@@ -88,7 +88,7 @@ list-itemdrops: Items Dropados
 list-hoeplowings: terras aradas
 list-fertilising: Plantas fertilizadas
 list-taming: Animais domesticados
-list-brewing: Poçoes fabricadas
-list-fireworks: Fogos lançados
+list-brewing: PoÃ§oes fabricadas
+list-fireworks: Fogos lanÃ§ados
 list-commands: Outros Achievements
 list-playedtime: Tempo Jogado

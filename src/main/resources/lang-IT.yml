@@ -9,15 +9,15 @@
 configuration-successfully-reloaded: File di configurazione ricaricata con successo.
 configuration-reload-failed: Errori nel ricaricare il file di configurazione. Controlla il log per ulteriori informazioni.
 no-permissions: Non hai permessi sufficienti.
-top-achievement: 'Persone con più obiettivi:'
+top-achievement: 'Persone con piÃ¹ obiettivi:'
 player-rank: 'Classifica attuale:'
 number-achievements: 'Obiettivo sbloccato:'
 book-received: Hai ricevuto il tuo libro degli obiettivi!
 book-delay: Devi aspettare TIME secondi prima di richiedere un altro libro!
 book-name: Obiettivi
-player-offline: Il giocatore PLAYER è offline!
-achievement-already-received: Il giocatore PLAYER ha già sbloccato questo obiettivo!
-achievement-not-found: L'obiettivo specificato non è stato trovato.
+player-offline: Il giocatore PLAYER Ã¨ offline!
+achievement-already-received: Il giocatore PLAYER ha giÃ  sbloccato questo obiettivo!
+achievement-not-found: L'obiettivo specificato non Ã¨ stato trovato.
 achievement-given: Obiettivo donato!
 achievement-received: 'PLAYER ha sbloccato l'obiettivo:'
 achievement-new: 'Nuovo obiettivo:'
@@ -25,7 +25,7 @@ item-reward-received: Hai ricevuto un oggetto per ricompensa!
 money-reward-received: 'Hai ricevuto: AMOUNT !'
 command-reward: Comando ricompensa eseguito!
 aach-command-book: Ricevi il libro dei tuoi obiettivi.
-aach-command-stats: Quantità di obiettivi che hai sbloccato.
+aach-command-stats: QuantitÃ  di obiettivi che hai sbloccato.
 aach-command-list: Mostra gli obiettivi sbloccati e quelli mancanti.
 aach-command-top: Mostra la classifica personale e quella globale.
 aach-command-give: Dona l'obiettivo ACH al giocatore NAME.
@@ -36,6 +36,6 @@ version-command-version: 'Versione:'
 version-command-website: 'Sito Web:'
 version-command-author: 'Autore:'
 version-command-description: 'Descrizione:'
-version-command-description-details: Advanced Achievements mette a disposizione obiettivi unici e impegnativi. Prova ad ottenerne più che puoi, guadagna ricompense, scala le classifiche e ricevi libri RP!
+version-command-description-details: Advanced Achievements mette a disposizione obiettivi unici e impegnativi. Prova ad ottenerne piÃ¹ che puoi, guadagna ricompense, scala le classifiche e ricevi libri RP!
 version-command-vault: 'Vault integrato:'
 version-command-database: 'Tipo di database:'

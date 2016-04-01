@@ -54,7 +54,7 @@ version-command-description-details: "Advanced Achievements enables unique and c
 version-command-vault: "Vault integration:"
 version-command-database: "Database type:"
 
-list-gui-title: "&5§lAchievements List"
+list-gui-title: "&5Â§lAchievements List"
 list-reward: " Reward:"
 list-reward-money: "money"
 list-reward-item: "item"

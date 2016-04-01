@@ -4,90 +4,90 @@
 # +--------------------------------------------------------+ #
 #============================================================#
 
-configuration-successfully-reloaded: Configuration rechargée avec succès.
-configuration-reload-failed: Erreur(s) lors du rechargement des configurations. Merci de consulter les logs détaillés pour plus d'informations.
+configuration-successfully-reloaded: Configuration rechargÃ©e avec succÃ¨s.
+configuration-reload-failed: Erreur(s) lors du rechargement des configurations. Merci de consulter les logs dÃ©taillÃ©s pour plus d'informations.
 
 no-permissions: Vous n'avez pas la permission de faire cela.
 
-top-achievement: 'Joueurs ayant obtenu le plus de succès :'
+top-achievement: 'Joueurs ayant obtenu le plus de succÃ¨s :'
 player-rank: 'Classement actuel :'
-number-achievements: 'Nombre de succès obtenus :'
+number-achievements: 'Nombre de succÃ¨s obtenus :'
 
-book-received: Vous avez reçu votre livre de succès!
+book-received: Vous avez reÃ§u votre livre de succÃ¨s!
 book-delay: Vous devez attendre TIME secondes entre chaque obtention de livre !
 list-delay: Vous devez attendre TIME secondes entre chaque /aach list !
-book-name: Livre de Succès
+book-name: Livre de SuccÃ¨s
 
 player-offline: Le joueur PLAYER n'est pas en ligne !
-achievement-already-received: Le joueur PLAYER possède déjà ce succès !
-achievement-given: Succès donné !
-achievement-received: 'PLAYER a reçu le succès :'
-achievement-not-found: Succès introuvable. Vérifiez son orthographe.
-achievement-new: 'Nouveau succès :'
+achievement-already-received: Le joueur PLAYER possÃ¨de dÃ©jÃ  ce succÃ¨s !
+achievement-given: SuccÃ¨s donnÃ© !
+achievement-received: 'PLAYER a reÃ§u le succÃ¨s :'
+achievement-not-found: SuccÃ¨s introuvable. VÃ©rifiez son orthographe.
+achievement-new: 'Nouveau succÃ¨s :'
 
-check-achievement-true: PLAYER a reçu le succès ACH!
-check-achievements-false: PLAYER n'a pas reçu ACH!
-delete-achievements: Le succès ACH a été supprimé du joueur PLAYER.
+check-achievement-true: PLAYER a reÃ§u le succÃ¨s ACH!
+check-achievements-false: PLAYER n'a pas reÃ§u ACH!
+delete-achievements: Le succÃ¨s ACH a Ã©tÃ© supprimÃ© du joueur PLAYER.
 
-item-reward-received: 'Vous avez reçu une récompense :'
-money-reward-received: 'Vous avez gagné : AMOUNT !'
-command-reward: Commande de récompense exécutée !
+item-reward-received: 'Vous avez reÃ§u une rÃ©compense :'
+money-reward-received: 'Vous avez gagnÃ© : AMOUNT !'
+command-reward: Commande de rÃ©compense exÃ©cutÃ©e !
 
-aach-command-book: Obtenir votre livre de succès.
-aach-command-stats: Visualiser son nombre total de succès.
-aach-command-top: Afficher le classement des succès.
+aach-command-book: Obtenir votre livre de succÃ¨s.
+aach-command-stats: Visualiser son nombre total de succÃ¨s.
+aach-command-top: Afficher le classement des succÃ¨s.
 aach-command-reload: Recharger la configuration du plugin.
-aach-command-give: Donner le succès ACH au joueur NAME.
-aach-command-info: Afficher des informations à propos du plugin.
-aach-command-list: Afficher les succès reçus et manquants.
-aach-command-check: Vérifier si le joueur NAME a reçu &7le succès ACH.
-aach-command-delete: Supprimer le succès ACH du &7joueur NAME.
+aach-command-give: Donner le succÃ¨s ACH au joueur NAME.
+aach-command-info: Afficher des informations Ã  propos du plugin.
+aach-command-list: Afficher les succÃ¨s reÃ§us et manquants.
+aach-command-check: VÃ©rifier si le joueur NAME a reÃ§u &7le succÃ¨s ACH.
+aach-command-delete: Supprimer le succÃ¨s ACH du &7joueur NAME.
 
 version-command-name: 'Nom :'
 version-command-version: 'Version :'
 version-command-website: 'Site :'
 version-command-author: 'Auteur :'
 version-command-description: 'Description :'
-version-command-description-details: Advanced Achievements ajoute des succès uniques au serveur. Essayez d'en obtenir le plus possible, récoltez des récompenses, montez dans le classement et collectionnez vos livres !
-version-command-vault: 'Intégration avec Vault :'
+version-command-description-details: Advanced Achievements ajoute des succÃ¨s uniques au serveur. Essayez d'en obtenir le plus possible, rÃ©coltez des rÃ©compenses, montez dans le classement et collectionnez vos livres !
+version-command-vault: 'IntÃ©gration avec Vault :'
 version-command-database: 'Type de la BDD :'
 
-list-gui-title: "&5§lListe de Succès"
-list-reward: ' Récompense :'
+list-gui-title: "&5Â§lListe de SuccÃ¨s"
+list-reward: ' RÃ©compense :'
 list-reward-money: POs
 list-reward-item: objet
-list-reward-command: objet spécial
+list-reward-command: objet spÃ©cial
 list-amount: ' Niv. :'
 list-connections: Connexions
-list-places: Blocs Placés
-list-breaks: Blocs Cassés
-list-kills: Entités Tuées
-list-crafts: Objets Fabriqués
+list-places: Blocs PlacÃ©s
+list-breaks: Blocs CassÃ©s
+list-kills: EntitÃ©s TuÃ©es
+list-crafts: Objets FabriquÃ©s
 list-deaths: Nombre de Morts
-list-arrows: Flèches Tirées
-list-snowballs: Boules de Neige Envoyées
-list-eggs: Oeufs Envoyés
-list-fish: Poissons Attrapés
-list-itembreaks: Objets Cassés
-list-eatenitems: Nourriture Avalée
+list-arrows: FlÃ©ches TirÃ©es
+list-snowballs: Boules de Neige EnvoyÃ©es
+list-eggs: Oeufs EnvoyÃ©s
+list-fish: Poissons AttrapÃ©s
+list-itembreaks: Objets CassÃ©s
+list-eatenitems: Nourriture AvalÃ©e
 list-shear: Moutons Tondus
 list-milk: Vaches Traites
 list-trades: Commerce avec Villageois
-list-anvils: Enclumes Utilisées
-list-enchantments: Objets Enchantés
-list-beds: Lits Utilisés
+list-anvils: Enclumes UtilisÃ©es
+list-enchantments: Objets EnchantÃ©s
+list-beds: Lits UtilisÃ©s
 list-maxlevel: Niveau Maximum Atteint
-list-potions: Potions Consommées
-list-distance-foot: Distance Parcourue à Pied
+list-potions: Potions ConsommÃ©es
+list-distance-foot: Distance Parcourue Ã  Pied
 list-distance-pig: Distance Parcourue sur un Cochon
-list-distance-horse: Distance Parcourue à Cheval
+list-distance-horse: Distance Parcourue Ã  Cheval
 list-distance-minecart: Distance Parcourue en Minecart
 list-distance-boat: Distance Parcourue en Bateau
-list-itemdrops: Objets Jetés
-list-hoeplowings: Parcelles Labourées
-list-fertilising: Plantes Fertilisées
+list-itemdrops: Objets JetÃ©s
+list-hoeplowings: Parcelles LabourÃ©es
+list-fertilising: Plantes FertilisÃ©es
 list-playedtime: Time Played
-list-taming: Animaux Domptés
-list-brewing: Potions Préparées
-list-fireworks: Feux d'Artifice Lancés
-list-commands: Autres Succès
+list-taming: Animaux DomptÃ©s
+list-brewing: Potions PrÃ©parÃ©es
+list-fireworks: Feux d'Artifice LancÃ©s
+list-commands: Autres SuccÃ¨s
