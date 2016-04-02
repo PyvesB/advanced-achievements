@@ -124,7 +124,7 @@ public class BookCommand {
 		try {
 			while (i < achievements.size() && i < max) {
 				String currentAchievement = achievements.get(i) + "\n" + bookSeparator + "\n" + achievements.get(i + 1)
-						+ "\n" + bookSeparator + "\n§r" + achievements.get(i + 2);
+						+ "\n" + bookSeparator + "\nÂ§r" + achievements.get(i + 2);
 				currentAchievement = ChatColor.translateAlternateColorCodes('&', "&0" + currentAchievement);
 				pages.add(currentAchievement);
 				i = i + 3;

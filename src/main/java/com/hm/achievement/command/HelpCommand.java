@@ -23,7 +23,7 @@ public class HelpCommand {
 	public void getHelp(CommandSender sender) {
 
 		sender.sendMessage(plugin.getColor() + "-=-=-=-=-=-=-" + ChatColor.GRAY + "[" + plugin.getColor()
-				+ plugin.getIcon() + "§lAdvanced Achievements" + plugin.getColor() + plugin.getIcon() + ChatColor.GRAY
+				+ plugin.getIcon() + "Â§lAdvanced Achievements" + plugin.getColor() + plugin.getIcon() + ChatColor.GRAY
 				+ "]" + plugin.getColor() + "-=-=-=-=-=-=-");
 
 		sendJsonClickableMessage(sender, plugin.getChatHeader() + plugin.getColor() + "/aach book" + ChatColor.GRAY
@@ -39,21 +39,21 @@ public class HelpCommand {
 				+ " - " + Lang.AACH_COMMAND_TOP, "/aach top");
 
 		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach give §oach name§r"
+				plugin.getChatHeader() + plugin.getColor() + "/aach give Â§oach nameÂ§r"
 						+ ChatColor.GRAY + " - " + ChatColor.translateAlternateColorCodes('&', Lang.AACH_COMMAND_GIVE
-								.toString().replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+								.toString().replace("ACH", "Â§oachÂ§r&7").replace("NAME", "Â§onameÂ§r&7")),
 				"/aach give ach name");
 
 		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach check §oach name§r"
+				plugin.getChatHeader() + plugin.getColor() + "/aach check Â§oach nameÂ§r"
 						+ ChatColor.GRAY + " - " + ChatColor.translateAlternateColorCodes('&', Lang.AACH_COMMAND_CHECK
-								.toString().replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+								.toString().replace("ACH", "Â§oachÂ§r&7").replace("NAME", "Â§onameÂ§r&7")),
 				"/aach check ach name");
 
 		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach delete §oach name§r"
+				plugin.getChatHeader() + plugin.getColor() + "/aach delete Â§oach nameÂ§r"
 						+ ChatColor.GRAY + " - " + ChatColor.translateAlternateColorCodes('&', Lang.AACH_COMMAND_DELETE
-								.toString().replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+								.toString().replace("ACH", "Â§oachÂ§r&7").replace("NAME", "Â§onameÂ§r&7")),
 				"/aach delete ach name");
 
 		sendJsonClickableMessage(sender, plugin.getChatHeader() + plugin.getColor() + "/aach reload" + ChatColor.GRAY

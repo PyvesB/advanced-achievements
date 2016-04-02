@@ -231,30 +231,30 @@ public class ListCommand {
 		if (number == normalAchievementTypesLanguage.length - 1) {
 			// Display reward with obfuscate effect.
 			if (reward.length() != 0 && obfuscateNotReceived)
-				return "&8§k" + name + " |" + Lang.LIST_REWARD + " " + reward;
+				return "&8Â§k" + name + " |" + Lang.LIST_REWARD + " " + reward;
 			// Display reward without obfuscate effect.
 			else if (reward.length() != 0 && !obfuscateNotReceived)
-				return "&8§o" + name + " |" + Lang.LIST_REWARD + " " + reward;
+				return "&8Â§o" + name + " |" + Lang.LIST_REWARD + " " + reward;
 			// Display obfuscate effect without reward.
 			else if (obfuscateNotReceived)
-				return "&8§k" + name;
+				return "&8Â§k" + name;
 			// Display no reward and no obfuscate effect.
 			else
-				return "&8§o" + name;
+				return "&8Â§o" + name;
 		}
 
 		// Display reward with obfuscate effect.
 		if (reward.length() != 0 && obfuscateNotReceived)
-			return "&8§k" + name + " |" + Lang.LIST_AMOUNT + " " + level + " |" + Lang.LIST_REWARD + " " + reward;
+			return "&8Â§k" + name + " |" + Lang.LIST_AMOUNT + " " + level + " |" + Lang.LIST_REWARD + " " + reward;
 		// Display reward without obfuscate effect.
 		else if (reward.length() != 0 && !obfuscateNotReceived)
-			return "&8§o" + name + " |" + Lang.LIST_AMOUNT + " " + level + " |" + Lang.LIST_REWARD + " " + reward;
+			return "&8Â§o" + name + " |" + Lang.LIST_AMOUNT + " " + level + " |" + Lang.LIST_REWARD + " " + reward;
 		// Display obfuscate effect without reward.
 		else if (obfuscateNotReceived)
-			return "&8§k" + name + " |" + Lang.LIST_AMOUNT + " " + level;
+			return "&8Â§k" + name + " |" + Lang.LIST_AMOUNT + " " + level;
 		// Display no reward and no obfuscate effect.
 		else
-			return "&8§o" + name + " |" + Lang.LIST_AMOUNT + " " + level;
+			return "&8Â§o" + name + " |" + Lang.LIST_AMOUNT + " " + level;
 
 	}
 
