@@ -10,7 +10,6 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import com.hm.achievement.language.Lang;
 import com.hm.achievement.particle.PacketSender;
 import com.hm.achievement.particle.ParticleEffect;
 
@@ -25,10 +24,10 @@ public class AchievementDisplay {
 	public AchievementDisplay(AdvancedAchievements achievement) {
 
 		this.plugin = achievement;
-		fireworkStyle = plugin.getConfig().getString("FireworkStyle", "BALL_LARGE");
-		firework = plugin.getConfig().getBoolean("Firework", true);
-		chatNotify = plugin.getConfig().getBoolean("ChatNotify", false);
-		titleScreen = plugin.getConfig().getBoolean("TitleScreen", true);
+		fireworkStyle = plugin.getPluginConfig().getString("FireworkStyle", "BALL_LARGE");
+		firework = plugin.getPluginConfig().getBoolean("Firework", true);
+		chatNotify = plugin.getPluginConfig().getBoolean("ChatNotify", false);
+		titleScreen = plugin.getPluginConfig().getBoolean("TitleScreen", true);
 	}
 
 	/**
@@ -38,22 +37,24 @@ public class AchievementDisplay {
 	public void displayAchievement(Player player, String configAchievement) {
 
 		String name = ChatColor.translateAlternateColorCodes('&',
-				plugin.getConfig().getString(configAchievement + ".Name"));
+				plugin.getPluginConfig().getString(configAchievement + ".Name"));
 		String msg = ChatColor.translateAlternateColorCodes('&',
-				plugin.getConfig().getString(configAchievement + ".Message"));
+				plugin.getPluginConfig().getString(configAchievement + ".Message"));
 
 		plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + name);
 
-		player.sendMessage(plugin.getChatHeader() + Lang.ACHIEVEMENT_NEW + " " + ChatColor.WHITE + name);
+		player.sendMessage(
+				plugin.getChatHeader() + plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " "
+						+ ChatColor.WHITE + name);
 
 		// Notify other online players that the player has received an
 		// achievement.
 		if (chatNotify) {
 			for (Player p : plugin.getServer().getOnlinePlayers()) {
 				if (!p.getName().equals(player.getName())) {
-					p.sendMessage(plugin.getChatHeader()
-							+ Lang.ACHIEVEMENT_RECEIVED.toString().replace("PLAYER", player.getName()) + " "
-							+ ChatColor.WHITE + name);
+					p.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
+							.getString("achievement-received", "PLAYER received the achievement:")
+							.replace("PLAYER", player.getName()) + " " + ChatColor.WHITE + name);
 
 				}
 			}

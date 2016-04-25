@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.language.Lang;
 
 public class GiveCommand implements Listener {
 
@@ -16,7 +15,7 @@ public class GiveCommand implements Listener {
 	public GiveCommand(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-		multiCommand = plugin.getConfig().getBoolean("MultiCommand", true);
+		multiCommand = plugin.getPluginConfig().getBoolean("MultiCommand", true);
 	}
 
 	/**
@@ -38,7 +37,8 @@ public class GiveCommand implements Listener {
 		// If player not found or is offline.
 		if (player == null) {
 
-			sender.sendMessage(plugin.getChatHeader() + Lang.PLAYER_OFFLINE.toString().replaceAll("PLAYER", args[2]));
+			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
+					.getString("player-offline", "The player PLAYER is offline!").replaceAll("PLAYER", args[2]));
 
 			return;
 		}
@@ -47,22 +47,27 @@ public class GiveCommand implements Listener {
 			// Check whether player has already received achievement and cannot
 			// receive it again.
 			if (!multiCommand && plugin.getDb().hasPlayerAchievement(player,
-					plugin.getConfig().getString(configAchievement + ".Name"))) {
+					plugin.getPluginConfig().getString(configAchievement + ".Name"))) {
 
-				sender.sendMessage(plugin.getChatHeader()
-						+ Lang.ACHIEVEMENT_ALREADY_RECEIVED.toString().replace("PLAYER", args[2]));
+				sender.sendMessage(
+						plugin.getChatHeader() + plugin.getPluginLang()
+								.getString("achievement-already-received",
+										"The player PLAYER has already received this achievement!")
+								.replace("PLAYER", args[2]));
 				return;
 			}
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig().getString(configAchievement + ".Message"));
+			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
+					plugin.getPluginConfig().getString(configAchievement + ".Message"));
 			plugin.getReward().checkConfig(player, configAchievement);
 
-			sender.sendMessage(plugin.getChatHeader() + Lang.ACHIEVEMENT_GIVEN);
+			sender.sendMessage(plugin.getChatHeader()
+					+ plugin.getPluginLang().getString("achievement-given", "Achievement given!"));
 		} else {
-			sender.sendMessage(
-					plugin.getChatHeader() + Lang.ACHIEVEMENT_NOT_FOUND.toString().replace("PLAYER", args[2]));
+			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
+					.getString("achievement-not-found", "The specified achievement was not found.")
+					.replace("PLAYER", args[2]));
 		}
 	}
 }

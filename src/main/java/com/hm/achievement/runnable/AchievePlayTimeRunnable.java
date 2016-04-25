@@ -30,9 +30,9 @@ public class AchievePlayTimeRunnable implements Runnable {
 	 */
 	public void extractAchievementsFromConfig(AdvancedAchievements plugin) {
 
-		achievementPlayTimes = new int[plugin.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size()];
+		achievementPlayTimes = new int[plugin.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false).size()];
 		int i = 0;
-		for (String playedTime : plugin.getConfig().getConfigurationSection("PlayedTime").getKeys(false)) {
+		for (String playedTime : plugin.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false)) {
 			achievementPlayTimes[i] = Integer.valueOf(playedTime);
 			i++;
 		}
@@ -78,13 +78,13 @@ public class AchievePlayTimeRunnable implements Runnable {
 						+ plugin.getConnectionListener().getPlayTime().get(uuid) > achievementPlayTimes[i] * 3600000L
 						&& !playerAchievements[i].contains(player)) {
 					if (!plugin.getDb().hasPlayerAchievement(player,
-							plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"))) {
+							plugin.getPluginConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"))) {
 
 						plugin.getAchievementDisplay().displayAchievement(player,
 								"PlayedTime." + achievementPlayTimes[i]);
 						plugin.getDb().registerAchievement(player,
-								plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"),
-								plugin.getConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Message"));
+								plugin.getPluginConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Name"),
+								plugin.getPluginConfig().getString("PlayedTime." + achievementPlayTimes[i] + ".Message"));
 						plugin.getReward().checkConfig(player, "PlayedTime." + achievementPlayTimes[i]);
 
 					}

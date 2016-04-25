@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.language.Lang;
 
 public class DeleteCommand implements Listener {
 
@@ -44,16 +43,19 @@ public class DeleteCommand implements Listener {
 		if (player == null) {
 
 			sender.sendMessage(plugin.getChatHeader()
-					+ Lang.PLAYER_OFFLINE.toString().replaceAll("PLAYER", args[args.length - 1]));
+					+ plugin.getPluginLang().getString("player-offline", "The player PLAYER is offline!")
+							.replaceAll("PLAYER", args[args.length - 1]));
 			return;
 		}
 
 		if (!plugin.getDb().hasPlayerAchievement(player, achievementName))
-			sender.sendMessage(plugin.getChatHeader() + Lang.CHECK_ACHIEVEMENT_FALSE.toString()
+			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
+					.getString("check-achievements-false", "PLAYER has not received the achievement ACH!")
 					.replaceAll("PLAYER", args[args.length - 1]).replaceAll("ACH", achievementName));
 		else {
 			plugin.getDb().deletePlayerAchievement(player, achievementName);
-			sender.sendMessage(plugin.getChatHeader() + Lang.DELETE_ACHIEVEMENT.toString()
+			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
+					.getString("delete-achievements", "The achievement ACH was deleted from PLAYER.")
 					.replaceAll("PLAYER", args[args.length - 1]).replaceAll("ACH", achievementName));
 		}
 	}

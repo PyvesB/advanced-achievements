@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.language.Lang;
 
 public class StatsCommand {
 
@@ -16,10 +15,10 @@ public class StatsCommand {
 		this.plugin = plugin;
 		// Calculate the total number of achievements in the config file.
 		for (String type : AdvancedAchievements.NORMAL_ACHIEVEMENTS)
-			totalAchievements += plugin.getConfig().getConfigurationSection(type).getKeys(false).size();
+			totalAchievements += plugin.getPluginConfig().getConfigurationSection(type).getKeys(false).size();
 		for (String type : AdvancedAchievements.MULTIPLE_ACHIEVEMENTS)
-			for (String item : plugin.getConfig().getConfigurationSection(type).getKeys(false))
-				totalAchievements += plugin.getConfig().getConfigurationSection(type + '.' + item).getKeys(false)
+			for (String item : plugin.getPluginConfig().getConfigurationSection(type).getKeys(false))
+				totalAchievements += plugin.getPluginConfig().getConfigurationSection(type + '.' + item).getKeys(false)
 						.size();
 	}
 
@@ -32,8 +31,9 @@ public class StatsCommand {
 		int achievements = plugin.getDb().getPlayerAchievementsAmount(player);
 
 		// Display number of achievements received and total achievements.
-		player.sendMessage(plugin.getChatHeader() + Lang.NUMBER_ACHIEVEMENTS + " " + plugin.getColor() + achievements
-				+ ChatColor.GRAY + "/" + plugin.getColor() + totalAchievements);
+		player.sendMessage(plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("number-achievements", "Achievements received:") + " "
+				+ plugin.getColor() + achievements + ChatColor.GRAY + "/" + plugin.getColor() + totalAchievements);
 
 		// Display progress bar.
 		if (totalAchievements > 0) {

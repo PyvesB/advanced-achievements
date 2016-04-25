@@ -10,7 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.language.Lang;
 import com.hm.achievement.particle.ParticleEffect;
 
 public class TopCommand {
@@ -26,9 +25,9 @@ public class TopCommand {
 
 		this.plugin = plugin;
 		lastTopTime = 0L;
-		topList = plugin.getConfig().getInt("TopList", 5);
-		additionalEffects = plugin.getConfig().getBoolean("AdditionalEffects", true);
-		sound = plugin.getConfig().getBoolean("Sound", true);
+		topList = plugin.getPluginConfig().getInt("TopList", 5);
+		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
+		sound = plugin.getPluginConfig().getBoolean("Sound", true);
 	}
 
 	/**
@@ -46,7 +45,8 @@ public class TopCommand {
 			lastTopTime = System.currentTimeMillis();
 		}
 
-		sender.sendMessage(plugin.getChatHeader() + Lang.TOP_ACHIEVEMENT);
+		sender.sendMessage(plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("top-achievement", "Top achievement owners:"));
 
 		for (int i = 0; i < achievementsTop.size(); i += 2) {
 			try {
@@ -77,11 +77,14 @@ public class TopCommand {
 
 				// Play special sound when in top list.
 				if (sound) {
-					// Simple and fast check to compare versions. Might need to be
-					// updated in the future depending on how the Minecraft versions
+					// Simple and fast check to compare versions. Might need to
+					// be
+					// updated in the future depending on how the Minecraft
+					// versions
 					// change in the future.
 					int version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
-					if (version < 9) // Old enum for versions prior to Minecraft 1.9.
+					if (version < 9) // Old enum for versions prior to Minecraft
+										// 1.9.
 						((Player) sender).getWorld().playSound(((Player) sender).getLocation(),
 								Sound.valueOf("FIREWORK_BLAST"), 1, 0.6f);
 					else
@@ -91,8 +94,8 @@ public class TopCommand {
 			}
 
 			int totalPlayers = plugin.getDb().getTotalPlayers();
-			sender.sendMessage(plugin.getChatHeader() + Lang.PLAYER_RANK + " " + plugin.getColor() + rank
-					+ ChatColor.GRAY + "/" + plugin.getColor() + totalPlayers);
+			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang().getString("player-rank", "Current rank:")
+					+ " " + plugin.getColor() + rank + ChatColor.GRAY + "/" + plugin.getColor() + totalPlayers);
 		}
 	}
 

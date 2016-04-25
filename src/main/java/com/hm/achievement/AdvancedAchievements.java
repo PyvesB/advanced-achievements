@@ -1,16 +1,7 @@
 package com.hm.achievement;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,13 +9,10 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -32,16 +20,15 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.mcstats.MetricsLite;
 
 import com.hm.achievement.command.*;
+import com.hm.achievement.db.*;
 import com.hm.achievement.listener.*;
-import com.hm.achievement.db.SQLDatabaseManager;
-import com.hm.achievement.db.PooledRequestsSenderAsync;
-import com.hm.achievement.db.PooledRequestsSenderSync;
-import com.hm.achievement.language.Lang;
-import com.hm.achievement.metrics.MetricsLite;
-import com.hm.achievement.runnable.AchieveDistanceRunnable;
-import com.hm.achievement.runnable.AchievePlayTimeRunnable;
+import com.hm.achievement.runnable.*;
+import com.hm.achievement.utils.*;
+
+import net.milkbowl.vault.economy.Economy;
 
 /**
  * Advanced Achievements enables unique and challenging achievements on your
@@ -107,7 +94,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	private HelpCommand helpCommand;
 	private CheckCommand checkCommand;
 	private DeleteCommand deleteCommand;
-	private AdvancedAchievementsUpdateChecker updateChecker;
+	private UpdateChecker updateChecker;
+
+	private YamlManager config;
+	private YamlManager lang;
+	private FileManager fileManager;
 
 	// Database related.
 	private SQLDatabaseManager db;
@@ -148,7 +139,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AdvancedAchievements() {
 
 		excludedWorldList = new HashSet<String>();
-
+		fileManager = new FileManager(this);
 		db = new SQLDatabaseManager(this);
 
 	}
@@ -162,9 +153,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Start enabling plugin.
 		long startTime = System.currentTimeMillis();
 
-		if (!this.getDataFolder().exists())
-			this.getDataFolder().mkdir();
-
 		configurationLoad();
 
 		this.getLogger().info("Registering listeners...");
@@ -172,130 +160,130 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Register listeners so they can monitor server events; if there are no
 		// config related achievements, listeners aren't registered.
 		PluginManager pm = getServer().getPluginManager();
-		if (this.getConfig().getConfigurationSection("Places").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Places").getKeys(false).size() != 0) {
 			blockPlaceListener = new AchieveBlockPlaceListener(this);
 			pm.registerEvents(blockPlaceListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Breaks").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Breaks").getKeys(false).size() != 0) {
 			blockBreakListener = new AchieveBlockBreakListener(this);
 			pm.registerEvents(blockBreakListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Kills").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Kills").getKeys(false).size() != 0) {
 			killListener = new AchieveKillListener(this);
 			pm.registerEvents(killListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Crafts").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Crafts").getKeys(false).size() != 0) {
 			craftListener = new AchieveCraftListener(this);
 			pm.registerEvents(craftListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Deaths").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Deaths").getKeys(false).size() != 0) {
 			deathListener = new AchieveDeathListener(this);
 			pm.registerEvents(deathListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Arrows").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Arrows").getKeys(false).size() != 0) {
 			arrowListener = new AchieveArrowListener(this);
 			pm.registerEvents(arrowListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Snowballs").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("Eggs").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Snowballs").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("Eggs").getKeys(false).size() != 0) {
 			snowballEggListener = new AchieveSnowballEggListener(this);
 			pm.registerEvents(snowballEggListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Fish").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Fish").getKeys(false).size() != 0) {
 			fishListener = new AchieveFishListener(this);
 			pm.registerEvents(fishListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("ItemBreaks").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("ItemBreaks").getKeys(false).size() != 0) {
 			itemBreakListener = new AchieveItemBreakListener(this);
 			pm.registerEvents(itemBreakListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("ConsumedPotions").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("EatenItems").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("ConsumedPotions").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("EatenItems").getKeys(false).size() != 0) {
 			consumeListener = new AchieveConsumeListener(this);
 			pm.registerEvents(consumeListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Shear").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Shear").getKeys(false).size() != 0) {
 			shearListener = new AchieveShearListener(this);
 			pm.registerEvents(shearListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Milk").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Milk").getKeys(false).size() != 0) {
 			milkListener = new AchieveMilkListener(this);
 			pm.registerEvents(milkListener, this);
 		}
 
-		if (this.getConfig().getBoolean("CheckForUpdate", true)
-				|| this.getConfig().getConfigurationSection("Connections").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getBoolean("CheckForUpdate", true)
+				|| this.getPluginConfig().getConfigurationSection("Connections").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
 			connectionListener = new AchieveConnectionListener(this);
 			pm.registerEvents(connectionListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Trades").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("AnvilsUsed").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("Brewing").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Trades").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("AnvilsUsed").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("Brewing").getKeys(false).size() != 0) {
 			inventoryClickListener = new AchieveTradeAnvilBrewListener(this);
 			pm.registerEvents(inventoryClickListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Enchantments").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Enchantments").getKeys(false).size() != 0) {
 			enchantmentListener = new AchieveEnchantListener(this);
 			pm.registerEvents(enchantmentListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("MaxLevel").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("MaxLevel").getKeys(false).size() != 0) {
 			xpListener = new AchieveXPListener(this);
 			pm.registerEvents(xpListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Beds").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Beds").getKeys(false).size() != 0) {
 			bedListener = new AchieveBedListener(this);
 			pm.registerEvents(bedListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("ItemDrops").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("ItemDrops").getKeys(false).size() != 0) {
 			dropListener = new AchieveDropListener(this);
 			pm.registerEvents(dropListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("Taming").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("Taming").getKeys(false).size() != 0) {
 			tameListener = new AchieveTameListener(this);
 			pm.registerEvents(tameListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("HoePlowings").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("Fertilising").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("Fireworks").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("HoePlowings").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("Fertilising").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("Fireworks").getKeys(false).size() != 0) {
 			hoeFertiliseFireworkListener = new AchieveHoeFertiliseFireworkListener(this);
 			pm.registerEvents(hoeFertiliseFireworkListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("MaxLevel").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("MaxLevel").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
 			quitListener = new AchieveQuitListener(this);
 			pm.registerEvents(quitListener, this);
 		}
 
-		if (this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
 			teleportListener = new AchieveTeleportListener(this);
 			pm.registerEvents(teleportListener, this);
 		}
@@ -320,7 +308,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to monitor played time for each player (not
 		// directly related to an event).
-		if (this.getConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
 			achievePlayTimeRunnable = new AchievePlayTimeRunnable(this);
 			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achievePlayTimeRunnable,
@@ -329,11 +317,11 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to monitor distances travelled by each
 		// player (not directly related to an event).
-		if (this.getConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| this.getConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
+		if (this.getPluginConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
 			achieveDistanceRunnable = new AchieveDistanceRunnable(this);
 			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achieveDistanceRunnable,
@@ -352,44 +340,40 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * language file and backup configuration and database files. Register
 	 * permissions. Initialise command modules.
 	 */
+	@SuppressWarnings("unchecked")
 	private void configurationLoad() {
 
 		successfulLoad = true;
 
-		this.getLogger().info("Backing up and loading configuration files...");
-		backupConfigFile();
-		backupLanguageFile();
-
-		loadLang();
-		this.saveDefaultConfig();
-
-		// Workaround to keep configuration file comments (Bukkit issue).
-		File config = new File(this.getDataFolder(), "config.yml");
-		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader(config));
-
-			StringBuilder configString = new StringBuilder("");
-
-			String currentLine;
-
-			while ((currentLine = reader.readLine()) != null) {
-				if (currentLine.length() > 0 && currentLine.charAt(0) == '#') {
-
-					currentLine = "COMMENT" + currentLine.replace(" ", "$").replace(":", "&").replace(".", "%")
-							+ ": true";
-				}
-				configString.append(currentLine + "\n");
-			}
-
-			BufferedWriter writer = new BufferedWriter(new FileWriter(config));
-
-			writer.write(configString.toString());
-			writer.flush();
-			writer.close();
-			reader.close();
+			config = fileManager.getNewConfig("config.yml");
 		} catch (IOException e) {
-			this.getLogger().severe("Saving comments in configuration file failed.");
+			this.getLogger().severe("Error while loading configuration file.");
+			e.printStackTrace();
+			successfulLoad = false;
+		}
+		try {
+			lang = fileManager.getNewConfig("lang.yml");
+		} catch (IOException e) {
+			this.getLogger().severe("Error while loading language file.");
+			e.printStackTrace();
+			successfulLoad = false;
+		}
+
+		this.getLogger().info("Backing up and loading configuration files...");
+		try {
+			fileManager.backupFile("config.yml");
+		} catch (IOException e) {
+			this.getLogger().severe("Error while backing up configuration file.");
+			e.printStackTrace();
+			successfulLoad = false;
+		}
+
+		try {
+			fileManager.backupFile("lang.yml");
+		} catch (IOException e) {
+			this.getLogger().severe("Error while backing up language file.");
+			e.printStackTrace();
 			successfulLoad = false;
 		}
 
@@ -397,161 +381,134 @@ public class AdvancedAchievements extends JavaPlugin {
 		// parameters in config file.
 
 		// Added in version 1.1:
-		if (!this.getConfig().getKeys(false).contains("CheckForUpdate")) {
-			this.getConfig().set("CheckForUpdate", true);
+		if (!this.getPluginConfig().getKeys(false).contains("CheckForUpdate")) {
+			this.getPluginConfig().set("CheckForUpdate", true);
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("RetroVault")) {
-			this.getConfig().set("RetroVault", false);
+		if (!this.getPluginConfig().getKeys(false).contains("RetroVault")) {
+			this.getPluginConfig().set("RetroVault", false);
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("Firework")) {
-			this.getConfig().set("Firework", true);
+		if (!this.getPluginConfig().getKeys(false).contains("Firework")) {
+			this.getPluginConfig().set("Firework", true);
 			this.saveConfig();
 		}
 
 		// Added in version 1.4:
-		if (!this.getConfig().getKeys(false).contains("Sound")) {
-			this.getConfig().set("Sound", true);
+		if (!this.getPluginConfig().getKeys(false).contains("Sound")) {
+			this.getPluginConfig().set("Sound", true);
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("Icon")) {
-			this.getConfig().set("Icon", "\u2618");
+		if (!this.getPluginConfig().getKeys(false).contains("Icon")) {
+			this.getPluginConfig().set("Icon", "\u2618");
 			this.saveConfig();
 		}
 
 		// Added in version 1.5:
-		if (!this.getConfig().getKeys(false).contains("ChatNotify")) {
-			this.getConfig().set("ChatNotify", false);
+		if (!this.getPluginConfig().getKeys(false).contains("ChatNotify")) {
+			this.getPluginConfig().set("ChatNotify", false);
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("BookSeparator")) {
-			this.getConfig().set("BookSeparator", "");
+		if (!this.getPluginConfig().getKeys(false).contains("BookSeparator")) {
+			this.getPluginConfig().set("BookSeparator", "");
 			this.saveConfig();
 		}
 
 		// Added in version 1.6:
-		if (!this.getConfig().getKeys(false).contains("RestrictCreative")) {
-			this.getConfig().set("RestrictCreative", false);
+		if (!this.getPluginConfig().getKeys(false).contains("RestrictCreative")) {
+			this.getPluginConfig().set("RestrictCreative", false);
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("MultiCommand")) {
-			this.getConfig().set("MultiCommand", true);
+		if (!this.getPluginConfig().getKeys(false).contains("MultiCommand")) {
+			this.getPluginConfig().set("MultiCommand", true);
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("DatabaseBackup")) {
-			this.getConfig().set("DatabaseBackup", true);
+		if (!this.getPluginConfig().getKeys(false).contains("DatabaseBackup")) {
+			this.getPluginConfig().set("DatabaseBackup", true);
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("ExcludedWorlds")) {
+		if (!this.getPluginConfig().getKeys(false).contains("ExcludedWorlds")) {
 			List<String> list = new ArrayList<String>();
-			this.getConfig().set("ExcludedWorlds", list);
+			this.getPluginConfig().set("ExcludedWorlds", list);
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("TopList")) {
-			this.getConfig().set("TopList", 5);
+		if (!this.getPluginConfig().getKeys(false).contains("TopList")) {
+			this.getPluginConfig().set("TopList", 5);
 			this.saveConfig();
 		}
 
 		// Added in version 2.1:
-		if (!this.getConfig().getKeys(false).contains("AdditionalEffects")) {
-			this.getConfig().set("AdditionalEffects", true);
+		if (!this.getPluginConfig().getKeys(false).contains("AdditionalEffects")) {
+			this.getPluginConfig().set("AdditionalEffects", true);
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("FireworkStyle")) {
-			this.getConfig().set("FireworkStyle", "BALL_LARGE");
+		if (!this.getPluginConfig().getKeys(false).contains("FireworkStyle")) {
+			this.getPluginConfig().set("FireworkStyle", "BALL_LARGE");
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("ObfuscateNotReceived")) {
-			this.getConfig().set("ObfuscateNotReceived", true);
+		if (!this.getPluginConfig().getKeys(false).contains("ObfuscateNotReceived")) {
+			this.getPluginConfig().set("ObfuscateNotReceived", true);
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("HideNotReceivedCategories")) {
-			this.getConfig().set("HideNotReceivedCategories", false);
+		if (!this.getPluginConfig().getKeys(false).contains("HideNotReceivedCategories")) {
+			this.getPluginConfig().set("HideNotReceivedCategories", false);
 			this.saveConfig();
 		}
 
 		// Added in version 2.2:
-		if (!this.getConfig().getKeys(false).contains("TitleScreen")) {
-			this.getConfig().set("TitleScreen", true);
+		if (!this.getPluginConfig().getKeys(false).contains("TitleScreen")) {
+			this.getPluginConfig().set("TitleScreen", true);
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("Color")) {
-			this.getConfig().set("Color", "5");
+		if (!this.getPluginConfig().getKeys(false).contains("Color")) {
+			this.getPluginConfig().set("Color", "5");
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("TimeBook")) {
-			this.getConfig().set("TimeBook", this.getConfig().getInt("Time", 900));
+		if (!this.getPluginConfig().getKeys(false).contains("TimeBook")) {
+			this.getPluginConfig().set("TimeBook", this.getPluginConfig().getInt("Time", 900));
 			this.saveConfig();
 		}
 
-		if (!this.getConfig().getKeys(false).contains("TimeList")) {
-			this.getConfig().set("TimeList", 0);
+		if (!this.getPluginConfig().getKeys(false).contains("TimeList")) {
+			this.getPluginConfig().set("TimeList", 0);
 			this.saveConfig();
 		}
 
 		// Added in version 2.3.2:
-		if (!this.getConfig().getKeys(false).contains("AsyncPooledRequestsSender")) {
-			this.getConfig().set("AsyncPooledRequestsSender", true);
+		if (!this.getPluginConfig().getKeys(false).contains("AsyncPooledRequestsSender")) {
+			this.getPluginConfig().set("AsyncPooledRequestsSender", true);
 			this.saveConfig();
 		}
 
 		// End of configuration updates.
 
-		try {
-			reader = new BufferedReader(new FileReader(config));
-			StringBuilder configString = new StringBuilder("");
-
-			String currentLine;
-
-			while ((currentLine = reader.readLine()) != null) {
-				if (currentLine.startsWith("COMMENT")) {
-					currentLine = currentLine.replace("COMMENT", "").replace(": true", "").replace("$", " ")
-							.replace("&", ":").replace("%", ".");
-					configString.append(currentLine + "\n");
-
-				} else if (currentLine.length() > 0 && currentLine.charAt(0) != '#' || currentLine.length() == 0)
-					configString.append(currentLine + "\n");
-			}
-
-			BufferedWriter writer = new BufferedWriter(new FileWriter(config));
-
-			writer.write(configString.toString());
-			writer.flush();
-			writer.close();
-			reader.close();
-		} catch (IOException e) {
-			this.getLogger().severe("Saving comments in configuration file failed.");
-			successfulLoad = false;
-		}
-
 		this.getLogger().info("Loading configs, registering permissions and initialising command modules...");
 
 		// Load parameters.
-		icon = this.getConfig().getString("Icon", "\u2618");
-		color = ChatColor.getByChar(this.getConfig().getString("Color", "5").toCharArray()[0]);
+		icon = this.getPluginConfig().getString("Icon", "\u2618");
+		color = ChatColor.getByChar(this.getPluginConfig().getString("Color", "5").toCharArray()[0]);
 		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
-		restrictCreative = this.getConfig().getBoolean("RestrictCreative", false);
-		databaseBackup = this.getConfig().getBoolean("DatabaseBackup", true);
-		for (String world : this.getConfig().getStringList("ExcludedWorlds"))
+		restrictCreative = this.getPluginConfig().getBoolean("RestrictCreative", false);
+		databaseBackup = this.getPluginConfig().getBoolean("DatabaseBackup", true);
+		for (String world : (List<String>) this.getPluginConfig().getList("ExcludedWorlds"))
 			excludedWorldList.add(world);
-		playtimeTaskInterval = this.getConfig().getInt("PlaytimeTaskInterval", 150);
-		distanceTaskInterval = this.getConfig().getInt("DistanceTaskInterval", 5);
-		pooledRequestsTaskInterval = this.getConfig().getInt("PooledRequestsTaskInterval", 60);
-		asyncPooledRequestsSender = this.getConfig().getBoolean("AsyncPooledRequestsSender", true);
+		playtimeTaskInterval = this.getPluginConfig().getInt("PlaytimeTaskInterval", 150);
+		distanceTaskInterval = this.getPluginConfig().getInt("DistanceTaskInterval", 5);
+		pooledRequestsTaskInterval = this.getPluginConfig().getInt("PooledRequestsTaskInterval", 60);
+		asyncPooledRequestsSender = this.getPluginConfig().getBoolean("AsyncPooledRequestsSender", true);
 
 		registerPermissions();
 
@@ -578,8 +535,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			xpListener.extractAchievementsFromConfig(this);
 
 		// Check for available plugin update.
-		if (this.getConfig().getBoolean("CheckForUpdate", true)) {
-			updateChecker = new AdvancedAchievementsUpdateChecker(this);
+		if (this.getPluginConfig().getBoolean("CheckForUpdate", true)) {
+			updateChecker = new UpdateChecker(this);
 		}
 
 		// Load Metrics Lite.
@@ -591,7 +548,20 @@ public class AdvancedAchievements extends JavaPlugin {
 			successfulLoad = false;
 		}
 
-		backupDBFile();
+		if (databaseBackup && !this.getPluginConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql")) {
+			File backup = new File(this.getDataFolder(), "achievements.db.bak");
+			// Only do a daily backup for the .db file.
+			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
+				this.getLogger().info("Backing up database file...");
+				try {
+					fileManager.backupFile("achievements.db");
+				} catch (IOException e) {
+					this.getLogger().severe("Error while backing up database file.");
+					e.printStackTrace();
+					successfulLoad = false;
+				}
+			}
+		}
 	}
 
 	/**
@@ -602,7 +572,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	private void registerPermissions() {
 
 		for (int i = 0; i < MULTIPLE_ACHIEVEMENTS.length; i++)
-			for (String section : this.getConfig().getConfigurationSection(MULTIPLE_ACHIEVEMENTS[i]).getKeys(false)) {
+			for (String section : this.getPluginConfig().getConfigurationSection(MULTIPLE_ACHIEVEMENTS[i])
+					.getKeys(false)) {
 				// Bukkit only allows permissions to be set once, so must do
 				// additional check for /aach reload correctness.
 				if (this.getServer().getPluginManager().getPermission(
@@ -612,172 +583,6 @@ public class AdvancedAchievements extends JavaPlugin {
 									"achievement.count." + MULTIPLE_ACHIEVEMENTS[i].toLowerCase() + "." + section,
 									PermissionDefault.TRUE));
 			}
-	}
-
-	/**
-	 * Backup configuration file (config.yml.bak).
-	 */
-	private void backupConfigFile() {
-
-		File original = new File(this.getDataFolder(), "config.yml");
-		File backup = new File(this.getDataFolder(), "config.yml.bak");
-		if (original.length() != backup.length() && original.length() != 0) {
-			try {
-				FileInputStream inStream = new FileInputStream(original);
-				FileOutputStream outStream;
-				outStream = new FileOutputStream(backup);
-
-				byte[] buffer = new byte[1024];
-
-				int length;
-				while ((length = inStream.read(buffer)) > 0) {
-					outStream.write(buffer, 0, length);
-				}
-
-				if (inStream != null)
-					inStream.close();
-				if (outStream != null)
-					outStream.close();
-
-			} catch (FileNotFoundException e) {
-
-				this.getLogger().severe("Error while backing up configuration: file not found.");
-				successfulLoad = false;
-			} catch (IOException e) {
-
-				this.getLogger().severe("Error while backing up configuration file.");
-				e.printStackTrace();
-				successfulLoad = false;
-			}
-		}
-
-	}
-
-	/**
-	 * Backup database file (achievements.db.bak).
-	 */
-	private void backupDBFile() {
-
-		if (!databaseBackup || this.getConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
-			return;
-
-		File original = new File(this.getDataFolder(), "achievements.db");
-		File backup = new File(this.getDataFolder(), "achievements.db.bak");
-
-		// Update only if previous file older than one day.
-		if ((System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0)
-				&& original.length() != 0) {
-			this.getLogger().info("Backing up database file...");
-			try {
-				FileInputStream inStream = new FileInputStream(original);
-				FileOutputStream outStream;
-				outStream = new FileOutputStream(backup);
-
-				byte[] buffer = new byte[1024];
-
-				int length;
-				while ((length = inStream.read(buffer)) > 0) {
-					outStream.write(buffer, 0, length);
-				}
-
-				if (inStream != null)
-					inStream.close();
-				if (outStream != null)
-					outStream.close();
-
-			} catch (FileNotFoundException e) {
-
-				this.getLogger().severe("Error while backing up database: file not found.");
-				successfulLoad = false;
-			} catch (IOException e) {
-
-				this.getLogger().severe("Error while backing up database file.");
-				e.printStackTrace();
-				successfulLoad = false;
-			}
-		}
-
-	}
-
-	/**
-	 * Load the lang.yml file.
-	 */
-	public void loadLang() {
-
-		File lang = new File(getDataFolder(), "lang.yml");
-		if (!lang.exists()) {
-			try {
-				getDataFolder().mkdir();
-				lang.createNewFile();
-				Reader defConfigStream = new InputStreamReader(this.getResource("lang.yml"), "UTF8");
-				if (defConfigStream != null) {
-					YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-					defConfig.save(lang);
-					Lang.setFile(defConfig);
-					return;
-				}
-			} catch (IOException e) {
-
-				this.getLogger().severe("Error while creating language file.");
-				e.printStackTrace();
-				successfulLoad = false;
-			}
-		}
-		YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
-		for (Lang item : Lang.values()) {
-			if (conf.getString(item.getPath()) == null) {
-				conf.set(item.getPath(), item.getDefault());
-			}
-		}
-		Lang.setFile(conf);
-		try {
-			conf.save(lang);
-		} catch (IOException e) {
-
-			this.getLogger().severe("Error while saving language file.");
-			e.printStackTrace();
-			successfulLoad = false;
-		}
-	}
-
-	/**
-	 * Backup language file (lang.yml.bak).
-	 */
-	private void backupLanguageFile() {
-
-		File original = new File(this.getDataFolder(), "lang.yml");
-		File backup = new File(this.getDataFolder(), "lang.yml.bak");
-		if (original.length() != backup.length() && original.length() != 0) {
-			try {
-				FileInputStream inStream = new FileInputStream(original);
-				FileOutputStream outStream;
-				outStream = new FileOutputStream(backup);
-
-				byte[] buffer = new byte[1024];
-
-				int length;
-				while ((length = inStream.read(buffer)) > 0) {
-					outStream.write(buffer, 0, length);
-				}
-
-				if (inStream != null)
-					inStream.close();
-				if (outStream != null)
-					outStream.close();
-
-			} catch (FileNotFoundException e) {
-
-				this.getLogger().severe("Error while backing up language: file not found");
-				e.printStackTrace();
-				successfulLoad = false;
-			} catch (IOException e) {
-
-				this.getLogger().severe("Error while backing up language file.");
-				e.printStackTrace();
-				successfulLoad = false;
-			}
-		}
-
 	}
 
 	/**
@@ -891,13 +696,16 @@ public class AdvancedAchievements extends JavaPlugin {
 					this.reloadConfig();
 					configurationLoad();
 					if (successfulLoad)
-						sender.sendMessage(chatHeader + Lang.CONFIGURATION_SUCCESSFULLY_RELOADED);
+						sender.sendMessage(chatHeader + lang.getString("configuration-successfully-reloaded",
+								"Configuration successfully reloaded."));
 					else
-						sender.sendMessage(chatHeader + Lang.CONFIGURATION_RELOAD_FAILED);
+						sender.sendMessage(chatHeader + lang.getString("configuration-reload-failed",
+								"Errors while reloading configuration. Please view logs for more details."));
 
 				} else {
 
-					sender.sendMessage(chatHeader + Lang.NO_PERMS);
+					sender.sendMessage(chatHeader
+							+ lang.getString("no-permissions", "You do not have the permission to do this."));
 				}
 			} else if (args[0].equalsIgnoreCase("stats") && sender instanceof Player) {
 
@@ -909,7 +717,8 @@ public class AdvancedAchievements extends JavaPlugin {
 					listCommand.getList((Player) sender);
 				} else {
 
-					sender.sendMessage(chatHeader + Lang.NO_PERMS);
+					sender.sendMessage(chatHeader
+							+ lang.getString("no-permissions", "You do not have the permission to do this."));
 				}
 			} else if (args[0].equalsIgnoreCase("top")) {
 
@@ -930,7 +739,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			} else {
 
-				sender.sendMessage(chatHeader + Lang.NO_PERMS);
+				sender.sendMessage(
+						chatHeader + lang.getString("no-permissions", "You do not have the permission to do this."));
 			}
 
 		} else if ((args.length >= 3) && args[0].equalsIgnoreCase("check")) {
@@ -941,7 +751,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			} else {
 
-				sender.sendMessage(chatHeader + Lang.NO_PERMS);
+				sender.sendMessage(
+						chatHeader + lang.getString("no-permissions", "You do not have the permission to do this."));
 			}
 
 		} else if ((args.length >= 3) && args[0].equalsIgnoreCase("delete")) {
@@ -952,7 +763,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			} else {
 
-				sender.sendMessage(chatHeader + Lang.NO_PERMS);
+				sender.sendMessage(
+						chatHeader + lang.getString("no-permissions", "You do not have the permission to do this."));
 			}
 		} else {
 
@@ -985,7 +797,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		return achievementDisplay;
 	}
 
-	public AdvancedAchievementsUpdateChecker getUpdateChecker() {
+	public UpdateChecker getUpdateChecker() {
 
 		return updateChecker;
 	}
@@ -1055,4 +867,13 @@ public class AdvancedAchievements extends JavaPlugin {
 		return asyncPooledRequestsSender;
 	}
 
+	public YamlManager getPluginConfig() {
+
+		return config;
+	}
+
+	public YamlManager getPluginLang() {
+
+		return lang;
+	}
 }

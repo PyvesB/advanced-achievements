@@ -43,7 +43,7 @@ public class AchieveKillListener implements Listener {
 		} else {
 			mobName = entity.getType().name().toLowerCase();
 		}
-		if (!plugin.getConfig().isConfigurationSection("Kills." + mobName)
+		if (!plugin.getPluginConfig().isConfigurationSection("Kills." + mobName)
 				|| !player.hasPermission("achievement.count.kills." + mobName))
 			return;
 
@@ -60,8 +60,8 @@ public class AchieveKillListener implements Listener {
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig().getString(configAchievement + ".Message"));
+			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
+					plugin.getPluginConfig().getString(configAchievement + ".Message"));
 
 			plugin.getReward().checkConfig(player, configAchievement);
 		}

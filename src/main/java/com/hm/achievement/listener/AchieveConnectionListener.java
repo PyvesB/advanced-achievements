@@ -12,7 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.AdvancedAchievementsUpdateChecker;
+import com.hm.achievement.utils.UpdateChecker;
 import com.hm.achievement.runnable.AchieveConnectionRunnable;
 
 public class AchieveConnectionListener implements Listener {
@@ -42,8 +42,8 @@ public class AchieveConnectionListener implements Listener {
 				&& event.getPlayer().hasPermission("achievement.update")) {
 			event.getPlayer().sendMessage(plugin.getChatHeader() + "Update available: v"
 					+ plugin.getUpdateChecker().getVersion() + ". Download at one of the following:");
-			event.getPlayer().sendMessage(ChatColor.GRAY + AdvancedAchievementsUpdateChecker.BUKKIT_DONWLOAD_URL);
-			event.getPlayer().sendMessage(ChatColor.GRAY + AdvancedAchievementsUpdateChecker.SPIGOT_DONWLOAD_URL);
+			event.getPlayer().sendMessage(ChatColor.GRAY + UpdateChecker.BUKKIT_DONWLOAD_URL);
+			event.getPlayer().sendMessage(ChatColor.GRAY + UpdateChecker.SPIGOT_DONWLOAD_URL);
 		}
 
 		// Initialise play time data for the player.

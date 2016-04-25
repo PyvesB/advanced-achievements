@@ -34,9 +34,9 @@ public class AchieveXPListener implements Listener {
 
 	public void extractAchievementsFromConfig(AdvancedAchievements plugin) {
 
-		achievementsMaxLevel = new int[plugin.getConfig().getConfigurationSection("MaxLevel").getKeys(false).size()];
+		achievementsMaxLevel = new int[plugin.getPluginConfig().getConfigurationSection("MaxLevel").getKeys(false).size()];
 		int i = 0;
-		for (String level : plugin.getConfig().getConfigurationSection("MaxLevel").getKeys(false)) {
+		for (String level : plugin.getPluginConfig().getConfigurationSection("MaxLevel").getKeys(false)) {
 			achievementsMaxLevel[i] = Integer.parseInt(level);
 			i++;
 		}
@@ -71,11 +71,11 @@ public class AchieveXPListener implements Listener {
 		for (int i = 0; i < achievementsMaxLevel.length; i++) {
 			if (event.getNewLevel() >= achievementsMaxLevel[i] && !playerAchievements[i].contains(player)) {
 				if (!plugin.getDb().hasPlayerAchievement(player,
-						plugin.getConfig().getString("MaxLevel." + achievementsMaxLevel[i] + ".Name"))) {
+						plugin.getPluginConfig().getString("MaxLevel." + achievementsMaxLevel[i] + ".Name"))) {
 					plugin.getAchievementDisplay().displayAchievement(player, "MaxLevel." + achievementsMaxLevel[i]);
 					plugin.getDb().registerAchievement(player,
-							plugin.getConfig().getString("MaxLevel." + achievementsMaxLevel[i] + ".Name"),
-							plugin.getConfig().getString("MaxLevel." + achievementsMaxLevel[i] + ".Message"));
+							plugin.getPluginConfig().getString("MaxLevel." + achievementsMaxLevel[i] + ".Name"),
+							plugin.getPluginConfig().getString("MaxLevel." + achievementsMaxLevel[i] + ".Message"));
 					plugin.getReward().checkConfig(player, "MaxLevel." + achievementsMaxLevel[i]);
 				}
 

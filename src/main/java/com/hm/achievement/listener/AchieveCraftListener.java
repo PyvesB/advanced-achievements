@@ -34,12 +34,12 @@ public class AchieveCraftListener implements Listener {
 		ItemStack item = event.getRecipe().getResult();
 		String craftName = item.getType().name().toLowerCase();
 		if (player.hasPermission("achievement.count.crafts." + craftName + ":" + item.getDurability())
-				&& plugin.getConfig().isConfigurationSection("Crafts." + craftName + ":" + item.getDurability()))
+				&& plugin.getPluginConfig().isConfigurationSection("Crafts." + craftName + ":" + item.getDurability()))
 			craftName += ":" + item.getDurability();
 		else {
 			if (!player.hasPermission("achievement.count.crafts." + craftName))
 				return;
-			if (!plugin.getConfig().isConfigurationSection("Crafts." + craftName))
+			if (!plugin.getPluginConfig().isConfigurationSection("Crafts." + craftName))
 				return;
 		}
 
@@ -66,16 +66,16 @@ public class AchieveCraftListener implements Listener {
 		DatabasePools.getCraftHashMap().put(player.getUniqueId().toString() + craftName, times);
 		
 		String configAchievement;
-		for (String threshold : plugin.getConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))
+		for (String threshold : plugin.getPluginConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))
 			if (times >= Integer.parseInt(threshold) && !plugin.getDb().hasPlayerAchievement(player,
-					plugin.getConfig().getString("Crafts." + craftName + '.' + threshold + '.' + "Name"))) {
+					plugin.getPluginConfig().getString("Crafts." + craftName + '.' + threshold + '.' + "Name"))) {
 				configAchievement = "Crafts." + craftName + '.' + threshold;
 				if (plugin.getReward().checkAchievement(configAchievement)) {
 
 					plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 					plugin.getDb().registerAchievement(player,
-							plugin.getConfig().getString(configAchievement + ".Name"),
-							plugin.getConfig().getString(configAchievement + ".Message"));
+							plugin.getPluginConfig().getString(configAchievement + ".Name"),
+							plugin.getPluginConfig().getString(configAchievement + ".Message"));
 					plugin.getReward().checkConfig(player, configAchievement);
 
 				}

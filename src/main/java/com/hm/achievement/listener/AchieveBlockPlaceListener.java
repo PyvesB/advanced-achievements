@@ -31,12 +31,12 @@ public class AchieveBlockPlaceListener implements Listener {
 
 		String blockName = block.getType().name().toLowerCase();
 		if (player.hasPermission("achievement.count.places." + blockName + ":" + block.getData())
-				&& plugin.getConfig().isConfigurationSection("Places." + blockName + ":" + block.getData()))
+				&& plugin.getPluginConfig().isConfigurationSection("Places." + blockName + ":" + block.getData()))
 			blockName += ":" + block.getData();
 		else {
 			if (!player.hasPermission("achievement.count.places." + blockName))
 				return;
-			if (!plugin.getConfig().isConfigurationSection("Places." + blockName))
+			if (!plugin.getPluginConfig().isConfigurationSection("Places." + blockName))
 				return;
 		}
 
@@ -53,8 +53,8 @@ public class AchieveBlockPlaceListener implements Listener {
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig().getString(configAchievement + ".Message"));
+			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
+					plugin.getPluginConfig().getString(configAchievement + ".Message"));
 			plugin.getReward().checkConfig(player, configAchievement);
 		}
 	}

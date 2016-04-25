@@ -5,7 +5,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.language.Lang;
 import com.hm.achievement.particle.PacketSender;
 
 public class HelpCommand {
@@ -26,41 +25,67 @@ public class HelpCommand {
 				+ plugin.getIcon() + "§lAdvanced Achievements" + plugin.getColor() + plugin.getIcon() + ChatColor.GRAY
 				+ "]" + plugin.getColor() + "-=-=-=-=-=-=-");
 
-		sendJsonClickableMessage(sender, plugin.getChatHeader() + plugin.getColor() + "/aach book" + ChatColor.GRAY
-				+ " - " + Lang.AACH_COMMAND_BOOK, "/aach book");
-
-		sendJsonClickableMessage(sender, plugin.getChatHeader() + plugin.getColor() + "/aach stats" + ChatColor.GRAY
-				+ " - " + Lang.AACH_COMMAND_STATS, "/aach stats");
-
-		sendJsonClickableMessage(sender, plugin.getChatHeader() + plugin.getColor() + "/aach list" + ChatColor.GRAY
-				+ " - " + Lang.AACH_COMMAND_LIST, "/aach list");
-
-		sendJsonClickableMessage(sender, plugin.getChatHeader() + plugin.getColor() + "/aach top" + ChatColor.GRAY
-				+ " - " + Lang.AACH_COMMAND_TOP, "/aach top");
+		sendJsonClickableMessage(sender,
+				plugin.getChatHeader() + plugin.getColor() + "/aach book" + ChatColor.GRAY + " - "
+						+ plugin.getPluginLang().getString("aach-command-book", "Receive your achievements book."),
+				"/aach book");
 
 		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach give §oach name§r"
-						+ ChatColor.GRAY + " - " + ChatColor.translateAlternateColorCodes('&', Lang.AACH_COMMAND_GIVE
-								.toString().replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+				plugin.getChatHeader() + plugin.getColor()
+						+ "/aach stats" + ChatColor.GRAY + " - " + plugin.getPluginLang()
+								.getString("aach-command-stats", "Amount of achievements you have received."),
+				"/aach stats");
+
+		sendJsonClickableMessage(sender,
+				plugin.getChatHeader() + plugin.getColor() + "/aach list" + ChatColor.GRAY + " - " + plugin
+						.getPluginLang().getString("aach-command-list", "Display received and missing achievements."),
+				"/aach list");
+
+		sendJsonClickableMessage(sender,
+				plugin.getChatHeader() + plugin.getColor() + "/aach top" + ChatColor.GRAY + " - "
+						+ plugin.getPluginLang().getString("aach-command-top", "Display personal and global rankings."),
+				"/aach top");
+
+		sendJsonClickableMessage(sender,
+				plugin.getChatHeader() + plugin.getColor() + "/aach give §oach name§r" + ChatColor.GRAY + " - "
+						+ ChatColor
+								.translateAlternateColorCodes('&',
+										plugin.getPluginLang()
+												.getString("aach-command-give",
+														"Give achievement ACH to player &7NAME.")
+												.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
 				"/aach give ach name");
 
 		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach check §oach name§r"
-						+ ChatColor.GRAY + " - " + ChatColor.translateAlternateColorCodes('&', Lang.AACH_COMMAND_CHECK
-								.toString().replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+				plugin.getChatHeader() + plugin.getColor() + "/aach check §oach name§r" + ChatColor.GRAY + " - "
+						+ ChatColor
+								.translateAlternateColorCodes('&',
+										plugin.getPluginLang()
+												.getString("aach-command-check",
+														"Check if player NAME has &7received ACH.")
+												.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
 				"/aach check ach name");
 
 		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach delete §oach name§r"
-						+ ChatColor.GRAY + " - " + ChatColor.translateAlternateColorCodes('&', Lang.AACH_COMMAND_DELETE
-								.toString().replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+				plugin.getChatHeader() + plugin.getColor() + "/aach delete §oach name§r" + ChatColor.GRAY + " - "
+						+ ChatColor
+								.translateAlternateColorCodes('&',
+										plugin.getPluginLang()
+												.getString("aach-command-delete",
+														"Delete achievement ACH from &7player NAME.")
+												.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
 				"/aach delete ach name");
 
-		sendJsonClickableMessage(sender, plugin.getChatHeader() + plugin.getColor() + "/aach reload" + ChatColor.GRAY
-				+ " - " + Lang.AACH_COMMAND_RELOAD, "/aach reload");
+		sendJsonClickableMessage(sender,
+				plugin.getChatHeader() + plugin.getColor() + "/aach reload" + ChatColor.GRAY + " - "
+						+ plugin.getPluginLang().getString("aach-command-reload", "Reload the plugin's configuration."),
+				"/aach reload");
 
-		sendJsonClickableMessage(sender, plugin.getChatHeader() + plugin.getColor() + "/aach info" + ChatColor.GRAY
-				+ " - " + Lang.AACH_COMMAND_INFO, "/aach info");
+		sendJsonClickableMessage(sender,
+				plugin.getChatHeader() + plugin.getColor() + "/aach info" + ChatColor.GRAY + " - "
+						+ plugin.getPluginLang().getString("aach-command-info",
+								"Display various information about the plugin."),
+				"/aach info");
 
 		sender.sendMessage(plugin.getColor() + "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 	}
@@ -75,7 +100,8 @@ public class HelpCommand {
 	public void sendJsonClickableMessage(CommandSender sender, String message, String command) {
 
 		// Build the json format string.
-		String json = "{\"text\":\"" + message + "\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"" + command + "\"}}";
+		String json = "{\"text\":\"" + message + "\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\""
+				+ command + "\"}}";
 		if (sender instanceof Player)
 			try {
 				PacketSender.sendChatPacket((Player) sender, json);

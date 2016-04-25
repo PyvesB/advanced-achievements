@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.language.Lang;
 
 public class ListCommand {
 
@@ -52,24 +51,46 @@ public class ListCommand {
 
 		this.plugin = plugin;
 		players = new HashMap<Player, Long>();
-		hideNotReceivedCategories = plugin.getConfig().getBoolean("HideNotReceivedCategories", false);
-		obfuscateNotReceived = plugin.getConfig().getBoolean("ObfuscateNotReceived", true);
-		listTime = plugin.getConfig().getInt("TimeList", 0) * 1000;
+		hideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
+		obfuscateNotReceived = plugin.getPluginConfig().getBoolean("ObfuscateNotReceived", true);
+		listTime = plugin.getPluginConfig().getInt("TimeList", 0) * 1000;
 
-		normalAchievementTypesLanguage = new String[] { Lang.LIST_CONNECTIONS.toString(), Lang.LIST_DEATHS.toString(),
-				Lang.LIST_ARROWS.toString(), Lang.LIST_SNOWBALLS.toString(), Lang.LIST_EGGS.toString(),
-				Lang.LIST_FISH.toString(), Lang.LIST_ITEMBREAKS.toString(), Lang.LIST_EATENITEMS.toString(),
-				Lang.LIST_SHEAR.toString(), Lang.LIST_MILK.toString(), Lang.LIST_TRADES.toString(),
-				Lang.LIST_ANVILS.toString(), Lang.LIST_ENCHANTMENTS.toString(), Lang.LIST_BEDS.toString(),
-				Lang.LIST_MAXLEVEL.toString(), Lang.LIST_POTIONS.toString(), Lang.LIST_PLAYEDTIME.toString(),
-				Lang.LIST_ITEMDROPS.toString(), Lang.LIST_HOEPLOWINGS.toString(), Lang.LIST_FERTILISING.toString(),
-				Lang.LIST_TAMING.toString(), Lang.LIST_BREWING.toString(), Lang.LIST_FIREWORKS.toString(),
-				Lang.LIST_DISTANCE_FOOT.toString(), Lang.LIST_DISTANCE_PIG.toString(),
-				Lang.LIST_DISTANCE_HORSE.toString(), Lang.LIST_DISTANCE_MINECART.toString(),
-				Lang.LIST_DISTANCE_BOAT.toString(), Lang.LIST_COMMANDS.toString() };
+		normalAchievementTypesLanguage = new String[] {
+				plugin.getPluginLang().getString("list-connections", "Connections"),
+				plugin.getPluginLang().getString("list-deaths", "Number of Deaths"),
+				plugin.getPluginLang().getString("list-arrows", "Arrows Shot"),
+				plugin.getPluginLang().getString("list-snowballs", "Snowballs Thrown"),
+				plugin.getPluginLang().getString("list-eggs", "Eggs Thrown"),
+				plugin.getPluginLang().getString("list-fish", "Fish Caught"),
+				plugin.getPluginLang().getString("list-itembreaks", "Items Broken"),
+				plugin.getPluginLang().getString("list-eatenitems", "Items Eaten"),
+				plugin.getPluginLang().getString("list-shear", "Sheeps Sheared"),
+				plugin.getPluginLang().getString("list-milk", "Cows Milked"),
+				plugin.getPluginLang().getString("list-trades", "Number of Trades"),
+				plugin.getPluginLang().getString("list-anvils", "Anvils Used"),
+				plugin.getPluginLang().getString("list-enchantments", "Items Enchanted"),
+				plugin.getPluginLang().getString("list-beds", "Beds Entered"),
+				plugin.getPluginLang().getString("list-maxlevel", "Max Level Reached"),
+				plugin.getPluginLang().getString("list-potions", "Potions Consumed"),
+				plugin.getPluginLang().getString("list-playedtime", "Time Played"),
+				plugin.getPluginLang().getString("list-itemdrops", "Items Dropped"),
+				plugin.getPluginLang().getString("list-hoeplowings", "Surface Plowed"),
+				plugin.getPluginLang().getString("list-fertilising", "Plants Fertilised"),
+				plugin.getPluginLang().getString("list-taming", "Animals Tamed"),
+				plugin.getPluginLang().getString("list-brewing", "Potions Brewed"),
+				plugin.getPluginLang().getString("list-fireworks", "Fireworks Launched"),
+				plugin.getPluginLang().getString("list-distance-foot", "Distance Travelled by Foot"),
+				plugin.getPluginLang().getString("list-distance-pig", "Distance Travelled on a Pig"),
+				plugin.getPluginLang().getString("list-distance-horse", "Distance Travelled on a Horse"),
+				plugin.getPluginLang().getString("list-distance-minecart", "Distance Travelled in a Minecart"),
+				plugin.getPluginLang().getString("list-distance-boat", "Distance Travelled in a Boat"),
+				plugin.getPluginLang().getString("list-commands", "Other Achievements") };
 
-		multipleAchievementTypesLanguage = new String[] { Lang.LIST_PLACES.toString(), Lang.LIST_BREAKS.toString(),
-				Lang.LIST_KILLS.toString(), Lang.LIST_CRAFTS.toString() };
+		multipleAchievementTypesLanguage = new String[] {
+				plugin.getPluginLang().getString("list-places", "Blocks Placed"),
+				plugin.getPluginLang().getString("list-breaks", "Blocks Broken"),
+				plugin.getPluginLang().getString("list-kills", "Entities Killed"),
+				plugin.getPluginLang().getString("list-crafts", "Items Crafted") };
 
 	}
 
@@ -102,7 +123,8 @@ public class ListCommand {
 		if (timeAuthorisedList(player)) {
 
 			// Create a new chest-like inventory.
-			Inventory guiInv = Bukkit.createInventory(null, 36, Lang.LIST_GUI_TITLE.toString());
+			Inventory guiInv = Bukkit.createInventory(null, 36,
+					plugin.getPluginLang().getString("list-gui-title", "&5§lAchievements List"));
 
 			// Number of achievements in current category.
 			int numberInCategory = 0;
@@ -118,21 +140,21 @@ public class ListCommand {
 					ArrayList<String> lore = new ArrayList<String>();
 					// Iterate through all sub-categories in achievement
 					// category.
-					for (String section : plugin.getConfig()
+					for (String section : plugin.getPluginConfig()
 							.getConfigurationSection(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i]).getKeys(false))
 						// Iterate through all achievements in sub-category.
-						for (String ach : plugin.getConfig()
+						for (String ach : plugin.getPluginConfig()
 								.getConfigurationSection(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i] + '.' + section)
 								.getKeys(false))
 							// Check if player has received achievement and
 							// build message accordingly.
-							if (plugin.getDb().hasPlayerAchievement(player, plugin.getConfig().getString(
+							if (plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig().getString(
 									AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i] + '.' + section + '.' + ach + ".Name",
 									""))) {
 								numberInCategory++;
 								lore.add(ChatColor.translateAlternateColorCodes('&',
 										buildLoreString(
-												"&f" + plugin.getConfig()
+												"&f" + plugin.getPluginConfig()
 														.getString(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i] + '.'
 																+ section + '.' + ach + ".Name", ""),
 												ach,
@@ -143,12 +165,15 @@ public class ListCommand {
 							} else
 								lore.add(ChatColor.translateAlternateColorCodes('&',
 										buildLoreString(
-												plugin.getConfig()
+												plugin.getPluginConfig()
 														.getString(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i] + '.'
 																+ section + '.' + ach + ".Name", "")
-												.replaceAll(REGEX_PATTERN.pattern(), ""), ach,
-										plugin.getReward().getRewardType(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i]
-												+ '.' + section + '.' + ach), i)));
+														.replaceAll(REGEX_PATTERN.pattern(), ""),
+												ach,
+												plugin.getReward()
+														.getRewardType(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i]
+																+ '.' + section + '.' + ach),
+												i)));
 					// Set lore for the current category item in GUI.
 					if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
 						connectionsMeta.setDisplayName(
@@ -173,25 +198,27 @@ public class ListCommand {
 					ItemMeta connectionsMeta = connections.getItemMeta();
 					ArrayList<String> lore = new ArrayList<String>();
 					// Iterate through all achievements in category.
-					for (String ach : plugin.getConfig()
+					for (String ach : plugin.getPluginConfig()
 							.getConfigurationSection(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i]).getKeys(false))
 						// Check if player has received achievement and
 						// build message accordingly.
-						if (plugin.getDb().hasPlayerAchievement(player, plugin.getConfig()
+						if (plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig()
 								.getString(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach + ".Name", ""))) {
 							numberInCategory++;
-							lore.add(ChatColor.translateAlternateColorCodes('&',
-									buildLoreString(
-											"&f" + plugin.getConfig()
-													.getString(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach
-															+ ".Name", ""),
-											ach, plugin.getReward().getRewardType(
-													AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach),
-											i)));
+							lore.add(
+									ChatColor.translateAlternateColorCodes('&',
+											buildLoreString(
+													"&f" + plugin.getPluginConfig()
+															.getString(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.'
+																	+ ach + ".Name", ""),
+													ach,
+													plugin.getReward().getRewardType(
+															AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach),
+													i)));
 						} else
 							lore.add(ChatColor.translateAlternateColorCodes('&',
 									buildLoreString(
-											plugin.getConfig()
+											plugin.getPluginConfig()
 													.getString(AdvancedAchievements.NORMAL_ACHIEVEMENTS[i] + '.' + ach
 															+ ".Name", "")
 													.replaceAll(REGEX_PATTERN.pattern(), ""),
@@ -217,8 +244,9 @@ public class ListCommand {
 			player.openInventory(guiInv);
 		} else {
 			// The player has already done a list command recently.
-			player.sendMessage(
-					plugin.getChatHeader() + Lang.LIST_DELAY.toString().replace("TIME", "" + listTime / 1000));
+			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
+					.getString("list-delay", "You must wait TIME seconds between each list command!")
+					.replace("TIME", "" + listTime / 1000));
 		}
 	}
 
@@ -231,10 +259,12 @@ public class ListCommand {
 		if (number == normalAchievementTypesLanguage.length - 1) {
 			// Display reward with obfuscate effect.
 			if (reward.length() != 0 && obfuscateNotReceived)
-				return "&8§k" + name + " |" + Lang.LIST_REWARD + " " + reward;
+				return "&8§k" + name + " |" + plugin.getPluginLang().getString("list-reward", " Reward:") + " "
+						+ reward;
 			// Display reward without obfuscate effect.
 			else if (reward.length() != 0 && !obfuscateNotReceived)
-				return "&8§o" + name + " |" + Lang.LIST_REWARD + " " + reward;
+				return "&8§o" + name + " |" + plugin.getPluginLang().getString("list-reward", " Reward:") + " "
+						+ reward;
 			// Display obfuscate effect without reward.
 			else if (obfuscateNotReceived)
 				return "&8§k" + name;
@@ -245,16 +275,18 @@ public class ListCommand {
 
 		// Display reward with obfuscate effect.
 		if (reward.length() != 0 && obfuscateNotReceived)
-			return "&8§k" + name + " |" + Lang.LIST_AMOUNT + " " + level + " |" + Lang.LIST_REWARD + " " + reward;
+			return "&8§k" + name + " |" + plugin.getPluginLang().getString("list-amount", " Lvl:") + " " + level + " |"
+					+ plugin.getPluginLang().getString("list-reward", " Reward:") + " " + reward;
 		// Display reward without obfuscate effect.
 		else if (reward.length() != 0 && !obfuscateNotReceived)
-			return "&8§o" + name + " |" + Lang.LIST_AMOUNT + " " + level + " |" + Lang.LIST_REWARD + " " + reward;
+			return "&8§o" + name + " |" + plugin.getPluginLang().getString("list-amount", " Lvl:") + " " + level + " |"
+					+ plugin.getPluginLang().getString("list-reward", " Reward:") + " " + reward;
 		// Display obfuscate effect without reward.
 		else if (obfuscateNotReceived)
-			return "&8§k" + name + " |" + Lang.LIST_AMOUNT + " " + level;
+			return "&8§k" + name + " |" + plugin.getPluginLang().getString("list-amount", " Lvl:") + " " + level;
 		// Display no reward and no obfuscate effect.
 		else
-			return "&8§o" + name + " |" + Lang.LIST_AMOUNT + " " + level;
+			return "&8§o" + name + " |" + plugin.getPluginLang().getString("list-amount", " Lvl:") + " " + level;
 
 	}
 

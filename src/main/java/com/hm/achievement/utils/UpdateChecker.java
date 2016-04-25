@@ -1,4 +1,4 @@
-package com.hm.achievement;
+package com.hm.achievement.utils;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -9,7 +9,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class AdvancedAchievementsUpdateChecker {
+import com.hm.achievement.AdvancedAchievements;
+
+public class UpdateChecker {
 
 	private AdvancedAchievements plugin;
 	private String version;
@@ -22,7 +24,7 @@ public class AdvancedAchievementsUpdateChecker {
 	public static final String BUKKIT_DONWLOAD_URL = "- dev.bukkit.org/bukkit-plugins/advanced-achievements";
 	public static final String SPIGOT_DONWLOAD_URL = "- spigotmc.org/resources/advanced-achievements.6239";
 
-	public AdvancedAchievementsUpdateChecker(AdvancedAchievements plugin) {
+	public UpdateChecker(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 		updateNeeded = checkForUpdate();

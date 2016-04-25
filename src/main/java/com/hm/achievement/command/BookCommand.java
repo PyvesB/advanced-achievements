@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.language.Lang;
 import com.hm.achievement.particle.ParticleEffect;
 
 public class BookCommand {
@@ -30,10 +29,10 @@ public class BookCommand {
 
 		this.plugin = plugin;
 		players = new HashMap<Player, Long>();
-		bookTime = plugin.getConfig().getInt("TimeBook", 0) * 1000;
-		bookSeparator = plugin.getConfig().getString("BookSeparator", "");
-		additionalEffects = plugin.getConfig().getBoolean("AdditionalEffects", true);
-		sound = plugin.getConfig().getBoolean("Sound", true);
+		bookTime = plugin.getPluginConfig().getInt("TimeBook", 0) * 1000;
+		bookSeparator = plugin.getPluginConfig().getString("BookSeparator", "");
+		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
+		sound = plugin.getPluginConfig().getBoolean("Sound", true);
 	}
 
 	/**
@@ -70,7 +69,7 @@ public class BookCommand {
 				} catch (Exception ex) {
 					plugin.getLogger().severe("Error while displaying additional particle effects.");
 				}
-			
+
 			// Play special sound when receiving the book.
 			if (sound) {
 				// Simple and fast check to compare versions. Might need to be
@@ -104,11 +103,13 @@ public class BookCommand {
 			if (i > 599 && achievements.size() != 600)
 				i = fillBook(achievements, player, i, 750, 5);
 
-			player.sendMessage(plugin.getChatHeader() + Lang.BOOK_RECEIVED);
+			player.sendMessage(plugin.getChatHeader()
+					+ plugin.getPluginLang().getString("book-received", "You received your achievements book!"));
 		} else {
 			// The player has already received a book recently.
-			player.sendMessage(
-					plugin.getChatHeader() + Lang.BOOK_DELAY.toString().replace("TIME", "" + bookTime / 1000));
+			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
+					.getString("book-delay", "You must wait TIME seconds between each book reception!")
+					.replace("TIME", "" + bookTime / 1000));
 		}
 	}
 
@@ -135,7 +136,7 @@ public class BookCommand {
 
 		bm.setPages(pages);
 		bm.setAuthor(player.getName());
-		bm.setTitle(Lang.BOOK_NAME.toString());
+		bm.setTitle(plugin.getPluginLang().getString("book-name", "Achievements"));
 
 		book.setItemMeta(bm);
 

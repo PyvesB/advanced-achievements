@@ -9,7 +9,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.DatabasePools;
-import com.hm.achievement.language.Lang;
 
 public class AchieveTradeAnvilBrewListener implements Listener {
 
@@ -25,7 +24,8 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 
 		// Not relevant for trade, anvil, or brewing events, but used for the
 		// /aach list command to avoid adding an additional event handler.
-		if (event.getInventory().getName().equals(Lang.LIST_GUI_TITLE.toString())) {
+		if (event.getInventory().getName()
+				.equals(plugin.getPluginLang().getString("list-gui-title", "&5§lAchievements List"))) {
 			event.setCancelled(true);
 			return;
 		}
@@ -79,8 +79,8 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig().getString(configAchievement + ".Message"));
+			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
+					plugin.getPluginConfig().getString(configAchievement + ".Message"));
 
 			plugin.getReward().checkConfig(player, configAchievement);
 		}

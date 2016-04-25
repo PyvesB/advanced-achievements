@@ -29,12 +29,12 @@ public class AchieveBlockBreakListener implements Listener {
 			return;
 		Block block = event.getBlock();
 		String blockName = block.getType().name().toLowerCase();
-		if (player.hasPermission("achievement.count.breaks." + blockName + ":" + block.getData()) && plugin.getConfig().isConfigurationSection("Breaks." + blockName + ":" + block.getData()))
+		if (player.hasPermission("achievement.count.breaks." + blockName + ":" + block.getData()) && plugin.getPluginConfig().isConfigurationSection("Breaks." + blockName + ":" + block.getData()))
 			blockName += ":" + block.getData();
 		else {
 			if (!player.hasPermission("achievement.count.breaks." + blockName))
 				return;
-			if (!plugin.getConfig().isConfigurationSection("Breaks." + blockName))
+			if (!plugin.getPluginConfig().isConfigurationSection("Breaks." + blockName))
 				return;
 		}
 
@@ -51,8 +51,8 @@ public class AchieveBlockBreakListener implements Listener {
 		if (plugin.getReward().checkAchievement(configAchievement)) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getConfig().getString(configAchievement + ".Name"),
-					plugin.getConfig().getString(configAchievement + ".Message"));
+			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
+					plugin.getPluginConfig().getString(configAchievement + ".Message"));
 			plugin.getReward().checkConfig(player, configAchievement);
 
 		}

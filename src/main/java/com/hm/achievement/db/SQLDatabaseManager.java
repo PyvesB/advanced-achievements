@@ -99,12 +99,12 @@ public class SQLDatabaseManager {
 	 */
 	private void configurationLoad() {
 
-		String dataHandler = plugin.getConfig().getString("DatabaseType", "sqlite");
+		String dataHandler = plugin.getPluginConfig().getString("DatabaseType", "sqlite");
 		if (dataHandler.equalsIgnoreCase("mysql")) {
 			sqliteDatabase = false;
-			mysqlDatabase = plugin.getConfig().getString("MYSQL.Database", "jdbc:mysql://localhost:3306/minecraft");
-			mysqlUser = plugin.getConfig().getString("MYSQL.User", "root");
-			mysqlPassword = plugin.getConfig().getString("MYSQL.Password", "root");
+			mysqlDatabase = plugin.getPluginConfig().getString("MYSQL.Database", "jdbc:mysql://localhost:3306/minecraft");
+			mysqlUser = plugin.getPluginConfig().getString("MYSQL.User", "root");
+			mysqlPassword = plugin.getPluginConfig().getString("MYSQL.Password", "root");
 		} else
 			sqliteDatabase = true;
 
