@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.DatabasePools;
 
 public class AchieveBlockPlaceListener implements Listener {
 
@@ -40,14 +39,9 @@ public class AchieveBlockPlaceListener implements Listener {
 				return;
 		}
 
-		int places = 0;
-		if (!DatabasePools.getBlockPlaceHashMap().containsKey(player.getUniqueId().toString() + blockName))
-			places = plugin.getDb().getPlaces(player, blockName) + 1;
-		else
-			// Concatenate player name and block ID to put in HashMap.
-			places = DatabasePools.getBlockPlaceHashMap().get(player.getUniqueId().toString() + blockName) + 1;
+		int places = plugin.getPoolsManager().getPlayerBlockPlaceAmount(player, blockName) + 1;
 
-		DatabasePools.getBlockPlaceHashMap().put(player.getUniqueId().toString() + blockName, places);
+		plugin.getPoolsManager().getBlockPlaceHashMap().put(player.getUniqueId().toString() + blockName, places);
 
 		String configAchievement = "Places." + blockName + '.' + places;
 		if (plugin.getReward().checkAchievement(configAchievement)) {

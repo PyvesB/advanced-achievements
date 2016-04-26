@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.DatabasePools;
 
 public class AchieveBedListener implements Listener {
 
@@ -29,13 +28,9 @@ public class AchieveBedListener implements Listener {
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		int beds;
-		if (!DatabasePools.getBedHashMap().containsKey(player.getUniqueId().toString()))
-			beds = plugin.getDb().getNormalAchievementAmount(player, "beds") + 1;
-		else
-			beds = DatabasePools.getBedHashMap().get(player.getUniqueId().toString()) + 1;
+		int beds = plugin.getPoolsManager().getPlayerBedAmount(player) + 1;
 
-		DatabasePools.getBedHashMap().put(player.getUniqueId().toString(), beds);
+		plugin.getPoolsManager().getBedHashMap().put(player.getUniqueId().toString(), beds);
 
 		String configAchievement = "Beds." + beds;
 		if (plugin.getReward().checkAchievement(configAchievement)) {

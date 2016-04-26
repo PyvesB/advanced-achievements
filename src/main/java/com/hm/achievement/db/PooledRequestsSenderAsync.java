@@ -15,7 +15,7 @@ public class PooledRequestsSenderAsync implements Runnable {
 	public PooledRequestsSenderAsync(AdvancedAchievements plugin, boolean init) {
 
 		if (init == true)
-			DatabasePools.databasePoolsInit(plugin.isAsyncPooledRequestsSender());
+			plugin.getPoolsManager().databasePoolsInit(plugin.isAsyncPooledRequestsSender());
 		this.plugin = plugin;
 	}
 
@@ -51,158 +51,158 @@ public class PooledRequestsSenderAsync implements Runnable {
 			Connection conn = plugin.getDb().getSQLConnection();
 			Statement st = conn.createStatement();
 
-			for (Entry<String, Integer> entry : DatabasePools.getDeathHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getDeathHashMap().entrySet()) {
 				st.execute("REPLACE INTO `deaths` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getDeathHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getDeathHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getArrowHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getArrowHashMap().entrySet()) {
 				st.execute("REPLACE INTO `arrows` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getArrowHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getArrowHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getSnowballHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getSnowballHashMap().entrySet()) {
 				st.execute("REPLACE INTO `snowballs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getSnowballHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getSnowballHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getEggHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEggHashMap().entrySet()) {
 				st.execute("REPLACE INTO `eggs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getEggHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getEggHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getFishHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFishHashMap().entrySet()) {
 				st.execute("REPLACE INTO `fish` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getFishHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getFishHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getItemBreakHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getItemBreakHashMap().entrySet()) {
 				st.execute("REPLACE INTO `itembreaks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getItemBreakHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getItemBreakHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getEatenItemsHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEatenItemsHashMap().entrySet()) {
 				st.execute("REPLACE INTO `eatenitems` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getEatenItemsHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getEatenItemsHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getShearHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getShearHashMap().entrySet()) {
 				st.execute("REPLACE INTO `shears` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getShearHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getShearHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getMilkHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getMilkHashMap().entrySet()) {
 				st.execute("REPLACE INTO `milks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getMilkHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getMilkHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getTradeHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getTradeHashMap().entrySet()) {
 				st.execute("REPLACE INTO `trades` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getTradeHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getTradeHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getAnvilHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getAnvilHashMap().entrySet()) {
 				st.execute("REPLACE INTO `anvils` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getAnvilHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getAnvilHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getEnchantmentHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEnchantmentHashMap().entrySet()) {
 				st.execute("REPLACE INTO `enchantments` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getEnchantmentHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getEnchantmentHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getBedHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBedHashMap().entrySet()) {
 				st.execute("REPLACE INTO `beds` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getBedHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBedHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getXpHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getXpHashMap().entrySet()) {
 				st.execute("REPLACE INTO `levels` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getXpHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getXpHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getConsumedPotionsHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getConsumedPotionsHashMap().entrySet()) {
 				st.execute(
 						"REPLACE INTO `consumedpotions` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getConsumedPotionsHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getConsumedPotionsHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getDropHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getDropHashMap().entrySet()) {
 				st.execute("REPLACE INTO `drops` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getDropHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getDropHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getHoePlowingHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getHoePlowingHashMap().entrySet()) {
 				st.execute("REPLACE INTO `hoeplowing` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getHoePlowingHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getHoePlowingHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getFertiliseHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFertiliseHashMap().entrySet()) {
 				st.execute("REPLACE INTO `fertilising` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getFertiliseHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getFertiliseHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getTameHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getTameHashMap().entrySet()) {
 				st.execute("REPLACE INTO `tames` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getTameHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getTameHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getBrewingHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBrewingHashMap().entrySet()) {
 				st.execute("REPLACE INTO `brewing` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getBrewingHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBrewingHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getFireworkHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFireworkHashMap().entrySet()) {
 				st.execute("REPLACE INTO `fireworks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getFireworkHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getFireworkHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getBlockPlaceHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockPlaceHashMap().entrySet()) {
 				st.execute("REPLACE INTO `places` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getBlockPlaceHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBlockPlaceHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getBlockBreakHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockBreakHashMap().entrySet()) {
 				st.execute("REPLACE INTO `breaks` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getBlockBreakHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBlockBreakHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getKillHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getKillHashMap().entrySet()) {
 				st.execute("REPLACE INTO `kills` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getKillHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getKillHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 
-			for (Entry<String, Integer> entry : DatabasePools.getCraftHashMap().entrySet()) {
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getCraftHashMap().entrySet()) {
 				st.execute("REPLACE INTO `crafts` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) DatabasePools.getCraftHashMap()).remove(entry.getKey(),
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getCraftHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
 

@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.DatabasePools;
 
 public class AchieveDropListener implements Listener {
 
@@ -28,13 +27,9 @@ public class AchieveDropListener implements Listener {
 				|| plugin.isInExludedWorld(player))
 			return;
 
-		int drops;
-		if (!DatabasePools.getDropHashMap().containsKey(player.getUniqueId().toString()))
-			drops = plugin.getDb().getNormalAchievementAmount(player, "drops") + 1;
-		else
-			drops = DatabasePools.getDropHashMap().get(player.getUniqueId().toString()) + 1;
+		int drops = plugin.getPoolsManager().getPlayerDropAmount(player) + 1;
 
-		DatabasePools.getDropHashMap().put(player.getUniqueId().toString(), drops);
+		plugin.getPoolsManager().getDropHashMap().put(player.getUniqueId().toString(), drops);
 
 		String configAchievement = "ItemDrops." + drops;
 		if (plugin.getReward().checkAchievement(configAchievement)) {

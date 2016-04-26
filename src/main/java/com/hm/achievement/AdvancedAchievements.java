@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -102,6 +103,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	// Database related.
 	private SQLDatabaseManager db;
+	private DatabasePoolsManager poolsManager;
 	private int pooledRequestsTaskInterval;
 	private boolean databaseBackup;
 	private boolean asyncPooledRequestsSender;
@@ -141,6 +143,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		excludedWorldList = new HashSet<String>();
 		fileManager = new FileManager(this);
 		db = new SQLDatabaseManager(this);
+		poolsManager = new DatabasePoolsManager(this);
 
 	}
 
@@ -345,22 +348,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		successfulLoad = true;
 
-		try {
-			config = fileManager.getNewConfig("config.yml");
-		} catch (IOException e) {
-			this.getLogger().severe("Error while loading configuration file.");
-			e.printStackTrace();
-			successfulLoad = false;
-		}
-		try {
-			lang = fileManager.getNewConfig("lang.yml");
-		} catch (IOException e) {
-			this.getLogger().severe("Error while loading language file.");
-			e.printStackTrace();
-			successfulLoad = false;
-		}
-
 		this.getLogger().info("Backing up and loading configuration files...");
+		
 		try {
 			fileManager.backupFile("config.yml");
 		} catch (IOException e) {
@@ -373,6 +362,22 @@ public class AdvancedAchievements extends JavaPlugin {
 			fileManager.backupFile("lang.yml");
 		} catch (IOException e) {
 			this.getLogger().severe("Error while backing up language file.");
+			e.printStackTrace();
+			successfulLoad = false;
+		}
+
+		try {
+			config = fileManager.getNewConfig("config.yml");
+		} catch (IOException e) {
+			this.getLogger().severe("Error while loading configuration file.");
+			e.printStackTrace();
+			successfulLoad = false;
+		}
+
+		try {
+			lang = fileManager.getNewConfig("lang.yml");
+		} catch (IOException e) {
+			this.getLogger().severe("Error while loading language file.");
 			e.printStackTrace();
 			successfulLoad = false;
 		}
@@ -695,12 +700,16 @@ public class AdvancedAchievements extends JavaPlugin {
 
 					this.reloadConfig();
 					configurationLoad();
-					if (successfulLoad)
+					if (successfulLoad) {
 						sender.sendMessage(chatHeader + lang.getString("configuration-successfully-reloaded",
 								"Configuration successfully reloaded."));
-					else
+						this.getLogger().info("Configuration successfully reloaded.");
+					} else {
 						sender.sendMessage(chatHeader + lang.getString("configuration-reload-failed",
 								"Errors while reloading configuration. Please view logs for more details."));
+						this.getLogger()
+								.severe("Errors while reloading configuration. Please view logs for more details.");
+					}
 
 				} else {
 
@@ -785,6 +794,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	public SQLDatabaseManager getDb() {
 
 		return db;
+	}
+
+	public DatabasePoolsManager getPoolsManager() {
+
+		return poolsManager;
 	}
 
 	public AchievementRewards getReward() {

@@ -10,7 +10,6 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.DatabasePools;
 
 public class AchieveCraftListener implements Listener {
 
@@ -57,13 +56,9 @@ public class AchieveCraftListener implements Listener {
 			amount *= max;
 		}
 
-		int times;
-		if (!DatabasePools.getCraftHashMap().containsKey(player.getUniqueId().toString()))
-			times = plugin.getDb().getCrafts(player, craftName) + amount;
-		else
-			times = DatabasePools.getCraftHashMap().get(player.getUniqueId().toString() + craftName) + amount;
+		int times = plugin.getPoolsManager().getPlayerCraftAmount(player, craftName) + amount;
 
-		DatabasePools.getCraftHashMap().put(player.getUniqueId().toString() + craftName, times);
+		plugin.getPoolsManager().getCraftHashMap().put(player.getUniqueId().toString() + craftName, times);
 		
 		String configAchievement;
 		for (String threshold : plugin.getPluginConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))

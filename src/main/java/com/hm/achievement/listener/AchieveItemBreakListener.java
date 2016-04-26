@@ -7,7 +7,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.DatabasePools;
 
 public class AchieveItemBreakListener implements Listener {
 
@@ -25,13 +24,9 @@ public class AchieveItemBreakListener implements Listener {
 		if (!player.hasPermission("achievement.count.itembreaks") || plugin.isInExludedWorld(player))
 			return;
 
-		int itemBreaks;
-		if (!DatabasePools.getItemBreakHashMap().containsKey(player.getUniqueId().toString()))
-			itemBreaks = plugin.getDb().getNormalAchievementAmount(player, "itembreaks") + 1;
-		else
-			itemBreaks = DatabasePools.getItemBreakHashMap().get(player.getUniqueId().toString()) + 1;
+		int itemBreaks = plugin.getPoolsManager().getPlayerItemBreakAmount(player) + 1;
 
-		DatabasePools.getItemBreakHashMap().put(player.getUniqueId().toString(), itemBreaks);
+		plugin.getPoolsManager().getItemBreakHashMap().put(player.getUniqueId().toString(), itemBreaks);
 		
 		String configAchievement = "ItemBreaks." + itemBreaks;
 		if (plugin.getReward().checkAchievement(configAchievement)) {

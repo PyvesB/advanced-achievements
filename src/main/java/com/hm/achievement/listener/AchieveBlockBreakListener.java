@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.DatabasePools;
 
 public class AchieveBlockBreakListener implements Listener {
 
@@ -29,7 +28,8 @@ public class AchieveBlockBreakListener implements Listener {
 			return;
 		Block block = event.getBlock();
 		String blockName = block.getType().name().toLowerCase();
-		if (player.hasPermission("achievement.count.breaks." + blockName + ":" + block.getData()) && plugin.getPluginConfig().isConfigurationSection("Breaks." + blockName + ":" + block.getData()))
+		if (player.hasPermission("achievement.count.breaks." + blockName + ":" + block.getData())
+				&& plugin.getPluginConfig().isConfigurationSection("Breaks." + blockName + ":" + block.getData()))
 			blockName += ":" + block.getData();
 		else {
 			if (!player.hasPermission("achievement.count.breaks." + blockName))
@@ -38,14 +38,9 @@ public class AchieveBlockBreakListener implements Listener {
 				return;
 		}
 
-		int breaks;
-		if (!DatabasePools.getBlockBreakHashMap().containsKey(player.getUniqueId().toString() + blockName))
-			breaks = plugin.getDb().getBreaks(player, blockName) + 1;
-		else
-			// Concatenate player name and block ID to put in HashMap.
-			breaks = DatabasePools.getBlockBreakHashMap().get(player.getUniqueId().toString() + blockName) + 1;
+		int breaks = plugin.getPoolsManager().getPlayerBlockBreakAmount(player, blockName) + 1;
 
-		DatabasePools.getBlockBreakHashMap().put(player.getUniqueId().toString() + blockName, breaks);
+		plugin.getPoolsManager().getBlockBreakHashMap().put(player.getUniqueId().toString() + blockName, breaks);
 
 		String configAchievement = "Breaks." + blockName + '.' + breaks;
 		if (plugin.getReward().checkAchievement(configAchievement)) {

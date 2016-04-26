@@ -10,7 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.DatabasePools;
 
 public class AchieveSnowballEggListener implements Listener {
 
@@ -33,23 +32,15 @@ public class AchieveSnowballEggListener implements Listener {
 
 		String configAchievement;
 		if (player.hasPermission("achievement.count.snowballs") && event.getEntity() instanceof Snowball) {
-			int snowballs;
-			if (!DatabasePools.getSnowballHashMap().containsKey(player.getUniqueId().toString()))
-				snowballs = plugin.getDb().getNormalAchievementAmount(player, "snowballs") + 1;
-			else
-				snowballs = DatabasePools.getSnowballHashMap().get(player.getUniqueId().toString()) + 1;
+			int snowballs= plugin.getPoolsManager().getPlayerSnowballAmount(player) + 1;
 
-			DatabasePools.getSnowballHashMap().put(player.getUniqueId().toString(), snowballs);
+			plugin.getPoolsManager().getSnowballHashMap().put(player.getUniqueId().toString(), snowballs);
 
 			configAchievement = "Snowballs." + snowballs;
 		} else if (player.hasPermission("achievement.count.eggs")) {
-			int eggs;
-			if (!DatabasePools.getEggHashMap().containsKey(player.getUniqueId().toString()))
-				eggs = plugin.getDb().getNormalAchievementAmount(player, "eggs") + 1;
-			else
-				eggs = DatabasePools.getEggHashMap().get(player.getUniqueId().toString()) + 1;
+			int eggs = plugin.getPoolsManager().getPlayerEggAmount(player) + 1;
 
-			DatabasePools.getEggHashMap().put(player.getUniqueId().toString(), eggs);
+			plugin.getPoolsManager().getEggHashMap().put(player.getUniqueId().toString(), eggs);
 
 			configAchievement = "Eggs." + eggs;
 		} else

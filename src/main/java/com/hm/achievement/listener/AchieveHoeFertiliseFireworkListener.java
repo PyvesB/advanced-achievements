@@ -11,7 +11,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.DatabasePools;
 
 public class AchieveHoeFertiliseFireworkListener implements Listener {
 
@@ -41,13 +40,9 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 						|| event.getItem().getType() == Material.GOLD_HOE)
 				&& (event.getClickedBlock().getType() == Material.GRASS
 						|| event.getClickedBlock().getType() == Material.DIRT)) {
-			int plowings;
-			if (!DatabasePools.getHoePlowingHashMap().containsKey(player.getUniqueId().toString()))
-				plowings = plugin.getDb().getNormalAchievementAmount(player, "hoeplowing") + 1;
-			else
-				plowings = DatabasePools.getHoePlowingHashMap().get(player.getUniqueId().toString()) + 1;
+			int plowings= plugin.getPoolsManager().getPlayerHoePlowingAmount(player) + 1;
 
-			DatabasePools.getHoePlowingHashMap().put(player.getUniqueId().toString(), plowings);
+			plugin.getPoolsManager().getHoePlowingHashMap().put(player.getUniqueId().toString(), plowings);
 
 			configAchievement = "HoePlowings." + plowings;
 
@@ -65,24 +60,16 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 						|| event.getClickedBlock().getType() == Material.RED_MUSHROOM
 						|| event.getClickedBlock().getType() == Material.COCOA
 						|| event.getClickedBlock().getType() == Material.LONG_GRASS)) {
-			int fertilising;
-			if (!DatabasePools.getFertiliseHashMap().containsKey(player.getUniqueId().toString()))
-				fertilising = plugin.getDb().getNormalAchievementAmount(player, "fertilising") + 1;
-			else
-				fertilising = DatabasePools.getFertiliseHashMap().get(player.getUniqueId().toString()) + 1;
+			int fertilising = plugin.getPoolsManager().getPlayerFertiliseAmount(player) + 1;
 
-			DatabasePools.getFertiliseHashMap().put(player.getUniqueId().toString(), fertilising);
+			plugin.getPoolsManager().getFertiliseHashMap().put(player.getUniqueId().toString(), fertilising);
 
 			configAchievement = "Fertilising." + fertilising;
 		} else if (player.hasPermission("achievement.count.fireworks")
 				&& event.getItem().getType() == Material.FIREWORK) {
-			int fireworks;
-			if (!DatabasePools.getFireworkHashMap().containsKey(player.getUniqueId().toString()))
-				fireworks = plugin.getDb().getNormalAchievementAmount(player, "fireworks") + 1;
-			else
-				fireworks = DatabasePools.getFireworkHashMap().get(player.getUniqueId().toString()) + 1;
+			int fireworks = plugin.getPoolsManager().getPlayerFireworkAmount(player) + 1;
 
-			DatabasePools.getFireworkHashMap().put(player.getUniqueId().toString(), fireworks);
+			plugin.getPoolsManager().getFireworkHashMap().put(player.getUniqueId().toString(), fireworks);
 
 			configAchievement = "Fireworks." + fireworks;
 

@@ -14,7 +14,7 @@ public class PooledRequestsSenderSync implements Runnable {
 	public PooledRequestsSenderSync(AdvancedAchievements plugin, boolean init) {
 
 		if (init == true)
-			DatabasePools.databasePoolsInit(plugin.isAsyncPooledRequestsSender());
+			plugin.getPoolsManager().databasePoolsInit(plugin.isAsyncPooledRequestsSender());
 		this.plugin = plugin;
 	}
 
@@ -39,83 +39,83 @@ public class PooledRequestsSenderSync implements Runnable {
 			Connection conn = plugin.getDb().getSQLConnection();
 			Statement st = conn.createStatement();
 
-			for (Entry<String, Integer> entry : DatabasePools.getDeathHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getDeathHashMap().entrySet())
 				st.addBatch("REPLACE INTO `deaths` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getArrowHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getArrowHashMap().entrySet())
 				st.addBatch("REPLACE INTO `arrows` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getSnowballHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getSnowballHashMap().entrySet())
 				st.addBatch("REPLACE INTO `snowballs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getEggHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEggHashMap().entrySet())
 				st.addBatch("REPLACE INTO `eggs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getFishHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFishHashMap().entrySet())
 				st.addBatch("REPLACE INTO `fish` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getItemBreakHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getItemBreakHashMap().entrySet())
 				st.addBatch("REPLACE INTO `itembreaks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getEatenItemsHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEatenItemsHashMap().entrySet())
 				st.addBatch("REPLACE INTO `eatenitems` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getShearHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getShearHashMap().entrySet())
 				st.addBatch("REPLACE INTO `shears` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getMilkHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getMilkHashMap().entrySet())
 				st.addBatch("REPLACE INTO `milks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getTradeHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getTradeHashMap().entrySet())
 				st.addBatch("REPLACE INTO `trades` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getAnvilHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getAnvilHashMap().entrySet())
 				st.addBatch("REPLACE INTO `anvils` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getEnchantmentHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEnchantmentHashMap().entrySet())
 				st.addBatch("REPLACE INTO `enchantments` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getBedHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBedHashMap().entrySet())
 				st.addBatch("REPLACE INTO `beds` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getXpHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getXpHashMap().entrySet())
 				st.addBatch("REPLACE INTO `levels` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getConsumedPotionsHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getConsumedPotionsHashMap().entrySet())
 				st.addBatch(
 						"REPLACE INTO `consumedpotions` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getDropHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getDropHashMap().entrySet())
 				st.addBatch("REPLACE INTO `drops` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getHoePlowingHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getHoePlowingHashMap().entrySet())
 				st.addBatch("REPLACE INTO `hoeplowing` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getFertiliseHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFertiliseHashMap().entrySet())
 				st.addBatch("REPLACE INTO `fertilising` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getTameHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getTameHashMap().entrySet())
 				st.addBatch("REPLACE INTO `tames` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getBrewingHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBrewingHashMap().entrySet())
 				st.addBatch("REPLACE INTO `brewing` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getFireworkHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFireworkHashMap().entrySet())
 				st.addBatch("REPLACE INTO `fireworks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getBlockPlaceHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockPlaceHashMap().entrySet())
 				st.addBatch("REPLACE INTO `places` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getBlockBreakHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockBreakHashMap().entrySet())
 				st.addBatch("REPLACE INTO `breaks` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getKillHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getKillHashMap().entrySet())
 				st.addBatch("REPLACE INTO `kills` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 
-			for (Entry<String, Integer> entry : DatabasePools.getCraftHashMap().entrySet())
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getCraftHashMap().entrySet())
 				st.addBatch("REPLACE INTO `crafts` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 
@@ -130,31 +130,31 @@ public class PooledRequestsSenderSync implements Runnable {
 		}
 
 		// Clear entries in HashMaps.
-		DatabasePools.getDeathHashMap().clear();
-		DatabasePools.getArrowHashMap().clear();
-		DatabasePools.getSnowballHashMap().clear();
-		DatabasePools.getEggHashMap().clear();
-		DatabasePools.getFishHashMap().clear();
-		DatabasePools.getItemBreakHashMap().clear();
-		DatabasePools.getEatenItemsHashMap().clear();
-		DatabasePools.getShearHashMap().clear();
-		DatabasePools.getMilkHashMap().clear();
-		DatabasePools.getTradeHashMap().clear();
-		DatabasePools.getAnvilHashMap().clear();
-		DatabasePools.getEnchantmentHashMap().clear();
-		DatabasePools.getBedHashMap().clear();
-		DatabasePools.getXpHashMap().clear();
-		DatabasePools.getConsumedPotionsHashMap().clear();
-		DatabasePools.getDropHashMap().clear();
-		DatabasePools.getHoePlowingHashMap().clear();
-		DatabasePools.getFertiliseHashMap().clear();
-		DatabasePools.getTameHashMap().clear();
-		DatabasePools.getBrewingHashMap().clear();
-		DatabasePools.getFireworkHashMap().clear();
-		DatabasePools.getBlockPlaceHashMap().clear();
-		DatabasePools.getBlockBreakHashMap().clear();
-		DatabasePools.getKillHashMap().clear();
-		DatabasePools.getCraftHashMap().clear();
+		plugin.getPoolsManager().getDeathHashMap().clear();
+		plugin.getPoolsManager().getArrowHashMap().clear();
+		plugin.getPoolsManager().getSnowballHashMap().clear();
+		plugin.getPoolsManager().getEggHashMap().clear();
+		plugin.getPoolsManager().getFishHashMap().clear();
+		plugin.getPoolsManager().getItemBreakHashMap().clear();
+		plugin.getPoolsManager().getEatenItemsHashMap().clear();
+		plugin.getPoolsManager().getShearHashMap().clear();
+		plugin.getPoolsManager().getMilkHashMap().clear();
+		plugin.getPoolsManager().getTradeHashMap().clear();
+		plugin.getPoolsManager().getAnvilHashMap().clear();
+		plugin.getPoolsManager().getEnchantmentHashMap().clear();
+		plugin.getPoolsManager().getBedHashMap().clear();
+		plugin.getPoolsManager().getXpHashMap().clear();
+		plugin.getPoolsManager().getConsumedPotionsHashMap().clear();
+		plugin.getPoolsManager().getDropHashMap().clear();
+		plugin.getPoolsManager().getHoePlowingHashMap().clear();
+		plugin.getPoolsManager().getFertiliseHashMap().clear();
+		plugin.getPoolsManager().getTameHashMap().clear();
+		plugin.getPoolsManager().getBrewingHashMap().clear();
+		plugin.getPoolsManager().getFireworkHashMap().clear();
+		plugin.getPoolsManager().getBlockPlaceHashMap().clear();
+		plugin.getPoolsManager().getBlockBreakHashMap().clear();
+		plugin.getPoolsManager().getKillHashMap().clear();
+		plugin.getPoolsManager().getCraftHashMap().clear();
 
 	}
 }

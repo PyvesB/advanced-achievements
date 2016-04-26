@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.DatabasePools;
 
 public class AchieveConsumeListener implements Listener {
 
@@ -30,22 +29,14 @@ public class AchieveConsumeListener implements Listener {
 
 		if (event.getItem().getType().name().equals("POTION")
 				&& player.hasPermission("achievement.count.consumedpotions")) {
-			int consumedPotions;
-			if (!DatabasePools.getConsumedPotionsHashMap().containsKey(player.getUniqueId().toString()))
-				consumedPotions = plugin.getDb().getNormalAchievementAmount(player, "consumedpotions") + 1;
-			else
-				consumedPotions = DatabasePools.getConsumedPotionsHashMap().get(player.getUniqueId().toString()) + 1;
+			int consumedPotions = plugin.getPoolsManager().getPlayerConsumedPotionAmount(player) + 1;
 
-			DatabasePools.getConsumedPotionsHashMap().put(player.getUniqueId().toString(), consumedPotions);
+			plugin.getPoolsManager().getConsumedPotionsHashMap().put(player.getUniqueId().toString(), consumedPotions);
 			configAchievement = "ConsumedPotions." + consumedPotions;
 		} else if (player.hasPermission("achievement.count.eatenitems")) {
-			int eatenItems;
-			if (!DatabasePools.getEatenItemsHashMap().containsKey(player.getUniqueId().toString()))
-				eatenItems = plugin.getDb().getNormalAchievementAmount(player, "eatenitems") + 1;
-			else
-				eatenItems = DatabasePools.getEatenItemsHashMap().get(player.getUniqueId().toString()) + 1;
+			int eatenItems = plugin.getPoolsManager().getPlayerEatenItemAmount(player) + 1;
 
-			DatabasePools.getEatenItemsHashMap().put(player.getUniqueId().toString(), eatenItems);
+			plugin.getPoolsManager().getEatenItemsHashMap().put(player.getUniqueId().toString(), eatenItems);
 			configAchievement = "EatenItems." + eatenItems;
 		} else
 			return;
