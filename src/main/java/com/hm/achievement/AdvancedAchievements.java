@@ -115,6 +115,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private boolean restrictCreative;
 	private Set<String> excludedWorldList;
 	private boolean successfulLoad;
+	private boolean overrideDisable;
 	private int playtimeTaskInterval;
 	private int distanceTaskInterval;
 
@@ -140,6 +141,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	public AdvancedAchievements() {
 
+		overrideDisable = false;
 		excludedWorldList = new HashSet<String>();
 		fileManager = new FileManager(this);
 		db = new SQLDatabaseManager(this);
@@ -157,6 +159,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		long startTime = System.currentTimeMillis();
 
 		configurationLoad();
+
+		// Error while loading .yml files; do not do any further work.
+		if (overrideDisable) {
+			overrideDisable = false;
+			return;
+		}
 
 		this.getLogger().info("Registering listeners...");
 
@@ -296,6 +304,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Initialise the SQLite/MySQL database.
 		db.initialise();
 
+		// Error while loading database do not do any further work.
+		if (overrideDisable) {
+			overrideDisable = false;
+			return;
+		}
+
 		// Schedule a repeating task to group database queries for some frequent
 		// events. Choose between asynchronous task and synchronous task.
 		if (asyncPooledRequestsSender)
@@ -349,7 +363,41 @@ public class AdvancedAchievements extends JavaPlugin {
 		successfulLoad = true;
 
 		this.getLogger().info("Backing up and loading configuration files...");
-		
+
+		try {
+			config = fileManager.getNewConfig("config.yml");
+		} catch (IOException e) {
+			this.getLogger().severe("Error while loading configuration file.");
+			e.printStackTrace();
+			successfulLoad = false;
+		} catch (InvalidConfigurationException e) {
+			this.getLogger().severe("Error while loading configuration file, disabling plugin.");
+			this.getLogger().severe(
+					"Verify your syntax using the following logs and by visiting yaml-online-parser.appspot.com");
+			e.printStackTrace();
+			successfulLoad = false;
+			overrideDisable = true;
+			this.getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
+
+		try {
+			lang = fileManager.getNewConfig("lang.yml");
+		} catch (IOException e) {
+			this.getLogger().severe("Error while loading language file.");
+			e.printStackTrace();
+			successfulLoad = false;
+		} catch (InvalidConfigurationException e) {
+			this.getLogger().severe("Error while loading language file, disabling plugin.");
+			this.getLogger().severe(
+					"Verify your syntax using the following logs and by visiting yaml-online-parser.appspot.com");
+			e.printStackTrace();
+			successfulLoad = false;
+			overrideDisable = true;
+			this.getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
+
 		try {
 			fileManager.backupFile("config.yml");
 		} catch (IOException e) {
@@ -362,22 +410,6 @@ public class AdvancedAchievements extends JavaPlugin {
 			fileManager.backupFile("lang.yml");
 		} catch (IOException e) {
 			this.getLogger().severe("Error while backing up language file.");
-			e.printStackTrace();
-			successfulLoad = false;
-		}
-
-		try {
-			config = fileManager.getNewConfig("config.yml");
-		} catch (IOException e) {
-			this.getLogger().severe("Error while loading configuration file.");
-			e.printStackTrace();
-			successfulLoad = false;
-		}
-
-		try {
-			lang = fileManager.getNewConfig("lang.yml");
-		} catch (IOException e) {
-			this.getLogger().severe("Error while loading language file.");
 			e.printStackTrace();
 			successfulLoad = false;
 		}
@@ -595,6 +627,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
+
+		// Error while loading .yml files or database; do not do any further
+		// work.
+		if (overrideDisable)
+			return;
 
 		// Cancel scheduled tasks.
 		if (pooledRequestsSenderTask != null)
@@ -829,6 +866,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	public boolean isSuccessfulLoad() {
 
 		return successfulLoad;
+	}
+
+	public void setOverrideDisable(boolean overrideDisable) {
+
+		this.overrideDisable = overrideDisable;
 	}
 
 	public void setSuccessfulLoad(boolean successfulLoad) {

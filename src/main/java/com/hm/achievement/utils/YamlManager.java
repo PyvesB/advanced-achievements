@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -20,11 +21,13 @@ public class YamlManager {
 	private File file;
 	private FileConfiguration config;
 
-	public YamlManager(Reader reader, File configFile, int comments, AdvancedAchievements plugin) {
+	public YamlManager(Reader reader, File configFile, int comments, AdvancedAchievements plugin)
+			throws IOException, InvalidConfigurationException {
 		this.comments = comments;
 		this.manager = new FileManager(plugin);
 		this.file = configFile;
-		this.config = YamlConfiguration.loadConfiguration(reader);
+		this.config = new YamlConfiguration();
+			config.load(reader);
 	}
 
 	public String getString(String path) {

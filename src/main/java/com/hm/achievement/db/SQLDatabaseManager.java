@@ -53,8 +53,9 @@ public class SQLDatabaseManager {
 
 		// Try to establish connection with database.
 		if (getSQLConnection() == null) {
-			plugin.getLogger().severe("Could not establish SQL connection. Disabling Advanced Achievement.");
+			plugin.getLogger().severe("Could not establish SQL connection, disabling plugin.");
 			plugin.getLogger().severe("Please verify your settings in the configuration file.");
+			plugin.setOverrideDisable(true);
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
 			return;
 		}

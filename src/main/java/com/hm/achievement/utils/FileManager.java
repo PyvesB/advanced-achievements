@@ -13,6 +13,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 
+import org.bukkit.configuration.InvalidConfigurationException;
+
 import com.hm.achievement.AdvancedAchievements;
 
 public class FileManager {
@@ -23,7 +25,7 @@ public class FileManager {
 		this.plugin = plugin;
 	}
 
-	public YamlManager getNewConfig(String fileName) throws IOException {
+	public YamlManager getNewConfig(String fileName) throws IOException, InvalidConfigurationException {
 
 		File file = this.getConfigFile(fileName);
 
