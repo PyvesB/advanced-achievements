@@ -34,6 +34,8 @@ public class DatabasePoolsManager {
 	private Map<String, Integer> tameHashMap;
 	private Map<String, Integer> brewingHashMap;
 	private Map<String, Integer> fireworkHashMap;
+	private Map<String, Integer> musicDiscHashMap;
+	private Map<String, Integer> enderPearlHashMap;
 	// Statistics of the different players; keys correspond to UUIDs and
 	// block/entity identifiers.
 	private Map<String, Integer> blockPlaceHashMap;
@@ -71,6 +73,8 @@ public class DatabasePoolsManager {
 			tameHashMap = new ConcurrentHashMap<String, Integer>();
 			brewingHashMap = new ConcurrentHashMap<String, Integer>();
 			fireworkHashMap = new ConcurrentHashMap<String, Integer>();
+			musicDiscHashMap = new ConcurrentHashMap<String, Integer>();
+			enderPearlHashMap = new ConcurrentHashMap<String, Integer>();
 			blockPlaceHashMap = new ConcurrentHashMap<String, Integer>();
 			blockBreakHashMap = new ConcurrentHashMap<String, Integer>();
 			killHashMap = new ConcurrentHashMap<String, Integer>();
@@ -97,6 +101,8 @@ public class DatabasePoolsManager {
 			tameHashMap = new HashMap<String, Integer>();
 			brewingHashMap = new HashMap<String, Integer>();
 			fireworkHashMap = new HashMap<String, Integer>();
+			enderPearlHashMap = new HashMap<String, Integer>();
+			musicDiscHashMap = new HashMap<String, Integer>();
 			blockPlaceHashMap = new HashMap<String, Integer>();
 			blockBreakHashMap = new HashMap<String, Integer>();
 			killHashMap = new HashMap<String, Integer>();
@@ -376,7 +382,34 @@ public class DatabasePoolsManager {
 		else
 			return fireworkHashMap.get(player.getUniqueId().toString());
 	}
+	
+	
+	public Map<String, Integer> getMusicDiscHashMap() {
 
+		return musicDiscHashMap;
+	}
+
+	public int getPlayerMusicDiscAmount(Player player) {
+
+		if (!musicDiscHashMap.containsKey(player.getUniqueId().toString()))
+			return plugin.getDb().getNormalAchievementAmount(player, "musicdiscs");
+		else
+			return musicDiscHashMap.get(player.getUniqueId().toString());
+	}
+
+	public Map<String, Integer> getEnderPearlHashMap() {
+
+		return enderPearlHashMap;
+	}
+
+	public int getPlayerEnderPearlAmount(Player player) {
+
+		if (!enderPearlHashMap.containsKey(player.getUniqueId().toString()))
+			return plugin.getDb().getNormalAchievementAmount(player, "enderpearls");
+		else
+			return enderPearlHashMap.get(player.getUniqueId().toString());
+	}
+	
 	public Map<String, Integer> getBlockPlaceHashMap() {
 
 		return blockPlaceHashMap;

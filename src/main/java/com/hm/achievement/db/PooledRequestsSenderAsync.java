@@ -65,8 +65,8 @@ public class PooledRequestsSenderAsync implements Runnable {
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getSnowballHashMap().entrySet()) {
 				st.execute("REPLACE INTO `snowballs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getSnowballHashMap()).remove(entry.getKey(),
-						entry.getValue());
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getSnowballHashMap())
+						.remove(entry.getKey(), entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEggHashMap().entrySet()) {
@@ -83,14 +83,14 @@ public class PooledRequestsSenderAsync implements Runnable {
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getItemBreakHashMap().entrySet()) {
 				st.execute("REPLACE INTO `itembreaks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getItemBreakHashMap()).remove(entry.getKey(),
-						entry.getValue());
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getItemBreakHashMap())
+						.remove(entry.getKey(), entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEatenItemsHashMap().entrySet()) {
 				st.execute("REPLACE INTO `eatenitems` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getEatenItemsHashMap()).remove(entry.getKey(),
-						entry.getValue());
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getEatenItemsHashMap())
+						.remove(entry.getKey(), entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getShearHashMap().entrySet()) {
@@ -119,8 +119,8 @@ public class PooledRequestsSenderAsync implements Runnable {
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEnchantmentHashMap().entrySet()) {
 				st.execute("REPLACE INTO `enchantments` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getEnchantmentHashMap()).remove(entry.getKey(),
-						entry.getValue());
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getEnchantmentHashMap())
+						.remove(entry.getKey(), entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBedHashMap().entrySet()) {
@@ -138,8 +138,8 @@ public class PooledRequestsSenderAsync implements Runnable {
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getConsumedPotionsHashMap().entrySet()) {
 				st.execute(
 						"REPLACE INTO `consumedpotions` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getConsumedPotionsHashMap()).remove(entry.getKey(),
-						entry.getValue());
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getConsumedPotionsHashMap())
+						.remove(entry.getKey(), entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getDropHashMap().entrySet()) {
@@ -150,14 +150,14 @@ public class PooledRequestsSenderAsync implements Runnable {
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getHoePlowingHashMap().entrySet()) {
 				st.execute("REPLACE INTO `hoeplowing` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getHoePlowingHashMap()).remove(entry.getKey(),
-						entry.getValue());
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getHoePlowingHashMap())
+						.remove(entry.getKey(), entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFertiliseHashMap().entrySet()) {
 				st.execute("REPLACE INTO `fertilising` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getFertiliseHashMap()).remove(entry.getKey(),
-						entry.getValue());
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getFertiliseHashMap())
+						.remove(entry.getKey(), entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getTameHashMap().entrySet()) {
@@ -168,28 +168,40 @@ public class PooledRequestsSenderAsync implements Runnable {
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBrewingHashMap().entrySet()) {
 				st.execute("REPLACE INTO `brewing` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBrewingHashMap()).remove(entry.getKey(),
-						entry.getValue());
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBrewingHashMap())
+						.remove(entry.getKey(), entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFireworkHashMap().entrySet()) {
 				st.execute("REPLACE INTO `fireworks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getFireworkHashMap()).remove(entry.getKey(),
-						entry.getValue());
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getFireworkHashMap())
+						.remove(entry.getKey(), entry.getValue());
+			}
+
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getMusicDiscHashMap().entrySet()) {
+				st.execute("REPLACE INTO `musicdiscs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getMusicDiscHashMap())
+						.remove(entry.getKey(), entry.getValue());
+			}
+
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEnderPearlHashMap().entrySet()) {
+				st.execute("REPLACE INTO `enderpearls` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getEnderPearlHashMap())
+						.remove(entry.getKey(), entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockPlaceHashMap().entrySet()) {
 				st.execute("REPLACE INTO `places` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBlockPlaceHashMap()).remove(entry.getKey(),
-						entry.getValue());
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBlockPlaceHashMap())
+						.remove(entry.getKey(), entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockBreakHashMap().entrySet()) {
 				st.execute("REPLACE INTO `breaks` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBlockBreakHashMap()).remove(entry.getKey(),
-						entry.getValue());
+				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBlockBreakHashMap())
+						.remove(entry.getKey(), entry.getValue());
 			}
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getKillHashMap().entrySet()) {

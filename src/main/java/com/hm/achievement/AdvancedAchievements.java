@@ -3,7 +3,7 @@ package com.hm.achievement;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -23,11 +23,46 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.mcstats.MetricsLite;
 
-import com.hm.achievement.command.*;
-import com.hm.achievement.db.*;
-import com.hm.achievement.listener.*;
-import com.hm.achievement.runnable.*;
-import com.hm.achievement.utils.*;
+import com.hm.achievement.command.BookCommand;
+import com.hm.achievement.command.CheckCommand;
+import com.hm.achievement.command.DeleteCommand;
+import com.hm.achievement.command.GiveCommand;
+import com.hm.achievement.command.HelpCommand;
+import com.hm.achievement.command.InfoCommand;
+import com.hm.achievement.command.ListCommand;
+import com.hm.achievement.command.StatsCommand;
+import com.hm.achievement.command.TopCommand;
+import com.hm.achievement.db.DatabasePoolsManager;
+import com.hm.achievement.db.PooledRequestsSenderAsync;
+import com.hm.achievement.db.PooledRequestsSenderSync;
+import com.hm.achievement.db.SQLDatabaseManager;
+import com.hm.achievement.listener.AchieveArrowListener;
+import com.hm.achievement.listener.AchieveBedListener;
+import com.hm.achievement.listener.AchieveBlockBreakListener;
+import com.hm.achievement.listener.AchieveBlockPlaceListener;
+import com.hm.achievement.listener.AchieveConnectionListener;
+import com.hm.achievement.listener.AchieveConsumeListener;
+import com.hm.achievement.listener.AchieveCraftListener;
+import com.hm.achievement.listener.AchieveDeathListener;
+import com.hm.achievement.listener.AchieveDropListener;
+import com.hm.achievement.listener.AchieveEnchantListener;
+import com.hm.achievement.listener.AchieveFishListener;
+import com.hm.achievement.listener.AchieveHoeFertiliseFireworkMusicListener;
+import com.hm.achievement.listener.AchieveItemBreakListener;
+import com.hm.achievement.listener.AchieveKillListener;
+import com.hm.achievement.listener.AchieveMilkListener;
+import com.hm.achievement.listener.AchieveQuitListener;
+import com.hm.achievement.listener.AchieveShearListener;
+import com.hm.achievement.listener.AchieveSnowballEggListener;
+import com.hm.achievement.listener.AchieveTameListener;
+import com.hm.achievement.listener.AchieveTeleportListener;
+import com.hm.achievement.listener.AchieveTradeAnvilBrewListener;
+import com.hm.achievement.listener.AchieveXPListener;
+import com.hm.achievement.runnable.AchieveDistanceRunnable;
+import com.hm.achievement.runnable.AchievePlayTimeRunnable;
+import com.hm.achievement.utils.FileManager;
+import com.hm.achievement.utils.UpdateChecker;
+import com.hm.achievement.utils.YamlManager;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -74,7 +109,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveBedListener bedListener;
 	private AchieveXPListener xpListener;
 	private AchieveDropListener dropListener;
-	private AchieveHoeFertiliseFireworkListener hoeFertiliseFireworkListener;
+	private AchieveHoeFertiliseFireworkMusicListener hoeFertiliseFireworkMusicListener;
 	private AchieveTameListener tameListener;
 	private AchieveBlockPlaceListener blockPlaceListener;
 	private AchieveBlockBreakListener blockBreakListener;
@@ -123,8 +158,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	public static final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
 			"ItemBreaks", "EatenItems", "Shear", "Milk", "Trades", "AnvilsUsed", "Enchantments", "Beds", "MaxLevel",
 			"ConsumedPotions", "PlayedTime", "ItemDrops", "HoePlowings", "Fertilising", "Taming", "Brewing",
-			"Fireworks", "DistanceFoot", "DistancePig", "DistanceHorse", "DistanceMinecart", "DistanceBoat",
-			"Commands" };
+			"Fireworks", "MusicDiscs", "EnderPearls", "DistanceFoot", "DistancePig", "DistanceHorse",
+			"DistanceMinecart", "DistanceBoat", "DistanceGliding", "Commands" };
 	public static final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
 
 	// Plugin runnable classes.
@@ -274,9 +309,10 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (this.getPluginConfig().getConfigurationSection("HoePlowings").getKeys(false).size() != 0
 				|| this.getPluginConfig().getConfigurationSection("Fertilising").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("Fireworks").getKeys(false).size() != 0) {
-			hoeFertiliseFireworkListener = new AchieveHoeFertiliseFireworkListener(this);
-			pm.registerEvents(hoeFertiliseFireworkListener, this);
+				|| this.getPluginConfig().getConfigurationSection("Fireworks").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("MusicDiscs").getKeys(false).size() != 0) {
+			hoeFertiliseFireworkMusicListener = new AchieveHoeFertiliseFireworkMusicListener(this);
+			pm.registerEvents(hoeFertiliseFireworkMusicListener, this);
 		}
 
 		if (this.getPluginConfig().getConfigurationSection("MaxLevel").getKeys(false).size() != 0
@@ -285,7 +321,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| this.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
 				|| this.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
 				|| this.getPluginConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
+				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceGliding").getKeys(false).size() != 0) {
 			quitListener = new AchieveQuitListener(this);
 			pm.registerEvents(quitListener, this);
 		}
@@ -294,7 +331,9 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| this.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
 				|| this.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
 				|| this.getPluginConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
+				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceGliding").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("EnderPearls").getKeys(false).size() != 0) {
 			teleportListener = new AchieveTeleportListener(this);
 			pm.registerEvents(teleportListener, this);
 		}
@@ -338,7 +377,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| this.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
 				|| this.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
 				|| this.getPluginConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0) {
+				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
+				|| this.getPluginConfig().getConfigurationSection("DistanceGliding").getKeys(false).size() != 0) {
 			achieveDistanceRunnable = new AchieveDistanceRunnable(this);
 			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achieveDistanceRunnable,
@@ -415,119 +455,106 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		// Update configurations from older plugin versions by adding missing
-		// parameters in config file.
-
-		// Added in version 1.1:
-		if (!this.getPluginConfig().getKeys(false).contains("CheckForUpdate")) {
-			this.getPluginConfig().set("CheckForUpdate", true);
-			this.saveConfig();
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("RetroVault")) {
-			this.getPluginConfig().set("RetroVault", false);
-			this.saveConfig();
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("Firework")) {
-			this.getPluginConfig().set("Firework", true);
-			this.saveConfig();
-		}
-
-		// Added in version 1.4:
-		if (!this.getPluginConfig().getKeys(false).contains("Sound")) {
-			this.getPluginConfig().set("Sound", true);
-			this.saveConfig();
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("Icon")) {
-			this.getPluginConfig().set("Icon", "\u2618");
-			this.saveConfig();
-		}
-
-		// Added in version 1.5:
-		if (!this.getPluginConfig().getKeys(false).contains("ChatNotify")) {
-			this.getPluginConfig().set("ChatNotify", false);
-			this.saveConfig();
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("BookSeparator")) {
-			this.getPluginConfig().set("BookSeparator", "");
-			this.saveConfig();
-		}
-
-		// Added in version 1.6:
-		if (!this.getPluginConfig().getKeys(false).contains("RestrictCreative")) {
-			this.getPluginConfig().set("RestrictCreative", false);
-			this.saveConfig();
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("MultiCommand")) {
-			this.getPluginConfig().set("MultiCommand", true);
-			this.saveConfig();
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("DatabaseBackup")) {
-			this.getPluginConfig().set("DatabaseBackup", true);
-			this.saveConfig();
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("ExcludedWorlds")) {
-			List<String> list = new ArrayList<String>();
-			this.getPluginConfig().set("ExcludedWorlds", list);
-			this.saveConfig();
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("TopList")) {
-			this.getPluginConfig().set("TopList", 5);
-			this.saveConfig();
-		}
+		// parameters in config file. Upgrades from versions prior to 2.0 are
+		// not supported.
+		boolean updateDone = false;
 
 		// Added in version 2.1:
 		if (!this.getPluginConfig().getKeys(false).contains("AdditionalEffects")) {
 			this.getPluginConfig().set("AdditionalEffects", true);
-			this.saveConfig();
+			updateDone = true;
 		}
 
 		if (!this.getPluginConfig().getKeys(false).contains("FireworkStyle")) {
 			this.getPluginConfig().set("FireworkStyle", "BALL_LARGE");
-			this.saveConfig();
+			updateDone = true;
 		}
 
 		if (!this.getPluginConfig().getKeys(false).contains("ObfuscateNotReceived")) {
 			this.getPluginConfig().set("ObfuscateNotReceived", true);
-			this.saveConfig();
+			updateDone = true;
 		}
 
 		if (!this.getPluginConfig().getKeys(false).contains("HideNotReceivedCategories")) {
 			this.getPluginConfig().set("HideNotReceivedCategories", false);
-			this.saveConfig();
+			updateDone = true;
 		}
 
 		// Added in version 2.2:
 		if (!this.getPluginConfig().getKeys(false).contains("TitleScreen")) {
 			this.getPluginConfig().set("TitleScreen", true);
-			this.saveConfig();
+			updateDone = true;
 		}
 
 		if (!this.getPluginConfig().getKeys(false).contains("Color")) {
 			this.getPluginConfig().set("Color", "5");
-			this.saveConfig();
+			updateDone = true;
 		}
 
 		if (!this.getPluginConfig().getKeys(false).contains("TimeBook")) {
 			this.getPluginConfig().set("TimeBook", this.getPluginConfig().getInt("Time", 900));
-			this.saveConfig();
+			updateDone = true;
 		}
 
 		if (!this.getPluginConfig().getKeys(false).contains("TimeList")) {
 			this.getPluginConfig().set("TimeList", 0);
-			this.saveConfig();
+			updateDone = true;
+		}
+
+		if (!this.getPluginConfig().getKeys(false).contains("Brewing")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			this.getPluginConfig().set("Brewing", emptyMap);
+			updateDone = true;
+		}
+
+		if (!this.getPluginConfig().getKeys(false).contains("Taming")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			this.getPluginConfig().set("Taming", emptyMap);
+			updateDone = true;
+		}
+
+		// Added in version 2.3:
+		if (!this.getPluginConfig().getKeys(false).contains("Fireworks")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			this.getPluginConfig().set("Fireworks", emptyMap);
+			updateDone = true;
 		}
 
 		// Added in version 2.3.2:
 		if (!this.getPluginConfig().getKeys(false).contains("AsyncPooledRequestsSender")) {
 			this.getPluginConfig().set("AsyncPooledRequestsSender", true);
-			this.saveConfig();
+			updateDone = true;
+		}
+
+		// Added in version 2.5:
+		if (!this.getPluginConfig().getKeys(false).contains("DistanceGliding")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			this.getPluginConfig().set("DistanceGliding", emptyMap, "test");
+			updateDone = true;
+		}
+
+		if (!this.getPluginConfig().getKeys(false).contains("MusicDiscs")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			this.getPluginConfig().set("MusicDiscs", emptyMap);
+			updateDone = true;
+		}
+
+		if (!this.getPluginConfig().getKeys(false).contains("EnderPearls")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			this.getPluginConfig().set("EnderPearls", emptyMap, "test");
+			updateDone = true;
+		}
+
+		if (updateDone) {
+			// Changes in the configuration: save and do a fresh load.
+			try {
+				config.saveConfig();
+				config.reloadConfig();
+			} catch (IOException e) {
+				this.getLogger().severe("Error while saving changes to the configuration file.");
+				e.printStackTrace();
+				successfulLoad = false;
+			}
 		}
 
 		// End of configuration updates.
@@ -667,6 +694,9 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesMinecart().entrySet())
 				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distanceminecart");
+
+			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesGliding().entrySet())
+				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distancegliding");
 		}
 
 		try {

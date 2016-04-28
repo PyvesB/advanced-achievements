@@ -10,13 +10,11 @@ import org.bukkit.inventory.ItemStack;
 public class AchievementRewards {
 
 	private AdvancedAchievements plugin;
-	private boolean retroVault;
 	private boolean rewardCommandNotif;
 
 	public AchievementRewards(AdvancedAchievements achievement) {
 
 		this.plugin = achievement;
-		retroVault = plugin.getPluginConfig().getBoolean("RetroVault", false);
 		// No longer available in default config, kept for compatibility with
 		// versions prior to 2.1.
 		rewardCommandNotif = plugin.getPluginConfig().getBoolean("RewardCommandNotif", true);
@@ -81,11 +79,14 @@ public class AchievementRewards {
 		if (plugin.setUpEconomy()) {
 			String price = Integer.toString(amount);
 			double amtd = Double.valueOf(price.trim());
-			// Deprecated method, was the only one existing prior to Vault 1.4.
-			if (retroVault)
-				plugin.getEconomy().depositPlayer(player.getName(), amtd);
-			else
+
+			try {
 				plugin.getEconomy().depositPlayer(player, amtd);
+			} catch (NoSuchMethodError e) {
+				// Deprecated method, was the only one existing prior to Vault
+				// 1.4.
+				plugin.getEconomy().depositPlayer(player.getName(), amtd);
+			}
 
 			// If player has set different currency names depending on name,
 			// adapt message accordingly.

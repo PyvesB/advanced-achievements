@@ -103,7 +103,8 @@ public class SQLDatabaseManager {
 		String dataHandler = plugin.getPluginConfig().getString("DatabaseType", "sqlite");
 		if (dataHandler.equalsIgnoreCase("mysql")) {
 			sqliteDatabase = false;
-			mysqlDatabase = plugin.getPluginConfig().getString("MYSQL.Database", "jdbc:mysql://localhost:3306/minecraft");
+			mysqlDatabase = plugin.getPluginConfig().getString("MYSQL.Database",
+					"jdbc:mysql://localhost:3306/minecraft");
 			mysqlUser = plugin.getPluginConfig().getString("MYSQL.User", "root");
 			mysqlPassword = plugin.getPluginConfig().getString("MYSQL.Password", "root");
 		} else
@@ -174,6 +175,8 @@ public class SQLDatabaseManager {
 				+ "distanceminecart INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 		st.addBatch("CREATE TABLE IF NOT EXISTS `distanceboat` (" + "playername char(36),"
 				+ "distanceboat INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `distancegliding` (" + "playername char(36),"
+				+ "distancegliding INT UNSIGNED," + "PRIMARY KEY (`playername`)" + ")");
 		st.addBatch("CREATE TABLE IF NOT EXISTS `drops` (" + "playername char(36)," + "drops INT UNSIGNED,"
 				+ "PRIMARY KEY (`playername`)" + ")");
 		st.addBatch("CREATE TABLE IF NOT EXISTS `hoeplowing` (" + "playername char(36)," + "hoeplowing INT UNSIGNED,"
@@ -185,6 +188,10 @@ public class SQLDatabaseManager {
 		st.addBatch("CREATE TABLE IF NOT EXISTS `brewing` (" + "playername char(36)," + "brewing INT UNSIGNED,"
 				+ "PRIMARY KEY (`playername`)" + ")");
 		st.addBatch("CREATE TABLE IF NOT EXISTS `fireworks` (" + "playername char(36)," + "fireworks INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `musicdiscs` (" + "playername char(36)," + "musicdiscs INT UNSIGNED,"
+				+ "PRIMARY KEY (`playername`)" + ")");
+		st.addBatch("CREATE TABLE IF NOT EXISTS `enderpearls` (" + "playername char(36)," + "enderpearls INT UNSIGNED,"
 				+ "PRIMARY KEY (`playername`)" + ")");
 
 		st.executeBatch();

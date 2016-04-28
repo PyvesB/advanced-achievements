@@ -19,12 +19,13 @@ public class AchieveDistanceRunnable implements Runnable {
 
 	private AdvancedAchievements plugin;
 
-	// Lists of achievements extracted from configuration.
+	// Lists of achievement amounts (=thresholds) extracted from configuration.
 	private int[] achievementsFoot;
 	private int[] achievementsPig;
 	private int[] achievementsHorse;
 	private int[] achievementsMinecart;
 	private int[] achievementsBoat;
+	private int[] achievementsGliding;
 
 	// Sets corresponding to whether a player has obtained a specific
 	// distance achievement.
@@ -34,6 +35,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	private HashSet<?>[] playerAchievementsPig;
 	private HashSet<?>[] playerAchievementsMinecart;
 	private HashSet<?>[] playerAchievementsBoat;
+	private HashSet<?>[] playerAchievementsGliding;
 
 	// HashMaps containing distance statistics for each player.
 	private Map<String, Integer> distancesFoot;
@@ -41,6 +43,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	private Map<String, Integer> distancesPig;
 	private Map<String, Integer> distancesBoat;
 	private Map<String, Integer> distancesMinecart;
+	private Map<String, Integer> distancesGliding;
 	private HashMap<Player, Location> playerLocations;
 
 	public AchieveDistanceRunnable(AdvancedAchievements plugin) {
@@ -52,12 +55,14 @@ public class AchieveDistanceRunnable implements Runnable {
 			distancesPig = new ConcurrentHashMap<String, Integer>();
 			distancesBoat = new ConcurrentHashMap<String, Integer>();
 			distancesMinecart = new ConcurrentHashMap<String, Integer>();
+			distancesGliding = new ConcurrentHashMap<String, Integer>();
 		} else {
 			distancesFoot = new HashMap<String, Integer>();
 			distancesHorse = new HashMap<String, Integer>();
 			distancesPig = new HashMap<String, Integer>();
 			distancesBoat = new HashMap<String, Integer>();
 			distancesMinecart = new HashMap<String, Integer>();
+			distancesGliding = new HashMap<String, Integer>();
 		}
 		playerLocations = new HashMap<Player, Location>();
 
@@ -70,35 +75,46 @@ public class AchieveDistanceRunnable implements Runnable {
 	 */
 	public void extractAchievementsFromConfig(AdvancedAchievements plugin) {
 
-		achievementsFoot = new int[plugin.getPluginConfig().getConfigurationSection("DistanceFoot").getKeys(false).size()];
+		achievementsFoot = new int[plugin.getPluginConfig().getConfigurationSection("DistanceFoot").getKeys(false)
+				.size()];
 		int i = 0;
 		for (String distance : plugin.getPluginConfig().getConfigurationSection("DistanceFoot").getKeys(false)) {
 			achievementsFoot[i] = Integer.parseInt(distance);
 			i++;
 		}
-		achievementsPig = new int[plugin.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false).size()];
+		achievementsPig = new int[plugin.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false)
+				.size()];
 		i = 0;
 		for (String distance : plugin.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false)) {
 			achievementsPig[i] = Integer.parseInt(distance);
 			i++;
 		}
-		achievementsHorse = new int[plugin.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false).size()];
+		achievementsHorse = new int[plugin.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false)
+				.size()];
 		i = 0;
 		for (String distance : plugin.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false)) {
 			achievementsHorse[i] = Integer.parseInt(distance);
 			i++;
 		}
-		achievementsMinecart = new int[plugin.getPluginConfig().getConfigurationSection("DistanceMinecart").getKeys(false)
-				.size()];
+		achievementsMinecart = new int[plugin.getPluginConfig().getConfigurationSection("DistanceMinecart")
+				.getKeys(false).size()];
 		i = 0;
 		for (String distance : plugin.getPluginConfig().getConfigurationSection("DistanceMinecart").getKeys(false)) {
 			achievementsMinecart[i] = Integer.parseInt(distance);
 			i++;
 		}
-		achievementsBoat = new int[plugin.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size()];
+		achievementsBoat = new int[plugin.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false)
+				.size()];
 		i = 0;
 		for (String distance : plugin.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false)) {
 			achievementsBoat[i] = Integer.parseInt(distance);
+			i++;
+		}
+		achievementsGliding = new int[plugin.getPluginConfig().getConfigurationSection("DistanceGliding").getKeys(false)
+				.size()];
+		i = 0;
+		for (String distance : plugin.getPluginConfig().getConfigurationSection("DistanceGliding").getKeys(false)) {
+			achievementsGliding[i] = Integer.parseInt(distance);
 			i++;
 		}
 
@@ -121,6 +137,10 @@ public class AchieveDistanceRunnable implements Runnable {
 		playerAchievementsMinecart = new HashSet<?>[achievementsMinecart.length];
 		for (i = 0; i < playerAchievementsMinecart.length; ++i)
 			playerAchievementsMinecart[i] = new HashSet<Player>();
+
+		playerAchievementsGliding = new HashSet<?>[achievementsGliding.length];
+		for (i = 0; i < playerAchievementsGliding.length; ++i)
+			playerAchievementsGliding[i] = new HashSet<Player>();
 	}
 
 	@Override
@@ -220,8 +240,8 @@ public class AchieveDistanceRunnable implements Runnable {
 
 				for (int i = 0; i < achievementsMinecart.length; i++) {
 					if (distance > achievementsMinecart[i] && !playerAchievementsMinecart[i].contains(player)) {
-						if (!plugin.getDb().hasPlayerAchievement(player,
-								plugin.getPluginConfig().getString("DistanceMinecart." + achievementsMinecart[i] + ".Name")))
+						if (!plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig()
+								.getString("DistanceMinecart." + achievementsMinecart[i] + ".Name")))
 							awardDistanceAchievement(player, achievementsMinecart[i], "DistanceMinecart.");
 
 						((HashSet<Player>) playerAchievementsMinecart[i]).add(player);
@@ -249,7 +269,7 @@ public class AchieveDistanceRunnable implements Runnable {
 					}
 				}
 			}
-		} else if (player.hasPermission("achievement.count.distancefoot") && !player.isFlying()) {
+		} else if (player.hasPermission("achievement.count.distancefoot") && !player.isFlying() && !player.isGliding()) {
 
 			Integer distance = distancesFoot.get(uuid);
 
@@ -270,6 +290,27 @@ public class AchieveDistanceRunnable implements Runnable {
 					((HashSet<Player>) playerAchievementsFoot[i]).add(player);
 				}
 			}
+		} else if (player.hasPermission("achievement.count.distancegliding") && player.isGliding()) {
+
+			Integer distance = distancesGliding.get(uuid);
+
+			if (distance == null) {
+				distancesGliding.put(uuid, plugin.getDb().updateAndGetDistance(uuid, 0, "distancegliding"));
+				return;
+			}
+
+			distance += difference;
+			distancesGliding.put(uuid, distance);
+
+			for (int i = 0; i < achievementsGliding.length; i++) {
+				if (distance > achievementsGliding[i] && !playerAchievementsGliding[i].contains(player)) {
+					if (!plugin.getDb().hasPlayerAchievement(player,
+							plugin.getPluginConfig().getString("DistanceGliding." + achievementsGliding[i] + ".Name")))
+						awardDistanceAchievement(player, achievementsGliding[i], "DistanceGliding.");
+
+					((HashSet<Player>) playerAchievementsGliding[i]).add(player);
+				}
+			}
 		}
 		// Update player's location.
 		playerLocations.put(player, player.getLocation());
@@ -279,7 +320,8 @@ public class AchieveDistanceRunnable implements Runnable {
 	private void awardDistanceAchievement(Player player, int achievementDistance, String type) {
 
 		plugin.getAchievementDisplay().displayAchievement(player, type + achievementDistance);
-		plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(type + achievementDistance + ".Name"),
+		plugin.getDb().registerAchievement(player,
+				plugin.getPluginConfig().getString(type + achievementDistance + ".Name"),
 				plugin.getPluginConfig().getString(type + achievementDistance + ".Message"));
 		plugin.getReward().checkConfig(player, type + achievementDistance);
 	}
@@ -299,14 +341,19 @@ public class AchieveDistanceRunnable implements Runnable {
 		return distancesPig;
 	}
 
+	public Map<String, Integer> getAchievementDistancesMinecart() {
+
+		return distancesMinecart;
+	}
+
 	public Map<String, Integer> getAchievementDistancesBoat() {
 
 		return distancesBoat;
 	}
 
-	public Map<String, Integer> getAchievementDistancesMinecart() {
+	public Map<String, Integer> getAchievementDistancesGliding() {
 
-		return distancesMinecart;
+		return distancesGliding;
 	}
 
 	public HashMap<Player, Location> getPlayerLocations() {
@@ -337,6 +384,11 @@ public class AchieveDistanceRunnable implements Runnable {
 	public HashSet<?>[] getPlayerAchievementsBoat() {
 
 		return playerAchievementsBoat;
+	}
+
+	public HashSet<?>[] getPlayerAchievementsGliding() {
+
+		return playerAchievementsGliding;
 	}
 
 }

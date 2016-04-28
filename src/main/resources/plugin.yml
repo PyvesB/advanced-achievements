@@ -81,6 +81,12 @@ permissions:
   achievement.count.fireworks:
     description: Allows firework statistics in database to increase.
     default: true
+  achievement.count.musicsdiscs:
+    description: Allows music disc statistics in database to increase.
+    default: true
+  achievement.count.enderpearls:
+    description: Allows ender pearl statistics in database to increase.
+    default: true
   achievement.count.itembreaks:
     description: Allows item breaks statistics in database to increase.
     default: true
@@ -128,6 +134,9 @@ permissions:
     default: true
   achievement.count.distancepig:
     description: Allows pig distance statistics in database to increase.
+    default: true
+  achievement.count.distancegliding:
+    description: Allows gliding distance statistics in database to increase.
     default: true
 # Additional permissions are available for the breaks, places, crafts and kills categories.
 # They depend on the sub-categories defined; for instance for stone breaks: achievement.count.breaks.stone

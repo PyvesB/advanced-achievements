@@ -43,6 +43,8 @@ public class AchieveQuitListener implements Listener {
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
 			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsMinecart())
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
+			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsGliding())
+				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
 
 			// Update database statistics for distances and clean HashMaps.
 			if (plugin.isAsyncPooledRequestsSender()) {
@@ -81,6 +83,12 @@ public class AchieveQuitListener implements Listener {
 						if (distance != null)
 							plugin.getDb().updateAndGetDistance(playerUUID, distance, "distanceminecart");
 						plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().remove(playerUUID);
+						
+						distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding()
+								.get(playerUUID);
+						if (distance != null)
+							plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancegliding");
+						plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding().remove(playerUUID);
 					}
 				});
 			} else {
@@ -104,6 +112,10 @@ public class AchieveQuitListener implements Listener {
 				distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().remove(playerUUID);
 				if (distance != null)
 					plugin.getDb().updateAndGetDistance(playerUUID, distance, "distanceminecart");
+				
+				distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding().remove(playerUUID);
+				if (distance != null)
+					plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancegliding");
 			}
 		}
 

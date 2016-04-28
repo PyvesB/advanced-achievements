@@ -44,8 +44,10 @@ public class ListCommand {
 			new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.GOLD_HOE),
 			new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.LEASH),
 			new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
+			new ItemStack(Material.RECORD_6), new ItemStack(Material.ENDER_PEARL),
 			new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK), new ItemStack(Material.SADDLE),
-			new ItemStack(Material.MINECART), new ItemStack(Material.BOAT), new ItemStack(Material.BOOKSHELF) };
+			new ItemStack(Material.MINECART), new ItemStack(Material.BOAT), new ItemStack(Material.ELYTRA),
+			new ItemStack(Material.BOOKSHELF) };
 
 	public ListCommand(AdvancedAchievements plugin) {
 
@@ -79,11 +81,14 @@ public class ListCommand {
 				plugin.getPluginLang().getString("list-taming", "Animals Tamed"),
 				plugin.getPluginLang().getString("list-brewing", "Potions Brewed"),
 				plugin.getPluginLang().getString("list-fireworks", "Fireworks Launched"),
+				plugin.getPluginLang().getString("list-musicdiscs", "Music Discs Played"),
+				plugin.getPluginLang().getString("list-enderpearls", "Teleportations with Ender Pearls"),
 				plugin.getPluginLang().getString("list-distance-foot", "Distance Travelled by Foot"),
 				plugin.getPluginLang().getString("list-distance-pig", "Distance Travelled on a Pig"),
 				plugin.getPluginLang().getString("list-distance-horse", "Distance Travelled on a Horse"),
 				plugin.getPluginLang().getString("list-distance-minecart", "Distance Travelled in a Minecart"),
 				plugin.getPluginLang().getString("list-distance-boat", "Distance Travelled in a Boat"),
+				plugin.getPluginLang().getString("list-distance-gliding", "Distance Travelled with Elytra"),
 				plugin.getPluginLang().getString("list-commands", "Other Achievements") };
 
 		multipleAchievementTypesLanguage = new String[] {

@@ -12,11 +12,11 @@ import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
 
-public class AchieveHoeFertiliseFireworkListener implements Listener {
+public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 
 	private AdvancedAchievements plugin;
 
-	public AchieveHoeFertiliseFireworkListener(AdvancedAchievements plugin) {
+	public AchieveHoeFertiliseFireworkMusicListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 	}
@@ -26,12 +26,12 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getItem() == null)
 			return;
-		
+
 		Player player = event.getPlayer();
-		
+
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
-		
+
 		String configAchievement;
 		if (player.hasPermission("achievement.count.hoeplowings")
 				&& (event.getItem().getType() == Material.DIAMOND_HOE || event.getItem().getType() == Material.IRON_HOE
@@ -40,7 +40,7 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 						|| event.getItem().getType() == Material.GOLD_HOE)
 				&& (event.getClickedBlock().getType() == Material.GRASS
 						|| event.getClickedBlock().getType() == Material.DIRT)) {
-			int plowings= plugin.getPoolsManager().getPlayerHoePlowingAmount(player) + 1;
+			int plowings = plugin.getPoolsManager().getPlayerHoePlowingAmount(player) + 1;
 
 			plugin.getPoolsManager().getHoePlowingHashMap().put(player.getUniqueId().toString(), plowings);
 
@@ -65,6 +65,7 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 			plugin.getPoolsManager().getFertiliseHashMap().put(player.getUniqueId().toString(), fertilising);
 
 			configAchievement = "Fertilising." + fertilising;
+
 		} else if (player.hasPermission("achievement.count.fireworks")
 				&& event.getItem().getType() == Material.FIREWORK) {
 			int fireworks = plugin.getPoolsManager().getPlayerFireworkAmount(player) + 1;
@@ -72,6 +73,15 @@ public class AchieveHoeFertiliseFireworkListener implements Listener {
 			plugin.getPoolsManager().getFireworkHashMap().put(player.getUniqueId().toString(), fireworks);
 
 			configAchievement = "Fireworks." + fireworks;
+
+		} else if (player.hasPermission("achievement.count.musicdiscs")
+				&& event.getItem().getType().name().contains("RECORD")
+				&& event.getClickedBlock().getType() == Material.JUKEBOX) {
+			int musicDiscs = plugin.getPoolsManager().getPlayerMusicDiscAmount(player) + 1;
+
+			plugin.getPoolsManager().getMusicDiscHashMap().put(player.getUniqueId().toString(), musicDiscs);
+
+			configAchievement = "MusicDiscs." + musicDiscs;
 
 		} else
 			return;

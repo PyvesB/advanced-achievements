@@ -103,6 +103,12 @@ public class PooledRequestsSenderSync implements Runnable {
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFireworkHashMap().entrySet())
 				st.addBatch("REPLACE INTO `fireworks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getMusicDiscHashMap().entrySet())
+				st.addBatch("REPLACE INTO `musicdiscs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+
+			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEnderPearlHashMap().entrySet())
+				st.addBatch("REPLACE INTO `enderpearls` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockPlaceHashMap().entrySet())
 				st.addBatch("REPLACE INTO `places` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
