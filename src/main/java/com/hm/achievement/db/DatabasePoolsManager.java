@@ -117,10 +117,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerDeathAmount(Player player) {
 
-		if (!deathHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = deathHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "deaths");
 		else
-			return deathHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getArrowHashMap() {
@@ -130,10 +131,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerArrowAmount(Player player) {
 
-		if (!arrowHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = arrowHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "arrows");
 		else
-			return arrowHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getSnowballHashMap() {
@@ -143,10 +145,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerSnowballAmount(Player player) {
 
-		if (!snowballHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = snowballHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "snowballs");
 		else
-			return snowballHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getEggHashMap() {
@@ -156,10 +159,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerEggAmount(Player player) {
 
-		if (!eggHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = eggHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "eggs");
 		else
-			return eggHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getFishHashMap() {
@@ -169,10 +173,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerFishAmount(Player player) {
 
-		if (!fishHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = fishHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "fish");
 		else
-			return fishHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getItemBreakHashMap() {
@@ -182,10 +187,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerItemBreakAmount(Player player) {
 
-		if (!itemBreakHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = itemBreakHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "itembreaks");
 		else
-			return itemBreakHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getEatenItemsHashMap() {
@@ -195,10 +201,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerEatenItemAmount(Player player) {
 
-		if (!eatenItemHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = eatenItemHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "eatenitems");
 		else
-			return eatenItemHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getShearHashMap() {
@@ -208,10 +215,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerShearAmount(Player player) {
 
-		if (!shearHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = shearHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "shears");
 		else
-			return shearHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getMilkHashMap() {
@@ -221,10 +229,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerMilkAmount(Player player) {
 
-		if (!milkHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = milkHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "milks");
 		else
-			return milkHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getTradeHashMap() {
@@ -234,10 +243,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerTradeAmount(Player player) {
 
-		if (!tradeHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = tradeHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "trades");
 		else
-			return tradeHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getAnvilHashMap() {
@@ -247,10 +257,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerAnvilAmount(Player player) {
 
-		if (!anvilHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = anvilHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "anvils");
 		else
-			return anvilHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getEnchantmentHashMap() {
@@ -260,10 +271,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerEnchantmentAmount(Player player) {
 
-		if (!enchantmentHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = enchantmentHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "enchantments");
 		else
-			return enchantmentHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getBedHashMap() {
@@ -273,10 +285,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerBedAmount(Player player) {
 
-		if (!bedHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = bedHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "beds");
 		else
-			return bedHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getXpHashMap() {
@@ -286,10 +299,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerXPAmount(Player player) {
 
-		if (!xpHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = xpHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "levels");
 		else
-			return xpHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getConsumedPotionsHashMap() {
@@ -299,10 +313,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerConsumedPotionAmount(Player player) {
 
-		if (!consumedPotionHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = consumedPotionHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "consumedpotions");
 		else
-			return consumedPotionHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getDropHashMap() {
@@ -312,10 +327,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerDropAmount(Player player) {
 
-		if (!dropHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = dropHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "drops");
 		else
-			return dropHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getHoePlowingHashMap() {
@@ -325,10 +341,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerHoePlowingAmount(Player player) {
 
-		if (!hoePlowingHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = hoePlowingHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "hoeplowing");
 		else
-			return hoePlowingHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getFertiliseHashMap() {
@@ -338,10 +355,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerFertiliseAmount(Player player) {
 
-		if (!fertiliseHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = fertiliseHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "fertilising");
 		else
-			return fertiliseHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getTameHashMap() {
@@ -351,10 +369,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerTameAmount(Player player) {
 
-		if (!tameHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = tameHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "tames");
 		else
-			return tameHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getBrewingHashMap() {
@@ -364,10 +383,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerBrewingAmount(Player player) {
 
-		if (!brewingHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = brewingHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "brewing");
 		else
-			return brewingHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getFireworkHashMap() {
@@ -377,13 +397,13 @@ public class DatabasePoolsManager {
 
 	public int getPlayerFireworkAmount(Player player) {
 
-		if (!fireworkHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = fireworkHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "fireworks");
 		else
-			return fireworkHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
-	
-	
+
 	public Map<String, Integer> getMusicDiscHashMap() {
 
 		return musicDiscHashMap;
@@ -391,10 +411,11 @@ public class DatabasePoolsManager {
 
 	public int getPlayerMusicDiscAmount(Player player) {
 
-		if (!musicDiscHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = musicDiscHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "musicdiscs");
 		else
-			return musicDiscHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
 
 	public Map<String, Integer> getEnderPearlHashMap() {
@@ -404,12 +425,13 @@ public class DatabasePoolsManager {
 
 	public int getPlayerEnderPearlAmount(Player player) {
 
-		if (!enderPearlHashMap.containsKey(player.getUniqueId().toString()))
+		Integer amount = enderPearlHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
 			return plugin.getDb().getNormalAchievementAmount(player, "enderpearls");
 		else
-			return enderPearlHashMap.get(player.getUniqueId().toString());
+			return amount;
 	}
-	
+
 	public Map<String, Integer> getBlockPlaceHashMap() {
 
 		return blockPlaceHashMap;
@@ -418,10 +440,11 @@ public class DatabasePoolsManager {
 	public int getPlayerBlockPlaceAmount(Player player, String blockName) {
 
 		// Concatenate player name and block name to put in HashMap.
-		if (!blockPlaceHashMap.containsKey(player.getUniqueId().toString() + blockName))
+		Integer amount = blockPlaceHashMap.get(player.getUniqueId().toString() + blockName);
+		if (amount == null)
 			return plugin.getDb().getPlaces(player, blockName);
 		else
-			return blockPlaceHashMap.get(player.getUniqueId().toString() + blockName);
+			return amount;
 	}
 
 	public Map<String, Integer> getBlockBreakHashMap() {
@@ -432,10 +455,11 @@ public class DatabasePoolsManager {
 	public int getPlayerBlockBreakAmount(Player player, String blockName) {
 
 		// Concatenate player name and block name to put in HashMap.
-		if (!blockBreakHashMap.containsKey(player.getUniqueId().toString() + blockName))
+		Integer amount = blockBreakHashMap.get(player.getUniqueId().toString() + blockName);
+		if (amount == null)
 			return plugin.getDb().getBreaks(player, blockName);
 		else
-			return blockBreakHashMap.get(player.getUniqueId().toString() + blockName);
+			return amount;
 	}
 
 	public Map<String, Integer> getKillHashMap() {
@@ -446,10 +470,11 @@ public class DatabasePoolsManager {
 	public int getPlayerKillAmount(Player player, String mobName) {
 
 		// Concatenate player name and mob name to put in HashMap.
-		if (!killHashMap.containsKey(player.getUniqueId().toString() + mobName))
+		Integer amount = killHashMap.get(player.getUniqueId().toString() + mobName);
+		if (amount == null)
 			return plugin.getDb().getKills(player, mobName);
 		else
-			return killHashMap.get(player.getUniqueId().toString() + mobName);
+			return amount;
 	}
 
 	public Map<String, Integer> getCraftHashMap() {
@@ -459,11 +484,12 @@ public class DatabasePoolsManager {
 
 	public int getPlayerCraftAmount(Player player, String craftName) {
 
-		// Concatenate player name and craft name to put in HashMap.
-		if (!craftHashMap.containsKey(player.getUniqueId().toString() + craftName))
+		// Concatenate player name and item name to put in HashMap.
+		Integer amount = craftHashMap.get(player.getUniqueId().toString() + craftName);
+		if (amount == null)
 			return plugin.getDb().getCrafts(player, craftName);
 		else
-			return craftHashMap.get(player.getUniqueId().toString() + craftName);
+			return amount;
 	}
 
 }

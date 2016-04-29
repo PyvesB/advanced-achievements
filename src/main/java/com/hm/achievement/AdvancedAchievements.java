@@ -21,50 +21,16 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+
 import org.mcstats.MetricsLite;
 
-import com.hm.achievement.command.BookCommand;
-import com.hm.achievement.command.CheckCommand;
-import com.hm.achievement.command.DeleteCommand;
-import com.hm.achievement.command.GiveCommand;
-import com.hm.achievement.command.HelpCommand;
-import com.hm.achievement.command.InfoCommand;
-import com.hm.achievement.command.ListCommand;
-import com.hm.achievement.command.StatsCommand;
-import com.hm.achievement.command.TopCommand;
-import com.hm.achievement.db.DatabasePoolsManager;
-import com.hm.achievement.db.PooledRequestsSenderAsync;
-import com.hm.achievement.db.PooledRequestsSenderSync;
-import com.hm.achievement.db.SQLDatabaseManager;
-import com.hm.achievement.listener.AchieveArrowListener;
-import com.hm.achievement.listener.AchieveBedListener;
-import com.hm.achievement.listener.AchieveBlockBreakListener;
-import com.hm.achievement.listener.AchieveBlockPlaceListener;
-import com.hm.achievement.listener.AchieveConnectionListener;
-import com.hm.achievement.listener.AchieveConsumeListener;
-import com.hm.achievement.listener.AchieveCraftListener;
-import com.hm.achievement.listener.AchieveDeathListener;
-import com.hm.achievement.listener.AchieveDropListener;
-import com.hm.achievement.listener.AchieveEnchantListener;
-import com.hm.achievement.listener.AchieveFishListener;
-import com.hm.achievement.listener.AchieveHoeFertiliseFireworkMusicListener;
-import com.hm.achievement.listener.AchieveItemBreakListener;
-import com.hm.achievement.listener.AchieveKillListener;
-import com.hm.achievement.listener.AchieveMilkListener;
-import com.hm.achievement.listener.AchieveQuitListener;
-import com.hm.achievement.listener.AchieveShearListener;
-import com.hm.achievement.listener.AchieveSnowballEggListener;
-import com.hm.achievement.listener.AchieveTameListener;
-import com.hm.achievement.listener.AchieveTeleportListener;
-import com.hm.achievement.listener.AchieveTradeAnvilBrewListener;
-import com.hm.achievement.listener.AchieveXPListener;
-import com.hm.achievement.runnable.AchieveDistanceRunnable;
-import com.hm.achievement.runnable.AchievePlayTimeRunnable;
-import com.hm.achievement.utils.FileManager;
-import com.hm.achievement.utils.UpdateChecker;
-import com.hm.achievement.utils.YamlManager;
-
 import net.milkbowl.vault.economy.Economy;
+
+import com.hm.achievement.command.*;
+import com.hm.achievement.db.*;
+import com.hm.achievement.listener.*;
+import com.hm.achievement.runnable.*;
+import com.hm.achievement.utils.*;
 
 /**
  * Advanced Achievements enables unique and challenging achievements on your
@@ -85,7 +51,7 @@ import net.milkbowl.vault.economy.Economy;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 2.4.4
+ * @version 2.5
  * @author DarkPyves
  */
 
@@ -206,134 +172,134 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Register listeners so they can monitor server events; if there are no
 		// config related achievements, listeners aren't registered.
 		PluginManager pm = getServer().getPluginManager();
-		if (this.getPluginConfig().getConfigurationSection("Places").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Places").getKeys(false).size() != 0) {
 			blockPlaceListener = new AchieveBlockPlaceListener(this);
 			pm.registerEvents(blockPlaceListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Breaks").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Breaks").getKeys(false).size() != 0) {
 			blockBreakListener = new AchieveBlockBreakListener(this);
 			pm.registerEvents(blockBreakListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Kills").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Kills").getKeys(false).size() != 0) {
 			killListener = new AchieveKillListener(this);
 			pm.registerEvents(killListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Crafts").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Crafts").getKeys(false).size() != 0) {
 			craftListener = new AchieveCraftListener(this);
 			pm.registerEvents(craftListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Deaths").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Deaths").getKeys(false).size() != 0) {
 			deathListener = new AchieveDeathListener(this);
 			pm.registerEvents(deathListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Arrows").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Arrows").getKeys(false).size() != 0) {
 			arrowListener = new AchieveArrowListener(this);
 			pm.registerEvents(arrowListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Snowballs").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("Eggs").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Snowballs").getKeys(false).size() != 0
+				|| config.getConfigurationSection("Eggs").getKeys(false).size() != 0) {
 			snowballEggListener = new AchieveSnowballEggListener(this);
 			pm.registerEvents(snowballEggListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Fish").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Fish").getKeys(false).size() != 0) {
 			fishListener = new AchieveFishListener(this);
 			pm.registerEvents(fishListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("ItemBreaks").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("ItemBreaks").getKeys(false).size() != 0) {
 			itemBreakListener = new AchieveItemBreakListener(this);
 			pm.registerEvents(itemBreakListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("ConsumedPotions").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("EatenItems").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("ConsumedPotions").getKeys(false).size() != 0
+				|| config.getConfigurationSection("EatenItems").getKeys(false).size() != 0) {
 			consumeListener = new AchieveConsumeListener(this);
 			pm.registerEvents(consumeListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Shear").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Shear").getKeys(false).size() != 0) {
 			shearListener = new AchieveShearListener(this);
 			pm.registerEvents(shearListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Milk").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Milk").getKeys(false).size() != 0) {
 			milkListener = new AchieveMilkListener(this);
 			pm.registerEvents(milkListener, this);
 		}
 
-		if (this.getPluginConfig().getBoolean("CheckForUpdate", true)
-				|| this.getPluginConfig().getConfigurationSection("Connections").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
+		if (config.getBoolean("CheckForUpdate", true)
+				|| config.getConfigurationSection("Connections").getKeys(false).size() != 0
+				|| config.getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
 			connectionListener = new AchieveConnectionListener(this);
 			pm.registerEvents(connectionListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Trades").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("AnvilsUsed").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("Brewing").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Trades").getKeys(false).size() != 0
+				|| config.getConfigurationSection("AnvilsUsed").getKeys(false).size() != 0
+				|| config.getConfigurationSection("Brewing").getKeys(false).size() != 0) {
 			inventoryClickListener = new AchieveTradeAnvilBrewListener(this);
 			pm.registerEvents(inventoryClickListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Enchantments").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Enchantments").getKeys(false).size() != 0) {
 			enchantmentListener = new AchieveEnchantListener(this);
 			pm.registerEvents(enchantmentListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("MaxLevel").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("MaxLevel").getKeys(false).size() != 0) {
 			xpListener = new AchieveXPListener(this);
 			pm.registerEvents(xpListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Beds").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Beds").getKeys(false).size() != 0) {
 			bedListener = new AchieveBedListener(this);
 			pm.registerEvents(bedListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("ItemDrops").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("ItemDrops").getKeys(false).size() != 0) {
 			dropListener = new AchieveDropListener(this);
 			pm.registerEvents(dropListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("Taming").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Taming").getKeys(false).size() != 0) {
 			tameListener = new AchieveTameListener(this);
 			pm.registerEvents(tameListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("HoePlowings").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("Fertilising").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("Fireworks").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("MusicDiscs").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("HoePlowings").getKeys(false).size() != 0
+				|| config.getConfigurationSection("Fertilising").getKeys(false).size() != 0
+				|| config.getConfigurationSection("Fireworks").getKeys(false).size() != 0
+				|| config.getConfigurationSection("MusicDiscs").getKeys(false).size() != 0) {
 			hoeFertiliseFireworkMusicListener = new AchieveHoeFertiliseFireworkMusicListener(this);
 			pm.registerEvents(hoeFertiliseFireworkMusicListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("MaxLevel").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceGliding").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("MaxLevel").getKeys(false).size() != 0
+				|| config.getConfigurationSection("PlayedTime").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistancePig").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceGliding").getKeys(false).size() != 0) {
 			quitListener = new AchieveQuitListener(this);
 			pm.registerEvents(quitListener, this);
 		}
 
-		if (this.getPluginConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceGliding").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("EnderPearls").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistancePig").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceGliding").getKeys(false).size() != 0
+				|| config.getConfigurationSection("EnderPearls").getKeys(false).size() != 0) {
 			teleportListener = new AchieveTeleportListener(this);
 			pm.registerEvents(teleportListener, this);
 		}
@@ -364,7 +330,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to monitor played time for each player (not
 		// directly related to an event).
-		if (this.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
 			achievePlayTimeRunnable = new AchievePlayTimeRunnable(this);
 			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achievePlayTimeRunnable,
@@ -373,12 +339,12 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to monitor distances travelled by each
 		// player (not directly related to an event).
-		if (this.getPluginConfig().getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistancePig").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
-				|| this.getPluginConfig().getConfigurationSection("DistanceGliding").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistancePig").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceGliding").getKeys(false).size() != 0) {
 			achieveDistanceRunnable = new AchieveDistanceRunnable(this);
 			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achieveDistanceRunnable,
@@ -454,125 +420,24 @@ public class AdvancedAchievements extends JavaPlugin {
 			successfulLoad = false;
 		}
 
-		// Update configurations from older plugin versions by adding missing
-		// parameters in config file. Upgrades from versions prior to 2.0 are
-		// not supported.
-		boolean updateDone = false;
-
-		// Added in version 2.1:
-		if (!this.getPluginConfig().getKeys(false).contains("AdditionalEffects")) {
-			this.getPluginConfig().set("AdditionalEffects", true);
-			updateDone = true;
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("FireworkStyle")) {
-			this.getPluginConfig().set("FireworkStyle", "BALL_LARGE");
-			updateDone = true;
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("ObfuscateNotReceived")) {
-			this.getPluginConfig().set("ObfuscateNotReceived", true);
-			updateDone = true;
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("HideNotReceivedCategories")) {
-			this.getPluginConfig().set("HideNotReceivedCategories", false);
-			updateDone = true;
-		}
-
-		// Added in version 2.2:
-		if (!this.getPluginConfig().getKeys(false).contains("TitleScreen")) {
-			this.getPluginConfig().set("TitleScreen", true);
-			updateDone = true;
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("Color")) {
-			this.getPluginConfig().set("Color", "5");
-			updateDone = true;
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("TimeBook")) {
-			this.getPluginConfig().set("TimeBook", this.getPluginConfig().getInt("Time", 900));
-			updateDone = true;
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("TimeList")) {
-			this.getPluginConfig().set("TimeList", 0);
-			updateDone = true;
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("Brewing")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			this.getPluginConfig().set("Brewing", emptyMap);
-			updateDone = true;
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("Taming")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			this.getPluginConfig().set("Taming", emptyMap);
-			updateDone = true;
-		}
-
-		// Added in version 2.3:
-		if (!this.getPluginConfig().getKeys(false).contains("Fireworks")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			this.getPluginConfig().set("Fireworks", emptyMap);
-			updateDone = true;
-		}
-
-		// Added in version 2.3.2:
-		if (!this.getPluginConfig().getKeys(false).contains("AsyncPooledRequestsSender")) {
-			this.getPluginConfig().set("AsyncPooledRequestsSender", true);
-			updateDone = true;
-		}
-
-		// Added in version 2.5:
-		if (!this.getPluginConfig().getKeys(false).contains("DistanceGliding")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			this.getPluginConfig().set("DistanceGliding", emptyMap, "test");
-			updateDone = true;
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("MusicDiscs")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			this.getPluginConfig().set("MusicDiscs", emptyMap);
-			updateDone = true;
-		}
-
-		if (!this.getPluginConfig().getKeys(false).contains("EnderPearls")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			this.getPluginConfig().set("EnderPearls", emptyMap, "test");
-			updateDone = true;
-		}
-
-		if (updateDone) {
-			// Changes in the configuration: save and do a fresh load.
-			try {
-				config.saveConfig();
-				config.reloadConfig();
-			} catch (IOException e) {
-				this.getLogger().severe("Error while saving changes to the configuration file.");
-				e.printStackTrace();
-				successfulLoad = false;
-			}
-		}
-
-		// End of configuration updates.
+		// Update configurations from previous versions of the plugin.
+		updateOldConfiguration();
+		updateOldLanguage();
 
 		this.getLogger().info("Loading configs, registering permissions and initialising command modules...");
 
 		// Load parameters.
-		icon = this.getPluginConfig().getString("Icon", "\u2618");
-		color = ChatColor.getByChar(this.getPluginConfig().getString("Color", "5").toCharArray()[0]);
+		icon = config.getString("Icon", "\u2618");
+		color = ChatColor.getByChar(config.getString("Color", "5").toCharArray()[0]);
 		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
-		restrictCreative = this.getPluginConfig().getBoolean("RestrictCreative", false);
-		databaseBackup = this.getPluginConfig().getBoolean("DatabaseBackup", true);
-		for (String world : (List<String>) this.getPluginConfig().getList("ExcludedWorlds"))
+		restrictCreative = config.getBoolean("RestrictCreative", false);
+		databaseBackup = config.getBoolean("DatabaseBackup", true);
+		for (String world : (List<String>) config.getList("ExcludedWorlds"))
 			excludedWorldList.add(world);
-		playtimeTaskInterval = this.getPluginConfig().getInt("PlaytimeTaskInterval", 150);
-		distanceTaskInterval = this.getPluginConfig().getInt("DistanceTaskInterval", 5);
-		pooledRequestsTaskInterval = this.getPluginConfig().getInt("PooledRequestsTaskInterval", 60);
-		asyncPooledRequestsSender = this.getPluginConfig().getBoolean("AsyncPooledRequestsSender", true);
+		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 150);
+		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
+		pooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 60);
+		asyncPooledRequestsSender = config.getBoolean("AsyncPooledRequestsSender", true);
 
 		registerPermissions();
 
@@ -599,7 +464,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			xpListener.extractAchievementsFromConfig(this);
 
 		// Check for available plugin update.
-		if (this.getPluginConfig().getBoolean("CheckForUpdate", true)) {
+		if (config.getBoolean("CheckForUpdate", true)) {
 			updateChecker = new UpdateChecker(this);
 		}
 
@@ -612,7 +477,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			successfulLoad = false;
 		}
 
-		if (databaseBackup && !this.getPluginConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql")) {
+		if (databaseBackup && !config.getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql")) {
 			File backup = new File(this.getDataFolder(), "achievements.db.bak");
 			// Only do a daily backup for the .db file.
 			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
@@ -629,6 +494,154 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
+	 * Update configuration file from older plugin versions by adding missing
+	 * parameters. Upgrades from versions prior to 2.0 are not supported.
+	 */
+	private void updateOldConfiguration() {
+
+		boolean updateDone = false;
+
+		// Added in version 2.1:
+		if (!config.getKeys(false).contains("AdditionalEffects")) {
+			config.set("AdditionalEffects", true,
+					"Set to true to activate particle effects when receiving book and for players in top list.");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("FireworkStyle")) {
+			config.set("FireworkStyle", "BALL_LARGE", "Choose BALL_LARGE, BALL, BURST, CREEPER or STAR.");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("ObfuscateNotReceived")) {
+			config.set("ObfuscateNotReceived", true,
+					"Obfuscate achievements that have not yet been received in /aach list.");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("HideNotReceivedCategories")) {
+			config.set("HideNotReceivedCategories", false,
+					"Hide categories with no achievements yet received in /aach list.");
+			updateDone = true;
+		}
+
+		// Added in version 2.2:
+		if (!config.getKeys(false).contains("TitleScreen")) {
+			config.set("TitleScreen", true, "Display achievement name and description as screen titles.");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("Color")) {
+			config.set("Color", "5", "Set the color of the plugin (default: 5, dark purple).");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("TimeBook")) {
+			config.set("TimeBook", 900, "Time in seconds between each /aach book.");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("TimeList")) {
+			config.set("TimeList", 0, "Time in seconds between each /aach list.");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("Brewing")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			config.set("Brewing", emptyMap, "When a potion is brewed.");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("Taming")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			config.set("Taming", emptyMap, "When an animal is tamed.");
+			updateDone = true;
+		}
+
+		// Added in version 2.3:
+		if (!config.getKeys(false).contains("Fireworks")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			config.set("Fireworks", emptyMap, "When a firework is launched.");
+			updateDone = true;
+		}
+
+		// Added in version 2.3.2:
+		if (!config.getKeys(false).contains("AsyncPooledRequestsSender")) {
+			config.set("AsyncPooledRequestsSender", true, "Enable multithreading for database write operations.");
+			updateDone = true;
+		}
+
+		// Added in version 2.5:
+		if (!config.getKeys(false).contains("DistanceGliding")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			config.set("DistanceGliding", emptyMap, new String[] { "When a distance is traveled with elytra.",
+					"(ignored on Minecraft versions prior to 1.9)" });
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("MusicDiscs")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			config.set("MusicDiscs", emptyMap, "When a music disc is played.");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("EnderPearls")) {
+			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			config.set("EnderPearls", emptyMap, "When a player teleports with an enderpearl.");
+			updateDone = true;
+		}
+
+		if (updateDone) {
+			// Changes in the configuration: save and do a fresh load.
+			try {
+				config.saveConfig();
+				config.reloadConfig();
+			} catch (IOException e) {
+				this.getLogger().severe("Error while saving changes to the configuration file.");
+				e.printStackTrace();
+				successfulLoad = false;
+			}
+		}
+	}
+
+	/**
+	 * Update language file from older plugin versions by adding missing
+	 * parameters. Upgrades from versions prior to 2.3 are not supported.
+	 */
+	private void updateOldLanguage() {
+
+		boolean updateDone = false;
+
+		// Added in version 2.5:
+		if (!lang.getKeys(false).contains("list-distance-gliding")) {
+			lang.set("list-distance-gliding", "Distance Travelled with Elytra");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("list-musicdiscs")) {
+			lang.set("list-musicdiscs", "Music Discs Played");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("list-enderpearls")) {
+			lang.set("list-enderpearls", "Teleportations with Ender Pearls");
+			updateDone = true;
+		}
+
+		if (updateDone) {
+			// Changes in the language file: save and do a fresh load.
+			try {
+				lang.saveConfig();
+				lang.reloadConfig();
+			} catch (IOException e) {
+				this.getLogger().severe("Error while saving changes to the language file.");
+				e.printStackTrace();
+				successfulLoad = false;
+			}
+		}
+	}
+
+	/**
 	 * Register permissions that depend on the user's configuration file (based
 	 * on multiple type achievements; for instance for stone breaks,
 	 * achievement.count.breaks.stone will be registered).
@@ -636,8 +649,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private void registerPermissions() {
 
 		for (int i = 0; i < MULTIPLE_ACHIEVEMENTS.length; i++)
-			for (String section : this.getPluginConfig().getConfigurationSection(MULTIPLE_ACHIEVEMENTS[i])
-					.getKeys(false)) {
+			for (String section : config.getConfigurationSection(MULTIPLE_ACHIEVEMENTS[i]).getKeys(false)) {
 				// Bukkit only allows permissions to be set once, so must do
 				// additional check for /aach reload correctness.
 				if (this.getServer().getPluginManager().getPermission(
@@ -768,8 +780,9 @@ public class AdvancedAchievements extends JavaPlugin {
 					this.reloadConfig();
 					configurationLoad();
 					if (successfulLoad) {
-						sender.sendMessage(chatHeader + lang.getString("configuration-successfully-reloaded",
-								"Configuration successfully reloaded."));
+						if (sender instanceof Player)
+							sender.sendMessage(chatHeader + lang.getString("configuration-successfully-reloaded",
+									"Configuration successfully reloaded."));
 						this.getLogger().info("Configuration successfully reloaded.");
 					} else {
 						sender.sendMessage(chatHeader + lang.getString("configuration-reload-failed",

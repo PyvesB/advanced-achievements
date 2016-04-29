@@ -52,7 +52,7 @@ public class TopCommand {
 			try {
 				String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(achievementsTop.get(i)))
 						.getName();
-				// Name in purple if player in top list.
+				// Name in plugin color if player in top list.
 				if (sender instanceof Player && playerName.equals(((Player) sender).getName()))
 					sender.sendMessage(ChatColor.GRAY + "[" + plugin.getColor() + ((i + 2) >> 1) + ChatColor.GRAY + "] "
 							+ plugin.getColor() + playerName + " - " + achievementsTop.get(i + 1));

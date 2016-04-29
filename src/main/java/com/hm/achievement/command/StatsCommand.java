@@ -38,9 +38,9 @@ public class StatsCommand {
 		// Display progress bar.
 		if (totalAchievements > 0) {
 			String barDisplay = "";
-			for (int i = 1; i <= 145; i++) {
-				if (i < (145 * achievements) / totalAchievements)
-					barDisplay = barDisplay + "&5|";
+			for (int i = 1; i <= 146 - plugin.getIcon().length(); i++) {
+				if (i < ((146 - plugin.getIcon().length()) * achievements) / totalAchievements)
+					barDisplay = barDisplay + plugin.getColor() + "|";
 				else {
 					barDisplay = barDisplay + "&8|";
 				}

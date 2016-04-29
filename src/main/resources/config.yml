@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |    Advanced Achievements 2.4.4 configuration - Readme   | #
+# |     Advanced Achievements 2.5 configuration - Readme    | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -292,6 +292,7 @@ DistanceBoat:
     Name: Great Sailor
 
 # When a distance is traveled with elytra.
+# (ignored on Minecraft versions prior to 1.9)
 DistanceGliding:
   '100':
     Message: You traveled 100 blocks with elytra!
@@ -341,7 +342,7 @@ MusicDiscs:
     Message: One jukebox used!
     Name: DJ
 
-# When a music disc is played.
+# When a player teleports with an enderpearl.
 EnderPearls:
   '10':
     Message: 10 teleportations with ender pearls!

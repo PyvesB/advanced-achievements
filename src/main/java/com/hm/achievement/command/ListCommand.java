@@ -41,13 +41,12 @@ public class ListCommand {
 			new ItemStack(Material.MELON), new ItemStack(Material.SHEARS), new ItemStack(Material.MILK_BUCKET),
 			new ItemStack(Material.EMERALD), new ItemStack(Material.ANVIL), new ItemStack(Material.ENCHANTMENT_TABLE),
 			new ItemStack(Material.BED), new ItemStack(Material.EXP_BOTTLE), new ItemStack(Material.GLASS_BOTTLE),
-			new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.GOLD_HOE),
+			new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.GRASS_PATH),
 			new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.LEASH),
 			new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
-			new ItemStack(Material.RECORD_6), new ItemStack(Material.ENDER_PEARL),
-			new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK), new ItemStack(Material.SADDLE),
-			new ItemStack(Material.MINECART), new ItemStack(Material.BOAT), new ItemStack(Material.ELYTRA),
-			new ItemStack(Material.BOOKSHELF) };
+			new ItemStack(Material.JUKEBOX), new ItemStack(Material.ENDER_PEARL), new ItemStack(Material.LEATHER_BOOTS),
+			new ItemStack(Material.CARROT_STICK), new ItemStack(Material.SADDLE), new ItemStack(Material.MINECART),
+			new ItemStack(Material.BOAT), new ItemStack(Material.ELYTRA), new ItemStack(Material.BOOKSHELF) };
 
 	public ListCommand(AdvancedAchievements plugin) {
 
@@ -128,8 +127,8 @@ public class ListCommand {
 		if (timeAuthorisedList(player)) {
 
 			// Create a new chest-like inventory.
-			Inventory guiInv = Bukkit.createInventory(null, 36,
-					plugin.getPluginLang().getString("list-gui-title", "&5§lAchievements List"));
+			Inventory guiInv = Bukkit.createInventory(null, 36, ChatColor.translateAlternateColorCodes('&',
+					plugin.getPluginLang().getString("list-gui-title", "&5§lAchievements List")));
 
 			// Number of achievements in current category.
 			int numberInCategory = 0;

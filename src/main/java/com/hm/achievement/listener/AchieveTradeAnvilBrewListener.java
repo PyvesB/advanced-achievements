@@ -1,5 +1,6 @@
 package com.hm.achievement.listener;
 
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,8 +24,8 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 
 		// Not relevant for trade, anvil, or brewing events, but used for the
 		// /aach list command to avoid adding an additional event handler.
-		if (event.getInventory().getName()
-				.equals(plugin.getPluginLang().getString("list-gui-title", "&5§lAchievements List"))) {
+		if (event.getInventory().getName().equals(ChatColor.translateAlternateColorCodes('&',
+				plugin.getPluginLang().getString("list-gui-title", "&5§lAchievements List")))) {
 			event.setCancelled(true);
 			return;
 		}

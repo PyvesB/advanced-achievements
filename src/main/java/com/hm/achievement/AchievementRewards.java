@@ -83,8 +83,8 @@ public class AchievementRewards {
 			try {
 				plugin.getEconomy().depositPlayer(player, amtd);
 			} catch (NoSuchMethodError e) {
-				// Deprecated method, was the only one existing prior to Vault
-				// 1.4.
+				// Deprecated method, the following one was the only one
+				// existing prior to Vault 1.4.
 				plugin.getEconomy().depositPlayer(player.getName(), amtd);
 			}
 
@@ -93,11 +93,11 @@ public class AchievementRewards {
 			if (amount > 1)
 				player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&',
 						plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT !")
-								.replace("AMOUNT", "&5" + amtd + " " + plugin.getEconomy().currencyNamePlural())));
+								.replace("AMOUNT", amtd + " " + plugin.getEconomy().currencyNamePlural())));
 			else
 				player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&',
 						plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT !")
-								.replace("AMOUNT", "&5" + amtd + " " + plugin.getEconomy().currencyNameSingular())));
+								.replace("AMOUNT", amtd + " " + plugin.getEconomy().currencyNameSingular())));
 		}
 	}
 

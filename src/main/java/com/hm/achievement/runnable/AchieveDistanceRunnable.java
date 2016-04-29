@@ -46,9 +46,15 @@ public class AchieveDistanceRunnable implements Runnable {
 	private Map<String, Integer> distancesGliding;
 	private HashMap<Player, Location> playerLocations;
 
+	// Minecraft version to deal with gliding.
+	private Integer version;
+
 	public AchieveDistanceRunnable(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+
+		version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
+
 		if (plugin.isAsyncPooledRequestsSender()) {
 			distancesFoot = new ConcurrentHashMap<String, Integer>();
 			distancesHorse = new ConcurrentHashMap<String, Integer>();
@@ -269,7 +275,8 @@ public class AchieveDistanceRunnable implements Runnable {
 					}
 				}
 			}
-		} else if (player.hasPermission("achievement.count.distancefoot") && !player.isFlying() && !player.isGliding()) {
+		} else if (player.hasPermission("achievement.count.distancefoot") && !player.isFlying()
+				&& (version < 9 || !player.isGliding())) {
 
 			Integer distance = distancesFoot.get(uuid);
 
@@ -290,7 +297,7 @@ public class AchieveDistanceRunnable implements Runnable {
 					((HashSet<Player>) playerAchievementsFoot[i]).add(player);
 				}
 			}
-		} else if (player.hasPermission("achievement.count.distancegliding") && player.isGliding()) {
+		} else if (player.hasPermission("achievement.count.distancegliding") && version >= 9 && player.isGliding()) {
 
 			Integer distance = distancesGliding.get(uuid);
 
@@ -314,7 +321,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		}
 		// Update player's location.
 		playerLocations.put(player, player.getLocation());
-
+		
 	}
 
 	private void awardDistanceAchievement(Player player, int achievementDistance, String type) {

@@ -74,7 +74,7 @@ public class SQLDatabaseManager {
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT `blockid` FROM `breaks`");
+			ResultSet rs = st.executeQuery("SELECT `blockid` FROM `breaks` LIMIT 1");
 			type = rs.getMetaData().getColumnTypeName(1);
 			st.close();
 			rs.close();
