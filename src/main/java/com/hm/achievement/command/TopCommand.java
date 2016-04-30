@@ -20,6 +20,7 @@ public class TopCommand {
 	private int topList;
 	private boolean additionalEffects;
 	private boolean sound;
+	private int version;
 
 	public TopCommand(AdvancedAchievements plugin) {
 
@@ -28,6 +29,10 @@ public class TopCommand {
 		topList = plugin.getPluginConfig().getInt("TopList", 5);
 		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		sound = plugin.getPluginConfig().getBoolean("Sound", true);
+		// Simple and fast check to compare versions. Might need to
+		// be updated in the future depending on how the Minecraft
+		// versions change in the future.
+		version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
 	}
 
 	/**
@@ -77,12 +82,6 @@ public class TopCommand {
 
 				// Play special sound when in top list.
 				if (sound) {
-					// Simple and fast check to compare versions. Might need to
-					// be
-					// updated in the future depending on how the Minecraft
-					// versions
-					// change in the future.
-					int version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
 					if (version < 9) // Old enum for versions prior to Minecraft
 										// 1.9.
 						((Player) sender).getWorld().playSound(((Player) sender).getLocation(),

@@ -51,7 +51,7 @@ import com.hm.achievement.utils.*;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 2.5
+ * @version 2.5.1
  * @author DarkPyves
  */
 

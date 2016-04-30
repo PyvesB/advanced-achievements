@@ -53,6 +53,9 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		this.plugin = plugin;
 
+		// Simple and fast check to compare versions. Might need to
+		// be updated in the future depending on how the Minecraft
+		// versions change in the future.
 		version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
 
 		if (plugin.isAsyncPooledRequestsSender()) {
@@ -321,7 +324,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		}
 		// Update player's location.
 		playerLocations.put(player, player.getLocation());
-		
+
 	}
 
 	private void awardDistanceAchievement(Player player, int achievementDistance, String type) {

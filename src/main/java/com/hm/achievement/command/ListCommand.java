@@ -32,21 +32,8 @@ public class ListCommand {
 	private static final Pattern REGEX_PATTERN = Pattern.compile("&([a-f]|[0-9]){1}");
 
 	// Get lists of item stacks for items displayed in the GUI.
-	private static final ItemStack[] MULTIPLE_ACHIEVEMENT_TYPES_MATERIAL = { new ItemStack(Material.SMOOTH_BRICK),
-			new ItemStack(Material.SMOOTH_BRICK, 1, (short) 2), new ItemStack(Material.BONE),
-			new ItemStack(Material.WORKBENCH) };
-	private static final ItemStack[] NORMAL_ACHIEVEMENT_TYPES_MATERIAL = { new ItemStack(Material.BOOK_AND_QUILL),
-			new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW), new ItemStack(Material.SNOW_BALL),
-			new ItemStack(Material.EGG), new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FLINT),
-			new ItemStack(Material.MELON), new ItemStack(Material.SHEARS), new ItemStack(Material.MILK_BUCKET),
-			new ItemStack(Material.EMERALD), new ItemStack(Material.ANVIL), new ItemStack(Material.ENCHANTMENT_TABLE),
-			new ItemStack(Material.BED), new ItemStack(Material.EXP_BOTTLE), new ItemStack(Material.GLASS_BOTTLE),
-			new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.GRASS_PATH),
-			new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.LEASH),
-			new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
-			new ItemStack(Material.JUKEBOX), new ItemStack(Material.ENDER_PEARL), new ItemStack(Material.LEATHER_BOOTS),
-			new ItemStack(Material.CARROT_STICK), new ItemStack(Material.SADDLE), new ItemStack(Material.MINECART),
-			new ItemStack(Material.BOAT), new ItemStack(Material.ELYTRA), new ItemStack(Material.BOOKSHELF) };
+	private ItemStack[] multipleAchievementsTypesItems;
+	private ItemStack[] normalAchievementsTypesItems;
 
 	public ListCommand(AdvancedAchievements plugin) {
 
@@ -96,6 +83,48 @@ public class ListCommand {
 				plugin.getPluginLang().getString("list-kills", "Entities Killed"),
 				plugin.getPluginLang().getString("list-crafts", "Items Crafted") };
 
+		// Get lists of item stacks for items displayed in the GUI.
+		multipleAchievementsTypesItems = new ItemStack[] { new ItemStack(Material.SMOOTH_BRICK),
+				new ItemStack(Material.SMOOTH_BRICK, 1, (short) 2), new ItemStack(Material.BONE),
+				new ItemStack(Material.WORKBENCH) };
+
+		// Simple and fast check to compare versions. Might need to
+		// be updated in the future depending on how the Minecraft
+		// versions change in the future.
+		int version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
+
+		if (version >= 9)
+			normalAchievementsTypesItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
+					new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW),
+					new ItemStack(Material.SNOW_BALL), new ItemStack(Material.EGG),
+					new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FLINT),
+					new ItemStack(Material.MELON), new ItemStack(Material.SHEARS), new ItemStack(Material.MILK_BUCKET),
+					new ItemStack(Material.EMERALD), new ItemStack(Material.ANVIL),
+					new ItemStack(Material.ENCHANTMENT_TABLE), new ItemStack(Material.BED),
+					new ItemStack(Material.EXP_BOTTLE), new ItemStack(Material.GLASS_BOTTLE),
+					new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.GRASS_PATH),
+					new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.LEASH),
+					new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
+					new ItemStack(Material.JUKEBOX), new ItemStack(Material.ENDER_PEARL),
+					new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK),
+					new ItemStack(Material.SADDLE), new ItemStack(Material.MINECART), new ItemStack(Material.BOAT),
+					new ItemStack(Material.ELYTRA), new ItemStack(Material.BOOKSHELF) };
+		else
+			normalAchievementsTypesItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
+					new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW),
+					new ItemStack(Material.SNOW_BALL), new ItemStack(Material.EGG),
+					new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FLINT),
+					new ItemStack(Material.MELON), new ItemStack(Material.SHEARS), new ItemStack(Material.MILK_BUCKET),
+					new ItemStack(Material.EMERALD), new ItemStack(Material.ANVIL),
+					new ItemStack(Material.ENCHANTMENT_TABLE), new ItemStack(Material.BED),
+					new ItemStack(Material.EXP_BOTTLE), new ItemStack(Material.GLASS_BOTTLE),
+					new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.GRASS),
+					new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.LEASH),
+					new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
+					new ItemStack(Material.JUKEBOX), new ItemStack(Material.ENDER_PEARL),
+					new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK),
+					new ItemStack(Material.SADDLE), new ItemStack(Material.MINECART), new ItemStack(Material.BOAT),
+					new ItemStack(Material.BEDROCK), new ItemStack(Material.BOOKSHELF) };
 	}
 
 	/**
@@ -139,7 +168,7 @@ public class ListCommand {
 			for (int i = 0; i < AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length; i++)
 				if (multipleAchievementTypesLanguage[i].length() != 0) {
 					// Create item stack that will be displayed in the GUI.
-					ItemStack connections = MULTIPLE_ACHIEVEMENT_TYPES_MATERIAL[i];
+					ItemStack connections = multipleAchievementsTypesItems[i];
 					ItemMeta connectionsMeta = connections.getItemMeta();
 					ArrayList<String> lore = new ArrayList<String>();
 					// Iterate through all sub-categories in achievement
@@ -198,7 +227,7 @@ public class ListCommand {
 			for (int i = 0; i < AdvancedAchievements.NORMAL_ACHIEVEMENTS.length; i++)
 				if (normalAchievementTypesLanguage[i].length() != 0) {
 					// Create item stack that will be displayed in the GUI.
-					ItemStack connections = NORMAL_ACHIEVEMENT_TYPES_MATERIAL[i];
+					ItemStack connections = normalAchievementsTypesItems[i];
 					ItemMeta connectionsMeta = connections.getItemMeta();
 					ArrayList<String> lore = new ArrayList<String>();
 					// Iterate through all achievements in category.
