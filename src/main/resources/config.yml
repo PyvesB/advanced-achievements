@@ -56,6 +56,9 @@ ChatNotify: false
 # Separator between name, description and date on a book page.
 BookSeparator: ''
 
+# Separator between name and level in achievement list
+ListItemSeparator: ' → '
+
 # Stop stats from increasing when player in creative mode (except Connections and PlayedTime).
 RestrictCreative: false
 
@@ -69,6 +72,9 @@ ObfuscateNotReceived: true
 
 # Hide categories with no achievements yet received in /aach list.
 HideNotReceivedCategories: false
+
+# Hide the reward display in the achievement list output
+HideRewardDisplayInList: false
 
 # Display achievement name and description as screen titles.
 TitleScreen: true

@@ -94,3 +94,6 @@ list-brewing: Pociones Creadas
 list-fireworks: Fuegos Artificiales Lanzados
 list-commands: Otros Logros
 list-playedtime: Tiempo Jugado
+
+list-achievement-received: "&a✓ "
+list-achievement-not-received: "&4✗ &5"

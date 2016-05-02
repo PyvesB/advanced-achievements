@@ -91,3 +91,6 @@ list-taming: Animaux Domptés
 list-brewing: Potions Préparées
 list-fireworks: Feux d'Artifice Lancés
 list-commands: Autres Succès
+
+list-achievement-received: "&a✓ "
+list-achievement-not-received: "&4✗ &5"

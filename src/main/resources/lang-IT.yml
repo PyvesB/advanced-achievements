@@ -39,3 +39,6 @@ version-command-description: 'Descrizione:'
 version-command-description-details: Advanced Achievements mette a disposizione obiettivi unici e impegnativi. Prova ad ottenerne più che puoi, guadagna ricompense, scala le classifiche e ricevi libri RP!
 version-command-vault: 'Vault integrato:'
 version-command-database: 'Tipo di database:'
+
+list-achievement-received: "&a✓ "
+list-achievement-not-received: "&4✗ &5"
