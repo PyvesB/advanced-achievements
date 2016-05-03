@@ -1,40 +1,52 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |       Advanced Achievements Spanish language file       | #
-# |                     By Segysmundo                       | #
+# |   Advanced Achievements 2.5.1 Spanish language file    | #
+# |                     By Segysmundo                      | #
 # +--------------------------------------------------------+ #
 #============================================================#
 
+no-permissions: No tienes permiso para hacer eso.
+
+# Related to /aach reload.
 configuration-successfully-reloaded: "Configuraci\xf3n recargada satisfactoriamente."
 configuration-reload-failed: "Ha ocurrido un error mientras recargaba la configuraci\xf3\
   n. Por favor revisa el log para m\xe1s detalles."
   
-no-permissions: No tienes permiso para hacer eso.
-
+# Related to /aach top.
 top-achievement: "Top usuarios con m\xe1s logros:"
 player-rank: 'Rango actual:'
+
+# Related to /aach stats.
 number-achievements: 'Logros recibidos:'
 
+# Related to /aach book.
 book-received: Has recibido tu libro de logros!
 book-delay: Debes esperar TIME segundos entre cada uso del libro!
-list-delay: Debes esperar TIME segundos entre cada uso del comando list!
 book-name: Logros
 
+# Related to /aach give.
 player-offline: "El jugador PLAYER est\xe1 desconectado!"
 achievement-already-received: El jugador PLAYER ya ha recibido ese logro!
 achievement-not-found: El logro especificado no ha sido encontrado.
 achievement-given: Logro otorgado!
+
+# Related to achievement reception.
 achievement-received: 'PLAYER ha recibido el logro:'
 achievement-new: 'Nuevo logro:'
 
+# Related to /aach check.
 check-achievement-true: PLAYER ha recibido el logro ACH!
 check-achievements-false: PLAYER no ha recibido el logro ACH!
+
+# Related to /aach delete.
 delete-achievements: El logro ACH ha sido eliminado de PLAYER.
 
+# Related to achievement rewards.
 item-reward-received: 'Has recibido un objeto como recompensa:'
 money-reward-received: 'Has recibido: AMOUNT !'
 command-reward: Se ha llevado a cabo el comando reward!
 
+# Related to /aach help.
 aach-command-book: Recibe tu libro de logros.
 aach-command-stats: Cantidad de logros que has recibido.
 aach-command-list: Muestra logros completados y restantes.
@@ -44,6 +56,8 @@ aach-command-reload: "Recarga la configuraci\xf3n del plugin."
 aach-command-info: "Muestra informaci\xf3n variada del plugin."
 aach-command-check: Comprueba si el jugador NAME &7ha recibido ACH.
 aach-command-delete: Elimina el logro ACH del jugador &7NAME.
+
+# Related to /aach info.
 version-command-name: 'Nombre:'
 version-command-version: "Versi\xf3n:"
 version-command-website: "P\xe1gina Web:"
@@ -55,12 +69,18 @@ version-command-description-details: "Advanced Achievements habilita logros \xfa
 version-command-vault: "Integraci\xf3n Vault:"
 version-command-database: 'Tipo de base de datos:'
 
+# Related to /aach list.
 list-gui-title: "&5\ufffdLista de Logros"
+list-delay: Debes esperar TIME segundos entre cada uso del comando list!
 list-reward: ' Recompensa:'
 list-reward-money: dinero
 list-reward-item: objeto
 list-reward-command: otro
 list-amount: ' Lvl:'
+list-achievement-received: "&a✓ "
+list-achievement-not-received: "&4✗ &5"
+
+# Related to category names in /aach list.
 list-connections: Conexiones
 list-places: Bloques Colocados
 list-breaks: Bloques Rotos
@@ -81,19 +101,25 @@ list-enchantments: Objetos Encantados
 list-beds: Camas Usadas
 list-maxlevel: "Lvl M\xe1ximo Alcanzado"
 list-potions: Pociones Consumidas
+list-playedtime: Tiempo Jugado
 list-distance-foot: Distancia Viajada a Pie
 list-distance-pig: Distancia Viajada en Cerdo
 list-distance-horse: Distancia Viajada a Caballo
 list-distance-minecart: Distancia Viajada en Vagoneta
 list-distance-boat: Distancia Viajada en Barca
+list-distance-gliding: "Distance Travelled with Elytra"
 list-itemdrops: Objetos Soltados
 list-hoeplowings: Superficies Cultivadas
 list-fertilising: Plantas Fertilizadas
 list-taming: Animales Domesticados
 list-brewing: Pociones Creadas
 list-fireworks: Fuegos Artificiales Lanzados
+list-musicdiscs: "Music Discs Played"
+list-enderpearls: "Teleportations with Ender Pearls"
 list-commands: Otros Logros
-list-playedtime: Tiempo Jugado
 
-list-achievement-received: "&a✓ "
-list-achievement-not-received: "&4✗ &5"
+#============================================================#
+# +--------------------------------------------------------+ #
+# |         Parameters to appear in future versions        | #
+# +--------------------------------------------------------+ #
+#============================================================#

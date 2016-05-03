@@ -1,29 +1,51 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |      Advanced Achievements Italian language file       | #
+# |   Advanced Achievements 2.5.1 Italian language file    | #
 # |                       By stewex                        | #
 # +--------------------------------------------------------+ #
 #============================================================#
 
+no-permissions: Non hai permessi sufficienti.
 
+# Related to /aach reload.
 configuration-successfully-reloaded: File di configurazione ricaricata con successo.
 configuration-reload-failed: Errori nel ricaricare il file di configurazione. Controlla il log per ulteriori informazioni.
-no-permissions: Non hai permessi sufficienti.
+
+# Related to /aach top.
 top-achievement: 'Persone con più obiettivi:'
 player-rank: 'Classifica attuale:'
+
+# Related to /aach stats.
 number-achievements: 'Obiettivo sbloccato:'
+
+# Related to /aach book.
 book-received: Hai ricevuto il tuo libro degli obiettivi!
 book-delay: Devi aspettare TIME secondi prima di richiedere un altro libro!
 book-name: Obiettivi
+
+# Related to /aach give.
 player-offline: Il giocatore PLAYER è offline!
 achievement-already-received: Il giocatore PLAYER ha già sbloccato questo obiettivo!
 achievement-not-found: L'obiettivo specificato non è stato trovato.
 achievement-given: Obiettivo donato!
+
+# Related to achievement reception.
 achievement-received: 'PLAYER ha sbloccato l'obiettivo:'
 achievement-new: 'Nuovo obiettivo:'
+
+# Related to /aach check.
+check-achievement-true: "PLAYER has received the achievement ACH!"
+check-achievements-false: "PLAYER has not received the achievement ACH!"
+
+# Related to /aach delete.
+delete-achievements: "The achievement ACH was deleted from PLAYER."
+
+# Related to achievement rewards.
 item-reward-received: Hai ricevuto un oggetto per ricompensa!
 money-reward-received: 'Hai ricevuto: AMOUNT !'
 command-reward: Comando ricompensa eseguito!
+
+# Related to /aach help.
 aach-command-book: Ricevi il libro dei tuoi obiettivi.
 aach-command-stats: Quantità di obiettivi che hai sbloccato.
 aach-command-list: Mostra gli obiettivi sbloccati e quelli mancanti.
@@ -31,6 +53,10 @@ aach-command-top: Mostra la classifica personale e quella globale.
 aach-command-give: Dona l'obiettivo ACH al giocatore NAME.
 aach-command-reload: Ricarica il file di configurazione del plugin.
 aach-command-info: Mostra varie informazioni riguardo al plugin.
+aach-command-check: "Check if player NAME has &7received ACH."
+aach-command-delete: "Delete achievement ACH from &7player NAME."
+
+# Related to /aach info.
 version-command-name: 'Nome:'
 version-command-version: 'Versione:'
 version-command-website: 'Sito Web:'
@@ -40,5 +66,57 @@ version-command-description-details: Advanced Achievements mette a disposizione 
 version-command-vault: 'Vault integrato:'
 version-command-database: 'Tipo di database:'
 
+# Related to /aach list.
+list-gui-title: "&5§lAchievements List"
+list-delay: "You must wait TIME seconds between each list command!"
+list-reward: "Reward: "
+list-reward-money: "money"
+list-reward-item: "item"
+list-reward-command: "other"
+list-amount: "Lvl: "
 list-achievement-received: "&a✓ "
 list-achievement-not-received: "&4✗ &5"
+
+# Related to category names in /aach list.
+list-connections: "Connections"
+list-places: "Blocks Placed"
+list-breaks: "Blocks Broken"
+list-kills: "Entities Killed"
+list-crafts: "Items Crafted"
+list-deaths: "Number of Deaths"
+list-arrows: "Arrows Shot"
+list-snowballs: "Snowballs Thrown"
+list-eggs: "Eggs Thrown"
+list-fish: "Fish Caught"
+list-itembreaks: "Items Broken"
+list-eatenitems: "Items Eaten"
+list-shear: "Sheeps Sheared"
+list-milk: "Cows Milked"
+list-trades: "Number of Trades"
+list-anvils: "Anvils Used"
+list-enchantments: "Items Enchanted"
+list-beds: "Beds Entered"
+list-maxlevel: "Max Level Reached"
+list-potions: "Potions Consumed"
+list-playedtime: "Time Played"
+list-distance-foot: "Distance Traveled by Foot"
+list-distance-pig: "Distance Traveled on a Pig"
+list-distance-horse: "Distance Traveled on a Horse"
+list-distance-minecart: "Distance Traveled in a Minecart"
+list-distance-boat: "Distance Traveled in a Boat"
+list-distance-gliding: "Distance Travelled with Elytra"
+list-itemdrops: "Items Dropped"
+list-hoeplowings: "Surface Plowed"
+list-fertilising: "Plants Fertilised"
+list-taming: "Animals Tamed"
+list-brewing: "Potions Brewed"
+list-fireworks: "Fireworks Launched"
+list-musicdiscs: "Music Discs Played"
+list-enderpearls: "Teleportations with Ender Pearls"
+list-commands: "Other Achievements"
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# |         Parameters to appear in future versions        | #
+# +--------------------------------------------------------+ #
+#============================================================#

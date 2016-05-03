@@ -1,39 +1,51 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |       Advanced Achievements German language file       | #
+# |    Advanced Achievements 2.5.1 German language file    | #
 # |                       By Mazuu                         | #
 # +--------------------------------------------------------+ #
 #============================================================#
 
+no-permissions: Du hast nicht die Erlaubnis dies zu tun.
+
+# Related to /aach reload.
 configuration-successfully-reloaded: Konfiguration neu geladen!
 configuration-reload-failed: Fehler beim neu laden des Plugins!
 
-no-permissions: Du hast nicht die Erlaubnis dies zu tun.
-
+# Related to /aach top.
 top-achievement: 'Top Achievement Sammler:'
 player-rank: 'Aktueller Rang:'
+
+# Related to /aach stats.
 number-achievements: 'Achievements erhalten:'
 
+# Related to /aach book.
 book-received: Du hast dein Achievement Buch erhalten!
 book-delay: Du musst TIME Sekunden warten!
-list-delay: Du musst TIME Sekunden warten!
 book-name: Achievements
 
+# Related to /aach give.
 player-offline: Der Spieler PLAYER ist offline!
 achievement-already-received: PLAYER hat dieses Achievement bereits!
 achievement-not-found: Das Spezifische Achievement wurde nicht gefunden.
 achievement-given: Achievement übertragen!
+
+# Related to achievement reception.
 achievement-received: 'PLAYER erhielt das Achievement:'
 achievement-new: 'Neues Achievement:'
 
+# Related to /aach check.
 check-achievement-true: PLAYER hat das Achievement ACH erhalten!
 check-achievements-false: PLAYER besitzt das Achievement ACH nicht!
+
+# Related to /aach delete.
 delete-achievements: Das Achievement ACH wurde von PLAYER gelöscht.
 
+# Related to achievement rewards.
 item-reward-received: 'Du hast ein Item erhalten:'
 money-reward-received: 'Du erhaelst: AMOUNT !'
 command-reward: Belohnung wurde ueberliefert!
 
+# Related to /aach help.
 aach-command-book: Erhalte dein Achievement-Buch.
 aach-command-stats: Anzahl der erhaltenen Achievements.
 aach-command-list: Zeige alle Achievements an.
@@ -44,6 +56,7 @@ aach-command-info: Zeige diverse Informationen des Plugins an.
 aach-command-check: Pruefe ob NAME das Achievement &7ACH besitzt.
 aach-command-delete: Lösche ACH von &7 NAME.
 
+# Related to /aach info.
 version-command-name: 'Name:'
 version-command-version: 'Version:'
 version-command-website: 'Website:'
@@ -53,12 +66,18 @@ version-command-description-details: Advanced Achievements enables unique and ch
 version-command-vault: 'Vault integration:'
 version-command-database: 'Database type:'
 
+# Related to /aach list.
 list-gui-title: '&5Liste aller Achievements'
+list-delay: Du musst TIME Sekunden warten!
 list-reward: ' Belohnung:'
 list-reward-money: Geld
 list-reward-item: Items
 list-reward-command: Anderes
 list-amount: ' Lvl:'
+list-achievement-received: "&a✓ "
+list-achievement-not-received: "&4✗ &5"
+
+# Related to category names in /aach list.
 list-connections: Verbindungen
 list-places: Bloecke platziert
 list-breaks: Bloecke zerstoert
@@ -79,19 +98,25 @@ list-enchantments: Items verzaubert
 list-beds: Betten betreten
 list-maxlevel: Level erreicht
 list-potions: Tränke getrunken
+list-playedtime: Spielzeit
 list-distance-foot: Distanz via Fuss
 list-distance-pig: Distanz via Schwein
 list-distance-horse: Distanz via Pferd
 list-distance-minecart: Distanz via Minecart
 list-distance-boat: Distanz via Boot
+list-distance-gliding: "Distance Travelled with Elytra"
 list-itemdrops: Items weggeworfen
 list-hoeplowings: Ackerboeden erstellt
 list-fertilising: Knochenmehl genutzt
 list-taming: Tiere gezaehmt
 list-brewing: Traenke gebraut
 list-fireworks: Feuerwerke gezuendet
+list-musicdiscs: "Music Discs Played"
+list-enderpearls: "Teleportations with Ender Pearls"
 list-commands: Easter-Eggs
-list-playedtime: Spielzeit
 
-list-achievement-received: "&a✓ "
-list-achievement-not-received: "&4✗ &5"
+#============================================================#
+# +--------------------------------------------------------+ #
+# |         Parameters to appear in future versions        | #
+# +--------------------------------------------------------+ #
+#============================================================#

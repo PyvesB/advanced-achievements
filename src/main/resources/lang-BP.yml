@@ -1,39 +1,52 @@
 #============================================================#
 # +--------------------------------------------------------+ #
 # |Advanced Achievements Brazilian Portuguese language file| #
+# |                         2.5.1                          | #
 # |                     By bruno10223                      | #
 # +--------------------------------------------------------+ #
 #============================================================#
 
+no-permissions: You do not have the permission to do this.
+
+# Related to /aach reload.
 configuration-successfully-reloaded: Configuration successfully reloaded.
 configuration-reload-failed: Errors while reloading configuration. Please view logs for more details.
 
-no-permissions: You do not have the permission to do this.
-
+# Related to /aach top.
 top-achievement: 'Top achievement owners:'
 player-rank: 'Rank Atual:'
+
+# Related to /aach stats.
 number-achievements: 'Achievements received:'
 
+# Related to /aach book.
 book-received: You received your achievements book!
 book-delay: Você deve esperar TIME segundos entre cada recepção livro!
-list-delay: Você deve esperar TIME segundos entre cada comando lista!
 book-name: Achievements
 
+# Related to /aach give.
 player-offline: O jogador PLAYER está offline !
 achievement-already-received: O jogador PLAYER já recebeu essa conquista !
 achievement-not-found: A achievement especificado não foi encontrado .
 achievement-given: Achievement dado!
+
+# Related to achievement reception.
 achievement-received: 'PLAYER recebeu a achievement:'
 achievement-new: 'Nova Conquista:'
 
+# Related to /aach check.
 check-achievement-true: PLAYER recebeu a achievement ACH!
 check-achievements-false: PLAYER não recebeu a achievement ACH!
+
+# Related to /aach delete.
 delete-achievements: The achievement ACH was deleted from PLAYER.
 
+# Related to achievement rewards.
 item-reward-received: 'Voce recebeu um premio:'
 money-reward-received: 'Voce Recebeu: AMOUNT !'
 command-reward: Comando recompensa realizado !
 
+# Related to /aach help.
 aach-command-book: Receba o seu livro de achievements
 aach-command-stats: Quantidade de achievements que você recebeu.
 aach-command-list: Display received and missing achievements.
@@ -44,6 +57,7 @@ aach-command-info: Display various information about the plugin.
 aach-command-check: Check if player NAME has &7received ACH.
 aach-command-delete: Delete achievement ACH from &7player NAME.
 
+# Related to /aach info.
 version-command-name: 'Name:'
 version-command-version: 'Version:'
 version-command-website: 'Website:'
@@ -53,12 +67,18 @@ version-command-description-details: Advanced Achievements enables unique and ch
 version-command-vault: 'Vault integration:'
 version-command-database: 'Database type:'
 
+# Related to /aach list.
 list-gui-title: '&5?lAchievements List'
+list-delay: Você deve esperar TIME segundos entre cada comando lista!
 list-reward: ' Recompensa:'
 list-reward-money: Dinheiro
 list-reward-item: item
 list-reward-command: Outro
 list-amount: ' Lvl:'
+list-achievement-received: "&a✓ "
+list-achievement-not-received: "&4✗ &5"
+
+# Related to category names in /aach list.
 list-connections: Conectado
 list-places: Blocos colocados
 list-breaks: Blocos quebrados
@@ -79,19 +99,25 @@ list-enchantments: Items Encantados
 list-beds: Camas Entroduzidas
 list-maxlevel: Nível Máximo Atingido
 list-potions: Potions Consumidas
+list-playedtime: Tempo Jogado
 list-distance-foot: Distancia andada a pé
 list-distance-pig: Distancia andada em um porco
 list-distance-horse: Distancia andada em um cavalo
 list-distance-minecart: Distancia andada em um minecart
 list-distance-boat: Distancia andada em um barco
+list-distance-gliding: "Distance Travelled with Elytra"
 list-itemdrops: Items Dropados
 list-hoeplowings: terras aradas
 list-fertilising: Plantas fertilizadas
 list-taming: Animais domesticados
 list-brewing: Poçoes fabricadas
 list-fireworks: Fogos lançados
+list-musicdiscs: "Music Discs Played"
+list-enderpearls: "Teleportations with Ender Pearls"
 list-commands: Outros Achievements
-list-playedtime: Tempo Jogado
 
-list-achievement-received: "&a✓ "
-list-achievement-not-received: "&4✗ &5"
+#============================================================#
+# +--------------------------------------------------------+ #
+# |         Parameters to appear in future versions        | #
+# +--------------------------------------------------------+ #
+#============================================================#

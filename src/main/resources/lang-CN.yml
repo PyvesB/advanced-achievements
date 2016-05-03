@@ -1,30 +1,53 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |      Advanced Achievements Chinese language file       | #
+# |   Advanced Achievements 2.5.1 Chinese language file    | #
 # |                      By DoloStar                       | #
 # +--------------------------------------------------------+ #
 #============================================================#
 
+no-permissions: "\u4f60\u6ca1\u6709\u6743\u9650\u8fd9\u4e48\u505a"
+
+# Related to /aach reload.
 configuration-successfully-reloaded: "\u914d\u7f6e\u52a0\u8f7d\u6210\u529f"
 configuration-reload-failed: "\u914d\u7f6e\u91cd\u8f7d\u51fa\u9519,\u8bf7\u67e5\u770b\
   log\u65e5\u5fd7\u4ee5\u83b7\u5f97\u66f4\u591a\u4fe1\u606f"
-no-permissions: "\u4f60\u6ca1\u6709\u6743\u9650\u8fd9\u4e48\u505a"
+
+# Related to /aach top.
 top-achievement: "\u6210\u5c31\u6392\u884c\u699c"
 player-rank: "\u73b0\u5728\u7684\u6392\u540d:"
+
+# Related to /aach stats.
 number-achievements: "\u5df2\u83b7\u5f97\u7684\u6210\u5c31:"
+
+# Related to /aach book.
 book-received: "\u4f60\u83b7\u5f97\u4e86\u4f60\u7684\u6210\u5c31\u4e66"
 book-delay: "\u4f60\u5fc5\u987b\u7b49\u5f85TIME\u79d2\u624d\u80fd\u518d\u6b21\u9886\
   \u53d6"
 book-name: "\u6210\u5c31\u8bb0\u5f55\u4e66"
+
+# Related to /aach give.
 player-offline: "\u8be5\u73a9\u5bb6\u4e0d\u5728\u7ebf"
 achievement-already-received: "\u8be5\u73a9\u5bb6\u4ee5\u83b7\u5f97\u8be5\u6210\u5c31"
 achievement-not-found: "\u672a\u627e\u5230\u6307\u5b9a\u7684\u6210\u5c31"
 achievement-given: "\u5df2\u7ed9\u4e88\u6210\u5c31"
+
+# Related to achievement reception.
 achievement-received: "\u8be5\u73a9\u5bb6\u5df2\u83b7\u5f97\u6210\u5c31"
 achievement-new: "\u65b0\u6210\u5c31:"
+
+# Related to /aach check.
+check-achievement-true: "PLAYER has received the achievement ACH!"
+check-achievements-false: "PLAYER has not received the achievement ACH!"
+
+# Related to /aach delete.
+delete-achievements: "The achievement ACH was deleted from PLAYER."
+
+# Related to achievement rewards.
 item-reward-received: "\u4f60\u83b7\u5f97\u4e86\u7269\u54c1\u5956\u52b1"
 money-reward-received: "\u4f60\u83b7\u5f97\u4e86\u91d1\u94b1\u5956\u52b1:AMOUNT"
 command-reward: "\u6307\u4ee4\u5956\u52b1!"
+
+# Related to /aach help.
 aach-command-book: "\u83b7\u53d6\u8bb0\u5f55\u6210\u5c31\u7684\u4e66\u672c"
 aach-command-stats: "\u67e5\u770b\u4f60\u5df2\u83b7\u5f97\u7684\u6210\u5c31"
 aach-command-list: "\u663e\u793a\u6240\u6709\u6210\u5c31"
@@ -32,6 +55,10 @@ aach-command-top: "\u67e5\u770b\u6210\u5c31\u6392\u884c\u699c"
 aach-command-give: "\u7ed9\u4e88\u73a9\u5bb6\u4e00\u4e2a\u6210\u5c31"
 aach-command-reload: "\u91cd\u8f7d\u63d2\u4ef6"
 aach-command-info: "\u67e5\u770b\u63d2\u4ef6\u4fe1\u606f"
+aach-command-check: "Check if player NAME has &7received ACH."
+aach-command-delete: "Delete achievement ACH from &7player NAME."
+
+# Related to /aach info.
 version-command-name: "\u540d\u5b57:"
 version-command-version: "\u7248\u672c:"
 version-command-website: "\u7f51\u7ad9:"
@@ -42,5 +69,57 @@ version-command-description-details: "\u529f\u80fd\u5f3a\u5927,\u914d\u7f6e\u7b8
 version-command-vault: 'Vault integration:'
 version-command-database: "\u6570\u636e\u5e93\u7c7b\u578b:"
 
+# Related to /aach list.
+list-gui-title: "&5§lAchievements List"
+list-delay: "You must wait TIME seconds between each list command!"
+list-reward: "Reward: "
+list-reward-money: "money"
+list-reward-item: "item"
+list-reward-command: "other"
+list-amount: "Lvl: "
 list-achievement-received: "&a✓ "
 list-achievement-not-received: "&4✗ &5"
+
+# Related to category names in /aach list.
+list-connections: "Connections"
+list-places: "Blocks Placed"
+list-breaks: "Blocks Broken"
+list-kills: "Entities Killed"
+list-crafts: "Items Crafted"
+list-deaths: "Number of Deaths"
+list-arrows: "Arrows Shot"
+list-snowballs: "Snowballs Thrown"
+list-eggs: "Eggs Thrown"
+list-fish: "Fish Caught"
+list-itembreaks: "Items Broken"
+list-eatenitems: "Items Eaten"
+list-shear: "Sheeps Sheared"
+list-milk: "Cows Milked"
+list-trades: "Number of Trades"
+list-anvils: "Anvils Used"
+list-enchantments: "Items Enchanted"
+list-beds: "Beds Entered"
+list-maxlevel: "Max Level Reached"
+list-potions: "Potions Consumed"
+list-playedtime: "Time Played"
+list-distance-foot: "Distance Traveled by Foot"
+list-distance-pig: "Distance Traveled on a Pig"
+list-distance-horse: "Distance Traveled on a Horse"
+list-distance-minecart: "Distance Traveled in a Minecart"
+list-distance-boat: "Distance Traveled in a Boat"
+list-distance-gliding: "Distance Travelled with Elytra"
+list-itemdrops: "Items Dropped"
+list-hoeplowings: "Surface Plowed"
+list-fertilising: "Plants Fertilised"
+list-taming: "Animals Tamed"
+list-brewing: "Potions Brewed"
+list-fireworks: "Fireworks Launched"
+list-musicdiscs: "Music Discs Played"
+list-enderpearls: "Teleportations with Ender Pearls"
+list-commands: "Other Achievements"
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# |         Parameters to appear in future versions        | #
+# +--------------------------------------------------------+ #
+#============================================================#

@@ -1,39 +1,51 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |           Advanced Achievements language file          | #
+# |   Advanced Achievements 2.5.1 English language file    | #
+# |                      By DarkPyves                      | #
 # +--------------------------------------------------------+ #
 #============================================================#
 
+no-permissions: "You do not have the permission to do this."
+
+# Related to /aach reload.
 configuration-successfully-reloaded: "Configuration successfully reloaded."
 configuration-reload-failed: "Errors while reloading configuration. Please view logs for more details."
 
-no-permissions: "You do not have the permission to do this."
-
+# Related to /aach top.
 top-achievement: "Top achievement owners:"
 player-rank: "Current rank:"
+
+# Related to /aach stats.
 number-achievements: "Achievements received:"
 
+# Related to /aach book.
 book-received: "You received your achievements book!"
 book-delay: "You must wait TIME seconds between each book reception!"
-list-delay: "You must wait TIME seconds between each list command!"
 book-name: "Achievements"
 
+# Related to /aach give.
 player-offline: "The player PLAYER is offline!"
 achievement-already-received: "The player PLAYER has already received this achievement!"
 achievement-not-found: "The specified achievement was not found."
 achievement-given: "Achievement given!"
+
+# Related to achievement reception.
 achievement-received: "PLAYER received the achievement:"
 achievement-new: "New Achievement:"
 
+# Related to /aach check.
 check-achievement-true: "PLAYER has received the achievement ACH!"
 check-achievements-false: "PLAYER has not received the achievement ACH!"
+
+# Related to /aach delete.
 delete-achievements: "The achievement ACH was deleted from PLAYER."
 
+# Related to achievement rewards.
 item-reward-received: "You received an item reward:"
 money-reward-received: "You received: AMOUNT !"
 command-reward: "Reward command carried out!"
 
-
+# Related to /aach help.
 aach-command-book: "Receive your achievements book."
 aach-command-stats: "Amount of achievements you have received."
 aach-command-list: "Display received and missing achievements."
@@ -44,7 +56,7 @@ aach-command-info: "Display various information about the plugin."
 aach-command-check: "Check if player NAME has &7received ACH."
 aach-command-delete: "Delete achievement ACH from &7player NAME."
 
-
+# Related to /aach info.
 version-command-name: "Name:"
 version-command-version: "Version:"
 version-command-website: "Website:"
@@ -54,12 +66,18 @@ version-command-description-details: "Advanced Achievements enables unique and c
 version-command-vault: "Vault integration:"
 version-command-database: "Database type:"
 
+# Related to /aach list.
 list-gui-title: "&5§lAchievements List"
+list-delay: "You must wait TIME seconds between each list command!"
 list-reward: "Reward: "
 list-reward-money: "money"
 list-reward-item: "item"
 list-reward-command: "other"
 list-amount: "Lvl: "
+list-achievement-received: "&a✓ "
+list-achievement-not-received: "&4✗ &5"
+
+# Related to category names in /aach list.
 list-connections: "Connections"
 list-places: "Blocks Placed"
 list-breaks: "Blocks Broken"
@@ -80,6 +98,7 @@ list-enchantments: "Items Enchanted"
 list-beds: "Beds Entered"
 list-maxlevel: "Max Level Reached"
 list-potions: "Potions Consumed"
+list-playedtime: "Time Played"
 list-distance-foot: "Distance Traveled by Foot"
 list-distance-pig: "Distance Traveled on a Pig"
 list-distance-horse: "Distance Traveled on a Horse"
@@ -96,5 +115,8 @@ list-musicdiscs: "Music Discs Played"
 list-enderpearls: "Teleportations with Ender Pearls"
 list-commands: "Other Achievements"
 
-list-achievement-received: "&a✓ "
-list-achievement-not-received: "&4✗ &5"
+#============================================================#
+# +--------------------------------------------------------+ #
+# |         Parameters to appear in future versions        | #
+# +--------------------------------------------------------+ #
+#============================================================#
