@@ -70,6 +70,13 @@ ExcludedWorlds: []
 #  - yourWorld1
 #  - yourWorld2
 
+# Don't show these categories in the achievement GUI or in the stats output
+# Also prevent obtaining achievements for these categories
+DisabledCategories: []
+#  - Beds
+#  - ItemBreaks
+#  - Crafts
+
 # Obfuscate achievements that have not yet been received in /aach list.
 ObfuscateNotReceived: true
 

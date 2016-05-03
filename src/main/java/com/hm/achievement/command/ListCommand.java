@@ -2,6 +2,7 @@ package com.hm.achievement.command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -173,6 +174,13 @@ public class ListCommand {
 					ArrayList<String> lore = new ArrayList<String>();
 					// Iterate through all sub-categories in achievement category
 					String cat = AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i];
+
+					// Ignore this category if it's in the disabled list
+					List<String> disabled = plugin.getConfig().getStringList("DisabledCategories");
+					if ((disabled != null) && (disabled.contains(cat))) {
+						continue;
+					}
+
 					for (String section : plugin.getPluginConfig().getConfigurationSection(cat).getKeys(false)) {
 						// Iterate through all achievements in sub-category.
 						for (String ach : plugin.getPluginConfig().getConfigurationSection(cat + '.' + section).getKeys(false)) {
@@ -214,6 +222,13 @@ public class ListCommand {
 					ArrayList<String> lore = new ArrayList<String>();
 					// Iterate through all achievements in category.
 					String cat = AdvancedAchievements.NORMAL_ACHIEVEMENTS[i];
+
+					// Ignore this category if it's in the disabled list
+					List<String> disabled = plugin.getConfig().getStringList("DisabledCategories");
+					if ((disabled != null) && (disabled.contains(cat))) {
+						continue;
+					}
+
 					for (String ach : plugin.getPluginConfig().getConfigurationSection(cat).getKeys(false)) {
 						// Check if player has received achievement and
 						// build message accordingly.
