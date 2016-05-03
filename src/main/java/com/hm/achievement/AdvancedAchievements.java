@@ -192,7 +192,13 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(craftListener, this);
 		}
 
-		if (config.getConfigurationSection("Deaths").getKeys(false).size() != 0) {
+		if (config.getConfigurationSection("Deaths").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistancePig").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
+				|| config.getConfigurationSection("DistanceGliding").getKeys(false).size() != 0) {
 			deathListener = new AchieveDeathListener(this);
 			pm.registerEvents(deathListener, this);
 		}

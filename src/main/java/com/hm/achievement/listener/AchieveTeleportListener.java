@@ -20,7 +20,7 @@ public class AchieveTeleportListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void playerTeleport(PlayerTeleportEvent event) {
-
+		
 		// Event fired twice when teleporting with a nether portal: first time
 		// to go to nether with the cause NETHER_PORTAL, then later on to change
 		// location in nether; we must only consider the second change because
@@ -40,7 +40,8 @@ public class AchieveTeleportListener implements Listener {
 		Player player = (Player) event.getPlayer();
 		if (!player.hasPermission("achievement.count.enderpeals")
 				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+				|| plugin.isInExludedWorld(player)
+				|| plugin.getConfig().getConfigurationSection("EnderPearls").getKeys(false).size() == 0)
 			return;
 
 		int enderpearls = plugin.getPoolsManager().getPlayerEnderPearlAmount(player) + 1;
