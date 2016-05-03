@@ -45,7 +45,7 @@ AdditionalEffects: true
 Sound: true
 
 # Set the icon of the plugin (default: shamrock, ☘).
-Icon: ☘
+Icon: '☘'
 
 # Set the color of the plugin (default: 5, dark purple).
 Color: '5'
@@ -56,6 +56,12 @@ ChatNotify: false
 # Separator between name, description and date on a book page.
 BookSeparator: ''
 
+# Separator between name and level in achievement list
+ListItemSeparator: ' → '
+
+# Set the format of the achievement name in the achievement list
+ListAchievementFormat: '%ICON% %NAME% %ICON%'
+
 # Stop stats from increasing when player in creative mode (except Connections and PlayedTime).
 RestrictCreative: false
 
@@ -64,11 +70,21 @@ ExcludedWorlds: []
 #  - yourWorld1
 #  - yourWorld2
 
+# Don't show these categories in the achievement GUI or in the stats output
+# Also prevent obtaining achievements for these categories
+DisabledCategories: []
+#  - Beds
+#  - ItemBreaks
+#  - Crafts
+
 # Obfuscate achievements that have not yet been received in /aach list.
 ObfuscateNotReceived: true
 
 # Hide categories with no achievements yet received in /aach list.
 HideNotReceivedCategories: false
+
+# Hide the reward display in the achievement list output
+HideRewardDisplayInList: false
 
 # Display achievement name and description as screen titles.
 TitleScreen: true

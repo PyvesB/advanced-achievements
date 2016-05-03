@@ -41,3 +41,6 @@ version-command-description-details: "\u529f\u80fd\u5f3a\u5927,\u914d\u7f6e\u7b8
   \u7684\u81ea\u5b9a\u4e49\u6210\u5c31\u63d2\u4ef6"
 version-command-vault: 'Vault integration:'
 version-command-database: "\u6570\u636e\u5e93\u7c7b\u578b:"
+
+list-achievement-received: "&a✓ "
+list-achievement-not-received: "&4✗ &5"

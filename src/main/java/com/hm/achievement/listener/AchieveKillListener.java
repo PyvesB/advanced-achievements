@@ -1,6 +1,7 @@
 package com.hm.achievement.listener;
 
 import org.bukkit.GameMode;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -41,6 +42,12 @@ public class AchieveKillListener implements Listener {
 			mobName = "player";
 		} else {
 			mobName = entity.getType().name().toLowerCase();
+			if (entity instanceof Creeper) {
+				Creeper c = (Creeper) entity;
+				if (c.isPowered()) {
+					mobName = "poweredcreeper";
+				}
+			}
 		}
 		if (!plugin.getPluginConfig().isConfigurationSection("Kills." + mobName)
 				|| !player.hasPermission("achievement.count.kills." + mobName))

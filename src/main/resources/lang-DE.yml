@@ -92,3 +92,6 @@ list-brewing: Traenke gebraut
 list-fireworks: Feuerwerke gezuendet
 list-commands: Easter-Eggs
 list-playedtime: Spielzeit
+
+list-achievement-received: "&a✓ "
+list-achievement-not-received: "&4✗ &5"

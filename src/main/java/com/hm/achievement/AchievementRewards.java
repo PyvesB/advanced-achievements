@@ -1,5 +1,7 @@
 package com.hm.achievement;
 
+import java.util.List;
+
 import net.milkbowl.vault.item.Items;
 
 import org.bukkit.ChatColor;
@@ -29,6 +31,11 @@ public class AchievementRewards {
 		if (check.equals("null")) {
 			return false;
 		} else {
+			// Ignore this achievement if it's in the disabled list
+			List<String> disabled = plugin.getConfig().getStringList("DisabledCategories");
+			if ((disabled != null) && (disabled.contains(ach.split(ach, 2)[0])))
+				return false; // this achievement is disabled
+
 			return true;
 		}
 	}
@@ -106,16 +113,15 @@ public class AchievementRewards {
 	 * language file.
 	 */
 	public String getRewardType(String configAchievement) {
-
 		String rewardType = "";
-		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Money"))
+		if (plugin.getPluginConfig().contains(configAchievement + ".Reward.Money"))
 			rewardType = plugin.getPluginLang().getString("list-reward-money", "money");
-		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Item"))
+		if (plugin.getPluginConfig().contains(configAchievement + ".Reward.Item"))
 			if (rewardType.length() != 0)
 				rewardType += ", " + plugin.getPluginLang().getString("list-reward-item", "item");
 			else
 				rewardType = plugin.getPluginLang().getString("list-reward-item", "item");
-		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.command"))
+		if (plugin.getPluginConfig().contains(configAchievement + ".Reward.Command"))
 			if (rewardType.length() != 0)
 				rewardType += ", " + plugin.getPluginLang().getString("list-reward-command", "other");
 			else
