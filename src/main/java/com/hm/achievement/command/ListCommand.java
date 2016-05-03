@@ -165,7 +165,7 @@ public class ListCommand {
 			int numberOfCategories = 0;
 
 			// Build list of achievements with multiple sub-categories in GUI.
-			for (int i = 0; i < AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length; i++)
+			for (int i = 0; i < AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length; i++) {
 				if (multipleAchievementTypesLanguage[i].length() != 0) {
 					// Create item stack that will be displayed in the GUI.
 					ItemStack connections = multipleAchievementsTypesItems[i];
@@ -189,8 +189,10 @@ public class ListCommand {
 					// Set lore for the current category item in GUI.
 					if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
 						connectionsMeta.setDisplayName(
-								ChatColor.translateAlternateColorCodes('&', "&7" + plugin.getIcon() + " "
-										+ multipleAchievementTypesLanguage[i] + " " + " &7" + plugin.getIcon() + " "));
+								ChatColor.translateAlternateColorCodes('&', "&8" +
+										plugin.getPluginConfig().getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
+										.replaceAll("%ICON%", plugin.getIcon())
+										.replaceAll("%NAME%", multipleAchievementTypesLanguage[i])));
 						connectionsMeta.setLore(lore);
 						connections.setItemMeta(connectionsMeta);
 
@@ -201,9 +203,10 @@ public class ListCommand {
 					lore.clear();
 					numberInCategory = 0;
 				}
+			}
 
 			// Build list of normal achievements in GUI.
-			for (int i = 0; i < AdvancedAchievements.NORMAL_ACHIEVEMENTS.length; i++)
+			for (int i = 0; i < AdvancedAchievements.NORMAL_ACHIEVEMENTS.length; i++) {
 				if (normalAchievementTypesLanguage[i].length() != 0) {
 					// Create item stack that will be displayed in the GUI.
 					ItemStack connections = normalAchievementsTypesItems[i];
@@ -225,8 +228,10 @@ public class ListCommand {
 					// Set lore for the current category item in GUI.
 					if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
 						connectionsMeta.setDisplayName(
-								ChatColor.translateAlternateColorCodes('&', "&7" + plugin.getIcon() + " "
-										+ normalAchievementTypesLanguage[i] + " " + " &7" + plugin.getIcon() + " "));
+								ChatColor.translateAlternateColorCodes('&', "&8" +
+										plugin.getPluginConfig().getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
+										.replaceAll("%ICON%", plugin.getIcon())
+										.replaceAll("%NAME%", normalAchievementTypesLanguage[i])));
 						connectionsMeta.setLore(lore);
 						connections.setItemMeta(connectionsMeta);
 
@@ -237,6 +242,7 @@ public class ListCommand {
 					lore.clear();
 					numberInCategory = 0;
 				}
+			}
 			// Display GUI to the player.
 			player.openInventory(guiInv);
 		} else {
