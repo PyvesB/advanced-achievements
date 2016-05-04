@@ -107,15 +107,15 @@ list-distance-pig: Distancia Viajada en Cerdo
 list-distance-horse: Distancia Viajada a Caballo
 list-distance-minecart: Distancia Viajada en Vagoneta
 list-distance-boat: Distancia Viajada en Barca
-list-distance-gliding: "Distance Travelled with Elytra"
+list-distance-gliding: "Distancia Viajada en Elytra"
 list-itemdrops: Objetos Soltados
 list-hoeplowings: Superficies Cultivadas
 list-fertilising: Plantas Fertilizadas
 list-taming: Animales Domesticados
 list-brewing: Pociones Creadas
 list-fireworks: Fuegos Artificiales Lanzados
-list-musicdiscs: "Music Discs Played"
-list-enderpearls: "Teleportations with Ender Pearls"
+list-musicdiscs: "Discos de M\xfasica Reproducidos"
+list-enderpearls: "Teletransportes con Perlas de Ender"
 list-commands: Otros Logros
 
 #============================================================#

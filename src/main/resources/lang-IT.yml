@@ -30,15 +30,15 @@ achievement-not-found: L'obiettivo specificato non è stato trovato.
 achievement-given: Obiettivo donato!
 
 # Related to achievement reception.
-achievement-received: 'PLAYER ha sbloccato l'obiettivo:'
+achievement-received: 'PLAYER ha sbloccato l''obiettivo:'
 achievement-new: 'Nuovo obiettivo:'
 
 # Related to /aach check.
-check-achievement-true: "PLAYER has received the achievement ACH!"
-check-achievements-false: "PLAYER has not received the achievement ACH!"
+check-achievement-true: "PLAYER ha ottenuto l'obiettivo ACH!"
+check-achievements-false: "PLAYER non ha ottenuto l'obiettivo ACH!"
 
 # Related to /aach delete.
-delete-achievements: "The achievement ACH was deleted from PLAYER."
+delete-achievements: "L'obiettivo ACH è stato tolto a PLAYER."
 
 # Related to achievement rewards.
 item-reward-received: Hai ricevuto un oggetto per ricompensa!
@@ -53,8 +53,8 @@ aach-command-top: Mostra la classifica personale e quella globale.
 aach-command-give: Dona l'obiettivo ACH al giocatore NAME.
 aach-command-reload: Ricarica il file di configurazione del plugin.
 aach-command-info: Mostra varie informazioni riguardo al plugin.
-aach-command-check: "Check if player NAME has &7received ACH."
-aach-command-delete: "Delete achievement ACH from &7player NAME."
+aach-command-check: "Controlla se il giocatore NAME ha &7sbloccato ACH."
+aach-command-delete: "Toglie l'obiettivo ACH al &7giocatore NAME."
 
 # Related to /aach info.
 version-command-name: 'Nome:'
@@ -67,53 +67,53 @@ version-command-vault: 'Vault integrato:'
 version-command-database: 'Tipo di database:'
 
 # Related to /aach list.
-list-gui-title: "&5§lAchievements List"
-list-delay: "You must wait TIME seconds between each list command!"
-list-reward: "Reward: "
-list-reward-money: "money"
-list-reward-item: "item"
-list-reward-command: "other"
+list-gui-title: "&5§lLista Obiettivi"
+list-delay: "Devi aspettare TIME secondi tra un comando lista e l'altro!"
+list-reward: "Ricompensa: "
+list-reward-money: "soldi"
+list-reward-item: "oggetto"
+list-reward-command: "altro"
 list-amount: "Lvl: "
 list-achievement-received: "&a✓ "
 list-achievement-not-received: "&4✗ &5"
 
 # Related to category names in /aach list.
-list-connections: "Connections"
-list-places: "Blocks Placed"
-list-breaks: "Blocks Broken"
-list-kills: "Entities Killed"
-list-crafts: "Items Crafted"
-list-deaths: "Number of Deaths"
-list-arrows: "Arrows Shot"
-list-snowballs: "Snowballs Thrown"
-list-eggs: "Eggs Thrown"
-list-fish: "Fish Caught"
-list-itembreaks: "Items Broken"
-list-eatenitems: "Items Eaten"
-list-shear: "Sheeps Sheared"
-list-milk: "Cows Milked"
-list-trades: "Number of Trades"
-list-anvils: "Anvils Used"
-list-enchantments: "Items Enchanted"
-list-beds: "Beds Entered"
-list-maxlevel: "Max Level Reached"
-list-potions: "Potions Consumed"
-list-playedtime: "Time Played"
-list-distance-foot: "Distance Traveled by Foot"
-list-distance-pig: "Distance Traveled on a Pig"
-list-distance-horse: "Distance Traveled on a Horse"
-list-distance-minecart: "Distance Traveled in a Minecart"
-list-distance-boat: "Distance Traveled in a Boat"
-list-distance-gliding: "Distance Travelled with Elytra"
-list-itemdrops: "Items Dropped"
-list-hoeplowings: "Surface Plowed"
-list-fertilising: "Plants Fertilised"
-list-taming: "Animals Tamed"
-list-brewing: "Potions Brewed"
-list-fireworks: "Fireworks Launched"
-list-musicdiscs: "Music Discs Played"
-list-enderpearls: "Teleportations with Ender Pearls"
-list-commands: "Other Achievements"
+list-connections: "Connessioni"
+list-places: "Blocchi Piazzati"
+list-breaks: "Blocchi Distrutti"
+list-kills: "Entità Uccise"
+list-crafts: "Oggetti Craftati"
+list-deaths: "Numero di Morti"
+list-arrows: "Frecce Scoccate"
+list-snowballs: "Palle di Neve Lanciate"
+list-eggs: "Uova Lanciate"
+list-fish: "Pesci Catturati"
+list-itembreaks: "Oggetti Rotti"
+list-eatenitems: "Oggetti Mangiati"
+list-shear: "Pecore Tosate"
+list-milk: "Mucche Munte"
+list-trades: "Numero di Scambi"
+list-anvils: "Incudini Usate"
+list-enchantments: "Oggetti Incantati"
+list-beds: "Letti Usati"
+list-maxlevel: "Livello Massimo Raggiunto"
+list-potions: "Pozioni Consumate"
+list-playedtime: "Tempo di Gioco"
+list-distance-foot: "Distanza Percorsa a Piedi"
+list-distance-pig: "Distanza Percorsa su un Maiale"
+list-distance-horse: "Distanza Percorsa su un Cavallo"
+list-distance-minecart: "Distanza Percorsa su un Minecart"
+list-distance-boat: "Distanza Percorsa in una Barca"
+list-distance-gliding: "Distanza Percorsa con Elytra"
+list-itemdrops: "Oggetti Lasciati"
+list-hoeplowings: "Superficie Arata"
+list-fertilising: "Piante Fertilizzate"
+list-taming: "Animali Domati"
+list-brewing: "Pozioni Preparate"
+list-fireworks: "Fuochi d'Artificio Accesi"
+list-musicdiscs: "Dischi Musicali Ascoltati"
+list-enderpearls: "Teletrasporti con le Perle Ender"
+list-commands: "Altri Obiettivi"
 
 #============================================================#
 # +--------------------------------------------------------+ #

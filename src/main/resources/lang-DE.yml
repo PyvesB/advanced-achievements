@@ -104,15 +104,15 @@ list-distance-pig: Distanz via Schwein
 list-distance-horse: Distanz via Pferd
 list-distance-minecart: Distanz via Minecart
 list-distance-boat: Distanz via Boot
-list-distance-gliding: "Distance Travelled with Elytra"
+list-distance-gliding: Distanz mit Elytren geflogen"
 list-itemdrops: Items weggeworfen
 list-hoeplowings: Ackerboeden erstellt
 list-fertilising: Knochenmehl genutzt
 list-taming: Tiere gezaehmt
 list-brewing: Traenke gebraut
 list-fireworks: Feuerwerke gezuendet
-list-musicdiscs: "Music Discs Played"
-list-enderpearls: "Teleportations with Ender Pearls"
+list-musicdiscs: Schallplatten abgespielt
+list-enderpearls: Teleportationen mit Enderperlen
 list-commands: Easter-Eggs
 
 #============================================================#
