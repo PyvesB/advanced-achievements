@@ -25,10 +25,11 @@ public class HelpCommand {
 				+ plugin.getIcon() + "§lAdvanced Achievements" + plugin.getColor() + plugin.getIcon() + ChatColor.GRAY
 				+ "]" + plugin.getColor() + "-=-=-=-=-=-=-");
 
-		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach book" + ChatColor.GRAY + " - "
-						+ plugin.getPluginLang().getString("aach-command-book", "Receive your achievements book."),
-				"/aach book");
+		if (sender.hasPermission("achievement.book"))
+			sendJsonClickableMessage(sender,
+					plugin.getChatHeader() + plugin.getColor() + "/aach book" + ChatColor.GRAY + " - "
+							+ plugin.getPluginLang().getString("aach-command-book", "Receive your achievements book."),
+					"/aach book");
 
 		sendJsonClickableMessage(sender,
 				plugin.getChatHeader() + plugin.getColor()
@@ -36,50 +37,56 @@ public class HelpCommand {
 								.getString("aach-command-stats", "Amount of achievements you have received."),
 				"/aach stats");
 
-		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach list" + ChatColor.GRAY + " - " + plugin
-						.getPluginLang().getString("aach-command-list", "Display received and missing achievements."),
-				"/aach list");
+		if (sender.hasPermission("achievement.list"))
+			sendJsonClickableMessage(sender,
+					plugin.getChatHeader() + plugin.getColor()
+							+ "/aach list" + ChatColor.GRAY + " - " + plugin.getPluginLang()
+									.getString("aach-command-list", "Display received and missing achievements."),
+					"/aach list");
 
 		sendJsonClickableMessage(sender,
 				plugin.getChatHeader() + plugin.getColor() + "/aach top" + ChatColor.GRAY + " - "
 						+ plugin.getPluginLang().getString("aach-command-top", "Display personal and global rankings."),
 				"/aach top");
 
-		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach give §oach name§r" + ChatColor.GRAY + " - "
-						+ ChatColor
-								.translateAlternateColorCodes('&',
-										plugin.getPluginLang()
-												.getString("aach-command-give",
-														"Give achievement ACH to player &7NAME.")
-												.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
-				"/aach give ach name");
+		if (sender.hasPermission("achievement.give"))
+			sendJsonClickableMessage(sender,
+					plugin.getChatHeader() + plugin.getColor() + "/aach give §oach name§r" + ChatColor.GRAY + " - "
+							+ ChatColor
+									.translateAlternateColorCodes('&',
+											plugin.getPluginLang()
+													.getString("aach-command-give",
+															"Give achievement ACH to player &7NAME.")
+													.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+					"/aach give ach name");
 
-		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach check §oach name§r" + ChatColor.GRAY + " - "
-						+ ChatColor
-								.translateAlternateColorCodes('&',
-										plugin.getPluginLang()
-												.getString("aach-command-check",
-														"Check if player NAME has &7received ACH.")
-												.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
-				"/aach check ach name");
+		if (sender.hasPermission("achievement.check"))
+			sendJsonClickableMessage(sender,
+					plugin.getChatHeader() + plugin.getColor() + "/aach check §oach name§r" + ChatColor.GRAY + " - "
+							+ ChatColor
+									.translateAlternateColorCodes('&',
+											plugin.getPluginLang()
+													.getString("aach-command-check",
+															"Check if player NAME has &7received ACH.")
+													.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+					"/aach check ach name");
 
-		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach delete §oach name§r" + ChatColor.GRAY + " - "
-						+ ChatColor
-								.translateAlternateColorCodes('&',
-										plugin.getPluginLang()
-												.getString("aach-command-delete",
-														"Delete achievement ACH from &7player NAME.")
-												.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
-				"/aach delete ach name");
+		if (sender.hasPermission("achievement.delete"))
+			sendJsonClickableMessage(sender,
+					plugin.getChatHeader() + plugin.getColor() + "/aach delete §oach name§r" + ChatColor.GRAY + " - "
+							+ ChatColor.translateAlternateColorCodes('&',
+									plugin.getPluginLang()
+											.getString("aach-command-delete",
+													"Delete achievement ACH from &7player NAME.")
+											.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+					"/aach delete ach name");
 
-		sendJsonClickableMessage(sender,
-				plugin.getChatHeader() + plugin.getColor() + "/aach reload" + ChatColor.GRAY + " - "
-						+ plugin.getPluginLang().getString("aach-command-reload", "Reload the plugin's configuration."),
-				"/aach reload");
+		if (sender.hasPermission("achievement.reload"))
+			sendJsonClickableMessage(sender,
+					plugin.getChatHeader() + plugin.getColor()
+							+ "/aach reload" + ChatColor.GRAY + " - " + plugin.getPluginLang()
+									.getString("aach-command-reload", "Reload the plugin's configuration."),
+					"/aach reload");
 
 		sendJsonClickableMessage(sender,
 				plugin.getChatHeader() + plugin.getColor() + "/aach info" + ChatColor.GRAY + " - "

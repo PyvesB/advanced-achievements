@@ -37,7 +37,7 @@ public class AchieveTeleportListener implements Listener {
 		if (event.getCause() != PlayerTeleportEvent.TeleportCause.ENDER_PEARL)
 			return;
 
-		Player player = (Player) event.getPlayer();
+		Player player = event.getPlayer();
 		if (!player.hasPermission("achievement.count.enderpeals")
 				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
 				|| plugin.isInExludedWorld(player)
