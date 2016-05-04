@@ -1,13 +1,5 @@
 package com.hm.achievement.particle;
 
-import com.hm.achievement.particle.ReflectionUtils.PackageType;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,6 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 /**
  * <b>ParticleEffect Library</b>
@@ -1157,7 +1157,7 @@ public enum ParticleEffect {
 		 */
 		@Override
 		public float getValueX() {
-			return (float) red / 255F;
+			return red / 255F;
 		}
 
 		/**
@@ -1167,7 +1167,7 @@ public enum ParticleEffect {
 		 */
 		@Override
 		public float getValueY() {
-			return (float) green / 255F;
+			return green / 255F;
 		}
 
 		/**
@@ -1177,7 +1177,7 @@ public enum ParticleEffect {
 		 */
 		@Override
 		public float getValueZ() {
-			return (float) blue / 255F;
+			return blue / 255F;
 		}
 	}
 
@@ -1215,7 +1215,7 @@ public enum ParticleEffect {
 		 */
 		@Override
 		public float getValueX() {
-			return (float) note / 24F;
+			return note / 24F;
 		}
 
 		/**
@@ -1526,13 +1526,12 @@ public enum ParticleEffect {
 			if (range < 1) {
 				throw new IllegalArgumentException("The range is lower than 1");
 			}
-			String worldName = center.getWorld().getName();
+
 			double squared = range * range;
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (!player.getWorld().getName().equals(worldName) || player.getLocation().distanceSquared(center) > squared) {
-					continue;
+			for (Player player : center.getWorld().getPlayers()) {
+				if (player.getLocation().distanceSquared(center) <= squared) {
+					sendTo(center, player);
 				}
-				sendTo(center, player);
 			}
 		}
 

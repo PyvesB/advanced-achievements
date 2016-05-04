@@ -74,7 +74,7 @@ public class TopCommand {
 				try {
 					if (additionalEffects)
 						// Play special effect when in top list.
-						ParticleEffect.PORTAL.display(0, 1, 0, 0.1f, 500, ((Player) sender).getLocation(), 1);
+						ParticleEffect.PORTAL.display(0, 1, 0, 0.5f, 1000, ((Player) sender).getLocation(), 1);
 
 				} catch (Exception ex) {
 					plugin.getLogger().severe("Error while displaying additional particle effects.");
@@ -88,7 +88,7 @@ public class TopCommand {
 								Sound.valueOf("FIREWORK_BLAST"), 1, 0.6f);
 					else
 						((Player) sender).getWorld().playSound(((Player) sender).getLocation(),
-								Sound.ENTITY_FIREWORK_BLAST, 1, 0.6f);
+								Sound.ENTITY_FIREWORK_LARGE_BLAST, 1, 0.7f);
 				}
 			}
 
