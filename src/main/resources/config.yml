@@ -57,7 +57,7 @@ ChatNotify: false
 BookSeparator: ''
 
 # Separator between name and level in /aach list.
-ListItemSeparator: ' →'
+ListItemSeparator: ' → '
 
 # Set the format of the achievement name in /aach list.
 ListAchievementFormat: '%ICON% %NAME% %ICON%'

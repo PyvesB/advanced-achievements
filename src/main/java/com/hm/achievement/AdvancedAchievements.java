@@ -618,7 +618,10 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (!config.getKeys(false).contains("DisabledCategories")) {
 			List<String> list = new ArrayList<String>();
 			config.set("DisabledCategories", list,
-					"Don't show these categories in the achievement GUI or in the stats output (delete the [] before using). Also prevent obtaining achievements for these categories and prevent stats from increasing. If changed, do a full server reload, and not just /aach reload.");
+					new String[] {
+							"Don't show these categories in the achievement GUI or in the stats output (delete the [] before using).",
+							"Also prevent obtaining achievements for these categories and prevent stats from increasing.",
+							"If changed, do a full server reload, and not just /aach reload." });
 			updateDone = true;
 		}
 
@@ -627,10 +630,9 @@ public class AdvancedAchievements extends JavaPlugin {
 					"Set the format of the achievement name in /aach list.");
 			updateDone = true;
 		}
-		
+
 		if (!config.getKeys(false).contains("HideRewardDisplayInList")) {
-			config.set("HideRewardDisplayInList", false,
-					"Hide the reward display in /aach list.");
+			config.set("HideRewardDisplayInList", false, "Hide the reward display in /aach list.");
 			updateDone = true;
 		}
 

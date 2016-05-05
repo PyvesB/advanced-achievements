@@ -93,7 +93,7 @@ public class YamlManager {
 	public void set(String path, Object value, String comment) {
 
 		if (!this.config.contains(path)) {
-			this.config.set(manager.getPluginName() + "_COMMENT_" + comments, " " + comment);
+			this.config.set(manager.getPluginName() + "_COMMENT_" + comments, comment);
 			comments++;
 		}
 		this.config.set(path, value);
@@ -105,7 +105,7 @@ public class YamlManager {
 			if (!this.config.contains(path)) {
 				// Insert comment as new value in the file; will be converted
 				// back to a comment later.
-				this.config.set(manager.getPluginName() + "_COMMENT_" + comments, " " + comm);
+				this.config.set(manager.getPluginName() + "_COMMENT_" + comments, comm);
 				comments++;
 			}
 		}
