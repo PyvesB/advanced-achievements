@@ -34,6 +34,7 @@ public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 
 		String configAchievement;
 		if (player.hasPermission("achievement.count.hoeplowings")
+				&& !plugin.getDisabledCategorySet().contains("HoePlowings")
 				&& (event.getItem().getType() == Material.DIAMOND_HOE || event.getItem().getType() == Material.IRON_HOE
 						|| event.getItem().getType() == Material.STONE_HOE
 						|| event.getItem().getType() == Material.WOOD_HOE
@@ -47,6 +48,7 @@ public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 			configAchievement = "HoePlowings." + plowings;
 
 		} else if (player.hasPermission("achievement.count.fertilising")
+				&& !plugin.getDisabledCategorySet().contains("Fertilising")
 				&& event.getItem().isSimilar(new ItemStack(Material.INK_SACK, 1, (short) 15))
 				&& (event.getClickedBlock().getType() == Material.GRASS
 						|| event.getClickedBlock().getType() == Material.SAPLING
@@ -67,6 +69,7 @@ public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 			configAchievement = "Fertilising." + fertilising;
 
 		} else if (player.hasPermission("achievement.count.fireworks")
+				&& !plugin.getDisabledCategorySet().contains("Fireworks")
 				&& event.getItem().getType() == Material.FIREWORK) {
 			int fireworks = plugin.getPoolsManager().getPlayerFireworkAmount(player) + 1;
 
@@ -75,6 +78,7 @@ public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 			configAchievement = "Fireworks." + fireworks;
 
 		} else if (player.hasPermission("achievement.count.musicdiscs")
+				&& !plugin.getDisabledCategorySet().contains("MusicDiscs")
 				&& event.getItem().getType().name().contains("RECORD")
 				&& event.getClickedBlock().getType() == Material.JUKEBOX) {
 			int musicDiscs = plugin.getPoolsManager().getPlayerMusicDiscAmount(player) + 1;

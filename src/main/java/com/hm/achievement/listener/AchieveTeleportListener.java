@@ -41,7 +41,7 @@ public class AchieveTeleportListener implements Listener {
 		if (!player.hasPermission("achievement.count.enderpeals")
 				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
 				|| plugin.isInExludedWorld(player)
-				|| plugin.getConfig().getConfigurationSection("EnderPearls").getKeys(false).size() == 0)
+				|| plugin.getDisabledCategorySet().contains("EnderPearls"))
 			return;
 
 		int enderpearls = plugin.getPoolsManager().getPlayerEnderPearlAmount(player) + 1;

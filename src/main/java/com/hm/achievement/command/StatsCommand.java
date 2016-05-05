@@ -1,7 +1,5 @@
 package com.hm.achievement.command;
 
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -21,16 +19,15 @@ public class StatsCommand {
 	public StatsCommand(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-		// Ignore this category if it's in the disabled list
-		List<String> disabled = plugin.getConfig().getStringList("DisabledCategories");
+
 		// Calculate the total number of achievements in the config file.
 		for (String type : AdvancedAchievements.NORMAL_ACHIEVEMENTS) {
-			if ((disabled != null) && (disabled.contains(type)))
+			if (plugin.getDisabledCategorySet().contains(type))
 				continue; // ignore this type
 			totalAchievements += plugin.getPluginConfig().getConfigurationSection(type).getKeys(false).size();
 		}
 		for (String type : AdvancedAchievements.MULTIPLE_ACHIEVEMENTS) {
-			if ((disabled != null) && (disabled.contains(type)))
+			if (plugin.getDisabledCategorySet().contains(type))
 				continue; // ignore this type
 			for (String item : plugin.getPluginConfig().getConfigurationSection(type).getKeys(false))
 				totalAchievements += plugin.getPluginConfig().getConfigurationSection(type + '.' + item).getKeys(false)

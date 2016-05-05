@@ -40,14 +40,15 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 
 		String configAchievement;
 
-		if (player.hasPermission("achievement.count.trades") && event.getRawSlot() == 2
-				&& event.getInventory().getType().name().equals("MERCHANT")) {
+		if (player.hasPermission("achievement.count.trades") && !plugin.getDisabledCategorySet().contains("Trades")
+				&& event.getRawSlot() == 2 && event.getInventory().getType().name().equals("MERCHANT")) {
 			int trades = plugin.getPoolsManager().getPlayerTradeAmount(player) + 1;
 
 			plugin.getPoolsManager().getTradeHashMap().put(player.getUniqueId().toString(), trades);
 			configAchievement = "Trades." + trades;
 
-		} else if (player.hasPermission("achievement.count.anvilsused") && event.getRawSlot() == 2
+		} else if (player.hasPermission("achievement.count.anvilsused")
+				&& !plugin.getDisabledCategorySet().contains("AnvilsUsed") && event.getRawSlot() == 2
 				&& event.getInventory().getType().name().equals("ANVIL")) {
 			int anvils = plugin.getPoolsManager().getPlayerAnvilAmount(player) + 1;
 
@@ -55,6 +56,7 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 			configAchievement = "AnvilsUsed." + anvils;
 
 		} else if (player.hasPermission("achievement.count.brewing")
+				&& !plugin.getDisabledCategorySet().contains("Brewing")
 				&& event.getInventory().getType().name().equals("BREWING")) {
 			int brewings = plugin.getPoolsManager().getPlayerBrewingAmount(player) + 1;
 

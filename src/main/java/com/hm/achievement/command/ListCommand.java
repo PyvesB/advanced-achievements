@@ -3,6 +3,7 @@ package com.hm.achievement.command;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,6 +34,9 @@ public class ListCommand {
 	// Get lists of item stacks for items displayed in the GUI.
 	private ItemStack[] multipleAchievementsTypesItems;
 	private ItemStack[] normalAchievementsTypesItems;
+
+	// Pattern to delete colors if achievement not yet received.
+	private static final Pattern REGEX_PATTERN = Pattern.compile("&([a-f]|[0-9]){1}");
 
 	public ListCommand(AdvancedAchievements plugin) {
 
@@ -172,20 +176,23 @@ public class ListCommand {
 					ItemStack connections = multipleAchievementsTypesItems[i];
 					ItemMeta connectionsMeta = connections.getItemMeta();
 					ArrayList<String> lore = new ArrayList<String>();
-					// Iterate through all sub-categories in achievement category
+					// Iterate through all sub-categories in achievement
+					// category
 					String cat = AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i];
 
-					// Ignore this category if it's in the disabled list
-					List<String> disabled = plugin.getConfig().getStringList("DisabledCategories");
-					if ((disabled != null) && (disabled.contains(cat))) {
+					// Ignore this category if it's in the disabled list.
+					if (plugin.getDisabledCategorySet().contains(cat)) {
 						continue;
 					}
 
 					for (String section : plugin.getPluginConfig().getConfigurationSection(cat).getKeys(false)) {
 						// Iterate through all achievements in sub-category.
-						for (String ach : plugin.getPluginConfig().getConfigurationSection(cat + '.' + section).getKeys(false)) {
-							// Check if player has received achievement and build message accordingly.
-							String achname = plugin.getPluginConfig().getString(cat + '.' + section + '.' + ach + ".Name", "");
+						for (String ach : plugin.getPluginConfig().getConfigurationSection(cat + '.' + section)
+								.getKeys(false)) {
+							// Check if player has received achievement and
+							// build message accordingly.
+							String achname = plugin.getPluginConfig()
+									.getString(cat + '.' + section + '.' + ach + ".Name", "");
 							String reward = plugin.getReward().getRewardType(cat + '.' + section + '.' + ach);
 							if (plugin.getDb().hasPlayerAchievement(player, achname)) {
 								numberInCategory++;
@@ -196,9 +203,9 @@ public class ListCommand {
 					}
 					// Set lore for the current category item in GUI.
 					if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
-						connectionsMeta.setDisplayName(
-								ChatColor.translateAlternateColorCodes('&', "&8" +
-										plugin.getPluginConfig().getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
+						connectionsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+								"&8" + plugin.getPluginConfig()
+										.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
 										.replaceAll("%ICON%", plugin.getIcon())
 										.replaceAll("%NAME%", multipleAchievementTypesLanguage[i])));
 						connectionsMeta.setLore(lore);
@@ -242,9 +249,9 @@ public class ListCommand {
 					}
 					// Set lore for the current category item in GUI.
 					if (lore.size() > 0 && (numberInCategory != 0 || !hideNotReceivedCategories)) {
-						connectionsMeta.setDisplayName(
-								ChatColor.translateAlternateColorCodes('&', "&8" +
-										plugin.getPluginConfig().getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
+						connectionsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+								"&8" + plugin.getPluginConfig()
+										.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
 										.replaceAll("%ICON%", plugin.getIcon())
 										.replaceAll("%NAME%", normalAchievementTypesLanguage[i])));
 						connectionsMeta.setLore(lore);
@@ -272,20 +279,24 @@ public class ListCommand {
 	 * Create achievement line for item lore.
 	 */
 	public String buildLoreString(String name, String level, String reward, int number, boolean received) {
+
 		StringBuilder lore = new StringBuilder(100);
 
-		// Set achievement text color based on whether the achievement has been received
+		// Set achievement text color and style based on whether the achievement
+		// has been received
 		if (received)
-			lore.append(plugin.getPluginLang().getString("list-achievement-received", "&f"));
+			lore.append(plugin.getPluginLang().getString("list-achievement-received", "&a✓&f "));
+		else if (obfuscateNotReceived)
+			lore.append(plugin.getPluginLang().getString("list-achievement-not-received", "&4✗&8 ")).append("&k");
 		else
-			lore.append(plugin.getPluginLang().getString("list-achievement-not-received", "&8&o"));
+			lore.append(plugin.getPluginLang().getString("list-achievement-not-received", "&4✗&8 ")).append("&o");
 
-		// Do we obfuscate the achievement?
-		if (obfuscateNotReceived)
-			lore.append("&k");
-
-		// Name of achievement
-		lore.append(name);
+		// Apply regex pattern if not received: get rid of coulours defined by
+		// the user if achievement not yet received.
+		if (!received)
+			lore.append(name.replaceAll(REGEX_PATTERN.pattern(), ""));
+		else
+			lore.append(name);
 
 		// For achievements with levels (not command achievements)
 		if (number != (normalAchievementTypesLanguage.length - 1)) {

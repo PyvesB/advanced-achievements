@@ -29,7 +29,7 @@ public class AchieveDeathListener implements Listener {
 		plugin.getAchieveDistanceRunnable().getPlayerLocations().put(player, player.getLocation());
 
 		if (!player.hasPermission("achievement.count.deaths") || plugin.isInExludedWorld(player)
-				|| plugin.getConfig().getConfigurationSection("Deaths").getKeys(false).size() == 0)
+				|| plugin.getDisabledCategorySet().contains("Deaths"))
 			return;
 
 		int deaths = plugin.getPoolsManager().getPlayerDeathAmount(player) + 1;

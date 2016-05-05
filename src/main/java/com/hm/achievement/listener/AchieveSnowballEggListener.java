@@ -31,13 +31,15 @@ public class AchieveSnowballEggListener implements Listener {
 			return;
 
 		String configAchievement;
-		if (player.hasPermission("achievement.count.snowballs") && event.getEntity() instanceof Snowball) {
-			int snowballs= plugin.getPoolsManager().getPlayerSnowballAmount(player) + 1;
+		if (player.hasPermission("achievement.count.snowballs")
+				&& !plugin.getDisabledCategorySet().contains("Snowballs") && event.getEntity() instanceof Snowball) {
+			int snowballs = plugin.getPoolsManager().getPlayerSnowballAmount(player) + 1;
 
 			plugin.getPoolsManager().getSnowballHashMap().put(player.getUniqueId().toString(), snowballs);
 
 			configAchievement = "Snowballs." + snowballs;
-		} else if (player.hasPermission("achievement.count.eggs")) {
+		} else if (player.hasPermission("achievement.count.eggs")
+				&& !plugin.getDisabledCategorySet().contains("Eggs")) {
 			int eggs = plugin.getPoolsManager().getPlayerEggAmount(player) + 1;
 
 			plugin.getPoolsManager().getEggHashMap().put(player.getUniqueId().toString(), eggs);

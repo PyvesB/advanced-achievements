@@ -60,9 +60,10 @@ public class AchieveConnectionListener implements Listener {
 
 		// Schedule delayed task to check if player has a new Connections
 		// achievement.
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-				Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-				new AchieveConnectionRunnable(event.getPlayer(), plugin), 100);
+		if (!plugin.getDisabledCategorySet().contains("Connections"))
+			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
+					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
+					new AchieveConnectionRunnable(event.getPlayer(), plugin), 100);
 
 	}
 

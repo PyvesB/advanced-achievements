@@ -3,6 +3,7 @@ package com.hm.achievement;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -114,7 +115,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	private ChatColor color;
 	private String chatHeader;
 	private boolean restrictCreative;
-	private Set<String> excludedWorldList;
+	private Set<String> excludedWorldSet;
+	private Set<String> disabledCategorySet;
 	private boolean successfulLoad;
 	private boolean overrideDisable;
 	private int playtimeTaskInterval;
@@ -143,7 +145,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AdvancedAchievements() {
 
 		overrideDisable = false;
-		excludedWorldList = new HashSet<String>();
+		excludedWorldSet = new HashSet<String>();
+		disabledCategorySet = new HashSet<String>();
 		fileManager = new FileManager(this);
 		db = new SQLDatabaseManager(this);
 		poolsManager = new DatabasePoolsManager(this);
@@ -172,140 +175,124 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Register listeners so they can monitor server events; if there are no
 		// config related achievements, listeners aren't registered.
 		PluginManager pm = getServer().getPluginManager();
-		if (config.getConfigurationSection("Places").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Places")) {
 			blockPlaceListener = new AchieveBlockPlaceListener(this);
 			pm.registerEvents(blockPlaceListener, this);
 		}
 
-		if (config.getConfigurationSection("Breaks").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Breaks")) {
 			blockBreakListener = new AchieveBlockBreakListener(this);
 			pm.registerEvents(blockBreakListener, this);
 		}
 
-		if (config.getConfigurationSection("Kills").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Kills")) {
 			killListener = new AchieveKillListener(this);
 			pm.registerEvents(killListener, this);
 		}
 
-		if (config.getConfigurationSection("Crafts").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Crafts")) {
 			craftListener = new AchieveCraftListener(this);
 			pm.registerEvents(craftListener, this);
 		}
 
-		if (config.getConfigurationSection("Deaths").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistancePig").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceGliding").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Deaths") || !disabledCategorySet.contains("DistanceFoot")
+				|| !disabledCategorySet.contains("DistancePig") || !disabledCategorySet.contains("DistanceHorse")
+				|| !disabledCategorySet.contains("DistanceMinecart") || !disabledCategorySet.contains("DistanceBoat")
+				|| !disabledCategorySet.contains("DistanceGliding")) {
 			deathListener = new AchieveDeathListener(this);
 			pm.registerEvents(deathListener, this);
 		}
 
-		if (config.getConfigurationSection("Arrows").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Arrows")) {
 			arrowListener = new AchieveArrowListener(this);
 			pm.registerEvents(arrowListener, this);
 		}
 
-		if (config.getConfigurationSection("Snowballs").getKeys(false).size() != 0
-				|| config.getConfigurationSection("Eggs").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Snowballs") || !disabledCategorySet.contains("Eggs")) {
 			snowballEggListener = new AchieveSnowballEggListener(this);
 			pm.registerEvents(snowballEggListener, this);
 		}
 
-		if (config.getConfigurationSection("Fish").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Fish")) {
 			fishListener = new AchieveFishListener(this);
 			pm.registerEvents(fishListener, this);
 		}
 
-		if (config.getConfigurationSection("ItemBreaks").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("ItemBreaks")) {
 			itemBreakListener = new AchieveItemBreakListener(this);
 			pm.registerEvents(itemBreakListener, this);
 		}
 
-		if (config.getConfigurationSection("ConsumedPotions").getKeys(false).size() != 0
-				|| config.getConfigurationSection("EatenItems").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("ConsumedPotions") || !disabledCategorySet.contains("EatenItems")) {
 			consumeListener = new AchieveConsumeListener(this);
 			pm.registerEvents(consumeListener, this);
 		}
 
-		if (config.getConfigurationSection("Shear").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Shear")) {
 			shearListener = new AchieveShearListener(this);
 			pm.registerEvents(shearListener, this);
 		}
 
-		if (config.getConfigurationSection("Milk").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Milk")) {
 			milkListener = new AchieveMilkListener(this);
 			pm.registerEvents(milkListener, this);
 		}
 
-		if (config.getBoolean("CheckForUpdate", true)
-				|| config.getConfigurationSection("Connections").getKeys(false).size() != 0
-				|| config.getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
+		if (config.getBoolean("CheckForUpdate", true) || !disabledCategorySet.contains("Connections")
+				|| !disabledCategorySet.contains("PlayedTime")) {
 			connectionListener = new AchieveConnectionListener(this);
 			pm.registerEvents(connectionListener, this);
 		}
 
-		if (config.getConfigurationSection("Trades").getKeys(false).size() != 0
-				|| config.getConfigurationSection("AnvilsUsed").getKeys(false).size() != 0
-				|| config.getConfigurationSection("Brewing").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Trades") || !disabledCategorySet.contains("AnvilsUsed")
+				|| !disabledCategorySet.contains("Brewing")) {
 			inventoryClickListener = new AchieveTradeAnvilBrewListener(this);
 			pm.registerEvents(inventoryClickListener, this);
 		}
 
-		if (config.getConfigurationSection("Enchantments").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Enchantments")) {
 			enchantmentListener = new AchieveEnchantListener(this);
 			pm.registerEvents(enchantmentListener, this);
 		}
 
-		if (config.getConfigurationSection("MaxLevel").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("MaxLevel")) {
 			xpListener = new AchieveXPListener(this);
 			pm.registerEvents(xpListener, this);
 		}
 
-		if (config.getConfigurationSection("Beds").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Beds")) {
 			bedListener = new AchieveBedListener(this);
 			pm.registerEvents(bedListener, this);
 		}
 
-		if (config.getConfigurationSection("ItemDrops").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("ItemDrops")) {
 			dropListener = new AchieveDropListener(this);
 			pm.registerEvents(dropListener, this);
 		}
 
-		if (config.getConfigurationSection("Taming").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("Taming")) {
 			tameListener = new AchieveTameListener(this);
 			pm.registerEvents(tameListener, this);
 		}
 
-		if (config.getConfigurationSection("HoePlowings").getKeys(false).size() != 0
-				|| config.getConfigurationSection("Fertilising").getKeys(false).size() != 0
-				|| config.getConfigurationSection("Fireworks").getKeys(false).size() != 0
-				|| config.getConfigurationSection("MusicDiscs").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("HoePlowings") || !disabledCategorySet.contains("Fertilising")
+				|| !disabledCategorySet.contains("Fireworks") || !disabledCategorySet.contains("MusicDiscs")) {
 			hoeFertiliseFireworkMusicListener = new AchieveHoeFertiliseFireworkMusicListener(this);
 			pm.registerEvents(hoeFertiliseFireworkMusicListener, this);
 		}
 
-		if (config.getConfigurationSection("MaxLevel").getKeys(false).size() != 0
-				|| config.getConfigurationSection("PlayedTime").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistancePig").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceGliding").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("MaxLevel") || !disabledCategorySet.contains("PlayedTime")
+				|| !disabledCategorySet.contains("DistanceFoot") || !disabledCategorySet.contains("DistancePig")
+				|| !disabledCategorySet.contains("DistanceHorse") || !disabledCategorySet.contains("DistanceMinecart")
+				|| !disabledCategorySet.contains("DistanceBoat") || !disabledCategorySet.contains("DistanceGliding")) {
 			quitListener = new AchieveQuitListener(this);
 			pm.registerEvents(quitListener, this);
 		}
 
-		if (config.getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistancePig").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceGliding").getKeys(false).size() != 0
-				|| config.getConfigurationSection("EnderPearls").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("DistanceFoot") || !disabledCategorySet.contains("DistancePig")
+				|| !disabledCategorySet.contains("DistanceHorse") || !disabledCategorySet.contains("DistanceMinecart")
+				|| !disabledCategorySet.contains("DistanceBoat") || !disabledCategorySet.contains("DistanceGliding")
+				|| !disabledCategorySet.contains("EnderPearls")) {
 			teleportListener = new AchieveTeleportListener(this);
 			pm.registerEvents(teleportListener, this);
 		}
@@ -336,7 +323,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to monitor played time for each player (not
 		// directly related to an event).
-		if (config.getConfigurationSection("PlayedTime").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("PlayedTime")) {
 			achievePlayTimeRunnable = new AchievePlayTimeRunnable(this);
 			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achievePlayTimeRunnable,
@@ -345,12 +332,9 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to monitor distances travelled by each
 		// player (not directly related to an event).
-		if (config.getConfigurationSection("DistanceFoot").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistancePig").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceHorse").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceMinecart").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceBoat").getKeys(false).size() != 0
-				|| config.getConfigurationSection("DistanceGliding").getKeys(false).size() != 0) {
+		if (!disabledCategorySet.contains("DistanceFoot") || !disabledCategorySet.contains("DistancePig")
+				|| !disabledCategorySet.contains("DistanceHorse") || !disabledCategorySet.contains("DistanceMinecart")
+				|| !disabledCategorySet.contains("DistanceBoat") || !disabledCategorySet.contains("DistanceGliding")) {
 			achieveDistanceRunnable = new AchieveDistanceRunnable(this);
 			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achieveDistanceRunnable,
@@ -439,7 +423,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		restrictCreative = config.getBoolean("RestrictCreative", false);
 		databaseBackup = config.getBoolean("DatabaseBackup", true);
 		for (String world : (List<String>) config.getList("ExcludedWorlds"))
-			excludedWorldList.add(world);
+			excludedWorldSet.add(world);
+		for (String category : (List<String>) config.getList("DisabledCategories"))
+			disabledCategorySet.add(category);
 		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 150);
 		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 60);
@@ -503,6 +489,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Update configuration file from older plugin versions by adding missing
 	 * parameters. Upgrades from versions prior to 2.0 are not supported.
 	 */
+	@SuppressWarnings("unchecked")
 	private void updateOldConfiguration() {
 
 		boolean updateDone = false;
@@ -555,18 +542,33 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (!config.getKeys(false).contains("Brewing")) {
 			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
 			config.set("Brewing", emptyMap, "When a potion is brewed.");
+			// As no achievements are set, we initially disable this new
+			// category.
+			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
+			disabledCategories.add("Brewing");
+			config.set("DisabledCategories", disabledCategories);
 			updateDone = true;
 		}
 
 		if (!config.getKeys(false).contains("Taming")) {
 			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
 			config.set("Taming", emptyMap, "When an animal is tamed.");
+			// As no achievements are set, we initially disable this new
+			// category.
+			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
+			disabledCategories.add("Taming");
+			config.set("DisabledCategories", disabledCategories);
 			updateDone = true;
 		}
 
 		// Added in version 2.3:
 		if (!config.getKeys(false).contains("Fireworks")) {
 			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
+			// As no achievements are set, we initially disable this new
+			// category.
+			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
+			disabledCategories.add("Fireworks");
+			config.set("DisabledCategories", disabledCategories);
 			config.set("Fireworks", emptyMap, "When a firework is launched.");
 			updateDone = true;
 		}
@@ -582,18 +584,58 @@ public class AdvancedAchievements extends JavaPlugin {
 			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
 			config.set("DistanceGliding", emptyMap, new String[] { "When a distance is traveled with elytra.",
 					"(ignored on Minecraft versions prior to 1.9)" });
+			// As no achievements are set, we initially disable this new
+			// category.
+			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
+			disabledCategories.add("DistanceGliding");
+			config.set("DisabledCategories", disabledCategories);
 			updateDone = true;
 		}
 
 		if (!config.getKeys(false).contains("MusicDiscs")) {
 			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
 			config.set("MusicDiscs", emptyMap, "When a music disc is played.");
+			// As no achievements are set, we initially disable this new
+			// category.
+			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
+			disabledCategories.add("MusicDiscs");
+			config.set("DisabledCategories", disabledCategories);
 			updateDone = true;
 		}
 
 		if (!config.getKeys(false).contains("EnderPearls")) {
 			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
 			config.set("EnderPearls", emptyMap, "When a player teleports with an enderpearl.");
+			// As no achievements are set, we initially disable this new
+			// category.
+			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
+			disabledCategories.add("EnderPearls");
+			config.set("DisabledCategories", disabledCategories);
+			updateDone = true;
+		}
+
+		// Added in version 2.5.2:
+		if (!config.getKeys(false).contains("DisabledCategories")) {
+			List<String> list = new ArrayList<String>();
+			config.set("DisabledCategories", list,
+					"Don't show these categories in the achievement GUI or in the stats output (delete the [] before using). Also prevent obtaining achievements for these categories and prevent stats from increasing. If changed, do a full server reload, and not just /aach reload.");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("ListAchievementFormat")) {
+			config.set("ListAchievementFormat", "%ICON% %NAME% %ICON%",
+					"Set the format of the achievement name in /aach list.");
+			updateDone = true;
+		}
+		
+		if (!config.getKeys(false).contains("HideRewardDisplayInList")) {
+			config.set("HideRewardDisplayInList", false,
+					"Hide the reward display in /aach list.");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("ListItemSeparator")) {
+			config.set("ListItemSeparator", " → ", "Separator between name and level in /aach list.");
 			updateDone = true;
 		}
 
@@ -631,6 +673,17 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (!lang.getKeys(false).contains("list-enderpearls")) {
 			lang.set("list-enderpearls", "Teleportations with Ender Pearls");
+			updateDone = true;
+		}
+
+		// Added in version 2.5.2:
+		if (!lang.getKeys(false).contains("list-achievement-received")) {
+			lang.set("list-achievement-received", "&a✓ ");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("list-achievement-not-received")) {
+			lang.set("list-achievement-not-received", "&4✗ &5");
 			updateDone = true;
 		}
 
@@ -734,10 +787,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	public boolean isInExludedWorld(Player player) {
 
-		if (excludedWorldList.isEmpty())
+		if (excludedWorldSet.isEmpty())
 			return false;
 
-		return excludedWorldList.contains(player.getWorld().getName());
+		return excludedWorldSet.contains(player.getWorld().getName());
 	}
 
 	/**
@@ -915,6 +968,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	public boolean isSuccessfulLoad() {
 
 		return successfulLoad;
+	}
+
+	public Set<String> getDisabledCategorySet() {
+
+		return disabledCategorySet;
 	}
 
 	public void setOverrideDisable(boolean overrideDisable) {

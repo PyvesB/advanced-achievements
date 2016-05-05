@@ -28,12 +28,14 @@ public class AchieveConsumeListener implements Listener {
 		String configAchievement;
 
 		if (event.getItem().getType().name().equals("POTION")
+				&& !plugin.getDisabledCategorySet().contains("ConsumedPotions")
 				&& player.hasPermission("achievement.count.consumedpotions")) {
 			int consumedPotions = plugin.getPoolsManager().getPlayerConsumedPotionAmount(player) + 1;
 
 			plugin.getPoolsManager().getConsumedPotionsHashMap().put(player.getUniqueId().toString(), consumedPotions);
 			configAchievement = "ConsumedPotions." + consumedPotions;
-		} else if (player.hasPermission("achievement.count.eatenitems")) {
+		} else if (player.hasPermission("achievement.count.eatenitems")
+				&& !plugin.getDisabledCategorySet().contains("EatenItems")) {
 			int eatenItems = plugin.getPoolsManager().getPlayerEatenItemAmount(player) + 1;
 
 			plugin.getPoolsManager().getEatenItemsHashMap().put(player.getUniqueId().toString(), eatenItems);

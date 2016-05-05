@@ -9,7 +9,7 @@
 # In command rewards, PLAYER designates the name of the player who got the achievement.
 # Only spaces, no tabs. Don't forget the indents, plugin won't work otherwise!
 # To check your file, use: yaml-online-parser.appspot.com
-# Do NOT delete any sections; if you don't want to set any achievements in one category, write: Category: {}
+# Do NOT delete any sections in the configuration file.
 # Possible items for rewards/Crafts/Places/Breaks: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
 # Possible mobs for the Kills section: 	  hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
 # Default config.yml file:  github.com/PyvesB/AdvancedAchievements/blob/master/src/main/resources/config.yml
@@ -56,10 +56,10 @@ ChatNotify: false
 # Separator between name, description and date on a book page.
 BookSeparator: ''
 
-# Separator between name and level in achievement list
-ListItemSeparator: ' → '
+# Separator between name and level in /aach list.
+ListItemSeparator: ' →'
 
-# Set the format of the achievement name in the achievement list
+# Set the format of the achievement name in /aach list.
 ListAchievementFormat: '%ICON% %NAME% %ICON%'
 
 # Stop stats from increasing when player in creative mode (except Connections and PlayedTime).
@@ -70,8 +70,9 @@ ExcludedWorlds: []
 #  - yourWorld1
 #  - yourWorld2
 
-# Don't show these categories in the achievement GUI or in the stats output
-# Also prevent obtaining achievements for these categories
+# Don't show these categories in the achievement GUI or in the stats output (delete the [] before using).
+# Also prevent obtaining achievements for these categories and prevent stats from increasing.
+# If changed, do a full server reload, and not just /aach reload.
 DisabledCategories: []
 #  - Beds
 #  - ItemBreaks
@@ -83,7 +84,7 @@ ObfuscateNotReceived: true
 # Hide categories with no achievements yet received in /aach list.
 HideNotReceivedCategories: false
 
-# Hide the reward display in the achievement list output
+# Hide the reward display in /aach list.
 HideRewardDisplayInList: false
 
 # Display achievement name and description as screen titles.
@@ -113,7 +114,8 @@ MYSQL:
 # 4---------------------------------------------------------4 #
 #============================oo=oo============================#
 
-# DO NOT CHANGE THE FOLLOWING UNLESS YOU ARE AN EXPERIENCED USER. The intervals are in seconds.
+# DO NOT CHANGE THE FOLLOWING UNLESS YOU ARE AN EXPERIENCED USER. The intervals are in seconds. 
+# If any of the performance settings are changed, do a full server reload, and not just /aach reload.
 # Frequency of play time checks for players. Smaller values give more precision but more CPU usage.
 PlaytimeTaskInterval: 150
 
@@ -162,7 +164,7 @@ Breaks:
       Message: '&2You have cut dark oak 100 logs!'
       Name: Dark Oak Cutter
               
-# When a specific mob is killed (specify an entity name or 'player', lower case).
+# When a specific mob is killed (specify an entity name or poweredcreeper or player, lower case).
 Kills:
   zombie:
     '1':
