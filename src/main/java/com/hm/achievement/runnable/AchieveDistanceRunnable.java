@@ -192,7 +192,8 @@ public class AchieveDistanceRunnable implements Runnable {
 			return;
 
 		if (player.isInsideVehicle()) {
-			if (player.getVehicle() instanceof Horse && player.hasPermission("achievement.count.distancehorse")) {
+			if (player.getVehicle() instanceof Horse && player.hasPermission("achievement.count.distancehorse")
+					&& !plugin.getDisabledCategorySet().contains("DistanceHorse")) {
 
 				Integer distance = distancesHorse.get(uuid);
 
@@ -213,7 +214,8 @@ public class AchieveDistanceRunnable implements Runnable {
 						((HashSet<Player>) playerAchievementsHorse[i]).add(player);
 					}
 				}
-			} else if (player.getVehicle() instanceof Pig && player.hasPermission("achievement.count.distancepig")) {
+			} else if (player.getVehicle() instanceof Pig && player.hasPermission("achievement.count.distancepig")
+					&& !plugin.getDisabledCategorySet().contains("DistancePig")) {
 
 				Integer distance = distancesPig.get(uuid);
 
@@ -235,7 +237,8 @@ public class AchieveDistanceRunnable implements Runnable {
 					}
 				}
 			} else if (player.getVehicle() instanceof Minecart
-					&& player.hasPermission("achievement.count.distanceminecart")) {
+					&& player.hasPermission("achievement.count.distanceminecart")
+					&& !plugin.getDisabledCategorySet().contains("DistanceMinecart")) {
 
 				Integer distance = distancesMinecart.get(uuid);
 
@@ -256,7 +259,8 @@ public class AchieveDistanceRunnable implements Runnable {
 						((HashSet<Player>) playerAchievementsMinecart[i]).add(player);
 					}
 				}
-			} else if (player.getVehicle() instanceof Boat && player.hasPermission("achievement.count.distanceboat")) {
+			} else if (player.getVehicle() instanceof Boat && player.hasPermission("achievement.count.distanceboat")
+					&& !plugin.getDisabledCategorySet().contains("DistanceBoat")) {
 
 				Integer distance = distancesBoat.get(uuid);
 
@@ -279,7 +283,7 @@ public class AchieveDistanceRunnable implements Runnable {
 				}
 			}
 		} else if (player.hasPermission("achievement.count.distancefoot") && !player.isFlying()
-				&& (version < 9 || !player.isGliding())) {
+				&& (version < 9 || !player.isGliding()) && !plugin.getDisabledCategorySet().contains("DistanceFoot")) {
 
 			Integer distance = distancesFoot.get(uuid);
 
@@ -300,7 +304,8 @@ public class AchieveDistanceRunnable implements Runnable {
 					((HashSet<Player>) playerAchievementsFoot[i]).add(player);
 				}
 			}
-		} else if (player.hasPermission("achievement.count.distancegliding") && version >= 9 && player.isGliding()) {
+		} else if (player.hasPermission("achievement.count.distancegliding") && version >= 9 && player.isGliding()
+				&& !plugin.getDisabledCategorySet().contains("DistanceGliding")) {
 
 			Integer distance = distancesGliding.get(uuid);
 
