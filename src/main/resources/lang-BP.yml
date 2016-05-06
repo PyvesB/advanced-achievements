@@ -1,7 +1,7 @@
 #============================================================#
 # +--------------------------------------------------------+ #
 # |Advanced Achievements Brazilian Portuguese language file| #
-# |                         2.5.1                          | #
+# |                         2.5.2                          | #
 # |                     By bruno10223                      | #
 # +--------------------------------------------------------+ #
 #============================================================#
@@ -68,15 +68,15 @@ version-command-vault: 'Vault integration:'
 version-command-database: 'Database type:'
 
 # Related to /aach list.
-list-gui-title: '&5?lAchievements List'
+list-gui-title: '&5&lAchievements List'
 list-delay: Você deve esperar TIME segundos entre cada comando lista!
 list-reward: ' Recompensa:'
 list-reward-money: Dinheiro
 list-reward-item: item
 list-reward-command: Outro
 list-amount: ' Lvl:'
-list-achievement-received: "&a✓ "
-list-achievement-not-received: "&4✗ &5"
+list-achievement-received: "&a\u2713&f "
+list-achievement-not-received: "&4\u2717&8 "
 
 # Related to category names in /aach list.
 list-connections: Conectado

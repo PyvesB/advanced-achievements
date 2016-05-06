@@ -1,6 +1,6 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |    Advanced Achievements 2.5.1 French language file    | #
+# |    Advanced Achievements 2.5.2 French language file    | #
 # |                      By DarkPyves                      | #
 # +--------------------------------------------------------+ #
 #============================================================#
@@ -67,15 +67,15 @@ version-command-vault: 'Intégration avec Vault :'
 version-command-database: 'Type de la BDD :'
 
 # Related to /aach list.
-list-gui-title: "&5§lListe de Succès"
+list-gui-title: "&5&lListe de Succès"
 list-delay: Vous devez attendre TIME secondes entre chaque /aach list !
 list-reward: ' Récompense :'
 list-reward-money: POs
 list-reward-item: objet
 list-reward-command: objet spécial
-list-achievement-received: "&a✓ "
 list-amount: ' Niv. :'
-list-achievement-not-received: "&4✗ &5"
+list-achievement-received: "&a\u2713&f "
+list-achievement-not-received: "&4\u2717&8 "
 
 # Related to category names in /aach list.
 list-connections: Connexions

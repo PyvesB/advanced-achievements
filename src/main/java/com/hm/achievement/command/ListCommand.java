@@ -162,7 +162,7 @@ public class ListCommand {
 
 			// Create a new chest-like inventory.
 			Inventory guiInv = Bukkit.createInventory(null, 36, ChatColor.translateAlternateColorCodes('&',
-					plugin.getPluginLang().getString("list-gui-title", "&5§lAchievements List")));
+					plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
 
 			// Number of achievements in current category.
 			int numberInCategory = 0;
@@ -285,11 +285,11 @@ public class ListCommand {
 		// Set achievement text color and style based on whether the achievement
 		// has been received
 		if (received)
-			lore.append(plugin.getPluginLang().getString("list-achievement-received", "&a✓&f "));
+			lore.append(plugin.getPluginLang().getString("list-achievement-received", "&a\u2713&f "));
 		else if (obfuscateNotReceived)
-			lore.append(plugin.getPluginLang().getString("list-achievement-not-received", "&4✗&8 ")).append("&k");
+			lore.append(plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2717&8 ")).append("&k");
 		else
-			lore.append(plugin.getPluginLang().getString("list-achievement-not-received", "&4✗&8 ")).append("&o");
+			lore.append(plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2717&8 ")).append("&o");
 
 		// Apply regex pattern if not received: get rid of coulours defined by
 		// the user if achievement not yet received.

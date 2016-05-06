@@ -25,7 +25,7 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 		// Not relevant for trade, anvil, or brewing events, but used for the
 		// /aach list command to avoid adding an additional event handler.
 		if (event.getInventory().getName().equals(ChatColor.translateAlternateColorCodes('&',
-				plugin.getPluginLang().getString("list-gui-title", "&5§lAchievements List")))) {
+				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")))) {
 			event.setCancelled(true);
 			return;
 		}

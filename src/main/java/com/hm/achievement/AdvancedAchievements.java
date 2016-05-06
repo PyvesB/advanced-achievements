@@ -52,7 +52,7 @@ import com.hm.achievement.utils.*;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 2.5.1
+ * @version 2.5.2
  * @author DarkPyves
  */
 
@@ -680,12 +680,12 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Added in version 2.5.2:
 		if (!lang.getKeys(false).contains("list-achievement-received")) {
-			lang.set("list-achievement-received", "&a✓ ");
+			lang.set("list-achievement-received", "&a\u2713&f ");
 			updateDone = true;
 		}
 
 		if (!lang.getKeys(false).contains("list-achievement-not-received")) {
-			lang.set("list-achievement-not-received", "&4✗ &5");
+			lang.set("list-achievement-not-received", "&4\u2717&8 ");
 			updateDone = true;
 		}
 
@@ -812,7 +812,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			return (economy != null);
 		} catch (NoClassDefFoundError e) {
-			this.getLogger().severe("Attempt to hook up with Vault failed.");
+			this.getLogger().warning("Attempt to hook up with Vault failed.");
 			return false;
 		}
 	}

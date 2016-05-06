@@ -1,6 +1,6 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |   Advanced Achievements 2.5.1 Chinese language file    | #
+# |   Advanced Achievements 2.5.2 Chinese language file    | #
 # |                      By DoloStar                       | #
 # +--------------------------------------------------------+ #
 #============================================================#
@@ -70,15 +70,15 @@ version-command-vault: 'Vault integration:'
 version-command-database: "\u6570\u636e\u5e93\u7c7b\u578b:"
 
 # Related to /aach list.
-list-gui-title: "&5§lAchievements List"
+list-gui-title: "&5&lAchievements List"
 list-delay: "You must wait TIME seconds between each list command!"
 list-reward: "Reward: "
 list-reward-money: "money"
 list-reward-item: "item"
 list-reward-command: "other"
 list-amount: "Lvl: "
-list-achievement-received: "&a✓ "
-list-achievement-not-received: "&4✗ &5"
+list-achievement-received: "&a\u2713&f "
+list-achievement-not-received: "&4\u2717&8 "
 
 # Related to category names in /aach list.
 list-connections: "Connections"

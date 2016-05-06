@@ -22,8 +22,8 @@ public class HelpCommand {
 	public void getHelp(CommandSender sender) {
 
 		sender.sendMessage(plugin.getColor() + "-=-=-=-=-=-=-" + ChatColor.GRAY + "[" + plugin.getColor()
-				+ plugin.getIcon() + "§lAdvanced Achievements" + plugin.getColor() + plugin.getIcon() + ChatColor.GRAY
-				+ "]" + plugin.getColor() + "-=-=-=-=-=-=-");
+				+ plugin.getIcon() + ChatColor.translateAlternateColorCodes('&', "&lAdvanced Achievements")
+				+ plugin.getColor() + plugin.getIcon() + ChatColor.GRAY + "]" + plugin.getColor() + "-=-=-=-=-=-=-");
 
 		if (sender.hasPermission("achievement.book"))
 			sendJsonClickableMessage(sender,
@@ -51,34 +51,34 @@ public class HelpCommand {
 
 		if (sender.hasPermission("achievement.give"))
 			sendJsonClickableMessage(sender,
-					plugin.getChatHeader() + plugin.getColor() + "/aach give §oach name§r" + ChatColor.GRAY + " - "
+					plugin.getChatHeader() + plugin.getColor() + "/aach give &oach name&r" + ChatColor.GRAY + " - "
 							+ ChatColor
 									.translateAlternateColorCodes('&',
 											plugin.getPluginLang()
 													.getString("aach-command-give",
 															"Give achievement ACH to player &7NAME.")
-													.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+													.replace("ACH", "&oach&r&7").replace("NAME", "&oname&r&7")),
 					"/aach give ach name");
 
 		if (sender.hasPermission("achievement.check"))
 			sendJsonClickableMessage(sender,
-					plugin.getChatHeader() + plugin.getColor() + "/aach check §oach name§r" + ChatColor.GRAY + " - "
+					plugin.getChatHeader() + plugin.getColor() + "/aach check &oach name&r" + ChatColor.GRAY + " - "
 							+ ChatColor
 									.translateAlternateColorCodes('&',
 											plugin.getPluginLang()
 													.getString("aach-command-check",
 															"Check if player NAME has &7received ACH.")
-													.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+													.replace("ACH", "&oach&r&7").replace("NAME", "&oname&r&7")),
 					"/aach check ach name");
 
 		if (sender.hasPermission("achievement.delete"))
 			sendJsonClickableMessage(sender,
-					plugin.getChatHeader() + plugin.getColor() + "/aach delete §oach name§r" + ChatColor.GRAY + " - "
+					plugin.getChatHeader() + plugin.getColor() + "/aach delete &oach name&r" + ChatColor.GRAY + " - "
 							+ ChatColor.translateAlternateColorCodes('&',
 									plugin.getPluginLang()
 											.getString("aach-command-delete",
 													"Delete achievement ACH from &7player NAME.")
-											.replace("ACH", "§oach§r&7").replace("NAME", "§oname§r&7")),
+											.replace("ACH", "&oach&r&7").replace("NAME", "&oname&r&7")),
 					"/aach delete ach name");
 
 		if (sender.hasPermission("achievement.reload"))

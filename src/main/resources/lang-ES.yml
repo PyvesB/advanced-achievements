@@ -1,6 +1,6 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |   Advanced Achievements 2.5.1 Spanish language file    | #
+# |   Advanced Achievements 2.5.2 Spanish language file    | #
 # |                     By Segysmundo                      | #
 # +--------------------------------------------------------+ #
 #============================================================#
@@ -70,15 +70,15 @@ version-command-vault: "Integraci\xf3n Vault:"
 version-command-database: 'Tipo de base de datos:'
 
 # Related to /aach list.
-list-gui-title: "&5\ufffdLista de Logros"
+list-gui-title: "&5&lLista de Logros"
 list-delay: Debes esperar TIME segundos entre cada uso del comando list!
 list-reward: ' Recompensa:'
 list-reward-money: dinero
 list-reward-item: objeto
 list-reward-command: otro
 list-amount: ' Lvl:'
-list-achievement-received: "&a✓ "
-list-achievement-not-received: "&4✗ &5"
+list-achievement-received: "&a\u2713&f "
+list-achievement-not-received: "&4\u2717&8 "
 
 # Related to category names in /aach list.
 list-connections: Conexiones

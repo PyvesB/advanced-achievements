@@ -1,6 +1,6 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |   Advanced Achievements 2.5.1 Italian language file    | #
+# |   Advanced Achievements 2.5.2 Italian language file    | #
 # |                       By stewex                        | #
 # +--------------------------------------------------------+ #
 #============================================================#
@@ -67,15 +67,15 @@ version-command-vault: 'Vault integrato:'
 version-command-database: 'Tipo di database:'
 
 # Related to /aach list.
-list-gui-title: "&5§lLista Obiettivi"
+list-gui-title: "&5&lLista Obiettivi"
 list-delay: "Devi aspettare TIME secondi tra un comando lista e l'altro!"
 list-reward: "Ricompensa: "
 list-reward-money: "soldi"
 list-reward-item: "oggetto"
 list-reward-command: "altro"
 list-amount: "Lvl: "
-list-achievement-received: "&a✓ "
-list-achievement-not-received: "&4✗ &5"
+list-achievement-received: "&a\u2713&f "
+list-achievement-not-received: "&4\u2717&8 "
 
 # Related to category names in /aach list.
 list-connections: "Connessioni"
