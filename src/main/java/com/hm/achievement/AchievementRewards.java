@@ -107,14 +107,14 @@ public class AchievementRewards {
 	 */
 	public String getRewardType(String configAchievement) {
 		String rewardType = "";
-		if (plugin.getPluginConfig().contains(configAchievement + ".Reward.Money"))
+		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Money"))
 			rewardType = plugin.getPluginLang().getString("list-reward-money", "money");
-		if (plugin.getPluginConfig().contains(configAchievement + ".Reward.Item"))
+		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Item"))
 			if (rewardType.length() != 0)
 				rewardType += ", " + plugin.getPluginLang().getString("list-reward-item", "item");
 			else
 				rewardType = plugin.getPluginLang().getString("list-reward-item", "item");
-		if (plugin.getPluginConfig().contains(configAchievement + ".Reward.Command"))
+		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Command"))
 			if (rewardType.length() != 0)
 				rewardType += ", " + plugin.getPluginLang().getString("list-reward-command", "other");
 			else

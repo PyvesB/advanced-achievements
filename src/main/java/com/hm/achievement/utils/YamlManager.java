@@ -125,6 +125,6 @@ public class YamlManager {
 
 	public Set<String> getKeys(boolean deep) {
 
-		return this.config.getKeys(false);
+		return this.config.getKeys(deep);
 	}
 }
