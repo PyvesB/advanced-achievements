@@ -1,0 +1,122 @@
+#============================================================#
+# +--------------------------------------------------------+ #
+# |   Advanced Achievements 2.5.3 Romanian language file   | #
+# |                      By andrei1058                     | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+no-permissions: "Nu ai permisiunea."
+
+# Related to /aach reload.
+configuration-successfully-reloaded: "Configuration successfully reloaded."
+configuration-reload-failed: "Errors while reloading configuration. Please view logs for more details."
+
+# Related to /aach top.
+top-achievement: "Topul realizarilor:"
+player-rank: "Nivel actual:"
+
+# Related to /aach stats.
+number-achievements: "Realizari primite:"
+
+# Related to /aach book.
+book-received: "Ai primit cartea cu realizarile tale!"
+book-delay: "Trebuie sa astepti TIME seconds pentru a primi iar cartea!"
+book-name: "Realizari"
+
+# Related to /aach give.
+player-offline: "Jucatorul PLAYER este deconectat!"
+achievement-already-received: "Jucatorul PLAYER a obrinut deja aceasta realizare!"
+achievement-not-found: "Aceasta realizare nu exista."
+achievement-given: "Realizare data!"
+
+# Related to achievement reception.
+achievement-received: "PLAYER a obtinut realizarea:"
+achievement-new: "New Achievement:"
+
+# Related to /aach check.
+check-achievement-true: "PLAYER a primit realizarea ACH!"
+check-achievements-false: "PLAYER nu a primit realizarea ACH!"
+
+# Related to /aach delete.
+delete-achievements: "Realizarea ACH a fost stearsa pentru PLAYER."
+
+# Related to achievement rewards.
+item-reward-received: "Ai primit un obiect recompensa:"
+money-reward-received: "Ai primit: AMOUNT !"
+command-reward: "Comanda recompensa executata!"
+
+# Related to /aach help.
+aach-command-book: "Iti da cartea cu realizarile tale."
+aach-command-stats: "Numarul realizarilor tale."
+aach-command-list: "Arata realizarile primite si lipsa."
+aach-command-top: "Vezi rank-ul tau si topul."
+aach-command-give: "Adauga o realizare manual unui jucator."
+aach-command-reload: "Reincarca configul."
+aach-command-info: "Arata informatii despre plugin."
+aach-command-check: "Verifica daca un jucator a primit o realizare."
+aach-command-delete: "Sterge realizarea unui jucator."
+
+# Related to /aach info.
+version-command-name: "Nume:"
+version-command-version: "Versiune:"
+version-command-website: "Website:"
+version-command-author: "Autor:"
+version-command-description: "Descriere:"
+version-command-description-details: "AdvancedAchievements iti permite sa creezi realizari unice. Pune-ti imaginatia la incercare si distreaza-te tu si jucatorii tai cu acest plugin."
+version-command-vault: "Support Vault:"
+version-command-database: "Baza de date:"
+
+# Related to /aach list.
+list-gui-title: "&5&lLista Realizari"
+list-delay: "Trebuie sa astepti TIME pentru a folosi iar comanda!"
+list-reward: "Recompensa: "
+list-reward-money: "bani"
+list-reward-item: "item"
+list-reward-command: "alt ceva"
+list-amount: "Nivel: "
+list-achievement-received: "&a\u2713&f "
+list-achievement-not-received: "&4\u2717&8 "
+
+# Related to category names in /aach list.
+list-connections: "Conectari"
+list-places: "Cuburi Puse"
+list-breaks: "Cuburi Sparte"
+list-kills: "Entitati Ucise"
+list-crafts: "Obiecte Craftate"
+list-deaths: "Numar Decese"
+list-arrows: "Sageti Trase"
+list-snowballs: "Bulgari Aruncati"
+list-eggs: "Oua Aruncate"
+list-fish: "Peste Prins"
+list-itembreaks: "Obiecte Sparte"
+list-eatenitems: "Obiecte Mancate"
+list-shear: "Oi Tunse"
+list-milk: "Vaci Mulse"
+list-trades: "Numa De Vanzari"
+list-anvils: "Nicovale Folosite"
+list-enchantments: "Obiecte Vrajite"
+list-beds: "Intrari in pat"
+list-maxlevel: "Nivel maxim atins"
+list-potions: "Potiuni Consumate"
+list-playedtime: "Timp Jucat"
+list-distance-foot: "Distanta parcursa pe jos"
+list-distance-pig: "Distanta parcursa pe porc"
+list-distance-horse: "Distanta parcursa pe cal"
+list-distance-minecart: "Distanta parcursa pe vagon"
+list-distance-boat: "Distanta parcursa pe barca"
+list-distance-gliding: "Distanta parcursa pe aripi"
+list-itemdrops: "Obiecte aruncate"
+list-hoeplowings: "Teren arat"
+list-fertilising: "Plante fertilizate"
+list-taming: "Animale Adomesticate"
+list-brewing: "Potiuni Produse"
+list-fireworks: "Artificii Lansate"
+list-musicdiscs: "Discuri Muzicale Ascultate"
+list-enderpearls: "Teleportari cu perla"
+list-commands: "Alte realizari"
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# |         Parameters to appear in future versions        | #
+# +--------------------------------------------------------+ #
+#============================================================#
