@@ -81,7 +81,7 @@ permissions:
   achievement.count.fireworks:
     description: Allows firework statistics in database to increase.
     default: true
-  achievement.count.musicsdiscs:
+  achievement.count.musicdiscs:
     description: Allows music disc statistics in database to increase.
     default: true
   achievement.count.enderpearls:

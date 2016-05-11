@@ -22,7 +22,7 @@ public class AchieveShearListener implements Listener {
 	public void onPlayerShearEntity(PlayerShearEntityEvent event) {
 
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.count.shears")
+		if (!player.hasPermission("achievement.count.shear")
 				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
 				|| plugin.isInExludedWorld(player))
 			return;
