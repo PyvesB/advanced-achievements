@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -83,7 +84,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveKillListener killListener;
 	private AchieveCraftListener craftListener;
 	private AchieveQuitListener quitListener;
-	private AchieveTeleportListener teleportListener;
+	private AchieveTeleportRespawnListener teleportRespawnListener;
 
 	// Additional classes related to plugin modules and commands.
 	private AchievementRewards reward;
@@ -195,10 +196,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(craftListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Deaths") || !disabledCategorySet.contains("DistanceFoot")
-				|| !disabledCategorySet.contains("DistancePig") || !disabledCategorySet.contains("DistanceHorse")
-				|| !disabledCategorySet.contains("DistanceMinecart") || !disabledCategorySet.contains("DistanceBoat")
-				|| !disabledCategorySet.contains("DistanceGliding")) {
+		if (!disabledCategorySet.contains("Deaths")) {
 			deathListener = new AchieveDeathListener(this);
 			pm.registerEvents(deathListener, this);
 		}
@@ -293,8 +291,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| !disabledCategorySet.contains("DistanceHorse") || !disabledCategorySet.contains("DistanceMinecart")
 				|| !disabledCategorySet.contains("DistanceBoat") || !disabledCategorySet.contains("DistanceGliding")
 				|| !disabledCategorySet.contains("EnderPearls")) {
-			teleportListener = new AchieveTeleportListener(this);
-			pm.registerEvents(teleportListener, this);
+			teleportRespawnListener = new AchieveTeleportRespawnListener(this);
+			pm.registerEvents(teleportRespawnListener, this);
 		}
 
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
@@ -417,7 +415,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		this.getLogger().info("Loading configs, registering permissions and initialising command modules...");
 
 		// Load parameters.
-		icon = config.getString("Icon", "\u2618");
+		icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
 		color = ChatColor.getByChar(config.getString("Color", "5").toCharArray()[0]);
 		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
 		restrictCreative = config.getBoolean("RestrictCreative", false);

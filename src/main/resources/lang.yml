@@ -26,7 +26,7 @@ book-name: "Achievements"
 # Related to /aach give.
 player-offline: "The player PLAYER is offline!"
 achievement-already-received: "The player PLAYER has already received this achievement!"
-achievement-not-found: "The specified achievement was not found."
+achievement-not-found: "The specified achievement was not found in Commands category."
 achievement-given: "Achievement given!"
 
 # Related to achievement reception.

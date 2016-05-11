@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -285,11 +286,16 @@ public class ListCommand {
 		// Set achievement text color and style based on whether the achievement
 		// has been received
 		if (received)
-			lore.append(plugin.getPluginLang().getString("list-achievement-received", "&a\u2713&f "));
+			lore.append(StringEscapeUtils
+					.unescapeJava(plugin.getPluginLang().getString("list-achievement-received", "&a\u2713&f ")));
 		else if (obfuscateNotReceived)
-			lore.append(plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2717&8 ")).append("&k");
+			lore.append(StringEscapeUtils
+					.unescapeJava(plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2717&8 ")))
+					.append("&k");
 		else
-			lore.append(plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2717&8 ")).append("&o");
+			lore.append(StringEscapeUtils
+					.unescapeJava(plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2717&8 ")))
+					.append("&o");
 
 		// Apply regex pattern if not received: get rid of coulours defined by
 		// the user if achievement not yet received.

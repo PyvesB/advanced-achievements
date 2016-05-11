@@ -66,7 +66,7 @@ public class GiveCommand implements Listener {
 					+ plugin.getPluginLang().getString("achievement-given", "Achievement given!"));
 		} else {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
-					.getString("achievement-not-found", "The specified achievement was not found.")
+					.getString("achievement-not-found", "The specified achievement was not found in Commands category.")
 					.replace("PLAYER", args[2]));
 		}
 	}

@@ -25,10 +25,6 @@ public class AchieveDeathListener implements Listener {
 		if (player == null)
 			return;
 
-		// Update player's location when he dies not to yield incorrect results.
-		if (plugin.getAchieveDistanceRunnable() != null)
-			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(player, player.getLocation());
-
 		if (!player.hasPermission("achievement.count.deaths") || plugin.isInExludedWorld(player)
 				|| plugin.getDisabledCategorySet().contains("Deaths"))
 			return;

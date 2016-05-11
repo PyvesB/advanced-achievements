@@ -65,14 +65,15 @@ public class YamlManager {
 
 	public ConfigurationSection getConfigurationSection(String path) {
 
-		ConfigurationSection configSection = this.config.getConfigurationSection(path);
-		if (configSection != null)
-			return configSection;
+		if (this.config.contains(path))
+			return this.config.getConfigurationSection(path);
 		else {
-			plugin.getLogger().warning(
-					"You have deleted a category from the configuration; this may lead to undefined behaviour.");
-			plugin.getLogger().warning(
-					"If you want to disable an achievement category, set it to {} and specify it in DisabledCategories.");
+			if (!plugin.getDisabledCategorySet().contains(path)) {
+				plugin.getLogger().warning(
+						"You have deleted a category (" + path +") from the configuration without adding it into DisabledCategories.");
+				plugin.getLogger().warning(
+						"This may lead to undefined behaviour, please add the category name to the DisabledCategories list.");
+			}
 			return this.config.createSection(path);
 		}
 	}
