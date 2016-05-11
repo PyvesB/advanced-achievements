@@ -21,13 +21,16 @@ public class YamlManager {
 	private File file;
 	private FileConfiguration config;
 
+	AdvancedAchievements plugin;
+
 	public YamlManager(Reader reader, File configFile, int comments, AdvancedAchievements plugin)
 			throws IOException, InvalidConfigurationException {
+		this.plugin = plugin;
 		this.comments = comments;
 		this.manager = new FileManager(plugin);
 		this.file = configFile;
 		this.config = new YamlConfiguration();
-			config.load(reader);
+		config.load(reader);
 	}
 
 	public String getString(String path) {
@@ -62,7 +65,16 @@ public class YamlManager {
 
 	public ConfigurationSection getConfigurationSection(String path) {
 
-		return this.config.getConfigurationSection(path);
+		ConfigurationSection configSection = this.config.getConfigurationSection(path);
+		if (configSection != null)
+			return configSection;
+		else {
+			plugin.getLogger().warning(
+					"You have deleted a category from the configuration; this may lead to undefined behaviour.");
+			plugin.getLogger().warning(
+					"If you want to disable an achievement category, set it to {} and specify it in DisabledCategories.");
+			return this.config.createSection(path);
+		}
 	}
 
 	public boolean isConfigurationSection(String path) {

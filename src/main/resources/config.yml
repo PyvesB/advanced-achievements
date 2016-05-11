@@ -44,8 +44,8 @@ AdditionalEffects: true
 # Set to true to activate sound effects when receiving book and for players in top list.
 Sound: true
 
-# Set the icon of the plugin (default: shamrock, "\u2618").
-Icon: "\u2618"
+# Set the icon of the plugin (default: shamrock, '\u2618').
+Icon: '\u2618'
 
 # Set the color of the plugin (default: 5, dark purple).
 Color: '5'
