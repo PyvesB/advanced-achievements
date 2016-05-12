@@ -53,7 +53,7 @@ import com.hm.achievement.utils.*;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 2.5.3
+ * @version 2.5.4
  * @author DarkPyves
  */
 
@@ -796,7 +796,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	/**
 	 * Try to hook up with Vault.
 	 */
-	public boolean setUpEconomy() {
+	public boolean setUpEconomy(boolean log) {
 
 		if (economy != null)
 			return true;
@@ -810,7 +810,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			return (economy != null);
 		} catch (NoClassDefFoundError e) {
-			this.getLogger().warning("Attempt to hook up with Vault failed.");
+			if (log)
+				this.getLogger().warning("Attempt to hook up with Vault failed. Money reward ignored.");
 			return false;
 		}
 	}

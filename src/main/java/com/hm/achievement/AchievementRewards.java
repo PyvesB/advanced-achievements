@@ -39,23 +39,29 @@ public class AchievementRewards {
 	public ItemStack getItemReward(Player player, String ach, int amount) {
 
 		ItemStack item;
-		// Old config syntax.
-		if (plugin.getPluginConfig().getKeys(true).contains(ach + ".Reward.Item.Type"))
-			item = new ItemStack(
-					Material.getMaterial(
-							plugin.getPluginConfig().getString(ach + ".Reward.Item.Type", "stone").toUpperCase()),
-					amount);
-		// New config syntax.
-		else
-			item = new ItemStack(
-					Material.getMaterial(
-							plugin.getPluginConfig()
-									.getString(ach + ".Reward.Item", "stone").toUpperCase().substring(0, plugin
-											.getPluginConfig().getString(ach + ".Reward.Item", "stone").indexOf(" "))),
-					amount);
+		try {
+			// Old config syntax.
+			if (plugin.getPluginConfig().getKeys(true).contains(ach + ".Reward.Item.Type"))
+				item = new ItemStack(
+						Material.getMaterial(
+								plugin.getPluginConfig().getString(ach + ".Reward.Item.Type", "stone").toUpperCase()),
+						amount);
+			// New config syntax.
+			else
+				item = new ItemStack(
+						Material.getMaterial(plugin.getPluginConfig()
+								.getString(ach + ".Reward.Item", "stone").toUpperCase().substring(0, plugin
+										.getPluginConfig().getString(ach + ".Reward.Item", "stone").indexOf(" "))),
+						amount);
+		} catch (NullPointerException e) {
+			plugin.getLogger()
+					.warning("Invalid item reward for achievement \"" + plugin.getPluginConfig().getString(ach + ".Name")
+							+ "\". Please specify a valid Material name.");
+			return null;
+		}
 
 		// Display Vault name of object if available.
-		if (plugin.setUpEconomy())
+		if (plugin.setUpEconomy(false))
 			try {
 				player.sendMessage(plugin.getChatHeader()
 						+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " "
@@ -76,7 +82,7 @@ public class AchievementRewards {
 	@SuppressWarnings("deprecation")
 	public void rewardMoney(Player player, int amount) {
 
-		if (plugin.setUpEconomy()) {
+		if (plugin.setUpEconomy(true)) {
 			String price = Integer.toString(amount);
 			double amtd = Double.valueOf(price.trim());
 
@@ -106,6 +112,7 @@ public class AchievementRewards {
 	 * language file.
 	 */
 	public String getRewardType(String configAchievement) {
+
 		String rewardType = "";
 		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Money"))
 			rewardType = plugin.getPluginLang().getString("list-reward-money", "money");
@@ -153,9 +160,9 @@ public class AchievementRewards {
 		}
 		if (itemAmount != 0) {
 			ItemStack item = this.getItemReward(player, configAchievement, itemAmount);
-			if (player.getInventory().firstEmpty() != -1)
+			if (player.getInventory().firstEmpty() != -1 && item != null)
 				player.getInventory().addItem(item);
-			else
+			else if (item != null)
 				player.getWorld().dropItem(player.getLocation(), item);
 		}
 		if (commandReward.length() != 0) {
