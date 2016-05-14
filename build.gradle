@@ -1,0 +1,91 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+buildscript {
+	repositories {
+		jcenter()
+	}
+	
+	dependencies {
+		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+
+group = 'com.hm.achievement'
+archivesBaseName = 'AdvancedAchievements'
+version = '2.5.4'
+
+description = """A Minecraft plugin that brings unique and challenging achievements on your server! Books, GUI, rankings, rewards, effects and more!"""
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+	jcenter()
+
+    maven {
+		url "https://hub.spigotmc.org/nexus/content/groups/public/"
+	}
+	
+    maven {
+		url "http://nexus.theyeticave.net/content/repositories/pub_releases"
+	}
+	 
+    maven {
+		url "http://repo.mcstats.org/content/repositories/public"
+	}
+}
+
+dependencies {
+    compile 'org.bukkit:bukkit:1.9.4-R0.1-SNAPSHOT'
+	
+    compile ('net.milkbowl.vault:VaultAPI:1.6') {
+		exclude group: 'org.bukkit'
+		exclude group: 'org.spigotmc'
+	}
+	
+	compile ('org.mcstats.bukkit:metrics-lite:R8-SNAPSHOT') {
+		exclude group: 'org.bukkit'
+		exclude group: 'org.spigotmc'
+	}
+}
+
+processResources {
+	filter ReplaceTokens, tokens: [
+		'VERSION': version
+	]
+}
+
+shadowJar {
+	classifier 'shaded'
+	
+	dependencies {
+		include(dependency(group: 'org.mcstats.bukkit', name: 'metrics-lite', version: 'R8-SNAPSHOT'))
+	}
+	
+	exclude 'LICENSE'
+	exclude 'old-maven/**'
+	relocate 'org.mcstats', 'com.hm.achievement.metrics'
+}
+
+task javadocJar(type: Jar) {
+	classifier 'javadoc'
+	from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+	classifier 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives javadocJar, sourcesJar, shadowJar
+}
+
+compileJava.options.encoding = 'UTF-8'
