@@ -8,6 +8,22 @@
 
 Contributions are happily accepted through pull requests on GitHub. Feel free to fork the project and share your code. You can also star the project if you like it !
 
+# On UN*X
+* Instead of using `gradlew` use `./gradlew`
+
+# Generating IDE files
+
+* Eclipse: `gradlew eclipse`
+* IDEA: `gradlew idea`
+
+# Compiling
+
+We use Gradle to handle our dependencies.
+
+* No need to install anything, we use the Gradle Wrapper
+* Clone this repo and: `gradlew build`
+
+
 # Useful links
 
 For more information, please visit the project's webpages:
