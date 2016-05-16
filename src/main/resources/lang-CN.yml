@@ -1,122 +1,120 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |   Advanced Achievements 2.5.2 Chinese language file    | #
+# |   Advanced Achievements 2.5.4 Chinese language file    | #
 # |                      By DoloStar                       | #
+# |                      需要ANSI格式                       | #
 # +--------------------------------------------------------+ #
 #============================================================#
 
-no-permissions: "\u4f60\u6ca1\u6709\u6743\u9650\u8fd9\u4e48\u505a"
+no-permissions: "你没有权限这么做"
 
 # Related to /aach reload.
-configuration-successfully-reloaded: "\u914d\u7f6e\u52a0\u8f7d\u6210\u529f"
-configuration-reload-failed: "\u914d\u7f6e\u91cd\u8f7d\u51fa\u9519,\u8bf7\u67e5\u770b\
-  log\u65e5\u5fd7\u4ee5\u83b7\u5f97\u66f4\u591a\u4fe1\u606f"
+configuration-successfully-reloaded: "配置加载成功"
+configuration-reload-failed: "加载失败 请查看log"
 
 # Related to /aach top.
-top-achievement: "\u6210\u5c31\u6392\u884c\u699c"
-player-rank: "\u73b0\u5728\u7684\u6392\u540d:"
+top-achievement: "成就排行榜"
+player-rank: "现在的排名:"
 
 # Related to /aach stats.
-number-achievements: "\u5df2\u83b7\u5f97\u7684\u6210\u5c31:"
+number-achievements: "已获得的成就:"
 
 # Related to /aach book.
-book-received: "\u4f60\u83b7\u5f97\u4e86\u4f60\u7684\u6210\u5c31\u4e66"
-book-delay: "\u4f60\u5fc5\u987b\u7b49\u5f85TIME\u79d2\u624d\u80fd\u518d\u6b21\u9886\
-  \u53d6"
-book-name: "\u6210\u5c31\u8bb0\u5f55\u4e66"
+book-received: "你获得了你的成就书"
+book-delay: "指令冷却中"
+book-name: "成就记录书"
 
 # Related to /aach give.
-player-offline: "\u8be5\u73a9\u5bb6\u4e0d\u5728\u7ebf"
-achievement-already-received: "\u8be5\u73a9\u5bb6\u4ee5\u83b7\u5f97\u8be5\u6210\u5c31"
-achievement-not-found: "\u672a\u627e\u5230\u6307\u5b9a\u7684\u6210\u5c31"
-achievement-given: "\u5df2\u7ed9\u4e88\u6210\u5c31"
+player-offline: "该玩家不在线"
+achievement-already-received: "该玩家已获得该成就"
+achievement-not-found: "未找到指定的成就"
+achievement-given: "已给予成就"
 
 # Related to achievement reception.
-achievement-received: "\u8be5\u73a9\u5bb6\u5df2\u83b7\u5f97\u6210\u5c31"
-achievement-new: "\u65b0\u6210\u5c31:"
+achievement-received: "该玩家已获得成就"
+achievement-new: "新成就:"
 
 # Related to /aach check.
-check-achievement-true: "PLAYER has received the achievement ACH!"
-check-achievements-false: "PLAYER has not received the achievement ACH!"
+check-achievement-true: "该玩家已获得该成就"
+check-achievements-false: "该玩家未获得该成就"
 
 # Related to /aach delete.
-delete-achievements: "The achievement ACH was deleted from PLAYER."
+delete-achievements: "已删除玩家该玩家的该成就"
 
 # Related to achievement rewards.
-item-reward-received: "\u4f60\u83b7\u5f97\u4e86\u7269\u54c1\u5956\u52b1"
-money-reward-received: "\u4f60\u83b7\u5f97\u4e86\u91d1\u94b1\u5956\u52b1:AMOUNT"
-command-reward: "\u6307\u4ee4\u5956\u52b1!"
+item-reward-received: "你获得了物品奖励"
+money-reward-received: "你获得了金钱奖励:AMOUNT"
+command-reward: "指令奖励"
 
 # Related to /aach help.
-aach-command-book: "\u83b7\u53d6\u8bb0\u5f55\u6210\u5c31\u7684\u4e66\u672c"
-aach-command-stats: "\u67e5\u770b\u4f60\u5df2\u83b7\u5f97\u7684\u6210\u5c31"
-aach-command-list: "\u663e\u793a\u6240\u6709\u6210\u5c31"
-aach-command-top: "\u67e5\u770b\u6210\u5c31\u6392\u884c\u699c"
-aach-command-give: "\u7ed9\u4e88\u73a9\u5bb6\u4e00\u4e2a\u6210\u5c31"
-aach-command-reload: "\u91cd\u8f7d\u63d2\u4ef6"
-aach-command-info: "\u67e5\u770b\u63d2\u4ef6\u4fe1\u606f"
-aach-command-check: "Check if player NAME has &7received ACH."
-aach-command-delete: "Delete achievement ACH from &7player NAME."
+aach-command-book: "获取记录成就的书本"
+aach-command-stats: "查看你已获得的成就"
+aach-command-list: "显示所有成就"
+aach-command-top: "查看成就排行榜"
+aach-command-give: "给予玩家一个成就"
+aach-command-reload: "重载插件"
+aach-command-info: "查看插件信息"
+aach-command-check: "检测玩家该玩家是否获得该成就"
+aach-command-delete: "已删除玩家的该玩家的该成就"
 
 # Related to /aach info.
-version-command-name: "\u540d\u5b57:"
-version-command-version: "\u7248\u672c:"
-version-command-website: "\u7f51\u7ad9:"
-version-command-author: "\u4f5c\u8005:"
-version-command-description: "\u4ecb\u7ecd:"
-version-command-description-details: "\u529f\u80fd\u5f3a\u5927,\u914d\u7f6e\u7b80\u5355\
-  \u7684\u81ea\u5b9a\u4e49\u6210\u5c31\u63d2\u4ef6"
-version-command-vault: 'Vault integration:'
-version-command-database: "\u6570\u636e\u5e93\u7c7b\u578b:"
+version-command-name: "名字:"
+version-command-version: "版本:"
+version-command-website: "网站:"
+version-command-author: "作者:"
+version-command-description: "介绍:"
+version-command-description-details: "功能强大,配置简单\  的自定义成就插件"
+version-command-vault: 'vault integration:'
+version-command-database: "数据库类型:"
 
 # Related to /aach list.
-list-gui-title: "&5&lAchievements List"
-list-delay: "You must wait TIME seconds between each list command!"
-list-reward: "Reward: "
-list-reward-money: "money"
-list-reward-item: "item"
-list-reward-command: "other"
-list-amount: "Lvl: "
-list-achievement-received: "&a\u2713&f "
-list-achievement-not-received: "&4\u2717&8 "
+list-gui-title: "&5&l成就列表"
+list-delay: "你必须等待time秒来再次使用指令"
+list-reward: "奖励: "
+list-reward-money: "金币"
+list-reward-item: "物品"
+list-reward-command: "其他"
+list-amount: "lvl: "
+list-achievement-received: "&a√&f "
+list-achievement-not-received: "&4X&8 "
 
 # Related to category names in /aach list.
-list-connections: "Connections"
-list-places: "Blocks Placed"
-list-breaks: "Blocks Broken"
-list-kills: "Entities Killed"
-list-crafts: "Items Crafted"
-list-deaths: "Number of Deaths"
-list-arrows: "Arrows Shot"
-list-snowballs: "Snowballs Thrown"
-list-eggs: "Eggs Thrown"
-list-fish: "Fish Caught"
-list-itembreaks: "Items Broken"
-list-eatenitems: "Items Eaten"
-list-shear: "Sheeps Sheared"
-list-milk: "Cows Milked"
-list-trades: "Number of Trades"
-list-anvils: "Anvils Used"
-list-enchantments: "Items Enchanted"
-list-beds: "Beds Entered"
-list-maxlevel: "Max Level Reached"
-list-potions: "Potions Consumed"
-list-playedtime: "Time Played"
-list-distance-foot: "Distance Traveled by Foot"
-list-distance-pig: "Distance Traveled on a Pig"
-list-distance-horse: "Distance Traveled on a Horse"
-list-distance-minecart: "Distance Traveled in a Minecart"
-list-distance-boat: "Distance Traveled in a Boat"
-list-distance-gliding: "Distance Travelled with Elytra"
-list-itemdrops: "Items Dropped"
-list-hoeplowings: "Surface Plowed"
-list-fertilising: "Plants Fertilised"
-list-taming: "Animals Tamed"
-list-brewing: "Potions Brewed"
-list-fireworks: "Fireworks Launched"
-list-musicdiscs: "Music Discs Played"
-list-enderpearls: "Teleportations with Ender Pearls"
-list-commands: "Other Achievements"
+list-connections: "链接服务器"
+list-places: "放置方块"
+list-breaks: "破坏方块"
+list-kills: "击杀实体"
+list-crafts: "合成物品"
+list-deaths: "死亡次数"
+list-arrows: "发射箭支"
+list-snowballs: "投掷雪球"
+list-eggs: "投掷鸡蛋"
+list-fish: "钓鱼"
+list-itembreaks: "物品损坏"
+list-eatenitems: "吃东西"
+list-shear: "剪羊毛"
+list-milk: "挤牛奶"
+list-trades: "交易次数"
+list-anvils: "使用铁毡"
+list-enchantments: "附魔物品"
+list-beds: "上床"
+list-maxlevel: "达到指定等级"
+list-potions: "药水消耗"
+list-playedtime: "在线时间"
+list-distance-foot: "徒步行走距离"
+list-distance-pig: "骑猪行走距离"
+list-distance-horse: "骑马行走距离"
+list-distance-minecart: "矿车行驶距离"
+list-distance-boat: "船行驶距离"
+list-distance-gliding: "滑翔翼飞行距离"
+list-itemdrops: "物品掉落"
+list-hoeplowings: "耕地"
+list-fertilising: "施肥"
+list-taming: "驯服动物"
+list-brewing: "酿造药水"
+list-fireworks: "发射烟花"
+list-musicdiscs: "播放音乐唱片"
+list-enderpearls: "使用末影珍珠传送"
+list-commands: "其他成就"
 
 #============================================================#
 # +--------------------------------------------------------+ #
