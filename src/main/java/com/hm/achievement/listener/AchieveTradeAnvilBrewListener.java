@@ -31,7 +31,7 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 		}
 
 		if (event.getRawSlot() != 0 && event.getRawSlot() != 1 && event.getRawSlot() != 2
-				|| event.getCurrentItem().getType().name().equals("AIR"))
+				|| event.getCurrentItem() == null || event.getCurrentItem().getType().name().equals("AIR"))
 			return;
 
 		Player player = (Player) event.getWhoClicked();

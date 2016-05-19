@@ -1,5 +1,6 @@
 package com.hm.achievement.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,10 +16,15 @@ import com.hm.achievement.AdvancedAchievements;
 public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 
 	private AdvancedAchievements plugin;
+	private int version;
 
 	public AchieveHoeFertiliseFireworkMusicListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+		// Simple and fast check to compare versions. Might need to
+		// be updated in the future depending on how the Minecraft
+		// versions change in the future.
+		version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -61,7 +67,8 @@ public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 						|| event.getClickedBlock().getType() == Material.BROWN_MUSHROOM
 						|| event.getClickedBlock().getType() == Material.RED_MUSHROOM
 						|| event.getClickedBlock().getType() == Material.COCOA
-						|| event.getClickedBlock().getType() == Material.LONG_GRASS)) {
+						|| event.getClickedBlock().getType() == Material.LONG_GRASS
+						|| (version >= 9 && event.getClickedBlock().getType() == Material.BEETROOT_BLOCK))) {
 			int fertilising = plugin.getPoolsManager().getPlayerFertiliseAmount(player) + 1;
 
 			plugin.getPoolsManager().getFertiliseHashMap().put(player.getUniqueId().toString(), fertilising);

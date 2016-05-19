@@ -57,8 +57,6 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		this.plugin = plugin;
 
-		ignoreVerticalDistance = plugin.getPluginConfig().getBoolean("IgnoreVerticalDistance", false);
-
 		// Simple and fast check to compare versions. Might need to
 		// be updated in the future depending on how the Minecraft
 		// versions change in the future.
@@ -89,6 +87,8 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * Load list of achievements from configuration.
 	 */
 	public void extractAchievementsFromConfig(AdvancedAchievements plugin) {
+		
+		ignoreVerticalDistance = plugin.getPluginConfig().getBoolean("IgnoreVerticalDistance", false);
 
 		achievementsFoot = new int[plugin.getPluginConfig().getConfigurationSection("DistanceFoot").getKeys(false)
 				.size()];

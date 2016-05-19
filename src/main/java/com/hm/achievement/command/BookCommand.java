@@ -21,6 +21,7 @@ public class BookCommand {
 	private String bookSeparator;
 	private boolean additionalEffects;
 	private boolean sound;
+	private int version;
 
 	// Corresponds to times at which players have received their books.
 	private HashMap<Player, Long> players;
@@ -33,6 +34,10 @@ public class BookCommand {
 		bookSeparator = plugin.getPluginConfig().getString("BookSeparator", "");
 		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		sound = plugin.getPluginConfig().getBoolean("Sound", true);
+		// Simple and fast check to compare versions. Might need to
+		// be updated in the future depending on how the Minecraft
+		// versions change in the future.
+		version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
 	}
 
 	/**
@@ -72,10 +77,6 @@ public class BookCommand {
 
 			// Play special sound when receiving the book.
 			if (sound) {
-				// Simple and fast check to compare versions. Might need to be
-				// updated in the future depending on how the Minecraft versions
-				// change in the future.
-				int version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
 				if (version < 9) // Old enum for versions prior to Minecraft
 									// 1.9.
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
@@ -124,8 +125,8 @@ public class BookCommand {
 
 		try {
 			while (i < achievements.size() && i < max) {
-				String currentAchievement = "&0" + achievements.get(i) + "\n" + bookSeparator + "\n" + achievements.get(i + 1)
-						+ "\n" + bookSeparator + "\n&r" + achievements.get(i + 2);
+				String currentAchievement = "&0" + achievements.get(i) + "\n" + bookSeparator + "\n"
+						+ achievements.get(i + 1) + "\n" + bookSeparator + "\n&r" + achievements.get(i + 2);
 				currentAchievement = ChatColor.translateAlternateColorCodes('&', currentAchievement);
 				pages.add(currentAchievement);
 				i = i + 3;
