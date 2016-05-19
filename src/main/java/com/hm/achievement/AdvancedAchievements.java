@@ -491,6 +491,17 @@ public class AdvancedAchievements extends JavaPlugin {
 	private void updateOldConfiguration() {
 
 		boolean updateDone = false;
+		
+		// Added in version 2.5.2 (put first to enable adding elements to it):
+		if (!config.getKeys(false).contains("DisabledCategories")) {
+			List<String> list = new ArrayList<String>();
+			config.set("DisabledCategories", list,
+					new String[] {
+							"Don't show these categories in the achievement GUI or in the stats output (delete the [] before using).",
+							"Also prevent obtaining achievements for these categories and prevent stats from increasing.",
+							"If changed, do a full server reload, and not just /aach reload." });
+			updateDone = true;
+		}
 
 		// Added in version 2.1:
 		if (!config.getKeys(false).contains("AdditionalEffects")) {
@@ -613,16 +624,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		// Added in version 2.5.2:
-		if (!config.getKeys(false).contains("DisabledCategories")) {
-			List<String> list = new ArrayList<String>();
-			config.set("DisabledCategories", list,
-					new String[] {
-							"Don't show these categories in the achievement GUI or in the stats output (delete the [] before using).",
-							"Also prevent obtaining achievements for these categories and prevent stats from increasing.",
-							"If changed, do a full server reload, and not just /aach reload." });
-			updateDone = true;
-		}
-
 		if (!config.getKeys(false).contains("ListAchievementFormat")) {
 			config.set("ListAchievementFormat", "%ICON% %NAME% %ICON%",
 					"Set the format of the achievement name in /aach list.");
@@ -635,7 +636,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		if (!config.getKeys(false).contains("ListItemSeparator")) {
-			config.set("ListItemSeparator", " → ", "Separator between name and level in /aach list.");
+			config.set("ListItemSeparator", " \u2192 ", "Separator between name and level in /aach list.");
+			updateDone = true;
+		}
+		
+		if (!config.getKeys(false).contains("IgnoreVerticalDistance")) {
+			config.set("IgnoreVerticalDistance", false, "Ignore vertical dimension (Y axis) when calculating distance statistics.");
 			updateDone = true;
 		}
 

@@ -6,10 +6,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -92,7 +93,7 @@ public class FileManager {
 		String pluginName = this.getPluginName();
 
 		StringBuilder whole = new StringBuilder("");
-		BufferedReader reader = new BufferedReader(new FileReader(file));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 
 		while ((currentLine = reader.readLine()) != null) {
 			// Rework comment line so it becomes a normal value in the
@@ -184,7 +185,7 @@ public class FileManager {
 
 		String configuration = this.prepareConfigString(configString);
 
-		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
 		writer.write(configuration);
 		writer.flush();
 		writer.close();

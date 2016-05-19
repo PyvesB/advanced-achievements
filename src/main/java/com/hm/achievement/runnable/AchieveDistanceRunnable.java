@@ -13,11 +13,15 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
+import org.bukkit.util.NumberConversions;
+
 import com.hm.achievement.AdvancedAchievements;
 
 public class AchieveDistanceRunnable implements Runnable {
 
 	private AdvancedAchievements plugin;
+
+	boolean ignoreVerticalDistance;
 
 	// Lists of achievement amounts (=thresholds) extracted from configuration.
 	private int[] achievementsFoot;
@@ -52,6 +56,8 @@ public class AchieveDistanceRunnable implements Runnable {
 	public AchieveDistanceRunnable(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+
+		ignoreVerticalDistance = plugin.getPluginConfig().getBoolean("IgnoreVerticalDistance", false);
 
 		// Simple and fast check to compare versions. Might need to
 		// be updated in the future depending on how the Minecraft
@@ -184,8 +190,13 @@ public class AchieveDistanceRunnable implements Runnable {
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
-		// Distance difference since last runnable.
-		int difference = (int) previousLocation.distance(player.getLocation());
+		// Distance difference since last runnable; ignore the vertical axis or not.
+		int difference;
+		if (ignoreVerticalDistance)
+			difference = (int) Math.sqrt(NumberConversions.square(previousLocation.getX() - player.getLocation().getX())
+					+ NumberConversions.square(previousLocation.getZ() - player.getLocation().getZ()));
+		else
+			difference = (int) previousLocation.distance(player.getLocation());
 
 		// Check if player has not moved since last run.
 		if (difference == 0)

@@ -57,7 +57,7 @@ ChatNotify: false
 BookSeparator: ''
 
 # Separator between name and level in /aach list.
-ListItemSeparator: " \u2192 "
+ListItemSeparator: ' \u2192 '
 
 # Set the format of the achievement name in /aach list (default: '%ICON% %NAME% %ICON%').
 ListAchievementFormat: '%ICON% %NAME% %ICON%'
@@ -69,6 +69,9 @@ RestrictCreative: false
 ExcludedWorlds: []
 #  - yourWorld1
 #  - yourWorld2
+
+# Ignore vertical dimension (Y axis) when calculating distance statistics.
+IgnoreVerticalDistance: false
 
 # Don't show these categories in the achievement GUI or in the stats output (delete the [] before using).
 # Also prevent obtaining achievements for these categories and prevent stats from increasing.
