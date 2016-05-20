@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |    Advanced Achievements 2.5.4 configuration - Readme   | #
+# |    Advanced Achievements 2.5.5 configuration - Readme   | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -56,7 +56,7 @@ ChatNotify: false
 # Separator between name, description and date on a book page.
 BookSeparator: ''
 
-# Separator between name and level in /aach list.
+# Separator between name and level in /aach list (default: arrow and spaces, ' \u2192 ').
 ListItemSeparator: ' \u2192 '
 
 # Set the format of the achievement name in /aach list (default: '%ICON% %NAME% %ICON%').

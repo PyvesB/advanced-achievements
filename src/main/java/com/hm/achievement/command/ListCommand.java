@@ -46,7 +46,8 @@ public class ListCommand {
 		hideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
 		obfuscateNotReceived = plugin.getPluginConfig().getBoolean("ObfuscateNotReceived", true);
 		hideRewardDisplay = plugin.getPluginConfig().getBoolean("HideRewardDisplayInList", false);
-		itemSeparator = plugin.getPluginConfig().getString("ListItemSeparator", " → ");
+		itemSeparator = StringEscapeUtils
+				.unescapeJava(plugin.getPluginConfig().getString("ListItemSeparator", " \u2192 "));
 		listTime = plugin.getPluginConfig().getInt("TimeList", 0) * 1000;
 
 		normalAchievementTypesLanguage = new String[] {
