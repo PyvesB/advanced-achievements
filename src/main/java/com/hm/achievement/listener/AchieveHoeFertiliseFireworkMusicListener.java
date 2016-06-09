@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,6 +11,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 
@@ -24,7 +24,7 @@ public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 		// Simple and fast check to compare versions. Might need to
 		// be updated in the future depending on how the Minecraft
 		// versions change in the future.
-		version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
+		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

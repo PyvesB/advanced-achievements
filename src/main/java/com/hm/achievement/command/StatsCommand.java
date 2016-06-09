@@ -1,12 +1,12 @@
 package com.hm.achievement.command;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.particle.ParticleEffect;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 public class StatsCommand {
 
@@ -39,7 +39,7 @@ public class StatsCommand {
 		// Simple and fast check to compare versions. Might need to
 		// be updated in the future depending on how the Minecraft
 		// versions change in the future.
-		version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
+		version =  Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	/**

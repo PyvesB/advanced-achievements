@@ -3,7 +3,6 @@ package com.hm.achievement.command;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -13,6 +12,7 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.particle.ParticleEffect;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 public class BookCommand {
 
@@ -37,7 +37,7 @@ public class BookCommand {
 		// Simple and fast check to compare versions. Might need to
 		// be updated in the future depending on how the Minecraft
 		// versions change in the future.
-		version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
+		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	/**

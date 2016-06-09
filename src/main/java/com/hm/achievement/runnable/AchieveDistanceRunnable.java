@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 public class AchieveDistanceRunnable implements Runnable {
 
@@ -60,7 +61,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		// Simple and fast check to compare versions. Might need to
 		// be updated in the future depending on how the Minecraft
 		// versions change in the future.
-		version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
+		version =  Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 
 		if (plugin.isAsyncPooledRequestsSender()) {
 			distancesFoot = new ConcurrentHashMap<String, Integer>();

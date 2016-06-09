@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 public class ListCommand {
 
@@ -98,7 +99,7 @@ public class ListCommand {
 		// Simple and fast check to compare versions. Might need to
 		// be updated in the future depending on how the Minecraft
 		// versions change in the future.
-		int version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
+		int version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 
 		if (version >= 9)
 			normalAchievementsTypesItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
@@ -233,7 +234,8 @@ public class ListCommand {
 					String cat = AdvancedAchievements.NORMAL_ACHIEVEMENTS[i];
 
 					// Ignore this category if it's in the disabled list
-					List<String> disabled = plugin.getConfig().getStringList("DisabledCategories");
+					@SuppressWarnings("unchecked")
+					List<String> disabled = (List<String>) plugin.getPluginConfig().getList("DisabledCategories");
 					if ((disabled != null) && (disabled.contains(cat))) {
 						continue;
 					}
