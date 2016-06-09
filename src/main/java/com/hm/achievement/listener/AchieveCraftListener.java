@@ -27,7 +27,7 @@ public class AchieveCraftListener implements Listener {
 			return;
 
 		Player player = (Player) event.getWhoClicked();
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player) || event.isShiftClick() && player.getInventory().firstEmpty() < 0)
 			return;
 
 		ItemStack item = event.getRecipe().getResult();
