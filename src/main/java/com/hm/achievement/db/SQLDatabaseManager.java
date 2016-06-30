@@ -95,8 +95,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Load plugin configuration and set values to different parameters relevant
-	 * to the database system.
+	 * Load plugin configuration and set values to different parameters relevant to the database system.
 	 */
 	private void configurationLoad() {
 
@@ -113,9 +112,8 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Initialise database tables by creating non existing ones. Uses
-	 * configuration file to determine which ones it is relevant to try to
-	 * create.
+	 * Initialise database tables by creating non existing ones. Uses configuration file to determine which ones it is
+	 * relevant to try to create.
 	 */
 	private void initialiseTables() throws SQLException {
 
@@ -200,11 +198,9 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Update the database tables for break, craft and place achievements (from
-	 * int to varchar for identification column). The tables are now using
-	 * material names and no longer item IDs, which are deprecated; this also
-	 * allows to store extra data information, extending the number of items
-	 * available for the user.
+	 * Update the database tables for break, craft and place achievements (from int to varchar for identification
+	 * column). The tables are now using material names and no longer item IDs, which are deprecated; this also allows
+	 * to store extra data information, extending the number of items available for the user.
 	 */
 	@SuppressWarnings("deprecation")
 	private void updateOldDB(String tableName) {
@@ -438,6 +434,31 @@ public class SQLDatabaseManager {
 	}
 
 	/**
+	 * Get the date of reception of a specific achievement.
+	 */
+	public String getPlayerAchievementDate(Player player, String name) {
+
+		name = name.replace("'", "''");
+		try {
+			Connection conn = getSQLConnection();
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT date FROM `achievements` WHERE playername = '" + player.getUniqueId()
+					+ "' AND achievement = '" + name + "'");
+			String achievementDate = null;
+			if (rs.next()) {
+				achievementDate = rs.getString(1);
+			}
+			st.close();
+			rs.close();
+
+			return achievementDate;
+		} catch (SQLException e) {
+			plugin.getLogger().severe("SQL error while retrieving achievement date: " + e);
+		}
+		return null;
+	}
+
+	/**
 	 * Get the number of achievements received by a player.
 	 */
 	public int getPlayerAchievementsAmount(Player player) {
@@ -657,6 +678,31 @@ public class SQLDatabaseManager {
 	}
 
 	/**
+	 * Return player's number of connections.
+	 */
+	public int getConnectionsAmount(Player player) {
+
+		final String name = player.getUniqueId().toString();
+		try {
+			Connection conn = getSQLConnection();
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT connections FROM `connections` WHERE playername = '" + name + "'");
+			int connections = 0;
+			while (rs.next()) {
+				connections = rs.getInt("connections");
+			}
+			st.close();
+			rs.close();
+
+			return connections;
+		} catch (SQLException e) {
+			plugin.getLogger().severe("SQL error while retrieving connection statistics: " + e);
+			return 0;
+		}
+
+	}
+
+	/**
 	 * Get a player's last connection date.
 	 */
 	public String getPlayerConnectionDate(Player player) {
@@ -686,8 +732,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Update player's number of connections and last connection date and return
-	 * number of connections.
+	 * Update player's number of connections and last connection date and return number of connections.
 	 */
 	public int updateAndGetConnection(Player player, final String date) {
 
@@ -793,4 +838,5 @@ public class SQLDatabaseManager {
 		}
 
 	}
+
 }

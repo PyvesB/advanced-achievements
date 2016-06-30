@@ -53,7 +53,7 @@ import com.hm.achievement.utils.*;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 2.5.6
+ * @version 2.6-Beta
  * @author DarkPyves
  */
 
@@ -85,6 +85,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveCraftListener craftListener;
 	private AchieveQuitListener quitListener;
 	private AchieveTeleportRespawnListener teleportRespawnListener;
+
+	private ListGUIListener listGUIListener;
 
 	// Additional classes related to plugin modules and commands.
 	private AchievementRewards reward;
@@ -295,6 +297,9 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(teleportRespawnListener, this);
 		}
 
+		listGUIListener = new ListGUIListener(this);
+		pm.registerEvents(listGUIListener, this);
+
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
 
 		// Initialise the SQLite/MySQL database.
@@ -491,7 +496,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private void updateOldConfiguration() {
 
 		boolean updateDone = false;
-		
+
 		// Added in version 2.5.2 (put first to enable adding elements to it):
 		if (!config.getKeys(false).contains("DisabledCategories")) {
 			List<String> list = new ArrayList<String>();
@@ -635,13 +640,9 @@ public class AdvancedAchievements extends JavaPlugin {
 			updateDone = true;
 		}
 
-		if (!config.getKeys(false).contains("ListItemSeparator")) {
-			config.set("ListItemSeparator", " \u2192 ", "Separator between name and level in /aach list.");
-			updateDone = true;
-		}
-		
 		if (!config.getKeys(false).contains("IgnoreVerticalDistance")) {
-			config.set("IgnoreVerticalDistance", false, "Ignore vertical dimension (Y axis) when calculating distance statistics.");
+			config.set("IgnoreVerticalDistance", false,
+					"Ignore vertical dimension (Y axis) when calculating distance statistics.");
 			updateDone = true;
 		}
 
@@ -869,7 +870,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			} else if (args[0].equalsIgnoreCase("list") && sender instanceof Player) {
 
 				if (sender.hasPermission("achievement.list")) {
-					listCommand.getList((Player) sender);
+					listCommand.createMainGUI((Player) sender);
 				} else {
 
 					sender.sendMessage(chatHeader

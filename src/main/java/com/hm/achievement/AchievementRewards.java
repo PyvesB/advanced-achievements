@@ -2,6 +2,8 @@ package com.hm.achievement;
 
 import net.milkbowl.vault.item.Items;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -54,9 +56,8 @@ public class AchievementRewards {
 										.getPluginConfig().getString(ach + ".Reward.Item", "stone").indexOf(" "))),
 						amount);
 		} catch (NullPointerException e) {
-			plugin.getLogger()
-					.warning("Invalid item reward for achievement \"" + plugin.getPluginConfig().getString(ach + ".Name")
-							+ "\". Please specify a valid Material name.");
+			plugin.getLogger().warning("Invalid item reward for achievement \""
+					+ plugin.getPluginConfig().getString(ach + ".Name") + "\". Please specify a valid Material name.");
 			return null;
 		}
 
@@ -108,24 +109,18 @@ public class AchievementRewards {
 	}
 
 	/**
-	 * Return the type of an achievement reward with strings coming from
+	 * Return the type(s) of an achievement reward with strings coming from
 	 * language file.
 	 */
-	public String getRewardType(String configAchievement) {
+	public ArrayList<String> getRewardType(String configAchievement) {
 
-		String rewardType = "";
+		ArrayList<String> rewardType = new ArrayList<String>();
 		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Money"))
-			rewardType = plugin.getPluginLang().getString("list-reward-money", "money");
+			rewardType.add(plugin.getPluginLang().getString("list-reward-money", "money"));
 		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Item"))
-			if (rewardType.length() != 0)
-				rewardType += ", " + plugin.getPluginLang().getString("list-reward-item", "item");
-			else
-				rewardType = plugin.getPluginLang().getString("list-reward-item", "item");
+			rewardType.add(plugin.getPluginLang().getString("list-reward-item", "item"));
 		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Command"))
-			if (rewardType.length() != 0)
-				rewardType += ", " + plugin.getPluginLang().getString("list-reward-command", "other");
-			else
-				rewardType = plugin.getPluginLang().getString("list-reward-command", "other");
+			rewardType.add(plugin.getPluginLang().getString("list-reward-command", "other"));
 
 		return rewardType;
 	}

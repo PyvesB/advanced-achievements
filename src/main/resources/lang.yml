@@ -74,8 +74,9 @@ list-reward-money: "money"
 list-reward-item: "item"
 list-reward-command: "other"
 list-amount: "Lvl: "
-list-achievement-received: "&a\u2713&f "
+list-achievement-received: "&5\u2713&f "
 list-achievement-not-received: "&4\u2717&8 "
+list-category-not-unlocked: "You have not yet unlocked this category."
 
 # Related to category names in /aach list.
 list-connections: "Connections"

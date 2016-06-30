@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,14 +21,7 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
 
-		// Not relevant for trade, anvil, or brewing events, but used for the
-		// /aach list command to avoid adding an additional event handler.
-		if (event.getInventory().getName().equals(ChatColor.translateAlternateColorCodes('&',
-				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")))) {
-			event.setCancelled(true);
-			return;
-		}
-
+		// TODO - Optimise name equals.
 		if (event.getRawSlot() != 0 && event.getRawSlot() != 1 && event.getRawSlot() != 2
 				|| event.getCurrentItem() == null || event.getCurrentItem().getType().name().equals("AIR"))
 			return;
