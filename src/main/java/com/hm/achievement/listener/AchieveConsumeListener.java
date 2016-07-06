@@ -1,6 +1,7 @@
 package com.hm.achievement.listener;
 
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,8 +28,7 @@ public class AchieveConsumeListener implements Listener {
 
 		String configAchievement;
 
-		if (event.getItem().getType().name().equals("POTION")
-				&& !plugin.getDisabledCategorySet().contains("ConsumedPotions")
+		if (event.getItem().getType() == Material.POTION && !plugin.getDisabledCategorySet().contains("ConsumedPotions")
 				&& player.hasPermission("achievement.count.consumedpotions")) {
 			int consumedPotions = plugin.getPoolsManager().getPlayerConsumedPotionAmount(player) + 1;
 

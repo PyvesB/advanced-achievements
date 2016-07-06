@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -23,11 +24,12 @@ public class AchieveCraftListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(CraftItemEvent event) {
 
-		if (!(event.getWhoClicked() instanceof Player) || event.getAction().name().equals("NOTHING"))
+		if (!(event.getWhoClicked() instanceof Player) || event.getAction() == InventoryAction.NOTHING)
 			return;
 
 		Player player = (Player) event.getWhoClicked();
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player) || event.isShiftClick() && player.getInventory().firstEmpty() < 0)
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player)
+				|| event.isShiftClick() && player.getInventory().firstEmpty() < 0)
 			return;
 
 		ItemStack item = event.getRecipe().getResult();
@@ -47,7 +49,7 @@ public class AchieveCraftListener implements Listener {
 			int max = event.getInventory().getMaxStackSize();
 			ItemStack[] matrix = event.getInventory().getMatrix();
 			for (ItemStack itemStack : matrix) {
-				if (itemStack != null && !itemStack.getType().equals(Material.AIR)) {
+				if (itemStack != null && itemStack.getType() != Material.AIR) {
 					int tmp = itemStack.getAmount();
 					if (tmp < max && tmp > 0)
 						max = tmp;
@@ -59,7 +61,7 @@ public class AchieveCraftListener implements Listener {
 		int times = plugin.getPoolsManager().getPlayerCraftAmount(player, craftName) + amount;
 
 		plugin.getPoolsManager().getCraftHashMap().put(player.getUniqueId().toString() + craftName, times);
-		
+
 		String configAchievement;
 		for (String threshold : plugin.getPluginConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))
 			if (times >= Integer.parseInt(threshold) && !plugin.getDb().hasPlayerAchievement(player,
