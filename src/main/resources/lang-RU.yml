@@ -5,21 +5,21 @@
 # +--------------------------------------------------------+ #
 #============================================================#
 
-no-permissions: "У вас нету разрешения использовать эту команду."
+no-permissions: "У Вас нету прав для использования этой команды."
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "Конфигурация успешно перезагружена."
-configuration-reload-failed: "Ошибки при перечитывания конфигурации. Пожалуйста, просмотрите журналы для получения более подробной информации."
+configuration-reload-failed: "Ошибка при перезагрузке конфигурации. Пожалуйста, просмотрите лог для получения более подробной информации."
 
 # Related to /aach top.
-top-achievement: "ТОП Выполненых достижений:"
+top-achievement: "ТОП выполненых достижений:"
 player-rank: "Текущее место:"
 
 # Related to /aach stats.
 number-achievements: "Полученные достижения:"
 
 # Related to /aach book.
-book-received: "Вы получили вашу книгу достижений!"
+book-received: "Вы получили книгу достижений!"
 book-delay: "Вы должны подождать прежде чем снова получить новую книгу!"
 book-name: "Достижения"
 
@@ -43,10 +43,10 @@ delete-achievements: "Достижение ACH было удалено у PLAYER
 # Related to achievement rewards.
 item-reward-received: "Вы получили в награду предмет:"
 money-reward-received: "Вы получили: AMOUNT !"
-command-reward: "Reward command carried out!"
+command-reward: "Команда награды выполнена!"
 
 # Related to /aach help.
-aach-command-book: "Получить вашу книгу с достижениями."
+aach-command-book: "Получить Вашу книгу с достижениями."
 aach-command-stats: "Узнать кол-во выполненых достижений."
 aach-command-list: "Открыть список всех достижений."
 aach-command-top: "Показать личный и глобальный рейтинг."
@@ -57,18 +57,18 @@ aach-command-check: "Узнать получил ли достижение  иг
 aach-command-delete: "Удалить достижение у игрока"
 
 # Related to /aach info.
-version-command-name: "Имя:"
+version-command-name: "Название:"
 version-command-version: "Версия:"
-version-command-website: "ВебСайт:"
-version-command-author: "Автор(Автор перевода CeleDKo):"
+version-command-website: "Сайт:"
+version-command-author: "Автор:"
 version-command-description: "Описание:"
-version-command-description-details: "Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"
-version-command-vault: "Vault integration:"
-version-command-database: "Database type:"
+version-command-description-details: "Advanced Achievements включает в себя уникальные и соревновательные достижения. Попробуйте собрать их столько, сколько сможете, получайте награды, взбирайтесь по топу и получайте RP книги!"
+version-command-vault: "Интеграция с Vault:"
+version-command-database: "Тип базы данных:"
 
 # Related to /aach list.
 list-gui-title: "&5&lСписок достижений"
-list-delay: "Вы должны подождать прежде чем снова использовать эту команду"
+list-delay: "Вы должны подождать перед повторным использованием этой команды"
 list-reward: "Награда: "
 list-reward-money: "деньги"
 list-reward-item: "предмет"
@@ -78,41 +78,41 @@ list-achievement-received: "&a\u2713&f "
 list-achievement-not-received: "&4\u2717&8 "
 
 # Related to category names in /aach list.
-list-connections: "Присоеденения"
-list-places: "Размещенные блоки"
+list-connections: "Подключений"
+list-places: "Установленные блоки"
 list-breaks: "Сломанные блоки"
-list-kills: "Сущностей убито"
-list-crafts: "Предметов скрафчено"
+list-kills: "Убитые мобы"
+list-crafts: "Созданные предметы"
 list-deaths: "Количество смертей"
-list-arrows: "Выстрелы стрел"
+list-arrows: "Использованные стрелы"
 list-snowballs: "Метание снежков"
 list-eggs: "Метание яиц"
 list-fish: "Пойманная рыба"
-list-itembreaks: "Предметов сломано"
-list-eatenitems: "Предметов съедено"
+list-itembreaks: "Сломанные предметы"
+list-eatenitems: "Съеденные предметы"
 list-shear: "Овец подстрижено"
-list-milk: "Собрано молока"
+list-milk: "Сбор молока"
 list-trades: "Количество сделок"
 list-anvils: "Наковален использовано"
-list-enchantments: "Предметов зачаровано"
-list-beds: "Кроватей использовано"
-list-maxlevel: "Максимальный уровней достигнуто"
+list-enchantments: "Зачарование предметов"
+list-beds: "Использование кроватей"
+list-maxlevel: "Получаение максимального уровня"
 list-potions: "Зелий выпито"
 list-playedtime: "Временни сыграно"
-list-distance-foot: "Дистанций пройдено пешком"
-list-distance-pig: "Дистанций пройдено на свинье"
-list-distance-horse: "Дистанций пройдено на лошади"
-list-distance-minecart: "Дистанций проехано на вагонетке"
-list-distance-boat: "Дистанций проплыто на лодке"
-list-distance-gliding: "Distance Travelled with Elytra"
-list-itemdrops: "Предметов выкинуто"
-list-hoeplowings: "Земли вспахано"
-list-fertilising: "Растений посажено"
-list-taming: "Животных приручено"
-list-brewing: "Зелий сварено"
-list-fireworks: "Фейверков запущено"
-list-musicdiscs: "Музыкальных дисков сыграно"
-list-enderpearls: "Телепортаций с ендер жемчугом"
+list-distance-foot: "Пройденная дистанция пешком"
+list-distance-pig: "Проеханная дистанция на свинье"
+list-distance-horse: "Проеханная дистанция на лошади"
+list-distance-minecart: "Проеханная дистанция в вагонетке"
+list-distance-boat: "Проеханная дистанция в лодке"
+list-distance-gliding: "Пропутешествованная дистанция на Элитре"
+list-itemdrops: "Выброшенные предметы"
+list-hoeplowings: "Вспаханные земли"
+list-fertilising: "Посаженные растения"
+list-taming: "Прирученные животные"
+list-brewing: "Зельевание"
+list-fireworks: "Запущенные фейерверки"
+list-musicdiscs: "Воспроизведение музыкальных дисков"
+list-enderpearls: "Телепортации с Эндер-жемчугом"
 list-commands: "Другие достижения"
 
 #============================================================#
