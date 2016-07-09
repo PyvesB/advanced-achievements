@@ -78,10 +78,10 @@ list-achievement-received: "&a\u2713&f "
 list-achievement-not-received: "&4\u2717&8 "
 
 # Related to category names in /aach list.
-list-connections: "Подключений"
+list-connections: "Подключения"
 list-places: "Установленные блоки"
 list-breaks: "Сломанные блоки"
-list-kills: "Убитые мобы"
+list-kills: "Убитые существа"
 list-crafts: "Созданные предметы"
 list-deaths: "Количество смертей"
 list-arrows: "Использованные стрелы"
