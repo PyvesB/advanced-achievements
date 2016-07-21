@@ -105,6 +105,10 @@ DatabaseBackup: true
 # Database type, sqlite or mysql.
 DatabaseType: sqlite
 
+# Prefix added to the tables in the database. If you switch from the default tables names (no prefix),
+# the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.
+TablePrefix: ''
+
 # Settings to link with MySQL database (ignore if sqlite).
 MYSQL:
   Database: 'jdbc:mysql://localhost:3306/minecraft'

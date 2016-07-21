@@ -646,6 +646,13 @@ public class AdvancedAchievements extends JavaPlugin {
 			updateDone = true;
 		}
 
+		if (!config.getKeys(false).contains("TablePrefix")) {
+			config.set("TablePrefix", "", new String[] {
+					"Prefix added to the tables in the database. If you switch from the default tables names (no prefix),",
+					"the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually." });
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {
