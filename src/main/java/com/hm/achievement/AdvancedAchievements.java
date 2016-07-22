@@ -35,22 +35,19 @@ import com.hm.achievement.runnable.*;
 import com.hm.achievement.utils.*;
 
 /**
- * Advanced Achievements enables unique and challenging achievements on your
- * server. Try to collect as many as you can, earn rewards, climb the rankings
- * and receive RP books!
+ * Advanced Achievements enables unique and challenging achievements on your server. Try to collect as many as you can,
+ * earn rewards, climb the rankings and receive RP books!
  * 
- * Some minor parts of the code and ideas are based on Achievement plugin by
- * Death_marine and captainawesome7, under Federation of Lost Lawn Chairs
- * license (http://dev.bukkit.org/licenses/1332-federation-of-lost-lawn-chairs).
+ * Some minor parts of the code and ideas are based on Achievement plugin by Death_marine and captainawesome7, under
+ * Federation of Lost Lawn Chairs license (http://dev.bukkit.org/licenses/1332-federation-of-lost-lawn-chairs).
  * 
- * AdvancedAchievements is under GNU General Public License version 3. Please
- * visit the plugin's GitHub for more information :
- * https://github.com/PyvesB/AdvancedAchievements
+ * AdvancedAchievements is under GNU General Public License version 3. Please visit the plugin's GitHub for more
+ * information : https://github.com/PyvesB/AdvancedAchievements
  * 
  * Official plugin's server: hellominecraft.fr
  * 
- * Bukkit project page: dev.bukkit.org/bukkit-plugins/advanced-achievements
- * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
+ * Bukkit project page: dev.bukkit.org/bukkit-plugins/advanced-achievements Spigot project page:
+ * spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
  * @version 2.6-Beta
@@ -302,7 +299,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
 
-		// Initialise the SQLite/MySQL database.
+		// Initialise the SQLite/MySQL/PostgreSQL database.
 		db.initialise();
 
 		// Error while loading database do not do any further work.
@@ -352,9 +349,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Load plugin configuration and set values to different parameters; load
-	 * language file and backup configuration and database files. Register
-	 * permissions. Initialise command modules.
+	 * Load plugin configuration and set values to different parameters; load language file and backup configuration and
+	 * database files. Register permissions. Initialise command modules.
 	 */
 	@SuppressWarnings("unchecked")
 	private void configurationLoad() {
@@ -472,7 +468,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			successfulLoad = false;
 		}
 
-		if (databaseBackup && !config.getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql")) {
+		if (databaseBackup && (!config.getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql")
+				|| !config.getString("DatabaseType", "sqlite").equalsIgnoreCase("postgresql"))) {
 			File backup = new File(this.getDataFolder(), "achievements.db.bak");
 			// Only do a daily backup for the .db file.
 			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
@@ -489,8 +486,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Update configuration file from older plugin versions by adding missing
-	 * parameters. Upgrades from versions prior to 2.0 are not supported.
+	 * Update configuration file from older plugin versions by adding missing parameters. Upgrades from versions prior
+	 * to 2.0 are not supported.
 	 */
 	@SuppressWarnings("unchecked")
 	private void updateOldConfiguration() {
@@ -667,8 +664,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Update language file from older plugin versions by adding missing
-	 * parameters. Upgrades from versions prior to 2.3 are not supported.
+	 * Update language file from older plugin versions by adding missing parameters. Upgrades from versions prior to 2.3
+	 * are not supported.
 	 */
 	private void updateOldLanguage() {
 
@@ -715,9 +712,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Register permissions that depend on the user's configuration file (based
-	 * on multiple type achievements; for instance for stone breaks,
-	 * achievement.count.breaks.stone will be registered).
+	 * Register permissions that depend on the user's configuration file (based on multiple type achievements; for
+	 * instance for stone breaks, achievement.count.breaks.stone will be registered).
 	 */
 	private void registerPermissions() {
 
@@ -831,8 +827,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Called when a player or the console enters a command. Handles command
-	 * directly or dispatches to one of the command modules.
+	 * Called when a player or the console enters a command. Handles command directly or dispatches to one of the
+	 * command modules.
 	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]) {

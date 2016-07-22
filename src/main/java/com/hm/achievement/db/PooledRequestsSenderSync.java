@@ -26,12 +26,11 @@ public class PooledRequestsSenderSync implements Runnable {
 	}
 
 	/**
-	 * Sends a batch of requests to the database to deal with regular events and
-	 * prevent plugin from hitting server performance. Non event related
-	 * categories (distances and play times) are not handled by pools.
+	 * Sends a batch of requests to the database to deal with regular events and prevent plugin from hitting server
+	 * performance. Non event related categories (distances and play times) are not handled by pools.
 	 * 
-	 * Queries are batched for optimisation and HashMaps are cleared to prevent
-	 * same writes during next task if statistics did not change.
+	 * Queries are batched for optimisation and HashMaps are cleared to prevent same writes during next task if
+	 * statistics did not change.
 	 */
 	public void sendRequests() {
 
@@ -40,90 +39,255 @@ public class PooledRequestsSenderSync implements Runnable {
 			Statement st = conn.createStatement();
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getDeathHashMap().entrySet())
-				st.addBatch("REPLACE INTO `deaths` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "deaths VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (deaths)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "deaths VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getArrowHashMap().entrySet())
-				st.addBatch("REPLACE INTO `arrows` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "arrows VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (arrows)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "arrows VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getSnowballHashMap().entrySet())
-				st.addBatch("REPLACE INTO `snowballs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "snowballs VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (snowballs)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "snowballs VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEggHashMap().entrySet())
-				st.addBatch("REPLACE INTO `eggs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "eggs VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (eggs)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "eggs VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFishHashMap().entrySet())
-				st.addBatch("REPLACE INTO `fish` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "fish VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (fish)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "fish VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getItemBreakHashMap().entrySet())
-				st.addBatch("REPLACE INTO `itembreaks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "itembreaks VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")"
+							+ " ON CONFLICT (playername) DO UPDATE SET (itembreaks)=(" + entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "itembreaks VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEatenItemsHashMap().entrySet())
-				st.addBatch("REPLACE INTO `eatenitems` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "eatenitems VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")"
+							+ " ON CONFLICT (playername) DO UPDATE SET (eatenitems)=(" + entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "eatenitems VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getShearHashMap().entrySet())
-				st.addBatch("REPLACE INTO `shears` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "shears VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (shears)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "shears VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getMilkHashMap().entrySet())
-				st.addBatch("REPLACE INTO `milks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "milks VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (milks)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "milks VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getTradeHashMap().entrySet())
-				st.addBatch("REPLACE INTO `trades` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "trades VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (trades)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "trades VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getAnvilHashMap().entrySet())
-				st.addBatch("REPLACE INTO `anvils` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "anvils VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (anvils)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "anvils VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEnchantmentHashMap().entrySet())
-				st.addBatch("REPLACE INTO `enchantments` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "enchantments VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")"
+							+ " ON CONFLICT (playername) DO UPDATE SET (enchantments)=(" + entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "enchantments VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBedHashMap().entrySet())
-				st.addBatch("REPLACE INTO `beds` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "beds VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (beds)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "beds VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getXpHashMap().entrySet())
-				st.addBatch("REPLACE INTO `levels` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "levels VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (levels)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "levels VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getConsumedPotionsHashMap().entrySet())
-				st.addBatch(
-						"REPLACE INTO `consumedpotions` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "consumedpotions VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")"
+							+ " ON CONFLICT (playername) DO UPDATE SET (consumedpotions)=(" + entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "consumedpotions VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getDropHashMap().entrySet())
-				st.addBatch("REPLACE INTO `drops` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "drops VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (drops)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "drops VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getHoePlowingHashMap().entrySet())
-				st.addBatch("REPLACE INTO `hoeplowing` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "hoeplowing VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")"
+							+ " ON CONFLICT (playername) DO UPDATE SET (hoeplowing)=(" + entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "hoeplowing VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFertiliseHashMap().entrySet())
-				st.addBatch("REPLACE INTO `fertilising` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "fertilising VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")"
+							+ " ON CONFLICT (playername) DO UPDATE SET (fertilising)=(" + entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "fertilising VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getTameHashMap().entrySet())
-				st.addBatch("REPLACE INTO `tames` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "tames VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (tames)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "tames VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBrewingHashMap().entrySet())
-				st.addBatch("REPLACE INTO `brewing` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "brewing VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (brewing)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "brewing VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getFireworkHashMap().entrySet())
-				st.addBatch("REPLACE INTO `fireworks` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "fireworks VALUES ('" + entry.getKey()
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (fireworks)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "fireworks VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getMusicDiscHashMap().entrySet())
-				st.addBatch("REPLACE INTO `musicdiscs` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "musicdiscs VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")"
+							+ " ON CONFLICT (playername) DO UPDATE SET (musicdiscs)=(" + entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "musicdiscs VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getEnderPearlHashMap().entrySet())
-				st.addBatch("REPLACE INTO `enderpearls` VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "enderpearls VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")"
+							+ " ON CONFLICT (playername) DO UPDATE SET (enderpearls)=(" + entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "enderpearls VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockPlaceHashMap().entrySet())
-				st.addBatch("REPLACE INTO `places` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
-						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "places VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")" + " ON CONFLICT (playername,blockid) DO UPDATE SET (places)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "places VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockBreakHashMap().entrySet())
-				st.addBatch("REPLACE INTO `breaks` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
-						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "breaks VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")" + " ON CONFLICT (playername,blockid) DO UPDATE SET (breaks)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "breaks VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getKillHashMap().entrySet())
-				st.addBatch("REPLACE INTO `kills` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
-						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "kills VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")" + " ON CONFLICT (playername,mobname) DO UPDATE SET (kills)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "kills VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")");
 
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getCraftHashMap().entrySet())
-				st.addBatch("REPLACE INTO `crafts` VALUES ('" + entry.getKey().substring(0, 36) + "', '"
-						+ entry.getKey().substring(36) + "', " + entry.getValue() + ")");
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "crafts VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")" + " ON CONFLICT (playername,item) DO UPDATE SET (crafts)=("
+							+ entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + "crafts VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")");
 
 			st.executeBatch();
 
