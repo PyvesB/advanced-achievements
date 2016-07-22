@@ -41,7 +41,6 @@ public class ListCommand {
 
 	// Minecraft font, used to display progress bar.
 	private MinecraftFont FONT = MinecraftFont.Font;
-	
 
 	public ListCommand(AdvancedAchievements plugin) {
 
@@ -298,6 +297,7 @@ public class ListCommand {
 					numberOfCategories++;
 				}
 			}
+			player.closeInventory();
 			// Display GUI to the player.
 			player.openInventory(guiInv);
 		} else {
@@ -475,7 +475,7 @@ public class ListCommand {
 		// Create a new chest-like inventory; make it as small as possible while still containing all achievements.
 		Inventory inventory = Bukkit.createInventory(null,
 				getClosestGreaterMultipleOf9(
-						plugin.getPluginConfig().getConfigurationSection(category).getKeys(false).size()),
+						plugin.getPluginConfig().getConfigurationSection(category).getKeys(false).size() + 1),
 				ChatColor.translateAlternateColorCodes('&',
 						plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
 
@@ -492,6 +492,14 @@ public class ListCommand {
 			createGUIItem(inventory, positionInGUI, ach, statistic, achName, achMessage, rewards, date);
 			positionInGUI++;
 		}
+
+		// Add "back button" item.
+		ItemStack achItem = new ItemStack(Material.PAPER);
+		ItemMeta connectionsMeta = achItem.getItemMeta();
+		connectionsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+				StringEscapeUtils.unescapeJava(plugin.getPluginLang().getString("list-back-message", "&7Back"))));
+		achItem.setItemMeta(connectionsMeta);
+		inventory.setItem(positionInGUI, achItem);
 
 		// Close main GUI.
 		player.closeInventory();
@@ -536,10 +544,10 @@ public class ListCommand {
 		}
 
 		// Create a new chest-like inventory; make it as small as possible while still containing all achievements.
-		Inventory inventory = Bukkit.createInventory(null, getClosestGreaterMultipleOf9(totalAchievementsInCategory),
-				ChatColor.translateAlternateColorCodes('&',
-						plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
-		
+		Inventory inventory = Bukkit.createInventory(null,
+				getClosestGreaterMultipleOf9(totalAchievementsInCategory + 1), ChatColor.translateAlternateColorCodes(
+						'&', plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
+
 		int positionInGUI = 0;
 
 		// Match the item the player clicked on with its database statistic.
@@ -579,6 +587,14 @@ public class ListCommand {
 				positionInGUI++;
 			}
 		}
+
+		// Add "back button" item.
+		ItemStack achItem = new ItemStack(Material.PAPER);
+		ItemMeta connectionsMeta = achItem.getItemMeta();
+		connectionsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+				StringEscapeUtils.unescapeJava(plugin.getPluginLang().getString("list-back-message", "&7Back"))));
+		achItem.setItemMeta(connectionsMeta);
+		inventory.setItem(positionInGUI, achItem);
 
 		// Close main GUI.
 		player.closeInventory();

@@ -23,19 +23,6 @@ public class AchievementRewards {
 	}
 
 	/**
-	 * Check if achievement exists in configuration file.
-	 */
-	public Boolean checkAchievement(String ach) {
-
-		String check = plugin.getPluginConfig().getString(ach + ".Message", "null");
-		if (check.equals("null")) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	/**
 	 * Get item reward to a player (specified in configuration file).
 	 */
 	public ItemStack getItemReward(Player player, String ach, int amount) {
