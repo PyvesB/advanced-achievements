@@ -32,7 +32,7 @@ public class AchieveMilkListener implements Listener {
 		plugin.getPoolsManager().getMilkHashMap().put(player.getUniqueId().toString(), milks);
 
 		String configAchievement = "Milk." + milks;
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),

@@ -32,7 +32,7 @@ public class AchieveEnchantListener implements Listener {
 		plugin.getPoolsManager().getEnchantmentHashMap().put(player.getUniqueId().toString(), enchantments);
 		
 		String configAchievement = "Enchantments." + enchantments;
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),

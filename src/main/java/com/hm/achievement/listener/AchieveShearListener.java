@@ -32,7 +32,7 @@ public class AchieveShearListener implements Listener {
 		plugin.getPoolsManager().getShearHashMap().put(player.getUniqueId().toString(), shears);
 
 		String configAchievement = "Shear." + shears;
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),

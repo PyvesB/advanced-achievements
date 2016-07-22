@@ -35,7 +35,7 @@ public class AchieveArrowListener implements Listener {
 		plugin.getPoolsManager().getArrowHashMap().put(player.getUniqueId().toString(), arrows);
 
 		String configAchievement = "Arrows." + arrows;
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),

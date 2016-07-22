@@ -58,7 +58,7 @@ public class AchieveKillListener implements Listener {
 		plugin.getPoolsManager().getKillHashMap().put(player.getUniqueId().toString() + mobName, kills);
 
 		String configAchievement = "Kills." + mobName + '.' + kills;
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),

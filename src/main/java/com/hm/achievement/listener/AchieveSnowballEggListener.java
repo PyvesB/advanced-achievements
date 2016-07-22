@@ -47,7 +47,8 @@ public class AchieveSnowballEggListener implements Listener {
 			configAchievement = "Eggs." + eggs;
 		} else
 			return;
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),

@@ -42,7 +42,7 @@ public class GiveCommand implements Listener {
 
 			return;
 		}
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			// Check whether player has already received achievement and cannot
 			// receive it again.

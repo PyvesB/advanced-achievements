@@ -44,7 +44,7 @@ public class CheckCommand implements Listener {
 		if (player == null) {
 
 			sender.sendMessage(plugin.getChatHeader()
-					+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:")
+					+ plugin.getPluginLang().getString("player-offline", "The player PLAYER is offline!")
 							.replaceAll("PLAYER", args[args.length - 1]));
 			return;
 		}

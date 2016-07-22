@@ -32,7 +32,7 @@ public class AchieveDropListener implements Listener {
 		plugin.getPoolsManager().getDropHashMap().put(player.getUniqueId().toString(), drops);
 
 		String configAchievement = "ItemDrops." + drops;
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),

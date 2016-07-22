@@ -34,7 +34,7 @@ public class AchieveDeathListener implements Listener {
 		plugin.getPoolsManager().getDeathHashMap().put(player.getUniqueId().toString(), deaths);
 
 		String configAchievement = "Deaths." + deaths;
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),

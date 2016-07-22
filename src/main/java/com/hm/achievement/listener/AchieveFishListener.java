@@ -34,7 +34,7 @@ public class AchieveFishListener implements Listener {
 		plugin.getPoolsManager().getFishHashMap().put(player.getUniqueId().toString(), fish);
 		
 		String configAchievement = "Fish." + fish;
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),

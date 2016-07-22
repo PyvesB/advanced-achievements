@@ -32,7 +32,7 @@ public class AchieveConnectionRunnable implements Runnable {
 
 			int connections = plugin.getDb().updateAndGetConnection(player, format.format(now));
 			String configAchievement = "Connections." + connections;
-			if (plugin.getReward().checkAchievement(configAchievement)) {
+			if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 				plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 				plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),

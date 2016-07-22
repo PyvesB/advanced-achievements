@@ -31,6 +31,11 @@ public class ListGUIListener implements Listener {
 		// Prevent players from taking items out of the GUI.
 		event.setCancelled(true);
 
+		// Back button; display main GUI again.
+		if (event.getCurrentItem().getType() == Material.PAPER) {
+			plugin.getAchievementListCommand().createMainGUI((Player) event.getWhoClicked());
+		}
+
 		// GUI corresponding to the achievement listing of a given category. Do not let the player interact with it.
 		if (event.getInventory().getItem(0).getType() == Material.STAINED_CLAY)
 			return;
@@ -40,7 +45,7 @@ public class ListGUIListener implements Listener {
 		if (event.getInventory().getItem(0).getType() != Material.STAINED_CLAY
 				&& (event.getCurrentItem().getType() == Material.BARRIER
 						|| event.getRawSlot() > AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length
-								+ AdvancedAchievements.NORMAL_ACHIEVEMENTS.length
+								+ AdvancedAchievements.NORMAL_ACHIEVEMENTS.length + 1
 								- plugin.getDisabledCategorySet().size()))
 			return;
 

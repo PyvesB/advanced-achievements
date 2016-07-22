@@ -33,7 +33,7 @@ public class AchieveBedListener implements Listener {
 		plugin.getPoolsManager().getBedHashMap().put(player.getUniqueId().toString(), beds);
 
 		String configAchievement = "Beds." + beds;
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),

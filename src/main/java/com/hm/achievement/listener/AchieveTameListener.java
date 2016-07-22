@@ -34,7 +34,7 @@ public class AchieveTameListener implements Listener {
 		plugin.getPoolsManager().getTameHashMap().put(player.getUniqueId().toString(), tames);
 
 		String configAchievement = "Taming." + tames;
-		if (plugin.getReward().checkAchievement(configAchievement)) {
+		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
