@@ -1,8 +1,10 @@
 package com.hm.achievement;
 
+import com.hm.achievement.utils.YamlManager;
 import net.milkbowl.vault.item.Items;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -28,23 +30,36 @@ public class AchievementRewards {
 	public ItemStack getItemReward(Player player, String ach, int amount) {
 
 		ItemStack item;
+		YamlManager config = plugin.getPluginConfig();
+
 		try {
+
 			// Old config syntax.
-			if (plugin.getPluginConfig().getKeys(true).contains(ach + ".Reward.Item.Type"))
+			if (config.getKeys(true).contains(ach + ".Reward.Item.Type")) {
 				item = new ItemStack(
 						Material.getMaterial(
-								plugin.getPluginConfig().getString(ach + ".Reward.Item.Type", "stone").toUpperCase()),
+								config.getString(ach + ".Reward.Item.Type", "stone").toUpperCase()),
 						amount);
-			// New config syntax.
-			else
-				item = new ItemStack(
-						Material.getMaterial(plugin.getPluginConfig()
-								.getString(ach + ".Reward.Item", "stone").toUpperCase().substring(0, plugin
-										.getPluginConfig().getString(ach + ".Reward.Item", "stone").indexOf(" "))),
-						amount);
+			} else {
+				// New config syntax.
+				// Reward is of the form:
+				// Item: coal 5
+				// The amount has already been parsed out and is provided by parameter amount
+
+				String materialNameAndQty = config.getString(ach + ".Reward.Item", "stone");
+				int indexSpace = materialNameAndQty.indexOf(" ");
+
+				String materialName;
+				if (indexSpace > 0)
+					materialName = materialNameAndQty.toUpperCase().substring(0, indexSpace);
+				else
+					materialName = materialNameAndQty.toUpperCase();
+
+				item = new ItemStack(Material.getMaterial(materialName), amount);
+			}
 		} catch (NullPointerException e) {
 			plugin.getLogger().warning("Invalid item reward for achievement \""
-					+ plugin.getPluginConfig().getString(ach + ".Name") + "\". Please specify a valid Material name.");
+					+ config.getString(ach + ".Name") + "\". Please specify a valid Material name.");
 			return null;
 		}
 
@@ -102,11 +117,13 @@ public class AchievementRewards {
 	public ArrayList<String> getRewardType(String configAchievement) {
 
 		ArrayList<String> rewardType = new ArrayList<String>();
-		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Money"))
+		Set<String> keyNames = plugin.getPluginConfig().getKeys(true);
+
+		if (keyNames.contains(configAchievement + ".Reward.Money"))
 			rewardType.add(plugin.getPluginLang().getString("list-reward-money", "money"));
-		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Item"))
+		if (keyNames.contains(configAchievement + ".Reward.Item"))
 			rewardType.add(plugin.getPluginLang().getString("list-reward-item", "item"));
-		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Command"))
+		if (keyNames.contains(configAchievement + ".Reward.Command"))
 			rewardType.add(plugin.getPluginLang().getString("list-reward-command", "other"));
 
 		return rewardType;
@@ -117,37 +134,41 @@ public class AchievementRewards {
 	 */
 	public void checkConfig(Player player, String configAchievement) {
 
+		YamlManager config = plugin.getPluginConfig();
+
 		// Supports both old and new plugin syntax.
-		int money = Math.max(plugin.getPluginConfig().getInt(configAchievement + ".Reward.Money", 0),
-				plugin.getPluginConfig().getInt(configAchievement + ".Reward.Money.Amount", 0));
+		int money = Math.max(config.getInt(configAchievement + ".Reward.Money", 0),
+		                     config.getInt(configAchievement + ".Reward.Money.Amount", 0));
 
 		int itemAmount = 0;
+
 		// Old config syntax.
-		if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
-			itemAmount = plugin.getPluginConfig().getInt(configAchievement + ".Reward.Item.Amount", 0);
-		} else if (plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Item")) { // New
+		if (config.getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
+			itemAmount = config.getInt(configAchievement + ".Reward.Item.Amount", 0);
+		} else if (config.getKeys(true).contains(configAchievement + ".Reward.Item")) {
+			// New
 			// config
 			// syntax.
+			String materialAndQty = config.getString(configAchievement + ".Reward.Item", "");
 			int indexOfAmount = 0;
-			indexOfAmount = plugin.getPluginConfig().getString(configAchievement + ".Reward.Item", "").indexOf(" ");
+			indexOfAmount = materialAndQty.indexOf(" ");
 			if (indexOfAmount != -1)
-				itemAmount = Integer.valueOf(plugin.getPluginConfig().getString(configAchievement + ".Reward.Item", "")
-						.substring(indexOfAmount + 1));
+				itemAmount = Integer.valueOf(materialAndQty.substring(indexOfAmount + 1));
 		}
 
-		String commandReward = plugin.getPluginConfig().getString(configAchievement + ".Reward.Command", "");
+		String commandReward = config.getString(configAchievement + ".Reward.Command", "");
 
-		if (money != 0) {
+		if (money > 0) {
 			rewardMoney(player, money);
 		}
-		if (itemAmount != 0) {
+		if (itemAmount > 0) {
 			ItemStack item = this.getItemReward(player, configAchievement, itemAmount);
 			if (player.getInventory().firstEmpty() != -1 && item != null)
 				player.getInventory().addItem(item);
 			else if (item != null)
 				player.getWorld().dropItem(player.getLocation(), item);
 		}
-		if (commandReward.length() != 0) {
+		if (commandReward.length() > 0) {
 
 			commandReward = commandReward.replace("PLAYER", player.getName());
 			// Multiple reward command can be set, separated by a semicolon and
@@ -155,11 +176,12 @@ public class AchievementRewards {
 			String[] commands = commandReward.split("; ");
 			for (String command : commands)
 				plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
-			if (!rewardCommandNotif
-					|| plugin.getPluginLang().getString("command-reward", "Reward command carried out!").length() == 0)
+
+			String rewardMsg = plugin.getPluginLang().getString("command-reward", "Reward command carried out!");
+			if (!rewardCommandNotif || rewardMsg.length() == 0)
 				return;
-			player.sendMessage(plugin.getChatHeader()
-					+ plugin.getPluginLang().getString("command-reward", "Reward command carried out!"));
+
+			player.sendMessage(plugin.getChatHeader() + rewardMsg);
 
 		}
 
