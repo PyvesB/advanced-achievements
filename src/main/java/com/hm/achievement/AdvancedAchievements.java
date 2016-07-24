@@ -50,7 +50,7 @@ import com.hm.achievement.utils.*;
  * spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 2.6-Beta
+ * @version 3.0-Beta
  * @author DarkPyves
  */
 
@@ -631,7 +631,7 @@ public class AdvancedAchievements extends JavaPlugin {
 					"Set the format of the achievement name in /aach list.");
 			updateDone = true;
 		}
-
+		
 		if (!config.getKeys(false).contains("HideRewardDisplayInList")) {
 			config.set("HideRewardDisplayInList", false, "Hide the reward display in /aach list.");
 			updateDone = true;
@@ -643,10 +643,19 @@ public class AdvancedAchievements extends JavaPlugin {
 			updateDone = true;
 		}
 
+		// Added in version 3.0:
 		if (!config.getKeys(false).contains("TablePrefix")) {
-			config.set("TablePrefix", "", new String[] {
-					"Prefix added to the tables in the database. If you switch from the default tables names (no prefix),",
-					"the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually." });
+			config.set("TablePrefix", "",
+					new String[] {
+							"Prefix added to the tables in the database. If you switch from the default tables names (no prefix),",
+							"the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.",
+							"Do a full server reload or restart to make this effective." });
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("BookChronologicalOrder")) {
+			config.set("BookChronologicalOrder", true,
+					"Sort pages of the book in chronological order (false for reverse chronological order).");
 			updateDone = true;
 		}
 
@@ -695,6 +704,98 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (!lang.getKeys(false).contains("list-achievement-not-received")) {
 			lang.set("list-achievement-not-received", "&4\u2717&8 ");
+			updateDone = true;
+		}
+
+		// Added in version 3.0:
+		if (!lang.getKeys(false).contains("book-date")) {
+			lang.set("book-date", "Book created on DATE.");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("list-back-message")) {
+			lang.set("list-back-message", "&7Back");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("week-achievement")) {
+			lang.set("week-achievement", "Weekly achievement rankings:");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("month-achievement")) {
+			lang.set("month-achievement", "Monthly achievement rankings:");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-week")) {
+			lang.set("aach-command-week", "Display weekly rankings.");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-month")) {
+			lang.set("aach-command-month", "Display monthly rankings.");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("not-ranked")) {
+			lang.set("not-ranked", "You are currently not ranked for this period.");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-book-hover")) {
+			lang.set("aach-command-book-hover",
+					"RP items you can collect and exchange with others! Time-based listing.");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-stats-hover")) {
+			lang.set("aach-command-stats-hover", "Progress bar. Gotta catch 'em all!");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-list-hover")) {
+			lang.set("aach-command-list-hover", "Fancy GUI to get an overview of all achievements and your progress!");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-top-hover")) {
+			lang.set("aach-command-top-hover", "Who are the server's leaders and how do you compare to them?");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-give-hover")) {
+			lang.set("aach-command-give-hover", "Player must be online; only Commands achievements can be used.");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-reload-hover")) {
+			lang.set("aach-command-reload-hover", "Reload most settings in config.yml and lang.yml files.");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-info-hover")) {
+			lang.set("aach-command-info-hover", "Some extra info about the plugin and its awesome author!");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-check-hover")) {
+			lang.set("aach-command-check-hover", "Don't forget to add the colors defined in the config file.");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-delete-hover")) {
+			lang.set("aach-command-delete-hover", "Player must be online; does not reset any associated statistics.");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-week-hover")) {
+			lang.set("aach-command-week-hover", "Best achievement hunters since the start of the week!");
+			updateDone = true;
+		}
+
+		if (!lang.getKeys(false).contains("aach-command-month-hover")) {
+			lang.set("aach-command-month-hover", "Best achievement hunters since the start of the month!");
 			updateDone = true;
 		}
 
@@ -868,8 +969,13 @@ public class AdvancedAchievements extends JavaPlugin {
 				}
 			} else if (args[0].equalsIgnoreCase("stats") && sender instanceof Player) {
 
-				statsCommand.getStats((Player) sender);
+				if (sender.hasPermission("achievement.stats")) {
+					statsCommand.getStats((Player) sender);
+				} else {
 
+					sender.sendMessage(chatHeader
+							+ lang.getString("no-permissions", "You do not have the permission to do this."));
+				}
 			} else if (args[0].equalsIgnoreCase("list") && sender instanceof Player) {
 
 				if (sender.hasPermission("achievement.list")) {
@@ -881,8 +987,31 @@ public class AdvancedAchievements extends JavaPlugin {
 				}
 			} else if (args[0].equalsIgnoreCase("top")) {
 
-				topCommand.getTop(sender);
+				if (sender.hasPermission("achievement.top")) {
+					topCommand.getTop(sender);
+				} else {
 
+					sender.sendMessage(chatHeader
+							+ lang.getString("no-permissions", "You do not have the permission to do this."));
+				}
+			} else if (args[0].equalsIgnoreCase("week")) {
+
+				if (sender.hasPermission("achievement.week")) {
+					topCommand.getWeek(sender);
+				} else {
+
+					sender.sendMessage(chatHeader
+							+ lang.getString("no-permissions", "You do not have the permission to do this."));
+				}
+			} else if (args[0].equalsIgnoreCase("month")) {
+
+				if (sender.hasPermission("achievement.month")) {
+					topCommand.getMonth(sender);
+				} else {
+
+					sender.sendMessage(chatHeader
+							+ lang.getString("no-permissions", "You do not have the permission to do this."));
+				}
 			} else if (args[0].equalsIgnoreCase("info")) {
 
 				infoCommand.getInfo(sender);

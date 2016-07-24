@@ -1,6 +1,9 @@
 package com.hm.achievement.command;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.bukkit.ChatColor;
@@ -41,8 +44,7 @@ public class BookCommand {
 	}
 
 	/**
-	 * Check is player hasn't received a book too recently (with "too recently"
-	 * being defined in configuration file).
+	 * Check is player hasn't received a book too recently (with "too recently" being defined in configuration file).
 	 */
 	private boolean timeAuthorisedBook(Player player) {
 
@@ -60,8 +62,7 @@ public class BookCommand {
 	}
 
 	/**
-	 * Give an achievements book to the player, or several books depending on
-	 * the number of achievements.
+	 * Give an achievements book to the player, or several books depending on the number of achievements.
 	 */
 	public void giveBook(Player player) {
 
@@ -86,23 +87,7 @@ public class BookCommand {
 
 			ArrayList<String> achievements = plugin.getDb().getPlayerAchievementsList(player);
 
-			int i = 0;
-			// Up to five achievement books can be generated (= 250
-			// achievements received by a player).
-			if (i == 0)
-				i = fillBook(achievements, player, i, 150, 1);
-
-			if (i > 149 && achievements.size() != 150)
-				i = fillBook(achievements, player, i, 300, 2);
-
-			if (i > 299 && achievements.size() != 300)
-				i = fillBook(achievements, player, i, 450, 3);
-
-			if (i > 449 && achievements.size() != 450)
-				i = fillBook(achievements, player, i, 600, 4);
-
-			if (i > 599 && achievements.size() != 600)
-				i = fillBook(achievements, player, i, 750, 5);
+			fillBook(achievements, player);
 
 			player.sendMessage(plugin.getChatHeader()
 					+ plugin.getPluginLang().getString("book-received", "You received your achievements book!"));
@@ -117,27 +102,31 @@ public class BookCommand {
 	/**
 	 * Construct the pages of a book.
 	 */
-	private int fillBook(ArrayList<String> achievements, Player player, int i, int max, int bookNumber) {
+	private void fillBook(ArrayList<String> achievements, Player player) {
 
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 		ArrayList<String> pages = new ArrayList<String>();
 		BookMeta bm = (BookMeta) book.getItemMeta();
 
 		try {
-			while (i < achievements.size() && i < max) {
+			for (int i = 0; i < achievements.size(); i += 3) {
 				String currentAchievement = "&0" + achievements.get(i) + "\n" + bookSeparator + "\n"
 						+ achievements.get(i + 1) + "\n" + bookSeparator + "\n&r" + achievements.get(i + 2);
 				currentAchievement = ChatColor.translateAlternateColorCodes('&', currentAchievement);
 				pages.add(currentAchievement);
-				i = i + 3;
 			}
-		} catch (Exception e) {
-			plugin.getLogger().severe("Error while creating book pages of book " + bookNumber + ".");
+		} catch (
+
+		Exception e) {
+			plugin.getLogger().severe("Error while creating book pages of book.");
 		}
 
 		bm.setPages(pages);
 		bm.setAuthor(player.getName());
-		bm.setTitle(plugin.getPluginLang().getString("book-name", "Achievements"));
+		bm.setTitle(plugin.getPluginLang().getString("book-name", "Achievements Book"));
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		bm.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&r&o" +plugin.getPluginLang().getString("book-date", "Book created on DATE.").replace("DATE",
+				format.format(new Date())))));
 
 		book.setItemMeta(bm);
 
@@ -147,7 +136,6 @@ public class BookCommand {
 			for (ItemStack item : new ItemStack[] { book })
 				player.getWorld().dropItem(player.getLocation(), item);
 
-		return i;
 	}
 
 	public HashMap<Player, Long> getPlayers() {
