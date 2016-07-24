@@ -23,8 +23,10 @@ public class ListGUIListener implements Listener {
 	public void onInventoryClick(InventoryClickEvent event) {
 
 		// Inventory not related to the plugin: do nothing.
-		if (!event.getInventory().getName().startsWith(ChatColor.translateAlternateColorCodes('&',
-				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")))) {
+		if (!event.getInventory().getName()
+				.startsWith(ChatColor.translateAlternateColorCodes('&',
+						plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")))
+				|| event.getRawSlot() < 0) {
 			return;
 		}
 
@@ -45,7 +47,7 @@ public class ListGUIListener implements Listener {
 		if (event.getInventory().getItem(0).getType() != Material.STAINED_CLAY
 				&& (event.getCurrentItem().getType() == Material.BARRIER
 						|| event.getRawSlot() > AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length
-								+ AdvancedAchievements.NORMAL_ACHIEVEMENTS.length + 1
+								+ AdvancedAchievements.NORMAL_ACHIEVEMENTS.length - 1
 								- plugin.getDisabledCategorySet().size()))
 			return;
 

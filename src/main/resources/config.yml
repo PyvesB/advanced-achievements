@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |    Advanced Achievements 2.5.6 configuration - Readme   | #
+# |     Advanced Achievements 3.0 configuration - Readme    | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -82,7 +82,7 @@ DisabledCategories: []
 #  - Crafts
 
 # Obfuscate achievements that have not yet been received in /aach list.
-ObfuscateNotReceived: true
+ObfuscateNotReceived: false
 
 # Hide categories with no achievements yet received in /aach list.
 HideNotReceivedCategories: false
@@ -93,6 +93,9 @@ HideRewardDisplayInList: false
 # Display achievement name and description as screen titles.
 TitleScreen: true
 
+# Sort pages of the book in chronological order (false for reverse chronological order).
+BookChronologicalOrder: true
+
 #=============================OOO=============================#
 # III-----------------------------------------------------III #
 # |                    Database settings                    | #
@@ -102,11 +105,12 @@ TitleScreen: true
 # Make a daily backup of your local database (if sqlite).
 DatabaseBackup: true
 
-# Database type, sqlite, postgresql or mysql.
+# Database type, sqlite, postgresql or mysql. Do a full server reload or restart to make this effective.
 DatabaseType: sqlite
 
 # Prefix added to the tables in the database. If you switch from the default tables names (no prefix),
 # the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.
+# Do a full server reload or restart to make this effective.
 TablePrefix: ''
 
 # Settings to link with MySQL database (ignore if sqlite or postgresql).

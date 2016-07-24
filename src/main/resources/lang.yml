@@ -1,6 +1,6 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |   Advanced Achievements 2.5.6 English language file    | #
+# |    Advanced Achievements 3.0 English language file     | #
 # |                      By DarkPyves                      | #
 # +--------------------------------------------------------+ #
 #============================================================#
@@ -11,9 +11,12 @@ no-permissions: "You do not have the permission to do this."
 configuration-successfully-reloaded: "Configuration successfully reloaded."
 configuration-reload-failed: "Errors while reloading configuration. Please view logs for more details."
 
-# Related to /aach top.
+# Related to /aach top week and month.
 top-achievement: "Top achievement owners:"
 player-rank: "Current rank:"
+week-achievement: "Weekly achievement rankings:"
+month-achievement: "Monthly achievement rankings:"
+not-ranked: "You are currently not ranked for this period."
 
 # Related to /aach stats.
 number-achievements: "Achievements received:"
@@ -21,7 +24,8 @@ number-achievements: "Achievements received:"
 # Related to /aach book.
 book-received: "You received your achievements book!"
 book-delay: "You must wait TIME seconds between each book reception!"
-book-name: "Achievements"
+book-name: "Achievements Book"
+book-date: "Book created on DATE."
 
 # Related to /aach give.
 player-offline: "The player PLAYER is offline!"
@@ -47,14 +51,27 @@ command-reward: "Reward command carried out!"
 
 # Related to /aach help.
 aach-command-book: "Receive your achievements book."
-aach-command-stats: "Amount of achievements you have received."
+aach-command-book-hover: "RP items you can collect and exchange with others! Time-based listing."
+aach-command-stats: "Display amount of received achievements."
+aach-command-stats-hover: "Progress bar. Gotta catch 'em all!"
 aach-command-list: "Display received and missing achievements."
+aach-command-list-hover: "Fancy GUI to get an overview of all achievements and your progress!"
 aach-command-top: "Display personal and global rankings."
-aach-command-give: "Give achievement ACH to player &7NAME."
+aach-command-top-hover: "Who are the server's leaders and how do you compare to them?"
+aach-command-give: "Give achievement ACH to NAME."
+aach-command-give-hover: "Player must be online; only Commands achievements can be used."
 aach-command-reload: "Reload the plugin's configuration."
-aach-command-info: "Display various information about the plugin."
-aach-command-check: "Check if player NAME has &7received ACH."
-aach-command-delete: "Delete achievement ACH from &7player NAME."
+aach-command-reload-hover: "Reload most settings in config.yml and lang.yml files."
+aach-command-info: "Display information about the plugin."
+aach-command-info-hover: "Some extra info about the plugin and its awesome author!"
+aach-command-check: "Check if NAME has ACH."
+aach-command-check-hover: "Don't forget to add the colors defined in the config file."
+aach-command-delete: "Delete ACH from NAME."
+aach-command-delete-hover: "Player must be online; does not reset any associated statistics."
+aach-command-week: "Display weekly rankings."
+aach-command-week-hover: "Best achievement hunters since the start of the week!"
+aach-command-month: "Display monthly rankings."
+aach-command-month-hover: "Best achievement hunters since the start of the month!"
 
 # Related to /aach info.
 version-command-name: "Name:"
@@ -77,6 +94,7 @@ list-amount: "Lvl: "
 list-achievement-received: "&5\u2713&f "
 list-achievement-not-received: "&4\u2717&8 "
 list-category-not-unlocked: "You have not yet unlocked this category."
+list-back-message: "&7Back"
 
 # Related to category names in /aach list.
 list-connections: "Connections"

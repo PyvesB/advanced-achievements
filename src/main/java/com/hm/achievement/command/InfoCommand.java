@@ -38,15 +38,19 @@ public class InfoCommand {
 		if (plugin.setUpEconomy(false))
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " "
-					+ ChatColor.GRAY + "YES");
+					+ ChatColor.GRAY + "ON");
 		else
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " "
-					+ ChatColor.GRAY + "NO");
+					+ ChatColor.GRAY + "OFF");
 		if (plugin.getPluginConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
 					+ ChatColor.GRAY + "MySQL");
+		else if (plugin.getPluginConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("postgresql"))
+			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
+					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
+					+ ChatColor.GRAY + "PostgreSQL");
 		else
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "

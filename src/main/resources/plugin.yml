@@ -18,6 +18,18 @@ permissions:
   achievement.list:
     description: Allows to display  name of received and missing achievements.
     default: true
+  achievement.top:
+    description: Allows to display global achievement rankings.
+    default: true
+  achievement.week:
+    description: Allows to display weekly achievement rankings.
+    default: true
+  achievement.month:
+    description: Allows to display monthly achievement rankings.
+    default: true
+  achievement.stats:
+    description: Allows to display achievement stats.
+    default: true
   achievement.reload:
     description: Allows to reload the plugin's configuration.
     default: op
@@ -36,10 +48,13 @@ permissions:
   achievement.*:
     description: Star notation of permissions, includes all the above ones and disables book and list commands delays.
     default: op
-    children:
-      achievement.get: true
+    children:      
       achievement.book: true
       achievement.list: true
+      achievement.top: true
+      achievement.week: true
+      achievement.month: true
+      achievement.stats: true
       achievement.reload: true
       achievement.give: true
       achievement.check: true

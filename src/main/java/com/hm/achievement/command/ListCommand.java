@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MinecraftFont;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 public class ListCommand {
 
@@ -93,7 +94,7 @@ public class ListCommand {
 
 		// Simple and fast check to retrieve Minecraft version. Might need to be updated depending on how the
 		// Minecraft versions change in the future.
-		version = Integer.valueOf(Bukkit.getBukkitVersion().charAt(2) + "");
+		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 
 		// Get lists of item stacks for items displayed in the GUI.
 		multipleAchievementsTypesItems = new ItemStack[] { new ItemStack(Material.STONE, 1, (short) 6),
