@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
+import com.google.common.primitives.Ints;
 import com.hm.achievement.utils.YamlManager;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
@@ -25,6 +26,7 @@ public class ListCommand {
 	private AdvancedAchievements plugin;
 	private boolean hideNotReceivedCategories;
 	private boolean obfuscateNotReceived;
+	private boolean obfuscateProgressiveAchievements;
 	private boolean hideRewardDisplay;
 	private int listTime;
 	private int version;
@@ -52,6 +54,7 @@ public class ListCommand {
 		players = new HashMap<Player, Long>();
 		hideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
 		obfuscateNotReceived = plugin.getPluginConfig().getBoolean("ObfuscateNotReceived", true);
+		obfuscateProgressiveAchievements = plugin.getPluginConfig().getBoolean("ObfuscateProgressiveAchievements", false);
 		hideRewardDisplay = plugin.getPluginConfig().getBoolean("HideRewardDisplayInList", false);
 		listTime = plugin.getPluginConfig().getInt("TimeList", 0) * 1000;
 
@@ -489,8 +492,16 @@ public class ListCommand {
 
 		int positionInGUI = 0;
 
-		// Populate GUI with all the achievements for the category.
+		// Populate the GUI with all of the achievements for the category.
+
+		String previousItemDate = null;
+		int previousItemGoal = 0;
+
 		for (String ach : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
+
+			// ach is the threshold for obtaining this achievement
+			// Convert it to an integer
+			int currentItemGoal = Ints.tryParse(ach);
 
 			String achName;
 			String displayName = plugin.getPluginConfig().getString(category + '.' + ach + ".DisplayName", "");
@@ -515,8 +526,27 @@ public class ListCommand {
 			ArrayList<String> rewards = plugin.getReward().getRewardType(category + '.' + ach);
 			String date = plugin.getDb().getPlayerAchievementDate(player, achName);
 
-			createGUIItem(inventory, positionInGUI, ach, statistic, achName, achMessage, rewards, date);
+			boolean inelligibleSeriesItem;
+
+			if (positionInGUI == 0 || date != null || previousItemDate != null) {
+				// First achievement in the category or
+				// achievement has been completed or
+				// previous achievement has been completed
+				inelligibleSeriesItem = false;
+			} else {
+				// Check whether this achievement cannot be completed until the previous one is completed
+				if (currentItemGoal > previousItemGoal)
+					inelligibleSeriesItem = true;
+				else
+					inelligibleSeriesItem = false;
+			}
+
+			createGUIItem(inventory, positionInGUI, ach, statistic, achName, achMessage,
+					rewards, date, inelligibleSeriesItem);
 			positionInGUI++;
+
+			previousItemDate = date;
+			previousItemGoal = currentItemGoal;
 		}
 
 		// Add "back button" item.
@@ -601,9 +631,17 @@ public class ListCommand {
 					break;
 			}
 
+			String previousItemDate = null;
+			int previousItemGoal = 0;
+			int subcategoryIndex = 0;
+
 			// Populate GUI with all the achievements for the current sub-category.
 			ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + '.' + section);
 			for (String level : subcategoryConfig.getKeys(false)) {
+
+				// level is the threshold for obtaining this achievement
+				// Convert it to an integer
+				int currentItemGoal = Ints.tryParse(level);
 
 				String achName;
 				String displayName = config.getString(category + '.' + section + '.' + level + ".DisplayName", "");
@@ -628,8 +666,28 @@ public class ListCommand {
 				ArrayList<String> rewards = plugin.getReward().getRewardType(category + '.' + section + '.' + level);
 				String date = plugin.getDb().getPlayerAchievementDate(player, achName);
 
-				createGUIItem(inventory, positionInGUI, level, statistic, achName, achMessage, rewards, date);
+				boolean inelligibleSeriesItem;
+
+				if (subcategoryIndex == 0 || date != null || previousItemDate != null) {
+					// First achievement in the category or
+					// achievement has been completed or
+					// previous achievement has been completed
+					inelligibleSeriesItem = false;
+				} else {
+					// Check whether this achievement cannot be completed until the previous one is completed
+					if (currentItemGoal > previousItemGoal)
+						inelligibleSeriesItem = true;
+					else
+						inelligibleSeriesItem = false;
+				}
+
+				createGUIItem(inventory, positionInGUI, level, statistic, achName, achMessage,
+						rewards, date, inelligibleSeriesItem);
 				positionInGUI++;
+
+				previousItemDate = date;
+				previousItemGoal = currentItemGoal;
+				subcategoryIndex++;
 			}
 		}
 
@@ -652,20 +710,24 @@ public class ListCommand {
 	 * Create a GUI item for a given achievement.
 	 */
 	private void createGUIItem(Inventory inventory, int positionInGUI, String level, int statistic, String achName,
-			String achMessage, ArrayList<String> rewards, String date) {
+			String achMessage, ArrayList<String> rewards, String date, boolean inelligibleSeriesItem) {
 
 		// Display a clay block in the GUI, with a color depending on whether it was received or not, or whether it was
 		// started.
 		ItemStack achItem;
-		if (date != null)
+		if (date != null) {
+			// Item has been received
 			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 5);
-		else if (statistic > 0)
+		} else if (statistic > 0) {
+			// Player is making progress toward the item
 			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 4);
-		else
+		} else {
+			// Player has not started progress
 			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 14);
+		}
 
 		// Set name of the achievement. The style depends whether it was received or not and whether the user has set
-		// obfuscateNotReceived in the config.
+		// obfuscateNotReceived and/or obfuscateProgressiveAchievements in the config.
 		ItemMeta connectionsMeta = achItem.getItemMeta();
 		if (date != null)
 			connectionsMeta
@@ -673,7 +735,7 @@ public class ListCommand {
 							StringEscapeUtils.unescapeJava(
 									plugin.getPluginLang().getString("list-achievement-received", "&a\u2713&f "))
 									+ achName));
-		else if (obfuscateNotReceived)
+		else if (obfuscateNotReceived || (obfuscateProgressiveAchievements && inelligibleSeriesItem))
 			connectionsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 					StringEscapeUtils.unescapeJava(
 							plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2717&8 ")) + "&k"
@@ -685,7 +747,7 @@ public class ListCommand {
 									+ achName.replaceAll(REGEX_PATTERN.pattern(), ""))));
 
 		// Build the lore of the item.
-		ArrayList<String> lore = buildLoreString(achMessage, level, rewards, date, statistic);
+		ArrayList<String> lore = buildLoreString(achMessage, level, rewards, date, statistic, inelligibleSeriesItem);
 
 		connectionsMeta.setLore(lore);
 		achItem.setItemMeta(connectionsMeta);
@@ -697,7 +759,7 @@ public class ListCommand {
 	 * description, rewards.
 	 */
 	private ArrayList<String> buildLoreString(String achMessage, String level, ArrayList<String> rewards, String date,
-			int statistic) {
+			int statistic, boolean inelligibleSeriesItem) {
 
 		ArrayList<String> lore = new ArrayList<String>();
 
@@ -705,7 +767,7 @@ public class ListCommand {
 		// set obfuscateNotReceived in the config.
 		if (date != null)
 			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + achMessage));
-		else if (obfuscateNotReceived)
+		else if (obfuscateNotReceived || (obfuscateProgressiveAchievements && inelligibleSeriesItem))
 			lore.add(ChatColor.translateAlternateColorCodes('&',
 					"&8&k" + achMessage.replaceAll(REGEX_PATTERN.pattern(), "")));
 		else
