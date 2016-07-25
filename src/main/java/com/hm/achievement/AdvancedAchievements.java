@@ -9,12 +9,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 
+import com.google.common.collect.ObjectArrays;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
@@ -356,18 +359,19 @@ public class AdvancedAchievements extends JavaPlugin {
 	private void configurationLoad() {
 
 		successfulLoad = true;
+		Logger logger = this.getLogger();
 
-		this.getLogger().info("Backing up and loading configuration files...");
+		logger.info("Backing up and loading configuration files...");
 
 		try {
 			config = fileManager.getNewConfig("config.yml");
 		} catch (IOException e) {
-			this.getLogger().severe("Error while loading configuration file.");
+			logger.severe("Error while loading configuration file.");
 			e.printStackTrace();
 			successfulLoad = false;
 		} catch (InvalidConfigurationException e) {
-			this.getLogger().severe("Error while loading configuration file, disabling plugin.");
-			this.getLogger().severe(
+			logger.severe("Error while loading configuration file, disabling plugin.");
+			logger.severe(
 					"Verify your syntax using the following logs and by visiting yaml-online-parser.appspot.com");
 			e.printStackTrace();
 			successfulLoad = false;
@@ -379,12 +383,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		try {
 			lang = fileManager.getNewConfig("lang.yml");
 		} catch (IOException e) {
-			this.getLogger().severe("Error while loading language file.");
+			logger.severe("Error while loading language file.");
 			e.printStackTrace();
 			successfulLoad = false;
 		} catch (InvalidConfigurationException e) {
-			this.getLogger().severe("Error while loading language file, disabling plugin.");
-			this.getLogger().severe(
+			logger.severe("Error while loading language file, disabling plugin.");
+			logger.severe(
 					"Verify your syntax using the following logs and by visiting yaml-online-parser.appspot.com");
 			e.printStackTrace();
 			successfulLoad = false;
@@ -396,7 +400,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		try {
 			fileManager.backupFile("config.yml");
 		} catch (IOException e) {
-			this.getLogger().severe("Error while backing up configuration file.");
+			logger.severe("Error while backing up configuration file.");
 			e.printStackTrace();
 			successfulLoad = false;
 		}
@@ -404,7 +408,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		try {
 			fileManager.backupFile("lang.yml");
 		} catch (IOException e) {
-			this.getLogger().severe("Error while backing up language file.");
+			logger.severe("Error while backing up language file.");
 			e.printStackTrace();
 			successfulLoad = false;
 		}
@@ -413,7 +417,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		updateOldConfiguration();
 		updateOldLanguage();
 
-		this.getLogger().info("Loading configs, registering permissions and initialising command modules...");
+		logger.info("Loading configs, registering permissions and initialising command modules...");
 
 		// Load parameters.
 		icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
@@ -464,7 +468,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			MetricsLite metrics = new MetricsLite(this);
 			metrics.start();
 		} catch (IOException e) {
-			this.getLogger().severe("Error while sending Metrics statistics.");
+			logger.severe("Error while sending Metrics statistics.");
 			successfulLoad = false;
 		}
 
@@ -473,15 +477,81 @@ public class AdvancedAchievements extends JavaPlugin {
 			File backup = new File(this.getDataFolder(), "achievements.db.bak");
 			// Only do a daily backup for the .db file.
 			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
-				this.getLogger().info("Backing up database file...");
+				logger.info("Backing up database file...");
 				try {
 					fileManager.backupFile("achievements.db");
 				} catch (IOException e) {
-					this.getLogger().severe("Error while backing up database file.");
+					logger.severe("Error while backing up database file.");
 					e.printStackTrace();
 					successfulLoad = false;
 				}
 			}
+		}
+
+		logAchievementStats();
+	}
+
+	private void logAchievementStats() {
+
+		YamlManager config = getPluginConfig();
+		int totalAchievements = 0;
+		int categoriesInUse = 0;
+
+		// Enumerate the normal achievements
+		for (String category : NORMAL_ACHIEVEMENTS) {
+			if (disabledCategorySet.contains(category))
+				continue;
+
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category);
+			int keyCount = categoryConfig.getKeys(false).size();
+			if (keyCount > 0) {
+				categoriesInUse += 1;
+				totalAchievements += keyCount;
+			}
+		}
+
+		// Enumerate the achievements with multiple categories
+		for (String category : MULTIPLE_ACHIEVEMENTS) {
+			if (disabledCategorySet.contains(category))
+				continue;
+
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category);
+			Set<String> categorySections = categoryConfig.getKeys(false);
+
+			if (categorySections.size() == 0)
+				continue;
+
+			categoriesInUse +=1;
+
+			// Enumerate the sub-categories
+			for (String section : categorySections) {
+				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + '.' + section);
+				int achievementCount = subcategoryConfig.getKeys(false).size();
+				if (achievementCount > 0) {
+					totalAchievements += achievementCount;
+				}
+			}
+		}
+
+		this.getLogger().info("Loaded " + totalAchievements + " achievements in " + categoriesInUse + " categories");
+
+		if (disabledCategorySet.size() > 0) {
+			StringBuilder disabledCategories = new StringBuilder();
+
+			if (disabledCategorySet.size() == 1)
+				disabledCategories.append(disabledCategorySet.size() + " disabled category: ");
+			else
+				disabledCategories.append(disabledCategorySet.size() + " disabled categories: ");
+
+			for (String category: disabledCategorySet) {
+				disabledCategories.append(category + ", ");
+			}
+
+			// Remove the trailing comma and space
+			disabledCategories.deleteCharAt(disabledCategories.length() - 1);
+			disabledCategories.deleteCharAt(disabledCategories.length() - 1);
+
+			this.getLogger().info(disabledCategories.toString());
 		}
 	}
 
