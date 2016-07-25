@@ -180,6 +180,8 @@ public class ListCommand {
 			// Total number of categories already displayed.
 			int numberOfCategories = 0;
 
+			YamlManager config = plugin.getPluginConfig();
+
 			// Display categories with multiple sub-categories in GUI.
 			for (int i = 0; i < AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length; i++) {
 				// Hide category if the user has defined an empty name for it.
@@ -196,13 +198,13 @@ public class ListCommand {
 					if (hideNotReceivedCategories) {
 						hasReceivedInCategory = false;
 						// Iterate through all sub-categories.
-						for (String section : plugin.getPluginConfig().getConfigurationSection(category)
+						for (String section : config.getConfigurationSection(category)
 								.getKeys(false)) {
 							// Iterate through all achievements in sub-category.
-							for (String ach : plugin.getPluginConfig().getConfigurationSection(category + '.' + section)
+							for (String ach : config.getConfigurationSection(category + '.' + section)
 									.getKeys(false)) {
 								// Check whether player has received achievement.
-								if (plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig()
+								if (plugin.getDb().hasPlayerAchievement(player, config
 										.getString(category + '.' + section + '.' + ach + ".Name", ""))) {
 									// At least one achievement was received in the current category; it is unlocked,
 									// can continue processing.
@@ -224,7 +226,7 @@ public class ListCommand {
 						categoryItem = multipleAchievementsTypesItems[i];
 						categoryMeta = categoryItem.getItemMeta();
 						categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-								"&8" + plugin.getPluginConfig()
+								"&8" + config
 										.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
 										.replaceAll("%ICON%", plugin.getIcon())
 										.replaceAll("%NAME%", multipleAchievementTypesLanguage[i])));
@@ -261,10 +263,10 @@ public class ListCommand {
 					if (hideNotReceivedCategories) {
 						hasReceivedInCategory = false;
 						// Iterate through all achievements in category.
-						for (String ach : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
+						for (String ach : config.getConfigurationSection(category).getKeys(false)) {
 							/// Check whether player has received achievement.
 							if (plugin.getDb().hasPlayerAchievement(player,
-									plugin.getPluginConfig().getString(category + '.' + ach + ".Name", ""))) {
+									config.getString(category + '.' + ach + ".Name", ""))) {
 								// At least one achievement was received in the current category; it is unlocked,
 								// can continue processing.
 								hasReceivedInCategory = true;
@@ -281,7 +283,7 @@ public class ListCommand {
 						categoryItem = normalAchievementsTypesItems[i];
 						categoryMeta = categoryItem.getItemMeta();
 						categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-								"&8" + plugin.getPluginConfig()
+								"&8" + config
 										.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
 										.replaceAll("%ICON%", plugin.getIcon())
 										.replaceAll("%NAME%", normalAchievementTypesLanguage[i])));
@@ -313,7 +315,7 @@ public class ListCommand {
 	}
 
 	/**
-	 * Display the a category GUI, containing all the achievements from a given category. This method is used for normal
+	 * Display a category GUI, containing all the achievements from a given category. This method is used for normal
 	 * achievements.
 	 */
 	public void createCategoryGUINormal(Material clickedItem, Player player) {
@@ -476,10 +478,12 @@ public class ListCommand {
 			}
 		}
 
+		YamlManager config = plugin.getPluginConfig();
+
 		// Create a new chest-like inventory; make it as small as possible while still containing all achievements.
 		Inventory inventory = Bukkit.createInventory(null,
 				getClosestGreaterMultipleOf9(
-						plugin.getPluginConfig().getConfigurationSection(category).getKeys(false).size() + 1),
+						config.getConfigurationSection(category).getKeys(false).size() + 1),
 				ChatColor.translateAlternateColorCodes('&',
 						plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
 
@@ -498,7 +502,16 @@ public class ListCommand {
 				achName = displayName;
 			}
 
-			String achMessage = plugin.getPluginConfig().getString(category + '.' + ach + ".Message", "");
+			String achMessage;
+			String goal = config.getString(category + '.' + ach + ".Goal", "");
+			if (Strings.isNullOrEmpty(goal)) {
+				// Show the achievement message below the achievement name
+				achMessage = config.getString(category + '.' + ach + ".Message", "");
+			} else {
+				// Show the goal below the achievement name
+				achMessage = goal;
+			}
+
 			ArrayList<String> rewards = plugin.getReward().getRewardType(category + '.' + ach);
 			String date = plugin.getDb().getPlayerAchievementDate(player, achName);
 
@@ -602,7 +615,16 @@ public class ListCommand {
 					achName = displayName;
 				}
 
-				String achMessage = config.getString(category + '.' + section + '.' + level + ".Message", "");
+				String achMessage;
+				String goal = config.getString(category + '.' + section + '.' + level + ".Goal", "");
+				if (Strings.isNullOrEmpty(goal)) {
+					// Show the achievement message below the achievement name
+					achMessage = config.getString(category + '.' + section + '.' + level + ".Message", "");
+				} else {
+					// Show the goal below the achievement name
+					achMessage = goal;
+				}
+
 				ArrayList<String> rewards = plugin.getReward().getRewardType(category + '.' + section + '.' + level);
 				String date = plugin.getDb().getPlayerAchievementDate(player, achName);
 
