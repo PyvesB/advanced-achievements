@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Strings;
+import com.hm.achievement.utils.YamlManager;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -485,7 +488,16 @@ public class ListCommand {
 		// Populate GUI with all the achievements for the category.
 		for (String ach : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
 
-			String achName = plugin.getPluginConfig().getString(category + '.' + ach + ".Name", "");
+			String achName;
+			String displayName = plugin.getPluginConfig().getString(category + '.' + ach + ".DisplayName", "");
+			if (Strings.isNullOrEmpty(displayName)) {
+				// Use the achievement key name (this name is used in the achievements table in the database)
+				achName = plugin.getPluginConfig().getString(category + '.' + ach + ".Name", "");
+			} else {
+				// Display name is defined; use it
+				achName = displayName;
+			}
+
 			String achMessage = plugin.getPluginConfig().getString(category + '.' + ach + ".Message", "");
 			ArrayList<String> rewards = plugin.getReward().getRewardType(category + '.' + ach);
 			String date = plugin.getDb().getPlayerAchievementDate(player, achName);
@@ -536,12 +548,15 @@ public class ListCommand {
 				break;
 		}
 
+		YamlManager config = plugin.getPluginConfig();
+		ConfigurationSection categoryConfig = config.getConfigurationSection(category);
+
 		int totalAchievementsInCategory = 0;
 
 		// Retrieve total number of achievements in the sub-categories of the category.
-		for (String section : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
-			totalAchievementsInCategory += plugin.getPluginConfig().getConfigurationSection(category + '.' + section)
-					.getKeys(false).size();
+		for (String section : categoryConfig.getKeys(false)) {
+			ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + '.' + section);
+			totalAchievementsInCategory += subcategoryConfig.getKeys(false).size();
 		}
 
 		// Create a new chest-like inventory; make it as small as possible while still containing all achievements.
@@ -552,7 +567,7 @@ public class ListCommand {
 		int positionInGUI = 0;
 
 		// Match the item the player clicked on with its database statistic.
-		for (String section : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
+		for (String section : categoryConfig.getKeys(false)) {
 
 			int statistic;
 			switch (item) {
@@ -574,13 +589,20 @@ public class ListCommand {
 			}
 
 			// Populate GUI with all the achievements for the current sub-category.
-			for (String level : plugin.getPluginConfig().getConfigurationSection(category + '.' + section)
-					.getKeys(false)) {
+			ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + '.' + section);
+			for (String level : subcategoryConfig.getKeys(false)) {
 
-				String achName = plugin.getPluginConfig().getString(category + '.' + section + '.' + level + ".Name",
-						"");
-				String achMessage = plugin.getPluginConfig()
-						.getString(category + '.' + section + '.' + level + ".Message", "");
+				String achName;
+				String displayName = config.getString(category + '.' + section + '.' + level + ".DisplayName", "");
+				if (Strings.isNullOrEmpty(displayName)) {
+					// Use the achievement key name (this name is used in the achievements table in the database)
+					achName = config.getString(category + '.' + section + '.' + level + ".Name", "");
+				} else {
+					// Display name is defined; use it
+					achName = displayName;
+				}
+
+				String achMessage = config.getString(category + '.' + section + '.' + level + ".Message", "");
 				ArrayList<String> rewards = plugin.getReward().getRewardType(category + '.' + section + '.' + level);
 				String date = plugin.getDb().getPlayerAchievementDate(player, achName);
 
