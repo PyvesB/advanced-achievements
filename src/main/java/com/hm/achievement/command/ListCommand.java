@@ -503,14 +503,16 @@ public class ListCommand {
 			// Convert it to an integer
 			int currentItemGoal = Ints.tryParse(ach);
 
-			String achName;
+			String achName = plugin.getPluginConfig().getString(category + '.' + ach + ".Name", "");
 			String displayName = plugin.getPluginConfig().getString(category + '.' + ach + ".DisplayName", "");
+			String nameToShowUser;
+
 			if (Strings.isNullOrEmpty(displayName)) {
 				// Use the achievement key name (this name is used in the achievements table in the database)
-				achName = plugin.getPluginConfig().getString(category + '.' + ach + ".Name", "");
+				nameToShowUser = achName;
 			} else {
 				// Display name is defined; use it
-				achName = displayName;
+				nameToShowUser = displayName;
 			}
 
 			String achMessage;
@@ -541,7 +543,7 @@ public class ListCommand {
 					inelligibleSeriesItem = false;
 			}
 
-			createGUIItem(inventory, positionInGUI, ach, statistic, achName, achMessage,
+			createGUIItem(inventory, positionInGUI, ach, statistic, nameToShowUser, achMessage,
 					rewards, date, inelligibleSeriesItem);
 			positionInGUI++;
 
@@ -643,14 +645,16 @@ public class ListCommand {
 				// Convert it to an integer
 				int currentItemGoal = Ints.tryParse(level);
 
-				String achName;
+				String achName = config.getString(category + '.' + section + '.' + level + ".Name", "");
 				String displayName = config.getString(category + '.' + section + '.' + level + ".DisplayName", "");
+				String nameToShowUser;
+
 				if (Strings.isNullOrEmpty(displayName)) {
 					// Use the achievement key name (this name is used in the achievements table in the database)
-					achName = config.getString(category + '.' + section + '.' + level + ".Name", "");
+					nameToShowUser = achName;
 				} else {
 					// Display name is defined; use it
-					achName = displayName;
+					nameToShowUser = displayName;
 				}
 
 				String achMessage;
@@ -681,7 +685,7 @@ public class ListCommand {
 						inelligibleSeriesItem = false;
 				}
 
-				createGUIItem(inventory, positionInGUI, level, statistic, achName, achMessage,
+				createGUIItem(inventory, positionInGUI, level, statistic, nameToShowUser, achMessage,
 						rewards, date, inelligibleSeriesItem);
 				positionInGUI++;
 
