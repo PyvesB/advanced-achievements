@@ -11,8 +11,10 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Strings;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -614,17 +616,30 @@ public class SQLDatabaseManager {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
 			ResultSet rs;
-			// Oldest date to newest one.
-			if (achievementsChronologicalOrder)
+
+			if (achievementsChronologicalOrder) {
+				// Oldest date to newest one.
 				rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements WHERE playername = '"
 						+ player.getUniqueId() + "' ORDER BY date ASC");
-			// Newest date to oldest one.
-			else
+			} else {
+				// Newest date to oldest one.
 				rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements WHERE playername = '"
 						+ player.getUniqueId() + "' ORDER BY date DESC");
+			}
+
 			ArrayList<String> achievementsList = new ArrayList<String>();
+			Map<String, String> achievementsAndDisplayNames = plugin.getAchievementsAndDisplayNames();
+
 			while (rs.next()) {
-				achievementsList.add(rs.getString(2));
+				String achName = rs.getString(2);
+				String displayName = achievementsAndDisplayNames.getOrDefault(achName, "");
+
+				if (Strings.isNullOrEmpty(displayName)) {
+					achievementsList.add(achName);
+				} else {
+					achievementsList.add(displayName);
+				}
+
 				achievementsList.add(rs.getString(3));
 				achievementsList.add(rs.getDate(4).toString());
 			}

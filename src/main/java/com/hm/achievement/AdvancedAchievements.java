@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import com.google.common.collect.ObjectArrays;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -1223,6 +1223,52 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AchieveXPListener getXpListener() {
 
 		return xpListener;
+	}
+
+	/**
+	 * Return a map from achievement name (as stored in the database) to DisplayName
+	 * If multiple achievements have the same achievement name, only the first DisplayName will be tracked
+	 * If DisplayName for an achievement is empty or undefined, the value in the returned map will be an empty string
+	 * @return Map from achievement name to user-friendly display name
+	 */
+	public Map<String, String> getAchievementsAndDisplayNames() {
+
+		Map<String, String> achievementsAndDisplayNames = new HashMap<>();
+
+		YamlManager config = getPluginConfig();
+
+		// Enumerate the normal achievements
+		for (String category : NORMAL_ACHIEVEMENTS) {
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category);
+			for (String ach : categoryConfig.getKeys(false)) {
+
+				String achName = config.getString(category + '.' + ach + ".Name", "");
+				String displayName = config.getString(category + '.' + ach + ".DisplayName", "");
+
+				if (!achievementsAndDisplayNames.containsKey(achName)) {
+					achievementsAndDisplayNames.put(achName, displayName);
+				}
+			}
+		}
+
+		// Enumerate the achievements with multiple categories
+		for (String category : MULTIPLE_ACHIEVEMENTS) {
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category);
+			for (String section : categoryConfig.getKeys(false)) {
+				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + '.' + section);
+				for (String level : subcategoryConfig.getKeys(false)) {
+
+					String achName = config.getString(category + '.' + section + '.' + level + ".Name", "");
+					String displayName = config.getString(category + '.' + section + '.' + level + ".DisplayName", "");
+
+					if (!achievementsAndDisplayNames.containsKey(achName)) {
+						achievementsAndDisplayNames.put(achName, displayName);
+					}
+				}
+			}
+		}
+
+		return achievementsAndDisplayNames;
 	}
 
 	public String getIcon() {
