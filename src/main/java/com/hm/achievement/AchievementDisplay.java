@@ -1,5 +1,7 @@
 package com.hm.achievement;
 
+import com.google.common.base.Strings;
+import com.hm.achievement.utils.YamlManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -24,10 +26,12 @@ public class AchievementDisplay {
 	public AchievementDisplay(AdvancedAchievements achievement) {
 
 		this.plugin = achievement;
-		fireworkStyle = plugin.getPluginConfig().getString("FireworkStyle", "BALL_LARGE");
-		firework = plugin.getPluginConfig().getBoolean("Firework", true);
-		chatNotify = plugin.getPluginConfig().getBoolean("ChatNotify", false);
-		titleScreen = plugin.getPluginConfig().getBoolean("TitleScreen", true);
+
+		YamlManager config = plugin.getPluginConfig();
+		fireworkStyle = config.getString("FireworkStyle", "BALL_LARGE");
+		firework = config.getBoolean("Firework", true);
+		chatNotify = config.getBoolean("ChatNotify", false);
+		titleScreen = config.getBoolean("TitleScreen", true);
 	}
 
 	/**
@@ -35,26 +39,38 @@ public class AchievementDisplay {
 	 * receives an achievement,
 	 */
 	public void displayAchievement(Player player, String configAchievement) {
+		YamlManager config = plugin.getPluginConfig();
 
-		String name = ChatColor.translateAlternateColorCodes('&',
-				plugin.getPluginConfig().getString(configAchievement + ".Name"));
-		String msg = ChatColor.translateAlternateColorCodes('&',
-				plugin.getPluginConfig().getString(configAchievement + ".Message"));
+		String achievementName = config.getString(configAchievement + ".Name");
+		String displayName = config.getString(configAchievement + ".DisplayName", "");
+		String message = config.getString(configAchievement + ".Message", "");
+		String nameToShowUser;
 
-		plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + name);
+		if (Strings.isNullOrEmpty(displayName)) {
+			// Use the achievement key name (this name is used in the achievements table in the database)
+			nameToShowUser = ChatColor.translateAlternateColorCodes('&', achievementName);
+			plugin.getLogger().info("Player " + player.getName() +
+					" received the achievement: " + achievementName);
+		} else {
+			// Display name is defined; use it
+			nameToShowUser = ChatColor.translateAlternateColorCodes('&', displayName);
+			plugin.getLogger().info("Player " + player.getName() +
+					" received the achievement: " + achievementName + " (" + displayName + ")");
+		}
+
+		String msg = ChatColor.translateAlternateColorCodes('&', message);
 
 		player.sendMessage(
 				plugin.getChatHeader() + plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " "
-						+ ChatColor.WHITE + name);
+						+ ChatColor.WHITE + nameToShowUser);
 
-		// Notify other online players that the player has received an
-		// achievement.
+		// Notify other online players that the player has received an achievement.
 		if (chatNotify) {
 			for (Player p : plugin.getServer().getOnlinePlayers()) {
 				if (!p.getName().equals(player.getName())) {
 					p.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
 							.getString("achievement-received", "PLAYER received the achievement:")
-							.replace("PLAYER", player.getName()) + " " + ChatColor.WHITE + name);
+							.replace("PLAYER", player.getName()) + " " + ChatColor.WHITE + nameToShowUser);
 
 				}
 			}
@@ -100,7 +116,7 @@ public class AchievementDisplay {
 		}
 		if (titleScreen) {
 			try {
-				PacketSender.sendTitlePacket(player, "{\"text\":\"" + name + "\"}", "{\"text\":\"" + msg + "\"}");
+				PacketSender.sendTitlePacket(player, "{\"text\":\"" + nameToShowUser + "\"}", "{\"text\":\"" + msg + "\"}");
 			} catch (Exception ex) {
 
 				plugin.getLogger()

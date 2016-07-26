@@ -84,6 +84,17 @@ DisabledCategories: []
 # Obfuscate achievements that have not yet been received in /aach list.
 ObfuscateNotReceived: false
 
+# Obfuscate progressive achievements:
+# For categories with a series of related achievements where the only thing changing
+# is the number of times the event has occurred, show achievements that have been obtained
+# and show the next obtainable achievement, but obfuscate the additional achievements.
+# In order for this to work properly, achievements must be sorted in order of increasing difficulty.
+# For example, under Places, stone, the first achievement could have a target of 100 stone,
+# the second 500 stone, and the third 1000 stone.  When ObfuscateProgressiveAchievements is true,
+# initially only the 100 stone achievement will be readable in the GUI.  Once 100 stone have been placed,
+# the 500 stone achievement will become legible.
+ObfuscateProgressiveAchievements: false
+
 # Hide categories with no achievements yet received in /aach list.
 HideNotReceivedCategories: false
 
@@ -166,7 +177,18 @@ Places:
     '1000':
       Message: '&4One thousand placed stones!'
       Name: Stone God
-      
+  smooth_brick:
+    '500':
+      Goal: 'Place 500 stone bricks.'
+      Message: '&4You have placed 500 stone bricks!'
+      Name: place_500_smooth_brick
+      DisplayName: 'Stone Brick Layer'
+    '2500':
+      Goal: 'Place 2500 stone bricks.'
+      Message: '&4You have placed 2500 stone bricks!'
+      Name: place_2500_smooth_brick
+      DisplayName: 'Stone Brick Architect'
+
 # When a specific block is broken (specify material name, lower case).
 # Below, the notation log:1 means log item with metadata 1.
 Breaks:
