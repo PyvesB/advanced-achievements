@@ -9,6 +9,12 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Milk achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveMilkListener implements Listener {
 
 	private AdvancedAchievements plugin;

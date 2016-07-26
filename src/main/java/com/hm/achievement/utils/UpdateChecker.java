@@ -11,6 +11,11 @@ import org.w3c.dom.NodeList;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Class used to check for newer versions of the plugin.
+ * 
+ * @author Pyves
+ */
 public class UpdateChecker {
 
 	private AdvancedAchievements plugin;
@@ -32,8 +37,7 @@ public class UpdateChecker {
 	}
 
 	/**
-	 * Check if a new version of AdvancedAchievements is available, and log in
-	 * console if new version found.
+	 * Check if a new version of AdvancedAchievements is available, and log in console if new version found.
 	 */
 	private boolean checkForUpdate() {
 

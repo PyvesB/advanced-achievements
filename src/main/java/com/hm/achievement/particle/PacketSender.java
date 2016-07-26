@@ -7,17 +7,31 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
+/**
+ * Class used to send packets to the player; can be titles or json messages.
+ * 
+ * @author Pyves
+ *
+ */
 public class PacketSender {
 
 	/**
 	 * Send the chat packet (hover and clickable messages).
+	 * 
+	 * @param player
+	 * @param json
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws NoSuchFieldException
 	 */
-	public static void sendChatPacket(Player player, String json) throws IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException, ClassNotFoundException, InstantiationException,
-			NoSuchFieldException {
+	public static void sendChatPacket(Player player, String json)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException,
+			InstantiationException, NoSuchFieldException {
 
-		// Retrieve a CraftPlayer instance and its PlayerConnection
-		// instance.
+		// Retrieve a CraftPlayer instance and its PlayerConnection instance.
 		Object craftPlayer = Class.forName(PackageType.CRAFTBUKKIT + ".entity.CraftPlayer").cast(player);
 		Object craftHandle = Class.forName(PackageType.CRAFTBUKKIT + ".entity.CraftPlayer").getMethod("getHandle")
 				.invoke(craftPlayer);
@@ -32,8 +46,8 @@ public class PacketSender {
 					.getMethod("a", String.class)
 					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
 		} catch (ClassNotFoundException e) {
-			parsedMessage = Class.forName(PackageType.MINECRAFT_SERVER + ".ChatSerializer")
-					.getMethod("a", String.class)
+			// Older versions of the game.
+			parsedMessage = Class.forName(PackageType.MINECRAFT_SERVER + ".ChatSerializer").getMethod("a", String.class)
 					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
 		}
 		Object packetPlayOutChat = Class.forName(PackageType.MINECRAFT_SERVER + ".PacketPlayOutChat")
@@ -48,10 +62,20 @@ public class PacketSender {
 
 	/**
 	 * Send the title packet (title and subtitle to appear on screen).
+	 * 
+	 * @param player
+	 * @param mainJson
+	 * @param subJson
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws NoSuchFieldException
 	 */
-	public static void sendTitlePacket(Player player, String mainJson, String subJson) throws IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException, ClassNotFoundException, InstantiationException,
-			NoSuchFieldException {
+	public static void sendTitlePacket(Player player, String mainJson, String subJson)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException,
+			InstantiationException, NoSuchFieldException {
 
 		// Retrieve a CraftPlayer instance and its PlayerConnection
 		// instance.
@@ -69,6 +93,7 @@ public class PacketSender {
 					.getMethod("a", String.class)
 					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), mainJson));
 		} catch (ClassNotFoundException e) {
+			// Older versions of the game.
 			parsedMainMessage = Class.forName(PackageType.MINECRAFT_SERVER + ".ChatSerializer")
 					.getMethod("a", String.class)
 					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), mainJson));
@@ -104,27 +129,26 @@ public class PacketSender {
 				subTitleEnumValue = e;
 		}
 
-		Object packetPlayOutChatMainTitle = ReflectionUtils.getConstructor(
-				Class.forName(PackageType.MINECRAFT_SERVER + ".PacketPlayOutTitle"),
-				Class.forName(PackageType.MINECRAFT_SERVER + ".PacketPlayOutTitle$EnumTitleAction"),
-				Class.forName(PackageType.MINECRAFT_SERVER + ".IChatBaseComponent")).newInstance(mainTitleEnumValue,
-				parsedMainMessage);
+		Object packetPlayOutChatMainTitle = ReflectionUtils
+				.getConstructor(Class.forName(PackageType.MINECRAFT_SERVER + ".PacketPlayOutTitle"),
+						Class.forName(PackageType.MINECRAFT_SERVER + ".PacketPlayOutTitle$EnumTitleAction"),
+						Class.forName(PackageType.MINECRAFT_SERVER + ".IChatBaseComponent"))
+				.newInstance(mainTitleEnumValue, parsedMainMessage);
 
-		// Send the message packet through the PlayerConnection.
+		// Send the message packet through the PlayerConnection (title).
 		Class.forName(PackageType.MINECRAFT_SERVER + ".PlayerConnection")
 				.getMethod("sendPacket", Class.forName(PackageType.MINECRAFT_SERVER + ".Packet"))
 				.invoke(playerConnection, packetPlayOutChatMainTitle);
 
-		Object packetPlayOutChatSubTitle = ReflectionUtils.getConstructor(
-				Class.forName(PackageType.MINECRAFT_SERVER + ".PacketPlayOutTitle"),
-				Class.forName(PackageType.MINECRAFT_SERVER + ".PacketPlayOutTitle$EnumTitleAction"),
-				Class.forName(PackageType.MINECRAFT_SERVER + ".IChatBaseComponent")).newInstance(subTitleEnumValue,
-				parsedSubMessage);
+		Object packetPlayOutChatSubTitle = ReflectionUtils
+				.getConstructor(Class.forName(PackageType.MINECRAFT_SERVER + ".PacketPlayOutTitle"),
+						Class.forName(PackageType.MINECRAFT_SERVER + ".PacketPlayOutTitle$EnumTitleAction"),
+						Class.forName(PackageType.MINECRAFT_SERVER + ".IChatBaseComponent"))
+				.newInstance(subTitleEnumValue, parsedSubMessage);
 
-		// Send the message packet through the PlayerConnection.
+		// Send the message packet through the PlayerConnection (subtitle).
 		Class.forName(PackageType.MINECRAFT_SERVER + ".PlayerConnection")
 				.getMethod("sendPacket", Class.forName(PackageType.MINECRAFT_SERVER + ".Packet"))
 				.invoke(playerConnection, packetPlayOutChatSubTitle);
 	}
-
 }

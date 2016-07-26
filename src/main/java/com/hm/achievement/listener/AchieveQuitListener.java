@@ -11,6 +11,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Distance and PlayedTime achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveQuitListener implements Listener {
 
 	private AdvancedAchievements plugin;
@@ -26,11 +32,11 @@ public class AchieveQuitListener implements Listener {
 
 		final String playerUUID = event.getPlayer().getUniqueId().toString();
 
-		// Clean HashMaps for commands.
+		// Clean cooldown HashMaps for book and list commands.
 		plugin.getAchievementBookCommand().getPlayers().remove(event.getPlayer());
 		plugin.getAchievementListCommand().getPlayers().remove(event.getPlayer());
 
-		// Clean HashSets cache.
+		// Remove player from HashSets cache for distance achievements.
 		if (plugin.getAchieveDistanceRunnable() != null
 				&& plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(event.getPlayer()) != null) {
 			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsFoot())
@@ -53,10 +59,9 @@ public class AchieveQuitListener implements Listener {
 					@Override
 					public void run() {
 
-						// Items must be removed from HashMaps after write to DB
-						// has finished in order to invalidate any data read in
-						// the meantime if the player reconnects (possible as
-						// this is an async task).
+						// Items must be removed from HashMaps AFTER write to DB has finished. As this is an async task,
+						// we could end up in a scenario where the player reconnects and data is not yet updated in the
+						// database; in this case, the cached variables will still be valid.
 						Integer distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot()
 								.get(playerUUID);
 						if (distance != null)
@@ -83,16 +88,15 @@ public class AchieveQuitListener implements Listener {
 						if (distance != null)
 							plugin.getDb().updateAndGetDistance(playerUUID, distance, "distanceminecart");
 						plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().remove(playerUUID);
-						
-						distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding()
-								.get(playerUUID);
+
+						distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding().get(playerUUID);
 						if (distance != null)
 							plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancegliding");
 						plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding().remove(playerUUID);
 					}
 				});
 			} else {
-				// Items can be removed from HashMaps directly.
+				// Items can be removed from HashMaps directly, as this is done in the main thread of execution.
 				Integer distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot().remove(playerUUID);
 				if (distance != null)
 					plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancefoot");
@@ -112,7 +116,7 @@ public class AchieveQuitListener implements Listener {
 				distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart().remove(playerUUID);
 				if (distance != null)
 					plugin.getDb().updateAndGetDistance(playerUUID, distance, "distanceminecart");
-				
+
 				distance = plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding().remove(playerUUID);
 				if (distance != null)
 					plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancegliding");
@@ -120,8 +124,7 @@ public class AchieveQuitListener implements Listener {
 		}
 
 		if (plugin.getAchievePlayTimeRunnable() != null) {
-			// Update database statistics for played time and clean
-			// HashMaps.
+			// Update database statistics for played time and clean HashMaps.
 			if (plugin.isAsyncPooledRequestsSender()) {
 
 				Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
@@ -129,10 +132,9 @@ public class AchieveQuitListener implements Listener {
 					@Override
 					public void run() {
 
-						// Items must be removed from HashMaps after write to DB
-						// has finished in order to invalidate any data read in
-						// the meantime if the player reconnects (possible as
-						// this is an async task).
+						// Items must be removed from HashMaps AFTER write to DB has finished. As this is an async task,
+						// we could end up in a scenario where the player reconnects and data is not yet updated in the
+						// database; in this case, the cached variables will still be valid.
 						Long playTime = plugin.getConnectionListener().getPlayTime().get(playerUUID);
 						Long joinTime = plugin.getConnectionListener().getJoinTime().get(playerUUID);
 
@@ -146,7 +148,7 @@ public class AchieveQuitListener implements Listener {
 
 				});
 			} else {
-				// Items can be removed from HashMaps directly.
+				// Items can be removed from HashMaps directly, as this is done in the main thread of execution.
 				Long playTime = plugin.getConnectionListener().getPlayTime().remove(playerUUID);
 				Long joinTime = plugin.getConnectionListener().getJoinTime().remove(playerUUID);
 
@@ -154,11 +156,12 @@ public class AchieveQuitListener implements Listener {
 					plugin.getDb().updateAndGetPlaytime(playerUUID, playTime + System.currentTimeMillis() - joinTime);
 
 			}
-
+			// Remove player from HashSet cache for PlayedTime achievements.
 			for (HashSet<?> playerHashSet : plugin.getAchievePlayTimeRunnable().getPlayerAchievements())
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
 		}
 
+		// Remove player from HashSet cache for MaxLevel achievements.
 		if (plugin.getXpListener() != null) {
 			for (HashSet<?> playerHashSet : plugin.getXpListener().getPlayerAchievements())
 				((HashSet<Player>) playerHashSet).remove(event.getPlayer());

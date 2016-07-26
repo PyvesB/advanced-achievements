@@ -8,6 +8,12 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Deaths achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveDeathListener implements Listener {
 
 	private AdvancedAchievements plugin;

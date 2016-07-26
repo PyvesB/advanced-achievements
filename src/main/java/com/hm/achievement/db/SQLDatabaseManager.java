@@ -20,6 +20,13 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Class used to deal with the database and provide functions to evaluate common queries and retrieve the relevant
+ * results.
+ * 
+ * @author Pyves
+ *
+ */
 public class SQLDatabaseManager {
 
 	private AdvancedAchievements plugin;
@@ -27,15 +34,13 @@ public class SQLDatabaseManager {
 	private String databaseUser;
 	private String databasePassword;
 	private String tablePrefix;
-
 	private boolean achievementsChronologicalOrder;
-
+	private Connection sqlConnection;
 	private byte databaseType;
+
 	private static final byte SQLITE = 0;
 	private static final byte MYSQL = 1;
 	private static final byte POSTGRESQL = 2;
-
-	private Connection sqlConnection;
 
 	public SQLDatabaseManager(AdvancedAchievements plugin) {
 
@@ -50,7 +55,7 @@ public class SQLDatabaseManager {
 		// Load plugin settings.
 		configurationLoad();
 
-		// Check if JDBC library available.
+		// Check if JDBC library for the specified database system is available.
 		try {
 			if (databaseType == SQLITE)
 				Class.forName("org.sqlite.JDBC");
@@ -86,13 +91,12 @@ public class SQLDatabaseManager {
 					rs = st.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='"
 							+ databaseAddress.substring(databaseAddress.lastIndexOf('/') + 1)
 							+ "' AND table_name ='achievements'");
-
 				} else {
 					rs = st.executeQuery(
 							"SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'achievements' AND c.relkind = 'r'");
-
 				}
-				// Table with a default name (ie. no prefix) was found; do a renaming of all tables.
+				// Table achievements still has its default name (ie. no prefix), but a prefix is set in the
+				// configuration; do a renaming of all tables.
 				if (rs.next())
 					renameTables();
 
@@ -104,7 +108,7 @@ public class SQLDatabaseManager {
 			}
 		}
 
-		// Initialise database tables.
+		// Initialise database tables (ie. create if they don't exist).
 		try {
 			initialiseTables();
 
@@ -122,13 +126,11 @@ public class SQLDatabaseManager {
 			type = rs.getMetaData().getColumnTypeName(1);
 			st.close();
 			rs.close();
-
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while trying to update old DB: " + e);
 		}
 
-		// Old column type was integer for SQLite and smallint unsigned for
-		// MySQL.
+		// Old column type for versions prior to 2.4.1 was integer for SQLite and smallint unsigned for MySQL.
 		if (type.equalsIgnoreCase("integer") || type.equalsIgnoreCase("smallint unsigned")) {
 			plugin.getLogger().warning("Updating database tables, please wait...");
 			updateOldDBToMaterial(tablePrefix + "breaks");
@@ -136,6 +138,7 @@ public class SQLDatabaseManager {
 			updateOldDBToMaterial(tablePrefix + "places");
 		}
 
+		// Check if using old database prior to version 3.0.
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
@@ -147,8 +150,9 @@ public class SQLDatabaseManager {
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while trying to update old DB: " + e);
 		}
-
-		// Old type was a text string.
+		// Old column type for versions prior to 3.0 was text for SQLite, char for MySQL and varchar for PostgreSQL
+		// (even though PostgreSQL was not supported on versions prior to 3.0, we still support the upgrade for it in
+		// case a user imports anither database into PostgreSQL without doing the table upgrade beforehand).
 		if (type.equalsIgnoreCase("text") || type.equalsIgnoreCase("char") || type.equalsIgnoreCase("varchar")) {
 			plugin.getLogger().warning("Updating database tables, please wait...");
 			updateOldDBToDates();
@@ -156,41 +160,39 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Load plugin configuration and set values to different parameters relevant to the database system.
+	 * Load plugin configuration and set parameters relevant to the database system.
 	 */
 	private void configurationLoad() {
 
 		achievementsChronologicalOrder = plugin.getPluginConfig().getBoolean("BookChronologicalOrder", true);
-
 		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
+
 		String dataHandler = plugin.getPluginConfig().getString("DatabaseType", "sqlite");
 		if (dataHandler.equalsIgnoreCase("mysql")) {
-
+			// Get parameters from the MySQL config category.
 			databaseType = MYSQL;
 			databaseAddress = plugin.getPluginConfig().getString("MYSQL.Database",
 					"jdbc:mysql://localhost:3306/minecraft");
 			databaseUser = plugin.getPluginConfig().getString("MYSQL.User", "root");
 			databasePassword = plugin.getPluginConfig().getString("MYSQL.Password", "root");
-
 		} else if (dataHandler.equalsIgnoreCase("postgresql")) {
-
+			// Get parameters from the PostgreSQL config category.
 			databaseType = POSTGRESQL;
 			databaseAddress = plugin.getPluginConfig().getString("POSTGRESQL.Database",
 					"jdbc:postgresql://localhost:5432/minecraft");
 			databaseUser = plugin.getPluginConfig().getString("POSTGRESQL.User", "root");
 			databasePassword = plugin.getPluginConfig().getString("POSTGRESQL.Password", "root");
-
 		} else {
-
+			// No extra parameters to retrieve!
 			databaseType = SQLITE;
-
 		}
-
 	}
 
 	/**
-	 * Initialise database tables by creating non existing ones. Uses configuration file to determine which ones it is
-	 * relevant to try to create.
+	 * Initialise database tables by creating non existing ones. We batch the requests to send a unique batch to the
+	 * database.
+	 * 
+	 * @throws SQLException
 	 */
 	private void initialiseTables() throws SQLException {
 
@@ -271,11 +273,13 @@ public class SQLDatabaseManager {
 
 		st.executeBatch();
 		st.close();
-
 	}
 
 	/**
-	 * Rename the database tables with the prefix given in the configuration file.
+	 * Rename the database tables with the prefix given in the configuration file. This method is only used and only
+	 * works if the tables had the default name. It does not support multiple successive table renamings.
+	 * 
+	 * @throws SQLException
 	 */
 	private void renameTables() throws SQLException {
 
@@ -327,6 +331,8 @@ public class SQLDatabaseManager {
 	 * Update the database tables for break, craft and place achievements (from int to varchar for identification
 	 * column). The tables are now using material names and no longer item IDs, which are deprecated; this also allows
 	 * to store extra data information, extending the number of items available for the user.
+	 * 
+	 * @param tableName
 	 */
 	@SuppressWarnings("deprecation")
 	private void updateOldDBToMaterial(String tableName) {
@@ -345,13 +351,16 @@ public class SQLDatabaseManager {
 				amounts.add(rs.getInt(3));
 			}
 
+			// Preallocate space in array containing the values in the new format.
 			ArrayList<String> materials = new ArrayList<String>(ids.size());
 
-			for (int id : ids)
+			for (int id : ids) {
 				// Convert from ID to Material name.
 				materials.add(Material.getMaterial(id).name().toLowerCase());
-			conn.setAutoCommit(false); // Prevent from doing any commits before
-										// entire transaction is ready.
+			}
+			// Prevent from doing any commits before entire transaction is ready.
+			conn.setAutoCommit(false);
+
 			// Create new table.
 			if (!tableName.equals("crafts"))
 				st.execute("CREATE TABLE tempTable (playername char(36),blockid varchar(64)," + tableName
@@ -360,8 +369,7 @@ public class SQLDatabaseManager {
 				st.execute(
 						"CREATE TABLE tempTable (playername char(36),item varchar(64),crafts INT UNSIGNED,PRIMARY KEY(playername, item))");
 
-			// Populate new table with contents of the old one and material
-			// strings.
+			// Populate new table with contents of the old one and material strings. Batch the insert requests.
 			PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
 			for (int i = 0; i < uuids.size(); ++i) {
 				prep.setString(1, uuids.get(i));
@@ -371,14 +379,15 @@ public class SQLDatabaseManager {
 			}
 
 			prep.executeBatch();
-
+			// Delete old table.
 			st.execute("DROP TABLE " + tableName + "");
+			// Rename new table to old one.
 			st.execute("ALTER TABLE tempTable RENAME TO " + tableName + "");
-			conn.commit(); // Commit entire transaction.
+			// Commit entire transaction.
+			conn.commit();
 			conn.setAutoCommit(true);
 			st.close();
 			rs.close();
-
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while updating old DB (ids to material): " + e);
 		}
@@ -390,7 +399,8 @@ public class SQLDatabaseManager {
 	 */
 	private void updateOldDBToDates() {
 
-		// Early versions of the plugin added colors to the date. We have to get rid of them.
+		// Early versions of the plugin added colors to the date. We have to get rid of them by using a regex pattern;
+		// else parsing will fail.
 		final Pattern REGEX_PATERN = Pattern.compile("&([a-f]|[0-9]){1}");
 		// Old date format, which was stored as a string.
 		final SimpleDateFormat OLD_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
@@ -413,25 +423,26 @@ public class SQLDatabaseManager {
 				oldDates.add(rs.getString(4));
 			}
 
+			// Preallocate space in array containing the values in the new format.
 			ArrayList<java.sql.Date> newDates = new ArrayList<java.sql.Date>(oldDates.size());
 
-			// Convert to SQL date format.
 			try {
-				for (String date : oldDates)
-
+				for (String date : oldDates) {
+					// Convert to SQL date format.
 					newDates.add((new java.sql.Date(
 							OLD_FORMAT.parse(date.replaceAll(REGEX_PATERN.pattern(), "")).getTime())));
+				}
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			conn.setAutoCommit(false); // Prevent from doing any commits before
-										// entire transaction is ready.
+			// Prevent from doing any commits before entire transaction is ready.
+			conn.setAutoCommit(false);
+
 			// Create new table.
 			st.execute(
 					"CREATE TABLE tempTable (playername char(36),achievement varchar(64),description varchar(128),date DATE,PRIMARY KEY (playername, achievement))");
 
-			// Populate new table with contents of the old one and material
-			// strings.
+			// Populate new table with contents of the old one and date values.
 			PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?,?);");
 			for (int i = 0; i < uuids.size(); ++i) {
 				prep.setString(1, uuids.get(i));
@@ -443,20 +454,22 @@ public class SQLDatabaseManager {
 
 			prep.executeBatch();
 
+			// Delete old table.
 			st.execute("DROP TABLE " + tablePrefix + "achievements");
+			// Rename new table to old one.
 			st.execute("ALTER TABLE tempTable RENAME TO " + tablePrefix + "achievements");
-			conn.commit(); // Commit entire transaction.
+			// Commit entire transaction.
+			conn.commit();
 			conn.setAutoCommit(true);
 			st.close();
 			rs.close();
-
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while updating old DB (strings to dates): " + e);
 		}
 	}
 
 	/**
-	 * Retrieve SQL connection to MySQL or SQLite database.
+	 * Retrieve SQL connection to MySQL, PostgreSQL or SQLite database.
 	 */
 	public Connection getSQLConnection() {
 
@@ -467,7 +480,6 @@ public class SQLDatabaseManager {
 				if (databaseType == MYSQL || databaseType == POSTGRESQL) {
 					sqlConnection = createRemoteSQLConnection();
 				} else {
-
 					sqlConnection = createSQLiteConnection();
 				}
 			}
@@ -482,6 +494,9 @@ public class SQLDatabaseManager {
 
 	/**
 	 * Create a new Connection object to SQLite database.
+	 * 
+	 * @return connection object to database
+	 * @throws SQLException
 	 */
 	private Connection createSQLiteConnection() throws SQLException {
 
@@ -499,7 +514,10 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Create a new Connection object to MySQL database.
+	 * Create a new Connection object to MySQL or PostgreSQL database.
+	 * 
+	 * @return connection object to database
+	 * @throws SQLException
 	 */
 	private Connection createRemoteSQLConnection() throws SQLException {
 
@@ -508,107 +526,10 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get number of player's kills for a specific mob.
-	 */
-	public int getKills(Player player, String mobname) {
-
-		try {
-			Connection conn = getSQLConnection();
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT kills FROM " + tablePrefix + "kills WHERE playername = '"
-					+ player.getUniqueId() + "' AND mobname = '" + mobname + "'");
-			int entityKills = 0;
-			while (rs.next()) {
-				entityKills = rs.getInt("kills");
-			}
-
-			st.close();
-			rs.close();
-
-			return entityKills;
-		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving kill stats: " + e);
-			return 0;
-		}
-	}
-
-	/**
-	 * Get number of player's places for a specific block.
-	 */
-	public int getPlaces(Player player, String block) {
-
-		try {
-			Connection conn = getSQLConnection();
-			int blockBreaks = 0;
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT places FROM " + tablePrefix + "places WHERE playername = '"
-					+ player.getUniqueId() + "' AND blockid = '" + block + "'");
-			while (rs.next()) {
-				blockBreaks = rs.getInt("places");
-			}
-
-			st.close();
-			rs.close();
-
-			return blockBreaks;
-		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving block place stats: " + e);
-			return 0;
-		}
-	}
-
-	/**
-	 * Get number of player's breaks for a specific block.
-	 */
-	public int getBreaks(Player player, String block) {
-
-		try {
-			Connection conn = getSQLConnection();
-			int blockBreaks = 0;
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT breaks FROM " + tablePrefix + "breaks WHERE playername = '"
-					+ player.getUniqueId() + "' AND blockid = '" + block + "'");
-			while (rs.next()) {
-				blockBreaks = rs.getInt("breaks");
-			}
-
-			st.close();
-			rs.close();
-
-			return blockBreaks;
-		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving block break stats: " + e);
-			return 0;
-		}
-	}
-
-	/**
-	 * Increment and return value of a specific craft achievement statistic.
-	 */
-	public int getCrafts(Player player, String item) {
-
-		try {
-			Connection conn = getSQLConnection();
-			int itemCrafts = 0;
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT crafts FROM " + tablePrefix + "crafts WHERE playername = '"
-					+ player.getUniqueId() + "' AND item = '" + item + "'");
-			while (rs.next()) {
-				itemCrafts = rs.getInt("crafts");
-			}
-			st.close();
-			rs.close();
-
-			return itemCrafts;
-		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while handling craft event: " + e);
-			return 0;
-		}
-
-	}
-
-	/**
-	 * Get the list of achievements of a player.
+	 * Get the list of all the achievements of a player.
+	 * 
+	 * @param player
+	 * @return array list with groups of 3 strings: achievement name, description and date
 	 */
 	public ArrayList<String> getPlayerAchievementsList(Player player) {
 
@@ -655,6 +576,10 @@ public class SQLDatabaseManager {
 
 	/**
 	 * Get the date of reception of a specific achievement.
+	 * 
+	 * @param player
+	 * @param name
+	 * @return date represented as a string
 	 */
 	public String getPlayerAchievementDate(Player player, String name) {
 
@@ -679,7 +604,10 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get the number of achievements received by a player.
+	 * Get the total number of achievements received by a player.
+	 * 
+	 * @param player
+	 * @return number of achievements
 	 */
 	public int getPlayerAchievementsAmount(Player player) {
 
@@ -692,7 +620,6 @@ public class SQLDatabaseManager {
 			if (rs.next()) {
 				achievementsAmount = rs.getInt(1);
 			}
-
 			st.close();
 			rs.close();
 
@@ -701,25 +628,31 @@ public class SQLDatabaseManager {
 			plugin.getLogger().severe("SQL error while counting player achievements: " + e);
 		}
 		return 0;
-
 	}
 
 	/**
-	 * Get the list of players with the most achievements.
+	 * Get the list of players with the most achievements over a given period.
+	 * 
+	 * @param listLength
+	 * @param start
+	 * @return list with player UUIDs
 	 */
-	public ArrayList<String> getTopList(int listLength, long period) {
+	public ArrayList<String> getTopList(int listLength, long start) {
 
 		try {
 			Connection conn = getSQLConnection();
+			// PreparedStatement used to easily set date in query regardless of the database type.
 			PreparedStatement prep;
-			if (period == 0L) {
+			if (start == 0L) {
+				// We consider all the achievements; no date comparison.
 				prep = conn.prepareStatement("SELECT playername, COUNT(*) FROM " + tablePrefix
 						+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC LIMIT ?");
 				prep.setInt(1, listLength);
 			} else {
+				// We only consider achievement received after the start date; do date comparisons.
 				prep = conn.prepareStatement("SELECT playername, COUNT(*) FROM " + tablePrefix
 						+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC LIMIT ?");
-				prep.setDate(1, new java.sql.Date(period));
+				prep.setDate(1, new java.sql.Date(start));
 				prep.setInt(2, listLength);
 			}
 			prep.execute();
@@ -737,24 +670,29 @@ public class SQLDatabaseManager {
 			plugin.getLogger().severe("SQL error while retrieving top players: " + e);
 		}
 		return new ArrayList<String>();
-
 	}
 
 	/**
-	 * Get number of players who have received at least one achievement.
+	 * Get number of players who have received at least one achievement after start date.
+	 * 
+	 * @param start
+	 * @return list with player UUIDs
 	 */
-	public int getTotalPlayers(long period) {
+	public int getTotalPlayers(long start) {
 
 		try {
 			Connection conn = getSQLConnection();
+			// PreparedStatement used to easily set date in query regardless of the database type.
 			PreparedStatement prep;
-			if (period == 0L) {
+			if (start == 0L) {
+				// We consider all the achievements; no date comparison.
 				prep = conn.prepareStatement("SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + tablePrefix
 						+ "achievements) AS distinctPlayers");
 			} else {
+				// We only consider achievement received after the start date; do date comparisons.
 				prep = conn.prepareStatement("SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + tablePrefix
 						+ "achievements WHERE date > ?) AS distinctPlayers");
-				prep.setDate(1, new java.sql.Date(period));
+				prep.setDate(1, new java.sql.Date(start));
 			}
 			prep.execute();
 			ResultSet rs = prep.getResultSet();
@@ -770,34 +708,41 @@ public class SQLDatabaseManager {
 			plugin.getLogger().severe("SQL error while retrieving total players: " + e);
 		}
 		return 0;
-
 	}
 
 	/**
-	 * Get the rank of a player given his number of achievements.
+	 * Get the rank of a player given his number of achievements received after start date.
+	 * 
+	 * @param player
+	 * @param start
+	 * @return player's rank
 	 */
-	public int getPlayerRank(Player player, long period) {
+	public int getPlayerRank(Player player, long start) {
 
 		try {
 			Connection conn = getSQLConnection();
+			// PreparedStatement used to easily set date in query regardless of the database type.
 			PreparedStatement prep;
-			if (period == 0L) {
+			if (start == 0L) {
+				// We consider all the achievements; no date comparison.
 				prep = conn.prepareStatement("SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + tablePrefix
 						+ "achievements GROUP BY playername) AS achGroupedByPlayer WHERE number > (SELECT COUNT(*) FROM "
 						+ tablePrefix + "achievements WHERE playername = ?)");
 				prep.setString(1, player.getUniqueId().toString());
 			} else {
+				// We only consider achievement received after the start date; do date comparisons.
 				prep = conn.prepareStatement("SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + tablePrefix
 						+ "achievements WHERE date > ? GROUP BY playername) AS achGroupedByPlayer WHERE number > (SELECT COUNT(*) FROM "
 						+ tablePrefix + "achievements WHERE playername = ? AND date > ?)");
-				prep.setDate(1, new java.sql.Date(period));
+				prep.setDate(1, new java.sql.Date(start));
 				prep.setString(2, player.getUniqueId().toString());
-				prep.setDate(3, new java.sql.Date(period));
+				prep.setDate(3, new java.sql.Date(start));
 			}
 			prep.execute();
 			ResultSet rs = prep.getResultSet();
 			int rank = 0;
 			while (rs.next()) {
+				// Rank of a player corresponds to number of players with more achievements + 1.
 				rank = rs.getInt(1) + 1;
 			}
 			rs.close();
@@ -808,44 +753,55 @@ public class SQLDatabaseManager {
 			plugin.getLogger().severe("SQL error while retrieving player rank: " + e);
 		}
 		return 0;
-
 	}
 
 	/**
-	 * Register a new achievement for a player.
+	 * Register a new achievement for a player; this method will distinguish between asynchronous and synchronous
+	 * processing.
+	 * 
+	 * @param player
+	 * @param achievement
+	 * @param desc
 	 */
 	public void registerAchievement(Player player, final String achievement, final String desc) {
 
 		final String name = player.getUniqueId().toString();
 
-		if (plugin.isAsyncPooledRequestsSender())
-			new Thread() { // Avoid using Bukkit API scheduler, as a
-							// reload/restart could kill the async task before
-							// write to database has occured.
+		if (plugin.isAsyncPooledRequestsSender()) {
+			// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to database
+			// has occured.
+			new Thread() {
 
 				@Override
 				public void run() {
 
 					registerAchievementToDB(achievement, desc, name);
 				}
-
 			}.start();
-		else
+		} else {
 			registerAchievementToDB(achievement, desc, name);
-
+		}
 	}
 
 	/**
-	 * Write to DB to register new achievement for a player.
+	 * Write to DB to register new achievement for a player. Method executed on main server thread or in parallel.
+	 * 
+	 * @param achievement
+	 * @param desc
+	 * @param name
 	 */
 	private void registerAchievementToDB(String achievement, String desc, String name) {
 
 		try {
 			Connection conn = getSQLConnection();
+			// PreparedStatement used to easily set date in query regardless of the database type.
 			PreparedStatement prep;
+			// We simply double apostrophes to avoid breaking the query.
 			achievement = achievement.replace("'", "''");
 			desc = desc.replace("'", "''");
 			if (databaseType == POSTGRESQL) {
+				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
+				// available for PostgreSQL 9.5+.
 				prep = conn.prepareStatement("INSERT INTO " + tablePrefix
 						+ "achievements VALUES (?,?,?,?) ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)");
 				prep.setString(1, name);
@@ -861,10 +817,8 @@ public class SQLDatabaseManager {
 				prep.setString(3, desc);
 				prep.setDate(4, new java.sql.Date(new java.util.Date().getTime()));
 			}
-
 			prep.execute();
 			prep.close();
-
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while registering achievement: " + e);
 		}
@@ -872,6 +826,10 @@ public class SQLDatabaseManager {
 
 	/**
 	 * Check whether player has received a specific achievement.
+	 * 
+	 * @param player
+	 * @param name
+	 * @return true if achievement found in database, false otherwise
 	 */
 	public boolean hasPlayerAchievement(Player player, String name) {
 
@@ -879,6 +837,7 @@ public class SQLDatabaseManager {
 			boolean result = false;
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
+			// We simply double apostrophes to avoid breaking the query.
 			name = name.replace("'", "''");
 			if (st.executeQuery("SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
 					+ player.getUniqueId() + "' AND achievement = '" + name + "'").next())
@@ -890,30 +849,147 @@ public class SQLDatabaseManager {
 			plugin.getLogger().severe("SQL error while checking achievement: " + e);
 		}
 		return false;
-
 	}
 
 	/**
-	 * Check whether player has received a specific achievement.
+	 * Delete an achievement from a player.
+	 * 
+	 * @param player
+	 * @param name
 	 */
 	public void deletePlayerAchievement(Player player, String name) {
 
 		try {
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
+			// We simply double apostrophes to avoid breaking the query.
 			name = name.replace("'", "''");
 			st.execute("DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + player.getUniqueId()
 					+ "' AND achievement = '" + name + "'");
 			st.close();
-
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while deleting achievement: " + e);
 		}
+	}
 
+	/**
+	 * Get number of player's kills for a specific mob.
+	 * 
+	 * @param player
+	 * @param mobname
+	 * @return kill statistic
+	 */
+	public int getKills(Player player, String mobname) {
+
+		try {
+			Connection conn = getSQLConnection();
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT kills FROM " + tablePrefix + "kills WHERE playername = '"
+					+ player.getUniqueId() + "' AND mobname = '" + mobname + "'");
+			int entityKills = 0;
+			while (rs.next()) {
+				entityKills = rs.getInt("kills");
+			}
+			st.close();
+			rs.close();
+
+			return entityKills;
+		} catch (SQLException e) {
+			plugin.getLogger().severe("SQL error while retrieving kill stats: " + e);
+			return 0;
+		}
+	}
+
+	/**
+	 * Get number of player's places for a specific block.
+	 * 
+	 * @param player
+	 * @param block
+	 * @return place statistics
+	 */
+	public int getPlaces(Player player, String block) {
+
+		try {
+			Connection conn = getSQLConnection();
+			int blockBreaks = 0;
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT places FROM " + tablePrefix + "places WHERE playername = '"
+					+ player.getUniqueId() + "' AND blockid = '" + block + "'");
+			while (rs.next()) {
+				blockBreaks = rs.getInt("places");
+			}
+			st.close();
+			rs.close();
+
+			return blockBreaks;
+		} catch (SQLException e) {
+			plugin.getLogger().severe("SQL error while retrieving block place stats: " + e);
+			return 0;
+		}
+	}
+
+	/**
+	 * Get number of player's breaks for a specific block.
+	 * 
+	 * @param player
+	 * @param block
+	 * @return breaks statistics
+	 */
+	public int getBreaks(Player player, String block) {
+
+		try {
+			Connection conn = getSQLConnection();
+			int blockBreaks = 0;
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT breaks FROM " + tablePrefix + "breaks WHERE playername = '"
+					+ player.getUniqueId() + "' AND blockid = '" + block + "'");
+			while (rs.next()) {
+				blockBreaks = rs.getInt("breaks");
+			}
+			st.close();
+			rs.close();
+
+			return blockBreaks;
+		} catch (SQLException e) {
+			plugin.getLogger().severe("SQL error while retrieving block break stats: " + e);
+			return 0;
+		}
+	}
+
+	/**
+	 * Get number of player's crafts for a specific object.
+	 * 
+	 * @param player
+	 * @param item
+	 * @return craft statistics
+	 */
+	public int getCrafts(Player player, String item) {
+
+		try {
+			Connection conn = getSQLConnection();
+			int itemCrafts = 0;
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT crafts FROM " + tablePrefix + "crafts WHERE playername = '"
+					+ player.getUniqueId() + "' AND item = '" + item + "'");
+			while (rs.next()) {
+				itemCrafts = rs.getInt("crafts");
+			}
+			st.close();
+			rs.close();
+
+			return itemCrafts;
+		} catch (SQLException e) {
+			plugin.getLogger().severe("SQL error while handling craft event: " + e);
+			return 0;
+		}
 	}
 
 	/**
 	 * Get the amount of a normal achievement statistic.
+	 * 
+	 * @param player
+	 * @param table
+	 * @return statistic
 	 */
 	public int getNormalAchievementAmount(Player player, String table) {
 
@@ -926,7 +1002,6 @@ public class SQLDatabaseManager {
 			while (rs.next()) {
 				amount = rs.getInt(table);
 			}
-
 			rs.close();
 
 			return amount;
@@ -937,7 +1012,10 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Return player's number of connections.
+	 * Return player's number of connections on separate days (used by GUI).
+	 * 
+	 * @param player
+	 * @return connections statistic
 	 */
 	public int getConnectionsAmount(Player player) {
 
@@ -959,11 +1037,13 @@ public class SQLDatabaseManager {
 			plugin.getLogger().severe("SQL error while retrieving connection statistics: " + e);
 			return 0;
 		}
-
 	}
 
 	/**
 	 * Get a player's last connection date.
+	 * 
+	 * @param player
+	 * @return String with date
 	 */
 	public String getPlayerConnectionDate(Player player) {
 
@@ -979,20 +1059,21 @@ public class SQLDatabaseManager {
 			rs.close();
 
 			return date;
-
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving connection date stats: " + e);
 			return null;
-		}
-
-		catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			return null;
 		}
-
 	}
 
 	/**
-	 * Update player's number of connections and last connection date and return number of connections.
+	 * Update player's number of connections and last connection date and return number of connections (used by
+	 * Connections listener).
+	 * 
+	 * @param player
+	 * @param date
+	 * @return connections statistic
 	 */
 	public int updateAndGetConnection(Player player, final String date) {
 
@@ -1008,18 +1089,21 @@ public class SQLDatabaseManager {
 			}
 			final int newConnections = prev + 1;
 			if (!plugin.isAsyncPooledRequestsSender()) {
-				if (databaseType == POSTGRESQL)
+				if (databaseType == POSTGRESQL) {
+					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
+					// available for PostgreSQL 9.5+.
 					st.execute("INSERT INTO " + tablePrefix + "connections VALUES ('" + name + "', " + newConnections
 							+ ", '" + date + "')" + " ON CONFLICT (playername) DO UPDATE SET (connections,date)=('"
 							+ newConnections + "','" + date + "')");
 
-				else
+				} else {
 					st.execute("REPLACE INTO " + tablePrefix + "connections VALUES ('" + name + "', " + newConnections
 							+ ", '" + date + "')");
+				}
 			} else {
-				new Thread() { // Avoid using Bukkit API scheduler, as a
-					// reload/restart could kill the async task before
-					// write to database has occured.
+				// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to
+				// database has occured.
+				new Thread() {
 
 					@Override
 					public void run() {
@@ -1028,15 +1112,17 @@ public class SQLDatabaseManager {
 						Statement st;
 						try {
 							st = conn.createStatement();
-							if (databaseType == POSTGRESQL)
+							if (databaseType == POSTGRESQL) {
+								// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
+								// construct, which is available for PostgreSQL 9.5+.
 								st.execute("INSERT INTO " + tablePrefix + "connections VALUES ('" + name + "', "
 										+ newConnections + ", '" + date + "')"
 										+ " ON CONFLICT (playername) DO UPDATE SET (connections,date)=('"
 										+ newConnections + "','" + date + "')");
-
-							else
+							} else {
 								st.execute("REPLACE INTO " + tablePrefix + "connections VALUES ('" + name + "', "
 										+ newConnections + ", '" + date + "')");
+							}
 							st.close();
 						} catch (SQLException e) {
 							plugin.getLogger().severe("SQL error while handling connection event on async task: " + e);
@@ -1052,11 +1138,14 @@ public class SQLDatabaseManager {
 			plugin.getLogger().severe("SQL error while handling connection event: " + e);
 			return 0;
 		}
-
 	}
 
 	/**
 	 * Update and return player's playtime.
+	 * 
+	 * @param name
+	 * @param time
+	 * @return play time statistic
 	 */
 	public long updateAndGetPlaytime(String name, long time) {
 
@@ -1073,13 +1162,14 @@ public class SQLDatabaseManager {
 				}
 				rs.close();
 			} else {
-				if (databaseType == POSTGRESQL)
+				if (databaseType == POSTGRESQL) {
+					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
+					// construct, which is available for PostgreSQL 9.5+.
 					st.execute("INSERT INTO " + tablePrefix + "playedtime VALUES ('" + name + "', " + time + ")"
 							+ " ON CONFLICT (playername) DO UPDATE SET (playedtime)=('" + time + "')");
-
-				else
+				} else {
 					st.execute("REPLACE INTO " + tablePrefix + "playedtime VALUES ('" + name + "', " + time + ")");
-
+				}
 			}
 			st.close();
 
@@ -1088,11 +1178,15 @@ public class SQLDatabaseManager {
 			plugin.getLogger().severe("SQL error while handling play time registration: " + e);
 			return 0L;
 		}
-
 	}
 
 	/**
 	 * Update and return player's distance for a specific distance type.
+	 * 
+	 * @param name
+	 * @param distance
+	 * @param type
+	 * @return distance statistic
 	 */
 	public int updateAndGetDistance(String name, int distance, String type) {
 
@@ -1101,6 +1195,7 @@ public class SQLDatabaseManager {
 			Statement st = conn.createStatement();
 			int newDistance = 0;
 			if (distance == 0) {
+				// Retrieve statistic.
 				ResultSet rs = st.executeQuery(
 						"SELECT " + type + " FROM " + tablePrefix + type + " WHERE playername = '" + name + "'");
 				while (rs.next()) {
@@ -1108,12 +1203,15 @@ public class SQLDatabaseManager {
 				}
 				rs.close();
 			} else {
-				if (databaseType == POSTGRESQL)
+				// Update statistic.
+				if (databaseType == POSTGRESQL) {
+					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
+					// construct, which is available for PostgreSQL 9.5+.
 					st.execute("INSERT INTO " + tablePrefix + type + " VALUES ('" + name + "', " + distance + ")"
 							+ " ON CONFLICT (playername) DO UPDATE SET (" + type + ")=('" + distance + "')");
-
-				else
+				} else {
 					st.execute("REPLACE INTO " + tablePrefix + type + " VALUES ('" + name + "', " + distance + ")");
+				}
 			}
 			st.close();
 
@@ -1122,7 +1220,6 @@ public class SQLDatabaseManager {
 			plugin.getLogger().severe("SQL error while handling " + type + " registration: " + e);
 			return 0;
 		}
-
 	}
 
 	public String getTablePrefix() {

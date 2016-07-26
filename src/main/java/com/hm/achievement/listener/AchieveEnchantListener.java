@@ -9,6 +9,12 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Enchantments achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveEnchantListener implements Listener {
 
 	private AdvancedAchievements plugin;
@@ -30,7 +36,7 @@ public class AchieveEnchantListener implements Listener {
 		int enchantments = plugin.getPoolsManager().getPlayerEnchantmentAmount(player) + 1;
 
 		plugin.getPoolsManager().getEnchantmentHashMap().put(player.getUniqueId().toString(), enchantments);
-		
+
 		String configAchievement = "Enchantments." + enchantments;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 

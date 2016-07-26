@@ -10,6 +10,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Breaks achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveBlockBreakListener implements Listener {
 
 	AdvancedAchievements plugin;
@@ -28,7 +34,7 @@ public class AchieveBlockBreakListener implements Listener {
 			return;
 		Block block = event.getBlock();
 		String blockName = block.getType().name().toLowerCase();
-		if (player.hasPermission("achievement.count.breaks." + blockName + ":" + block.getData())
+		if (player.hasPermission("achievement.count.breaks." + blockName + "." + block.getData())
 				&& plugin.getPluginConfig().isConfigurationSection("Breaks." + blockName + ":" + block.getData()))
 			blockName += ":" + block.getData();
 		else {

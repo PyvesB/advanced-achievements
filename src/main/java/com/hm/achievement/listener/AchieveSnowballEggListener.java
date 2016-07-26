@@ -11,6 +11,12 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Snowballs and Eggs achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveSnowballEggListener implements Listener {
 
 	private AdvancedAchievements plugin;
@@ -47,7 +53,7 @@ public class AchieveSnowballEggListener implements Listener {
 			configAchievement = "Eggs." + eggs;
 		} else
 			return;
-		
+
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

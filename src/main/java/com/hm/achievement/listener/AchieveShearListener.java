@@ -9,6 +9,12 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Shear achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveShearListener implements Listener {
 
 	private AdvancedAchievements plugin;

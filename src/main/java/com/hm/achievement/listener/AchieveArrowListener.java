@@ -9,6 +9,12 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Arrows achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveArrowListener implements Listener {
 
 	private AdvancedAchievements plugin;

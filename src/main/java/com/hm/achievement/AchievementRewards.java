@@ -11,6 +11,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Class in charge of distributing the rewards when receiving an achievement.
+ * 
+ * @author Pyves
+ */
 public class AchievementRewards {
 
 	private AdvancedAchievements plugin;
@@ -19,13 +24,18 @@ public class AchievementRewards {
 	public AchievementRewards(AdvancedAchievements achievement) {
 
 		this.plugin = achievement;
-		// No longer available in default config, kept for compatibility with
-		// versions prior to 2.1.
+		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
+		// a player is notified in case of a command reward.
 		rewardCommandNotif = plugin.getPluginConfig().getBoolean("RewardCommandNotif", true);
 	}
 
 	/**
-	 * Get item reward to a player (specified in configuration file).
+	 * Give item reward to a player (specified in configuration file).
+	 * 
+	 * @param player
+	 * @param ach
+	 * @param amount
+	 * @return ItemStack object corresponding to the reward
 	 */
 	public ItemStack getItemReward(Player player, String ach, int amount) {
 
@@ -33,19 +43,15 @@ public class AchievementRewards {
 		YamlManager config = plugin.getPluginConfig();
 
 		try {
-
-			// Old config syntax.
+			// Old config syntax (type of item separated in a additional subcategory).
 			if (config.getKeys(true).contains(ach + ".Reward.Item.Type")) {
 				item = new ItemStack(
-						Material.getMaterial(
-								config.getString(ach + ".Reward.Item.Type", "stone").toUpperCase()),
+						Material.getMaterial(config.getString(ach + ".Reward.Item.Type", "stone").toUpperCase()),
 						amount);
 			} else {
-				// New config syntax.
-				// Reward is of the form:
+				// New config syntax. Reward is of the form:
 				// Item: coal 5
-				// The amount has already been parsed out and is provided by parameter amount
-
+				// The amount has already been parsed out and is provided by parameter amount.
 				String materialNameAndQty = config.getString(ach + ".Reward.Item", "stone");
 				int indexSpace = materialNameAndQty.indexOf(" ");
 
@@ -58,21 +64,24 @@ public class AchievementRewards {
 				item = new ItemStack(Material.getMaterial(materialName), amount);
 			}
 		} catch (NullPointerException e) {
-			plugin.getLogger().warning("Invalid item reward for achievement \""
-					+ config.getString(ach + ".Name") + "\". Please specify a valid Material name.");
+			plugin.getLogger().warning("Invalid item reward for achievement \"" + config.getString(ach + ".Name")
+					+ "\". Please specify a valid Material name.");
 			return null;
 		}
 
 		// Display Vault name of object if available.
-		if (plugin.setUpEconomy(false))
+		if (plugin.setUpEconomy(false)) {
 			try {
 				player.sendMessage(plugin.getChatHeader()
 						+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " "
 						+ Items.itemByStack(item).getName());
 				return item;
 			} catch (Exception ex) {
-				// Do nothing, another message will be displayed just bellow.
+				// Do nothing, another message will be displayed just below.
 			}
+		}
+
+		// Vault name of object not available.
 		player.sendMessage(plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " "
 				+ item.getType().toString().replace("_", " ").toLowerCase());
@@ -81,38 +90,40 @@ public class AchievementRewards {
 
 	/**
 	 * Give money reward to a player (specified in configuration file).
+	 * 
+	 * @param player
+	 * @param amount
 	 */
 	@SuppressWarnings("deprecation")
 	public void rewardMoney(Player player, int amount) {
 
 		if (plugin.setUpEconomy(true)) {
-			String price = Integer.toString(amount);
-			double amtd = Double.valueOf(price.trim());
 
 			try {
-				plugin.getEconomy().depositPlayer(player, amtd);
+				plugin.getEconomy().depositPlayer(player, amount);
 			} catch (NoSuchMethodError e) {
-				// Deprecated method, the following one was the only one
-				// existing prior to Vault 1.4.
-				plugin.getEconomy().depositPlayer(player.getName(), amtd);
+				// Deprecated method, but was the only one existing prior to Vault 1.4.
+				plugin.getEconomy().depositPlayer(player.getName(), amount);
 			}
 
-			// If player has set different currency names depending on name,
+			// If player has set different currency names depending on amount,
 			// adapt message accordingly.
 			if (amount > 1)
 				player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&',
 						plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT !")
-								.replace("AMOUNT", amtd + " " + plugin.getEconomy().currencyNamePlural())));
+								.replace("AMOUNT", amount + " " + plugin.getEconomy().currencyNamePlural())));
 			else
 				player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&',
 						plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT !")
-								.replace("AMOUNT", amtd + " " + plugin.getEconomy().currencyNameSingular())));
+								.replace("AMOUNT", amount + " " + plugin.getEconomy().currencyNameSingular())));
 		}
 	}
 
 	/**
-	 * Return the type(s) of an achievement reward with strings coming from
-	 * language file.
+	 * Return the type(s) of an achievement reward with strings coming from language file.
+	 * 
+	 * @param configAchievement
+	 * @return type(s) of the achievement reward as an array of strings
 	 */
 	public ArrayList<String> getRewardType(String configAchievement) {
 
@@ -131,14 +142,17 @@ public class AchievementRewards {
 
 	/**
 	 * Main reward manager (deals with configuration).
+	 * 
+	 * @param player
+	 * @param configAchievement
 	 */
 	public void checkConfig(Player player, String configAchievement) {
 
 		YamlManager config = plugin.getPluginConfig();
 
-		// Supports both old and new plugin syntax.
+		// Supports both old and new plugin syntax (Amount was once a separate sub-category).
 		int money = Math.max(config.getInt(configAchievement + ".Reward.Money", 0),
-		                     config.getInt(configAchievement + ".Reward.Money.Amount", 0));
+				config.getInt(configAchievement + ".Reward.Money.Amount", 0));
 
 		int itemAmount = 0;
 
@@ -146,9 +160,7 @@ public class AchievementRewards {
 		if (config.getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
 			itemAmount = config.getInt(configAchievement + ".Reward.Item.Amount", 0);
 		} else if (config.getKeys(true).contains(configAchievement + ".Reward.Item")) {
-			// New
-			// config
-			// syntax.
+			// New config syntax. Name of item and quantity are on the same line, separated by a space.
 			String materialAndQty = config.getString(configAchievement + ".Reward.Item", "");
 			int indexOfAmount = 0;
 			indexOfAmount = materialAndQty.indexOf(" ");
@@ -158,9 +170,10 @@ public class AchievementRewards {
 
 		String commandReward = config.getString(configAchievement + ".Reward.Command", "");
 
-		if (money > 0) {
+		// Parsing of config finished; we now dispatch the rewards accordingly.
+		if (money > 0)
 			rewardMoney(player, money);
-		}
+
 		if (itemAmount > 0) {
 			ItemStack item = this.getItemReward(player, configAchievement, itemAmount);
 			if (player.getInventory().firstEmpty() != -1 && item != null)
@@ -168,11 +181,10 @@ public class AchievementRewards {
 			else if (item != null)
 				player.getWorld().dropItem(player.getLocation(), item);
 		}
-		if (commandReward.length() > 0) {
 
+		if (commandReward.length() > 0) {
 			commandReward = commandReward.replace("PLAYER", player.getName());
-			// Multiple reward command can be set, separated by a semicolon and
-			// space.
+			// Multiple reward command can be set, separated by a semicolon and space. Extra parsing needed.
 			String[] commands = commandReward.split("; ");
 			for (String command : commands)
 				plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
@@ -182,9 +194,6 @@ public class AchievementRewards {
 				return;
 
 			player.sendMessage(plugin.getChatHeader() + rewardMsg);
-
 		}
-
 	}
-
 }

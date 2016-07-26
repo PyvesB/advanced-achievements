@@ -12,6 +12,12 @@ import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Crafts achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveCraftListener implements Listener {
 
 	private AdvancedAchievements plugin;
@@ -34,7 +40,7 @@ public class AchieveCraftListener implements Listener {
 
 		ItemStack item = event.getRecipe().getResult();
 		String craftName = item.getType().name().toLowerCase();
-		if (player.hasPermission("achievement.count.crafts." + craftName + ":" + item.getDurability())
+		if (player.hasPermission("achievement.count.crafts." + craftName + "." + item.getDurability())
 				&& plugin.getPluginConfig().isConfigurationSection("Crafts." + craftName + ":" + item.getDurability()))
 			craftName += ":" + item.getDurability();
 		else {

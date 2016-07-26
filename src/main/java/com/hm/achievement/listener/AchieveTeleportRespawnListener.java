@@ -10,6 +10,12 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with EnderPearls achievements and update Distances.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveTeleportRespawnListener implements Listener {
 
 	private AdvancedAchievements plugin;
@@ -21,7 +27,7 @@ public class AchieveTeleportRespawnListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		
+
 		// Update location of player if he respawns after dying.
 		if (plugin.getAchieveDistanceRunnable() != null)
 			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer(), event.getRespawnLocation());

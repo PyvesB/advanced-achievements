@@ -5,6 +5,11 @@ import org.bukkit.command.CommandSender;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Class in charge of displaying the plugin's extra information (/aach info).
+ * 
+ * @author Pyves
+ */
 public class InfoCommand {
 
 	private AdvancedAchievements plugin;
@@ -16,6 +21,8 @@ public class InfoCommand {
 
 	/**
 	 * Display various information about the plugin to the command sender.
+	 * 
+	 * @param sender
 	 */
 	public void getInfo(CommandSender sender) {
 
@@ -35,6 +42,7 @@ public class InfoCommand {
 				+ plugin.getPluginLang().getString("version-command-description", "Description:") + " " + ChatColor.GRAY
 				+ plugin.getPluginLang().getString("version-command-description-details",
 						"Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"));
+		// Display whether Advanced Achievements is linked to Vault.
 		if (plugin.setUpEconomy(false))
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " "
@@ -43,6 +51,7 @@ public class InfoCommand {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " "
 					+ ChatColor.GRAY + "OFF");
+		// Display database type.
 		if (plugin.getPluginConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
@@ -55,6 +64,5 @@ public class InfoCommand {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
 					+ ChatColor.GRAY + "SQLite");
-
 	}
 }

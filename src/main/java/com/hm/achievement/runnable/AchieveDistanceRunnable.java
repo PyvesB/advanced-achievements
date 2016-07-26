@@ -1,5 +1,6 @@
 package com.hm.achievement.runnable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,23 +21,29 @@ import org.bukkit.util.NumberConversions;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
+/**
+ * Class used to monitor distances travelled by players for the different available categories.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveDistanceRunnable implements Runnable {
 
 	private AdvancedAchievements plugin;
 
 	boolean ignoreVerticalDistance;
 
-	// Lists of achievement amounts (=thresholds) extracted from configuration.
-	private int[] achievementsFoot;
-	private int[] achievementsPig;
-	private int[] achievementsHorse;
-	private int[] achievementsMinecart;
-	private int[] achievementsBoat;
-	private int[] achievementsGliding;
+	// Arrays of achievement amounts (=thresholds) extracted from configuration.
+	private int[] footAchievementThresholds;
+	private int[] pigAchievementThresholds;
+	private int[] horseAchievementThresholds;
+	private int[] minecartAchievementThresholds;
+	private int[] boatAchievementThresholds;
+	private int[] glidingAchievementThresholds;
 
-	// Sets corresponding to whether a player has obtained a specific
-	// distance achievement.
-	// Uses as pseudo-caching system to reduce load on database.
+	// Arrays of HashSets corresponding to whether a player has obtained a specific distance achievement.
+	// Each index in the array corresponds to one achievement, and has its associated player Set.
+	// Used as pseudo-caching system to reduce load on database.
 	private HashSet<?>[] playerAchievementsFoot;
 	private HashSet<?>[] playerAchievementsHorse;
 	private HashSet<?>[] playerAchievementsPig;
@@ -60,10 +67,9 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		this.plugin = plugin;
 
-		// Simple and fast check to compare versions. Might need to
-		// be updated in the future depending on how the Minecraft
-		// versions change in the future.
-		version =  Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
+		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
+		// Minecraft versions change in the future.
+		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 
 		if (plugin.isAsyncPooledRequestsSender()) {
 			distancesFoot = new ConcurrentHashMap<String, Integer>();
@@ -87,7 +93,9 @@ public class AchieveDistanceRunnable implements Runnable {
 	}
 
 	/**
-	 * Load list of achievements from configuration.
+	 * Loads list of achievements from configuration.
+	 * 
+	 * @param plugin
 	 */
 	public void extractAchievementsFromConfig(AdvancedAchievements plugin) {
 
@@ -95,20 +103,19 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		ignoreVerticalDistance = config.getBoolean("IgnoreVerticalDistance", false);
 
-		achievementsFoot = extractDistanceAchievementFromConfig(config, "DistanceFoot");
-		achievementsPig = extractDistanceAchievementFromConfig(config, "DistancePig");
-		achievementsHorse = extractDistanceAchievementFromConfig(config, "DistanceHorse");
-		achievementsMinecart = extractDistanceAchievementFromConfig(config, "DistanceMinecart");
-		achievementsBoat = extractDistanceAchievementFromConfig(config, "DistanceBoat");
-		achievementsGliding = extractDistanceAchievementFromConfig(config, "DistanceGliding");
+		footAchievementThresholds = extractDistanceAchievementFromConfig(config, "DistanceFoot");
+		pigAchievementThresholds = extractDistanceAchievementFromConfig(config, "DistancePig");
+		horseAchievementThresholds = extractDistanceAchievementFromConfig(config, "DistanceHorse");
+		minecartAchievementThresholds = extractDistanceAchievementFromConfig(config, "DistanceMinecart");
+		boatAchievementThresholds = extractDistanceAchievementFromConfig(config, "DistanceBoat");
+		glidingAchievementThresholds = extractDistanceAchievementFromConfig(config, "DistanceGliding");
 
-		playerAchievementsFoot = initializePlayerAchievements(achievementsFoot.length);
-		playerAchievementsPig = initializePlayerAchievements(achievementsPig.length);
-		playerAchievementsHorse = initializePlayerAchievements(achievementsHorse.length);
-		playerAchievementsMinecart = initializePlayerAchievements(achievementsMinecart.length);
-		playerAchievementsBoat = initializePlayerAchievements(achievementsBoat.length);
-		playerAchievementsGliding = initializePlayerAchievements(achievementsGliding.length);
-
+		playerAchievementsFoot = initializeAchievementSets(footAchievementThresholds.length);
+		playerAchievementsPig = initializeAchievementSets(pigAchievementThresholds.length);
+		playerAchievementsHorse = initializeAchievementSets(horseAchievementThresholds.length);
+		playerAchievementsMinecart = initializeAchievementSets(minecartAchievementThresholds.length);
+		playerAchievementsBoat = initializeAchievementSets(boatAchievementThresholds.length);
+		playerAchievementsGliding = initializeAchievementSets(glidingAchievementThresholds.length);
 	}
 
 	@Override
@@ -117,13 +124,12 @@ public class AchieveDistanceRunnable implements Runnable {
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			refreshDistance(player);
 		}
-
 	}
 
-	@SuppressWarnings("unchecked")
 	/**
-	 * Update distances and store them into server's memory until player
-	 * disconnects.
+	 * Update distances and store them into server's memory until player disconnects.
+	 * 
+	 * @param player
 	 */
 	public void refreshDistance(Player player) {
 
@@ -159,10 +165,8 @@ public class AchieveDistanceRunnable implements Runnable {
 			if (player.getVehicle() instanceof Horse && player.hasPermission("achievement.count.distancehorse")
 					&& !plugin.getDisabledCategorySet().contains("DistanceHorse")) {
 
-				boolean updateLocation = checkDistanceAchievement(
-						difference, player, uuid,
-						distancesHorse, "DistanceHorse",
-						achievementsHorse, playerAchievementsHorse);
+				boolean updateLocation = checkDistanceAchievement(difference, player, uuid, distancesHorse,
+						"DistanceHorse", horseAchievementThresholds, playerAchievementsHorse);
 
 				if (!updateLocation)
 					return;
@@ -170,10 +174,8 @@ public class AchieveDistanceRunnable implements Runnable {
 			} else if (player.getVehicle() instanceof Pig && player.hasPermission("achievement.count.distancepig")
 					&& !plugin.getDisabledCategorySet().contains("DistancePig")) {
 
-				boolean updateLocation = checkDistanceAchievement(
-						difference, player, uuid,
-						distancesPig, "DistancePig",
-						achievementsPig, playerAchievementsPig);
+				boolean updateLocation = checkDistanceAchievement(difference, player, uuid, distancesPig, "DistancePig",
+						pigAchievementThresholds, playerAchievementsPig);
 
 				if (!updateLocation)
 					return;
@@ -182,10 +184,8 @@ public class AchieveDistanceRunnable implements Runnable {
 					&& player.hasPermission("achievement.count.distanceminecart")
 					&& !plugin.getDisabledCategorySet().contains("DistanceMinecart")) {
 
-				boolean updateLocation = checkDistanceAchievement(
-						difference, player, uuid,
-						distancesMinecart, "DistanceMinecart",
-						achievementsMinecart, playerAchievementsMinecart);
+				boolean updateLocation = checkDistanceAchievement(difference, player, uuid, distancesMinecart,
+						"DistanceMinecart", minecartAchievementThresholds, playerAchievementsMinecart);
 
 				if (!updateLocation)
 					return;
@@ -193,10 +193,8 @@ public class AchieveDistanceRunnable implements Runnable {
 			} else if (player.getVehicle() instanceof Boat && player.hasPermission("achievement.count.distanceboat")
 					&& !plugin.getDisabledCategorySet().contains("DistanceBoat")) {
 
-				boolean updateLocation = checkDistanceAchievement(
-						difference, player, uuid,
-						distancesBoat, "DistanceBoat",
-						achievementsBoat, playerAchievementsBoat);
+				boolean updateLocation = checkDistanceAchievement(difference, player, uuid, distancesBoat,
+						"DistanceBoat", boatAchievementThresholds, playerAchievementsBoat);
 
 				if (!updateLocation)
 					return;
@@ -205,10 +203,8 @@ public class AchieveDistanceRunnable implements Runnable {
 		} else if (player.hasPermission("achievement.count.distancefoot") && !player.isFlying()
 				&& (version < 9 || !player.isGliding()) && !plugin.getDisabledCategorySet().contains("DistanceFoot")) {
 
-			boolean updateLocation = checkDistanceAchievement(
-					difference, player, uuid,
-					distancesFoot, "DistanceFoot",
-					achievementsFoot, playerAchievementsFoot);
+			boolean updateLocation = checkDistanceAchievement(difference, player, uuid, distancesFoot, "DistanceFoot",
+					footAchievementThresholds, playerAchievementsFoot);
 
 			if (!updateLocation)
 				return;
@@ -216,10 +212,8 @@ public class AchieveDistanceRunnable implements Runnable {
 		} else if (player.hasPermission("achievement.count.distancegliding") && version >= 9 && player.isGliding()
 				&& !plugin.getDisabledCategorySet().contains("DistanceGliding")) {
 
-			boolean updateLocation = checkDistanceAchievement(
-					difference, player, uuid,
-					distancesGliding, "DistanceGliding",
-					achievementsGliding, playerAchievementsGliding);
+			boolean updateLocation = checkDistanceAchievement(difference, player, uuid, distancesGliding,
+					"DistanceGliding", glidingAchievementThresholds, playerAchievementsGliding);
 
 			if (!updateLocation)
 				return;
@@ -230,21 +224,26 @@ public class AchieveDistanceRunnable implements Runnable {
 
 	}
 
+	/**
+	 * Give a distance achievement to the player.
+	 * 
+	 * @param player
+	 * @param achievementDistance
+	 * @param type
+	 */
 	private void awardDistanceAchievement(Player player, int achievementDistance, String type) {
 
 		YamlManager config = plugin.getPluginConfig();
 		plugin.getAchievementDisplay().displayAchievement(player, type + achievementDistance);
-		plugin.getDb().registerAchievement(player,
-				config.getString(type + achievementDistance + ".Name"),
+		plugin.getDb().registerAchievement(player, config.getString(type + achievementDistance + ".Name"),
 				config.getString(type + achievementDistance + ".Message"));
 		plugin.getReward().checkConfig(player, type + achievementDistance);
 	}
 
-
 	/**
-	 * Compare the distance difference to the movement achievement thresholds
-	 * If a threshold is reached, award the achievment
-	 * Update the various tracking objects
+	 * Compare the distance difference to the movement achievement thresholds If a threshold is reached, award the
+	 * achievement Update the various tracking objects
+	 * 
 	 * @param difference
 	 * @param player
 	 * @param uuid
@@ -254,17 +253,12 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * @param playerAchievements
 	 * @return True if the player location should be updated; false if the distances Map does not contain the uuid
 	 */
-	private boolean checkDistanceAchievement(
-			int difference,
-			Player player,
-			String uuid,
-			Map<String, Integer> distances,
-			String achievementKeyName,
-			int[] achievementAmounts,
-			HashSet<?>[] playerAchievements) {
+	@SuppressWarnings("unchecked")
+	private boolean checkDistanceAchievement(int difference, Player player, String uuid, Map<String, Integer> distances,
+			String achievementKeyName, int[] achievementAmounts, HashSet<?>[] playerAchievements) {
 
 		Integer distance = distances.get(uuid);
-
+		// Distance didn't previously exist in the cache; retrieve it from the database and return.
 		if (distance == null) {
 			distances.put(uuid, plugin.getDb().updateAndGetDistance(uuid, 0, achievementKeyName.toLowerCase()));
 			return false;
@@ -272,22 +266,35 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		distance += difference;
 		distances.put(uuid, distance);
-
+		// Iterate through all the different achievements.
 		for (int i = 0; i < achievementAmounts.length; i++) {
-			if (distance > achievementAmounts[i] && !playerAchievements[i].contains(player)) {
-				String achievementName = plugin.getPluginConfig()
-						.getString(achievementKeyName + "." + achievementAmounts[i] + ".Name");
-
-				if (!plugin.getDb().hasPlayerAchievement(player, achievementName))
-					awardDistanceAchievement(player, achievementAmounts[i], achievementKeyName + ".");
-
-				((HashSet<Player>) playerAchievements[i]).add(player);
+			// Check whether player has met the threshold and whether we he has not yet received the achievement.
+			if (distance > achievementAmounts[i]) {
+				if (!playerAchievements[i].contains(player)) {
+					String achievementName = plugin.getPluginConfig()
+							.getString(achievementKeyName + "." + achievementAmounts[i] + ".Name");
+					// The cache does not contain information about the reception of the achievement. Query database.
+					if (!plugin.getDb().hasPlayerAchievement(player, achievementName))
+						awardDistanceAchievement(player, achievementAmounts[i], achievementKeyName + ".");
+					// Player has now received this achievement.
+					((HashSet<Player>) playerAchievements[i]).add(player);
+				}
+			} else {
+				// Achievements with higher thresholds will not yet be received by the player. Break loop.
+				break;
 			}
 		}
 
 		return true;
 	}
 
+	/**
+	 * Extract the different thresholds from the config.
+	 * 
+	 * @param config
+	 * @param achievementKeyName
+	 * @return array containing thresholds for thr achievement keyName.
+	 */
 	private int[] extractDistanceAchievementFromConfig(YamlManager config, String achievementKeyName) {
 
 		Set<String> configKeys = config.getConfigurationSection(achievementKeyName).getKeys(false);
@@ -299,15 +306,24 @@ public class AchieveDistanceRunnable implements Runnable {
 			achievementThresholds[i] = Integer.parseInt(distance);
 			i++;
 		}
+		// Sort array; this will enable us to break loops as soon as we find an achievement not yet received by a
+		// player.
+		Arrays.sort(achievementThresholds);
 
 		return achievementThresholds;
 	}
 
-	private HashSet<?>[] initializePlayerAchievements(int thresholdCount) {
+	/**
+	 * Initialise an array of HashSets given thresholdCount.
+	 * 
+	 * @param thresholdCount
+	 * @return array of HashSets
+	 */
+	private HashSet<?>[] initializeAchievementSets(int thresholdCount) {
 
 		HashSet<?>[] playerAchievements = new HashSet<?>[thresholdCount];
 
-		for (int i = 0; i < playerAchievements.length; ++i)
+		for (int i = 0; i < thresholdCount; ++i)
 			playerAchievements[i] = new HashSet<Player>();
 
 		return playerAchievements;

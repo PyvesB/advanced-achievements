@@ -13,6 +13,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Class to take care of the Yaml file; provides a wrapper around the standard Bukkit YamlConfiguration classes. This
+ * wrapper is used to enable more modularity, and guarantees that the comments are properly saved and added to the Yaml
+ * files.
+ * 
+ * @author Pyves
+ *
+ */
 public class YamlManager {
 
 	private int comments;
@@ -69,8 +77,8 @@ public class YamlManager {
 			return this.config.getConfigurationSection(path);
 		else {
 			if (!plugin.getDisabledCategorySet().contains(path)) {
-				plugin.getLogger().warning(
-						"You have deleted a category (" + path +") from the configuration without adding it into DisabledCategories.");
+				plugin.getLogger().warning("You have deleted a category (" + path
+						+ ") from the configuration without adding it into DisabledCategories.");
 				plugin.getLogger().warning(
 						"This may lead to undefined behaviour, please add the category name to the DisabledCategories list.");
 			}
@@ -106,7 +114,7 @@ public class YamlManager {
 	public void set(String path, Object value, String comment) {
 
 		if (!this.config.contains(path)) {
-			this.config.set(manager.getPluginName() + "_COMMENT_" + comments, comment);
+			this.config.set(plugin.getDescription().getName() + "_COMMENT_" + comments, comment);
 			comments++;
 		}
 		this.config.set(path, value);
@@ -118,7 +126,7 @@ public class YamlManager {
 			if (!this.config.contains(path)) {
 				// Insert comment as new value in the file; will be converted
 				// back to a comment later.
-				this.config.set(manager.getPluginName() + "_COMMENT_" + comments, comm);
+				this.config.set(plugin.getDescription().getName() + "_COMMENT_" + comments, comm);
 				comments++;
 			}
 		}

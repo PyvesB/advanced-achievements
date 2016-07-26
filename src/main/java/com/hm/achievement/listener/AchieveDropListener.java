@@ -9,6 +9,12 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with ItemDrops achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveDropListener implements Listener {
 
 	private AdvancedAchievements plugin;

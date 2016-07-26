@@ -3,11 +3,16 @@ package com.hm.achievement.command;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.particle.ParticleEffect;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
+/**
+ * Class in charge of handling the /aach stats command, which creates and displays a progress bar of the player's
+ * achievements
+ * 
+ * @author Pyves
+ */
 public class StatsCommand {
 
 	private AdvancedAchievements plugin;
@@ -33,21 +38,22 @@ public class StatsCommand {
 				totalAchievements += plugin.getPluginConfig().getConfigurationSection(type + '.' + item).getKeys(false)
 						.size();
 		}
-
+		// Load configuration parameters.
 		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		sound = plugin.getPluginConfig().getBoolean("Sound", true);
-		// Simple and fast check to compare versions. Might need to
-		// be updated in the future depending on how the Minecraft
-		// versions change in the future.
-		version =  Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
+		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
+		// Minecraft versions change in the future.
+		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	/**
-	 * Get statistics of the player by displaying number of achievements
-	 * received and total number of achievements.
+	 * Get statistics of the player by displaying number of achievements received and total number of achievements.
+	 * 
+	 * @param player
 	 */
 	public void getStats(Player player) {
 
+		// Retrieve total number of achievements received by the player.
 		int achievements = plugin.getDb().getPlayerAchievementsAmount(player);
 
 		// Display number of achievements received and total achievements.
@@ -57,35 +63,39 @@ public class StatsCommand {
 
 		// Display progress bar.
 		if (totalAchievements > 0) {
-			String barDisplay = "";
+			// Size initialised to 150; might require more or slightly less depending on the filling of the progress
+			// bar.
+			StringBuilder barDisplay = new StringBuilder(150);
 			for (int i = 1; i <= 146 - plugin.getIcon().length(); i++) {
 				if (i < ((146 - plugin.getIcon().length()) * achievements) / totalAchievements)
-					barDisplay = barDisplay + plugin.getColor() + "|";
-				else {
-					barDisplay = barDisplay + "&8|";
-				}
+					barDisplay.append(plugin.getColor()).append('|');
+				else
+					barDisplay.append("&8|");
 			}
-			player.sendMessage(plugin.getChatHeader() + "[" + ChatColor.translateAlternateColorCodes('&', barDisplay)
-					+ ChatColor.GRAY + "]");
+			player.sendMessage(plugin.getChatHeader() + "["
+					+ ChatColor.translateAlternateColorCodes('&', barDisplay.toString()) + ChatColor.GRAY + "]");
 		}
 
+		// Player has received all achievement; play special effect and sound.
 		if (achievements >= totalAchievements) {
 			try {
+				// Play special effect.
 				if (additionalEffects)
-					// Play special effect when in top list.
 					ParticleEffect.SPELL_WITCH.display(0, 1, 0, 0.5f, 400, player.getLocation(), 1);
-
 			} catch (Exception ex) {
 				plugin.getLogger().severe("Error while displaying additional particle effects.");
 			}
 
-			// Play special sound when in top list.
+			// Play special sound.
 			if (sound) {
-				if (version < 9) // Old enum for versions prior to Minecraft
-									// 1.9.
+				if (version < 9) {
+					// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in
+					// newer versions.
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("FIREWORK_BLAST"), 1, 0.6f);
-				else
+				} else {
+					// Play sound with enum for newer versions.
 					player.getWorld().playSound(player.getLocation(), Sound.ENTITY_FIREWORK_LARGE_BLAST, 1, 0.9f);
+				}
 			}
 		}
 	}

@@ -9,6 +9,12 @@ import org.bukkit.event.entity.EntityTameEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Taming achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveTameListener implements Listener {
 
 	private AdvancedAchievements plugin;

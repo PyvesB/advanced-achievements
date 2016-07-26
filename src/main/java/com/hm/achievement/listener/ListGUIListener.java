@@ -10,6 +10,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with the GUIs from the /aach list command.
+ * 
+ * @author Pyves
+ *
+ */
 public class ListGUIListener implements Listener {
 
 	private AdvancedAchievements plugin;
@@ -51,8 +57,8 @@ public class ListGUIListener implements Listener {
 								- plugin.getDisabledCategorySet().size()))
 			return;
 
-		// Create GUI according to whether the player clicked on a normal
-		// achievements category or a multiple achievement category.
+		// Create GUI according to whether the player clicked on a normal achievements category or a multiple
+		// achievement category.
 		if (event.getCurrentItem().getType() == Material.STONE
 				|| event.getCurrentItem().getType() == Material.SMOOTH_BRICK
 				|| event.getCurrentItem().getType() == Material.BONE
@@ -63,6 +69,5 @@ public class ListGUIListener implements Listener {
 			plugin.getAchievementListCommand().createCategoryGUINormal(event.getCurrentItem().getType(),
 					(Player) event.getWhoClicked());
 		}
-
 	}
 }

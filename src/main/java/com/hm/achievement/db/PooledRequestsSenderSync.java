@@ -7,6 +7,13 @@ import java.util.Map.Entry;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Class used to send the cached statistics to the database in asynchronous manner (ie. main thread of execution of the
+ * server).
+ * 
+ * @author Pyves
+ *
+ */
 public class PooledRequestsSenderSync implements Runnable {
 
 	private AdvancedAchievements plugin;
@@ -22,7 +29,6 @@ public class PooledRequestsSenderSync implements Runnable {
 	public void run() {
 
 		sendRequests();
-
 	}
 
 	/**
@@ -31,6 +37,9 @@ public class PooledRequestsSenderSync implements Runnable {
 	 * 
 	 * Queries are batched for optimisation and HashMaps are cleared to prevent same writes during next task if
 	 * statistics did not change.
+	 * 
+	 * PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available for
+	 * PostgreSQL 9.5+.
 	 */
 	public void sendRequests() {
 

@@ -10,6 +10,12 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Places achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveBlockPlaceListener implements Listener {
 
 	AdvancedAchievements plugin;
@@ -29,7 +35,7 @@ public class AchieveBlockPlaceListener implements Listener {
 		Block block = event.getBlock();
 
 		String blockName = block.getType().name().toLowerCase();
-		if (player.hasPermission("achievement.count.places." + blockName + ":" + block.getData())
+		if (player.hasPermission("achievement.count.places." + blockName + "." + block.getData())
 				&& plugin.getPluginConfig().isConfigurationSection("Places." + blockName + ":" + block.getData()))
 			blockName += ":" + block.getData();
 		else {

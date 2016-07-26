@@ -13,6 +13,12 @@ import org.bukkit.inventory.ItemStack;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
+/**
+ * Listener class to deal with HoePlowings, Fertilising, Fireworks and MusicDiscs achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 
 	private AdvancedAchievements plugin;
@@ -21,9 +27,8 @@ public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 	public AchieveHoeFertiliseFireworkMusicListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-		// Simple and fast check to compare versions. Might need to
-		// be updated in the future depending on how the Minecraft
-		// versions change in the future.
+		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
+		// Minecraft versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 

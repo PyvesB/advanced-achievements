@@ -8,6 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Class used to send the cached statistics to the database in an asynchronous manner.
+ * 
+ * @author Pyves
+ *
+ */
 public class PooledRequestsSenderAsync implements Runnable {
 
 	private AdvancedAchievements plugin;
@@ -27,7 +33,7 @@ public class PooledRequestsSenderAsync implements Runnable {
 	}
 
 	/**
-	 * Sends requests to the database to deal with regular events and prevent plugin from hitting server performance.
+	 * * Sends requests to the database to deal with regular events and prevent plugin from hitting server performance.
 	 * Non event related categories (distances and play times) are not handled by pools.
 	 * 
 	 * Queries must not be batched because of race conditions; a database entry must first be updated, and if cached
@@ -39,6 +45,9 @@ public class PooledRequestsSenderAsync implements Runnable {
 	 * 
 	 * The cast operations are necessary to ensure compatibility with Java versions prior to Java 8 (Map interface did
 	 * not support remove(key, value) before then).
+	 * 
+	 * PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available for
+	 * PostgreSQL 9.5+.
 	 */
 	public void sendRequests() {
 
@@ -381,7 +390,6 @@ public class PooledRequestsSenderAsync implements Runnable {
 			st.close();
 
 		} catch (SQLException e) {
-
 			plugin.getLogger().severe("Error while sending async pooled requests to database: " + e);
 			e.printStackTrace();
 		}

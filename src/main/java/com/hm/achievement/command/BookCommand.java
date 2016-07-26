@@ -17,6 +17,12 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.particle.ParticleEffect;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
+/**
+ * Class in charge of handling the /aach book command, which creates and gives a book containing the player's
+ * achievements.
+ * 
+ * @author Pyves
+ */
 public class BookCommand {
 
 	private AdvancedAchievements plugin;
@@ -26,63 +32,50 @@ public class BookCommand {
 	private boolean sound;
 	private int version;
 
-	// Corresponds to times at which players have received their books.
+	// Corresponds to times at which players have received their books. Cooldown structure.
 	private HashMap<Player, Long> players;
 
 	public BookCommand(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 		players = new HashMap<Player, Long>();
+		// Load configuration parameters.
 		bookTime = plugin.getPluginConfig().getInt("TimeBook", 0) * 1000;
 		bookSeparator = plugin.getPluginConfig().getString("BookSeparator", "");
 		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		sound = plugin.getPluginConfig().getBoolean("Sound", true);
-		// Simple and fast check to compare versions. Might need to
-		// be updated in the future depending on how the Minecraft
-		// versions change in the future.
+		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
+		// Minecraft versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	/**
-	 * Check is player hasn't received a book too recently (with "too recently" being defined in configuration file).
-	 */
-	private boolean timeAuthorisedBook(Player player) {
-
-		if (player.hasPermission("achievement.*"))
-			return true;
-		long currentTime = System.currentTimeMillis();
-		long lastBookTime = 0;
-		if (players.containsKey(player))
-			lastBookTime = players.get(player);
-		if (currentTime - lastBookTime < bookTime)
-			return false;
-		players.put(player, currentTime);
-		return true;
-
-	}
-
-	/**
 	 * Give an achievements book to the player, or several books depending on the number of achievements.
+	 * 
+	 * @param player
 	 */
 	public void giveBook(Player player) {
 
 		if (timeAuthorisedBook(player)) {
-
-			// Play special effect when receiving the book.
-			if (additionalEffects)
+			// Play special particle effect when receiving the book.
+			if (additionalEffects) {
 				try {
 					ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 100);
 				} catch (Exception ex) {
-					plugin.getLogger().severe("Error while displaying additional particle effects.");
+					plugin.getLogger().severe("Error while displaying additional particle effects for books.");
 				}
+			}
 
 			// Play special sound when receiving the book.
 			if (sound) {
-				if (version < 9) // Old enum for versions prior to Minecraft
-									// 1.9.
+				if (version < 9) {
+					// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in
+					// newer versions.
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
-				else
+				} else {
+					// Play sound with enum for newer versions.
 					player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 0);
+				}
 			}
 
 			ArrayList<String> achievements = plugin.getDb().getPlayerAchievementsList(player);
@@ -100,7 +93,31 @@ public class BookCommand {
 	}
 
 	/**
+	 * Check if player hasn't received a book too recently (with "too recently" being defined in configuration file).
+	 * 
+	 * @param player
+	 * @return whether a player is authorised to receive a book
+	 */
+	private boolean timeAuthorisedBook(Player player) {
+
+		// Player bypasses cooldown if he has full plugin permissions.
+		if (player.hasPermission("achievement.*"))
+			return true;
+		long currentTime = System.currentTimeMillis();
+		long lastBookTime = 0;
+		if (players.containsKey(player))
+			lastBookTime = players.get(player);
+		if (currentTime - lastBookTime < bookTime)
+			return false;
+		players.put(player, currentTime);
+		return true;
+	}
+
+	/**
 	 * Construct the pages of a book.
+	 * 
+	 * @param achievements
+	 * @param player
 	 */
 	private void fillBook(ArrayList<String> achievements, Player player) {
 
@@ -109,35 +126,40 @@ public class BookCommand {
 		BookMeta bm = (BookMeta) book.getItemMeta();
 
 		try {
+			// Elements in the array go by groups of 3: name, description and date.
 			for (int i = 0; i < achievements.size(); i += 3) {
 				String currentAchievement = "&0" + achievements.get(i) + "\n" + bookSeparator + "\n"
 						+ achievements.get(i + 1) + "\n" + bookSeparator + "\n&r" + achievements.get(i + 2);
 				currentAchievement = ChatColor.translateAlternateColorCodes('&', currentAchievement);
 				pages.add(currentAchievement);
 			}
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			plugin.getLogger().severe("Error while creating book pages of book.");
 		}
 
+		// Set the pages and other elements of the book (author, title and date of reception).
 		bm.setPages(pages);
 		bm.setAuthor(player.getName());
 		bm.setTitle(plugin.getPluginLang().getString("book-name", "Achievements Book"));
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		bm.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&r&o" +plugin.getPluginLang().getString("book-date", "Book created on DATE.").replace("DATE",
-				format.format(new Date())))));
+		bm.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&r&o" + plugin.getPluginLang()
+				.getString("book-date", "Book created on DATE.").replace("DATE", format.format(new Date())))));
 
 		book.setItemMeta(bm);
 
+		// Check whether player has room in his inventory, else drop book on the ground.
 		if (player.getInventory().firstEmpty() != -1)
-			player.getInventory().addItem(new ItemStack[] { book });
+			player.getInventory().addItem(book);
 		else
-			for (ItemStack item : new ItemStack[] { book })
-				player.getWorld().dropItem(player.getLocation(), item);
+			player.getWorld().dropItem(player.getLocation(), book);
 
 	}
 
+	/**
+	 * Retrieve cooldown structure.
+	 * 
+	 * @return book cooldown structure
+	 */
 	public HashMap<Player, Long> getPlayers() {
 
 		return players;

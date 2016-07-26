@@ -11,6 +11,12 @@ import org.bukkit.event.inventory.InventoryType;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Trades, AnvilsUsed and Brewing achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveTradeAnvilBrewListener implements Listener {
 
 	private AdvancedAchievements plugin;

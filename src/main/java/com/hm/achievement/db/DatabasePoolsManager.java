@@ -8,11 +8,18 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Class used to provide a cache wrapper for the database statistics, in order to reduce load of database and enable
+ * more modularity for the user.
+ * 
+ * @author Pyves
+ *
+ */
 public class DatabasePoolsManager {
 
 	private AdvancedAchievements plugin;
 
-	// Statistics of the different players; keys correspond to UUIDs.
+	// Statistics of the different players for normal achievements; keys correspond to UUIDs.
 	private Map<String, Integer> deathHashMap;
 	private Map<String, Integer> arrowHashMap;
 	private Map<String, Integer> snowballHashMap;
@@ -36,7 +43,8 @@ public class DatabasePoolsManager {
 	private Map<String, Integer> fireworkHashMap;
 	private Map<String, Integer> musicDiscHashMap;
 	private Map<String, Integer> enderPearlHashMap;
-	// Statistics of the different players; keys correspond to UUIDs and
+
+	// Statistics of the different players for multiple achievements; keys correspond to concatenated UUIDs and
 	// block/entity identifiers.
 	private Map<String, Integer> blockPlaceHashMap;
 	private Map<String, Integer> blockBreakHashMap;
@@ -44,6 +52,7 @@ public class DatabasePoolsManager {
 	private Map<String, Integer> craftHashMap;
 
 	public DatabasePoolsManager(AdvancedAchievements plugin) {
+
 		this.plugin = plugin;
 	}
 

@@ -18,6 +18,12 @@ import org.bukkit.configuration.InvalidConfigurationException;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Class to take care of the management of configuration files.
+ * 
+ * @author Pyves
+ *
+ */
 public class FileManager {
 
 	private AdvancedAchievements plugin;
@@ -26,6 +32,14 @@ public class FileManager {
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Constructs a new YamlManager given a configuration file name.
+	 * 
+	 * @param fileName
+	 * @return YamlManager for fileName
+	 * @throws IOException
+	 * @throws InvalidConfigurationException
+	 */
 	public YamlManager getNewConfig(String fileName) throws IOException, InvalidConfigurationException {
 
 		File file = this.getConfigFile(fileName);
@@ -40,7 +54,10 @@ public class FileManager {
 	}
 
 	/**
-	 * Retrieve a configuration file with its name.
+	 * Retrieve a configuration file by using its name. We assume the file is situated in the data folder of the plugin.
+	 * 
+	 * @param file
+	 * @return config file
 	 */
 	private File getConfigFile(String file) {
 
@@ -54,16 +71,20 @@ public class FileManager {
 				configFile = new File(plugin.getDataFolder() + file.replace("/", File.separator));
 			else
 				configFile = new File(plugin.getDataFolder() + File.separator + file.replace("/", File.separator));
-		} else
+		} else {
 			configFile = new File(plugin.getDataFolder(), file);
+		}
 
 		return configFile;
 	}
 
 	/**
-	 * Create file.
+	 * Create a new file and the folders if they don't exist. Copy file from plugin's resources.
+	 * 
+	 * @param resource
+	 * @throws IOException
 	 */
-	public void prepareFile(String resource) throws IOException {
+	private void prepareFile(String resource) throws IOException {
 
 		File file = this.getConfigFile(resource);
 
@@ -79,8 +100,11 @@ public class FileManager {
 	}
 
 	/**
-	 * Extract the configuration from the file and rework it in order to provide
-	 * a workaround to save comments.
+	 * Extract the configuration from the file and rework it in order to provide a workaround to save comments.
+	 * 
+	 * @param file
+	 * @return Reader with saved comments
+	 * @throws IOException
 	 */
 	public Reader getConfigContent(File file) throws IOException {
 
@@ -90,23 +114,21 @@ public class FileManager {
 
 		String addLine;
 		String currentLine;
-		String pluginName = this.getPluginName();
 
 		StringBuilder whole = new StringBuilder("");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 
 		while ((currentLine = reader.readLine()) != null) {
-			// Rework comment line so it becomes a normal value in the
-			// config file.
-			// This workaround allows the comment to be saved in the Yaml
-			// file.
+			// Rework comment line so it becomes a normal value in the config file.
+			// This workaround allows the comment to be saved in the Yaml file.
 			if (currentLine.startsWith("#")) {
 				addLine = currentLine.replace(":", "_COLON_").replace("|", "_VERT_").replace("-", "_HYPHEN_")
-						.replaceFirst("#", pluginName + "_COMMENT_" + commentNum + ": ");
+						.replaceFirst("#", plugin.getDescription().getName() + "_COMMENT_" + commentNum + ": ");
 				whole.append(addLine + "\n");
 				commentNum++;
-			} else
+			} else {
 				whole.append(currentLine + "\n");
+			}
 		}
 
 		String config = whole.toString();
@@ -118,6 +140,10 @@ public class FileManager {
 
 	/**
 	 * Return the total number of comments in the file.
+	 * 
+	 * @param file
+	 * @return number of comments
+	 * @throws IOException
 	 */
 	private int getCommentsAmount(File file) throws IOException {
 
@@ -142,8 +168,10 @@ public class FileManager {
 	}
 
 	/**
-	 * Rework the configuration string in order to provide a workaround to save
-	 * comments.
+	 * Rework the configuration string in order to regenerate comments.
+	 * 
+	 * @param configString
+	 * @return String representing original config file.
 	 */
 	private String prepareConfigString(String configString) {
 
@@ -154,7 +182,7 @@ public class FileManager {
 
 		for (String line : lines) {
 			// Rework comment line so it is converted back to a normal comment.
-			if (line.startsWith(this.getPluginName() + "_COMMENT")) {
+			if (line.startsWith(plugin.getDescription().getName() + "_COMMENT")) {
 				String comment = ("#" + line.trim().substring(line.indexOf(": ") + 1)).replace("_COLON_", ":")
 						.replace("_HYPHEN_", "-").replace("_VERT_", "|");
 
@@ -180,6 +208,10 @@ public class FileManager {
 
 	/**
 	 * Write a string into a file.
+	 * 
+	 * @param configString
+	 * @param file
+	 * @throws IOException
 	 */
 	public void saveConfig(String configString, File file) throws IOException {
 
@@ -192,13 +224,12 @@ public class FileManager {
 
 	}
 
-	public String getPluginName() {
-
-		return plugin.getDescription().getName();
-	}
-
 	/**
 	 * Write a resource represented by an input stream into a file.
+	 * 
+	 * @param resource
+	 * @param file
+	 * @throws IOException
 	 */
 	private void copyResource(InputStream resource, File file) throws IOException {
 
@@ -215,8 +246,11 @@ public class FileManager {
 	}
 
 	/**
-	 * Perform a backup of a file contained in the plugin's data folder; the
-	 * backup simply has a .bak extension.
+	 * Perform a backup of a file contained in the plugin's data folder; the backup simply has an additional .bak
+	 * extension.
+	 * 
+	 * @param name
+	 * @throws IOException
 	 */
 	public void backupFile(String name) throws IOException {
 

@@ -21,6 +21,11 @@ import org.bukkit.map.MinecraftFont;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
+/**
+ * Class in charge of handling the /aach list command, which displays interactive GUIs.
+ * 
+ * @author Pyves
+ */
 public class ListCommand {
 
 	private AdvancedAchievements plugin;
@@ -31,34 +36,36 @@ public class ListCommand {
 	private int listTime;
 	private int version;
 
-	// Corresponds to times at which players have entered list commands.
+	// Corresponds to times at which players have entered list commands. Cooldown structure.
 	private HashMap<Player, Long> players;
 
-	// Messages from language file.
-	private String[] normalAchievementTypesLanguage;
-	private String[] multipleAchievementTypesLanguage;
+	// Array of category names from language file.
+	private String[] normalAchievementCategoryNames;
+	private String[] multipleAchievementCategoryNames;
 
-	// Lists of item stacks for items displayed in the GUI.
-	private ItemStack[] multipleAchievementsTypesItems;
-	private ItemStack[] normalAchievementsTypesItems;
+	// Array of item stacks for items displayed in the GUI.
+	private ItemStack[] multipleAchievementCategoryItems;
+	private ItemStack[] normalAchievementCategoryItems;
 
 	// Pattern to delete colors if achievement not yet received.
 	private static final Pattern REGEX_PATTERN = Pattern.compile("&([a-f]|[0-9]){1}");
 
-	// Minecraft font, used to display progress bar.
+	// Minecraft font, used to get size information in the progress bar.
 	private MinecraftFont FONT = MinecraftFont.Font;
 
 	public ListCommand(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 		players = new HashMap<Player, Long>();
+		// Load configuration parameters.
 		hideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
 		obfuscateNotReceived = plugin.getPluginConfig().getBoolean("ObfuscateNotReceived", true);
-		obfuscateProgressiveAchievements = plugin.getPluginConfig().getBoolean("ObfuscateProgressiveAchievements", false);
+		obfuscateProgressiveAchievements = plugin.getPluginConfig().getBoolean("ObfuscateProgressiveAchievements",
+				false);
 		hideRewardDisplay = plugin.getPluginConfig().getBoolean("HideRewardDisplayInList", false);
 		listTime = plugin.getPluginConfig().getInt("TimeList", 0) * 1000;
-
-		normalAchievementTypesLanguage = new String[] {
+		// Get array of category names from configuration.
+		normalAchievementCategoryNames = new String[] {
 				plugin.getPluginLang().getString("list-connections", "Connections"),
 				plugin.getPluginLang().getString("list-deaths", "Number of Deaths"),
 				plugin.getPluginLang().getString("list-arrows", "Arrows Shot"),
@@ -92,7 +99,7 @@ public class ListCommand {
 				plugin.getPluginLang().getString("list-distance-gliding", "Distance Travelled with Elytra"),
 				plugin.getPluginLang().getString("list-commands", "Other Achievements") };
 
-		multipleAchievementTypesLanguage = new String[] {
+		multipleAchievementCategoryNames = new String[] {
 				plugin.getPluginLang().getString("list-places", "Blocks Placed"),
 				plugin.getPluginLang().getString("list-breaks", "Blocks Broken"),
 				plugin.getPluginLang().getString("list-kills", "Entities Killed"),
@@ -102,14 +109,15 @@ public class ListCommand {
 		// Minecraft versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 
-		// Get lists of item stacks for items displayed in the GUI.
-		multipleAchievementsTypesItems = new ItemStack[] { new ItemStack(Material.STONE, 1, (short) 6),
+		// Get list of item stacks for items displayed in the GUI, for multiple achievements.
+		multipleAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.STONE, 1, (short) 6),
 				new ItemStack(Material.SMOOTH_BRICK, 1, (short) 2), new ItemStack(Material.BONE),
 				new ItemStack(Material.WORKBENCH) };
 
-		// Elytra and Grass paths only available in Minecraft 1.9+.
+		// Get list of item stacks for items displayed in the GUI, for multiple achievements.
+		// Elytra and Grass paths only available in Minecraft 1.9+, we construct the list depending on the game version.
 		if (version >= 9)
-			normalAchievementsTypesItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
+			normalAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
 					new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW),
 					new ItemStack(Material.SNOW_BALL), new ItemStack(Material.EGG),
 					new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FLINT),
@@ -125,7 +133,7 @@ public class ListCommand {
 					new ItemStack(Material.SADDLE), new ItemStack(Material.MINECART), new ItemStack(Material.BOAT),
 					new ItemStack(Material.ELYTRA), new ItemStack(Material.BOOKSHELF) };
 		else
-			normalAchievementsTypesItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
+			normalAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
 					new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW),
 					new ItemStack(Material.SNOW_BALL), new ItemStack(Material.EGG),
 					new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FLINT),
@@ -143,33 +151,15 @@ public class ListCommand {
 	}
 
 	/**
-	 * Check is player hasn't done a list command too recently (with "too recently" being defined in configuration
-	 * file).
-	 */
-	private boolean timeAuthorisedList(Player player) {
-
-		if (player.hasPermission("achievement.*") || listTime == 0)
-			return true;
-		long currentTime = System.currentTimeMillis();
-		long lastListTime = 0;
-		if (players.containsKey(player))
-			lastListTime = players.get(player);
-		if (currentTime - lastListTime < listTime)
-			return false;
-		players.put(player, currentTime);
-		return true;
-
-	}
-
-	/**
 	 * Display the main GUI, corresponding to all the different available categories and their names. Users will then be
 	 * able to click on an unlocked category to display another GUI with more specific details about the different
 	 * achievements.
+	 * 
+	 * @param player
 	 */
 	public void createMainGUI(Player player) {
 
 		if (timeAuthorisedList(player)) {
-
 			// Create a new chest-like inventory; make it as small as possible while still containing all elements.
 			Inventory guiInv = Bukkit.createInventory(null,
 					getClosestGreaterMultipleOf9(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length
@@ -188,7 +178,7 @@ public class ListCommand {
 			// Display categories with multiple sub-categories in GUI.
 			for (int i = 0; i < AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length; i++) {
 				// Hide category if the user has defined an empty name for it.
-				if (multipleAchievementTypesLanguage[i].length() != 0) {
+				if (multipleAchievementCategoryNames[i].length() != 0) {
 					// Retrieve the name of the category, defined by the user.
 					String category = AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i];
 					// Ignore this category if it's in the disabled list.
@@ -201,21 +191,19 @@ public class ListCommand {
 					if (hideNotReceivedCategories) {
 						hasReceivedInCategory = false;
 						// Iterate through all sub-categories.
-						for (String section : config.getConfigurationSection(category)
-								.getKeys(false)) {
+						for (String section : config.getConfigurationSection(category).getKeys(false)) {
 							// Iterate through all achievements in sub-category.
-							for (String ach : config.getConfigurationSection(category + '.' + section)
-									.getKeys(false)) {
+							for (String ach : config.getConfigurationSection(category + '.' + section).getKeys(false)) {
 								// Check whether player has received achievement.
-								if (plugin.getDb().hasPlayerAchievement(player, config
-										.getString(category + '.' + section + '.' + ach + ".Name", ""))) {
+								if (plugin.getDb().hasPlayerAchievement(player,
+										config.getString(category + '.' + section + '.' + ach + ".Name", ""))) {
 									// At least one achievement was received in the current category; it is unlocked,
 									// can continue processing.
 									hasReceivedInCategory = true;
 									break;
 								}
 							}
-							// No need to check next sub-category, break.
+							// No need to check next sub-category, break and move to next category.
 							if (hasReceivedInCategory)
 								break;
 						}
@@ -226,13 +214,12 @@ public class ListCommand {
 
 					if (hasReceivedInCategory || !hideNotReceivedCategories) {
 						// Create item stack that will be displayed in the GUI, with its category name.
-						categoryItem = multipleAchievementsTypesItems[i];
+						categoryItem = multipleAchievementCategoryItems[i];
 						categoryMeta = categoryItem.getItemMeta();
 						categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-								"&8" + config
-										.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
-										.replaceAll("%ICON%", plugin.getIcon())
-										.replaceAll("%NAME%", multipleAchievementTypesLanguage[i])));
+								"&8" + config.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
+										.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%",
+												multipleAchievementCategoryNames[i])));
 					} else {
 						// The player has not unlocked any achievements in the category: display barrier item with
 						// message.
@@ -253,7 +240,7 @@ public class ListCommand {
 			// Display categories with normal achievements in GUI.
 			for (int i = 0; i < AdvancedAchievements.NORMAL_ACHIEVEMENTS.length; i++) {
 				// Hide category if the user has defined an empty name for it.
-				if (normalAchievementTypesLanguage[i].length() != 0) {
+				if (normalAchievementCategoryNames[i].length() != 0) {
 					// Retrieve the name of the category, defined by the user.
 					String category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[i];
 					// Ignore this category if it's in the disabled list.
@@ -283,13 +270,12 @@ public class ListCommand {
 
 					if (hasReceivedInCategory || !hideNotReceivedCategories) {
 						// Create item stack that will be displayed in the GUI, with its category name.
-						categoryItem = normalAchievementsTypesItems[i];
+						categoryItem = normalAchievementCategoryItems[i];
 						categoryMeta = categoryItem.getItemMeta();
 						categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-								"&8" + config
-										.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
-										.replaceAll("%ICON%", plugin.getIcon())
-										.replaceAll("%NAME%", normalAchievementTypesLanguage[i])));
+								"&8" + config.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
+										.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%",
+												normalAchievementCategoryNames[i])));
 					} else {
 						// The player has not unlocked any achievements in the category: display barrier item with
 						// message.
@@ -306,6 +292,7 @@ public class ListCommand {
 					numberOfCategories++;
 				}
 			}
+			// Close player's current inventory (this can occur if player is coming back from a category GUI).
 			player.closeInventory();
 			// Display GUI to the player.
 			player.openInventory(guiInv);
@@ -318,8 +305,33 @@ public class ListCommand {
 	}
 
 	/**
+	 * Check if player hasn't done a list command too recently (with "too recently" being defined in configuration
+	 * file).
+	 * 
+	 * @param player
+	 * @return whether a player is authorised to perform the list command
+	 */
+	private boolean timeAuthorisedList(Player player) {
+
+		// Player bypasses cooldown if he has full plugin permissions.
+		if (player.hasPermission("achievement.*") || listTime == 0)
+			return true;
+		long currentTime = System.currentTimeMillis();
+		long lastListTime = 0;
+		if (players.containsKey(player))
+			lastListTime = players.get(player);
+		if (currentTime - lastListTime < listTime)
+			return false;
+		players.put(player, currentTime);
+		return true;
+	}
+
+	/**
 	 * Display a category GUI, containing all the achievements from a given category. This method is used for normal
 	 * achievements.
+	 * 
+	 * @param clickedItem
+	 * @param player
 	 */
 	public void createCategoryGUINormal(Material clickedItem, Player player) {
 
@@ -462,7 +474,7 @@ public class ListCommand {
 				break;
 		}
 
-		// Items used for 1.9+ version of Minecraft.
+		// Items used for 1.9+ version of Minecraft. This corresponds to the default case of the above switch.
 		if (category.equals("") && version >= 9) {
 			switch (clickedItem) {
 				case ELYTRA:
@@ -485,18 +497,15 @@ public class ListCommand {
 
 		// Create a new chest-like inventory; make it as small as possible while still containing all achievements.
 		Inventory inventory = Bukkit.createInventory(null,
-				getClosestGreaterMultipleOf9(
-						config.getConfigurationSection(category).getKeys(false).size() + 1),
+				getClosestGreaterMultipleOf9(config.getConfigurationSection(category).getKeys(false).size() + 1),
 				ChatColor.translateAlternateColorCodes('&',
 						plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
 
 		int positionInGUI = 0;
 
-		// Populate the GUI with all of the achievements for the category.
-
 		String previousItemDate = null;
 		int previousItemGoal = 0;
-
+		// Populate the GUI with all of the achievements for the category.
 		for (String ach : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
 
 			// ach is the threshold for obtaining this achievement
@@ -508,20 +517,20 @@ public class ListCommand {
 			String nameToShowUser;
 
 			if (Strings.isNullOrEmpty(displayName)) {
-				// Use the achievement key name (this name is used in the achievements table in the database)
+				// Use the achievement key name (this name is used in the achievements table in the database).
 				nameToShowUser = achName;
 			} else {
-				// Display name is defined; use it
+				// Display name is defined; use it.
 				nameToShowUser = displayName;
 			}
 
 			String achMessage;
 			String goal = config.getString(category + '.' + ach + ".Goal", "");
 			if (Strings.isNullOrEmpty(goal)) {
-				// Show the achievement message below the achievement name
+				// Show the achievement message below the achievement name.
 				achMessage = config.getString(category + '.' + ach + ".Message", "");
 			} else {
-				// Show the goal below the achievement name
+				// Show the goal below the achievement name.
 				achMessage = goal;
 			}
 
@@ -533,18 +542,18 @@ public class ListCommand {
 			if (positionInGUI == 0 || date != null || previousItemDate != null) {
 				// First achievement in the category or
 				// achievement has been completed or
-				// previous achievement has been completed
+				// previous achievement has been completed.
 				inelligibleSeriesItem = false;
 			} else {
-				// Check whether this achievement cannot be completed until the previous one is completed
+				// Check whether this achievement cannot be completed until the previous one is completed.
 				if (currentItemGoal > previousItemGoal)
 					inelligibleSeriesItem = true;
 				else
 					inelligibleSeriesItem = false;
 			}
 
-			createGUIItem(inventory, positionInGUI, ach, statistic, nameToShowUser, achMessage,
-					rewards, date, inelligibleSeriesItem);
+			createGUIItem(inventory, positionInGUI, ach, statistic, nameToShowUser, achMessage, rewards, date,
+					inelligibleSeriesItem);
 			positionInGUI++;
 
 			previousItemDate = date;
@@ -569,6 +578,9 @@ public class ListCommand {
 	/**
 	 * Display the a category GUI, containing all the achievements from a given category. This method is used for
 	 * multiple achievements, in other words those based on sub-categories.
+	 * 
+	 * @param item
+	 * @param player
 	 */
 	public void createCategoryGUIMultiple(Material item, Player player) {
 
@@ -640,9 +652,8 @@ public class ListCommand {
 			// Populate GUI with all the achievements for the current sub-category.
 			ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + '.' + section);
 			for (String level : subcategoryConfig.getKeys(false)) {
-
 				// level is the threshold for obtaining this achievement
-				// Convert it to an integer
+				// Convert it to an integer.
 				int currentItemGoal = Ints.tryParse(level);
 
 				String achName = config.getString(category + '.' + section + '.' + level + ".Name", "");
@@ -650,20 +661,20 @@ public class ListCommand {
 				String nameToShowUser;
 
 				if (Strings.isNullOrEmpty(displayName)) {
-					// Use the achievement key name (this name is used in the achievements table in the database)
+					// Use the achievement key name (this name is used in the achievements table in the database).
 					nameToShowUser = achName;
 				} else {
-					// Display name is defined; use it
+					// Display name is defined; use it.
 					nameToShowUser = displayName;
 				}
 
 				String achMessage;
 				String goal = config.getString(category + '.' + section + '.' + level + ".Goal", "");
 				if (Strings.isNullOrEmpty(goal)) {
-					// Show the achievement message below the achievement name
+					// Show the achievement message below the achievement name.
 					achMessage = config.getString(category + '.' + section + '.' + level + ".Message", "");
 				} else {
-					// Show the goal below the achievement name
+					// Show the goal below the achievement name.
 					achMessage = goal;
 				}
 
@@ -675,18 +686,18 @@ public class ListCommand {
 				if (subcategoryIndex == 0 || date != null || previousItemDate != null) {
 					// First achievement in the category or
 					// achievement has been completed or
-					// previous achievement has been completed
+					// previous achievement has been completed.
 					inelligibleSeriesItem = false;
 				} else {
-					// Check whether this achievement cannot be completed until the previous one is completed
+					// Check whether this achievement cannot be completed until the previous one is completed.
 					if (currentItemGoal > previousItemGoal)
 						inelligibleSeriesItem = true;
 					else
 						inelligibleSeriesItem = false;
 				}
 
-				createGUIItem(inventory, positionInGUI, level, statistic, nameToShowUser, achMessage,
-						rewards, date, inelligibleSeriesItem);
+				createGUIItem(inventory, positionInGUI, level, statistic, nameToShowUser, achMessage, rewards, date,
+						inelligibleSeriesItem);
 				positionInGUI++;
 
 				previousItemDate = date;
@@ -707,26 +718,36 @@ public class ListCommand {
 		player.closeInventory();
 		// Display category GUI.
 		player.openInventory(inventory);
-
 	}
 
 	/**
 	 * Create a GUI item for a given achievement.
+	 * 
+	 * @param inventory
+	 * @param positionInGUI
+	 * @param level
+	 * @param statistic
+	 * @param achName
+	 * @param achMessage
+	 * @param rewards
+	 * @param date
+	 * @param inelligibleSeriesItem
 	 */
 	private void createGUIItem(Inventory inventory, int positionInGUI, String level, int statistic, String achName,
 			String achMessage, ArrayList<String> rewards, String date, boolean inelligibleSeriesItem) {
 
-		// Display a clay block in the GUI, with a color depending on whether it was received or not, or whether it was
+		// Display a clay block in the GUI, with a color depending on whether it was received or not, or whether
+		// progress was
 		// started.
 		ItemStack achItem;
 		if (date != null) {
-			// Item has been received
+			// Achievement has been received.
 			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 5);
 		} else if (statistic > 0) {
-			// Player is making progress toward the item
+			// Player is making progress toward the achievement.
 			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 4);
 		} else {
-			// Player has not started progress
+			// Player has not started progress.
 			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 14);
 		}
 
@@ -761,6 +782,14 @@ public class ListCommand {
 	/**
 	 * Create the lore for the current achievement, containing information about the progress, date of reception,
 	 * description, rewards.
+	 * 
+	 * @param achMessage
+	 * @param level
+	 * @param rewards
+	 * @param date
+	 * @param statistic
+	 * @param inelligibleSeriesItem
+	 * @return
 	 */
 	private ArrayList<String> buildLoreString(String achMessage, String level, ArrayList<String> rewards, String date,
 			int statistic, boolean inelligibleSeriesItem) {
@@ -779,23 +808,24 @@ public class ListCommand {
 					"&8&o" + achMessage.replaceAll(REGEX_PATTERN.pattern(), "")));
 		lore.add("");
 
-		// Display date if the achievement was received, or progress bar; achievements with statistic -1 correspond to
-		// Command achievements, ignore if they weren't yet received.
+		// Display date if the achievement was received, or progress bar otherwise; achievements with statistic -1
+		// correspond to
+		// Commands achievements, ignore if they weren't yet received.
 		if (date != null) {
 			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + date.replaceAll(REGEX_PATTERN.pattern(), "")));
 			lore.add("");
 		} else if (!obfuscateNotReceived && statistic >= 0) {
-			String barDisplay = "&7[";
+			StringBuilder barDisplay = new StringBuilder("&7[");
 			for (int i = 1; i <= FONT.getWidth(achMessage) / 2 - 2; i++) {
-				if (i < ((FONT.getWidth(achMessage) / 2 - 2) * statistic) / Integer.valueOf(level))
-					barDisplay = barDisplay + plugin.getColor() + "|";
-				else {
-					barDisplay = barDisplay + "&8|";
+				if (i < ((FONT.getWidth(achMessage) / 2 - 2) * statistic) / Integer.valueOf(level)) {
+					barDisplay.append(plugin.getColor()).append('|');
+				} else {
+					barDisplay.append("&8|");
 				}
 			}
 
-			barDisplay += "&7]";
-			lore.add(ChatColor.translateAlternateColorCodes('&', barDisplay));
+			barDisplay.append("&7]");
+			lore.add(ChatColor.translateAlternateColorCodes('&', barDisplay.toString()));
 			lore.add("");
 		}
 
@@ -814,12 +844,14 @@ public class ListCommand {
 			}
 		}
 		return lore;
-
 	}
 
 	/**
 	 * Inventory GUIs need a number of slots that is a multiple of 9. This simple function gets the smallest multiple of
 	 * 9 greater than its input value, in order for the GUI to contain all of its elements with minimum empty space.
+	 * 
+	 * @param value
+	 * @return closest multiple of 9 greater than value
 	 */
 	private int getClosestGreaterMultipleOf9(int value) {
 
@@ -830,7 +862,9 @@ public class ListCommand {
 	}
 
 	/**
-	 * Return hashmap storing times when players last entered /aach list command.
+	 * Retrieve cooldown structure.
+	 * 
+	 * @return list cooldown structure
 	 */
 	public HashMap<Player, Long> getPlayers() {
 

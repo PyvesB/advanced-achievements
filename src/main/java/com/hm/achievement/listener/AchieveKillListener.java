@@ -12,6 +12,12 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Kills achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveKillListener implements Listener {
 
 	private AdvancedAchievements plugin;

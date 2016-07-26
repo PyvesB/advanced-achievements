@@ -10,6 +10,12 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with EatenItems and ConsumedPotions achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveConsumeListener implements Listener {
 
 	private AdvancedAchievements plugin;

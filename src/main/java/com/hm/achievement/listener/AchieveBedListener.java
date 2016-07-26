@@ -9,6 +9,12 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with Beds achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveBedListener implements Listener {
 
 	private AdvancedAchievements plugin;

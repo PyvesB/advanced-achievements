@@ -11,6 +11,12 @@ import org.bukkit.event.player.PlayerLevelChangeEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Listener class to deal with MaxLevel achievements.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveXPListener implements Listener {
 
 	private AdvancedAchievements plugin;

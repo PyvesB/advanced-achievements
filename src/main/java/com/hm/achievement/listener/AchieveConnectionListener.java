@@ -15,10 +15,16 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.utils.UpdateChecker;
 import com.hm.achievement.runnable.AchieveConnectionRunnable;
 
+/**
+ * Listener class to deal with Connections achievements, as well as update checker and initialisation of played time
+ * statistics.
+ * 
+ * @author Pyves
+ *
+ */
 public class AchieveConnectionListener implements Listener {
 
 	private AdvancedAchievements plugin;
-
 	private Map<String, Long> joinTime;
 	private Map<String, Long> playTime;
 
@@ -47,8 +53,7 @@ public class AchieveConnectionListener implements Listener {
 		}
 
 		// Initialise play time data for the player.
-		// If runnable is null, no played time achievements have been set, no
-		// need to store data.
+		// If runnable is null, no played time achievements have been set, no need to store data.
 		// If player doesn't have permissions, no need to store data.
 		if (plugin.getAchievePlayTimeRunnable() != null
 				&& event.getPlayer().hasPermission("achievement.count.playedtime")) {
@@ -58,8 +63,7 @@ public class AchieveConnectionListener implements Listener {
 					plugin.getDb().updateAndGetPlaytime(event.getPlayer().getUniqueId().toString(), 0L));
 		}
 
-		// Schedule delayed task to check if player has a new Connections
-		// achievement.
+		// Schedule delayed task to check if player has a new Connections achievement.
 		if (!plugin.getDisabledCategorySet().contains("Connections"))
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
@@ -67,14 +71,23 @@ public class AchieveConnectionListener implements Listener {
 
 	}
 
+	/**
+	 * Retrieve map containing the join time for each player.
+	 * 
+	 * @return joinTime map
+	 */
 	public Map<String, Long> getJoinTime() {
 
 		return joinTime;
 	}
 
+	/**
+	 * Retrieve map containing the time played by each player.
+	 * 
+	 * @return playTime map
+	 */
 	public Map<String, Long> getPlayTime() {
 
 		return playTime;
 	}
-
 }
