@@ -77,8 +77,7 @@ public class UpdateChecker {
 				}
 			}
 
-			// Additional check (for instance pluginVersion = 2.2 and
-			// onlineVersion = 2.2.1).
+			// Additional check (for instance pluginVersion = 2.2 and onlineVersion = 2.2.1).
 			if (pluginVersion.length < onlineVersion.length) {
 				logUpdate();
 				return true;
@@ -90,14 +89,13 @@ public class UpdateChecker {
 			plugin.setSuccessfulLoad(false);
 		}
 		return false;
-
 	}
 
 	private void logUpdate() {
 
-		plugin.getLogger().info("Update available: v" + version + ". Download at one of the following:");
-		plugin.getLogger().info(BUKKIT_DONWLOAD_URL);
-		plugin.getLogger().info(SPIGOT_DONWLOAD_URL);
+		plugin.getLogger().warning("Update available: v" + version + ". Download at one of the following:");
+		plugin.getLogger().warning(BUKKIT_DONWLOAD_URL);
+		plugin.getLogger().warning(SPIGOT_DONWLOAD_URL);
 	}
 
 	public String getVersion() {

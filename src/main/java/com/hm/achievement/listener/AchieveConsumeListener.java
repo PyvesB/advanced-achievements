@@ -40,7 +40,8 @@ public class AchieveConsumeListener implements Listener {
 
 			plugin.getPoolsManager().getConsumedPotionsHashMap().put(player.getUniqueId().toString(), consumedPotions);
 			configAchievement = "ConsumedPotions." + consumedPotions;
-		} else if (player.hasPermission("achievement.count.eatenitems")
+		} else if (event.getItem().getType() != Material.MILK_BUCKET
+				&& player.hasPermission("achievement.count.eatenitems")
 				&& !plugin.getDisabledCategorySet().contains("EatenItems")) {
 			int eatenItems = plugin.getPoolsManager().getPlayerEatenItemAmount(player) + 1;
 

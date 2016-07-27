@@ -2,6 +2,7 @@ package com.hm.achievement.listener;
 
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -9,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 /**
  * Listener class to deal with Breaks achievements.
@@ -18,11 +20,18 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public class AchieveBlockBreakListener implements Listener {
 
-	AdvancedAchievements plugin;
+	private AdvancedAchievements plugin;
+	private int version;
+	private boolean disableSilkTouchBreaks;
 
 	public AchieveBlockBreakListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+		// Load configuration parameter.
+		disableSilkTouchBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchBreaks", false);
+		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
+		// Minecraft versions change in the future.
+		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -30,7 +39,12 @@ public class AchieveBlockBreakListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 
 		Player player = event.getPlayer();
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player)
+				|| disableSilkTouchBreaks && (version >= 9
+						&& event.getPlayer().getInventory().getItemInMainHand()
+								.containsEnchantment(Enchantment.SILK_TOUCH)
+						|| version < 9
+								&& event.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)))
 			return;
 		Block block = event.getBlock();
 		String blockName = block.getType().name().toLowerCase();

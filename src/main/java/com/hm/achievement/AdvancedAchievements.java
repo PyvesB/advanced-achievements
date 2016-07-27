@@ -49,14 +49,14 @@ import com.hm.achievement.utils.*;
  * 
  * Official plugin's server: hellominecraft.fr
  * 
- * Bukkit project page: dev.bukkit.org/bukkit-plugins/advanced-achievements Spigot project page:
- * spigotmc.org/resources/advanced-achievements.6239
+ * Bukkit project page: dev.bukkit.org/bukkit-plugins/advanced-achievements
+ * 
+ * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
  * @version 3.0-Beta
- * @author DarkPyves
+ * @author Pyves
  */
-
 public class AdvancedAchievements extends JavaPlugin {
 
 	// Used for Vault plugin integration.
@@ -371,8 +371,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			successfulLoad = false;
 		} catch (InvalidConfigurationException e) {
 			logger.severe("Error while loading configuration file, disabling plugin.");
-			logger.severe(
-					"Verify your syntax using the following logs and by visiting yaml-online-parser.appspot.com");
+			logger.severe("Verify your syntax using the following logs and by visiting yaml-online-parser.appspot.com");
 			e.printStackTrace();
 			successfulLoad = false;
 			overrideDisable = true;
@@ -388,8 +387,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			successfulLoad = false;
 		} catch (InvalidConfigurationException e) {
 			logger.severe("Error while loading language file, disabling plugin.");
-			logger.severe(
-					"Verify your syntax using the following logs and by visiting yaml-online-parser.appspot.com");
+			logger.severe("Verify your syntax using the following logs and by visiting yaml-online-parser.appspot.com");
 			e.printStackTrace();
 			successfulLoad = false;
 			overrideDisable = true;
@@ -491,6 +489,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		logAchievementStats();
 	}
 
+	/**
+	 * Log number of achievements and disabled categories.
+	 */
 	private void logAchievementStats() {
 
 		YamlManager config = getPluginConfig();
@@ -521,7 +522,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			if (categorySections.size() == 0)
 				continue;
 
-			categoriesInUse +=1;
+			categoriesInUse += 1;
 
 			// Enumerate the sub-categories
 			for (String section : categorySections) {
@@ -533,7 +534,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			}
 		}
 
-		this.getLogger().info("Loaded " + totalAchievements + " achievements in " + categoriesInUse + " categories");
+		this.getLogger().info("Loaded " + totalAchievements + " achievements in " + categoriesInUse + " categories.");
 
 		if (disabledCategorySet.size() > 0) {
 			StringBuilder disabledCategories = new StringBuilder();
@@ -543,7 +544,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			else
 				disabledCategories.append(disabledCategorySet.size() + " disabled categories: ");
 
-			for (String category: disabledCategorySet) {
+			for (String category : disabledCategorySet) {
 				disabledCategories.append(category + ", ");
 			}
 
@@ -701,7 +702,7 @@ public class AdvancedAchievements extends JavaPlugin {
 					"Set the format of the achievement name in /aach list.");
 			updateDone = true;
 		}
-		
+
 		if (!config.getKeys(false).contains("HideRewardDisplayInList")) {
 			config.set("HideRewardDisplayInList", false, "Hide the reward display in /aach list.");
 			updateDone = true;
@@ -726,6 +727,25 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (!config.getKeys(false).contains("BookChronologicalOrder")) {
 			config.set("BookChronologicalOrder", true,
 					"Sort pages of the book in chronological order (false for reverse chronological order).");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("DisableSilkTouchBreaks")) {
+			config.set("DisableSilkTouchBreaks", false,
+					"Do not take into accound items broken with Silk Touch for the Breaks achievements.");
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("ObfuscateProgressiveAchievements")) {
+			config.set("ObfuscateProgressiveAchievements", false,
+					new String[] { "Obfuscate progressive achievements:",
+							"For categories with a series of related achievements where the only thing changing is the number of times",
+							"the event has occurred, show achievements that have been obtained and show the next obtainable achievement,",
+							"but obfuscate the additional achievements. In order for this to work properly, achievements must be sorted",
+							"in order of increasing difficulty. For example, under Places, stone, the first achievement could have a",
+							"target of 100 stone,# the second 500 stone, and the third 1000 stone.  When ObfuscateProgressiveAchievements",
+							"is true, initially only the 100 stone achievement will be readable in the GUI.  Once 100 stone have been placed,",
+							"the 500 stone achievement will become legible." });
 			updateDone = true;
 		}
 
@@ -965,6 +985,9 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	/**
 	 * Check if player is in a world in which achievements must not be received.
+	 * 
+	 * @param player
+	 * @return true if player is in excluded world, false otherwise
 	 */
 	public boolean isInExludedWorld(Player player) {
 
@@ -975,7 +998,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Try to hook up with Vault.
+	 * Try to hook up with Vault, and log if this is called on plugin initialisation.
+	 * 
+	 * @param log
+	 * @return true if Vault available, false otherwise
 	 */
 	public boolean setUpEconomy(boolean log) {
 
@@ -1226,9 +1252,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Return a map from achievement name (as stored in the database) to DisplayName
-	 * If multiple achievements have the same achievement name, only the first DisplayName will be tracked
-	 * If DisplayName for an achievement is empty or undefined, the value in the returned map will be an empty string
+	 * Return a map from achievement name (as stored in the database) to DisplayName If multiple achievements have the
+	 * same achievement name, only the first DisplayName will be tracked If DisplayName for an achievement is empty or
+	 * undefined, the value in the returned map will be an empty string
+	 * 
 	 * @return Map from achievement name to user-friendly display name
 	 */
 	public Map<String, String> getAchievementsAndDisplayNames() {

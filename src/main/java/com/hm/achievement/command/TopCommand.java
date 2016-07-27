@@ -22,19 +22,24 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
 public class TopCommand {
 
 	private AdvancedAchievements plugin;
-	private long lastTopTime;
-	private long lastWeekTime;
-	private long lastMonthTime;
+
+	private int topList;
+	private boolean additionalEffects;
+	private boolean sound;
+	private int version;
+
+	// Used for caching.
 	private int totalGlobalPlayers;
 	private int totalWeeklyPlayers;
 	private int totalMonthlyPlayers;
 	private ArrayList<String> globalPlayersTop;
 	private ArrayList<String> weeklyPlayersTop;
 	private ArrayList<String> monthlyPlayersTop;
-	private int topList;
-	private boolean additionalEffects;
-	private boolean sound;
-	private int version;
+
+	// Caching cooldowns.
+	private long lastTopTime;
+	private long lastWeekTime;
+	private long lastMonthTime;
 
 	private final static int VALUES_EXPIRATION_DELAY = 60000;
 

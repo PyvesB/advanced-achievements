@@ -31,7 +31,7 @@ public class AchieveDistanceRunnable implements Runnable {
 
 	private AdvancedAchievements plugin;
 
-	boolean ignoreVerticalDistance;
+	private boolean ignoreVerticalDistance;
 
 	// Arrays of achievement amounts (=thresholds) extracted from configuration.
 	private int[] footAchievementThresholds;

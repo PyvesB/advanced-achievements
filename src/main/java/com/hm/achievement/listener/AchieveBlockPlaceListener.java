@@ -18,7 +18,7 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public class AchieveBlockPlaceListener implements Listener {
 
-	AdvancedAchievements plugin;
+	private AdvancedAchievements plugin;
 
 	public AchieveBlockPlaceListener(AdvancedAchievements plugin) {
 

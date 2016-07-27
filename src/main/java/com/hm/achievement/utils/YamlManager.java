@@ -29,7 +29,7 @@ public class YamlManager {
 	private File file;
 	private FileConfiguration config;
 
-	AdvancedAchievements plugin;
+	private AdvancedAchievements plugin;
 
 	public YamlManager(Reader reader, File configFile, int comments, AdvancedAchievements plugin)
 			throws IOException, InvalidConfigurationException {
