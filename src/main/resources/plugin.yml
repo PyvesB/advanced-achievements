@@ -30,6 +30,9 @@ permissions:
   achievement.stats:
     description: Allows to display achievement stats.
     default: true
+  achievement.easteregg:
+    description: Allows to display the plugin's easter egg.
+    default: true
   achievement.reload:
     description: Allows to reload the plugin's configuration.
     default: op
@@ -55,6 +58,7 @@ permissions:
       achievement.week: true
       achievement.month: true
       achievement.stats: true
+      achievement.easteregg: true
       achievement.reload: true
       achievement.give: true
       achievement.check: true

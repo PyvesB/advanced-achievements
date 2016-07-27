@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-import com.google.common.base.Strings;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.particle.ParticleEffect;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
@@ -34,9 +32,6 @@ public class BookCommand {
 	private boolean sound;
 	private int version;
 
-	// Map between achievement names and display names.
-	private Map<String, String> namesToDisplayNames;
-
 	// Corresponds to times at which players have received their books. Cooldown structure.
 	private HashMap<Player, Long> players;
 
@@ -44,7 +39,6 @@ public class BookCommand {
 
 		this.plugin = plugin;
 		players = new HashMap<Player, Long>();
-		namesToDisplayNames = plugin.getAchievementsAndDisplayNames();
 		// Load configuration parameters.
 		bookTime = plugin.getPluginConfig().getInt("TimeBook", 0) * 1000;
 		bookSeparator = plugin.getPluginConfig().getString("BookSeparator", "");
@@ -134,11 +128,7 @@ public class BookCommand {
 		try {
 			// Elements in the array go by groups of 3: name, description and date.
 			for (int i = 0; i < achievements.size(); i += 3) {
-				// We retrieve the "Name" parameters from the database; attempt to convert to "DisplayName".
-				String achievementName = namesToDisplayNames.get(achievements.get(i));
-				if (Strings.isNullOrEmpty(achievementName))
-					achievementName = achievements.get(i);
-				String currentAchievement = "&0" + achievementName + "\n" + bookSeparator + "\n"
+				String currentAchievement = "&0" + achievements.get(i) + "\n" + bookSeparator + "\n"
 						+ achievements.get(i + 1) + "\n" + bookSeparator + "\n&r" + achievements.get(i + 2);
 				currentAchievement = ChatColor.translateAlternateColorCodes('&', currentAchievement);
 				pages.add(currentAchievement);
