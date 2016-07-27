@@ -89,7 +89,7 @@ import net.milkbowl.vault.economy.Economy;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 3.0-Beta
+ * @version 3.0
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin {
@@ -924,6 +924,11 @@ public class AdvancedAchievements extends JavaPlugin {
 			updateDone = true;
 		}
 
+		if (!lang.getKeys(false).contains("aach-tip")) {
+			lang.set("aach-tip", "&lHINT&r &8You can &7&n&ohover&r &8or &7&n&oclick&r &8on the commands!");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the language file: save and do a fresh load.
 			try {
@@ -1068,18 +1073,17 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (!cmd.getName().equalsIgnoreCase("aach"))
 			return false;
 
-		
 		if ((args.length == 1) && !args[0].equalsIgnoreCase("help")) {
 
 			if (args[0].equalsIgnoreCase("book") && sender.hasPermission("achievement.book")
 					&& sender instanceof Player) {
 
 				bookCommand.giveBook(((Player) sender));
-				
+
 			} else if (args[0].equalsIgnoreCase("hcaa") && sender.hasPermission("achievement.easteregg")) {
-				
+
 				displayEasterEgg(sender);
-				
+
 			} else if (args[0].equalsIgnoreCase("reload")) {
 
 				if (sender.hasPermission("achievement.reload")) {
@@ -1200,6 +1204,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
+	 * Easter egg; run it and you'll see what all this mess is about!
 	 * 
 	 * @param sender
 	 */

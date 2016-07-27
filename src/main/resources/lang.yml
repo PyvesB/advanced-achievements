@@ -65,13 +65,14 @@ aach-command-reload-hover: "Reload most settings in config.yml and lang.yml file
 aach-command-info: "Display information about the plugin."
 aach-command-info-hover: "Some extra info about the plugin and its awesome author!"
 aach-command-check: "Check if NAME has ACH."
-aach-command-check-hover: "Don't forget to add the colors defined in the config file."
+aach-command-check-hover: "Use the Name parameter specified in the config."
 aach-command-delete: "Delete ACH from NAME."
 aach-command-delete-hover: "Player must be online; does not reset any associated statistics."
 aach-command-week: "Display weekly rankings."
 aach-command-week-hover: "Best achievement hunters since the start of the week!"
 aach-command-month: "Display monthly rankings."
 aach-command-month-hover: "Best achievement hunters since the start of the month!"
+aach-tip: "&lHINT&r &8You can &7&n&ohover&r &8or &7&n&oclick&r &8on the commands!"
 
 # Related to /aach info.
 version-command-name: "Name:"

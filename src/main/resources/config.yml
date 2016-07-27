@@ -4,15 +4,15 @@
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
-# You can use Minecraft chat colours in Message/Name, but include '' around the whole text: '&4Colour'.
+# You can use Minecraft chat colors in Message|DisplayName|Goal, but include '' around the whole text: '&4Color'.
 # When using colours, you must also double apostrophes: '&2I''ve doubled apostrophes!'.
-# In command rewards, PLAYER designates the name of the player who got the achievement.
 # Only spaces, no tabs. Don't forget the indents, plugin won't work otherwise!
 # To check your file, use: yaml-online-parser.appspot.com
-# Do NOT delete any sections in the configuration file.
+# Do NOT delete any main achievement sections in the configuration file.
 # Possible items for rewards/Crafts/Places/Breaks: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
 # Possible mobs for the Kills section: 	  hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
 # Default config.yml file:  github.com/PyvesB/AdvancedAchievements/blob/master/src/main/resources/config.yml
+# Visit the wiki for some additional documentation: github.com/PyvesB/AdvancedAchievements/wiki
 
 #=============================O=O=============================#
 # II-------------------------------------------------------II #
@@ -35,7 +35,7 @@ Firework: true
 # Choose BALL_LARGE, BALL, BURST, CREEPER or STAR.
 FireworkStyle: BALL_LARGE
 
-# Number of players displayed on /aach top command.
+# Number of players displayed in /aach top, week and month commands.
 TopList: 5
 
 # Set to true to activate particle effects when receiving book and for players in top list.
@@ -103,7 +103,7 @@ TitleScreen: true
 # Sort pages of the book in chronological order (false for reverse chronological order).
 BookChronologicalOrder: true
 
-# Do not take into accound items broken with Silk Touch for the Breaks achievements.
+# Do not take into account items broken with Silk Touch for the Breaks achievements.
 DisableSilkTouchBreaks: false
 
 #=============================OOO=============================#
@@ -165,49 +165,60 @@ AsyncPooledRequestsSender: true
 Connections:
   '1':
     Message: You connected to our server for the first time!
-    Name: Good Choice
+    Name: connect_1
+    DisplayName: Good Choice
 
 # When a specific block is placed (specify material name, lower case).
-Places:
-  stone:
-    '100':
-      Message: '&4One hundred placed stones!'
-      Name: Stone Addict
-    '1000':
-      Message: '&4One thousand placed stones!'
-      Name: Stone God
+Places:  
   smooth_brick:
     '500':
+      # Used in /aach list when achievement not yet received.
       Goal: 'Place 500 stone bricks.'
+      # Description; displayed when receiving achievement, and in /aach book and /aach list.
       Message: '&4You have placed 500 stone bricks!'
+      # Database name, must also be used in /aach delete and /aach check.
       Name: place_500_smooth_brick
+      # Name; displayed when receiving achievement, and in /aach book and /aach list.
       DisplayName: 'Stone Brick Layer'
     '2500':
       Goal: 'Place 2500 stone bricks.'
       Message: '&4You have placed 2500 stone bricks!'
       Name: place_2500_smooth_brick
       DisplayName: 'Stone Brick Architect'
+  stone:
+    '100':
+      Message: '&4One hundred placed stones!'
+      Name: place_100_stone
+      DisplayName: Stone Addict
+    '1000':
+      Message: '&4One thousand placed stones!'
+      Name: place_1000_stone
+      DisplayName: Stone God
 
 # When a specific block is broken (specify material name, lower case).
 # Below, the notation log:1 means log item with metadata 1.
-Breaks:
-  stone:
-    '1':
-      Message: '&1The first time you went mining!'
-      Name: Cobble!
-      Reward:
-        Command: give PLAYER 158 10; give PLAYER 126 5
+Breaks: 
   log:1:
     '100':
       Message: '&2You have cut dark oak 100 logs!'
-      Name: Dark Oak Cutter
+      Name: break_1_log1
+      DisplayName: Dark Oak Cutter
+  stone:
+    '1':
+      Message: '&1The first time you went mining!'
+      Name: break_1_stone
+      DisplayName: Cobble!
+      # Use semicolons for multiple command rewards. PLAYER will be replaced by player's name.
+      Reward:
+        Command: give PLAYER 158 10; give PLAYER 126 5
               
 # When a specific mob is killed (specify an entity name or poweredcreeper or player, lower case).
 Kills:
   zombie:
     '1':
       Message: '&8The first time you killed a zombie!'
-      Name: The Walking Dead
+      DisplayName: The Walking Dead
+      Name: kills_1_zombie
       Reward:
         Money: 1         
         Item: diamond 1
@@ -217,7 +228,8 @@ Crafts:
   diamond_sword:
     '1':
       Message: The first time you crafted a blade!
-      Name: Blacksmith Apprentice
+      Name: craft_1_blade
+      DisplayName: Blacksmith Apprentice
       Reward:
         Money: 2
       
@@ -225,146 +237,170 @@ Crafts:
 Deaths:
   '1':
     Message: The first time you died!
-    Name: Rest in Peace
+    Name: deaths_1
+    DisplayName: Rest in Peace
     
 # When an arrow is shot.
 Arrows:
   '50':
     Message: '50 arrows shot!'
-    Name: Arrows Around the Place
+    Name: arrows_50
+    DisplayName: Arrows Around the Place
     
 # When a snowball is thrown.  
 Snowballs:
   '1000':
     Message: '1000 snowballs thrown. That''s the spirit!'
-    Name: Winter Addict 
+    Name: snowballs_1000
+    DisplayName: Winter Addict 
     
 # When an egg is thrown.  
 Eggs:
   '1000':
     Message: '1000 eggs thrown!'
-    Name: Omelet Addict 
+    Name: eggs_1000
+    DisplayName: Omelet Addict 
     
 # When a fish is caught. 
 Fish:
   '1':
     Message: The first time you caught a fish!
-    Name: Time for Fish and Chips
+    Name: fish_1
+    DisplayName: Time for Fish and Chips
 
 # When a tool/armor/weapon is broken.  
 ItemBreaks:
   '1':
     Message: You broke your favorite tool!
-    Name: '&4Clumsy Guy'
+    Name: itembreaks_1
+    DisplayName: '&4Clumsy Guy'
 
-# When an item is eaten.  
+# When an item is eaten (excludes potions and milk).
 EatenItems:
   '1':
     Message: Just had a snack!
-    Name: First Snack  
+    Name: eatenitems_1
+    DisplayName: First Snack  
     
 # When a sheep is sheared.
 Shear:
   '100':
     Message: 100 sheep sheared!
-    Name: '&1Wool Addict'
+    Name: shear_100
+    DisplayName: '&1Wool Addict'
     
 # When a cow is milked.
 Milk:
   '1':
     Message: Just milked a cow!
-    Name: First Milk    
+    Name: milk_1
+    DisplayName: First Milk    
     
 # When a trade with a villager is made.
 Trades:
   '1':
     Message: Doing business with your first villager!
-    Name: First Trade    
+    Name: trades_1
+    DisplayName: First Trade    
     
 # When an anvil is used.
 AnvilsUsed:
   '1':
     Message: You just repaired your first item!
-    Name: First Repair 
+    Name: anvilsused_1
+    DisplayName: First Repair 
     
 # When an enchantment is performed.
 Enchantments:
   '5':
     Message: 5 objects enchanted!
-    Name: '&5Wizard'
+    Name: enchantments_5
+    DisplayName: '&5Wizard'
     
 # When a bed is entered. 
 Beds:  
   '5':
     Message: You entered a bed 5 times!
-    Name: Sleepy guy 
+    Name: bed_5
+    DisplayName: Sleepy guy 
     
 # Maximum level reached.    
 MaxLevel:  
   '10':
     Message: Level 10 reached!
-    Name: '&4Rookie'  
+    Name: maxlevel_10
+    DisplayName: '&4Rookie'  
     
 # When a potion is consumed.
 ConsumedPotions:
   '100':
     Message: Drinking weird beverages all the time...
-    Name: Alcoholic 
+    Name: consumedpotions_100
+    DisplayName: Alcoholic 
     
 # Amount of time played on the server (in hours, use integers).
 PlayedTime:
   '1':
     Message: You played during one hour on the server!
-    Name: First Hour
+    Name: playedtime_1
+    DisplayName: First Hour
     
 # When a distance is traveled by foot.
 DistanceFoot:
   '1000':
     Message: You traveled 1000 blocks by foot!
-    Name: Big Walker 
+    Name: distancefoot_1000
+    DisplayName: Big Walker 
     
 # When a distance is traveled on a pig.
 DistancePig:
   '100':
     Message: You traveled 100 blocks on a pig!
-    Name: Carrot on a Stick Master
+    Name: distancepig_100
+    DisplayName: Carrot on a Stick Master
     
 # When a distance is traveled on a horse.
 DistanceHorse:
   '500':
     Message: You traveled 500 blocks on a horse!
-    Name: The Avener
+    Name: distancehorse_500
+    DisplayName: The Avener
     
 # When a distance is traveled in a minecart.
 DistanceMinecart:
   '100':
     Message: You traveled 100 blocks in a minecart!
-    Name: Carting Fan
+    Name: distanceminecart_100
+    DisplayName: Carting Fan
 
 # When a distance is traveled in a boat.
 DistanceBoat:
   '200':
     Message: You traveled 200 blocks in a boat!
-    Name: Great Sailor
+    Name: distanceboat_200
+    DisplayName: Great Sailor
 
 # When a distance is traveled with elytra.
 # (ignored on Minecraft versions prior to 1.9)
 DistanceGliding:
   '100':
     Message: You traveled 100 blocks with elytra!
-    Name: Angel
+    Name: distancegliding_100
+    DisplayName: Angel
 
 # When an item is dropped on the ground.
 ItemDrops:
   '15':
     Message: You're killing the planet!
-    Name: Polluter
+    Name: itemdrops_15
+    DisplayName: Polluter
     
 # When soil is plowed with a hoe.
 HoePlowings:
   '10':
     Message: You plowed the ground 10 times!
-    Name: Farmer
+    Name: hoeplowings_10
+    DisplayName: Farmer
     Reward:                 
         Item: cookie 15
     
@@ -372,37 +408,43 @@ HoePlowings:
 Fertilising:
   '15':
     Message: You used bone meal on plants 15 times!
-    Name: Gardener
+    Name: fertilising_15
+    DisplayName: Gardener
     
 # When an animal is tamed.
 Taming:
   '1':
     Message: You tamed your first animal!
-    Name: Tamer
+    Name: taming_1
+    DisplayName: Tamer
     
 # When a potion is brewed.
 Brewing:
   '1':
     Message: You brewed your first potion!
-    Name: Alchemist
+    Name: brewing_1
+    DisplayName: Alchemist
     
 # When a firework is launched.
 Fireworks:
   '10':
     Message: You launched 10 fireworks!
-    Name: Pyrotechnist
+    Name: fireworks_10
+    DisplayName: Pyrotechnist
 
 # When a music disc is played.
 MusicDiscs:
   '1':
     Message: One jukebox used!
-    Name: DJ
+    Name: musicdiscs_1
+    DisplayName: DJ
 
 # When a player teleports with an enderpearl.
 EnderPearls:
   '10':
     Message: 10 teleportations with ender pearls!
-    Name: Teleport Man
+    Name: enderpearls_10
+    DisplayName: Teleport Man
     
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
@@ -418,7 +460,8 @@ MultiCommand: true
 Commands:
   yourAch1:
     Message: You took part in the special event!
-    Name: Special Event Achievement!
+    Name: yourAch1
+    DisplayName: Special Event Achievement!
     
 #===========================OOOOOOO===========================#
 # VII-----------------------------------------------------VII #

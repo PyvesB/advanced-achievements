@@ -109,7 +109,7 @@ public class HelpCommand {
 									plugin.getPluginLang().getString("aach-command-check", "Check if NAME has ACH.")
 											.replace("ACH", "&oach&r&7").replace("NAME", "&oplayer&r&7")),
 					"/aach check ach name", plugin.getPluginLang().getString("aach-command-check-hover",
-							"Don't forget to add the colors defined in the config file."));
+							"Use the Name parameter specified in the config."));
 
 		if (sender.hasPermission("achievement.delete"))
 			sendJsonClickableHoverableMessage(sender,
@@ -124,9 +124,8 @@ public class HelpCommand {
 		sender.sendMessage(plugin.getColor() + " ");
 
 		// Tip message.
-		sender.sendMessage(ChatColor.GRAY + "§lHINT§r" + ChatColor.DARK_GRAY + " You can " + ChatColor.GRAY
-				+ "§n§ohover§r" + ChatColor.DARK_GRAY + " or " + ChatColor.GRAY + "§n§oclick§r" + ChatColor.DARK_GRAY
-				+ " on the commands!");
+		sender.sendMessage(ChatColor.GRAY + ChatColor.translateAlternateColorCodes('&', plugin.getPluginLang()
+				.getString("aach-tip", "&lHINT&r &8You can &7&n&ohover&r &8or &7&n&oclick&r &8on the commands!")));
 	}
 
 	/**
