@@ -12,7 +12,7 @@ You can also **star this repository** to support the open-source project!
 
 # Useful links
 
-The **Wiki** of Advanced Achievements is available by clicking on the Wiki tab at the top of the page, or directly on [this link](https://github.com/PyvesB/AdvancedAchievements/wiki). Many valuable information on how to set up the plugin or use it is at your disposal!
+The **Wiki** of Advanced Achievements is available by clicking on the *Wiki* tab at the top of the page, or directly on [this link](https://github.com/PyvesB/AdvancedAchievements/wiki). A lot of valuable information on how to set the plugin up or use it properly is at your disposal!
 
 For more *information and download links*, please visit the project's webpages:
 
@@ -25,11 +25,11 @@ Feel free to visit **HelloMinecraft**, the plugin's official server (french serv
 
 # Setting your own working copy of the project
 
-Ensure you have a working version of the [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+Ensure you have a working version of the [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (Java Development Kit).
 
 The following steps are for the [Eclipse](https://eclipse.org/) development environment, but will be similar on other IDEs.
 
-* Download or clone the repository on your computer. You can also create your own fork by clicking on the Fork icon on the top right of the page.
+* Download or clone the repository on your computer. You can also create your own fork by clicking on the *Fork* icon on the top right of the page.
 * In Eclipse, go to *File* -> *Import...* -> *Maven* -> *Existing Maven Projects*.
 * In the *Root Directory* field, select the location where you downloaded the Advanced Achievements repository.
 * Tick the *pom.xml* box that appears in the *Projects* field and click *Finish*.
