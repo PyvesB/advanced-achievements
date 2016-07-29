@@ -1,6 +1,6 @@
 #============================================================#
 # +--------------------------------------------------------+ #
-# |    Advanced Achievements 2.5.2 French language file    | #
+# |     Advanced Achievements 3.0 French language file     | #
 # |                      By DarkPyves                      | #
 # +--------------------------------------------------------+ #
 #============================================================#
@@ -14,6 +14,9 @@ configuration-reload-failed: Erreur(s) lors du rechargement des configurations. 
 # Related to /aach top.
 top-achievement: 'Joueurs ayant obtenu le plus de succès :'
 player-rank: 'Classement actuel :'
+week-achievement: 'Joueurs ayant obtenu le plus de succès cette semaine :'
+month-achievement: 'Joueurs ayant obtenu le plus de succès ce mois :'
+not-ranked: Vous n'êtes pas classé sur cette période.
 
 # Related to /aach stats.
 number-achievements: 'Nombre de succès obtenus :'
@@ -22,11 +25,13 @@ number-achievements: 'Nombre de succès obtenus :'
 book-received: Vous avez reçu votre livre de succès!
 book-delay: Vous devez attendre TIME secondes entre chaque obtention de livre !
 book-name: Livre de Succès
+book-date: 'Créé le DATE.'
 
 # Related to /aach give.
 player-offline: Le joueur PLAYER n'est pas en ligne !
 achievement-already-received: Le joueur PLAYER possède déjà ce succès !
 achievement-given: Succès donné !
+list-back-message: '&7Retour'
 
 # Related to achievement reception.
 achievement-received: 'PLAYER a reçu le succès :'
@@ -50,11 +55,24 @@ aach-command-book: Obtenir votre livre de succès.
 aach-command-stats: Visualiser son nombre total de succès.
 aach-command-top: Afficher le classement des succès.
 aach-command-reload: Recharger la configuration du plugin.
-aach-command-give: Donner le succès ACH au joueur NAME.
+aach-command-give: Donner le succès ACH à &7NAME.
 aach-command-info: Afficher des informations à propos du plugin.
 aach-command-list: Afficher les succès reçus et manquants.
-aach-command-check: Vérifier si le joueur NAME a reçu &7le succès ACH.
+aach-command-check: Vérifier si NAME a reçu le &7succès ACH.
 aach-command-delete: Supprimer le succès ACH du &7joueur NAME.
+aach-command-week: Classement hebdomadaire.
+aach-command-month: Classement mensuel.
+aach-command-book-hover: Des livres RP, que vous pouvez échanger et collectionner !
+aach-command-stats-hover: Attrappez-les tous !
+aach-command-list-hover: Interface graphique pour visualiser vos succès !
+aach-command-top-hover: Qui sont les meilleurs joueurs du serveur ?
+aach-command-give-hover: Le joueur doit être en ligne.
+aach-command-reload-hover: Demander à DarkPyves avant de faire n'importe quoi.
+aach-command-info-hover: Des infos supplémentaires sur le plugin !
+aach-command-check-hover: Il faut utiliser le nom spécifié dans le fichier de config.
+aach-command-delete-hover: Demander à DarkPyves avant de faire n'importe quoi.
+aach-command-week-hover: Les meilleurs joueurs de la semaine !
+aach-command-month-hover: Les meilleurs joueurs du mois !
 
 # Related to /aach info.
 version-command-name: 'Nom :'
@@ -76,6 +94,7 @@ list-reward-command: objet spécial
 list-amount: ' Niv. :'
 list-achievement-received: "&a\u2713&f "
 list-achievement-not-received: "&4\u2717&8 "
+aach-tip: '&lASTUCE&r &7&n&oCliquez&r &8ou &7&n&opassez votre curseur&r &8sur les commandes !'
 
 # Related to category names in /aach list.
 list-connections: Connexions
