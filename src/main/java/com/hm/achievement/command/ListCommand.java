@@ -292,8 +292,6 @@ public class ListCommand {
 					numberOfCategories++;
 				}
 			}
-			// Close player's current inventory (this can occur if player is coming back from a category GUI).
-			player.closeInventory();
 			// Display GUI to the player.
 			player.openInventory(guiInv);
 		} else {
@@ -468,6 +466,7 @@ public class ListCommand {
 				statistic = -1;
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[31];
 				break;
+			// Default case can happen on Minecraft 1.9+.
 			default:
 				statistic = -1;
 				category = "";
@@ -486,6 +485,7 @@ public class ListCommand {
 					statistic = plugin.getPoolsManager().getPlayerHoePlowingAmount(player);
 					category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[18];
 					break;
+				// Default case can not happen.
 				default:
 					statistic = -1;
 					category = "";
@@ -504,13 +504,13 @@ public class ListCommand {
 		int positionInGUI = 0;
 
 		String previousItemDate = null;
-		int previousItemGoal = 0;
+		Integer previousItemGoal = 0;
 		// Populate the GUI with all of the achievements for the category.
 		for (String ach : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
 
 			// ach is the threshold for obtaining this achievement
 			// Convert it to an integer
-			int currentItemGoal = Ints.tryParse(ach);
+			Integer currentItemGoal = Ints.tryParse(ach);
 
 			String achName = plugin.getPluginConfig().getString(category + '.' + ach + ".Name", "");
 			String displayName = plugin.getPluginConfig().getString(category + '.' + ach + ".DisplayName", "");
@@ -539,8 +539,9 @@ public class ListCommand {
 
 			boolean inelligibleSeriesItem;
 
-			if (positionInGUI == 0 || date != null || previousItemDate != null) {
-				// First achievement in the category or
+			if (statistic == -1 && positionInGUI == 0 || date != null || previousItemDate != null) {
+				// Commands achievement or
+				// first achievement in the category or
 				// achievement has been completed or
 				// previous achievement has been completed.
 				inelligibleSeriesItem = false;
@@ -568,8 +569,6 @@ public class ListCommand {
 		achItem.setItemMeta(connectionsMeta);
 		inventory.setItem(positionInGUI, achItem);
 
-		// Close main GUI.
-		player.closeInventory();
 		// Display category GUI.
 		player.openInventory(inventory);
 
@@ -714,8 +713,6 @@ public class ListCommand {
 		achItem.setItemMeta(connectionsMeta);
 		inventory.setItem(positionInGUI, achItem);
 
-		// Close main GUI.
-		player.closeInventory();
 		// Display category GUI.
 		player.openInventory(inventory);
 	}
@@ -816,8 +813,16 @@ public class ListCommand {
 			lore.add("");
 		} else if (!obfuscateNotReceived && statistic >= 0) {
 			StringBuilder barDisplay = new StringBuilder("&7[");
-			for (int i = 1; i <= FONT.getWidth(achMessage) / 2 - 2; i++) {
-				if (i < ((FONT.getWidth(achMessage) / 2 - 2) * statistic) / Integer.valueOf(level)) {
+			// Length of the progress bar; we make it the same size as Goal/Message.
+			int textSize;
+			// MinecraftFont essentially supports latin alphabet characters. If invalid characters are found just use
+			// number of chars.
+			if (FONT.isValid(achMessage))
+				textSize = FONT.getWidth(achMessage.replaceAll(REGEX_PATTERN.pattern(), ""));
+			else
+				textSize = (achMessage.replaceAll(REGEX_PATTERN.pattern(), "")).length() * 3;
+			for (int i = 1; i < textSize / 2; i++) {
+				if (i < ((textSize / 2 - 1) * statistic) / Integer.valueOf(level)) {
 					barDisplay.append(plugin.getColor()).append('|');
 				} else {
 					barDisplay.append("&8|");
