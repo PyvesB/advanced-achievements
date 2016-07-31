@@ -539,7 +539,7 @@ public class ListCommand {
 
 			boolean inelligibleSeriesItem;
 
-			if (statistic == -1 && positionInGUI == 0 || date != null || previousItemDate != null) {
+			if (statistic == -1 || positionInGUI == 0 || date != null || previousItemDate != null) {
 				// Commands achievement or
 				// first achievement in the category or
 				// achievement has been completed or
