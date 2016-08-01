@@ -40,11 +40,11 @@ public class AchieveBlockBreakListener implements Listener {
 
 		Player player = event.getPlayer();
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player)
-				|| disableSilkTouchBreaks && (version >= 9
+				|| disableSilkTouchBreaks && version >= 9
 						&& event.getPlayer().getInventory().getItemInMainHand()
 								.containsEnchantment(Enchantment.SILK_TOUCH)
-						|| version < 9
-								&& event.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)))
+						|| disableSilkTouchBreaks && version < 9
+								&& event.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH))
 			return;
 		Block block = event.getBlock();
 		String blockName = block.getType().name().toLowerCase();
