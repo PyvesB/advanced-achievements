@@ -771,6 +771,14 @@ public class AdvancedAchievements extends JavaPlugin {
 			updateDone = true;
 		}
 
+		if (!config.getKeys(false).contains("DisableSilkTouchOreBreaks")) {
+			config.set("DisableSilkTouchOreBreaks", false,
+					new String[] {
+							"Do not take into account ores broken with Silk Touch for the Breaks achievements.",
+							"DisableSilkTouchBreaks takes precedence over this."});
+			updateDone = true;
+		}
+
 		if (!config.getKeys(false).contains("ObfuscateProgressiveAchievements")) {
 			config.set("ObfuscateProgressiveAchievements", false,
 					new String[] { "Obfuscate progressive achievements:",

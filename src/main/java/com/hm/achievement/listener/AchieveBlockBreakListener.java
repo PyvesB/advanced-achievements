@@ -23,12 +23,14 @@ public class AchieveBlockBreakListener implements Listener {
 	private AdvancedAchievements plugin;
 	private int version;
 	private boolean disableSilkTouchBreaks;
+	private boolean disableSilkTouchOreBreaks;
 
 	public AchieveBlockBreakListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 		// Load configuration parameter.
 		disableSilkTouchBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchBreaks", false);
+		disableSilkTouchOreBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchOreBreaks", false);
 		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
 		// Minecraft versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
@@ -39,14 +41,34 @@ public class AchieveBlockBreakListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 
 		Player player = event.getPlayer();
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player)
-				|| disableSilkTouchBreaks && (version >= 9
-						&& event.getPlayer().getInventory().getItemInMainHand()
-								.containsEnchantment(Enchantment.SILK_TOUCH)
-						|| version < 9
-								&& event.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)))
+		boolean silkTouchBreak = (
+				version >= 9 && event.getPlayer().getInventory().getItemInMainHand()
+						.containsEnchantment(Enchantment.SILK_TOUCH)) ||
+				version < 9 && event.getPlayer().getItemInHand()
+						.containsEnchantment(Enchantment.SILK_TOUCH);
+
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE ||
+				plugin.isInExludedWorld(player) ||
+				disableSilkTouchBreaks && silkTouchBreak) {
 			return;
+		}
+
 		Block block = event.getBlock();
+		if (disableSilkTouchOreBreaks && silkTouchBreak) {
+			switch (block.getType()) {
+				case COAL_ORE:
+				case DIAMOND_ORE:
+				case EMERALD_ORE:
+				case GOLD_ORE:
+				case LAPIS_ORE:
+				case QUARTZ_ORE:
+				case REDSTONE_ORE:
+					return;
+				default:
+					break;
+			}
+		}
+
 		String blockName = block.getType().name().toLowerCase();
 		if (player.hasPermission("achievement.count.breaks." + blockName + "." + block.getData())
 				&& plugin.getPluginConfig().isConfigurationSection("Breaks." + blockName + ":" + block.getData()))

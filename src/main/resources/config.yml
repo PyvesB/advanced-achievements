@@ -106,6 +106,10 @@ BookChronologicalOrder: true
 # Do not take into account items broken with Silk Touch for the Breaks achievements.
 DisableSilkTouchBreaks: false
 
+# Do not take into account ores broken with Silk Touch for the Breaks achievements.
+# DisableSilkTouchBreaks takes precedence over this.
+DisableSilkTouchOreBreaks: false
+
 #=============================OOO=============================#
 # III-----------------------------------------------------III #
 # |                    Database settings                    | #
