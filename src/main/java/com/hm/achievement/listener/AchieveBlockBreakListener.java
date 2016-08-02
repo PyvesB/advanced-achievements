@@ -60,7 +60,6 @@ public class AchieveBlockBreakListener implements Listener {
 				case DIAMOND_ORE:
 				case EMERALD_ORE:
 				case GOLD_ORE:
-				case IRON_ORE:
 				case LAPIS_ORE:
 				case QUARTZ_ORE:
 				case REDSTONE_ORE:
