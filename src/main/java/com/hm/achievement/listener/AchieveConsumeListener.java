@@ -9,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionType;
 
 /**
  * Listener class to deal with EatenItems and ConsumedPotions achievements.
@@ -36,6 +38,15 @@ public class AchieveConsumeListener implements Listener {
 
 		if (event.getItem().getType() == Material.POTION && !plugin.getDisabledCategorySet().contains("ConsumedPotions")
 				&& player.hasPermission("achievement.count.consumedpotions")) {
+
+			// Don't count drinking water toward ConsumePotions; check the potion type
+			PotionMeta meta = (PotionMeta)(event.getItem().getItemMeta());
+			PotionType potionType = meta.getBasePotionData().getType();
+
+			if (potionType == PotionType.WATER) {
+				return;
+			}
+
 			int consumedPotions = plugin.getPoolsManager().getPlayerConsumedPotionAmount(player) + 1;
 
 			plugin.getPoolsManager().getConsumedPotionsHashMap().put(player.getUniqueId().toString(), consumedPotions);
