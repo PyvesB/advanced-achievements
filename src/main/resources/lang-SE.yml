@@ -1,0 +1,142 @@
+#============================================================#
+# +--------------------------------------------------------+ #
+# |    Advanced Achievements 3.0 Swedish language file     | #
+# |                      By Sketaful                       | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+no-permissions: "Du har inte rättigheterna för att göra detta"
+
+# Related to /aach reload.
+configuration-successfully-reloaded: "Konfigureringen har laddats om."
+configuration-reload-failed: "Fel vid laddning av konfigureringen. Se logfilen för ytterligare information."
+
+# Related to /aach top week and month.
+top-achievement: "Prestationer Topplista spelare:"
+player-rank: "Nuvarande rank:"
+week-achievement: "Veckovis prestations ranking:"
+month-achievement: "Månadsvis prestations ranking:"
+not-ranked: "Du är för närvarande inte rankad för den här perioden."
+
+# Related to /aach stats.
+number-achievements: "Prestationer mottagna:"
+
+# Related to /aach book.
+book-received: "Du tog emot din prestationsbok!"
+book-delay: "Du måste vänta TIME sekunder mellan varje bok!"
+book-name: "Prestationsbok"
+book-date: "Bok skapad den DATE."
+
+# Related to /aach give.
+player-offline: "Spelaren PLAYER är offline!"
+achievement-already-received: "Spelaren PLAYER har redan mottagit den här prestationen!"
+achievement-not-found: "Den specifierade prestationen hittades inte i kategorin Kommandon."
+achievement-given: "Prestation tilldelad!"
+
+# Related to achievement reception.
+achievement-received: "PLAYER mottog prestationen"
+achievement-new: "Ny prestation:"
+
+# Related to /aach check.
+check-achievement-true: "PLAYER har mottagit prestationen ACH!"
+check-achievements-false: "PLAYER har inte mottagit prestationen ACH!"
+
+# Related to /aach delete.
+delete-achievements: "Prestationen ACH togs bort från PLAYER."
+
+# Related to achievement rewards.
+item-reward-received: "Du mottog ett objekt som belöning:"
+money-reward-received: "Du mottog: AMOUNT !"
+command-reward: "Belöningskommando utfört!"
+
+# Related to /aach help.
+aach-command-book: "Ta emot en prestationsbok."
+aach-command-book-hover: "RP objekt du kan samla och byta med andra! Tidsbaserad lista."
+aach-command-stats: "Visa antalet mottagna prestationer."
+aach-command-stats-hover: "Framstegsfält. Måste fånga dem alla!"
+aach-command-list: "Visar mottagna och saknade prestationer."
+aach-command-list-hover: "Stilig GUI för en överblick över alla mottagna prestationer och framsteg!"
+aach-command-top: "Visar personlig och global rankning."
+aach-command-top-hover: "Vilka är det som leder på servern och hur ligger du till jämnfört med dem?"
+aach-command-give: "Ge prestationen ACH till NAME."
+aach-command-give-hover: "Spelaren måste vara online; endast prestationskommandon kan användas."
+aach-command-reload: "Ladda om tilläggets konfiguration."
+aach-command-reload-hover: "Ladda om de flesta inställningarna i config.yml och lang.yml filerna."
+aach-command-info: "Visa information om tillägget."
+aach-command-info-hover: "Lite extra information om tillägget och dess fantastiske skapare!"
+aach-command-check: "Se om NAME har ACH."
+aach-command-check-hover: "Använd namn parametern specifierad i konfigureringen."
+aach-command-delete: "Ta bort ACH från NAME."
+aach-command-delete-hover: "Spelaren måste vara online; nollställer ingen tillhörande statistik."
+aach-command-week: "Visa veckovis ranking."
+aach-command-week-hover: "Bästa prestandajägare sedan början av veckan!"
+aach-command-month: "Visar månadsvis ranking."
+aach-command-month-hover: "Bästa prestandajägare sedan början av månaden!"
+aach-tip: "&lTIPS&r &8Du kan &7&n&ohovra&r &8eller &7&n&oklicka&r &8på kommandona!"
+
+# Related to /aach info.
+version-command-name: "Namn:"
+version-command-version: "Version:"
+version-command-website: "Websida:"
+version-command-author: "Författare:"
+version-command-description: "Beskrivning:"
+version-command-description-details: "Advanced Achievements möjliggör unika och utmanande prestationer. Försök samla så många du kan, få belöningar, klättra på rankingen och mottag RP böcker!"
+version-command-vault: "Vault integrering:"
+version-command-database: "Databastyp:"
+
+# Related to /aach list.
+list-gui-title: "&5&lPrestationslista"
+list-delay: "Du måste vänta TIME sekunder mellan varje listkommando!"
+list-reward: "Belöning: "
+list-reward-money: "pengar"
+list-reward-item: "objekt"
+list-reward-command: "annat"
+list-amount: "Lvl: "
+list-achievement-received: "&5\u2713&f "
+list-achievement-not-received: "&4\u2717&8 "
+list-category-not-unlocked: "Du har ännu inte låst upp den här kategorin."
+list-back-message: "&7Tillbaka"
+
+# Related to category names in /aach list.
+list-connections: "Anslutningar"
+list-places: "Block Placerade"
+list-breaks: "Block Förstörda"
+list-kills: "Enheter Dödade"
+list-crafts: "Objekt Skapade"
+list-deaths: "Antal Dödsfall"
+list-arrows: "Pilar Skjutna"
+list-snowballs: "Snöbollar Kastade"
+list-eggs: "Ägg Kastade"
+list-fish: "Fiskar Fångade"
+list-itembreaks: "Items Broken"
+list-eatenitems: "Items Eaten"
+list-shear: "Får Rakade"
+list-milk: "Kossor Mjölkade"
+list-trades: "Antal Handel"
+list-anvils: "Städ Använda"
+list-enchantments: "Objekt Förtrollade"
+list-beds: "Sängar Använda"
+list-maxlevel: "Max Nivå Nådd"
+list-potions: "Drycker Förtärda"
+list-playedtime: "Tid Spelad"
+list-distance-foot: "Avstånd Färdad till Fots"
+list-distance-pig: "Avstånd Färdad på Gris"
+list-distance-horse: "Avstånd Färdad på Häst"
+list-distance-minecart: "Avstånd Färdad i Gruvvagn"
+list-distance-boat: "Avstånd Färdad i Båt"
+list-distance-gliding: "Avstånd Färdad med Elytra"
+list-itemdrops: "Object Kastade"
+list-hoeplowings: "Yta Plöjd"
+list-fertilising: "Växter Gödslade"
+list-taming: "Djur Tämjda"
+list-brewing: "Drycker Bryggda"
+list-fireworks: "Fyrverkerier Avfyrade"
+list-musicdiscs: "Musikskivor Spelade"
+list-enderpearls: "Teleporteringar med Ender Pärlor"
+list-commands: "Andra Prestationer"
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# |         Parameters to appear in future versions        | #
+# +--------------------------------------------------------+ #
+#============================================================#
