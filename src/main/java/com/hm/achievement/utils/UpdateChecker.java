@@ -33,13 +33,15 @@ public class UpdateChecker {
 	public UpdateChecker(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-		updateNeeded = checkForUpdateBukkit();
+		updateNeeded = checkForUpdate();
 	}
 
 	/**
 	 * Check if a new version of AdvancedAchievements is available, and log in console if new version found.
 	 */
-	private boolean checkForUpdateBukkit() {
+	private boolean checkForUpdate() {
+		
+		plugin.getLogger().info("Checking for plugin update...");
 
 		URL filesFeed = null;
 		Document document = null;

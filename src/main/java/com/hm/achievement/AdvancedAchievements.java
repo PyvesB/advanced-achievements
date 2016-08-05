@@ -200,7 +200,36 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Start enabling plugin.
 		long startTime = System.currentTimeMillis();
 
-		configurationLoad();
+		configurationLoad(true);
+
+		// Load Metrics Lite.
+		try {
+			MetricsLite metrics = new MetricsLite(this);
+			metrics.start();
+		} catch (IOException e) {
+			this.getLogger().severe("Error while sending Metrics statistics.");
+			successfulLoad = false;
+		}
+
+		if (databaseBackup && (!config.getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql")
+				|| !config.getString("DatabaseType", "sqlite").equalsIgnoreCase("postgresql"))) {
+			File backup = new File(this.getDataFolder(), "achievements.db.bak");
+			// Only do a daily backup for the .db file.
+			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
+				this.getLogger().info("Backing up database file...");
+				try {
+					fileManager.backupFile("achievements.db");
+				} catch (IOException e) {
+					this.getLogger().severe("Error while backing up database file.");
+					e.printStackTrace();
+					successfulLoad = false;
+				}
+			}
+		}
+
+		// Check for available plugin update.
+		if (config.getBoolean("CheckForUpdate", true))
+			updateChecker = new UpdateChecker(this);
 
 		// Error while loading .yml files; do not do any further work.
 		if (overrideDisable) {
@@ -387,11 +416,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Load plugin configuration and set values to different parameters; load language file and backup configuration and
-	 * database files. Register permissions. Initialise command modules.
+	 * Load plugin configuration and set values to different parameters; load language file and backup configuration
+	 * files. Register permissions. Initialise command modules.
 	 */
 	@SuppressWarnings("unchecked")
-	private void configurationLoad() {
+	private void configurationLoad(boolean attemptUpdate) {
 
 		successfulLoad = true;
 		Logger logger = this.getLogger();
@@ -446,9 +475,11 @@ public class AdvancedAchievements extends JavaPlugin {
 			successfulLoad = false;
 		}
 
-		// Update configurations from previous versions of the plugin.
-		updateOldConfiguration();
-		updateOldLanguage();
+		// Update configurations from previous versions of the plugin if server reload or restart.
+		if (attemptUpdate) {
+			updateOldConfiguration();
+			updateOldLanguage();
+		}
 
 		logger.info("Loading configs, registering permissions and initialising command modules...");
 
@@ -491,34 +522,10 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (xpListener != null)
 			xpListener.extractAchievementsFromConfig(this);
 
-		// Check for available plugin update.
-		if (config.getBoolean("CheckForUpdate", true)) {
-			updateChecker = new UpdateChecker(this);
-		}
-
-		// Load Metrics Lite.
-		try {
-			MetricsLite metrics = new MetricsLite(this);
-			metrics.start();
-		} catch (IOException e) {
-			logger.severe("Error while sending Metrics statistics.");
-			successfulLoad = false;
-		}
-
-		if (databaseBackup && (!config.getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql")
-				|| !config.getString("DatabaseType", "sqlite").equalsIgnoreCase("postgresql"))) {
-			File backup = new File(this.getDataFolder(), "achievements.db.bak");
-			// Only do a daily backup for the .db file.
-			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
-				logger.info("Backing up database file...");
-				try {
-					fileManager.backupFile("achievements.db");
-				} catch (IOException e) {
-					logger.severe("Error while backing up database file.");
-					e.printStackTrace();
-					successfulLoad = false;
-				}
-			}
+		// Set to null in case user changed the option and did an /aach reload. We do not recheck for update on /aach
+		// reload.
+		if (!config.getBoolean("CheckForUpdate", true)) {
+			updateChecker = null;
 		}
 
 		logAchievementStats();
@@ -1102,7 +1109,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				if (sender.hasPermission("achievement.reload")) {
 
 					this.reloadConfig();
-					configurationLoad();
+					configurationLoad(false);
 					if (successfulLoad) {
 						if (sender instanceof Player)
 							sender.sendMessage(chatHeader + lang.getString("configuration-successfully-reloaded",
