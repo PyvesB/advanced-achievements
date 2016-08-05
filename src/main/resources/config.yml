@@ -110,6 +110,9 @@ DisableSilkTouchBreaks: false
 # DisableSilkTouchBreaks takes precedence over this.
 DisableSilkTouchOreBreaks: false
 
+# Name of the language file.
+LanguageFileName: 'lang.yml'
+
 #=============================OOO=============================#
 # III-----------------------------------------------------III #
 # |                    Database settings                    | #

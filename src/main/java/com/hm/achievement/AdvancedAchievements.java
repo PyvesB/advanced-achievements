@@ -415,7 +415,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		try {
-			lang = fileManager.getNewConfig("lang.yml");
+			lang = fileManager.getNewConfig(config.getString("LanguageFileName", "lang.yml"));
 		} catch (IOException e) {
 			logger.severe("Error while loading language file.");
 			e.printStackTrace();
@@ -439,7 +439,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		try {
-			fileManager.backupFile("lang.yml");
+			fileManager.backupFile(config.getString("LanguageFileName", "lang.yml"));
 		} catch (IOException e) {
 			logger.severe("Error while backing up language file.");
 			e.printStackTrace();
@@ -771,14 +771,6 @@ public class AdvancedAchievements extends JavaPlugin {
 			updateDone = true;
 		}
 
-		if (!config.getKeys(false).contains("DisableSilkTouchOreBreaks")) {
-			config.set("DisableSilkTouchOreBreaks", false,
-					new String[] {
-							"Do not take into account ores broken with Silk Touch for the Breaks achievements.",
-							"DisableSilkTouchBreaks takes precedence over this."});
-			updateDone = true;
-		}
-
 		if (!config.getKeys(false).contains("ObfuscateProgressiveAchievements")) {
 			config.set("ObfuscateProgressiveAchievements", false,
 					new String[] { "Obfuscate progressive achievements:",
@@ -789,6 +781,19 @@ public class AdvancedAchievements extends JavaPlugin {
 							"target of 100 stone,# the second 500 stone, and the third 1000 stone.  When ObfuscateProgressiveAchievements",
 							"is true, initially only the 100 stone achievement will be readable in the GUI.  Once 100 stone have been placed,",
 							"the 500 stone achievement will become legible." });
+			updateDone = true;
+		}
+
+		// Added in version 3.0.2:
+		if (!config.getKeys(false).contains("DisableSilkTouchOreBreaks")) {
+			config.set("DisableSilkTouchOreBreaks", false,
+					new String[] { "Do not take into account ores broken with Silk Touch for the Breaks achievements.",
+							"DisableSilkTouchBreaks takes precedence over this." });
+			updateDone = true;
+		}
+
+		if (!config.getKeys(false).contains("LanguageFileName")) {
+			config.set("LanguageFileName", "lang.yml", "Name of the language file.");
 			updateDone = true;
 		}
 
