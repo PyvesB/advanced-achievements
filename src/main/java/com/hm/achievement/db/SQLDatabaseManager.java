@@ -796,9 +796,6 @@ public class SQLDatabaseManager {
 			Connection conn = getSQLConnection();
 			// PreparedStatement used to easily set date in query regardless of the database type.
 			PreparedStatement prep;
-			// We simply double apostrophes to avoid breaking the query.
-			achievement = achievement.replace("'", "''");
-			desc = desc.replace("'", "''");
 			if (databaseType == POSTGRESQL) {
 				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
 				// available for PostgreSQL 9.5+.
@@ -837,11 +834,22 @@ public class SQLDatabaseManager {
 			boolean result = false;
 			Connection conn = getSQLConnection();
 			Statement st = conn.createStatement();
-			// We simply double apostrophes to avoid breaking the query.
-			name = name.replace("'", "''");
-			if (st.executeQuery("SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
-					+ player.getUniqueId() + "' AND achievement = '" + name + "'").next())
-				result = true;
+
+			if (name.contains("'")) {
+				// We simply double apostrophes to avoid breaking the query.
+				name = name.replace("'", "''");
+				// We check for names with single quotes, but also two single quotes. This is due to a bug in versions
+				// 3.0 to 3.0.2 where names containing single quotes were inserted with two single quotes in the
+				// database.
+				if (st.executeQuery("SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
+						+ player.getUniqueId() + "' AND (achievement = '" + name + "' OR achievement = '"
+						+ name.replace("'", "''") + "')").next())
+					result = true;
+			} else {
+				if (st.executeQuery("SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
+						+ player.getUniqueId() + "' AND achievement = '" + name + "')").next())
+					result = true;
+			}
 			st.close();
 
 			return result;
