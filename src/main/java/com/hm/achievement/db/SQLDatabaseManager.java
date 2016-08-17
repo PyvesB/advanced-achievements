@@ -847,7 +847,7 @@ public class SQLDatabaseManager {
 					result = true;
 			} else {
 				if (st.executeQuery("SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
-						+ player.getUniqueId() + "' AND achievement = '" + name + "')").next())
+						+ player.getUniqueId() + "' AND achievement = '" + name + "'").next())
 					result = true;
 			}
 			st.close();
