@@ -62,7 +62,7 @@ public class AchieveBlockBreakListener implements Listener {
 				case LAPIS_ORE:
 				case QUARTZ_ORE:
 				case REDSTONE_ORE:
-				case GLOWING_REDSTONE_ORE
+				case GLOWING_REDSTONE_ORE:
 					return;
 				default:
 					break;
