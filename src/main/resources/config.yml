@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |    Advanced Achievements 3.0.4 configuration - Readme   | #
+# |    Advanced Achievements 3.0.5 configuration - Readme   | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -107,7 +107,7 @@ BookChronologicalOrder: true
 DisableSilkTouchBreaks: false
 
 # Do not take into account ores broken with Silk Touch for the Breaks achievements.
-# DisableSilkTouchBreaks takes precedence over this.
+# DisableSilkTouchBreaks takes precedence over this. Not applicable to iron or gold ores.
 DisableSilkTouchOreBreaks: false
 
 # Name of the language file.
