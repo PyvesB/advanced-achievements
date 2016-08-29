@@ -334,7 +334,7 @@ public class ListCommand {
 	public void createCategoryGUINormal(Material clickedItem, Player player) {
 
 		String category;
-		int statistic;
+		double statistic;
 
 		// Match the item the player clicked on with a category and its database statistic.
 		switch (clickedItem) {
@@ -403,7 +403,11 @@ public class ListCommand {
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[15];
 				break;
 			case WATCH:
-				statistic = (int) plugin.getDb().updateAndGetPlaytime(player.getUniqueId().toString(), 0L);
+				statistic = (double) (System.currentTimeMillis()
+						- plugin.getConnectionListener().getJoinTime().getOrDefault(player.getUniqueId().toString(), 0L)
+						+ plugin.getConnectionListener().getPlayTime().getOrDefault(player.getUniqueId().toString(),
+								0L))
+						/ 3600000L;
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[16];
 				break;
 			case HOPPER:
@@ -439,27 +443,33 @@ public class ListCommand {
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[24];
 				break;
 			case LEATHER_BOOTS:
-				statistic = plugin.getDb().updateAndGetDistance(player.getUniqueId().toString(), 0, "distancefoot");
+				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot()
+						.getOrDefault(player.getUniqueId().toString(), 0);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[25];
 				break;
 			case CARROT_STICK:
-				statistic = plugin.getDb().updateAndGetDistance(player.getUniqueId().toString(), 0, "distancepig");
+				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesPig()
+						.getOrDefault(player.getUniqueId().toString(), 0);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[26];
 				break;
 			case SADDLE:
-				statistic = plugin.getDb().updateAndGetDistance(player.getUniqueId().toString(), 0, "distancehorse");
+				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse()
+						.getOrDefault(player.getUniqueId().toString(), 0);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[27];
 				break;
 			case MINECART:
-				statistic = plugin.getDb().updateAndGetDistance(player.getUniqueId().toString(), 0, "distanceminecart");
+				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart()
+						.getOrDefault(player.getUniqueId().toString(), 0);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[28];
 				break;
 			case BOAT:
-				statistic = plugin.getDb().updateAndGetDistance(player.getUniqueId().toString(), 0, "distanceboat");
+				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat()
+						.getOrDefault(player.getUniqueId().toString(), 0);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[29];
 				break;
 			case BEDROCK:
-				statistic = plugin.getDb().updateAndGetDistance(player.getUniqueId().toString(), 0, "distancegliding");
+				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding()
+						.getOrDefault(player.getUniqueId().toString(), 0);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[30];
 				break;
 			case BOOKSHELF:
@@ -477,8 +487,8 @@ public class ListCommand {
 		if (category.equals("") && version >= 9) {
 			switch (clickedItem) {
 				case ELYTRA:
-					statistic = plugin.getDb().updateAndGetDistance(player.getUniqueId().toString(), 0,
-							"distancegliding");
+					statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding()
+							.getOrDefault(player.getUniqueId(), 0);
 					category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[30];
 					break;
 				case GRASS_PATH:
@@ -730,7 +740,7 @@ public class ListCommand {
 	 * @param date
 	 * @param inelligibleSeriesItem
 	 */
-	private void createGUIItem(Inventory inventory, int positionInGUI, String level, int statistic, String achName,
+	private void createGUIItem(Inventory inventory, int positionInGUI, String level, double statistic, String achName,
 			String achMessage, ArrayList<String> rewards, String date, boolean inelligibleSeriesItem) {
 
 		// Display a clay block in the GUI, with a color depending on whether it was received or not, or whether
@@ -789,7 +799,7 @@ public class ListCommand {
 	 * @return
 	 */
 	private ArrayList<String> buildLoreString(String achMessage, String level, ArrayList<String> rewards, String date,
-			int statistic, boolean inelligibleSeriesItem) {
+			double statistic, boolean inelligibleSeriesItem) {
 
 		ArrayList<String> lore = new ArrayList<String>();
 
