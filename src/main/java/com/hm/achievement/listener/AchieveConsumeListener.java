@@ -9,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
+
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 
@@ -21,10 +23,14 @@ import org.bukkit.potion.PotionType;
 public class AchieveConsumeListener implements Listener {
 
 	private AdvancedAchievements plugin;
+	private int version;
 
 	public AchieveConsumeListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+		// Simple and fast check to retrieve Minecraft version. Might need to be updated depending on how the
+		// Minecraft versions change in the future.
+		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -39,12 +45,19 @@ public class AchieveConsumeListener implements Listener {
 		if (event.getItem().getType() == Material.POTION && !plugin.getDisabledCategorySet().contains("ConsumedPotions")
 				&& player.hasPermission("achievement.count.consumedpotions")) {
 
-			// Don't count drinking water toward ConsumePotions; check the potion type
-			PotionMeta meta = (PotionMeta)(event.getItem().getItemMeta());
-			PotionType potionType = meta.getBasePotionData().getType();
+			// Don't count drinking water toward ConsumePotions; check the potion type.
+			if (version >= 9) {
+				PotionMeta meta = (PotionMeta) (event.getItem().getItemMeta());
+				PotionType potionType = meta.getBasePotionData().getType();
 
-			if (potionType == PotionType.WATER) {
-				return;
+				if (potionType == PotionType.WATER) {
+					return;
+				}
+			} else {
+				// Method getBasePotionData does not exist for versions prior to Minecraft 1.9.
+				if (event.getItem().getDurability() == 0) {
+					return;
+				}
 			}
 
 			int consumedPotions = plugin.getPoolsManager().getPlayerConsumedPotionAmount(player) + 1;
