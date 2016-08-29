@@ -505,11 +505,14 @@ public class ListCommand {
 
 		YamlManager config = plugin.getPluginConfig();
 
-		// Create a new chest-like inventory; make it as small as possible while still containing all achievements.
-		Inventory inventory = Bukkit.createInventory(null,
-				getClosestGreaterMultipleOf9(config.getConfigurationSection(category).getKeys(false).size() + 1),
-				ChatColor.translateAlternateColorCodes('&',
-						plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
+		// Used to make the GUI as small as possible while still containing all achievements; limit to 99, above the GUI
+		// is really messed up.
+		int inventorySize = getClosestGreaterMultipleOf9(
+				config.getConfigurationSection(category).getKeys(false).size() + 1);
+
+		// Create a new chest-like inventory.
+		Inventory inventory = Bukkit.createInventory(null, inventorySize, ChatColor.translateAlternateColorCodes('&',
+				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
 
 		int positionInGUI = 0;
 
@@ -517,6 +520,10 @@ public class ListCommand {
 		Integer previousItemGoal = 0;
 		// Populate the GUI with all of the achievements for the category.
 		for (String ach : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
+
+			// If the user specifies more than 98 achievements in the category do not display them.
+			if (positionInGUI >= inventorySize - 1)
+				break;
 
 			// ach is the threshold for obtaining this achievement
 			// Convert it to an integer
@@ -625,10 +632,13 @@ public class ListCommand {
 			totalAchievementsInCategory += subcategoryConfig.getKeys(false).size();
 		}
 
+		// Used to make the GUI as small as possible while still containing all achievements; limit to 99, above the GUI
+		// is really messed up.
+		int inventorySize = getClosestGreaterMultipleOf9(totalAchievementsInCategory + 1);
+
 		// Create a new chest-like inventory; make it as small as possible while still containing all achievements.
-		Inventory inventory = Bukkit.createInventory(null,
-				getClosestGreaterMultipleOf9(totalAchievementsInCategory + 1), ChatColor.translateAlternateColorCodes(
-						'&', plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
+		Inventory inventory = Bukkit.createInventory(null, inventorySize, ChatColor.translateAlternateColorCodes('&',
+				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
 
 		int positionInGUI = 0;
 
@@ -661,6 +671,11 @@ public class ListCommand {
 			// Populate GUI with all the achievements for the current sub-category.
 			ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + '.' + section);
 			for (String level : subcategoryConfig.getKeys(false)) {
+
+				// If the user specifies more than 98 achievements in the category do not display them.
+				if (positionInGUI >= inventorySize - 1)
+					break;
+
 				// level is the threshold for obtaining this achievement
 				// Convert it to an integer.
 				int currentItemGoal = Ints.tryParse(level);
@@ -871,7 +886,7 @@ public class ListCommand {
 	private int getClosestGreaterMultipleOf9(int value) {
 
 		int multipleOfNine = 9;
-		while (multipleOfNine < value && multipleOfNine <= 90)
+		while (multipleOfNine < value && multipleOfNine <= 99)
 			multipleOfNine += 9;
 		return multipleOfNine;
 	}
