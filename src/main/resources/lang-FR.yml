@@ -67,10 +67,10 @@ aach-command-stats-hover: Attrappez-les tous !
 aach-command-list-hover: Interface graphique pour visualiser vos succès !
 aach-command-top-hover: Qui sont les meilleurs joueurs du serveur ?
 aach-command-give-hover: Le joueur doit être en ligne.
-aach-command-reload-hover: Demander à DarkPyves avant de faire n'importe quoi.
+aach-command-reload-hover: Recharge la plupart des paramètres de lang.yml et config.yml.
 aach-command-info-hover: Des infos supplémentaires sur le plugin !
 aach-command-check-hover: Il faut utiliser le nom spécifié dans le fichier de config.
-aach-command-delete-hover: Demander à DarkPyves avant de faire n'importe quoi.
+aach-command-delete-hover: Lisez la documentation avant d'utiliser cette commande !
 aach-command-week-hover: Les meilleurs joueurs de la semaine !
 aach-command-month-hover: Les meilleurs joueurs du mois !
 
