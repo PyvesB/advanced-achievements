@@ -13,7 +13,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
-
 import org.bukkit.configuration.InvalidConfigurationException;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -94,9 +93,8 @@ public class FileManager {
 		file.getParentFile().mkdirs();
 		file.createNewFile();
 
-		if (resource != null)
-			if (!resource.isEmpty())
-				this.copyResource(plugin.getResource(resource), file);
+		if (resource != null && !resource.isEmpty())
+			this.copyResource(plugin.getResource(resource), file);
 	}
 
 	/**
@@ -116,26 +114,31 @@ public class FileManager {
 		String currentLine;
 
 		StringBuilder whole = new StringBuilder("");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-
-		while ((currentLine = reader.readLine()) != null) {
-			// Rework comment line so it becomes a normal value in the config file.
-			// This workaround allows the comment to be saved in the Yaml file.
-			if (currentLine.startsWith("#")) {
-				addLine = currentLine.replace(":", "_COLON_").replace("|", "_VERT_").replace("-", "_HYPHEN_")
-						.replaceFirst("#", plugin.getDescription().getName() + "_COMMENT_" + commentNum + ": ");
-				whole.append(addLine + "\n");
-				commentNum++;
-			} else {
-				whole.append(currentLine + "\n");
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+			while ((currentLine = reader.readLine()) != null) {
+				// Rework comment line so it becomes a normal value in the config file.
+				// This workaround allows the comment to be saved in the Yaml file.
+				if (currentLine.startsWith("#")) {
+					addLine = currentLine.replace(":", "_COLON_").replace("|", "_VERT_").replace("-", "_HYPHEN_")
+							.replaceFirst("#", plugin.getDescription().getName() + "_COMMENT_" + commentNum + ": ");
+					whole.append(addLine + "\n");
+					commentNum++;
+				} else {
+					whole.append(currentLine + "\n");
+				}
 			}
+
+			String config = whole.toString();
+			StringReader configStream = new StringReader(config);
+			return configStream;
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (reader != null)
+				reader.close();
 		}
-
-		String config = whole.toString();
-		StringReader configStream = new StringReader(config);
-
-		reader.close();
-		return configStream;
 	}
 
 	/**
@@ -152,14 +155,20 @@ public class FileManager {
 		int comments = 0;
 		String currentLine;
 
-		BufferedReader reader = new BufferedReader(new FileReader(file));
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			while ((currentLine = reader.readLine()) != null)
+				if (currentLine.startsWith("#"))
+					comments++;
 
-		while ((currentLine = reader.readLine()) != null)
-			if (currentLine.startsWith("#"))
-				comments++;
-
-		reader.close();
-		return comments;
+			return comments;
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (reader != null)
+				reader.close();
+		}
 	}
 
 	public Reader getConfigContent(String filePath) throws IOException {
@@ -217,11 +226,17 @@ public class FileManager {
 
 		String configuration = this.prepareConfigString(configString);
 
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
-		writer.write(configuration);
-		writer.flush();
-		writer.close();
-
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+			writer.write(configuration);
+			writer.flush();
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (writer != null)
+				writer.close();
+		}
 	}
 
 	/**
@@ -233,16 +248,22 @@ public class FileManager {
 	 */
 	private void copyResource(InputStream resource, File file) throws IOException {
 
-		OutputStream out = new FileOutputStream(file);
+		OutputStream out = null;
+		try {
+			out = new FileOutputStream(file);
+			int length;
+			byte[] buf = new byte[1024];
 
-		int length;
-		byte[] buf = new byte[1024];
+			while ((length = resource.read(buf)) > 0)
+				out.write(buf, 0, length);
 
-		while ((length = resource.read(buf)) > 0)
-			out.write(buf, 0, length);
-
-		out.close();
-		resource.close();
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (out != null)
+				out.close();
+			resource.close();
+		}
 	}
 
 	/**
@@ -260,23 +281,27 @@ public class FileManager {
 		// Do a backup only if a newer version of the file exists.
 		if (original.lastModified() > backup.lastModified() && original.exists()) {
 
-			FileInputStream inStream = new FileInputStream(original);
-			FileOutputStream outStream;
-			outStream = new FileOutputStream(backup);
+			FileInputStream inStream = null;
+			FileOutputStream outStream = null;
+			try {
+				inStream = new FileInputStream(original);
+				outStream = new FileOutputStream(backup);
 
-			byte[] buffer = new byte[1024];
+				byte[] buffer = new byte[1024];
 
-			int length;
-			while ((length = inStream.read(buffer)) > 0) {
-				outStream.write(buffer, 0, length);
+				int length;
+				while ((length = inStream.read(buffer)) > 0) {
+					outStream.write(buffer, 0, length);
+				}
+			} catch (IOException e) {
+				throw e;
+			} finally {
+				if (inStream != null)
+					inStream.close();
+				if (outStream != null)
+					outStream.close();
 			}
 
-			if (inStream != null)
-				inStream.close();
-			if (outStream != null)
-				outStream.close();
 		}
-
 	}
-
 }
