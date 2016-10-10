@@ -61,7 +61,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	private HashMap<Player, Location> playerLocations;
 
 	// Minecraft version to deal with gliding.
-	private Integer version;
+	private int version;
 
 	public AchieveDistanceRunnable(AdvancedAchievements plugin) {
 
@@ -88,16 +88,14 @@ public class AchieveDistanceRunnable implements Runnable {
 		}
 		playerLocations = new HashMap<Player, Location>();
 
-		extractAchievementsFromConfig(plugin);
-
+		extractAchievementsFromConfig();
 	}
 
 	/**
 	 * Loads list of achievements from configuration.
 	 * 
-	 * @param plugin
 	 */
-	public void extractAchievementsFromConfig(AdvancedAchievements plugin) {
+	public void extractAchievementsFromConfig() {
 
 		YamlManager config = plugin.getPluginConfig();
 
@@ -241,8 +239,8 @@ public class AchieveDistanceRunnable implements Runnable {
 	}
 
 	/**
-	 * Compare the distance difference to the movement achievement thresholds If a threshold is reached, award the
-	 * achievement Update the various tracking objects
+	 * Compare the distance difference to the movement achievement thresholds. If a threshold is reached, award the
+	 * achievement. Update the various tracking objects.
 	 * 
 	 * @param difference
 	 * @param player
@@ -293,7 +291,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * 
 	 * @param config
 	 * @param achievementKeyName
-	 * @return array containing thresholds for thr achievement keyName.
+	 * @return array containing thresholds for the achievement keyName.
 	 */
 	private int[] extractDistanceAchievementFromConfig(YamlManager config, String achievementKeyName) {
 

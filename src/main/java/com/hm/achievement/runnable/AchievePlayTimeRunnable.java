@@ -30,7 +30,7 @@ public class AchievePlayTimeRunnable implements Runnable {
 
 		this.plugin = plugin;
 
-		extractAchievementsFromConfig(plugin);
+		extractAchievementsFromConfig();
 	}
 
 	/**
@@ -38,13 +38,13 @@ public class AchievePlayTimeRunnable implements Runnable {
 	 * 
 	 * @param plugin
 	 */
-	public void extractAchievementsFromConfig(AdvancedAchievements plugin) {
+	public void extractAchievementsFromConfig() {
 
 		playtimeThresholds = new int[plugin.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false)
 				.size()];
 		int i = 0;
 		for (String playedTime : plugin.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false)) {
-			playtimeThresholds[i] = Integer.valueOf(playedTime);
+			playtimeThresholds[i] = Integer.parseInt(playedTime);
 			i++;
 		}
 		// Sort array; this will enable us to break loops as soon as we find an achievement not yet received by a

@@ -15,7 +15,7 @@ import com.hm.achievement.AdvancedAchievements;
 public class GiveCommand implements Listener {
 
 	private AdvancedAchievements plugin;
-	private Boolean multiCommand;
+	private boolean multiCommand;
 
 	public GiveCommand(AdvancedAchievements plugin) {
 

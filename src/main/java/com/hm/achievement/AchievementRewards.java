@@ -165,7 +165,7 @@ public class AchievementRewards {
 			int indexOfAmount = 0;
 			indexOfAmount = materialAndQty.indexOf(" ");
 			if (indexOfAmount != -1)
-				itemAmount = Integer.valueOf(materialAndQty.substring(indexOfAmount + 1));
+				itemAmount = Integer.parseInt(materialAndQty.substring(indexOfAmount + 1));
 		}
 
 		String commandReward = config.getString(configAchievement + ".Reward.Command", "");

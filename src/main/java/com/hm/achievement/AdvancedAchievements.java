@@ -516,11 +516,11 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Reload achievements in distance, max level and play time runnables
 		// only on plugin reload.
 		if (achieveDistanceRunnable != null)
-			achieveDistanceRunnable.extractAchievementsFromConfig(this);
+			achieveDistanceRunnable.extractAchievementsFromConfig();
 		if (achievePlayTimeRunnable != null)
-			achievePlayTimeRunnable.extractAchievementsFromConfig(this);
+			achievePlayTimeRunnable.extractAchievementsFromConfig();
 		if (xpListener != null)
-			xpListener.extractAchievementsFromConfig(this);
+			xpListener.extractAchievementsFromConfig();
 
 		// Set to null in case user changed the option and did an /aach reload. We do not recheck for update on /aach
 		// reload.
@@ -536,7 +536,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	private void logAchievementStats() {
 
-		YamlManager config = getPluginConfig();
 		int totalAchievements = 0;
 		int categoriesInUse = 0;
 
@@ -1389,17 +1388,15 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Return a map from achievement name (as stored in the database) to DisplayName If multiple achievements have the
-	 * same achievement name, only the first DisplayName will be tracked If DisplayName for an achievement is empty or
-	 * undefined, the value in the returned map will be an empty string
+	 * Return a map from achievement name (as stored in the database) to DisplayName. If multiple achievements have the
+	 * same achievement name, only the first DisplayName will be tracked. If DisplayName for an achievement is empty or
+	 * undefined, the value in the returned map will be an empty string.
 	 * 
 	 * @return Map from achievement name to user-friendly display name
 	 */
 	public Map<String, String> getAchievementsAndDisplayNames() {
 
 		Map<String, String> achievementsAndDisplayNames = new HashMap<>();
-
-		YamlManager config = getPluginConfig();
 
 		// Enumerate the normal achievements
 		for (String category : NORMAL_ACHIEVEMENTS) {

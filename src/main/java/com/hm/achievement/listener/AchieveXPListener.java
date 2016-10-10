@@ -33,11 +33,10 @@ public class AchieveXPListener implements Listener {
 
 		this.plugin = plugin;
 
-		extractAchievementsFromConfig(plugin);
-
+		extractAchievementsFromConfig();
 	}
 
-	public void extractAchievementsFromConfig(AdvancedAchievements plugin) {
+	public void extractAchievementsFromConfig() {
 
 		achievementsMaxLevel = new int[plugin.getPluginConfig().getConfigurationSection("MaxLevel").getKeys(false)
 				.size()];

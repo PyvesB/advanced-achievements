@@ -19,7 +19,7 @@ public class StatsCommand {
 	private int totalAchievements;
 	private boolean additionalEffects;
 	private boolean sound;
-	private Integer version;
+	private int version;
 
 	public StatsCommand(AdvancedAchievements plugin) {
 

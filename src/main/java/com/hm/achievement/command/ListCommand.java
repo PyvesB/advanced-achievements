@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
-import com.google.common.primitives.Ints;
 import com.hm.achievement.utils.YamlManager;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
@@ -517,7 +516,7 @@ public class ListCommand {
 		int positionInGUI = 0;
 
 		String previousItemDate = null;
-		Integer previousItemGoal = 0;
+		int previousItemGoal = 0;
 		// Populate the GUI with all of the achievements for the category.
 		for (String ach : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
 
@@ -527,7 +526,7 @@ public class ListCommand {
 
 			// ach is the threshold for obtaining this achievement
 			// Convert it to an integer
-			Integer currentItemGoal = Ints.tryParse(ach);
+			int currentItemGoal = Integer.parseInt(ach);
 
 			String achName = plugin.getPluginConfig().getString(category + '.' + ach + ".Name", "");
 			String displayName = plugin.getPluginConfig().getString(category + '.' + ach + ".DisplayName", "");
@@ -678,7 +677,7 @@ public class ListCommand {
 
 				// level is the threshold for obtaining this achievement
 				// Convert it to an integer.
-				int currentItemGoal = Ints.tryParse(level);
+				int currentItemGoal = Integer.parseInt(level);
 
 				String achName = config.getString(category + '.' + section + '.' + level + ".Name", "");
 				String displayName = config.getString(category + '.' + section + '.' + level + ".DisplayName", "");
@@ -847,7 +846,7 @@ public class ListCommand {
 			else
 				textSize = (achMessage.replaceAll(REGEX_PATTERN.pattern(), "")).length() * 3;
 			for (int i = 1; i < textSize / 2; i++) {
-				if (i < ((textSize / 2 - 1) * statistic) / Integer.valueOf(level)) {
+				if (i < ((textSize / 2 - 1) * statistic) / Integer.parseInt(level)) {
 					barDisplay.append(plugin.getColor()).append('|');
 				} else {
 					barDisplay.append("&8|");

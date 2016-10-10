@@ -60,7 +60,7 @@ public class FileManager {
 	 */
 	private File getConfigFile(String file) {
 
-		if (file.isEmpty() || file == null)
+		if (file.isEmpty())
 			return null;
 
 		File configFile;
