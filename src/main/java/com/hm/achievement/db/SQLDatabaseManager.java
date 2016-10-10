@@ -386,6 +386,7 @@ public class SQLDatabaseManager {
 			// Commit entire transaction.
 			conn.commit();
 			conn.setAutoCommit(true);
+			prep.close();
 			st.close();
 			rs.close();
 		} catch (SQLException e) {
@@ -461,6 +462,7 @@ public class SQLDatabaseManager {
 			// Commit entire transaction.
 			conn.commit();
 			conn.setAutoCommit(true);
+			prep.close();
 			st.close();
 			rs.close();
 		} catch (SQLException e) {
