@@ -466,7 +466,6 @@ public class SQLDatabaseManager {
 			e.printStackTrace();
 			plugin.setSuccessfulLoad(false);
 		}
-
 		return sqlConnection;
 	}
 
@@ -511,6 +510,7 @@ public class SQLDatabaseManager {
 	 */
 	public ArrayList<String> getPlayerAchievementsList(Player player) {
 
+		ArrayList<String> achievementsList = new ArrayList<String>();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs;
@@ -524,7 +524,6 @@ public class SQLDatabaseManager {
 						+ player.getUniqueId() + "' ORDER BY date DESC");
 			}
 
-			ArrayList<String> achievementsList = new ArrayList<String>();
 			Map<String, String> achievementsAndDisplayNames = plugin.getAchievementsAndDisplayNames();
 
 			while (rs.next()) {
@@ -540,11 +539,10 @@ public class SQLDatabaseManager {
 				achievementsList.add(rs.getString(3));
 				achievementsList.add(rs.getDate(4).toString());
 			}
-			return achievementsList;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving achievements: " + e);
 		}
-		return null;
+		return achievementsList;
 	}
 
 	/**
@@ -557,19 +555,19 @@ public class SQLDatabaseManager {
 	public String getPlayerAchievementDate(Player player, String name) {
 
 		name = name.replace("'", "''");
+		String achievementDate = null;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + "achievements WHERE playername = '"
 					+ player.getUniqueId() + "' AND achievement = '" + name + "'");
-			String achievementDate = null;
+
 			if (rs.next()) {
 				achievementDate = rs.getDate(1).toString();
 			}
-			return achievementDate;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving achievement date: " + e);
 		}
-		return null;
+		return achievementDate;
 	}
 
 	/**
@@ -580,19 +578,18 @@ public class SQLDatabaseManager {
 	 */
 	public int getPlayerAchievementsAmount(Player player) {
 
+		int achievementsAmount = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM " + tablePrefix + "achievements WHERE playername = '"
 					+ player.getUniqueId() + "'");
-			int achievementsAmount = 0;
 			if (rs.next()) {
 				achievementsAmount = rs.getInt(1);
 			}
-			return achievementsAmount;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while counting player achievements: " + e);
 		}
-		return 0;
+		return achievementsAmount;
 	}
 
 	/**
@@ -604,6 +601,7 @@ public class SQLDatabaseManager {
 	 */
 	public ArrayList<String> getTopList(int listLength, long start) {
 
+		ArrayList<String> topList = new ArrayList<String>();
 		Connection conn = getSQLConnection();
 		// PreparedStatement used to easily set date in query regardless of the database type.
 		PreparedStatement prep = null;
@@ -622,12 +620,10 @@ public class SQLDatabaseManager {
 			}
 			prep.execute();
 			ResultSet rs = prep.getResultSet();
-			ArrayList<String> topList = new ArrayList<String>();
 			while (rs.next()) {
 				topList.add(rs.getString(1));
 				topList.add("" + rs.getInt(2));
 			}
-			return topList;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving top players: " + e);
 		} finally {
@@ -638,7 +634,7 @@ public class SQLDatabaseManager {
 				plugin.getLogger().severe("SQL error while retrieving top players: " + e);
 			}
 		}
-		return new ArrayList<String>();
+		return topList;
 	}
 
 	/**
@@ -649,6 +645,7 @@ public class SQLDatabaseManager {
 	 */
 	public int getTotalPlayers(long start) {
 
+		int players = 0;
 		Connection conn = getSQLConnection();
 		// PreparedStatement used to easily set date in query regardless of the database type.
 		PreparedStatement prep = null;
@@ -665,11 +662,9 @@ public class SQLDatabaseManager {
 			}
 			prep.execute();
 			ResultSet rs = prep.getResultSet();
-			int players = 0;
 			while (rs.next()) {
 				players = rs.getInt(1);
 			}
-			return players;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving total players: " + e);
 		} finally {
@@ -680,7 +675,7 @@ public class SQLDatabaseManager {
 				plugin.getLogger().severe("SQL error while retrieving total players: " + e);
 			}
 		}
-		return 0;
+		return players;
 	}
 
 	/**
@@ -692,6 +687,7 @@ public class SQLDatabaseManager {
 	 */
 	public int getPlayerRank(Player player, long start) {
 
+		int rank = 0;
 		Connection conn = getSQLConnection();
 		// PreparedStatement used to easily set date in query regardless of the database type.
 		PreparedStatement prep = null;
@@ -713,12 +709,10 @@ public class SQLDatabaseManager {
 			}
 			prep.execute();
 			ResultSet rs = prep.getResultSet();
-			int rank = 0;
 			while (rs.next()) {
 				// Rank of a player corresponds to number of players with more achievements + 1.
 				rank = rs.getInt(1) + 1;
 			}
-			return rank;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving player rank: " + e);
 		} finally {
@@ -729,7 +723,7 @@ public class SQLDatabaseManager {
 				plugin.getLogger().severe("SQL error while retrieving player rank: " + e);
 			}
 		}
-		return 0;
+		return rank;
 	}
 
 	/**
@@ -830,11 +824,10 @@ public class SQLDatabaseManager {
 						+ player.getUniqueId() + "' AND achievement = '" + name + "'").next())
 					result = true;
 			}
-			return result;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while checking achievement: " + e);
 		}
-		return false;
+		return result;
 	}
 
 	/**
@@ -865,19 +858,19 @@ public class SQLDatabaseManager {
 	 */
 	public int getKills(Player player, String mobname) {
 
+		int entityKills = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT kills FROM " + tablePrefix + "kills WHERE playername = '"
 					+ player.getUniqueId() + "' AND mobname = '" + mobname + "'");
-			int entityKills = 0;
+
 			while (rs.next()) {
 				entityKills = rs.getInt("kills");
 			}
-			return entityKills;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving kill stats: " + e);
-			return 0;
 		}
+		return entityKills;
 	}
 
 	/**
@@ -889,19 +882,18 @@ public class SQLDatabaseManager {
 	 */
 	public int getPlaces(Player player, String block) {
 
+		int blockBreaks = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			int blockBreaks = 0;
 			ResultSet rs = st.executeQuery("SELECT places FROM " + tablePrefix + "places WHERE playername = '"
 					+ player.getUniqueId() + "' AND blockid = '" + block + "'");
 			while (rs.next()) {
 				blockBreaks = rs.getInt("places");
 			}
-			return blockBreaks;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving block place stats: " + e);
-			return 0;
 		}
+		return blockBreaks;
 	}
 
 	/**
@@ -913,19 +905,18 @@ public class SQLDatabaseManager {
 	 */
 	public int getBreaks(Player player, String block) {
 
+		int blockBreaks = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			int blockBreaks = 0;
 			ResultSet rs = st.executeQuery("SELECT breaks FROM " + tablePrefix + "breaks WHERE playername = '"
 					+ player.getUniqueId() + "' AND blockid = '" + block + "'");
 			while (rs.next()) {
 				blockBreaks = rs.getInt("breaks");
 			}
-			return blockBreaks;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving block break stats: " + e);
-			return 0;
 		}
+		return blockBreaks;
 	}
 
 	/**
@@ -937,19 +928,18 @@ public class SQLDatabaseManager {
 	 */
 	public int getCrafts(Player player, String item) {
 
+		int itemCrafts = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			int itemCrafts = 0;
 			ResultSet rs = st.executeQuery("SELECT crafts FROM " + tablePrefix + "crafts WHERE playername = '"
 					+ player.getUniqueId() + "' AND item = '" + item + "'");
 			while (rs.next()) {
 				itemCrafts = rs.getInt("crafts");
 			}
-			return itemCrafts;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while handling craft event: " + e);
-			return 0;
 		}
+		return itemCrafts;
 	}
 
 	/**
@@ -961,19 +951,18 @@ public class SQLDatabaseManager {
 	 */
 	public int getNormalAchievementAmount(Player player, String table) {
 
+		int amount = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT " + table + " FROM " + tablePrefix + table + " WHERE playername = '"
 					+ player.getUniqueId() + "'");
-			int amount = 0;
 			while (rs.next()) {
 				amount = rs.getInt(table);
 			}
-			return amount;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving " + table + " stats: " + e);
-			return 0;
 		}
+		return amount;
 	}
 
 	/**
@@ -985,19 +974,18 @@ public class SQLDatabaseManager {
 	public int getConnectionsAmount(Player player) {
 
 		final String name = player.getUniqueId().toString();
+		int connections = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery(
 					"SELECT connections FROM " + tablePrefix + "connections WHERE playername = '" + name + "'");
-			int connections = 0;
 			while (rs.next()) {
 				connections = rs.getInt("connections");
 			}
-			return connections;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving connection statistics: " + e);
-			return 0;
 		}
+		return connections;
 	}
 
 	/**
@@ -1015,11 +1003,10 @@ public class SQLDatabaseManager {
 					+ player.getUniqueId() + "'");
 			while (rs.next())
 				date = rs.getString("date");
-			return date;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving connection date stats: " + e);
-			return null;
 		}
+		return date;
 	}
 
 	/**
@@ -1084,8 +1071,8 @@ public class SQLDatabaseManager {
 			return newConnections;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while handling connection event: " + e);
-			return 0;
 		}
+		return 0;
 	}
 
 	/**
@@ -1097,9 +1084,9 @@ public class SQLDatabaseManager {
 	 */
 	public long updateAndGetPlaytime(String name, long time) {
 
+		long newPlayedTime = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			long newPlayedTime = 0;
 			if (time == 0) {
 				ResultSet rs = st.executeQuery(
 						"SELECT playedtime FROM " + tablePrefix + "playedtime WHERE playername = '" + name + "'");
@@ -1117,11 +1104,10 @@ public class SQLDatabaseManager {
 					st.execute("REPLACE INTO " + tablePrefix + "playedtime VALUES ('" + name + "', " + time + ")");
 				}
 			}
-			return newPlayedTime;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while handling play time registration: " + e);
-			return 0L;
 		}
+		return newPlayedTime;
 	}
 
 	/**
@@ -1134,9 +1120,9 @@ public class SQLDatabaseManager {
 	 */
 	public int updateAndGetDistance(String name, int distance, String type) {
 
+		int newDistance = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			int newDistance = 0;
 			if (distance == 0) {
 				// Retrieve statistic.
 				ResultSet rs = st.executeQuery(
@@ -1155,11 +1141,10 @@ public class SQLDatabaseManager {
 					st.execute("REPLACE INTO " + tablePrefix + type + " VALUES ('" + name + "', " + distance + ")");
 				}
 			}
-			return newDistance;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while handling " + type + " registration: " + e);
-			return 0;
 		}
+		return newDistance;
 	}
 
 	public String getTablePrefix() {
@@ -1171,5 +1156,4 @@ public class SQLDatabaseManager {
 
 		return databaseType == POSTGRESQL;
 	}
-
 }
