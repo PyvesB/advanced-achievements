@@ -114,9 +114,7 @@ public class FileManager {
 		String currentLine;
 
 		StringBuilder whole = new StringBuilder("");
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
 			while ((currentLine = reader.readLine()) != null) {
 				// Rework comment line so it becomes a normal value in the config file.
 				// This workaround allows the comment to be saved in the Yaml file.
@@ -133,11 +131,6 @@ public class FileManager {
 			String config = whole.toString();
 			StringReader configStream = new StringReader(config);
 			return configStream;
-		} catch (IOException e) {
-			throw e;
-		} finally {
-			if (reader != null)
-				reader.close();
 		}
 	}
 
@@ -155,19 +148,12 @@ public class FileManager {
 		int comments = 0;
 		String currentLine;
 
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(file));
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			while ((currentLine = reader.readLine()) != null)
 				if (currentLine.startsWith("#"))
 					comments++;
 
 			return comments;
-		} catch (IOException e) {
-			throw e;
-		} finally {
-			if (reader != null)
-				reader.close();
 		}
 	}
 
@@ -226,16 +212,9 @@ public class FileManager {
 
 		String configuration = this.prepareConfigString(configString);
 
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))) {
 			writer.write(configuration);
 			writer.flush();
-		} catch (IOException e) {
-			throw e;
-		} finally {
-			if (writer != null)
-				writer.close();
 		}
 	}
 
@@ -248,21 +227,12 @@ public class FileManager {
 	 */
 	private void copyResource(InputStream resource, File file) throws IOException {
 
-		OutputStream out = null;
-		try {
-			out = new FileOutputStream(file);
+		try (OutputStream out = new FileOutputStream(file)) {
 			int length;
 			byte[] buf = new byte[1024];
 
 			while ((length = resource.read(buf)) > 0)
 				out.write(buf, 0, length);
-
-		} catch (IOException e) {
-			throw e;
-		} finally {
-			if (out != null)
-				out.close();
-			resource.close();
 		}
 	}
 
@@ -281,27 +251,15 @@ public class FileManager {
 		// Do a backup only if a newer version of the file exists.
 		if (original.lastModified() > backup.lastModified() && original.exists()) {
 
-			FileInputStream inStream = null;
-			FileOutputStream outStream = null;
-			try {
-				inStream = new FileInputStream(original);
-				outStream = new FileOutputStream(backup);
-
+			try (FileInputStream inStream = new FileInputStream(original);
+					FileOutputStream outStream = new FileOutputStream(backup)) {
 				byte[] buffer = new byte[1024];
 
 				int length;
 				while ((length = inStream.read(buffer)) > 0) {
 					outStream.write(buffer, 0, length);
 				}
-			} catch (IOException e) {
-				throw e;
-			} finally {
-				if (inStream != null)
-					inStream.close();
-				if (outStream != null)
-					outStream.close();
 			}
-
 		}
 	}
 }
