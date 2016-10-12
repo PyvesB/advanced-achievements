@@ -1,12 +1,18 @@
 package com.hm.achievement.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.hm.achievement.AdvancedAchievements;
 
@@ -18,8 +24,11 @@ import com.hm.achievement.AdvancedAchievements;
 public class UpdateChecker {
 
 	private AdvancedAchievements plugin;
-	private String version;
-	private boolean updateNeeded;
+	private Boolean updateNeeded = null;
+	private FutureTask<Boolean> updateCheckerFutureTask;
+	// Marked as volatile to ensure that once the updateCheckerFutureTask is done, the version is visible to the main
+	// thread of execution.
+	private volatile String version;
 
 	// Address of the rss feed to retrieve most recent version number.
 	private static final String BUKKIT_URL = "https://dev.bukkit.org/bukkit-plugins/advanced-achievements/files.rss";
@@ -33,35 +42,41 @@ public class UpdateChecker {
 	public UpdateChecker(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-		updateNeeded = checkForUpdate();
+		updateCheckerFutureTask = new FutureTask<Boolean>(new Callable<Boolean>() {
+
+			@Override
+			public Boolean call() throws Exception {
+
+				return checkForUpdate();
+			}
+		});
+		// Run the FutureTask in a new thread.
+		new Thread(updateCheckerFutureTask).start();
 	}
 
 	/**
 	 * Check if a new version of AdvancedAchievements is available, and log in console if new version found.
+	 * 
+	 * @throws ParserConfigurationException
+	 * @throws IOException
+	 * @throws SAXException
 	 */
-	private boolean checkForUpdate() {
-		
+	private boolean checkForUpdate() throws SAXException, IOException, ParserConfigurationException {
+
 		plugin.getLogger().info("Checking for plugin update...");
 
-		URL filesFeed = null;
+		URL filesFeed = new URL(BUKKIT_URL);
 		Document document = null;
 		boolean bukkit = true;
 
-		try {
-			filesFeed = new URL(BUKKIT_URL);
-			InputStream input = filesFeed.openConnection().getInputStream();
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
+		try (InputStream inputBukkit = filesFeed.openConnection().getInputStream()) {
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputBukkit);
 		} catch (Exception eB) {
-			try {
-				// If XML parsing for Bukkit has failed (website down, address change, etc.), try on GitHub.
-				bukkit = false;
-				filesFeed = new URL(GITHUB_URL);
-				InputStream input = filesFeed.openConnection().getInputStream();
-				document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
-			} catch (Exception eG) {
-				plugin.getLogger().severe("Error while checking for AdvancedAchievements update.");
-				plugin.setSuccessfulLoad(false);
-				return false;
+			// If XML parsing for Bukkit has failed (website down, address change, etc.), try on GitHub.
+			bukkit = false;
+			filesFeed = new URL(GITHUB_URL);
+			try (InputStream inputGithub = filesFeed.openConnection().getInputStream()) {
+				document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputGithub);
 			}
 		}
 
@@ -117,6 +132,23 @@ public class UpdateChecker {
 
 	public boolean isUpdateNeeded() {
 
+		// Completion of the FutureTask has not yet been checked.
+		if (updateNeeded == null) {
+			if (updateCheckerFutureTask.isDone()) {
+				try {
+					// Retrieve result of the FutureTask.
+					updateNeeded = updateCheckerFutureTask.get();
+				} catch (InterruptedException | ExecutionException e) {
+					// Error during execution; assume that no updates are available.
+					updateNeeded = false;
+					plugin.getLogger().severe("Error while checking for AdvancedAchievements update.");
+				}
+			} else {
+				// FutureTask not yet completed; indicate that no updates are available. If an OP joins before the task
+				// completes, he will not be notified; this is both an unlikely and non critical scenario.
+				return false;
+			}
+		}
 		return updateNeeded;
 	}
 
