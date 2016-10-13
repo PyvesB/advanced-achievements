@@ -12,6 +12,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
@@ -35,8 +37,13 @@ public class SQLDatabaseManager {
 	private String databasePassword;
 	private String tablePrefix;
 	private boolean achievementsChronologicalOrder;
-	private Connection sqlConnection;
 	private byte databaseType;
+
+	// Connection to the database; remains opened and shared except when plugin disabled.
+	private Connection sqlConnection;
+
+	// Used to do some write operations to the database asynchronously.
+	private final ExecutorService pool;
 
 	private static final byte SQLITE = 0;
 	private static final byte MYSQL = 1;
@@ -45,6 +52,8 @@ public class SQLDatabaseManager {
 	public SQLDatabaseManager(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+		// We expect to execute many short writes to the database. The pool can grow dynamically under high load.
+		pool = Executors.newCachedThreadPool();
 	}
 
 	/**
@@ -740,15 +749,15 @@ public class SQLDatabaseManager {
 
 		if (plugin.isAsyncPooledRequestsSender()) {
 			// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to database
-			// has occured.
-			new Thread() {
+			// has occurred; pools also allow to reuse threads.
+			pool.execute(new Runnable() {
 
 				@Override
 				public void run() {
 
 					registerAchievementToDB(achievement, desc, name);
 				}
-			}.start();
+			});
 		} else {
 			registerAchievementToDB(achievement, desc, name);
 		}
@@ -785,6 +794,7 @@ public class SQLDatabaseManager {
 				prep.setString(3, desc);
 				prep.setDate(4, new java.sql.Date(new java.util.Date().getTime()));
 			}
+			prep.execute();
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while registering achievement: " + e);
 		} finally {
@@ -831,22 +841,32 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Delete an achievement from a player.
+	 * Delete an achievement from a player (asynchronously).
 	 * 
 	 * @param player
 	 * @param name
 	 */
-	public void deletePlayerAchievement(Player player, String name) {
+	public void deletePlayerAchievement(Player player, final String ach) {
 
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			// We simply double apostrophes to avoid breaking the query.
-			name = name.replace("'", "''");
-			st.execute("DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + player.getUniqueId()
-					+ "' AND achievement = '" + name + "'");
-		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while deleting achievement: " + e);
-		}
+		final String name = player.getUniqueId().toString();
+		// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to
+		// database has occurred; pools also allow to reuse threads.
+		pool.execute(new Runnable() {
+
+			@Override
+			public void run() {
+
+				Connection conn = getSQLConnection();
+				try (Statement st = conn.createStatement()) {
+					// We simply double apostrophes to avoid breaking the query.
+					String achWithApostrophes = ach.replace("'", "''");
+					st.execute("DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + name
+							+ "' AND achievement = '" + achWithApostrophes + "'");
+				} catch (SQLException e) {
+					plugin.getLogger().severe("SQL error while deleting achievement: " + e);
+				}
+			}
+		});
 	}
 
 	/**
@@ -1043,8 +1063,8 @@ public class SQLDatabaseManager {
 				}
 			} else {
 				// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to
-				// database has occured.
-				new Thread() {
+				// database has occurred; pools also allow to reuse threads.
+				pool.execute(new Runnable() {
 
 					@Override
 					public void run() {
@@ -1066,7 +1086,7 @@ public class SQLDatabaseManager {
 							plugin.getLogger().severe("SQL error while handling connection event on async task: " + e);
 						}
 					}
-				}.start();
+				});
 			}
 			return newConnections;
 		} catch (SQLException e) {
