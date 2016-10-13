@@ -51,10 +51,8 @@ public class PooledRequestsSenderAsync implements Runnable {
 	 */
 	public void sendRequests() {
 
-		try {
-			Connection conn = plugin.getDb().getSQLConnection();
-			Statement st = conn.createStatement();
-
+		Connection conn = plugin.getDb().getSQLConnection();
+		try (Statement st = conn.createStatement()) {
 			for (Entry<String, Integer> entry : plugin.getPoolsManager().getDeathHashMap().entrySet()) {
 				if (plugin.getDb().isPostgres())
 					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + "deaths VALUES ('" + entry.getKey()
@@ -386,9 +384,6 @@ public class PooledRequestsSenderAsync implements Runnable {
 				((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getCraftHashMap()).remove(entry.getKey(),
 						entry.getValue());
 			}
-
-			st.close();
-
 		} catch (SQLException e) {
 			plugin.getLogger().severe("Error while sending async pooled requests to database: " + e);
 			e.printStackTrace();
