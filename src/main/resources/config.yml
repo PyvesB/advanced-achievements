@@ -203,13 +203,13 @@ Places:
       DisplayName: Stone God
 
 # When a specific block is broken (specify material name, lower case).
-# Below, the notation log:1 means log item with metadata 1.
+# Below, the notation sand:1 means sand item with metadata 1 (red sand).
 Breaks: 
-  log:1:
-    '100':
-      Message: '&2You have cut dark oak 100 logs!'
-      Name: break_1_log1
-      DisplayName: Dark Oak Cutter
+  sand:1:
+    '10':
+      Message: '&cYou have collected 10 red sand blocks!'
+      Name: break_10_sand1
+      DisplayName: Red Sand Fan
   stone:
     '1':
       Message: '&1The first time you went mining!'
