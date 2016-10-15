@@ -1,6 +1,6 @@
 package com.hm.achievement.listener;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -9,6 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 
+import com.google.common.collect.HashMultimap;
 import com.hm.achievement.AdvancedAchievements;
 
 /**
@@ -21,13 +22,12 @@ public class AchieveXPListener implements Listener {
 
 	private AdvancedAchievements plugin;
 
-	// Lists of achievements extracted from configuration.
-	private int[] achievementsMaxLevel;
-
-	// Sets corresponding to whether a player has obtained a specific
-	// level achievement.
-	// Used as pseudo-caching system to reduce load on database.
-	private HashSet<?>[] playerAchievements;
+	// Multimaps corresponding to the players who have received max level achievements.
+	// Each key in the multimap corresponds to one achievement threshold, and has its associated player Set.
+	// Used as pseudo-caching system to reduce load on database as we cannot rely on the fact that each unique integer
+	// value will be reached for this achievement, and we can therefore not give the achievement when a precise value is
+	// met; we have to do threshold comparisons, which require extra reads from the database.
+	HashMultimap<Integer, String> achievementsCache;
 
 	public AchieveXPListener(AdvancedAchievements plugin) {
 
@@ -38,24 +38,21 @@ public class AchieveXPListener implements Listener {
 
 	public void extractAchievementsFromConfig() {
 
-		achievementsMaxLevel = new int[plugin.getPluginConfig().getConfigurationSection("MaxLevel").getKeys(false)
-				.size()];
-		int i = 0;
-		for (String level : plugin.getPluginConfig().getConfigurationSection("MaxLevel").getKeys(false)) {
-			achievementsMaxLevel[i] = Integer.parseInt(level);
-			i++;
-		}
+		Set<String> configKeys = plugin.getConfig().getConfigurationSection("MaxLevel").getKeys(false);
 
-		playerAchievements = new HashSet<?>[achievementsMaxLevel.length];
-		for (i = 0; i < playerAchievements.length; ++i)
-			playerAchievements[i] = new HashSet<Player>();
+		achievementsCache = HashMultimap.create(configKeys.size(), 1);
+
+		// Populate the multimap with the different threshold keys. This is used to iterate through the multimap when
+		// players start connecting to the server.
+		for (String level : configKeys)
+			achievementsCache.put(Integer.valueOf(level), null);
 	}
 
-	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerExpChange(PlayerLevelChangeEvent event) {
 
 		Player player = event.getPlayer();
+		String uuid = player.getUniqueId().toString();
 
 		if (!player.hasPermission("achievement.count.maxlevel")
 				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
@@ -69,25 +66,26 @@ public class AchieveXPListener implements Listener {
 		else
 			return;
 
-		for (int i = 0; i < achievementsMaxLevel.length; i++) {
-			if (event.getNewLevel() >= achievementsMaxLevel[i] && !playerAchievements[i].contains(player)) {
+		for (Integer achievementThreshold : achievementsCache.keySet()) {
+			if (event.getNewLevel() >= achievementThreshold
+					&& !achievementsCache.get(achievementThreshold).contains(uuid)) {
 				if (!plugin.getDb().hasPlayerAchievement(player,
-						plugin.getPluginConfig().getString("MaxLevel." + achievementsMaxLevel[i] + ".Name"))) {
-					plugin.getAchievementDisplay().displayAchievement(player, "MaxLevel." + achievementsMaxLevel[i]);
+						plugin.getPluginConfig().getString("MaxLevel." + achievementThreshold + ".Name"))) {
+					plugin.getAchievementDisplay().displayAchievement(player, "MaxLevel." + achievementThreshold);
 					plugin.getDb().registerAchievement(player,
-							plugin.getPluginConfig().getString("MaxLevel." + achievementsMaxLevel[i] + ".Name"),
-							plugin.getPluginConfig().getString("MaxLevel." + achievementsMaxLevel[i] + ".Message"));
-					plugin.getReward().checkConfig(player, "MaxLevel." + achievementsMaxLevel[i]);
+							plugin.getPluginConfig().getString("MaxLevel." + achievementThreshold + ".Name"),
+							plugin.getPluginConfig().getString("MaxLevel." + achievementThreshold + ".Message"));
+					plugin.getReward().checkConfig(player, "MaxLevel." + achievementThreshold);
 				}
-
-				((HashSet<Player>) playerAchievements[i]).add(player);
+				// Player has received this achievement.
+				achievementsCache.put(achievementThreshold, uuid);
 			}
 		}
 	}
 
-	public HashSet<?>[] getPlayerAchievements() {
+	public HashMultimap<Integer, String> getAchievementsCache() {
 
-		return playerAchievements;
+		return achievementsCache;
 	}
 
 }

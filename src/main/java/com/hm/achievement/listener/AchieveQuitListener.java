@@ -1,9 +1,6 @@
 package com.hm.achievement.listener;
 
-import java.util.HashSet;
-
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -26,7 +23,6 @@ public class AchieveQuitListener implements Listener {
 		this.plugin = plugin;
 	}
 
-	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 
@@ -163,15 +159,14 @@ public class AchieveQuitListener implements Listener {
 
 			}
 			// Remove player from Multimap cache for PlayedTime achievements.
-			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getMinecartAchievementsCache()
-					.keySet())
+			for (Integer achievementThreshold : plugin.getAchievePlayTimeRunnable().getAchievementsCache().keySet())
 				plugin.getAchievePlayTimeRunnable().getAchievementsCache().remove(achievementThreshold, playerUUID);
 		}
 
 		// Remove player from HashSet cache for MaxLevel achievements.
 		if (plugin.getXpListener() != null) {
-			for (HashSet<?> playerHashSet : plugin.getXpListener().getPlayerAchievements())
-				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
+			for (Integer achievementThreshold : plugin.getXpListener().getAchievementsCache().keySet())
+				plugin.getXpListener().getAchievementsCache().remove(achievementThreshold, playerUUID);
 		}
 	}
 }
