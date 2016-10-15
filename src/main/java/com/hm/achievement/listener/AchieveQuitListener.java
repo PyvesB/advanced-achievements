@@ -39,18 +39,24 @@ public class AchieveQuitListener implements Listener {
 		// Remove player from HashSets cache for distance achievements.
 		if (plugin.getAchieveDistanceRunnable() != null
 				&& plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(event.getPlayer()) != null) {
-			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsFoot())
-				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
-			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsHorse())
-				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
-			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsPig())
-				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
-			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsBoat())
-				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
-			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsMinecart())
-				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
-			for (HashSet<?> playerHashSet : plugin.getAchieveDistanceRunnable().getPlayerAchievementsGliding())
-				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
+			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getFootAchievementsCache().keySet())
+				plugin.getAchieveDistanceRunnable().getFootAchievementsCache().remove(achievementThreshold, playerUUID);
+			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getHorseAchievementsCache()
+					.keySet())
+				plugin.getAchieveDistanceRunnable().getHorseAchievementsCache().remove(achievementThreshold,
+						playerUUID);
+			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getPigAchievementsCache().keySet())
+				plugin.getAchieveDistanceRunnable().getPigAchievementsCache().remove(achievementThreshold, playerUUID);
+			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getBoatAchievementsCache().keySet())
+				plugin.getAchieveDistanceRunnable().getBoatAchievementsCache().remove(achievementThreshold, playerUUID);
+			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getMinecartAchievementsCache()
+					.keySet())
+				plugin.getAchieveDistanceRunnable().getMinecartAchievementsCache().remove(achievementThreshold,
+						playerUUID);
+			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getGlidingAchievementsCache()
+					.keySet())
+				plugin.getAchieveDistanceRunnable().getGlidingAchievementsCache().remove(achievementThreshold,
+						playerUUID);
 
 			// Update database statistics for distances and clean HashMaps.
 			if (plugin.isAsyncPooledRequestsSender()) {
