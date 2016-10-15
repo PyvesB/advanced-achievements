@@ -41,8 +41,8 @@ public class AchievePlayTimeRunnable implements Runnable {
 
 		achievementsCache = HashMultimap.create(configKeys.size(), 1);
 
-		// Populate the multimap with the different threshold keys. This is used to iterate through the multimap when
-		// players start connecting to the server.
+		// Populate the multimap with the different threshold keys and null values. This is used to easily iterate
+		// through the thresholds without referring to the config file again.
 		for (String time : configKeys)
 			achievementsCache.put(Integer.valueOf(time), null);
 	}
