@@ -36,7 +36,7 @@ public class AchieveQuitListener implements Listener {
 		plugin.getAchievementBookCommand().getPlayers().remove(event.getPlayer());
 		plugin.getAchievementListCommand().getPlayers().remove(event.getPlayer());
 
-		// Remove player from HashSets cache for distance achievements.
+		// Remove player from Multimap caches for distance achievements.
 		if (plugin.getAchieveDistanceRunnable() != null
 				&& plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(event.getPlayer()) != null) {
 			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getFootAchievementsCache().keySet())
@@ -162,9 +162,10 @@ public class AchieveQuitListener implements Listener {
 					plugin.getDb().updateAndGetPlaytime(playerUUID, playTime + System.currentTimeMillis() - joinTime);
 
 			}
-			// Remove player from HashSet cache for PlayedTime achievements.
-			for (HashSet<?> playerHashSet : plugin.getAchievePlayTimeRunnable().getPlayerAchievements())
-				((HashSet<Player>) playerHashSet).remove(event.getPlayer());
+			// Remove player from Multimap cache for PlayedTime achievements.
+			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getMinecartAchievementsCache()
+					.keySet())
+				plugin.getAchievePlayTimeRunnable().getAchievementsCache().remove(achievementThreshold, playerUUID);
 		}
 
 		// Remove player from HashSet cache for MaxLevel achievements.

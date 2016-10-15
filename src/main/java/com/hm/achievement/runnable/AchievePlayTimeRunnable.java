@@ -1,11 +1,11 @@
 package com.hm.achievement.runnable;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.HashMultimap;
 import com.hm.achievement.AdvancedAchievements;
 
 /**
@@ -18,13 +18,10 @@ public class AchievePlayTimeRunnable implements Runnable {
 
 	private AdvancedAchievements plugin;
 
-	// List of achievements extracted from configuration.
-	private int[] playtimeThresholds;
-
-	// Arrays of HashSets corresponding to whether a player has obtained a specific PlayedTime achievement.
-	// Each index in the array corresponds to one achievement, and has its associated player Set.
-	// Used as pseudo-caching system to reduce load on database.
-	private HashSet<?>[] playerAchievements;
+	// Multimaps corresponding to the players who have received played time achievements.
+	// Each key in the multimap corresponds to one achievement threshold, and has its associated player Set.
+	// Used as pseudo-caching system to reduce load on database as times are monitored on a regular basis.
+	HashMultimap<Integer, String> achievementsCache;
 
 	public AchievePlayTimeRunnable(AdvancedAchievements plugin) {
 
@@ -40,21 +37,14 @@ public class AchievePlayTimeRunnable implements Runnable {
 	 */
 	public void extractAchievementsFromConfig() {
 
-		playtimeThresholds = new int[plugin.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false)
-				.size()];
-		int i = 0;
-		for (String playedTime : plugin.getPluginConfig().getConfigurationSection("PlayedTime").getKeys(false)) {
-			playtimeThresholds[i] = Integer.parseInt(playedTime);
-			i++;
-		}
-		// Sort array; this will enable us to break loops as soon as we find an achievement not yet received by a
-		// player.
-		Arrays.sort(playtimeThresholds);
+		Set<String> configKeys = plugin.getConfig().getConfigurationSection("PlayedTime").getKeys(false);
 
-		playerAchievements = new HashSet<?>[playtimeThresholds.length];
-		for (i = 0; i < playerAchievements.length; ++i)
-			playerAchievements[i] = new HashSet<Player>();
+		achievementsCache = HashMultimap.create(configKeys.size(), 1);
 
+		// Populate the multimap with the different threshold keys. This is used to iterate through the multimap when
+		// players start connecting to the server.
+		for (String time : configKeys)
+			achievementsCache.put(Integer.valueOf(time), null);
 	}
 
 	@Override
@@ -70,7 +60,6 @@ public class AchievePlayTimeRunnable implements Runnable {
 	 * 
 	 * @param player
 	 */
-	@SuppressWarnings("unchecked")
 	public void registerTimes(Player player) {
 
 		// Do not register any times if player does not have permission.
@@ -86,38 +75,35 @@ public class AchievePlayTimeRunnable implements Runnable {
 			plugin.getConnectionListener().getPlayTime().put(uuid, plugin.getDb().updateAndGetPlaytime(uuid, 0L));
 		} else {
 			// Iterate through all the different achievements.
-			for (int i = 0; i < playtimeThresholds.length; i++) {
+			for (Integer achievementThreshold : achievementsCache.keySet()) {
 				// Check whether player has met the threshold and whether we he has not yet received the achievement.
 				if (System.currentTimeMillis() - plugin.getConnectionListener().getJoinTime().get(uuid)
-						+ plugin.getConnectionListener().getPlayTime().get(uuid) > playtimeThresholds[i] * 3600000L) {
-					if (!playerAchievements[i].contains(player)) {
+						+ plugin.getConnectionListener().getPlayTime().get(uuid) > achievementThreshold * 3600000L) {
+					if (!achievementsCache.get(achievementThreshold).contains(uuid)) {
 						// The cache does not contain information about the reception of the achievement. Query
 						// database.
 						if (!plugin.getDb().hasPlayerAchievement(player,
-								plugin.getPluginConfig().getString("PlayedTime." + playtimeThresholds[i] + ".Name"))) {
+								plugin.getPluginConfig().getString("PlayedTime." + achievementThreshold + ".Name"))) {
 							plugin.getAchievementDisplay().displayAchievement(player,
-									"PlayedTime." + playtimeThresholds[i]);
+									"PlayedTime." + achievementThreshold);
 							plugin.getDb().registerAchievement(player,
-									plugin.getPluginConfig().getString("PlayedTime." + playtimeThresholds[i] + ".Name"),
+									plugin.getPluginConfig().getString("PlayedTime." + achievementThreshold + ".Name"),
 									plugin.getPluginConfig()
-											.getString("PlayedTime." + playtimeThresholds[i] + ".Message"));
-							plugin.getReward().checkConfig(player, "PlayedTime." + playtimeThresholds[i]);
+											.getString("PlayedTime." + achievementThreshold + ".Message"));
+							plugin.getReward().checkConfig(player, "PlayedTime." + achievementThreshold);
 
 						}
-						// Player has now received this achievement.
-						((HashSet<Player>) playerAchievements[i]).add(player);
+						// Player has received this achievement.
+						achievementsCache.put(achievementThreshold, uuid);
 					}
-				} else {
-					// Achievements with higher thresholds will not yet be received by the player. Break loop.
-					break;
 				}
 			}
 		}
 	}
 
-	public HashSet<?>[] getPlayerAchievements() {
+	public HashMultimap<Integer, String> getAchievementsCache() {
 
-		return playerAchievements;
+		return achievementsCache;
 	}
 
 }
