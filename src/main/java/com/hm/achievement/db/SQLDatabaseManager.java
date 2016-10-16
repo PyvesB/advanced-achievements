@@ -79,8 +79,10 @@ public class SQLDatabaseManager {
 			plugin.setSuccessfulLoad(false);
 		}
 
-		// Try to establish connection with database.
-		if (getSQLConnection() == null) {
+		// Try to establish connection with database; stays opened until explicitely closed by the plugin..
+		Connection conn = getSQLConnection();
+
+		if (conn == null) {
 			plugin.getLogger().severe("Could not establish SQL connection, disabling plugin.");
 			plugin.getLogger().severe("Please verify your settings in the configuration file.");
 			plugin.setOverrideDisable(true);
@@ -90,7 +92,6 @@ public class SQLDatabaseManager {
 
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
 		if (!tablePrefix.equals("")) {
-			Connection conn = getSQLConnection();
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs;
 				if (databaseType == SQLITE) {
@@ -116,7 +117,6 @@ public class SQLDatabaseManager {
 		// Initialise database tables (ie. create if they don't exist).
 		try {
 			initialiseTables();
-
 		} catch (SQLException e) {
 			plugin.getLogger().severe("Error while initialising database tables: " + e);
 			plugin.setSuccessfulLoad(false);
@@ -124,7 +124,6 @@ public class SQLDatabaseManager {
 
 		// Check if using old database prior to version 2.4.1.
 		String type = "";
-		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT blockid FROM " + tablePrefix + "breaks LIMIT 1");
 			type = rs.getMetaData().getColumnTypeName(1);
@@ -841,7 +840,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Delete an achievement from a player (asynchronously).
+	 * Delete an achievement from a player.
 	 * 
 	 * @param player
 	 * @param name
@@ -849,24 +848,39 @@ public class SQLDatabaseManager {
 	public void deletePlayerAchievement(Player player, final String ach) {
 
 		final String name = player.getUniqueId().toString();
-		// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to
-		// database has occurred; pools also allow to reuse threads.
-		pool.execute(new Runnable() {
+		if (plugin.isAsyncPooledRequestsSender()) {
+			// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to
+			// database has occurred; pools also allow to reuse threads.
+			pool.execute(new Runnable() {
 
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
-				Connection conn = getSQLConnection();
-				try (Statement st = conn.createStatement()) {
-					// We simply double apostrophes to avoid breaking the query.
-					String achWithApostrophes = ach.replace("'", "''");
-					st.execute("DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + name
-							+ "' AND achievement = '" + achWithApostrophes + "'");
-				} catch (SQLException e) {
-					plugin.getLogger().severe("SQL error while deleting achievement: " + e);
+					deletePlayerAchievementFromDB(ach, name);
 				}
-			}
-		});
+			});
+		} else {
+			deletePlayerAchievementFromDB(ach, name);
+		}
+	}
+
+	/**
+	 * Delete an achievement from a player in the DB. Method executed on main server thread or in parallel.
+	 * 
+	 * @param player
+	 * @param name
+	 */
+	private void deletePlayerAchievementFromDB(final String ach, final String name) {
+
+		Connection conn = getSQLConnection();
+		try (Statement st = conn.createStatement()) {
+			// We simply double apostrophes to avoid breaking the query.
+			String achWithApostrophes = ach.replace("'", "''");
+			st.execute("DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + name
+					+ "' AND achievement = '" + achWithApostrophes + "'");
+		} catch (SQLException e) {
+			plugin.getLogger().severe("SQL error while deleting achievement: " + e);
+		}
 	}
 
 	/**
@@ -1049,19 +1063,7 @@ public class SQLDatabaseManager {
 				prev = rs.getInt("connections");
 			}
 			final int newConnections = prev + 1;
-			if (!plugin.isAsyncPooledRequestsSender()) {
-				if (databaseType == POSTGRESQL) {
-					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
-					// available for PostgreSQL 9.5+.
-					st.execute("INSERT INTO " + tablePrefix + "connections VALUES ('" + name + "', " + newConnections
-							+ ", '" + date + "')" + " ON CONFLICT (playername) DO UPDATE SET (connections,date)=('"
-							+ newConnections + "','" + date + "')");
-
-				} else {
-					st.execute("REPLACE INTO " + tablePrefix + "connections VALUES ('" + name + "', " + newConnections
-							+ ", '" + date + "')");
-				}
-			} else {
+			if (plugin.isAsyncPooledRequestsSender()) {
 				// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to
 				// database has occurred; pools also allow to reuse threads.
 				pool.execute(new Runnable() {
@@ -1069,30 +1071,43 @@ public class SQLDatabaseManager {
 					@Override
 					public void run() {
 
-						Connection conn = getSQLConnection();
-						try (Statement st = conn.createStatement()) {
-							if (databaseType == POSTGRESQL) {
-								// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
-								// construct, which is available for PostgreSQL 9.5+.
-								st.execute("INSERT INTO " + tablePrefix + "connections VALUES ('" + name + "', "
-										+ newConnections + ", '" + date + "')"
-										+ " ON CONFLICT (playername) DO UPDATE SET (connections,date)=('"
-										+ newConnections + "','" + date + "')");
-							} else {
-								st.execute("REPLACE INTO " + tablePrefix + "connections VALUES ('" + name + "', "
-										+ newConnections + ", '" + date + "')");
-							}
-						} catch (SQLException e) {
-							plugin.getLogger().severe("SQL error while handling connection event on async task: " + e);
-						}
+						updateConnection(date, name, newConnections);
 					}
 				});
+			} else {
+				updateConnection(date, name, newConnections);
 			}
 			return newConnections;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while handling connection event: " + e);
 		}
 		return 0;
+	}
+
+	/**
+	 * Update player's number of connections and last connection date.
+	 * 
+	 * @param date
+	 * @param name
+	 * @param newConnections
+	 */
+	private void updateConnection(final String date, final String name, final int newConnections) {
+
+		Connection conn = getSQLConnection();
+		try (Statement st = conn.createStatement()) {
+			if (databaseType == POSTGRESQL) {
+				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
+				// construct, which is available for PostgreSQL 9.5+.
+				st.execute("INSERT INTO " + tablePrefix + "connections VALUES ('" + name + "', " + newConnections
+						+ ", '" + date + "')" + " ON CONFLICT (playername) DO UPDATE SET (connections,date)=('"
+						+ newConnections + "','" + date + "')");
+			} else {
+				st.execute("REPLACE INTO " + tablePrefix + "connections VALUES ('" + name + "', " + newConnections
+						+ ", '" + date + "')");
+			}
+		} catch (SQLException e) {
+			plugin.getLogger().severe("SQL error while updating connection: " + e);
+		}
 	}
 
 	/**
@@ -1176,4 +1191,5 @@ public class SQLDatabaseManager {
 
 		return databaseType == POSTGRESQL;
 	}
+
 }
