@@ -2,6 +2,9 @@ package com.hm.achievement;
 
 import com.google.common.base.Strings;
 import com.hm.achievement.utils.YamlManager;
+
+import java.util.logging.Level;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -106,11 +109,9 @@ public class AchievementDisplay {
 
 		try {
 			PacketSender.sendTitlePacket(player, "{\"text\":\"" + nameToShowUser + "\"}", "{\"text\":\"" + msg + "\"}");
-		} catch (Exception ex) {
-
-			plugin.getLogger()
-					.severe("Errors while trying to display achievement screen title. Is your server up-to-date?");
-			ex.printStackTrace();
+		} catch (Exception e) {
+			plugin.getLogger().log(Level.SEVERE,
+					"Errors while trying to display achievement screen title. Is your server up-to-date? ", e);
 		}
 	}
 
@@ -136,7 +137,7 @@ public class AchievementDisplay {
 				effect = FireworkEffect.builder().flicker(false).trail(false)
 						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))
 						.with(Type.valueOf(fireworkStyle.toUpperCase())).withFade(Color.PURPLE).build();
-			} catch (Exception ex) {
+			} catch (Exception e) {
 				effect = FireworkEffect.builder().flicker(false).trail(false)
 						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).with(Type.BALL_LARGE)
 						.withFade(Color.PURPLE).build();

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -220,8 +221,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				try {
 					fileManager.backupFile("achievements.db");
 				} catch (IOException e) {
-					this.getLogger().severe("Error while backing up database file.");
-					e.printStackTrace();
+					this.getLogger().log(Level.SEVERE, "Error while backing up database file: ", e);
 					successfulLoad = false;
 				}
 			}
@@ -430,13 +430,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		try {
 			config = fileManager.getNewConfig("config.yml");
 		} catch (IOException e) {
-			logger.severe("Error while loading configuration file.");
-			e.printStackTrace();
+			this.getLogger().log(Level.SEVERE, "Error while loading configuration file: ", e);
 			successfulLoad = false;
 		} catch (InvalidConfigurationException e) {
 			logger.severe("Error while loading configuration file, disabling plugin.");
-			logger.severe("Verify your syntax using the following logs and by visiting yaml-online-parser.appspot.com");
-			e.printStackTrace();
+			logger.log(Level.SEVERE,
+					"Verify your syntax by visiting yaml-online-parser.appspot.com and using the following logs: ", e);
 			successfulLoad = false;
 			overrideDisable = true;
 			this.getServer().getPluginManager().disablePlugin(this);
@@ -446,13 +445,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		try {
 			lang = fileManager.getNewConfig(config.getString("LanguageFileName", "lang.yml"));
 		} catch (IOException e) {
-			logger.severe("Error while loading language file.");
-			e.printStackTrace();
+			this.getLogger().log(Level.SEVERE, "Error while loading language file: ", e);
 			successfulLoad = false;
 		} catch (InvalidConfigurationException e) {
 			logger.severe("Error while loading language file, disabling plugin.");
-			logger.severe("Verify your syntax using the following logs and by visiting yaml-online-parser.appspot.com");
-			e.printStackTrace();
+			this.getLogger().log(Level.SEVERE,
+					"Verify your syntax by visiting yaml-online-parser.appspot.com and using the following logs: ", e);
 			successfulLoad = false;
 			overrideDisable = true;
 			this.getServer().getPluginManager().disablePlugin(this);
@@ -462,16 +460,14 @@ public class AdvancedAchievements extends JavaPlugin {
 		try {
 			fileManager.backupFile("config.yml");
 		} catch (IOException e) {
-			logger.severe("Error while backing up configuration file.");
-			e.printStackTrace();
+			this.getLogger().log(Level.SEVERE, "Error while backing up configuration file: ", e);
 			successfulLoad = false;
 		}
 
 		try {
 			fileManager.backupFile(config.getString("LanguageFileName", "lang.yml"));
 		} catch (IOException e) {
-			logger.severe("Error while backing up language file.");
-			e.printStackTrace();
+			this.getLogger().log(Level.SEVERE, "Error while backing up language file: ", e);
 			successfulLoad = false;
 		}
 
@@ -809,8 +805,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				config.saveConfig();
 				config.reloadConfig();
 			} catch (IOException e) {
-				this.getLogger().severe("Error while saving changes to the configuration file.");
-				e.printStackTrace();
+				this.getLogger().log(Level.SEVERE, "Error while saving changes to the configuration file: ", e);
 				successfulLoad = false;
 			}
 		}
@@ -954,8 +949,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				lang.saveConfig();
 				lang.reloadConfig();
 			} catch (IOException e) {
-				this.getLogger().severe("Error while saving changes to the language file.");
-				e.printStackTrace();
+				this.getLogger().log(Level.SEVERE, "Error while saving changes to the language file: ", e);
 				successfulLoad = false;
 			}
 		}
@@ -1034,12 +1028,10 @@ public class AdvancedAchievements extends JavaPlugin {
 			if (this.getDb().getSQLConnection() != null)
 				this.getDb().getSQLConnection().close();
 		} catch (SQLException e) {
-			this.getLogger().severe("Error while closing connection to database.");
-			e.printStackTrace();
+			this.getLogger().log(Level.SEVERE, "Error while closing connection to database: ", e);
 		}
 
 		this.getLogger().info("Remaining requests sent to database, plugin disabled.");
-
 	}
 
 	/**

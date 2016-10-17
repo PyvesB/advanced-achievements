@@ -73,9 +73,9 @@ public class SQLDatabaseManager {
 			else
 				Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e) {
-			plugin.getLogger().severe(
-					"The JBDC library for your database type was not found. Please read the plugin's support for more information.");
-			e.printStackTrace();
+			plugin.getLogger()
+					.severe("The JBDC library for your database type was not found. Please read the plugin's support for more information."
+							+ e);
 			plugin.setSuccessfulLoad(false);
 		}
 
@@ -423,7 +423,7 @@ public class SQLDatabaseManager {
 							OLD_FORMAT.parse(date.replaceAll(REGEX_PATERN.pattern(), "")).getTime())));
 				}
 			} catch (ParseException e) {
-				e.printStackTrace();
+				plugin.getLogger().severe("Error while parsing dates: " + e);
 			}
 			// Prevent from doing any commits before entire transaction is ready.
 			conn.setAutoCommit(false);
@@ -471,7 +471,6 @@ public class SQLDatabaseManager {
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().severe("Error while attempting to retrieve connection to database: " + e);
-			e.printStackTrace();
 			plugin.setSuccessfulLoad(false);
 		}
 		return sqlConnection;
@@ -491,7 +490,6 @@ public class SQLDatabaseManager {
 				dbfile.createNewFile();
 			} catch (IOException e) {
 				plugin.getLogger().severe("Error while creating database file.");
-				e.printStackTrace();
 				plugin.setSuccessfulLoad(false);
 			}
 		}

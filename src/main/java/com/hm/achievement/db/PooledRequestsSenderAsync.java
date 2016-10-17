@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 import com.hm.achievement.AdvancedAchievements;
 
@@ -385,8 +386,7 @@ public class PooledRequestsSenderAsync implements Runnable {
 						entry.getValue());
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("Error while sending async pooled requests to database: " + e);
-			e.printStackTrace();
+			plugin.getLogger().log(Level.SEVERE, "Error while sending async pooled requests to database: ", e);
 		}
 
 	}

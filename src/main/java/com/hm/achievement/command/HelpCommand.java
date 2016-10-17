@@ -148,7 +148,7 @@ public class HelpCommand {
 		if (sender instanceof Player) {
 			try {
 				PacketSender.sendChatPacket((Player) sender, json);
-			} catch (Exception ex) {
+			} catch (Exception e) {
 				plugin.getLogger().severe(
 						"Errors while trying to display clickable and hoverable message in /aach help command. Displaying standard message instead.");
 				sender.sendMessage(message);

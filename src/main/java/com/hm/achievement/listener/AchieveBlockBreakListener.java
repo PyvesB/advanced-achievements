@@ -41,15 +41,12 @@ public class AchieveBlockBreakListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 
 		Player player = event.getPlayer();
-		boolean silkTouchBreak = (
-				version >= 9 && event.getPlayer().getInventory().getItemInMainHand()
-						.containsEnchantment(Enchantment.SILK_TOUCH)) ||
-				version < 9 && event.getPlayer().getItemInHand()
-						.containsEnchantment(Enchantment.SILK_TOUCH);
+		boolean silkTouchBreak = (version >= 9
+				&& event.getPlayer().getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
+				|| version < 9 && event.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
 
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE ||
-				plugin.isInExludedWorld(player) ||
-				disableSilkTouchBreaks && silkTouchBreak) {
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player)
+				|| disableSilkTouchBreaks && silkTouchBreak) {
 			return;
 		}
 

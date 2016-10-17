@@ -82,7 +82,7 @@ public class StatsCommand {
 				// Play special effect.
 				if (additionalEffects)
 					ParticleEffect.SPELL_WITCH.display(0, 1, 0, 0.5f, 400, player.getLocation(), 1);
-			} catch (Exception ex) {
+			} catch (Exception e) {
 				plugin.getLogger().severe("Error while displaying additional particle effects.");
 			}
 

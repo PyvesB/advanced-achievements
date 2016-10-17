@@ -76,7 +76,7 @@ public class AchievementRewards {
 						+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " "
 						+ Items.itemByStack(item).getName());
 				return item;
-			} catch (Exception ex) {
+			} catch (Exception e) {
 				// Do nothing, another message will be displayed just below.
 			}
 		}

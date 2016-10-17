@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import com.hm.achievement.AdvancedAchievements;
 
@@ -298,8 +299,7 @@ public class PooledRequestsSenderSync implements Runnable {
 
 			st.executeBatch();
 		} catch (SQLException e) {
-			plugin.getLogger().severe("Error while sending sync pooled requests to database: " + e);
-			e.printStackTrace();
+			plugin.getLogger().log(Level.SEVERE, "Error while sending sync pooled requests to database: ", e);
 		}
 
 		// Clear entries in HashMaps.

@@ -89,7 +89,7 @@ public class TopCommand {
 				else
 					sender.sendMessage(ChatColor.GRAY + "[" + plugin.getColor() + ((i + 2) >> 1) + ChatColor.GRAY + "] "
 							+ playerName + " - " + globalPlayersTop.get(i + 1));
-			} catch (Exception ex) {
+			} catch (Exception e) {
 				plugin.getLogger().warning("Top command: name corresponding to UUID not found.");
 			}
 		}
@@ -141,7 +141,7 @@ public class TopCommand {
 				else
 					sender.sendMessage(ChatColor.GRAY + "[" + plugin.getColor() + ((i + 2) >> 1) + ChatColor.GRAY + "] "
 							+ playerName + " - " + weeklyPlayersTop.get(i + 1));
-			} catch (Exception ex) {
+			} catch (Exception e) {
 				plugin.getLogger().warning("Week command: name corresponding to UUID not found.");
 			}
 		}
@@ -200,7 +200,7 @@ public class TopCommand {
 				else
 					sender.sendMessage(ChatColor.GRAY + "[" + plugin.getColor() + ((i + 2) >> 1) + ChatColor.GRAY + "] "
 							+ playerName + " - " + monthlyPlayersTop.get(i + 1));
-			} catch (Exception ex) {
+			} catch (Exception e) {
 				plugin.getLogger().warning("Month command: name corresponding to UUID not found.");
 			}
 		}
@@ -237,7 +237,7 @@ public class TopCommand {
 			if (additionalEffects)
 				// Play special effect when in top list.
 				ParticleEffect.PORTAL.display(0, 1, 0, 0.5f, 1000, player.getLocation(), 1);
-		} catch (Exception ex) {
+		} catch (Exception e) {
 			plugin.getLogger().severe("Error while displaying additional particle effects.");
 		}
 
