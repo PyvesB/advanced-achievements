@@ -123,9 +123,9 @@ public class PacketSender {
 		Enum<?> subTitleEnumValue = null;
 		for (Object o : titleClass.getEnumConstants()) {
 			Enum<?> e = (Enum<?>) o;
-			if (e.name().equalsIgnoreCase("TITLE"))
+			if ("TITLE".equalsIgnoreCase(e.name()))
 				mainTitleEnumValue = e;
-			if (e.name().equalsIgnoreCase("SUBTITLE"))
+			if ("SUBTITLE".equalsIgnoreCase(e.name()))
 				subTitleEnumValue = e;
 		}
 

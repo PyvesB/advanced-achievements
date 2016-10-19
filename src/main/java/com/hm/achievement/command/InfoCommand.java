@@ -52,11 +52,11 @@ public class InfoCommand {
 					+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " "
 					+ ChatColor.GRAY + "OFF");
 		// Display database type.
-		if (plugin.getPluginConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("mysql"))
+		if ("mysql".equalsIgnoreCase(plugin.getPluginConfig().getString("DatabaseType", "sqlite")))
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
 					+ ChatColor.GRAY + "MySQL");
-		else if (plugin.getPluginConfig().getString("DatabaseType", "sqlite").equalsIgnoreCase("postgresql"))
+		else if ("postgresql".equalsIgnoreCase(plugin.getPluginConfig().getString("DatabaseType", "sqlite")))
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
 					+ ChatColor.GRAY + "PostgreSQL");

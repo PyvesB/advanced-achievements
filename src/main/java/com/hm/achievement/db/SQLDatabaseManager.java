@@ -91,7 +91,7 @@ public class SQLDatabaseManager {
 		}
 
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
-		if (!tablePrefix.equals("")) {
+		if (!"".equals(tablePrefix)) {
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs;
 				if (databaseType == SQLITE) {
@@ -132,7 +132,7 @@ public class SQLDatabaseManager {
 		}
 
 		// Old column type for versions prior to 2.4.1 was integer for SQLite and smallint unsigned for MySQL.
-		if (type.equalsIgnoreCase("integer") || type.equalsIgnoreCase("smallint unsigned")) {
+		if ("integer".equalsIgnoreCase(type) || "smallint unsigned".equalsIgnoreCase(type)) {
 			plugin.getLogger().warning("Updating database tables, please wait...");
 			updateOldDBToMaterial(tablePrefix + "breaks");
 			updateOldDBToMaterial(tablePrefix + "crafts");
@@ -149,7 +149,7 @@ public class SQLDatabaseManager {
 		// Old column type for versions prior to 3.0 was text for SQLite, char for MySQL and varchar for PostgreSQL
 		// (even though PostgreSQL was not supported on versions prior to 3.0, we still support the upgrade for it in
 		// case a user imports anither database into PostgreSQL without doing the table upgrade beforehand).
-		if (type.equalsIgnoreCase("text") || type.equalsIgnoreCase("char") || type.equalsIgnoreCase("varchar")) {
+		if ("text".equalsIgnoreCase(type) || "char".equalsIgnoreCase(type) || "varchar".equalsIgnoreCase(type)) {
 			plugin.getLogger().warning("Updating database tables, please wait...");
 			updateOldDBToDates();
 		}
@@ -164,14 +164,14 @@ public class SQLDatabaseManager {
 		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
 
 		String dataHandler = plugin.getPluginConfig().getString("DatabaseType", "sqlite");
-		if (dataHandler.equalsIgnoreCase("mysql")) {
+		if ("mysql".equalsIgnoreCase(dataHandler)) {
 			// Get parameters from the MySQL config category.
 			databaseType = MYSQL;
 			databaseAddress = plugin.getPluginConfig().getString("MYSQL.Database",
 					"jdbc:mysql://localhost:3306/minecraft");
 			databaseUser = plugin.getPluginConfig().getString("MYSQL.User", "root");
 			databasePassword = plugin.getPluginConfig().getString("MYSQL.Password", "root");
-		} else if (dataHandler.equalsIgnoreCase("postgresql")) {
+		} else if ("postgresql".equalsIgnoreCase(dataHandler)) {
 			// Get parameters from the PostgreSQL config category.
 			databaseType = POSTGRESQL;
 			databaseAddress = plugin.getPluginConfig().getString("POSTGRESQL.Database",
@@ -355,7 +355,7 @@ public class SQLDatabaseManager {
 			conn.setAutoCommit(false);
 
 			// Create new table.
-			if (!tableName.equals("crafts"))
+			if (!"crafts".equals(tableName))
 				st.execute("CREATE TABLE tempTable (playername char(36),blockid varchar(64)," + tableName
 						+ " INT UNSIGNED,PRIMARY KEY(playername, blockid))");
 			else
@@ -372,9 +372,9 @@ public class SQLDatabaseManager {
 
 			prep.executeBatch();
 			// Delete old table.
-			st.execute("DROP TABLE " + tableName + "");
+			st.execute("DROP TABLE " + tableName);
 			// Rename new table to old one.
-			st.execute("ALTER TABLE tempTable RENAME TO " + tableName + "");
+			st.execute("ALTER TABLE tempTable RENAME TO " + tableName);
 			// Commit entire transaction.
 			conn.commit();
 			conn.setAutoCommit(true);
