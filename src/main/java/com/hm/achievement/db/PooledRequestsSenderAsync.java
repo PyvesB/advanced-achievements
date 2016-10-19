@@ -21,7 +21,7 @@ public class PooledRequestsSenderAsync implements Runnable {
 
 	public PooledRequestsSenderAsync(AdvancedAchievements plugin, boolean init) {
 
-		if (init == true)
+		if (init)
 			plugin.getPoolsManager().databasePoolsInit(plugin.isAsyncPooledRequestsSender());
 		this.plugin = plugin;
 	}

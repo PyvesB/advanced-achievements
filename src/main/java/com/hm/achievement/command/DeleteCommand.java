@@ -27,15 +27,14 @@ public class DeleteCommand implements Listener {
 	 * @param sender
 	 * @param args
 	 */
-	public void achievementDelete(CommandSender sender, String args[]) {
+	public void achievementDelete(CommandSender sender, String[] args) {
 
-		String achievementName = "";
+		StringBuilder achievementName = new StringBuilder();
 		// Rebuild name of achievement by concatenating elements in the string array. The name of the player is last.
 		for (int i = 1; i < args.length - 1; i++) {
+			achievementName.append(args[i]);
 			if (i != args.length - 2)
-				achievementName += args[i] + " ";
-			else
-				achievementName += args[i];
+				achievementName.append(' ');
 		}
 
 		Player player = null;
@@ -56,12 +55,12 @@ public class DeleteCommand implements Listener {
 		}
 
 		// Check if achievement exists in database and display message accordingly; if received, delete it.
-		if (!plugin.getDb().hasPlayerAchievement(player, achievementName)) {
+		if (!plugin.getDb().hasPlayerAchievement(player, achievementName.toString())) {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
 					.getString("check-achievements-false", "PLAYER has not received the achievement ACH!")
 					.replace("PLAYER", args[args.length - 1]).replace("ACH", achievementName));
 		} else {
-			plugin.getDb().deletePlayerAchievement(player, achievementName);
+			plugin.getDb().deletePlayerAchievement(player, achievementName.toString());
 			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
 					.getString("delete-achievements", "The achievement ACH was deleted from PLAYER.")
 					.replace("PLAYER", args[args.length - 1]).replace("ACH", achievementName));

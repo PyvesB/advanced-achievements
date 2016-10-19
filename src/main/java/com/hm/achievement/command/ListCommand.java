@@ -2,6 +2,8 @@ package com.hm.achievement.command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
@@ -50,12 +52,12 @@ public class ListCommand {
 	private static final Pattern REGEX_PATTERN = Pattern.compile("&([a-f]|[0-9]){1}");
 
 	// Minecraft font, used to get size information in the progress bar.
-	private MinecraftFont FONT = MinecraftFont.Font;
+	private static final MinecraftFont FONT = MinecraftFont.Font;
 
 	public ListCommand(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-		players = new HashMap<Player, Long>();
+		players = new HashMap<>();
 		// Load configuration parameters.
 		hideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
 		obfuscateNotReceived = plugin.getPluginConfig().getBoolean("ObfuscateNotReceived", true);
@@ -297,7 +299,7 @@ public class ListCommand {
 			// The player has already done a list command recently.
 			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
 					.getString("list-delay", "You must wait TIME seconds between each list command!")
-					.replace("TIME", "" + listTime / 1000));
+					.replace("TIME", Integer.toString(listTime / 1000)));
 		}
 	}
 
@@ -483,7 +485,7 @@ public class ListCommand {
 		}
 
 		// Items used for 1.9+ version of Minecraft. This corresponds to the default case of the above switch.
-		if (category.equals("") && version >= 9) {
+		if ("".equals(category) && version >= 9) {
 			switch (clickedItem) {
 				case ELYTRA:
 					statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding()
@@ -550,12 +552,12 @@ public class ListCommand {
 				achMessage = goal;
 			}
 
-			ArrayList<String> rewards = plugin.getReward().getRewardType(category + '.' + ach);
+			List<String> rewards = plugin.getReward().getRewardType(category + '.' + ach);
 			String date = plugin.getDb().getPlayerAchievementDate(player, achName);
 
 			boolean inelligibleSeriesItem;
 
-			if (statistic == -1 || positionInGUI == 0 || date != null || previousItemDate != null) {
+			if (statistic < -0.5 || positionInGUI == 0 || date != null || previousItemDate != null) {
 				// Commands achievement or
 				// first achievement in the category or
 				// achievement has been completed or
@@ -701,7 +703,7 @@ public class ListCommand {
 					achMessage = goal;
 				}
 
-				ArrayList<String> rewards = plugin.getReward().getRewardType(category + '.' + section + '.' + level);
+				List<String> rewards = plugin.getReward().getRewardType(category + '.' + section + '.' + level);
 				String date = plugin.getDb().getPlayerAchievementDate(player, achName);
 
 				boolean inelligibleSeriesItem;
@@ -755,7 +757,7 @@ public class ListCommand {
 	 * @param inelligibleSeriesItem
 	 */
 	private void createGUIItem(Inventory inventory, int positionInGUI, String level, double statistic, String achName,
-			String achMessage, ArrayList<String> rewards, String date, boolean inelligibleSeriesItem) {
+			String achMessage, List<String> rewards, String date, boolean inelligibleSeriesItem) {
 
 		// Display a clay block in the GUI, with a color depending on whether it was received or not, or whether
 		// progress was
@@ -812,10 +814,10 @@ public class ListCommand {
 	 * @param inelligibleSeriesItem
 	 * @return
 	 */
-	private ArrayList<String> buildLoreString(String achMessage, String level, ArrayList<String> rewards, String date,
+	private ArrayList<String> buildLoreString(String achMessage, String level, List<String> rewards, String date,
 			double statistic, boolean inelligibleSeriesItem) {
 
-		ArrayList<String> lore = new ArrayList<String>();
+		ArrayList<String> lore = new ArrayList<>();
 
 		// Set description of the achievement. The style depends whether it was received or not and whether the user has
 		// set obfuscateNotReceived in the config.
@@ -895,7 +897,7 @@ public class ListCommand {
 	 * 
 	 * @return list cooldown structure
 	 */
-	public HashMap<Player, Long> getPlayers() {
+	public Map<Player, Long> getPlayers() {
 
 		return players;
 	}

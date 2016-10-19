@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -38,7 +39,7 @@ public class BookCommand {
 	public BookCommand(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-		players = new HashMap<Player, Long>();
+		players = new HashMap<>();
 		// Load configuration parameters.
 		bookTime = plugin.getPluginConfig().getInt("TimeBook", 0) * 1000;
 		bookSeparator = plugin.getPluginConfig().getString("BookSeparator", "");
@@ -88,7 +89,7 @@ public class BookCommand {
 			// The player has already received a book recently.
 			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
 					.getString("book-delay", "You must wait TIME seconds between each book reception!")
-					.replace("TIME", "" + bookTime / 1000));
+					.replace("TIME", Integer.toString(bookTime / 1000)));
 		}
 	}
 
@@ -122,7 +123,7 @@ public class BookCommand {
 	private void fillBook(ArrayList<String> achievements, Player player) {
 
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-		ArrayList<String> pages = new ArrayList<String>();
+		ArrayList<String> pages = new ArrayList<>();
 		BookMeta bm = (BookMeta) book.getItemMeta();
 
 		try {
@@ -160,7 +161,7 @@ public class BookCommand {
 	 * 
 	 * @return book cooldown structure
 	 */
-	public HashMap<Player, Long> getPlayers() {
+	public Map<Player, Long> getPlayers() {
 
 		return players;
 	}

@@ -3,7 +3,6 @@ package com.hm.achievement;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,6 +67,7 @@ import com.hm.achievement.listener.ListGUIListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 import com.hm.achievement.utils.FileManager;
+import com.hm.achievement.utils.FileUpdater;
 import com.hm.achievement.utils.UpdateChecker;
 import com.hm.achievement.utils.YamlManager;
 
@@ -140,11 +140,12 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	private YamlManager config;
 	private YamlManager lang;
-	private FileManager fileManager;
+	private final FileManager fileManager;
+	private final FileUpdater fileUpdater;
 
 	// Database related.
-	private SQLDatabaseManager db;
-	private DatabasePoolsManager poolsManager;
+	private final SQLDatabaseManager db;
+	private final DatabasePoolsManager poolsManager;
 	private int pooledRequestsTaskInterval;
 	private boolean databaseBackup;
 	private boolean asyncPooledRequestsSender;
@@ -184,12 +185,12 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AdvancedAchievements() {
 
 		overrideDisable = false;
-		excludedWorldSet = new HashSet<String>();
-		disabledCategorySet = new HashSet<String>();
+		excludedWorldSet = new HashSet<>();
+		disabledCategorySet = new HashSet<>();
 		fileManager = new FileManager(this);
 		db = new SQLDatabaseManager(this);
 		poolsManager = new DatabasePoolsManager(this);
-
+		fileUpdater = new FileUpdater(this);
 	}
 
 	/**
@@ -419,7 +420,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Load plugin configuration and set values to different parameters; load language file and backup configuration
 	 * files. Register permissions. Initialise command modules.
 	 */
-	@SuppressWarnings("unchecked")
 	private void configurationLoad(boolean attemptUpdate) {
 
 		successfulLoad = true;
@@ -457,60 +457,23 @@ public class AdvancedAchievements extends JavaPlugin {
 			return;
 		}
 
-		try {
-			fileManager.backupFile("config.yml");
-		} catch (IOException e) {
-			this.getLogger().log(Level.SEVERE, "Error while backing up configuration file: ", e);
-			successfulLoad = false;
-		}
-
-		try {
-			fileManager.backupFile(config.getString("LanguageFileName", "lang.yml"));
-		} catch (IOException e) {
-			this.getLogger().log(Level.SEVERE, "Error while backing up language file: ", e);
-			successfulLoad = false;
-		}
+		backupFiles();
 
 		// Update configurations from previous versions of the plugin if server reload or restart.
 		if (attemptUpdate) {
-			updateOldConfiguration();
-			updateOldLanguage();
+			fileUpdater.updateOldConfiguration();
+			fileUpdater.updateOldLanguage();
 		}
 
 		logger.info("Loading configs, registering permissions and initialising command modules...");
 
-		// Load parameters.
-		icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
-		color = ChatColor.getByChar(config.getString("Color", "5").toCharArray()[0]);
-		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
-		restrictCreative = config.getBoolean("RestrictCreative", false);
-		databaseBackup = config.getBoolean("DatabaseBackup", true);
-		for (String world : (List<String>) config.getList("ExcludedWorlds"))
-			excludedWorldSet.add(world);
-		for (String category : (List<String>) config.getList("DisabledCategories"))
-			disabledCategorySet.add(category);
-		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 150);
-		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
-		pooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 60);
-		asyncPooledRequestsSender = config.getBoolean("AsyncPooledRequestsSender", true);
+		extractParameters();
 
 		registerPermissions();
 
-		// Initialise command modules.
-		reward = new AchievementRewards(this);
-		achievementDisplay = new AchievementDisplay(this);
-		giveCommand = new GiveCommand(this);
-		bookCommand = new BookCommand(this);
-		topCommand = new TopCommand(this);
-		statsCommand = new StatsCommand(this);
-		infoCommand = new InfoCommand(this);
-		listCommand = new ListCommand(this);
-		helpCommand = new HelpCommand(this);
-		checkCommand = new CheckCommand(this);
-		deleteCommand = new DeleteCommand(this);
+		initialiseCommands();
 
-		// Reload achievements in distance, max level and play time runnables
-		// only on plugin reload.
+		// Reload achievements in distance, max level and play time runnables on plugin reload (when objects are null).
 		if (achieveDistanceRunnable != null)
 			achieveDistanceRunnable.extractAchievementsFromConfig();
 		if (achievePlayTimeRunnable != null)
@@ -525,6 +488,65 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		logAchievementStats();
+	}
+
+	/**
+	 * Performs a backup of the language and configuration files.
+	 */
+	private void backupFiles() {
+
+		try {
+			fileManager.backupFile("config.yml");
+		} catch (IOException e) {
+			this.getLogger().log(Level.SEVERE, "Error while backing up configuration file: ", e);
+			successfulLoad = false;
+		}
+
+		try {
+			fileManager.backupFile(config.getString("LanguageFileName", "lang.yml"));
+		} catch (IOException e) {
+			this.getLogger().log(Level.SEVERE, "Error while backing up language file: ", e);
+			successfulLoad = false;
+		}
+	}
+
+	/**
+	 * Extracts plugin parameters from the configuration file.
+	 */
+	@SuppressWarnings("unchecked")
+	private void extractParameters() {
+
+		icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
+		color = ChatColor.getByChar(config.getString("Color", "5").toCharArray()[0]);
+		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
+		restrictCreative = config.getBoolean("RestrictCreative", false);
+		databaseBackup = config.getBoolean("DatabaseBackup", true);
+		for (String world : (List<String>) config.getList("ExcludedWorlds"))
+			excludedWorldSet.add(world);
+		for (String category : (List<String>) config.getList("DisabledCategories"))
+			disabledCategorySet.add(category);
+		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 150);
+		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
+		pooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 60);
+		asyncPooledRequestsSender = config.getBoolean("AsyncPooledRequestsSender", true);
+	}
+
+	/**
+	 * Initialises the command modules.
+	 */
+	private void initialiseCommands() {
+
+		reward = new AchievementRewards(this);
+		achievementDisplay = new AchievementDisplay(this);
+		giveCommand = new GiveCommand(this);
+		bookCommand = new BookCommand(this);
+		topCommand = new TopCommand(this);
+		statsCommand = new StatsCommand(this);
+		infoCommand = new InfoCommand(this);
+		listCommand = new ListCommand(this);
+		helpCommand = new HelpCommand(this);
+		checkCommand = new CheckCommand(this);
+		deleteCommand = new DeleteCommand(this);
 	}
 
 	/**
@@ -590,368 +612,6 @@ public class AdvancedAchievements extends JavaPlugin {
 			disabledCategories.deleteCharAt(disabledCategories.length() - 1);
 
 			this.getLogger().info(disabledCategories.toString());
-		}
-	}
-
-	/**
-	 * Update configuration file from older plugin versions by adding missing parameters. Upgrades from versions prior
-	 * to 2.0 are not supported.
-	 */
-	@SuppressWarnings("unchecked")
-	private void updateOldConfiguration() {
-
-		boolean updateDone = false;
-
-		// Added in version 2.5.2 (put first to enable adding elements to it):
-		if (!config.getKeys(false).contains("DisabledCategories")) {
-			List<String> list = new ArrayList<String>();
-			config.set("DisabledCategories", list,
-					new String[] {
-							"Don't show these categories in the achievement GUI or in the stats output (delete the [] before using).",
-							"Also prevent obtaining achievements for these categories and prevent stats from increasing.",
-							"If changed, do a full server reload, and not just /aach reload." });
-			updateDone = true;
-		}
-
-		// Added in version 2.1:
-		if (!config.getKeys(false).contains("AdditionalEffects")) {
-			config.set("AdditionalEffects", true,
-					"Set to true to activate particle effects when receiving book and for players in top list.");
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("FireworkStyle")) {
-			config.set("FireworkStyle", "BALL_LARGE", "Choose BALL_LARGE, BALL, BURST, CREEPER or STAR.");
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("ObfuscateNotReceived")) {
-			config.set("ObfuscateNotReceived", true,
-					"Obfuscate achievements that have not yet been received in /aach list.");
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("HideNotReceivedCategories")) {
-			config.set("HideNotReceivedCategories", false,
-					"Hide categories with no achievements yet received in /aach list.");
-			updateDone = true;
-		}
-
-		// Added in version 2.2:
-		if (!config.getKeys(false).contains("TitleScreen")) {
-			config.set("TitleScreen", true, "Display achievement name and description as screen titles.");
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("Color")) {
-			config.set("Color", "5", "Set the color of the plugin (default: 5, dark purple).");
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("TimeBook")) {
-			config.set("TimeBook", 900, "Time in seconds between each /aach book.");
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("TimeList")) {
-			config.set("TimeList", 0, "Time in seconds between each /aach list.");
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("Brewing")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			config.set("Brewing", emptyMap, "When a potion is brewed.");
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
-			disabledCategories.add("Brewing");
-			config.set("DisabledCategories", disabledCategories);
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("Taming")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			config.set("Taming", emptyMap, "When an animal is tamed.");
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
-			disabledCategories.add("Taming");
-			config.set("DisabledCategories", disabledCategories);
-			updateDone = true;
-		}
-
-		// Added in version 2.3:
-		if (!config.getKeys(false).contains("Fireworks")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
-			disabledCategories.add("Fireworks");
-			config.set("DisabledCategories", disabledCategories);
-			config.set("Fireworks", emptyMap, "When a firework is launched.");
-			updateDone = true;
-		}
-
-		// Added in version 2.3.2:
-		if (!config.getKeys(false).contains("AsyncPooledRequestsSender")) {
-			config.set("AsyncPooledRequestsSender", true, "Enable multithreading for database write operations.");
-			updateDone = true;
-		}
-
-		// Added in version 2.5:
-		if (!config.getKeys(false).contains("DistanceGliding")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			config.set("DistanceGliding", emptyMap, new String[] { "When a distance is traveled with elytra.",
-					"(ignored on Minecraft versions prior to 1.9)" });
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
-			disabledCategories.add("DistanceGliding");
-			config.set("DisabledCategories", disabledCategories);
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("MusicDiscs")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			config.set("MusicDiscs", emptyMap, "When a music disc is played.");
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
-			disabledCategories.add("MusicDiscs");
-			config.set("DisabledCategories", disabledCategories);
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("EnderPearls")) {
-			HashMap<Object, Object> emptyMap = new HashMap<Object, Object>();
-			config.set("EnderPearls", emptyMap, "When a player teleports with an enderpearl.");
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = (List<String>) config.getList("DisabledCategories");
-			disabledCategories.add("EnderPearls");
-			config.set("DisabledCategories", disabledCategories);
-			updateDone = true;
-		}
-
-		// Added in version 2.5.2:
-		if (!config.getKeys(false).contains("ListAchievementFormat")) {
-			config.set("ListAchievementFormat", "%ICON% %NAME% %ICON%",
-					"Set the format of the achievement name in /aach list.");
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("HideRewardDisplayInList")) {
-			config.set("HideRewardDisplayInList", false, "Hide the reward display in /aach list.");
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("IgnoreVerticalDistance")) {
-			config.set("IgnoreVerticalDistance", false,
-					"Ignore vertical dimension (Y axis) when calculating distance statistics.");
-			updateDone = true;
-		}
-
-		// Added in version 3.0:
-		if (!config.getKeys(false).contains("TablePrefix")) {
-			config.set("TablePrefix", "",
-					new String[] {
-							"Prefix added to the tables in the database. If you switch from the default tables names (no prefix),",
-							"the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.",
-							"Do a full server reload or restart to make this effective." });
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("BookChronologicalOrder")) {
-			config.set("BookChronologicalOrder", true,
-					"Sort pages of the book in chronological order (false for reverse chronological order).");
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("DisableSilkTouchBreaks")) {
-			config.set("DisableSilkTouchBreaks", false,
-					"Do not take into accound items broken with Silk Touch for the Breaks achievements.");
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("ObfuscateProgressiveAchievements")) {
-			config.set("ObfuscateProgressiveAchievements", false,
-					new String[] { "Obfuscate progressive achievements:",
-							"For categories with a series of related achievements where the only thing changing is the number of times",
-							"the event has occurred, show achievements that have been obtained and show the next obtainable achievement,",
-							"but obfuscate the additional achievements. In order for this to work properly, achievements must be sorted",
-							"in order of increasing difficulty. For example, under Places, stone, the first achievement could have a",
-							"target of 100 stone,# the second 500 stone, and the third 1000 stone.  When ObfuscateProgressiveAchievements",
-							"is true, initially only the 100 stone achievement will be readable in the GUI.  Once 100 stone have been placed,",
-							"the 500 stone achievement will become legible." });
-			updateDone = true;
-		}
-
-		// Added in version 3.0.2:
-		if (!config.getKeys(false).contains("DisableSilkTouchOreBreaks")) {
-			config.set("DisableSilkTouchOreBreaks", false,
-					new String[] { "Do not take into account ores broken with Silk Touch for the Breaks achievements.",
-							"DisableSilkTouchBreaks takes precedence over this." });
-			updateDone = true;
-		}
-
-		if (!config.getKeys(false).contains("LanguageFileName")) {
-			config.set("LanguageFileName", "lang.yml", "Name of the language file.");
-			updateDone = true;
-		}
-
-		if (updateDone) {
-			// Changes in the configuration: save and do a fresh load.
-			try {
-				config.saveConfig();
-				config.reloadConfig();
-			} catch (IOException e) {
-				this.getLogger().log(Level.SEVERE, "Error while saving changes to the configuration file: ", e);
-				successfulLoad = false;
-			}
-		}
-	}
-
-	/**
-	 * Update language file from older plugin versions by adding missing parameters. Upgrades from versions prior to 2.3
-	 * are not supported.
-	 */
-	private void updateOldLanguage() {
-
-		boolean updateDone = false;
-
-		// Added in version 2.5:
-		if (!lang.getKeys(false).contains("list-distance-gliding")) {
-			lang.set("list-distance-gliding", "Distance Travelled with Elytra");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("list-musicdiscs")) {
-			lang.set("list-musicdiscs", "Music Discs Played");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("list-enderpearls")) {
-			lang.set("list-enderpearls", "Teleportations with Ender Pearls");
-			updateDone = true;
-		}
-
-		// Added in version 2.5.2:
-		if (!lang.getKeys(false).contains("list-achievement-received")) {
-			lang.set("list-achievement-received", "&a\u2713&f ");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("list-achievement-not-received")) {
-			lang.set("list-achievement-not-received", "&4\u2717&8 ");
-			updateDone = true;
-		}
-
-		// Added in version 3.0:
-		if (!lang.getKeys(false).contains("book-date")) {
-			lang.set("book-date", "Book created on DATE.");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("list-back-message")) {
-			lang.set("list-back-message", "&7Back");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("week-achievement")) {
-			lang.set("week-achievement", "Weekly achievement rankings:");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("month-achievement")) {
-			lang.set("month-achievement", "Monthly achievement rankings:");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-week")) {
-			lang.set("aach-command-week", "Display weekly rankings.");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-month")) {
-			lang.set("aach-command-month", "Display monthly rankings.");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("not-ranked")) {
-			lang.set("not-ranked", "You are currently not ranked for this period.");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-book-hover")) {
-			lang.set("aach-command-book-hover",
-					"RP items you can collect and exchange with others! Time-based listing.");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-stats-hover")) {
-			lang.set("aach-command-stats-hover", "Progress bar. Gotta catch 'em all!");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-list-hover")) {
-			lang.set("aach-command-list-hover", "Fancy GUI to get an overview of all achievements and your progress!");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-top-hover")) {
-			lang.set("aach-command-top-hover", "Who are the server's leaders and how do you compare to them?");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-give-hover")) {
-			lang.set("aach-command-give-hover", "Player must be online; only Commands achievements can be used.");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-reload-hover")) {
-			lang.set("aach-command-reload-hover", "Reload most settings in config.yml and lang.yml files.");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-info-hover")) {
-			lang.set("aach-command-info-hover", "Some extra info about the plugin and its awesome author!");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-check-hover")) {
-			lang.set("aach-command-check-hover", "Don't forget to add the colors defined in the config file.");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-delete-hover")) {
-			lang.set("aach-command-delete-hover", "Player must be online; does not reset any associated statistics.");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-week-hover")) {
-			lang.set("aach-command-week-hover", "Best achievement hunters since the start of the week!");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-command-month-hover")) {
-			lang.set("aach-command-month-hover", "Best achievement hunters since the start of the month!");
-			updateDone = true;
-		}
-
-		if (!lang.getKeys(false).contains("aach-tip")) {
-			lang.set("aach-tip", "&lHINT&r &8You can &7&n&ohover&r &8or &7&n&oclick&r &8on the commands!");
-			updateDone = true;
-		}
-
-		if (updateDone) {
-			// Changes in the language file: save and do a fresh load.
-			try {
-				lang.saveConfig();
-				lang.reloadConfig();
-			} catch (IOException e) {
-				this.getLogger().log(Level.SEVERE, "Error while saving changes to the language file: ", e);
-				successfulLoad = false;
-			}
 		}
 	}
 
@@ -1221,70 +881,70 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	private void displayEasterEgg(CommandSender sender) {
 
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§4\u2592§4\u2592§c\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§4\u2592§4\u2592§4\u2592§c\u2592§c\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§c\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§0\u2592§8\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§7\u2592§0\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§0\u2592§8\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§8\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§0\u2592§8\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§8\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§0\u2592§8\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§6\u2592§6\u2592§8\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§8\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§0\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§6\u2592§6\u2592§6\u2592§6\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§8\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§8\u2592§8\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§6\u2592§6\u2592§6\u2592§6\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§0\u2592§8\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§7\u2592§6\u2592§6\u2592§4\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§0\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§0\u2592§8\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§4\u2592§4\u2592§4\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§7\u2592§0\u2592§8\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§4\u2592§4\u2592§4\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§8\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§f\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§4\u2592§4\u2592§4\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§4\u2592§4\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§f\u2592§f\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§4\u2592§4\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§4\u2592§4\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§f\u2592§f\u2592§7\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§4\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§8\u2592§8\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
-		sender.sendMessage(StringEscapeUtils.unescapeJava(
-				"§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§4\u2592§4\u2592§c\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§4\u2592§4\u2592§4\u2592§c\u2592§c\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§c\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§0\u2592§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§0\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§0\u2592§8\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§7\u2592§0\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§0\u2592§8\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§8\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§0\u2592§8\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§4\u2592§4\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§8\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§0\u2592§8\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§4\u2592§4\u2592§6\u2592§6\u2592§8\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§8\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§0\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§4\u2592§6\u2592§6\u2592§6\u2592§6\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§8\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§8\u2592§8\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§6\u2592§6\u2592§6\u2592§6\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§0\u2592§8\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§7\u2592§6\u2592§6\u2592§4\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§0\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§0\u2592§8\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§8\u2592§8\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§4\u2592§4\u2592§4\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§7\u2592§0\u2592§8\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§8\u2592§8\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§4\u2592§4\u2592§4\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§8\u2592§8\u2592§f\u2592§7\u2592§f\u2592§7\u2592§f\u2592§f\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§4\u2592§4\u2592§4\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§4\u2592§4\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§f\u2592§f\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§4\u2592§4\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§4\u2592§4\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§f\u2592§f\u2592§7\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§4\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§8\u2592§8\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§0\u2592§0\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
+		 sender.sendMessage(StringEscapeUtils.unescapeJava(
+		 "§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
 	}
 
 	// Various getters and setters. Names are self-explanatory.

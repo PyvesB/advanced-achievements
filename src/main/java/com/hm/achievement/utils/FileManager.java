@@ -47,9 +47,8 @@ public class FileManager {
 			this.prepareFile(fileName);
 		}
 
-		YamlManager yamlManager = new YamlManager(this.getConfigContent(fileName), file, this.getCommentsAmount(file),
+		return new YamlManager(this.getConfigContent(this.getConfigFile(fileName)), file, this.getCommentsAmount(file),
 				plugin);
-		return yamlManager;
 	}
 
 	/**
@@ -91,7 +90,9 @@ public class FileManager {
 			return;
 
 		file.getParentFile().mkdirs();
-		file.createNewFile();
+
+		if (file.createNewFile())
+			plugin.getLogger().info("Successfully created " + resource + " file.");
 
 		if (resource != null && !resource.isEmpty())
 			this.copyResource(plugin.getResource(resource), file);
@@ -114,7 +115,8 @@ public class FileManager {
 		String currentLine;
 
 		StringBuilder whole = new StringBuilder("");
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
+		try (FileInputStream fileSteam = new FileInputStream(file);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(fileSteam, "UTF-8"))) {
 			while ((currentLine = reader.readLine()) != null) {
 				// Rework comment line so it becomes a normal value in the config file.
 				// This workaround allows the comment to be saved in the Yaml file.
@@ -129,8 +131,7 @@ public class FileManager {
 			}
 
 			String config = whole.toString();
-			StringReader configStream = new StringReader(config);
-			return configStream;
+			return new StringReader(config);
 		}
 	}
 
@@ -155,11 +156,6 @@ public class FileManager {
 
 			return comments;
 		}
-	}
-
-	public Reader getConfigContent(String filePath) throws IOException {
-
-		return this.getConfigContent(this.getConfigFile(filePath));
 	}
 
 	/**
@@ -212,7 +208,8 @@ public class FileManager {
 
 		String configuration = this.prepareConfigString(configString);
 
-		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))) {
+		try (FileOutputStream fileSteam = new FileOutputStream(file);
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileSteam, "UTF-8"))) {
 			writer.write(configuration);
 			writer.flush();
 		}

@@ -32,6 +32,26 @@ public class AchieveQuitListener implements Listener {
 		plugin.getAchievementBookCommand().getPlayers().remove(event.getPlayer());
 		plugin.getAchievementListCommand().getPlayers().remove(event.getPlayer());
 
+		processAndCleanDistances(event, playerUUID);
+
+		processAndCleanPlayedTime(playerUUID);
+
+		// Remove player from HashSet cache for MaxLevel achievements.
+		if (plugin.getXpListener() != null) {
+			for (Integer achievementThreshold : plugin.getXpListener().getAchievementsCache().keySet())
+				plugin.getXpListener().getAchievementsCache().remove(achievementThreshold, playerUUID);
+		}
+	}
+
+	/**
+	 * Writes the distances to the database and cleans the various in memory objects containing information about the
+	 * disconnected player.
+	 * 
+	 * @param event
+	 * @param playerUUID
+	 */
+	private void processAndCleanDistances(PlayerQuitEvent event, final String playerUUID) {
+
 		// Remove player from Multimap caches for distance achievements.
 		if (plugin.getAchieveDistanceRunnable() != null
 				&& plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(event.getPlayer()) != null) {
@@ -124,6 +144,15 @@ public class AchieveQuitListener implements Listener {
 					plugin.getDb().updateAndGetDistance(playerUUID, distance, "distancegliding");
 			}
 		}
+	}
+
+	/**
+	 * Writes the played time to the database and cleans the various in memory objects containing information about the
+	 * disconnected player.
+	 * 
+	 * @param playerUUID
+	 */
+	private void processAndCleanPlayedTime(final String playerUUID) {
 
 		if (plugin.getAchievePlayTimeRunnable() != null) {
 			// Update database statistics for played time and clean HashMaps.
@@ -161,12 +190,6 @@ public class AchieveQuitListener implements Listener {
 			// Remove player from Multimap cache for PlayedTime achievements.
 			for (Integer achievementThreshold : plugin.getAchievePlayTimeRunnable().getAchievementsCache().keySet())
 				plugin.getAchievePlayTimeRunnable().getAchievementsCache().remove(achievementThreshold, playerUUID);
-		}
-
-		// Remove player from HashSet cache for MaxLevel achievements.
-		if (plugin.getXpListener() != null) {
-			for (Integer achievementThreshold : plugin.getXpListener().getAchievementsCache().keySet())
-				plugin.getXpListener().getAchievementsCache().remove(achievementThreshold, playerUUID);
 		}
 	}
 }

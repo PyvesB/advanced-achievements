@@ -43,7 +43,7 @@ public class AchieveKillListener implements Listener {
 			return;
 		}
 
-		String mobName = null;
+		String mobName;
 		if (entity instanceof Player) {
 			mobName = "player";
 		} else {

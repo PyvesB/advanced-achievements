@@ -27,7 +27,7 @@ public class AchieveMilkListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerBucketFill(PlayerBucketFillEvent event) {
 
-		if (!(event.getItemStack().getType() == Material.MILK_BUCKET))
+		if (event.getItemStack().getType() != Material.MILK_BUCKET)
 			return;
 		Player player = event.getPlayer();
 		if (!player.hasPermission("achievement.count.milk") || plugin.isInExludedWorld(player))

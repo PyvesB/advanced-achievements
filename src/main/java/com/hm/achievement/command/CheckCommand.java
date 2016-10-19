@@ -29,13 +29,12 @@ public class CheckCommand implements Listener {
 	 */
 	public void achievementCheck(CommandSender sender, String args[]) {
 
-		String achievementName = "";
+		StringBuilder achievementName = new StringBuilder();
 		// Rebuild name of achievement by concatenating elements in the string array. The name of the player is last.
 		for (int i = 1; i < args.length - 1; i++) {
+			achievementName.append(args[i]);
 			if (i != args.length - 2)
-				achievementName += args[i] + " ";
-			else
-				achievementName += args[i];
+				achievementName.append(' ');
 		}
 
 		Player player = null;
@@ -56,7 +55,7 @@ public class CheckCommand implements Listener {
 		}
 
 		// Check if achievement exists in database and display message accordingly.
-		if (plugin.getDb().hasPlayerAchievement(player, achievementName))
+		if (plugin.getDb().hasPlayerAchievement(player, achievementName.toString()))
 			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
 					.getString("check-achievement-true", "PLAYER has received the achievement ACH!")
 					.replace("PLAYER", args[args.length - 1]).replace("ACH", achievementName));

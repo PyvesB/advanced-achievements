@@ -389,21 +389,21 @@ public class SQLDatabaseManager {
 	 */
 	private void updateOldDBToDates() {
 
-		// Early versions of the plugin added colors to the date. We have to get rid of them by using a regex pattern;
+		// Early versions of the plugin added colors to the date. We have to get rid of them by using a regex pattern,
 		// else parsing will fail.
-		final Pattern REGEX_PATERN = Pattern.compile("&([a-f]|[0-9]){1}");
+		final Pattern regexPattern = Pattern.compile("&([a-f]|[0-9]){1}");
 		// Old date format, which was stored as a string.
-		final SimpleDateFormat OLD_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+		final SimpleDateFormat oldFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement();
 				PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?,?);")) {
 			// Load entire achievements table into memory.
 			ResultSet rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements");
-			ArrayList<String> uuids = new ArrayList<String>();
-			ArrayList<String> achs = new ArrayList<String>();
-			ArrayList<String> descs = new ArrayList<String>();
-			ArrayList<String> oldDates = new ArrayList<String>();
+			ArrayList<String> uuids = new ArrayList<>();
+			ArrayList<String> achs = new ArrayList<>();
+			ArrayList<String> descs = new ArrayList<>();
+			ArrayList<String> oldDates = new ArrayList<>();
 
 			// Parse entire table into arrays.
 			while (rs.next()) {
@@ -420,7 +420,7 @@ public class SQLDatabaseManager {
 				for (String date : oldDates) {
 					// Convert to SQL date format.
 					newDates.add((new java.sql.Date(
-							OLD_FORMAT.parse(date.replaceAll(REGEX_PATERN.pattern(), "")).getTime())));
+							oldFormat.parse(date.replaceAll(regexPattern.pattern(), "")).getTime())));
 				}
 			} catch (ParseException e) {
 				plugin.getLogger().severe("Error while parsing dates: " + e);
@@ -485,13 +485,12 @@ public class SQLDatabaseManager {
 	private Connection createSQLiteConnection() throws SQLException {
 
 		File dbfile = new File(plugin.getDataFolder(), "achievements.db");
-		if (!dbfile.exists()) {
-			try {
-				dbfile.createNewFile();
-			} catch (IOException e) {
-				plugin.getLogger().severe("Error while creating database file.");
-				plugin.setSuccessfulLoad(false);
-			}
+		try {
+			if (dbfile.createNewFile())
+				plugin.getLogger().info("Successfully created database file.");
+		} catch (IOException e) {
+			plugin.getLogger().severe("Error while creating database file.");
+			plugin.setSuccessfulLoad(false);
 		}
 		return DriverManager.getConnection("jdbc:sqlite:" + dbfile);
 	}
@@ -560,12 +559,12 @@ public class SQLDatabaseManager {
 	 */
 	public String getPlayerAchievementDate(Player player, String name) {
 
-		name = name.replace("'", "''");
+		String dbName = name.replace("'", "''");
 		String achievementDate = null;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + "achievements WHERE playername = '"
-					+ player.getUniqueId() + "' AND achievement = '" + name + "'");
+					+ player.getUniqueId() + "' AND achievement = '" + dbName + "'");
 
 			if (rs.next()) {
 				achievementDate = rs.getDate(1).toString();
@@ -607,7 +606,7 @@ public class SQLDatabaseManager {
 	 */
 	public ArrayList<String> getTopList(int listLength, long start) {
 
-		ArrayList<String> topList = new ArrayList<String>();
+		ArrayList<String> topList = new ArrayList<>();
 		Connection conn = getSQLConnection();
 		// PreparedStatement used to easily set date in query regardless of the database type.
 		PreparedStatement prep = null;
@@ -628,7 +627,7 @@ public class SQLDatabaseManager {
 			ResultSet rs = prep.getResultSet();
 			while (rs.next()) {
 				topList.add(rs.getString(1));
-				topList.add("" + rs.getInt(2));
+				topList.add(Integer.toString(rs.getInt(2)));
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving top players: " + e);
@@ -818,13 +817,13 @@ public class SQLDatabaseManager {
 		try (Statement st = conn.createStatement()) {
 			if (name.contains("'")) {
 				// We simply double apostrophes to avoid breaking the query.
-				name = name.replace("'", "''");
+				String dbName = name.replace("'", "''");
 				// We check for names with single quotes, but also two single quotes. This is due to a bug in versions
 				// 3.0 to 3.0.2 where names containing single quotes were inserted with two single quotes in the
 				// database.
 				if (st.executeQuery("SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
-						+ player.getUniqueId() + "' AND (achievement = '" + name + "' OR achievement = '"
-						+ name.replace("'", "''") + "')").next())
+						+ player.getUniqueId() + "' AND (achievement = '" + dbName + "' OR achievement = '"
+						+ dbName.replace("'", "''") + "')").next())
 					result = true;
 			} else {
 				if (st.executeQuery("SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
@@ -841,7 +840,7 @@ public class SQLDatabaseManager {
 	 * Delete an achievement from a player.
 	 * 
 	 * @param player
-	 * @param name
+	 * @param ach
 	 */
 	public void deletePlayerAchievement(Player player, final String ach) {
 

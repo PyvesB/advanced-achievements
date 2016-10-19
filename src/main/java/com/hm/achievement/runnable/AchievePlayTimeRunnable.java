@@ -68,8 +68,8 @@ public class AchievePlayTimeRunnable implements Runnable {
 
 		String uuid = player.getUniqueId().toString();
 
-		// Extra check in case server was reloaded and players did not reconnect;
-		// in that case the values are no longer in HashTables and must be rewritten.
+		// Extra check in case server was reloaded and players did not reconnect; in that case the values are no longer
+		// in HashTables and must be rewritten.
 		if (!plugin.getConnectionListener().getJoinTime().containsKey(uuid)) {
 			plugin.getConnectionListener().getJoinTime().put(uuid, System.currentTimeMillis());
 			plugin.getConnectionListener().getPlayTime().put(uuid, plugin.getDb().updateAndGetPlaytime(uuid, 0L));
@@ -78,24 +78,21 @@ public class AchievePlayTimeRunnable implements Runnable {
 			for (Integer achievementThreshold : achievementsCache.keySet()) {
 				// Check whether player has met the threshold and whether we he has not yet received the achievement.
 				if (System.currentTimeMillis() - plugin.getConnectionListener().getJoinTime().get(uuid)
-						+ plugin.getConnectionListener().getPlayTime().get(uuid) > achievementThreshold * 3600000L) {
-					if (!achievementsCache.get(achievementThreshold).contains(uuid)) {
-						// The cache does not contain information about the reception of the achievement. Query
-						// database.
-						if (!plugin.getDb().hasPlayerAchievement(player,
-								plugin.getPluginConfig().getString("PlayedTime." + achievementThreshold + ".Name"))) {
-							plugin.getAchievementDisplay().displayAchievement(player,
-									"PlayedTime." + achievementThreshold);
-							plugin.getDb().registerAchievement(player,
-									plugin.getPluginConfig().getString("PlayedTime." + achievementThreshold + ".Name"),
-									plugin.getPluginConfig()
-											.getString("PlayedTime." + achievementThreshold + ".Message"));
-							plugin.getReward().checkConfig(player, "PlayedTime." + achievementThreshold);
+						+ plugin.getConnectionListener().getPlayTime().get(uuid) > achievementThreshold * 3600000L
+						&& !achievementsCache.get(achievementThreshold).contains(uuid)) {
+					// The cache does not contain information about the reception of the achievement. Query
+					// database.
+					if (!plugin.getDb().hasPlayerAchievement(player,
+							plugin.getPluginConfig().getString("PlayedTime." + achievementThreshold + ".Name"))) {
+						plugin.getAchievementDisplay().displayAchievement(player, "PlayedTime." + achievementThreshold);
+						plugin.getDb().registerAchievement(player,
+								plugin.getPluginConfig().getString("PlayedTime." + achievementThreshold + ".Name"),
+								plugin.getPluginConfig().getString("PlayedTime." + achievementThreshold + ".Message"));
+						plugin.getReward().checkConfig(player, "PlayedTime." + achievementThreshold);
 
-						}
-						// Player has received this achievement.
-						achievementsCache.put(achievementThreshold, uuid);
 					}
+					// Player has received this achievement.
+					achievementsCache.put(achievementThreshold, uuid);
 				}
 			}
 		}

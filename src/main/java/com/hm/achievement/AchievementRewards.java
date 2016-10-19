@@ -4,6 +4,7 @@ import com.hm.achievement.utils.YamlManager;
 import net.milkbowl.vault.item.Items;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
@@ -53,7 +54,7 @@ public class AchievementRewards {
 				// Item: coal 5
 				// The amount has already been parsed out and is provided by parameter amount.
 				String materialNameAndQty = config.getString(ach + ".Reward.Item", "stone");
-				int indexSpace = materialNameAndQty.indexOf(" ");
+				int indexSpace = materialNameAndQty.indexOf(' ');
 
 				String materialName;
 				if (indexSpace > 0)
@@ -125,9 +126,9 @@ public class AchievementRewards {
 	 * @param configAchievement
 	 * @return type(s) of the achievement reward as an array of strings
 	 */
-	public ArrayList<String> getRewardType(String configAchievement) {
+	public List<String> getRewardType(String configAchievement) {
 
-		ArrayList<String> rewardType = new ArrayList<String>();
+		ArrayList<String> rewardType = new ArrayList<>();
 		Set<String> keyNames = plugin.getPluginConfig().getKeys(true);
 
 		if (keyNames.contains(configAchievement + ".Reward.Money"))
@@ -162,8 +163,7 @@ public class AchievementRewards {
 		} else if (config.getKeys(true).contains(configAchievement + ".Reward.Item")) {
 			// New config syntax. Name of item and quantity are on the same line, separated by a space.
 			String materialAndQty = config.getString(configAchievement + ".Reward.Item", "");
-			int indexOfAmount = 0;
-			indexOfAmount = materialAndQty.indexOf(" ");
+			int indexOfAmount = materialAndQty.indexOf(' ');
 			if (indexOfAmount != -1)
 				itemAmount = Integer.parseInt(materialAndQty.substring(indexOfAmount + 1));
 		}

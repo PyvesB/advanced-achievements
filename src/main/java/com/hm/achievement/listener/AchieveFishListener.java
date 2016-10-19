@@ -27,7 +27,7 @@ public class AchieveFishListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerFish(PlayerFishEvent event) {
 
-		if (!(event.getState() == PlayerFishEvent.State.CAUGHT_FISH))
+		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH)
 			return;
 		Player player = event.getPlayer();
 		if (!player.hasPermission("achievement.count.fish")

@@ -46,9 +46,8 @@ public class AchieveBlockBreakListener implements Listener {
 				|| version < 9 && event.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
 
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player)
-				|| disableSilkTouchBreaks && silkTouchBreak) {
+				|| disableSilkTouchBreaks && silkTouchBreak)
 			return;
-		}
 
 		Block block = event.getBlock();
 		if (disableSilkTouchOreBreaks && silkTouchBreak) {

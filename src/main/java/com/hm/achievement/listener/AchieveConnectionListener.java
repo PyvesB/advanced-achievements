@@ -32,11 +32,11 @@ public class AchieveConnectionListener implements Listener {
 
 		this.plugin = plugin;
 		if (plugin.isAsyncPooledRequestsSender()) {
-			joinTime = new ConcurrentHashMap<String, Long>();
-			playTime = new ConcurrentHashMap<String, Long>();
+			joinTime = new ConcurrentHashMap<>();
+			playTime = new ConcurrentHashMap<>();
 		} else {
-			joinTime = new HashMap<String, Long>();
-			playTime = new HashMap<String, Long>();
+			joinTime = new HashMap<>();
+			playTime = new HashMap<>();
 		}
 	}
 

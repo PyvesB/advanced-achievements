@@ -63,21 +63,21 @@ public class AchieveDistanceRunnable implements Runnable {
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 
 		if (plugin.isAsyncPooledRequestsSender()) {
-			distancesFoot = new ConcurrentHashMap<String, Integer>();
-			distancesHorse = new ConcurrentHashMap<String, Integer>();
-			distancesPig = new ConcurrentHashMap<String, Integer>();
-			distancesBoat = new ConcurrentHashMap<String, Integer>();
-			distancesMinecart = new ConcurrentHashMap<String, Integer>();
-			distancesGliding = new ConcurrentHashMap<String, Integer>();
+			distancesFoot = new ConcurrentHashMap<>();
+			distancesHorse = new ConcurrentHashMap<>();
+			distancesPig = new ConcurrentHashMap<>();
+			distancesBoat = new ConcurrentHashMap<>();
+			distancesMinecart = new ConcurrentHashMap<>();
+			distancesGliding = new ConcurrentHashMap<>();
 		} else {
-			distancesFoot = new HashMap<String, Integer>();
-			distancesHorse = new HashMap<String, Integer>();
-			distancesPig = new HashMap<String, Integer>();
-			distancesBoat = new HashMap<String, Integer>();
-			distancesMinecart = new HashMap<String, Integer>();
-			distancesGliding = new HashMap<String, Integer>();
+			distancesFoot = new HashMap<>();
+			distancesHorse = new HashMap<>();
+			distancesPig = new HashMap<>();
+			distancesBoat = new HashMap<>();
+			distancesMinecart = new HashMap<>();
+			distancesGliding = new HashMap<>();
 		}
-		playerLocations = new HashMap<Player, Location>();
+		playerLocations = new HashMap<>();
 
 		extractAchievementsFromConfig();
 	}
@@ -115,9 +115,8 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		Location previousLocation = playerLocations.get(player);
 
-		// If player location not found, add it in table.
-		// If player has changed world, ignore previous location;
-		// evaluating distance would give an exception.
+		// If player location not found, add it in table. If player has changed world, ignore previous location.
+		// Evaluating distance would give an exception.
 		if (previousLocation == null || !previousLocation.getWorld().getName().equals(player.getWorld().getName())) {
 			playerLocations.put(player, player.getLocation());
 			return;
@@ -128,6 +127,66 @@ public class AchieveDistanceRunnable implements Runnable {
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
+		int difference = getDistanceDifference(player, previousLocation);
+		// Player has not moved.
+		if (difference == 0)
+			return;
+
+		// Should be the player's location be updated in the map?
+		boolean updateLocation = true;
+
+		if (player.isInsideVehicle()) {
+			if (player.getVehicle() instanceof Horse && player.hasPermission("achievement.count.distancehorse")
+					&& !plugin.getDisabledCategorySet().contains("DistanceHorse")) {
+
+				updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesHorse, "DistanceHorse",
+						horseAchievementsCache);
+
+			} else if (player.getVehicle() instanceof Pig && player.hasPermission("achievement.count.distancepig")
+					&& !plugin.getDisabledCategorySet().contains("DistancePig")) {
+
+				updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesPig, "DistancePig",
+						pigAchievementsCache);
+
+			} else if (player.getVehicle() instanceof Minecart
+					&& player.hasPermission("achievement.count.distanceminecart")
+					&& !plugin.getDisabledCategorySet().contains("DistanceMinecart")) {
+
+				updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesMinecart,
+						"DistanceMinecart", minecartAchievementsCache);
+
+			} else if (player.getVehicle() instanceof Boat && player.hasPermission("achievement.count.distanceboat")
+					&& !plugin.getDisabledCategorySet().contains("DistanceBoat")) {
+
+				updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesBoat, "DistanceBoat",
+						boatAchievementsCache);
+			}
+		} else if (player.hasPermission("achievement.count.distancefoot") && !player.isFlying()
+				&& (version < 9 || !player.isGliding()) && !plugin.getDisabledCategorySet().contains("DistanceFoot")) {
+
+			updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesFoot, "DistanceFoot",
+					footAchievementsCache);
+
+		} else if (player.hasPermission("achievement.count.distancegliding") && version >= 9 && player.isGliding()
+				&& !plugin.getDisabledCategorySet().contains("DistanceGliding")) {
+
+			updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesGliding, "DistanceGliding",
+					glidingAchievementsCache);
+		}
+
+		if (updateLocation)
+			playerLocations.put(player, player.getLocation());
+	}
+
+	/**
+	 * Calculates the difference between the player's last location and his current one.
+	 * 
+	 * @param player
+	 * @param previousLocation
+	 * @return difference
+	 */
+	private int getDistanceDifference(Player player, Location previousLocation) {
+
 		// Distance difference since last runnable; ignore the vertical axis or not.
 		int difference;
 		if (ignoreVerticalDistance)
@@ -136,71 +195,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		else
 			difference = (int) previousLocation.distance(player.getLocation());
 
-		// Check if player has not moved since last run.
-		if (difference == 0)
-			return;
-
-		if (player.isInsideVehicle()) {
-			if (player.getVehicle() instanceof Horse && player.hasPermission("achievement.count.distancehorse")
-					&& !plugin.getDisabledCategorySet().contains("DistanceHorse")) {
-
-				boolean updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesHorse,
-						"DistanceHorse", horseAchievementsCache);
-
-				if (!updateLocation)
-					return;
-
-			} else if (player.getVehicle() instanceof Pig && player.hasPermission("achievement.count.distancepig")
-					&& !plugin.getDisabledCategorySet().contains("DistancePig")) {
-
-				boolean updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesPig,
-						"DistancePig", pigAchievementsCache);
-
-				if (!updateLocation)
-					return;
-
-			} else if (player.getVehicle() instanceof Minecart
-					&& player.hasPermission("achievement.count.distanceminecart")
-					&& !plugin.getDisabledCategorySet().contains("DistanceMinecart")) {
-
-				boolean updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesMinecart,
-						"DistanceMinecart", minecartAchievementsCache);
-
-				if (!updateLocation)
-					return;
-
-			} else if (player.getVehicle() instanceof Boat && player.hasPermission("achievement.count.distanceboat")
-					&& !plugin.getDisabledCategorySet().contains("DistanceBoat")) {
-
-				boolean updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesBoat,
-						"DistanceBoat", boatAchievementsCache);
-
-				if (!updateLocation)
-					return;
-
-			}
-		} else if (player.hasPermission("achievement.count.distancefoot") && !player.isFlying()
-				&& (version < 9 || !player.isGliding()) && !plugin.getDisabledCategorySet().contains("DistanceFoot")) {
-
-			boolean updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesFoot,
-					"DistanceFoot", footAchievementsCache);
-
-			if (!updateLocation)
-				return;
-
-		} else if (player.hasPermission("achievement.count.distancegliding") && version >= 9 && player.isGliding()
-				&& !plugin.getDisabledCategorySet().contains("DistanceGliding")) {
-
-			boolean updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesGliding,
-					"DistanceGliding", glidingAchievementsCache);
-
-			if (!updateLocation)
-				return;
-		}
-
-		// Update player's location.
-		playerLocations.put(player, player.getLocation());
-
+		return difference;
 	}
 
 	/**
@@ -247,16 +242,14 @@ public class AchieveDistanceRunnable implements Runnable {
 		// Iterate through all the different achievements.
 		for (Integer achievementThreshold : achievementsCache.keySet()) {
 			// Check whether player has met the threshold and whether we he has not yet received the achievement.
-			if (distance > achievementThreshold) {
-				if (!achievementsCache.get(achievementThreshold).contains(uuid)) {
-					String achievementName = plugin.getPluginConfig()
-							.getString(achievementKeyName + "." + achievementThreshold + ".Name");
-					// The cache does not contain information about the reception of the achievement. Query database.
-					if (!plugin.getDb().hasPlayerAchievement(player, achievementName))
-						awardDistanceAchievement(player, achievementThreshold, achievementKeyName + ".");
-					// Player has received this achievement.
-					achievementsCache.put(achievementThreshold, uuid);
-				}
+			if (distance > achievementThreshold && !achievementsCache.get(achievementThreshold).contains(uuid)) {
+				String achievementName = plugin.getPluginConfig()
+						.getString(achievementKeyName + "." + achievementThreshold + ".Name");
+				// The cache does not contain information about the reception of the achievement. Query database.
+				if (!plugin.getDb().hasPlayerAchievement(player, achievementName))
+					awardDistanceAchievement(player, achievementThreshold, achievementKeyName + ".");
+				// Player has received this achievement.
+				achievementsCache.put(achievementThreshold, uuid);
 			}
 		}
 		return true;
@@ -312,7 +305,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		return distancesGliding;
 	}
 
-	public HashMap<Player, Location> getPlayerLocations() {
+	public Map<Player, Location> getPlayerLocations() {
 
 		return playerLocations;
 	}

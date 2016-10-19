@@ -30,7 +30,7 @@ public class GiveCommand implements Listener {
 	 * @param sender
 	 * @param args
 	 */
-	public void achievementGive(CommandSender sender, String args[]) {
+	public void achievementGive(CommandSender sender, String[] args) {
 
 		String configAchievement = "Commands." + args[1];
 
