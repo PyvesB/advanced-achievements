@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
@@ -74,9 +75,8 @@ public class SQLDatabaseManager {
 			else
 				Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e) {
-			plugin.getLogger()
-					.severe("The JBDC library for your database type was not found. Please read the plugin's support for more information."
-							+ e);
+			plugin.getLogger().severe(
+					"The JBDC library for your database type was not found. Please read the plugin's support for more information.");
 			plugin.setSuccessfulLoad(false);
 		}
 
@@ -110,7 +110,7 @@ public class SQLDatabaseManager {
 				if (rs.next())
 					renameTables();
 			} catch (SQLException e) {
-				plugin.getLogger().severe("Error while attempting to set prefix of database tables: " + e);
+				plugin.getLogger().log(Level.SEVERE, "Error while attempting to set prefix of database tables: ", e);
 				plugin.setSuccessfulLoad(false);
 			}
 		}
@@ -119,7 +119,7 @@ public class SQLDatabaseManager {
 		try {
 			initialiseTables();
 		} catch (SQLException e) {
-			plugin.getLogger().severe("Error while initialising database tables: " + e);
+			plugin.getLogger().log(Level.SEVERE, "Error while initialising database tables: ", e);
 			plugin.setSuccessfulLoad(false);
 		}
 
@@ -129,7 +129,7 @@ public class SQLDatabaseManager {
 			ResultSet rs = st.executeQuery("SELECT blockid FROM " + tablePrefix + "breaks LIMIT 1");
 			type = rs.getMetaData().getColumnTypeName(1);
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while trying to update old DB: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old DB: ", e);
 		}
 
 		// Old column type for versions prior to 2.4.1 was integer for SQLite and smallint unsigned for MySQL.
@@ -145,7 +145,7 @@ public class SQLDatabaseManager {
 			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + "achievements LIMIT 1");
 			type = rs.getMetaData().getColumnTypeName(1);
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while trying to update old DB: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old DB: ", e);
 		}
 		// Old column type for versions prior to 3.0 was text for SQLite, char for MySQL and varchar for PostgreSQL
 		// (even though PostgreSQL was not supported on versions prior to 3.0, we still support the upgrade for it in
@@ -380,7 +380,7 @@ public class SQLDatabaseManager {
 			conn.commit();
 			conn.setAutoCommit(true);
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while updating old DB (ids to material): " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while updating old DB (ids to material): ", e);
 		}
 	}
 
@@ -424,7 +424,7 @@ public class SQLDatabaseManager {
 							oldFormat.parse(date.replaceAll(regexPattern.pattern(), "")).getTime())));
 				}
 			} catch (ParseException e) {
-				plugin.getLogger().severe("Error while parsing dates: " + e);
+				plugin.getLogger().log(Level.SEVERE, "Error while parsing dates: ", e);
 			}
 			// Prevent from doing any commits before entire transaction is ready.
 			conn.setAutoCommit(false);
@@ -451,7 +451,7 @@ public class SQLDatabaseManager {
 			conn.commit();
 			conn.setAutoCommit(true);
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while updating old DB (strings to dates): " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while updating old DB (strings to dates): ", e);
 		}
 	}
 
@@ -471,7 +471,7 @@ public class SQLDatabaseManager {
 				}
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("Error while attempting to retrieve connection to database: " + e);
+			plugin.getLogger().log(Level.SEVERE, "Error while attempting to retrieve connection to database: ", e);
 			plugin.setSuccessfulLoad(false);
 		}
 		return sqlConnection;
@@ -490,7 +490,7 @@ public class SQLDatabaseManager {
 			if (dbfile.createNewFile())
 				plugin.getLogger().info("Successfully created database file.");
 		} catch (IOException e) {
-			plugin.getLogger().severe("Error while creating database file.");
+			plugin.getLogger().log(Level.SEVERE, "Error while creating database file: ", e);
 			plugin.setSuccessfulLoad(false);
 		}
 		return DriverManager.getConnection("jdbc:sqlite:" + dbfile);
@@ -544,7 +544,7 @@ public class SQLDatabaseManager {
 				achievementsList.add(rs.getDate(4).toString());
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving achievements: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving achievements: ", e);
 		}
 		return achievementsList;
 	}
@@ -570,7 +570,7 @@ public class SQLDatabaseManager {
 				achievementDate = rs.getDate(1).toString();
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving achievement date: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving achievement date: ", e);
 		}
 		return achievementDate;
 	}
@@ -592,7 +592,7 @@ public class SQLDatabaseManager {
 				achievementsAmount = rs.getInt(1);
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while counting player achievements: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while counting player achievements: ", e);
 		}
 		return achievementsAmount;
 	}
@@ -633,7 +633,7 @@ public class SQLDatabaseManager {
 				topList.add(Integer.toString(rs.getInt(2)));
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving top players: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving top players: ", e);
 		}
 		return topList;
 	}
@@ -669,7 +669,7 @@ public class SQLDatabaseManager {
 				players = rs.getInt(1);
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving total players: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving total players: ", e);
 		}
 		return players;
 	}
@@ -713,7 +713,7 @@ public class SQLDatabaseManager {
 				rank = rs.getInt(1) + 1;
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving player rank: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving player rank: ", e);
 		}
 		return rank;
 	}
@@ -776,7 +776,7 @@ public class SQLDatabaseManager {
 			}
 			prep.execute();
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while registering achievement: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while registering achievement: ", e);
 		}
 	}
 
@@ -813,7 +813,7 @@ public class SQLDatabaseManager {
 			if (prep.executeQuery().next())
 				result = true;
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while checking achievement: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while checking achievement: ", e);
 		}
 		return result;
 	}
@@ -858,7 +858,7 @@ public class SQLDatabaseManager {
 			prep.setString(2, ach);
 			prep.execute();
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while deleting achievement: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while deleting achievement: ", e);
 		}
 	}
 
@@ -881,7 +881,7 @@ public class SQLDatabaseManager {
 				entityKills = rs.getInt("kills");
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving kill stats: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving kill stats: ", e);
 		}
 		return entityKills;
 	}
@@ -904,7 +904,7 @@ public class SQLDatabaseManager {
 				blockBreaks = rs.getInt("places");
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving block place stats: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving block place stats: ", e);
 		}
 		return blockBreaks;
 	}
@@ -927,7 +927,7 @@ public class SQLDatabaseManager {
 				blockBreaks = rs.getInt("breaks");
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving block break stats: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving block break stats: ", e);
 		}
 		return blockBreaks;
 	}
@@ -950,7 +950,7 @@ public class SQLDatabaseManager {
 				itemCrafts = rs.getInt("crafts");
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while handling craft event: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while handling craft event: ", e);
 		}
 		return itemCrafts;
 	}
@@ -973,7 +973,7 @@ public class SQLDatabaseManager {
 				amount = rs.getInt(table);
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving " + table + " stats: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving " + table + " stats: ", e);
 		}
 		return amount;
 	}
@@ -996,7 +996,7 @@ public class SQLDatabaseManager {
 				connections = rs.getInt("connections");
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving connection statistics: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving connection statistics: ", e);
 		}
 		return connections;
 	}
@@ -1017,7 +1017,7 @@ public class SQLDatabaseManager {
 			while (rs.next())
 				date = rs.getString("date");
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while retrieving connection date stats: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving connection date stats: ", e);
 		}
 		return date;
 	}
@@ -1058,7 +1058,7 @@ public class SQLDatabaseManager {
 			}
 			return newConnections;
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while handling connection event: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while handling connection event: ", e);
 		}
 		return 0;
 	}
@@ -1085,7 +1085,7 @@ public class SQLDatabaseManager {
 						+ ", '" + date + "')");
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while updating connection: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while updating connection: ", e);
 		}
 	}
 
@@ -1119,7 +1119,7 @@ public class SQLDatabaseManager {
 				}
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while handling play time registration: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while handling play time registration: ", e);
 		}
 		return newPlayedTime;
 	}
@@ -1156,7 +1156,7 @@ public class SQLDatabaseManager {
 				}
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().severe("SQL error while handling " + type + " registration: " + e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while handling " + type + " registration: ", e);
 		}
 		return newDistance;
 	}

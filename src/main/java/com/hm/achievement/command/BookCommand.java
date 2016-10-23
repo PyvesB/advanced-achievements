@@ -136,6 +136,8 @@ public class BookCommand {
 				pages.add(currentAchievement);
 			}
 		} catch (Exception e) {
+			// Catch runtime exception (for instance ArrayIndexOutOfBoundsException); this should not happen unless
+			// something went wrong in the database.
 			plugin.getLogger().severe("Error while creating book pages of book.");
 		}
 
