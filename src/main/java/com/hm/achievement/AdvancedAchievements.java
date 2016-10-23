@@ -203,6 +203,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		long startTime = System.currentTimeMillis();
 
 		configurationLoad(true);
+		
+		// Error while loading .yml files; do not do any further work.
+		if (overrideDisable) {
+			overrideDisable = false;
+			return;
+		}
 
 		// Load Metrics Lite.
 		try {
@@ -231,12 +237,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Check for available plugin update.
 		if (config.getBoolean("CheckForUpdate", true))
 			updateChecker = new UpdateChecker(this);
-
-		// Error while loading .yml files; do not do any further work.
-		if (overrideDisable) {
-			overrideDisable = false;
-			return;
-		}
 
 		this.getLogger().info("Registering listeners...");
 
