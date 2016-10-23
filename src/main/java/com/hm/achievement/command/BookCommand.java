@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
@@ -79,7 +80,7 @@ public class BookCommand {
 				}
 			}
 
-			ArrayList<String> achievements = plugin.getDb().getPlayerAchievementsList(player);
+			List<String> achievements = plugin.getDb().getPlayerAchievementsList(player);
 
 			fillBook(achievements, player);
 
@@ -120,7 +121,7 @@ public class BookCommand {
 	 * @param achievements
 	 * @param player
 	 */
-	private void fillBook(ArrayList<String> achievements, Player player) {
+	private void fillBook(List<String> achievements, Player player) {
 
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 		ArrayList<String> pages = new ArrayList<>();

@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -334,9 +335,9 @@ public class SQLDatabaseManager {
 		try (Statement st = conn.createStatement();
 				PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
 			ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "");
-			ArrayList<String> uuids = new ArrayList<String>();
-			ArrayList<Integer> ids = new ArrayList<Integer>();
-			ArrayList<Integer> amounts = new ArrayList<Integer>();
+			ArrayList<String> uuids = new ArrayList<>();
+			ArrayList<Integer> ids = new ArrayList<>();
+			ArrayList<Integer> amounts = new ArrayList<>();
 
 			while (rs.next()) {
 				uuids.add(rs.getString(1));
@@ -345,7 +346,7 @@ public class SQLDatabaseManager {
 			}
 
 			// Preallocate space in array containing the values in the new format.
-			ArrayList<String> materials = new ArrayList<String>(ids.size());
+			ArrayList<String> materials = new ArrayList<>(ids.size());
 
 			for (int id : ids) {
 				// Convert from ID to Material name.
@@ -414,7 +415,7 @@ public class SQLDatabaseManager {
 			}
 
 			// Preallocate space in array containing the values in the new format.
-			ArrayList<java.sql.Date> newDates = new ArrayList<java.sql.Date>(oldDates.size());
+			ArrayList<java.sql.Date> newDates = new ArrayList<>(oldDates.size());
 
 			try {
 				for (String date : oldDates) {
@@ -513,9 +514,9 @@ public class SQLDatabaseManager {
 	 * @param player
 	 * @return array list with groups of 3 strings: achievement name, description and date
 	 */
-	public ArrayList<String> getPlayerAchievementsList(Player player) {
+	public List<String> getPlayerAchievementsList(Player player) {
 
-		ArrayList<String> achievementsList = new ArrayList<String>();
+		ArrayList<String> achievementsList = new ArrayList<>();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs;
@@ -530,7 +531,6 @@ public class SQLDatabaseManager {
 			}
 
 			Map<String, String> achievementsAndDisplayNames = plugin.getAchievementsAndDisplayNames();
-
 			while (rs.next()) {
 				String achName = rs.getString(2);
 				String displayName = achievementsAndDisplayNames.getOrDefault(achName, "");
@@ -540,7 +540,6 @@ public class SQLDatabaseManager {
 				} else {
 					achievementsList.add(displayName);
 				}
-
 				achievementsList.add(rs.getString(3));
 				achievementsList.add(rs.getDate(4).toString());
 			}
@@ -559,6 +558,7 @@ public class SQLDatabaseManager {
 	 */
 	public String getPlayerAchievementDate(Player player, String name) {
 
+		// We double apostrophes to avoid breaking the query.
 		String dbName = name.replace("'", "''");
 		String achievementDate = null;
 		Connection conn = getSQLConnection();
@@ -604,22 +604,25 @@ public class SQLDatabaseManager {
 	 * @param start
 	 * @return list with player UUIDs
 	 */
-	public ArrayList<String> getTopList(int listLength, long start) {
+	public List<String> getTopList(int listLength, long start) {
 
 		ArrayList<String> topList = new ArrayList<>();
+		String query;
+		if (start == 0L) {
+			// We consider all the achievements; no date comparison.
+			query = "SELECT playername, COUNT(*) FROM " + tablePrefix
+					+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC LIMIT ?";
+		} else {
+			// We only consider achievement received after the start date; do date comparisons.
+			query = "SELECT playername, COUNT(*) FROM " + tablePrefix
+					+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC LIMIT ?";
+		}
+
 		Connection conn = getSQLConnection();
-		// PreparedStatement used to easily set date in query regardless of the database type.
-		PreparedStatement prep = null;
-		try {
+		try (PreparedStatement prep = conn.prepareStatement(query)) {
 			if (start == 0L) {
-				// We consider all the achievements; no date comparison.
-				prep = conn.prepareStatement("SELECT playername, COUNT(*) FROM " + tablePrefix
-						+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC LIMIT ?");
 				prep.setInt(1, listLength);
 			} else {
-				// We only consider achievement received after the start date; do date comparisons.
-				prep = conn.prepareStatement("SELECT playername, COUNT(*) FROM " + tablePrefix
-						+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC LIMIT ?");
 				prep.setDate(1, new java.sql.Date(start));
 				prep.setInt(2, listLength);
 			}
@@ -631,13 +634,6 @@ public class SQLDatabaseManager {
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving top players: " + e);
-		} finally {
-			try {
-				if (prep != null)
-					prep.close();
-			} catch (SQLException e) {
-				plugin.getLogger().severe("SQL error while retrieving top players: " + e);
-			}
 		}
 		return topList;
 	}
@@ -651,18 +647,20 @@ public class SQLDatabaseManager {
 	public int getTotalPlayers(long start) {
 
 		int players = 0;
+		String query;
+		if (start == 0L) {
+			// We consider all the achievements; no date comparison.
+			query = "SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + tablePrefix
+					+ "achievements) AS distinctPlayers";
+		} else {
+			// We only consider achievement received after the start date; do date comparisons.
+			query = "SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + tablePrefix
+					+ "achievements WHERE date > ?) AS distinctPlayers";
+		}
+
 		Connection conn = getSQLConnection();
-		// PreparedStatement used to easily set date in query regardless of the database type.
-		PreparedStatement prep = null;
-		try {
-			if (start == 0L) {
-				// We consider all the achievements; no date comparison.
-				prep = conn.prepareStatement("SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + tablePrefix
-						+ "achievements) AS distinctPlayers");
-			} else {
-				// We only consider achievement received after the start date; do date comparisons.
-				prep = conn.prepareStatement("SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + tablePrefix
-						+ "achievements WHERE date > ?) AS distinctPlayers");
+		try (PreparedStatement prep = conn.prepareStatement(query)) {
+			if (start > 0L) {
 				prep.setDate(1, new java.sql.Date(start));
 			}
 			prep.execute();
@@ -672,13 +670,6 @@ public class SQLDatabaseManager {
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving total players: " + e);
-		} finally {
-			try {
-				if (prep != null)
-					prep.close();
-			} catch (SQLException e) {
-				plugin.getLogger().severe("SQL error while retrieving total players: " + e);
-			}
 		}
 		return players;
 	}
@@ -693,21 +684,24 @@ public class SQLDatabaseManager {
 	public int getPlayerRank(Player player, long start) {
 
 		int rank = 0;
+		String query;
+		if (start == 0L) {
+			// We consider all the achievements; no date comparison.
+			query = "SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + tablePrefix
+					+ "achievements GROUP BY playername) AS achGroupedByPlayer WHERE number > (SELECT COUNT(*) FROM "
+					+ tablePrefix + "achievements WHERE playername = ?)";
+		} else {
+			// We only consider achievement received after the start date; do date comparisons.
+			query = "SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + tablePrefix
+					+ "achievements WHERE date > ? GROUP BY playername) AS achGroupedByPlayer WHERE number > (SELECT COUNT(*) FROM "
+					+ tablePrefix + "achievements WHERE playername = ? AND date > ?)";
+		}
+
 		Connection conn = getSQLConnection();
-		// PreparedStatement used to easily set date in query regardless of the database type.
-		PreparedStatement prep = null;
-		try {
+		try (PreparedStatement prep = conn.prepareStatement(query)) {
 			if (start == 0L) {
-				// We consider all the achievements; no date comparison.
-				prep = conn.prepareStatement("SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + tablePrefix
-						+ "achievements GROUP BY playername) AS achGroupedByPlayer WHERE number > (SELECT COUNT(*) FROM "
-						+ tablePrefix + "achievements WHERE playername = ?)");
 				prep.setString(1, player.getUniqueId().toString());
 			} else {
-				// We only consider achievement received after the start date; do date comparisons.
-				prep = conn.prepareStatement("SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + tablePrefix
-						+ "achievements WHERE date > ? GROUP BY playername) AS achGroupedByPlayer WHERE number > (SELECT COUNT(*) FROM "
-						+ tablePrefix + "achievements WHERE playername = ? AND date > ?)");
 				prep.setDate(1, new java.sql.Date(start));
 				prep.setString(2, player.getUniqueId().toString());
 				prep.setDate(3, new java.sql.Date(start));
@@ -720,13 +714,6 @@ public class SQLDatabaseManager {
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while retrieving player rank: " + e);
-		} finally {
-			try {
-				if (prep != null)
-					prep.close();
-			} catch (SQLException e) {
-				plugin.getLogger().severe("SQL error while retrieving player rank: " + e);
-			}
 		}
 		return rank;
 	}
@@ -768,38 +755,28 @@ public class SQLDatabaseManager {
 	 */
 	private void registerAchievementToDB(String achievement, String desc, String name) {
 
+		String query;
+		if (databaseType == POSTGRESQL) {
+			// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
+			// available for PostgreSQL 9.5+.
+			query = "INSERT INTO " + tablePrefix
+					+ "achievements VALUES (?,?,?,?) ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)";
+		} else {
+			query = "REPLACE INTO " + tablePrefix + "achievements VALUES (?,?,?,?)";
+		}
 		Connection conn = getSQLConnection();
-		// PreparedStatement used to easily set date in query regardless of the database type.
-		PreparedStatement prep = null;
-		try {
+		try (PreparedStatement prep = conn.prepareStatement(query)) {
+			prep.setString(1, name);
+			prep.setString(2, achievement);
+			prep.setString(3, desc);
+			prep.setDate(4, new java.sql.Date(new java.util.Date().getTime()));
 			if (databaseType == POSTGRESQL) {
-				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
-				// available for PostgreSQL 9.5+.
-				prep = conn.prepareStatement("INSERT INTO " + tablePrefix
-						+ "achievements VALUES (?,?,?,?) ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)");
-				prep.setString(1, name);
-				prep.setString(2, achievement);
-				prep.setString(3, desc);
-				prep.setDate(4, new java.sql.Date(new java.util.Date().getTime()));
 				prep.setString(5, desc);
 				prep.setDate(6, new java.sql.Date(new java.util.Date().getTime()));
-			} else {
-				prep = conn.prepareStatement("REPLACE INTO " + tablePrefix + "achievements VALUES (?,?,?,?)");
-				prep.setString(1, name);
-				prep.setString(2, achievement);
-				prep.setString(3, desc);
-				prep.setDate(4, new java.sql.Date(new java.util.Date().getTime()));
 			}
 			prep.execute();
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while registering achievement: " + e);
-		} finally {
-			try {
-				if (prep != null)
-					prep.close();
-			} catch (SQLException e) {
-				plugin.getLogger().severe("SQL error while registering achievement: " + e);
-			}
 		}
 	}
 
@@ -813,23 +790,28 @@ public class SQLDatabaseManager {
 	public boolean hasPlayerAchievement(Player player, String name) {
 
 		boolean result = false;
+		String query;
+		if (name.contains("'")) {
+			// We check for names with single quotes, but also two single quotes. This is due to a bug in versions
+			// 3.0 to 3.0.2 where names containing single quotes were inserted with two single quotes in the
+			// database.
+			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
+					+ player.getUniqueId() + "' AND (achievement = ? OR achievement = ?)";
+		} else {
+			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
+					+ player.getUniqueId() + "' AND achievement = ?";
+		}
+
 		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
+		try (PreparedStatement prep = conn.prepareStatement(query)) {
 			if (name.contains("'")) {
-				// We simply double apostrophes to avoid breaking the query.
-				String dbName = name.replace("'", "''");
-				// We check for names with single quotes, but also two single quotes. This is due to a bug in versions
-				// 3.0 to 3.0.2 where names containing single quotes were inserted with two single quotes in the
-				// database.
-				if (st.executeQuery("SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
-						+ player.getUniqueId() + "' AND (achievement = '" + dbName + "' OR achievement = '"
-						+ dbName.replace("'", "''") + "')").next())
-					result = true;
+				prep.setString(1, name);
+				prep.setString(2, name.replace("'", "''"));
 			} else {
-				if (st.executeQuery("SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
-						+ player.getUniqueId() + "' AND achievement = '" + name + "'").next())
-					result = true;
+				prep.setString(1, name);
 			}
+			if (prep.executeQuery().next())
+				result = true;
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while checking achievement: " + e);
 		}
@@ -870,11 +852,11 @@ public class SQLDatabaseManager {
 	private void deletePlayerAchievementFromDB(final String ach, final String name) {
 
 		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			// We simply double apostrophes to avoid breaking the query.
-			String achWithApostrophes = ach.replace("'", "''");
-			st.execute("DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + name
-					+ "' AND achievement = '" + achWithApostrophes + "'");
+		try (PreparedStatement prep = conn.prepareStatement(
+				"DELETE FROM " + tablePrefix + "achievements WHERE playername = ? AND achievement = ?")) {
+			prep.setString(1, name);
+			prep.setString(2, ach);
+			prep.execute();
 		} catch (SQLException e) {
 			plugin.getLogger().severe("SQL error while deleting achievement: " + e);
 		}

@@ -1,7 +1,7 @@
 package com.hm.achievement.command;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -32,9 +32,9 @@ public class TopCommand {
 	private int totalGlobalPlayers;
 	private int totalWeeklyPlayers;
 	private int totalMonthlyPlayers;
-	private ArrayList<String> globalPlayersTop;
-	private ArrayList<String> weeklyPlayersTop;
-	private ArrayList<String> monthlyPlayersTop;
+	private List<String> globalPlayersTop;
+	private List<String> weeklyPlayersTop;
+	private List<String> monthlyPlayersTop;
 
 	// Caching cooldowns.
 	private long lastTopTime;
