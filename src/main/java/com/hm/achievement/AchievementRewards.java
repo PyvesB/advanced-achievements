@@ -40,31 +40,34 @@ public class AchievementRewards {
 	 */
 	public ItemStack getItemReward(Player player, String ach, int amount) {
 
-		ItemStack item;
+		ItemStack item = null;
 		YamlManager config = plugin.getPluginConfig();
 
-		try {
+		if (config.getKeys(true).contains(ach + ".Reward.Item.Type")) {
 			// Old config syntax (type of item separated in a additional subcategory).
-			if (config.getKeys(true).contains(ach + ".Reward.Item.Type")) {
-				item = new ItemStack(
-						Material.getMaterial(config.getString(ach + ".Reward.Item.Type", "stone").toUpperCase()),
-						amount);
-			} else {
-				// New config syntax. Reward is of the form:
-				// Item: coal 5
-				// The amount has already been parsed out and is provided by parameter amount.
-				String materialNameAndQty = config.getString(ach + ".Reward.Item", "stone");
-				int indexSpace = materialNameAndQty.indexOf(' ');
+			Material rewardMaterial = Material
+					.getMaterial(config.getString(ach + ".Reward.Item.Type", "stone").toUpperCase());
+			if (rewardMaterial != null)
+				item = new ItemStack(rewardMaterial, amount);
+		} else {
+			// New config syntax. Reward is of the form:
+			// Item: coal 5
+			// The amount has already been parsed out and is provided by parameter amount.
+			String materialNameAndQty = config.getString(ach + ".Reward.Item", "stone");
+			int indexSpace = materialNameAndQty.indexOf(' ');
 
-				String materialName;
-				if (indexSpace > 0)
-					materialName = materialNameAndQty.toUpperCase().substring(0, indexSpace);
-				else
-					materialName = materialNameAndQty.toUpperCase();
+			String materialName;
+			if (indexSpace > 0)
+				materialName = materialNameAndQty.toUpperCase().substring(0, indexSpace);
+			else
+				materialName = materialNameAndQty.toUpperCase();
 
-				item = new ItemStack(Material.getMaterial(materialName), amount);
-			}
-		} catch (NullPointerException e) {
+			Material rewardMaterial = Material.getMaterial(materialName);
+			if (rewardMaterial != null)
+				item = new ItemStack(rewardMaterial, amount);
+		}
+
+		if (item == null) {
 			plugin.getLogger().warning("Invalid item reward for achievement \"" + config.getString(ach + ".Name")
 					+ "\". Please specify a valid Material name.");
 			return null;
