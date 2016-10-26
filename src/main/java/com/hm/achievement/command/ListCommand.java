@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
+import com.google.common.primitives.Ints;
 import com.hm.achievement.utils.YamlManager;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
@@ -518,7 +519,7 @@ public class ListCommand {
 		int positionInGUI = 0;
 
 		String previousItemDate = null;
-		int previousItemGoal = 0;
+		Integer previousItemGoal = 0;
 		// Populate the GUI with all of the achievements for the category.
 		for (String ach : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
 
@@ -528,7 +529,7 @@ public class ListCommand {
 
 			// ach is the threshold for obtaining this achievement
 			// Convert it to an integer
-			int currentItemGoal = Integer.parseInt(ach);
+			Integer currentItemGoal = Ints.tryParse(ach);
 
 			String achName = plugin.getPluginConfig().getString(category + '.' + ach + ".Name", "");
 			String displayName = plugin.getPluginConfig().getString(category + '.' + ach + ".DisplayName", "");
@@ -557,7 +558,7 @@ public class ListCommand {
 
 			boolean inelligibleSeriesItem;
 
-			if (statistic < -0.5 || positionInGUI == 0 || date != null || previousItemDate != null) {
+			if (Math.round(statistic) == -1L || positionInGUI == 0 || date != null || previousItemDate != null) {
 				// Commands achievement or
 				// first achievement in the category or
 				// achievement has been completed or
@@ -766,7 +767,7 @@ public class ListCommand {
 		if (date != null) {
 			// Achievement has been received.
 			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 5);
-		} else if (statistic > 0) {
+		} else if (Math.round(statistic) > 0) {
 			// Player is making progress toward the achievement.
 			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 4);
 		} else {
@@ -837,7 +838,7 @@ public class ListCommand {
 		if (date != null) {
 			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + date.replaceAll(REGEX_PATTERN.pattern(), "")));
 			lore.add("");
-		} else if (!obfuscateNotReceived && statistic >= 0) {
+		} else if (!obfuscateNotReceived && Math.round(statistic) >= 0) {
 			StringBuilder barDisplay = new StringBuilder("&7[");
 			// Length of the progress bar; we make it the same size as Goal/Message.
 			int textSize;
