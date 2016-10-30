@@ -163,28 +163,24 @@ public class AchieveQuitListener implements Listener {
 					@Override
 					public void run() {
 
-						// Items must be removed from HashMaps AFTER write to DB has finished. As this is an async task,
+						// Items must be removed from HashMap AFTER write to DB has finished. As this is an async task,
 						// we could end up in a scenario where the player reconnects and data is not yet updated in the
 						// database; in this case, the cached variables will still be valid.
-						Long playTime = plugin.getConnectionListener().getPlayTime().get(playerUUID);
-						Long joinTime = plugin.getConnectionListener().getJoinTime().get(playerUUID);
+						Long playTime = plugin.getAchievePlayTimeRunnable().getPlayTime().get(playerUUID);
 
-						if (playTime != null && joinTime != null)
-							plugin.getDb().updateAndGetPlaytime(playerUUID,
-									playTime + System.currentTimeMillis() - joinTime);
+						if (playTime != null)
+							plugin.getDb().updatePlaytime(playerUUID, playTime);
 
-						plugin.getConnectionListener().getPlayTime().remove(playerUUID);
-						plugin.getConnectionListener().getJoinTime().remove(playerUUID);
+						plugin.getAchievePlayTimeRunnable().getPlayTime().remove(playerUUID);
 					}
 
 				});
 			} else {
 				// Items can be removed from HashMaps directly, as this is done in the main thread of execution.
-				Long playTime = plugin.getConnectionListener().getPlayTime().remove(playerUUID);
-				Long joinTime = plugin.getConnectionListener().getJoinTime().remove(playerUUID);
+				Long playTime = plugin.getAchievePlayTimeRunnable().getPlayTime().remove(playerUUID);
 
-				if (playTime != null && joinTime != null)
-					plugin.getDb().updateAndGetPlaytime(playerUUID, playTime + System.currentTimeMillis() - joinTime);
+				if (playTime != null)
+					plugin.getDb().updatePlaytime(playerUUID, playTime);
 
 			}
 			// Remove player from Multimap cache for PlayedTime achievements.

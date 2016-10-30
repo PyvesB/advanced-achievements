@@ -956,6 +956,29 @@ public class SQLDatabaseManager {
 	}
 
 	/**
+	 * Get the time played by a player in millis.
+	 * 
+	 * @param player
+	 * @param table
+	 * @return statistic
+	 */
+	public long getPlaytime(Player player) {
+
+		long amount = 0;
+		Connection conn = getSQLConnection();
+		try (Statement st = conn.createStatement()) {
+			ResultSet rs = st.executeQuery("SELECT playedtime FROM " + tablePrefix + "playedtime WHERE playername = '"
+					+ player.getUniqueId() + "'");
+			while (rs.next()) {
+				amount = rs.getLong("playedtime");
+			}
+		} catch (SQLException e) {
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving playedtime stats: ", e);
+		}
+		return amount;
+	}
+
+	/**
 	 * Get the amount of a normal achievement statistic.
 	 * 
 	 * @param player
@@ -1090,38 +1113,27 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Update and return player's playtime.
+	 * Updates player's playtime.
 	 * 
 	 * @param name
 	 * @param time
 	 * @return play time statistic
 	 */
-	public long updateAndGetPlaytime(String name, long time) {
+	public void updatePlaytime(String name, long time) {
 
-		long newPlayedTime = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			if (time == 0) {
-				ResultSet rs = st.executeQuery(
-						"SELECT playedtime FROM " + tablePrefix + "playedtime WHERE playername = '" + name + "'");
-				newPlayedTime = 0;
-				while (rs.next()) {
-					newPlayedTime = rs.getLong("playedtime");
-				}
+			if (databaseType == POSTGRESQL) {
+				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
+				// construct, which is available for PostgreSQL 9.5+.
+				st.execute("INSERT INTO " + tablePrefix + "playedtime VALUES ('" + name + "', " + time + ")"
+						+ " ON CONFLICT (playername) DO UPDATE SET (playedtime)=('" + time + "')");
 			} else {
-				if (databaseType == POSTGRESQL) {
-					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
-					// construct, which is available for PostgreSQL 9.5+.
-					st.execute("INSERT INTO " + tablePrefix + "playedtime VALUES ('" + name + "', " + time + ")"
-							+ " ON CONFLICT (playername) DO UPDATE SET (playedtime)=('" + time + "')");
-				} else {
-					st.execute("REPLACE INTO " + tablePrefix + "playedtime VALUES ('" + name + "', " + time + ")");
-				}
+				st.execute("REPLACE INTO " + tablePrefix + "playedtime VALUES ('" + name + "', " + time + ")");
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while handling play time registration: ", e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while handling play time update: ", e);
 		}
-		return newPlayedTime;
 	}
 
 	/**

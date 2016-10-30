@@ -525,7 +525,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			excludedWorldSet.add(world);
 		for (String category : (List<String>) config.getList("DisabledCategories"))
 			disabledCategorySet.add(category);
-		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 150);
+		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 60);
 		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 60);
 		asyncPooledRequestsSender = config.getBoolean("AsyncPooledRequestsSender", true);
@@ -658,9 +658,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Send played time stats to the database, forcing synchronous writes.
 		if (achievePlayTimeRunnable != null)
-			for (Entry<String, Long> entry : connectionListener.getPlayTime().entrySet())
-				this.getDb().updateAndGetPlaytime(entry.getKey(), entry.getValue() + System.currentTimeMillis()
-						- connectionListener.getJoinTime().get(entry.getKey()));
+			for (Entry<String, Long> entry : achievePlayTimeRunnable.getPlayTime().entrySet())
+				this.getDb().updatePlaytime(entry.getKey(), entry.getValue());
 
 		// Send traveled distance stats to the database, forcing synchronous
 		// writes.

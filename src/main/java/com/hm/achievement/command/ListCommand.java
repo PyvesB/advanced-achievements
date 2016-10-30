@@ -405,11 +405,8 @@ public class ListCommand {
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[15];
 				break;
 			case WATCH:
-				statistic = (double) (System.currentTimeMillis()
-						- plugin.getConnectionListener().getJoinTime().getOrDefault(player.getUniqueId().toString(), 0L)
-						+ plugin.getConnectionListener().getPlayTime().getOrDefault(player.getUniqueId().toString(),
-								0L))
-						/ 3600000L;
+				statistic = (double) (plugin.getAchievePlayTimeRunnable().getPlayTime()
+						.getOrDefault(player.getUniqueId().toString(), 0L)) / 3600000L;
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[16];
 				break;
 			case HOPPER:
