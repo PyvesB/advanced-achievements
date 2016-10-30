@@ -59,10 +59,12 @@ BookSeparator: ''
 # Set the format of the achievement name in /aach list (default: '%ICON% %NAME% %ICON%').
 ListAchievementFormat: '%ICON% %NAME% %ICON%'
 
-# Stop stats from increasing when player in creative mode (except Connections).
+# Stop all stats from increasing when player in creative mode, including PlayedTime.
+# Connection achievements will only be handled once a player switches to a non-creative mode.
 RestrictCreative: false
 
-# Stop stats from increasing when player in a specific world (delete the [] before using).
+# Stop all stats from increasing when player in a specific world, including PlayedTime (delete the [] before using).
+# Connection achievements will only be handled once a player enters a non-excluded world.
 ExcludedWorlds: []
 #  - yourWorld1
 #  - yourWorld2
