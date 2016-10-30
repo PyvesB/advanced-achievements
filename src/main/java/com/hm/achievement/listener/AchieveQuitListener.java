@@ -41,6 +41,10 @@ public class AchieveQuitListener implements Listener {
 			for (Integer achievementThreshold : plugin.getXpListener().getAchievementsCache().keySet())
 				plugin.getXpListener().getAchievementsCache().remove(achievementThreshold, playerUUID);
 		}
+
+		// Remove player from HashSet for Connection achievements.
+		if (plugin.getConnectionListener() != null)
+			plugin.getConnectionListener().getPlayersAchieveConnectionRan().remove(playerUUID);
 	}
 
 	/**

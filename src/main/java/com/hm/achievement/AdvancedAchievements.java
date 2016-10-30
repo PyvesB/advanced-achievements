@@ -303,8 +303,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(milkListener, this);
 		}
 
-		if (config.getBoolean("CheckForUpdate", true) || !disabledCategorySet.contains("Connections")
-				|| !disabledCategorySet.contains("PlayedTime")) {
+		if (config.getBoolean("CheckForUpdate", true) || !disabledCategorySet.contains("Connections")) {
 			connectionListener = new AchieveConnectionListener(this);
 			pm.registerEvents(connectionListener, this);
 		}
