@@ -90,7 +90,7 @@ public class AchievePlayTimeRunnable implements Runnable {
 		String uuid = player.getUniqueId().toString();
 
 		Long playedTime = playTime.get(uuid);
-		if (!playTime.containsKey(uuid)) {
+		if (playedTime == null) {
 			playedTime = plugin.getDb().getPlaytime(player);
 		}
 

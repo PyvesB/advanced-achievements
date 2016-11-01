@@ -336,7 +336,7 @@ public class ListCommand {
 	public void createCategoryGUINormal(Material clickedItem, Player player) {
 
 		String category;
-		double statistic;
+		long statistic;
 
 		// Match the item the player clicked on with a category and its database statistic.
 		switch (clickedItem) {
@@ -405,8 +405,8 @@ public class ListCommand {
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[15];
 				break;
 			case WATCH:
-				statistic = (double) (plugin.getAchievePlayTimeRunnable().getPlayTime()
-						.getOrDefault(player.getUniqueId().toString(), 0L)) / 3600000L;
+				statistic = plugin.getAchievePlayTimeRunnable().getPlayTime()
+						.getOrDefault(player.getUniqueId().toString(), 0L);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[16];
 				break;
 			case HOPPER:
@@ -472,12 +472,12 @@ public class ListCommand {
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[30];
 				break;
 			case BOOKSHELF:
-				statistic = -1;
+				statistic = -1L;
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[31];
 				break;
 			// Default case can happen on Minecraft 1.9+.
 			default:
-				statistic = -1;
+				statistic = -1L;
 				category = "";
 				break;
 		}
@@ -487,7 +487,7 @@ public class ListCommand {
 			switch (clickedItem) {
 				case ELYTRA:
 					statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding()
-							.getOrDefault(player.getUniqueId(), 0);
+							.getOrDefault(player.getUniqueId().toString(), 0);
 					category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[30];
 					break;
 				case GRASS_PATH:
@@ -496,7 +496,7 @@ public class ListCommand {
 					break;
 				// Default case can not happen.
 				default:
-					statistic = -1;
+					statistic = -1L;
 					category = "";
 					break;
 			}
@@ -555,7 +555,7 @@ public class ListCommand {
 
 			boolean inelligibleSeriesItem;
 
-			if (Math.round(statistic) == -1L || positionInGUI == 0 || date != null || previousItemDate != null) {
+			if (statistic == -1L || positionInGUI == 0 || date != null || previousItemDate != null) {
 				// Commands achievement or
 				// first achievement in the category or
 				// achievement has been completed or
@@ -569,8 +569,12 @@ public class ListCommand {
 					inelligibleSeriesItem = false;
 			}
 
+			boolean playedTime = false;
+			if (clickedItem == Material.WATCH)
+				playedTime = true;
+
 			createGUIItem(inventory, positionInGUI, ach, statistic, nameToShowUser, achMessage, rewards, date,
-					inelligibleSeriesItem);
+					inelligibleSeriesItem, playedTime);
 			positionInGUI++;
 
 			previousItemDate = date;
@@ -594,15 +598,15 @@ public class ListCommand {
 	 * Display the a category GUI, containing all the achievements from a given category. This method is used for
 	 * multiple achievements, in other words those based on sub-categories.
 	 * 
-	 * @param item
+	 * @param clickedItem
 	 * @param player
 	 */
-	public void createCategoryGUIMultiple(Material item, Player player) {
+	public void createCategoryGUIMultiple(Material clickedItem, Player player) {
 
 		String category;
 
 		// Match the item the player clicked on with a category.
-		switch (item) {
+		switch (clickedItem) {
 			case STONE:
 				category = AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[0];
 				break;
@@ -645,7 +649,7 @@ public class ListCommand {
 		for (String section : categoryConfig.getKeys(false)) {
 
 			int statistic;
-			switch (item) {
+			switch (clickedItem) {
 				case STONE:
 					statistic = plugin.getPoolsManager().getPlayerBlockPlaceAmount(player, section);
 					break;
@@ -720,7 +724,7 @@ public class ListCommand {
 				}
 
 				createGUIItem(inventory, positionInGUI, level, statistic, nameToShowUser, achMessage, rewards, date,
-						inelligibleSeriesItem);
+						inelligibleSeriesItem, false);
 				positionInGUI++;
 
 				previousItemDate = date;
@@ -754,17 +758,16 @@ public class ListCommand {
 	 * @param date
 	 * @param inelligibleSeriesItem
 	 */
-	private void createGUIItem(Inventory inventory, int positionInGUI, String level, double statistic, String achName,
-			String achMessage, List<String> rewards, String date, boolean inelligibleSeriesItem) {
+	private void createGUIItem(Inventory inventory, int positionInGUI, String level, long statistic, String achName,
+			String achMessage, List<String> rewards, String date, boolean inelligibleSeriesItem, boolean playedTime) {
 
 		// Display a clay block in the GUI, with a color depending on whether it was received or not, or whether
-		// progress was
-		// started.
+		// progress was started.
 		ItemStack achItem;
 		if (date != null) {
 			// Achievement has been received.
 			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 5);
-		} else if (Math.round(statistic) > 0) {
+		} else if (statistic > 0) {
 			// Player is making progress toward the achievement.
 			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 4);
 		} else {
@@ -793,7 +796,8 @@ public class ListCommand {
 									+ achName.replaceAll(REGEX_PATTERN.pattern(), ""))));
 
 		// Build the lore of the item.
-		ArrayList<String> lore = buildLoreString(achMessage, level, rewards, date, statistic, inelligibleSeriesItem);
+		ArrayList<String> lore = buildLoreString(achMessage, level, rewards, date, statistic, inelligibleSeriesItem,
+				playedTime);
 
 		connectionsMeta.setLore(lore);
 		achItem.setItemMeta(connectionsMeta);
@@ -813,7 +817,7 @@ public class ListCommand {
 	 * @return
 	 */
 	private ArrayList<String> buildLoreString(String achMessage, String level, List<String> rewards, String date,
-			double statistic, boolean inelligibleSeriesItem) {
+			long statistic, boolean inelligibleSeriesItem, boolean playedTime) {
 
 		ArrayList<String> lore = new ArrayList<>();
 
@@ -835,7 +839,7 @@ public class ListCommand {
 		if (date != null) {
 			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + date.replaceAll(REGEX_PATTERN.pattern(), "")));
 			lore.add("");
-		} else if (!obfuscateNotReceived && Math.round(statistic) >= 0) {
+		} else if (!obfuscateNotReceived && statistic >= 0) {
 			StringBuilder barDisplay = new StringBuilder("&7[");
 			// Length of the progress bar; we make it the same size as Goal/Message.
 			int textSize;
@@ -845,8 +849,18 @@ public class ListCommand {
 				textSize = FONT.getWidth(achMessage.replaceAll(REGEX_PATTERN.pattern(), ""));
 			else
 				textSize = (achMessage.replaceAll(REGEX_PATTERN.pattern(), "")).length() * 3;
+
+			double statisticDouble;
+			if (playedTime) {
+				// Convert from millis to hours.
+				statisticDouble = statistic / 3600000.0;
+			} else {
+				// Cast to double.
+				statisticDouble = statistic;
+			}
+
 			for (int i = 1; i < textSize / 2; i++) {
-				if (i < ((textSize / 2 - 1) * statistic) / Integer.parseInt(level)) {
+				if (i < ((textSize / 2 - 1) * statisticDouble) / Integer.parseInt(level)) {
 					barDisplay.append(plugin.getColor()).append('|');
 				} else {
 					barDisplay.append("&8|");
