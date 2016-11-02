@@ -34,12 +34,12 @@ public class AchieveDistanceRunnable implements Runnable {
 	// Multimaps corresponding to the players who have received specific distance achievements.
 	// Each key in the multimap corresponds to one achievement threshold, and has its associated player Set.
 	// Used as pseudo-caching system to reduce load on database as distances are monitored on a regular basis.
-	HashMultimap<Integer, String> footAchievementsCache;
-	HashMultimap<Integer, String> horseAchievementsCache;
-	HashMultimap<Integer, String> pigAchievementsCache;
-	HashMultimap<Integer, String> minecartAchievementsCache;
-	HashMultimap<Integer, String> boatAchievementsCache;
-	HashMultimap<Integer, String> glidingAchievementsCache;
+	private HashMultimap<Integer, String> footAchievementsCache;
+	private HashMultimap<Integer, String> horseAchievementsCache;
+	private HashMultimap<Integer, String> pigAchievementsCache;
+	private HashMultimap<Integer, String> minecartAchievementsCache;
+	private HashMultimap<Integer, String> boatAchievementsCache;
+	private HashMultimap<Integer, String> glidingAchievementsCache;
 
 	private HashMap<String, Location> playerLocations;
 

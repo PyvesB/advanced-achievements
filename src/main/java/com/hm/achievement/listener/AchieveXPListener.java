@@ -27,7 +27,7 @@ public class AchieveXPListener implements Listener {
 	// Used as pseudo-caching system to reduce load on database as we cannot rely on the fact that each unique integer
 	// value will be reached for this achievement, and we can therefore not give the achievement when a precise value is
 	// met; we have to do threshold comparisons, which require extra reads from the database.
-	HashMultimap<Integer, String> achievementsCache;
+	private HashMultimap<Integer, String> achievementsCache;
 
 	public AchieveXPListener(AdvancedAchievements plugin) {
 

@@ -24,7 +24,7 @@ public class AchievePlayTimeRunnable implements Runnable {
 	// Multimaps corresponding to the players who have received played time achievements.
 	// Each key in the multimap corresponds to one achievement threshold, and has its associated player Set.
 	// Used as pseudo-caching system to reduce load on database as times are monitored on a regular basis.
-	HashMultimap<Integer, String> achievementsCache;
+	private HashMultimap<Integer, String> achievementsCache;
 
 	public AchievePlayTimeRunnable(AdvancedAchievements plugin) {
 
