@@ -29,8 +29,8 @@ public class AchieveQuitListener implements Listener {
 		final String playerUUID = event.getPlayer().getUniqueId().toString();
 
 		// Clean cooldown HashMaps for book and list commands.
-		plugin.getAchievementBookCommand().getPlayers().remove(event.getPlayer());
-		plugin.getAchievementListCommand().getPlayers().remove(event.getPlayer());
+		plugin.getAchievementBookCommand().getPlayers().remove(playerUUID);
+		plugin.getAchievementListCommand().getPlayers().remove(playerUUID);
 
 		processAndCleanDistances(event, playerUUID);
 
@@ -58,7 +58,8 @@ public class AchieveQuitListener implements Listener {
 
 		// Remove player from Multimap caches for distance achievements.
 		if (plugin.getAchieveDistanceRunnable() != null
-				&& plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(event.getPlayer()) != null) {
+				&& plugin.getAchieveDistanceRunnable().getPlayerLocations()
+						.remove(playerUUID) != null) {
 			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getFootAchievementsCache().keySet())
 				plugin.getAchieveDistanceRunnable().getFootAchievementsCache().remove(achievementThreshold, playerUUID);
 			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getHorseAchievementsCache()

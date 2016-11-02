@@ -35,7 +35,7 @@ public class BookCommand {
 	private int version;
 
 	// Corresponds to times at which players have received their books. Cooldown structure.
-	private HashMap<Player, Long> players;
+	private HashMap<String, Long> players;
 
 	public BookCommand(AdvancedAchievements plugin) {
 
@@ -107,11 +107,12 @@ public class BookCommand {
 			return true;
 		long currentTime = System.currentTimeMillis();
 		long lastBookTime = 0;
-		if (players.containsKey(player))
-			lastBookTime = players.get(player);
+		String uuid = player.getUniqueId().toString();
+		if (players.containsKey(uuid))
+			lastBookTime = players.get(uuid);
 		if (currentTime - lastBookTime < bookTime)
 			return false;
-		players.put(player, currentTime);
+		players.put(uuid, currentTime);
 		return true;
 	}
 
@@ -164,7 +165,7 @@ public class BookCommand {
 	 * 
 	 * @return book cooldown structure
 	 */
-	public Map<Player, Long> getPlayers() {
+	public Map<String, Long> getPlayers() {
 
 		return players;
 	}

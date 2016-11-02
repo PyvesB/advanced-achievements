@@ -39,7 +39,7 @@ public class ListCommand {
 	private int version;
 
 	// Corresponds to times at which players have entered list commands. Cooldown structure.
-	private HashMap<Player, Long> players;
+	private HashMap<String, Long> players;
 
 	// Array of category names from language file.
 	private String[] normalAchievementCategoryNames;
@@ -318,11 +318,12 @@ public class ListCommand {
 			return true;
 		long currentTime = System.currentTimeMillis();
 		long lastListTime = 0;
-		if (players.containsKey(player))
-			lastListTime = players.get(player);
+		String uuid = player.getUniqueId().toString();
+		if (players.containsKey(uuid))
+			lastListTime = players.get(uuid);
 		if (currentTime - lastListTime < listTime)
 			return false;
-		players.put(player, currentTime);
+		players.put(uuid, currentTime);
 		return true;
 	}
 
@@ -901,7 +902,7 @@ public class ListCommand {
 	 * 
 	 * @return list cooldown structure
 	 */
-	public Map<Player, Long> getPlayers() {
+	public Map<String, Long> getPlayers() {
 
 		return players;
 	}

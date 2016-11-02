@@ -30,7 +30,8 @@ public class AchieveTeleportRespawnListener implements Listener {
 
 		// Update location of player if he respawns after dying.
 		if (plugin.getAchieveDistanceRunnable() != null)
-			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer(), event.getRespawnLocation());
+			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer().getUniqueId().toString(),
+					event.getRespawnLocation());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -45,7 +46,8 @@ public class AchieveTeleportRespawnListener implements Listener {
 
 		// Update location of player if he teleports somewhere else.
 		if (plugin.getAchieveDistanceRunnable() != null)
-			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer(), event.getTo());
+			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer().getUniqueId().toString(),
+					event.getTo());
 
 		if (event.getCause() != PlayerTeleportEvent.TeleportCause.ENDER_PEARL
 				|| plugin.getDisabledCategorySet().contains("EnderPearls"))

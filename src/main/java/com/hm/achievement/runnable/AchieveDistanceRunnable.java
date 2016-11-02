@@ -41,7 +41,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	HashMultimap<Integer, String> boatAchievementsCache;
 	HashMultimap<Integer, String> glidingAchievementsCache;
 
-	private HashMap<Player, Location> playerLocations;
+	private HashMap<String, Location> playerLocations;
 
 	// Minecraft version to deal with gliding.
 	private int version;
@@ -90,12 +90,14 @@ public class AchieveDistanceRunnable implements Runnable {
 	 */
 	public void refreshDistance(Player player) {
 
-		Location previousLocation = playerLocations.get(player);
+		String uuid = player.getUniqueId().toString();
+
+		Location previousLocation = playerLocations.get(uuid);
 
 		// If player location not found, add it in table. If player has changed world, ignore previous location.
 		// Evaluating distance would give an exception.
 		if (previousLocation == null || !previousLocation.getWorld().getName().equals(player.getWorld().getName())) {
-			playerLocations.put(player, player.getLocation());
+			playerLocations.put(uuid, player.getLocation());
 			return;
 		}
 
@@ -153,7 +155,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		}
 
 		if (updateLocation)
-			playerLocations.put(player, player.getLocation());
+			playerLocations.put(uuid, player.getLocation());
 	}
 
 	/**
@@ -253,7 +255,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		return achievementsCache;
 	}
 
-	public Map<Player, Location> getPlayerLocations() {
+	public Map<String, Location> getPlayerLocations() {
 
 		return playerLocations;
 	}
