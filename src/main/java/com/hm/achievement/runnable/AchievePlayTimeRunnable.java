@@ -1,9 +1,6 @@
 package com.hm.achievement.runnable;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -22,8 +19,6 @@ public class AchievePlayTimeRunnable implements Runnable {
 
 	private AdvancedAchievements plugin;
 
-	private Map<String, Long> playTime;
-
 	private long previousRunMillis;
 
 	// Multimaps corresponding to the players who have received played time achievements.
@@ -34,11 +29,6 @@ public class AchievePlayTimeRunnable implements Runnable {
 	public AchievePlayTimeRunnable(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-
-		if (plugin.isAsyncPooledRequestsSender())
-			playTime = new ConcurrentHashMap<>();
-		else
-			playTime = new HashMap<>();
 
 		extractAchievementsFromConfig();
 		
@@ -89,14 +79,14 @@ public class AchievePlayTimeRunnable implements Runnable {
 
 		String uuid = player.getUniqueId().toString();
 
-		Long playedTime = playTime.get(uuid);
+		Long playedTime = plugin.getPoolsManager().getPlayedTimeHashMap().get(uuid);
 		if (playedTime == null) {
 			playedTime = plugin.getDb().getPlaytime(player);
 		}
 
 		playedTime += System.currentTimeMillis() - previousRunMillis;
 
-		playTime.put(uuid, playedTime);
+		plugin.getPoolsManager().getPlayedTimeHashMap().put(uuid, playedTime);
 
 		// Iterate through all the different achievements.
 		for (Integer achievementThreshold : achievementsCache.keySet()) {
@@ -123,16 +113,6 @@ public class AchievePlayTimeRunnable implements Runnable {
 	public HashMultimap<Integer, String> getAchievementsCache() {
 
 		return achievementsCache;
-	}
-
-	/**
-	 * Retrieve map containing the time played by each player.
-	 * 
-	 * @return playTime map
-	 */
-	public Map<String, Long> getPlayTime() {
-
-		return playTime;
 	}
 
 }

@@ -3,9 +3,7 @@ package com.hm.achievement.runnable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-import com.hm.achievement.utils.YamlManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -19,6 +17,7 @@ import org.bukkit.util.NumberConversions;
 import com.google.common.collect.HashMultimap;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
+import com.hm.achievement.utils.YamlManager;
 
 /**
  * Class used to monitor distances travelled by players for the different available categories.
@@ -42,13 +41,6 @@ public class AchieveDistanceRunnable implements Runnable {
 	HashMultimap<Integer, String> boatAchievementsCache;
 	HashMultimap<Integer, String> glidingAchievementsCache;
 
-	// HashMaps containing distance statistics for each player.
-	private Map<String, Integer> distancesFoot;
-	private Map<String, Integer> distancesHorse;
-	private Map<String, Integer> distancesPig;
-	private Map<String, Integer> distancesBoat;
-	private Map<String, Integer> distancesMinecart;
-	private Map<String, Integer> distancesGliding;
 	private HashMap<Player, Location> playerLocations;
 
 	// Minecraft version to deal with gliding.
@@ -62,21 +54,6 @@ public class AchieveDistanceRunnable implements Runnable {
 		// Minecraft versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 
-		if (plugin.isAsyncPooledRequestsSender()) {
-			distancesFoot = new ConcurrentHashMap<>();
-			distancesHorse = new ConcurrentHashMap<>();
-			distancesPig = new ConcurrentHashMap<>();
-			distancesBoat = new ConcurrentHashMap<>();
-			distancesMinecart = new ConcurrentHashMap<>();
-			distancesGliding = new ConcurrentHashMap<>();
-		} else {
-			distancesFoot = new HashMap<>();
-			distancesHorse = new HashMap<>();
-			distancesPig = new HashMap<>();
-			distancesBoat = new HashMap<>();
-			distancesMinecart = new HashMap<>();
-			distancesGliding = new HashMap<>();
-		}
 		playerLocations = new HashMap<>();
 
 		extractAchievementsFromConfig();
@@ -139,39 +116,40 @@ public class AchieveDistanceRunnable implements Runnable {
 			if (player.getVehicle() instanceof Horse && player.hasPermission("achievement.count.distancehorse")
 					&& !plugin.getDisabledCategorySet().contains("DistanceHorse")) {
 
-				updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesHorse, "DistanceHorse",
-						horseAchievementsCache);
+				updateLocation = updateDistanceAndCheckAchievements(difference, player,
+						plugin.getPoolsManager().getDistanceHorseHashMap(), "DistanceHorse", horseAchievementsCache);
 
 			} else if (player.getVehicle() instanceof Pig && player.hasPermission("achievement.count.distancepig")
 					&& !plugin.getDisabledCategorySet().contains("DistancePig")) {
 
-				updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesPig, "DistancePig",
-						pigAchievementsCache);
+				updateLocation = updateDistanceAndCheckAchievements(difference, player,
+						plugin.getPoolsManager().getDistancePigHashMap(), "DistancePig", pigAchievementsCache);
 
 			} else if (player.getVehicle() instanceof Minecart
 					&& player.hasPermission("achievement.count.distanceminecart")
 					&& !plugin.getDisabledCategorySet().contains("DistanceMinecart")) {
 
-				updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesMinecart,
-						"DistanceMinecart", minecartAchievementsCache);
+				updateLocation = updateDistanceAndCheckAchievements(difference, player,
+						plugin.getPoolsManager().getDistanceMinecartHashMap(), "DistanceMinecart",
+						minecartAchievementsCache);
 
 			} else if (player.getVehicle() instanceof Boat && player.hasPermission("achievement.count.distanceboat")
 					&& !plugin.getDisabledCategorySet().contains("DistanceBoat")) {
 
-				updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesBoat, "DistanceBoat",
-						boatAchievementsCache);
+				updateLocation = updateDistanceAndCheckAchievements(difference, player,
+						plugin.getPoolsManager().getDistanceBoatHashMap(), "DistanceBoat", boatAchievementsCache);
 			}
 		} else if (player.hasPermission("achievement.count.distancefoot") && !player.isFlying()
 				&& (version < 9 || !player.isGliding()) && !plugin.getDisabledCategorySet().contains("DistanceFoot")) {
 
-			updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesFoot, "DistanceFoot",
-					footAchievementsCache);
+			updateLocation = updateDistanceAndCheckAchievements(difference, player,
+					plugin.getPoolsManager().getDistanceFootHashMap(), "DistanceFoot", footAchievementsCache);
 
 		} else if (player.hasPermission("achievement.count.distancegliding") && version >= 9 && player.isGliding()
 				&& !plugin.getDisabledCategorySet().contains("DistanceGliding")) {
 
-			updateLocation = updateDistanceAndCheckAchievements(difference, player, distancesGliding, "DistanceGliding",
-					glidingAchievementsCache);
+			updateLocation = updateDistanceAndCheckAchievements(difference, player,
+					plugin.getPoolsManager().getDistanceGlidingHashMap(), "DistanceGliding", glidingAchievementsCache);
 		}
 
 		if (updateLocation)
@@ -233,7 +211,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		Integer distance = distances.get(uuid);
 		// Distance didn't previously exist in the cache; retrieve it from the database and return.
 		if (distance == null) {
-			distances.put(uuid, plugin.getDb().updateAndGetDistance(uuid, 0, achievementKeyName.toLowerCase()));
+			distances.put(uuid, plugin.getDb().getNormalAchievementAmount(player, achievementKeyName.toLowerCase()));
 			return false;
 		}
 
@@ -273,36 +251,6 @@ public class AchieveDistanceRunnable implements Runnable {
 			achievementsCache.put(Integer.valueOf(distance), null);
 
 		return achievementsCache;
-	}
-
-	public Map<String, Integer> getAchievementDistancesFoot() {
-
-		return distancesFoot;
-	}
-
-	public Map<String, Integer> getAchievementDistancesHorse() {
-
-		return distancesHorse;
-	}
-
-	public Map<String, Integer> getAchievementDistancesPig() {
-
-		return distancesPig;
-	}
-
-	public Map<String, Integer> getAchievementDistancesMinecart() {
-
-		return distancesMinecart;
-	}
-
-	public Map<String, Integer> getAchievementDistancesBoat() {
-
-		return distancesBoat;
-	}
-
-	public Map<String, Integer> getAchievementDistancesGliding() {
-
-		return distancesGliding;
 	}
 
 	public Map<Player, Location> getPlayerLocations() {

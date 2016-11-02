@@ -203,7 +203,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		long startTime = System.currentTimeMillis();
 
 		configurationLoad(true);
-		
+
 		// Error while loading .yml files; do not do any further work.
 		if (overrideDisable) {
 			overrideDisable = false;
@@ -657,29 +657,29 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Send played time stats to the database, forcing synchronous writes.
 		if (achievePlayTimeRunnable != null)
-			for (Entry<String, Long> entry : achievePlayTimeRunnable.getPlayTime().entrySet())
+			for (Entry<String, Long> entry : poolsManager.getPlayedTimeHashMap().entrySet())
 				this.getDb().updatePlaytime(entry.getKey(), entry.getValue());
 
 		// Send traveled distance stats to the database, forcing synchronous
 		// writes.
 		if (achieveDistanceRunnable != null) {
-			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesFoot().entrySet())
-				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distancefoot");
+			for (Entry<String, Integer> entry : poolsManager.getDistanceFootHashMap().entrySet())
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distancefoot");
 
-			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesPig().entrySet())
-				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distancepig");
+			for (Entry<String, Integer> entry : poolsManager.getDistancePigHashMap().entrySet())
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distancepig");
 
-			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesHorse().entrySet())
-				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distancehorse");
+			for (Entry<String, Integer> entry : poolsManager.getDistanceHorseHashMap().entrySet())
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distancehorse");
 
-			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesBoat().entrySet())
-				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distanceboat");
+			for (Entry<String, Integer> entry : poolsManager.getDistanceBoatHashMap().entrySet())
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distanceboat");
 
-			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesMinecart().entrySet())
-				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distanceminecart");
+			for (Entry<String, Integer> entry : poolsManager.getDistanceMinecartHashMap().entrySet())
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distanceminecart");
 
-			for (Entry<String, Integer> entry : achieveDistanceRunnable.getAchievementDistancesGliding().entrySet())
-				this.getDb().updateAndGetDistance(entry.getKey(), entry.getValue(), "distancegliding");
+			for (Entry<String, Integer> entry : poolsManager.getDistanceGlidingHashMap().entrySet())
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distancegliding");
 		}
 
 		try {

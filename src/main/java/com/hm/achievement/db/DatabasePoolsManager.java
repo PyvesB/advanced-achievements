@@ -43,6 +43,13 @@ public class DatabasePoolsManager {
 	private Map<String, Integer> fireworkHashMap;
 	private Map<String, Integer> musicDiscHashMap;
 	private Map<String, Integer> enderPearlHashMap;
+	private Map<String, Integer> distanceFootHashMap;
+	private Map<String, Integer> distanceHorseHashMap;
+	private Map<String, Integer> distancePigHashMap;
+	private Map<String, Integer> distanceBoatHashMap;
+	private Map<String, Integer> distanceMinecartHashMap;
+	private Map<String, Integer> distanceGlidingHashMap;
+	private Map<String, Long> playTimeHashMap;
 
 	// Statistics of the different players for multiple achievements; keys correspond to concatenated UUIDs and
 	// block/entity identifiers.
@@ -88,6 +95,13 @@ public class DatabasePoolsManager {
 			blockBreakHashMap = new ConcurrentHashMap<>();
 			killHashMap = new ConcurrentHashMap<>();
 			craftHashMap = new ConcurrentHashMap<>();
+			distanceFootHashMap = new ConcurrentHashMap<>();
+			distanceHorseHashMap = new ConcurrentHashMap<>();
+			distancePigHashMap = new ConcurrentHashMap<>();
+			distanceBoatHashMap = new ConcurrentHashMap<>();
+			distanceMinecartHashMap = new ConcurrentHashMap<>();
+			distanceGlidingHashMap = new ConcurrentHashMap<>();
+			playTimeHashMap = new ConcurrentHashMap<>();
 		} else {
 			deathHashMap = new HashMap<>();
 			arrowHashMap = new HashMap<>();
@@ -116,6 +130,13 @@ public class DatabasePoolsManager {
 			blockBreakHashMap = new HashMap<>();
 			killHashMap = new HashMap<>();
 			craftHashMap = new HashMap<>();
+			distanceFootHashMap = new HashMap<>();
+			distanceHorseHashMap = new HashMap<>();
+			distancePigHashMap = new HashMap<>();
+			distanceBoatHashMap = new HashMap<>();
+			distanceMinecartHashMap = new HashMap<>();
+			distanceGlidingHashMap = new HashMap<>();
+			playTimeHashMap = new HashMap<>();
 		}
 	}
 
@@ -497,6 +518,104 @@ public class DatabasePoolsManager {
 		Integer amount = craftHashMap.get(player.getUniqueId().toString() + craftName);
 		if (amount == null)
 			return plugin.getDb().getCrafts(player, craftName);
+		else
+			return amount;
+	}
+	
+	public Map<String, Integer> getDistanceFootHashMap() {
+
+		return distanceFootHashMap;
+	}
+	
+	public int getPlayerDistanceFootAmount(Player player) {
+
+		Integer amount = distanceFootHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
+			return plugin.getDb().getNormalAchievementAmount(player, "distancefoot");
+		else
+			return amount;
+	}
+
+	public Map<String, Integer> getDistanceHorseHashMap() {
+
+		return distanceHorseHashMap;
+	}
+	
+	public int getPlayerDistanceHorseAmount(Player player) {
+
+		Integer amount = distanceHorseHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
+			return plugin.getDb().getNormalAchievementAmount(player, "distancehorse");
+		else
+			return amount;
+	}
+
+	public Map<String, Integer> getDistancePigHashMap() {
+
+		return distancePigHashMap;
+	}
+	
+	public int getPlayerDistancePigAmount(Player player) {
+
+		Integer amount = distancePigHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
+			return plugin.getDb().getNormalAchievementAmount(player, "distancepig");
+		else
+			return amount;
+	}
+
+	public Map<String, Integer> getDistanceMinecartHashMap() {
+
+		return distanceMinecartHashMap;
+	}
+	
+	public int getPlayerDistanceMinecartAmount(Player player) {
+
+		Integer amount = distanceMinecartHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
+			return plugin.getDb().getNormalAchievementAmount(player, "distanceminecart");
+		else
+			return amount;
+	}
+
+	public Map<String, Integer> getDistanceBoatHashMap() {
+
+		return distanceBoatHashMap;
+	}
+	
+	public int getPlayerDistanceBoatAmount(Player player) {
+
+		Integer amount = distanceBoatHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
+			return plugin.getDb().getNormalAchievementAmount(player, "distanceboat");
+		else
+			return amount;
+	}
+
+	public Map<String, Integer> getDistanceGlidingHashMap() {
+
+		return distanceGlidingHashMap;
+	}
+	
+	public int getPlayerDistanceGlidingAmount(Player player) {
+
+		Integer amount = distanceGlidingHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
+			return plugin.getDb().getNormalAchievementAmount(player, "distancegliding");
+		else
+			return amount;
+	}
+
+	public Map<String, Long> getPlayedTimeHashMap() {
+
+		return playTimeHashMap;
+	}
+
+	public long getPlayerPlayTimeAmount(Player player) {
+
+		Long amount = playTimeHashMap.get(player.getUniqueId().toString());
+		if (amount == null)
+			return plugin.getDb().getPlaytime(player);
 		else
 			return amount;
 	}

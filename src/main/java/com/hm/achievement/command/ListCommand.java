@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Strings;
-import com.google.common.primitives.Ints;
-import com.hm.achievement.utils.YamlManager;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,8 +17,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MinecraftFont;
 
+import com.google.common.base.Strings;
+import com.google.common.primitives.Ints;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
+import com.hm.achievement.utils.YamlManager;
 
 /**
  * Class in charge of handling the /aach list command, which displays interactive GUIs.
@@ -405,8 +405,7 @@ public class ListCommand {
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[15];
 				break;
 			case WATCH:
-				statistic = plugin.getAchievePlayTimeRunnable().getPlayTime()
-						.getOrDefault(player.getUniqueId().toString(), 0L);
+				statistic = plugin.getPoolsManager().getPlayerPlayTimeAmount(player);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[16];
 				break;
 			case HOPPER:
@@ -442,33 +441,27 @@ public class ListCommand {
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[24];
 				break;
 			case LEATHER_BOOTS:
-				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesFoot()
-						.getOrDefault(player.getUniqueId().toString(), 0);
+				statistic = plugin.getPoolsManager().getPlayerDistanceFootAmount(player);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[25];
 				break;
 			case CARROT_STICK:
-				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesPig()
-						.getOrDefault(player.getUniqueId().toString(), 0);
+				statistic = plugin.getPoolsManager().getPlayerDistancePigAmount(player);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[26];
 				break;
 			case SADDLE:
-				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesHorse()
-						.getOrDefault(player.getUniqueId().toString(), 0);
+				statistic = plugin.getPoolsManager().getPlayerDistanceHorseAmount(player);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[27];
 				break;
 			case MINECART:
-				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesMinecart()
-						.getOrDefault(player.getUniqueId().toString(), 0);
+				statistic = plugin.getPoolsManager().getPlayerDistanceMinecartAmount(player);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[28];
 				break;
 			case BOAT:
-				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesBoat()
-						.getOrDefault(player.getUniqueId().toString(), 0);
+				statistic = plugin.getPoolsManager().getPlayerDistanceBoatAmount(player);
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[29];
 				break;
 			case BEDROCK:
-				statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding()
-						.getOrDefault(player.getUniqueId().toString(), 0);
+				statistic = 0L;
 				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[30];
 				break;
 			case BOOKSHELF:
@@ -486,8 +479,7 @@ public class ListCommand {
 		if ("".equals(category) && version >= 9) {
 			switch (clickedItem) {
 				case ELYTRA:
-					statistic = plugin.getAchieveDistanceRunnable().getAchievementDistancesGliding()
-							.getOrDefault(player.getUniqueId().toString(), 0);
+					statistic = plugin.getPoolsManager().getPlayerDistanceGlidingAmount(player);
 					category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[30];
 					break;
 				case GRASS_PATH:

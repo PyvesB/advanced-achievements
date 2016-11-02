@@ -18,10 +18,10 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Strings;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Strings;
 import com.hm.achievement.AdvancedAchievements;
 
 /**
@@ -1137,40 +1137,29 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Update and return player's distance for a specific distance type.
+	 * Updates player's distance for a specific distance type.
 	 * 
 	 * @param name
 	 * @param distance
 	 * @param type
 	 * @return distance statistic
 	 */
-	public int updateAndGetDistance(String name, int distance, String type) {
+	public void updateDistance(String name, int distance, String type) {
 
-		int newDistance = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			if (distance == 0) {
-				// Retrieve statistic.
-				ResultSet rs = st.executeQuery(
-						"SELECT " + type + " FROM " + tablePrefix + type + " WHERE playername = '" + name + "'");
-				while (rs.next()) {
-					newDistance = rs.getInt(type);
-				}
+			// Update statistic.
+			if (databaseType == POSTGRESQL) {
+				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
+				// construct, which is available for PostgreSQL 9.5+.
+				st.execute("INSERT INTO " + tablePrefix + type + " VALUES ('" + name + "', " + distance + ")"
+						+ " ON CONFLICT (playername) DO UPDATE SET (" + type + ")=('" + distance + "')");
 			} else {
-				// Update statistic.
-				if (databaseType == POSTGRESQL) {
-					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
-					// construct, which is available for PostgreSQL 9.5+.
-					st.execute("INSERT INTO " + tablePrefix + type + " VALUES ('" + name + "', " + distance + ")"
-							+ " ON CONFLICT (playername) DO UPDATE SET (" + type + ")=('" + distance + "')");
-				} else {
-					st.execute("REPLACE INTO " + tablePrefix + type + " VALUES ('" + name + "', " + distance + ")");
-				}
+				st.execute("REPLACE INTO " + tablePrefix + type + " VALUES ('" + name + "', " + distance + ")");
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while handling " + type + " registration: ", e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while handling " + type + " update: ", e);
 		}
-		return newDistance;
 	}
 
 	public String getTablePrefix() {
