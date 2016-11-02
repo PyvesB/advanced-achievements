@@ -52,6 +52,7 @@ public class ListGUIListener implements Listener {
 		// corresponding to a category item.
 		if (event.getInventory().getItem(0).getType() != Material.STAINED_CLAY
 				&& (event.getCurrentItem().getType() == Material.BARRIER
+						|| event.getCurrentItem().getType() == Material.BEDROCK
 						|| event.getRawSlot() > AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length
 								+ AdvancedAchievements.NORMAL_ACHIEVEMENTS.length - 1
 								- plugin.getDisabledCategorySet().size()))
