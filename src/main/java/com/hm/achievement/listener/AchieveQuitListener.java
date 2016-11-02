@@ -90,34 +90,40 @@ public class AchieveQuitListener implements Listener {
 						// we could end up in a scenario where the player reconnects and data is not yet updated in the
 						// database; in this case, the cached variables will still be valid.
 						Integer distance = plugin.getPoolsManager().getDistanceFootHashMap().get(playerUUID);
-						if (distance != null)
+						if (distance != null) {
 							plugin.getDb().updateDistance(playerUUID, distance, "distancefoot");
-						plugin.getPoolsManager().getDistanceFootHashMap().remove(playerUUID);
+							plugin.getPoolsManager().getDistanceFootHashMap().remove(playerUUID);
+						}
 
 						distance = plugin.getPoolsManager().getDistancePigHashMap().get(playerUUID);
-						if (distance != null)
+						if (distance != null) {
 							plugin.getDb().updateDistance(playerUUID, distance, "distancepig");
-						plugin.getPoolsManager().getDistancePigHashMap().remove(playerUUID);
+							plugin.getPoolsManager().getDistancePigHashMap().remove(playerUUID);
+						}
 
 						distance = plugin.getPoolsManager().getDistanceHorseHashMap().get(playerUUID);
-						if (distance != null)
+						if (distance != null) {
 							plugin.getDb().updateDistance(playerUUID, distance, "distancehorse");
-						plugin.getPoolsManager().getDistanceHorseHashMap().remove(playerUUID);
+							plugin.getPoolsManager().getDistanceHorseHashMap().remove(playerUUID);
+						}
 
 						distance = plugin.getPoolsManager().getDistanceBoatHashMap().get(playerUUID);
-						if (distance != null)
+						if (distance != null) {
 							plugin.getDb().updateDistance(playerUUID, distance, "distanceboat");
-						plugin.getPoolsManager().getDistanceBoatHashMap().remove(playerUUID);
+							plugin.getPoolsManager().getDistanceBoatHashMap().remove(playerUUID);
+						}
 
 						distance = plugin.getPoolsManager().getDistanceMinecartHashMap().get(playerUUID);
-						if (distance != null)
+						if (distance != null) {
 							plugin.getDb().updateDistance(playerUUID, distance, "distanceminecart");
-						plugin.getPoolsManager().getDistanceMinecartHashMap().remove(playerUUID);
+							plugin.getPoolsManager().getDistanceMinecartHashMap().remove(playerUUID);
+						}
 
 						distance = plugin.getPoolsManager().getDistanceGlidingHashMap().get(playerUUID);
-						if (distance != null)
+						if (distance != null) {
 							plugin.getDb().updateDistance(playerUUID, distance, "distancegliding");
-						plugin.getPoolsManager().getDistanceGlidingHashMap().remove(playerUUID);
+							plugin.getPoolsManager().getDistanceGlidingHashMap().remove(playerUUID);
+						}
 					}
 				});
 			} else {
@@ -171,10 +177,10 @@ public class AchieveQuitListener implements Listener {
 						// database; in this case, the cached variables will still be valid.
 						Long playTime = plugin.getPoolsManager().getPlayedTimeHashMap().get(playerUUID);
 
-						if (playTime != null)
+						if (playTime != null) {
 							plugin.getDb().updatePlaytime(playerUUID, playTime);
-
-						plugin.getPoolsManager().getPlayedTimeHashMap().remove(playerUUID);
+							plugin.getPoolsManager().getPlayedTimeHashMap().remove(playerUUID);
+						}
 					}
 
 				});
