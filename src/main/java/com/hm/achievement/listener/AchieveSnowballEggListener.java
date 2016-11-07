@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with Snowballs and Eggs achievements.
@@ -38,19 +39,20 @@ public class AchieveSnowballEggListener implements Listener {
 
 		String configAchievement;
 		if (player.hasPermission("achievement.count.snowballs")
-				&& !plugin.getDisabledCategorySet().contains("Snowballs") && event.getEntity() instanceof Snowball) {
+				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.SNOWBALLS.toString())
+				&& event.getEntity() instanceof Snowball) {
 			int snowballs = plugin.getPoolsManager().getPlayerSnowballAmount(player) + 1;
 
 			plugin.getPoolsManager().getSnowballHashMap().put(player.getUniqueId().toString(), snowballs);
 
-			configAchievement = "Snowballs." + snowballs;
+			configAchievement = NormalAchievements.SNOWBALLS + "." + snowballs;
 		} else if (player.hasPermission("achievement.count.eggs")
-				&& !plugin.getDisabledCategorySet().contains("Eggs")) {
+				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.EGGS.toString())) {
 			int eggs = plugin.getPoolsManager().getPlayerEggAmount(player) + 1;
 
 			plugin.getPoolsManager().getEggHashMap().put(player.getUniqueId().toString(), eggs);
 
-			configAchievement = "Eggs." + eggs;
+			configAchievement = NormalAchievements.EGGS + "." + eggs;
 		} else
 			return;
 

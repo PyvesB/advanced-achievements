@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.google.common.collect.HashMultimap;
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Class used to monitor players' played times.
@@ -31,7 +32,7 @@ public class AchievePlayTimeRunnable implements Runnable {
 		this.plugin = plugin;
 
 		extractAchievementsFromConfig();
-		
+
 		previousRunMillis = System.currentTimeMillis();
 	}
 
@@ -42,7 +43,8 @@ public class AchievePlayTimeRunnable implements Runnable {
 	 */
 	public void extractAchievementsFromConfig() {
 
-		Set<String> configKeys = plugin.getConfig().getConfigurationSection("PlayedTime").getKeys(false);
+		Set<String> configKeys = plugin.getConfig().getConfigurationSection(NormalAchievements.PLAYEDTIME.toString())
+				.getKeys(false);
 
 		achievementsCache = HashMultimap.create(configKeys.size(), 1);
 
@@ -95,13 +97,16 @@ public class AchievePlayTimeRunnable implements Runnable {
 					&& !achievementsCache.get(achievementThreshold).contains(uuid)) {
 				// The cache does not contain information about the reception of the achievement. Query
 				// database.
-				if (!plugin.getDb().hasPlayerAchievement(player,
-						plugin.getPluginConfig().getString("PlayedTime." + achievementThreshold + ".Name"))) {
-					plugin.getAchievementDisplay().displayAchievement(player, "PlayedTime." + achievementThreshold);
+				if (!plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig()
+						.getString(NormalAchievements.PLAYEDTIME + "." + achievementThreshold + ".Name"))) {
+					plugin.getAchievementDisplay().displayAchievement(player,
+							NormalAchievements.PLAYEDTIME + "." + achievementThreshold);
 					plugin.getDb().registerAchievement(player,
-							plugin.getPluginConfig().getString("PlayedTime." + achievementThreshold + ".Name"),
-							plugin.getPluginConfig().getString("PlayedTime." + achievementThreshold + ".Message"));
-					plugin.getReward().checkConfig(player, "PlayedTime." + achievementThreshold);
+							plugin.getPluginConfig()
+									.getString(NormalAchievements.PLAYEDTIME + "." + achievementThreshold + ".Name"),
+							plugin.getPluginConfig().getString(
+									NormalAchievements.PLAYEDTIME + "." + achievementThreshold + ".Message"));
+					plugin.getReward().checkConfig(player, NormalAchievements.PLAYEDTIME + "." + achievementThreshold);
 
 				}
 				// Player has received this achievement.

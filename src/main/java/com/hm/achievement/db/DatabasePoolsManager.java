@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Class used to provide a cache wrapper for the database statistics, in order to reduce load of database and enable
@@ -149,7 +150,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = deathHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "deaths");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.DEATHS.toDBName());
 		else
 			return amount;
 	}
@@ -163,7 +165,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = arrowHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "arrows");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.ARROWS.toDBName());
 		else
 			return amount;
 	}
@@ -177,7 +180,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = snowballHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "snowballs");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.SNOWBALLS.toDBName());
 		else
 			return amount;
 	}
@@ -191,7 +195,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = eggHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "eggs");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.EGGS.toDBName());
 		else
 			return amount;
 	}
@@ -205,7 +210,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = fishHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "fish");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.FISH.toDBName());
 		else
 			return amount;
 	}
@@ -219,7 +225,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = itemBreakHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "itembreaks");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.ITEMBREAKS.toDBName());
 		else
 			return amount;
 	}
@@ -233,7 +240,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = eatenItemHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "eatenitems");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.EATENITEMS.toDBName());
 		else
 			return amount;
 	}
@@ -247,7 +255,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = shearHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "shears");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.SHEARS.toDBName());
 		else
 			return amount;
 	}
@@ -261,7 +270,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = milkHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "milks");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.MILKS.toDBName());
 		else
 			return amount;
 	}
@@ -275,7 +285,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = tradeHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "trades");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.TRADES.toDBName());
 		else
 			return amount;
 	}
@@ -289,7 +300,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = anvilHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "anvils");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.ANVILS.toDBName());
 		else
 			return amount;
 	}
@@ -303,7 +315,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = enchantmentHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "enchantments");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.ENCHANTMENTS.toDBName());
 		else
 			return amount;
 	}
@@ -317,7 +330,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = bedHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "beds");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.BEDS.toDBName());
 		else
 			return amount;
 	}
@@ -331,7 +345,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = xpHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "levels");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.LEVELS.toDBName());
 		else
 			return amount;
 	}
@@ -345,7 +360,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = consumedPotionHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "consumedpotions");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.CONSUMEDPOTIONS.toDBName());
 		else
 			return amount;
 	}
@@ -359,7 +375,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = dropHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "drops");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.DROPS.toDBName());
 		else
 			return amount;
 	}
@@ -373,7 +390,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = hoePlowingHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "hoeplowing");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.HOEPLOWING.toDBName());
 		else
 			return amount;
 	}
@@ -387,7 +405,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = fertiliseHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "fertilising");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.FERTILISING.toDBName());
 		else
 			return amount;
 	}
@@ -401,7 +420,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = tameHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "tames");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.TAMES.toDBName());
 		else
 			return amount;
 	}
@@ -415,7 +435,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = brewingHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "brewing");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.BREWING.toDBName());
 		else
 			return amount;
 	}
@@ -429,7 +450,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = fireworkHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "fireworks");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.FIREWORKS.toDBName());
 		else
 			return amount;
 	}
@@ -443,7 +465,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = musicDiscHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "musicdiscs");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.MUSICDISCS.toDBName());
 		else
 			return amount;
 	}
@@ -457,7 +480,8 @@ public class DatabasePoolsManager {
 
 		Integer amount = enderPearlHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "enderpearls");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.ENDERPEARLS.toDBName());
 		else
 			return amount;
 	}
@@ -521,17 +545,18 @@ public class DatabasePoolsManager {
 		else
 			return amount;
 	}
-	
+
 	public Map<String, Integer> getDistanceFootHashMap() {
 
 		return distanceFootHashMap;
 	}
-	
+
 	public int getPlayerDistanceFootAmount(Player player) {
 
 		Integer amount = distanceFootHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "distancefoot");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.DISTANCEFOOT.toDBName());
 		else
 			return amount;
 	}
@@ -540,12 +565,13 @@ public class DatabasePoolsManager {
 
 		return distanceHorseHashMap;
 	}
-	
+
 	public int getPlayerDistanceHorseAmount(Player player) {
 
 		Integer amount = distanceHorseHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "distancehorse");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.DISTANCEHORSE.toDBName());
 		else
 			return amount;
 	}
@@ -554,12 +580,13 @@ public class DatabasePoolsManager {
 
 		return distancePigHashMap;
 	}
-	
+
 	public int getPlayerDistancePigAmount(Player player) {
 
 		Integer amount = distancePigHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "distancepig");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.DISTANCEPIG.toDBName());
 		else
 			return amount;
 	}
@@ -568,12 +595,13 @@ public class DatabasePoolsManager {
 
 		return distanceMinecartHashMap;
 	}
-	
+
 	public int getPlayerDistanceMinecartAmount(Player player) {
 
 		Integer amount = distanceMinecartHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "distanceminecart");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.DISTANCEMINECART.toDBName());
 		else
 			return amount;
 	}
@@ -582,12 +610,13 @@ public class DatabasePoolsManager {
 
 		return distanceBoatHashMap;
 	}
-	
+
 	public int getPlayerDistanceBoatAmount(Player player) {
 
 		Integer amount = distanceBoatHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "distanceboat");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.DISTANCEBOAT.toDBName());
 		else
 			return amount;
 	}
@@ -596,12 +625,13 @@ public class DatabasePoolsManager {
 
 		return distanceGlidingHashMap;
 	}
-	
+
 	public int getPlayerDistanceGlidingAmount(Player player) {
 
 		Integer amount = distanceGlidingHashMap.get(player.getUniqueId().toString());
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player, "distancegliding");
+			return plugin.getDb().getNormalAchievementAmount(player,
+					NormalAchievements.DISTANCEGLIDING.toDBName());
 		else
 			return amount;
 	}

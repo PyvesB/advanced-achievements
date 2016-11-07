@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.runnable.AchieveConnectionRunnable;
 import com.hm.achievement.utils.UpdateChecker;
 
@@ -51,7 +52,7 @@ public class AchieveConnectionListener implements Listener {
 			player.sendMessage(ChatColor.GRAY + UpdateChecker.BUKKIT_DONWLOAD_URL);
 			player.sendMessage(ChatColor.GRAY + UpdateChecker.SPIGOT_DONWLOAD_URL);
 		}
-		
+
 		scheduleTaskIfAllowed(player);
 	}
 
@@ -86,7 +87,7 @@ public class AchieveConnectionListener implements Listener {
 			return;
 
 		// Schedule delayed task to check if player should receive a Connections achievement.
-		if (!plugin.getDisabledCategorySet().contains("Connections"))
+		if (!plugin.getDisabledCategorySet().contains(NormalAchievements.CONNECTIONS.toString()))
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
 					new AchieveConnectionRunnable(player, plugin), 100);

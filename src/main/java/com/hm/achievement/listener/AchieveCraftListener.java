@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
 
 /**
  * Listener class to deal with Crafts achievements.
@@ -41,12 +42,13 @@ public class AchieveCraftListener implements Listener {
 		ItemStack item = event.getRecipe().getResult();
 		String craftName = item.getType().name().toLowerCase();
 		if (player.hasPermission("achievement.count.crafts." + craftName + "." + item.getDurability())
-				&& plugin.getPluginConfig().isConfigurationSection("Crafts." + craftName + ":" + item.getDurability()))
+				&& plugin.getPluginConfig().isConfigurationSection(
+						MultipleAchievements.CRAFTS + "." + craftName + ":" + item.getDurability()))
 			craftName += ":" + item.getDurability();
 		else {
 			if (!player.hasPermission("achievement.count.crafts." + craftName))
 				return;
-			if (!plugin.getPluginConfig().isConfigurationSection("Crafts." + craftName))
+			if (!plugin.getPluginConfig().isConfigurationSection(MultipleAchievements.CRAFTS + "." + craftName))
 				return;
 		}
 
@@ -69,10 +71,12 @@ public class AchieveCraftListener implements Listener {
 		plugin.getPoolsManager().getCraftHashMap().put(player.getUniqueId().toString() + craftName, times);
 
 		String configAchievement;
-		for (String threshold : plugin.getPluginConfig().getConfigurationSection("Crafts." + craftName).getKeys(false))
-			if (times >= Integer.parseInt(threshold) && !plugin.getDb().hasPlayerAchievement(player,
-					plugin.getPluginConfig().getString("Crafts." + craftName + '.' + threshold + '.' + "Name"))) {
-				configAchievement = "Crafts." + craftName + '.' + threshold;
+		for (String threshold : plugin.getPluginConfig()
+				.getConfigurationSection(MultipleAchievements.CRAFTS + "." + craftName).getKeys(false))
+			if (times >= Integer.parseInt(threshold)
+					&& !plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig().getString(
+							MultipleAchievements.CRAFTS + "." + craftName + '.' + threshold + '.' + "Name"))) {
+				configAchievement = MultipleAchievements.CRAFTS + "." + craftName + '.' + threshold;
 				if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 					plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

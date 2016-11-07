@@ -28,6 +28,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.mcstats.MetricsLite;
 
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.BookCommand;
 import com.hm.achievement.command.CheckCommand;
 import com.hm.achievement.command.DeleteCommand;
@@ -38,8 +40,7 @@ import com.hm.achievement.command.ListCommand;
 import com.hm.achievement.command.StatsCommand;
 import com.hm.achievement.command.TopCommand;
 import com.hm.achievement.db.DatabasePoolsManager;
-import com.hm.achievement.db.PooledRequestsSenderAsync;
-import com.hm.achievement.db.PooledRequestsSenderSync;
+import com.hm.achievement.db.PooledRequestsSender;
 import com.hm.achievement.db.SQLDatabaseManager;
 import com.hm.achievement.listener.AchieveArrowListener;
 import com.hm.achievement.listener.AchieveBedListener;
@@ -146,6 +147,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	// Database related.
 	private final SQLDatabaseManager db;
 	private final DatabasePoolsManager poolsManager;
+	private PooledRequestsSender pooledRequestsSender;
 	private int pooledRequestsTaskInterval;
 	private boolean databaseBackup;
 	private boolean asyncPooledRequestsSender;
@@ -161,14 +163,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private boolean overrideDisable;
 	private int playtimeTaskInterval;
 	private int distanceTaskInterval;
-
-	// Achievement types string arrays; constants.
-	public static final String[] NORMAL_ACHIEVEMENTS = { "Connections", "Deaths", "Arrows", "Snowballs", "Eggs", "Fish",
-			"ItemBreaks", "EatenItems", "Shear", "Milk", "Trades", "AnvilsUsed", "Enchantments", "Beds", "MaxLevel",
-			"ConsumedPotions", "PlayedTime", "ItemDrops", "HoePlowings", "Fertilising", "Taming", "Brewing",
-			"Fireworks", "MusicDiscs", "EnderPearls", "DistanceFoot", "DistancePig", "DistanceHorse",
-			"DistanceMinecart", "DistanceBoat", "DistanceGliding", "Commands" };
-	public static final String[] MULTIPLE_ACHIEVEMENTS = { "Places", "Breaks", "Kills", "Crafts" };
 
 	// Plugin runnable classes.
 	private AchieveDistanceRunnable achieveDistanceRunnable;
@@ -243,120 +237,133 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Register listeners so they can monitor server events; if there are no
 		// config related achievements, listeners aren't registered.
 		PluginManager pm = getServer().getPluginManager();
-		if (!disabledCategorySet.contains("Places")) {
+		if (!disabledCategorySet.contains(MultipleAchievements.PLACES.toString())) {
 			blockPlaceListener = new AchieveBlockPlaceListener(this);
 			pm.registerEvents(blockPlaceListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Breaks")) {
+		if (!disabledCategorySet.contains(MultipleAchievements.BREAKS.toString())) {
 			blockBreakListener = new AchieveBlockBreakListener(this);
 			pm.registerEvents(blockBreakListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Kills")) {
+		if (!disabledCategorySet.contains(MultipleAchievements.KILLS.toString())) {
 			killListener = new AchieveKillListener(this);
 			pm.registerEvents(killListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Crafts")) {
+		if (!disabledCategorySet.contains(MultipleAchievements.CRAFTS.toString())) {
 			craftListener = new AchieveCraftListener(this);
 			pm.registerEvents(craftListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Deaths")) {
+		if (!disabledCategorySet.contains(NormalAchievements.DEATHS.toString())) {
 			deathListener = new AchieveDeathListener(this);
 			pm.registerEvents(deathListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Arrows")) {
+		if (!disabledCategorySet.contains(NormalAchievements.ARROWS.toString())) {
 			arrowListener = new AchieveArrowListener(this);
 			pm.registerEvents(arrowListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Snowballs") || !disabledCategorySet.contains("Eggs")) {
+		if (!disabledCategorySet.contains(NormalAchievements.SNOWBALLS.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.EGGS.toString())) {
 			snowballEggListener = new AchieveSnowballEggListener(this);
 			pm.registerEvents(snowballEggListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Fish")) {
+		if (!disabledCategorySet.contains(NormalAchievements.FISH.toString())) {
 			fishListener = new AchieveFishListener(this);
 			pm.registerEvents(fishListener, this);
 		}
 
-		if (!disabledCategorySet.contains("ItemBreaks")) {
+		if (!disabledCategorySet.contains(NormalAchievements.ITEMBREAKS.toString())) {
 			itemBreakListener = new AchieveItemBreakListener(this);
 			pm.registerEvents(itemBreakListener, this);
 		}
 
-		if (!disabledCategorySet.contains("ConsumedPotions") || !disabledCategorySet.contains("EatenItems")) {
+		if (!disabledCategorySet.contains(NormalAchievements.CONSUMEDPOTIONS.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.EATENITEMS.toString())) {
 			consumeListener = new AchieveConsumeListener(this);
 			pm.registerEvents(consumeListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Shear")) {
+		if (!disabledCategorySet.contains(NormalAchievements.SHEARS.toString())) {
 			shearListener = new AchieveShearListener(this);
 			pm.registerEvents(shearListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Milk")) {
+		if (!disabledCategorySet.contains(NormalAchievements.MILKS.toString())) {
 			milkListener = new AchieveMilkListener(this);
 			pm.registerEvents(milkListener, this);
 		}
 
-		if (config.getBoolean("CheckForUpdate", true) || !disabledCategorySet.contains("Connections")) {
+		if (config.getBoolean("CheckForUpdate", true)
+				|| !disabledCategorySet.contains(NormalAchievements.CONNECTIONS.toString())) {
 			connectionListener = new AchieveConnectionListener(this);
 			pm.registerEvents(connectionListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Trades") || !disabledCategorySet.contains("AnvilsUsed")
-				|| !disabledCategorySet.contains("Brewing")) {
+		if (!disabledCategorySet.contains(NormalAchievements.TRADES.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.ANVILS.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.BREWING.toString())) {
 			inventoryClickListener = new AchieveTradeAnvilBrewListener(this);
 			pm.registerEvents(inventoryClickListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Enchantments")) {
+		if (!disabledCategorySet.contains(NormalAchievements.ENCHANTMENTS.toString())) {
 			enchantmentListener = new AchieveEnchantListener(this);
 			pm.registerEvents(enchantmentListener, this);
 		}
 
-		if (!disabledCategorySet.contains("MaxLevel")) {
+		if (!disabledCategorySet.contains(NormalAchievements.LEVELS.toString())) {
 			xpListener = new AchieveXPListener(this);
 			pm.registerEvents(xpListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Beds")) {
+		if (!disabledCategorySet.contains(NormalAchievements.BEDS.toString())) {
 			bedListener = new AchieveBedListener(this);
 			pm.registerEvents(bedListener, this);
 		}
 
-		if (!disabledCategorySet.contains("ItemDrops")) {
+		if (!disabledCategorySet.contains(NormalAchievements.DROPS.toString())) {
 			dropListener = new AchieveDropListener(this);
 			pm.registerEvents(dropListener, this);
 		}
 
-		if (!disabledCategorySet.contains("Taming")) {
+		if (!disabledCategorySet.contains(NormalAchievements.TAMES.toString())) {
 			tameListener = new AchieveTameListener(this);
 			pm.registerEvents(tameListener, this);
 		}
 
-		if (!disabledCategorySet.contains("HoePlowings") || !disabledCategorySet.contains("Fertilising")
-				|| !disabledCategorySet.contains("Fireworks") || !disabledCategorySet.contains("MusicDiscs")) {
+		if (!disabledCategorySet.contains(NormalAchievements.HOEPLOWING.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.FERTILISING.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.FIREWORKS.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.MUSICDISCS.toString())) {
 			hoeFertiliseFireworkMusicListener = new AchieveHoeFertiliseFireworkMusicListener(this);
 			pm.registerEvents(hoeFertiliseFireworkMusicListener, this);
 		}
 
-		if (!disabledCategorySet.contains("MaxLevel") || !disabledCategorySet.contains("PlayedTime")
-				|| !disabledCategorySet.contains("DistanceFoot") || !disabledCategorySet.contains("DistancePig")
-				|| !disabledCategorySet.contains("DistanceHorse") || !disabledCategorySet.contains("DistanceMinecart")
-				|| !disabledCategorySet.contains("DistanceBoat") || !disabledCategorySet.contains("DistanceGliding")) {
+		if (!disabledCategorySet.contains(NormalAchievements.LEVELS.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEFOOT.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEPIG.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())) {
 			quitListener = new AchieveQuitListener(this);
 			pm.registerEvents(quitListener, this);
 		}
 
-		if (!disabledCategorySet.contains("DistanceFoot") || !disabledCategorySet.contains("DistancePig")
-				|| !disabledCategorySet.contains("DistanceHorse") || !disabledCategorySet.contains("DistanceMinecart")
-				|| !disabledCategorySet.contains("DistanceBoat") || !disabledCategorySet.contains("DistanceGliding")
-				|| !disabledCategorySet.contains("EnderPearls")) {
+		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEFOOT.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEPIG.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.ENDERPEARLS.toString())) {
 			teleportRespawnListener = new AchieveTeleportRespawnListener(this);
 			pm.registerEvents(teleportRespawnListener, this);
 		}
@@ -375,22 +382,16 @@ public class AdvancedAchievements extends JavaPlugin {
 			return;
 		}
 
+		pooledRequestsSender = new PooledRequestsSender(this);
 		// Schedule a repeating task to group database queries for some frequent
-		// events. Choose between asynchronous task and synchronous task.
-		if (asyncPooledRequestsSender)
-			pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(
-					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-					new PooledRequestsSenderAsync(this, true), pooledRequestsTaskInterval * 40L,
-					pooledRequestsTaskInterval * 20L);
-		else
-			pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimer(
-					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
-					new PooledRequestsSenderSync(this, true), pooledRequestsTaskInterval * 40L,
-					pooledRequestsTaskInterval * 20L);
+		// events.
+		pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(
+				Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), pooledRequestsSender,
+				pooledRequestsTaskInterval * 40L, pooledRequestsTaskInterval * 20L);
 
 		// Schedule a repeating task to monitor played time for each player (not
 		// directly related to an event).
-		if (!disabledCategorySet.contains("PlayedTime")) {
+		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
 			achievePlayTimeRunnable = new AchievePlayTimeRunnable(this);
 			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achievePlayTimeRunnable,
@@ -399,9 +400,12 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to monitor distances travelled by each
 		// player (not directly related to an event).
-		if (!disabledCategorySet.contains("DistanceFoot") || !disabledCategorySet.contains("DistancePig")
-				|| !disabledCategorySet.contains("DistanceHorse") || !disabledCategorySet.contains("DistanceMinecart")
-				|| !disabledCategorySet.contains("DistanceBoat") || !disabledCategorySet.contains("DistanceGliding")) {
+		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEFOOT.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEPIG.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())) {
 			achieveDistanceRunnable = new AchieveDistanceRunnable(this);
 			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achieveDistanceRunnable,
@@ -556,12 +560,22 @@ public class AdvancedAchievements extends JavaPlugin {
 		int totalAchievements = 0;
 		int categoriesInUse = 0;
 
+		// Enumerate Commands achievements
+		if (!disabledCategorySet.contains("Commands")) {
+			ConfigurationSection categoryConfig = config.getConfigurationSection("Commands");
+			int keyCount = categoryConfig.getKeys(false).size();
+			if (keyCount > 0) {
+				categoriesInUse += 1;
+				totalAchievements += keyCount;
+			}
+		}
+
 		// Enumerate the normal achievements
-		for (String category : NORMAL_ACHIEVEMENTS) {
-			if (disabledCategorySet.contains(category))
+		for (NormalAchievements category : NormalAchievements.values()) {
+			if (disabledCategorySet.contains(category.toString()))
 				continue;
 
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category);
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
 			int keyCount = categoryConfig.getKeys(false).size();
 			if (keyCount > 0) {
 				categoriesInUse += 1;
@@ -570,11 +584,11 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		// Enumerate the achievements with multiple categories
-		for (String category : MULTIPLE_ACHIEVEMENTS) {
-			if (disabledCategorySet.contains(category))
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			if (disabledCategorySet.contains(category.toString()))
 				continue;
 
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category);
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
 			Set<String> categorySections = categoryConfig.getKeys(false);
 
 			if (categorySections.isEmpty())
@@ -584,7 +598,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			// Enumerate the sub-categories
 			for (String section : categorySections) {
-				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + '.' + section);
+				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
 				int achievementCount = subcategoryConfig.getKeys(false).size();
 				if (achievementCount > 0) {
 					totalAchievements += achievementCount;
@@ -620,15 +634,15 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	private void registerPermissions() {
 
-		for (int i = 0; i < MULTIPLE_ACHIEVEMENTS.length; i++)
-			for (String section : config.getConfigurationSection(MULTIPLE_ACHIEVEMENTS[i]).getKeys(false)) {
+		for (MultipleAchievements category : MultipleAchievements.values())
+			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
 				// Bukkit only allows permissions to be set once, so must do
 				// additional check for /aach reload correctness.
 				if (this.getServer().getPluginManager().getPermission(
-						"achievement.count." + MULTIPLE_ACHIEVEMENTS[i].toLowerCase() + "." + section) == null)
+						"achievement.count." + category.toString().toLowerCase() + "." + section) == null)
 					this.getServer().getPluginManager()
 							.addPermission(new Permission(
-									"achievement.count." + MULTIPLE_ACHIEVEMENTS[i].toLowerCase() + "." + section,
+									"achievement.count." + category.toString().toLowerCase() + "." + section,
 									PermissionDefault.TRUE));
 			}
 	}
@@ -653,7 +667,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			distanceTask.cancel();
 
 		// Send remaining stats for pooled events to the database.
-		new PooledRequestsSenderSync(this, false).sendRequests();
+		pooledRequestsSender.sendRequests();
 
 		// Send played time stats to the database, forcing synchronous writes.
 		if (achievePlayTimeRunnable != null)
@@ -664,22 +678,28 @@ public class AdvancedAchievements extends JavaPlugin {
 		// writes.
 		if (achieveDistanceRunnable != null) {
 			for (Entry<String, Integer> entry : poolsManager.getDistanceFootHashMap().entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distancefoot");
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEFOOT.toDBName());
 
 			for (Entry<String, Integer> entry : poolsManager.getDistancePigHashMap().entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distancepig");
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEPIG.toDBName());
 
 			for (Entry<String, Integer> entry : poolsManager.getDistanceHorseHashMap().entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distancehorse");
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEHORSE.toDBName());
 
 			for (Entry<String, Integer> entry : poolsManager.getDistanceBoatHashMap().entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distanceboat");
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEBOAT.toDBName());
 
 			for (Entry<String, Integer> entry : poolsManager.getDistanceMinecartHashMap().entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distanceminecart");
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEMINECART.toDBName());
 
 			for (Entry<String, Integer> entry : poolsManager.getDistanceGlidingHashMap().entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(), "distancegliding");
+				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEGLIDING.toDBName());
 		}
 
 		try {
@@ -1048,13 +1068,24 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		Map<String, String> achievementsAndDisplayNames = new HashMap<>();
 
+		// Enumerate Commands achievements
+		for (String ach : config.getConfigurationSection("Commands").getKeys(false)) {
+
+			String achName = config.getString("Commands." + ach + ".Name", "");
+			String displayName = config.getString("Commands." + ach + ".DisplayName", "");
+
+			if (!achievementsAndDisplayNames.containsKey(achName)) {
+				achievementsAndDisplayNames.put(achName, displayName);
+			}
+		}
+
 		// Enumerate the normal achievements
-		for (String category : NORMAL_ACHIEVEMENTS) {
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category);
+		for (NormalAchievements category : NormalAchievements.values()) {
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
 			for (String ach : categoryConfig.getKeys(false)) {
 
-				String achName = config.getString(category + '.' + ach + ".Name", "");
-				String displayName = config.getString(category + '.' + ach + ".DisplayName", "");
+				String achName = config.getString(category + "." + ach + ".Name", "");
+				String displayName = config.getString(category + "." + ach + ".DisplayName", "");
 
 				if (!achievementsAndDisplayNames.containsKey(achName)) {
 					achievementsAndDisplayNames.put(achName, displayName);
@@ -1063,14 +1094,14 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		// Enumerate the achievements with multiple categories
-		for (String category : MULTIPLE_ACHIEVEMENTS) {
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category);
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
 			for (String section : categoryConfig.getKeys(false)) {
-				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + '.' + section);
+				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
 				for (String level : subcategoryConfig.getKeys(false)) {
 
-					String achName = config.getString(category + '.' + section + '.' + level + ".Name", "");
-					String displayName = config.getString(category + '.' + section + '.' + level + ".DisplayName", "");
+					String achName = config.getString(category + "." + section + '.' + level + ".Name", "");
+					String displayName = config.getString(category + "." + section + '.' + level + ".DisplayName", "");
 
 					if (!achievementsAndDisplayNames.containsKey(achName)) {
 						achievementsAndDisplayNames.put(achName, displayName);

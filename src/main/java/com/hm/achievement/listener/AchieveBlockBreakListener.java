@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 /**
@@ -67,12 +68,13 @@ public class AchieveBlockBreakListener implements Listener {
 
 		String blockName = block.getType().name().toLowerCase();
 		if (player.hasPermission("achievement.count.breaks." + blockName + "." + block.getData())
-				&& plugin.getPluginConfig().isConfigurationSection("Breaks." + blockName + ":" + block.getData()))
+				&& plugin.getPluginConfig()
+						.isConfigurationSection(MultipleAchievements.BREAKS + "." + blockName + ":" + block.getData()))
 			blockName += ":" + block.getData();
 		else {
 			if (!player.hasPermission("achievement.count.breaks." + blockName))
 				return;
-			if (!plugin.getPluginConfig().isConfigurationSection("Breaks." + blockName))
+			if (!plugin.getPluginConfig().isConfigurationSection(MultipleAchievements.BREAKS + "." + blockName))
 				return;
 		}
 
@@ -80,7 +82,7 @@ public class AchieveBlockBreakListener implements Listener {
 
 		plugin.getPoolsManager().getBlockBreakHashMap().put(player.getUniqueId().toString() + blockName, breaks);
 
-		String configAchievement = "Breaks." + blockName + '.' + breaks;
+		String configAchievement = MultipleAchievements.BREAKS + "." + blockName + '.' + breaks;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

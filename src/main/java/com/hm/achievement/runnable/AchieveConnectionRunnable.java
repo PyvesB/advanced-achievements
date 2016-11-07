@@ -5,7 +5,9 @@ import java.util.Date;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Runnable task to check for Connection achievements after a player has connected.
@@ -49,7 +51,7 @@ public class AchieveConnectionRunnable implements Runnable {
 		if (!format.format(now).equals(plugin.getDb().getPlayerConnectionDate(player))) {
 
 			int connections = plugin.getDb().updateAndGetConnection(player, format.format(now));
-			String configAchievement = "Connections." + connections;
+			String configAchievement = NormalAchievements.CONNECTIONS + "." + connections;
 			if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 				plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

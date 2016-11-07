@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with Deaths achievements.
@@ -32,14 +33,14 @@ public class AchieveDeathListener implements Listener {
 			return;
 
 		if (!player.hasPermission("achievement.count.deaths") || plugin.isInExludedWorld(player)
-				|| plugin.getDisabledCategorySet().contains("Deaths"))
+				|| plugin.getDisabledCategorySet().contains(NormalAchievements.DEATHS.toString()))
 			return;
 
 		int deaths = plugin.getPoolsManager().getPlayerDeathAmount(player) + 1;
 
 		plugin.getPoolsManager().getDeathHashMap().put(player.getUniqueId().toString(), deaths);
 
-		String configAchievement = "Deaths." + deaths;
+		String configAchievement = NormalAchievements.DEATHS + "." + deaths;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

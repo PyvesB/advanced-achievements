@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with Enchantments achievements.
@@ -37,7 +38,7 @@ public class AchieveEnchantListener implements Listener {
 
 		plugin.getPoolsManager().getEnchantmentHashMap().put(player.getUniqueId().toString(), enchantments);
 
-		String configAchievement = "Enchantments." + enchantments;
+		String configAchievement = NormalAchievements.ENCHANTMENTS + "." + enchantments;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

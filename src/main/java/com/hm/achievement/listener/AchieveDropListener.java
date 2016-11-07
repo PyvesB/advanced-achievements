@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with ItemDrops achievements.
@@ -37,7 +38,7 @@ public class AchieveDropListener implements Listener {
 
 		plugin.getPoolsManager().getDropHashMap().put(player.getUniqueId().toString(), drops);
 
-		String configAchievement = "ItemDrops." + drops;
+		String configAchievement = NormalAchievements.DROPS + "." + drops;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

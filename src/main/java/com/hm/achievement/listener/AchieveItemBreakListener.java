@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with ItemBreaks achievements.
@@ -34,7 +35,7 @@ public class AchieveItemBreakListener implements Listener {
 
 		plugin.getPoolsManager().getItemBreakHashMap().put(player.getUniqueId().toString(), itemBreaks);
 
-		String configAchievement = "ItemBreaks." + itemBreaks;
+		String configAchievement = NormalAchievements.ITEMBREAKS + "." + itemBreaks;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

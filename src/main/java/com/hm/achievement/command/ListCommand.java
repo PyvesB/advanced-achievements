@@ -20,6 +20,8 @@ import org.bukkit.map.MinecraftFont;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 import com.hm.achievement.utils.YamlManager;
 
@@ -164,27 +166,28 @@ public class ListCommand {
 		if (timeAuthorisedList(player)) {
 			// Create a new chest-like inventory; make it as small as possible while still containing all elements.
 			Inventory guiInv = Bukkit.createInventory(null,
-					getClosestGreaterMultipleOf9(AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length
-							+ AdvancedAchievements.NORMAL_ACHIEVEMENTS.length - plugin.getDisabledCategorySet().size()),
+					getClosestGreaterMultipleOf9(MultipleAchievements.values().length
+							+ NormalAchievements.values().length - plugin.getDisabledCategorySet().size()),
 					ChatColor.translateAlternateColorCodes('&',
 							plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
 
-			// Boolean corresponding to whether a player has received achievements in the current category. Used for
-			// HideNotReceivedCategories config option.
-			boolean hasReceivedInCategory = true;
 			// Total number of categories already displayed.
 			int numberOfCategories = 0;
 
 			YamlManager config = plugin.getPluginConfig();
 
 			// Display categories with multiple sub-categories in GUI.
-			for (int i = 0; i < AdvancedAchievements.MULTIPLE_ACHIEVEMENTS.length; i++) {
+			for (MultipleAchievements category : MultipleAchievements.values()) {
+				// Boolean corresponding to whether a player has received achievements in the current category. Used for
+				// HideNotReceivedCategories config option.
+				boolean hasReceivedInCategory = true;
+
 				// Hide category if the user has defined an empty name for it.
-				if (multipleAchievementCategoryNames[i].length() != 0) {
+				if (multipleAchievementCategoryNames[category.ordinal()].length() != 0) {
 					// Retrieve the name of the category, defined by the user.
-					String category = AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[i];
+					String categoryName = category.toString();
 					// Ignore this category if it's in the disabled list.
-					if (plugin.getDisabledCategorySet().contains(category)) {
+					if (plugin.getDisabledCategorySet().contains(categoryName)) {
 						continue;
 					}
 
@@ -193,12 +196,13 @@ public class ListCommand {
 					if (hideNotReceivedCategories) {
 						hasReceivedInCategory = false;
 						// Iterate through all sub-categories.
-						for (String section : config.getConfigurationSection(category).getKeys(false)) {
+						for (String section : config.getConfigurationSection(categoryName).getKeys(false)) {
 							// Iterate through all achievements in sub-category.
-							for (String ach : config.getConfigurationSection(category + '.' + section).getKeys(false)) {
+							for (String ach : config.getConfigurationSection(categoryName + '.' + section)
+									.getKeys(false)) {
 								// Check whether player has received achievement.
 								if (plugin.getDb().hasPlayerAchievement(player,
-										config.getString(category + '.' + section + '.' + ach + ".Name", ""))) {
+										config.getString(categoryName + '.' + section + '.' + ach + ".Name", ""))) {
 									// At least one achievement was received in the current category; it is unlocked,
 									// can continue processing.
 									hasReceivedInCategory = true;
@@ -216,12 +220,12 @@ public class ListCommand {
 
 					if (hasReceivedInCategory || !hideNotReceivedCategories) {
 						// Create item stack that will be displayed in the GUI, with its category name.
-						categoryItem = multipleAchievementCategoryItems[i];
+						categoryItem = multipleAchievementCategoryItems[category.ordinal()];
 						categoryMeta = categoryItem.getItemMeta();
 						categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 								"&8" + config.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
 										.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%",
-												multipleAchievementCategoryNames[i])));
+												multipleAchievementCategoryNames[category.ordinal()])));
 					} else {
 						// The player has not unlocked any achievements in the category: display barrier item with
 						// message.
@@ -240,60 +244,31 @@ public class ListCommand {
 			}
 
 			// Display categories with normal achievements in GUI.
-			for (int i = 0; i < AdvancedAchievements.NORMAL_ACHIEVEMENTS.length; i++) {
+			for (NormalAchievements category : NormalAchievements.values()) {
 				// Hide category if the user has defined an empty name for it.
-				if (normalAchievementCategoryNames[i].length() != 0) {
+				if (normalAchievementCategoryNames[category.ordinal()].length() != 0) {
 					// Retrieve the name of the category, defined by the user.
-					String category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[i];
+					String categoryName = category.toString();
 					// Ignore this category if it's in the disabled list.
-					if (plugin.getDisabledCategorySet().contains(category)) {
+					if (plugin.getDisabledCategorySet().contains(categoryName)) {
 						continue;
 					}
 
-					// Hide not yet unlocked categories: we must check whether the player has received at least one
-					// achievement in the category.
-					if (hideNotReceivedCategories) {
-						hasReceivedInCategory = false;
-						// Iterate through all achievements in category.
-						for (String ach : config.getConfigurationSection(category).getKeys(false)) {
-							/// Check whether player has received achievement.
-							if (plugin.getDb().hasPlayerAchievement(player,
-									config.getString(category + '.' + ach + ".Name", ""))) {
-								// At least one achievement was received in the current category; it is unlocked,
-								// can continue processing.
-								hasReceivedInCategory = true;
-								break;
-							}
-						}
-					}
-
-					ItemStack categoryItem;
-					ItemMeta categoryMeta;
-
-					if (hasReceivedInCategory || !hideNotReceivedCategories) {
-						// Create item stack that will be displayed in the GUI, with its category name.
-						categoryItem = normalAchievementCategoryItems[i];
-						categoryMeta = categoryItem.getItemMeta();
-						categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-								"&8" + config.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
-										.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%",
-												normalAchievementCategoryNames[i])));
-					} else {
-						// The player has not unlocked any achievements in the category: display barrier item with
-						// message.
-						categoryItem = new ItemStack(Material.BARRIER);
-						categoryMeta = categoryItem.getItemMeta();
-						categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-								"&8" + plugin.getPluginLang().getString("list-category-not-unlocked",
-										"You have not yet unlocked this category.")));
-					}
-
-					// Set item in the GUI.
-					categoryItem.setItemMeta(categoryMeta);
-					guiInv.setItem(numberOfCategories, categoryItem);
+					ItemStack itemInMainGui = createNormalMainItem(categoryName, player, category.ordinal());
+					guiInv.setItem(numberOfCategories, itemInMainGui);
 					numberOfCategories++;
 				}
 			}
+
+			// Hide Commands category if the user has defined an empty name for it or if it was disabled.
+			if (normalAchievementCategoryNames[normalAchievementCategoryNames.length - 1].length() != 0
+					&& !plugin.getDisabledCategorySet().contains("Commands")) {
+
+				ItemStack itemInMainGui = createNormalMainItem("Commands", player,
+						normalAchievementCategoryNames.length - 1);
+				guiInv.setItem(numberOfCategories, itemInMainGui);
+			}
+
 			// Display GUI to the player.
 			player.openInventory(guiInv);
 		} else {
@@ -302,6 +277,67 @@ public class ListCommand {
 					.getString("list-delay", "You must wait TIME seconds between each list command!")
 					.replace("TIME", Integer.toString(listTime / 1000)));
 		}
+	}
+
+	/**
+	 * Create an ItemStack to be displayed in the main GUI for either normal or Commands categories.
+	 * 
+	 * @param categoryName
+	 * @param player
+	 * @param indexInItemStacksArray
+	 * @param numberOfCategories
+	 * @param guiInv
+	 * @return
+	 */
+	private ItemStack createNormalMainItem(String categoryName, Player player, int indexInItemStacksArray) {
+
+		YamlManager config = plugin.getPluginConfig();
+
+		// Boolean corresponding to whether a player has received achievements in the current category. Used
+		// for HideNotReceivedCategories config option.
+		boolean hasReceivedInCategory = true;
+
+		// Hide not yet unlocked categories: we must check whether the player has received at least one
+		// achievement in the category.
+		if (hideNotReceivedCategories) {
+			hasReceivedInCategory = false;
+			// Iterate through all achievements in category.
+			for (String ach : config.getConfigurationSection(categoryName).getKeys(false)) {
+				/// Check whether player has received achievement.
+				if (plugin.getDb().hasPlayerAchievement(player,
+						config.getString(categoryName + '.' + ach + ".Name", ""))) {
+					// At least one achievement was received in the current category; it is unlocked,
+					// can continue processing.
+					hasReceivedInCategory = true;
+					break;
+				}
+			}
+		}
+
+		ItemStack categoryItem;
+		ItemMeta categoryMeta;
+
+		if (hasReceivedInCategory || !hideNotReceivedCategories) {
+			// Create item stack that will be displayed in the GUI, with its category name.
+			categoryItem = normalAchievementCategoryItems[indexInItemStacksArray];
+			categoryMeta = categoryItem.getItemMeta();
+			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+					"&8" + config.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
+							.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%",
+									normalAchievementCategoryNames[indexInItemStacksArray])));
+		} else {
+			// The player has not unlocked any achievements in the category: display barrier item with
+			// message.
+			categoryItem = new ItemStack(Material.BARRIER);
+			categoryMeta = categoryItem.getItemMeta();
+			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&8" + plugin.getPluginLang()
+					.getString("list-category-not-unlocked", "You have not yet unlocked this category.")));
+		}
+
+		// Set item in the GUI.
+		categoryItem.setItemMeta(categoryMeta);
+
+		return categoryItem;
 	}
 
 	/**
@@ -336,163 +372,166 @@ public class ListCommand {
 	 */
 	public void createCategoryGUINormal(Material clickedItem, Player player) {
 
-		String category;
+		NormalAchievements category;
 		long statistic;
 
 		// Match the item the player clicked on with a category and its database statistic.
 		switch (clickedItem) {
 			case BOOK_AND_QUILL:
 				statistic = plugin.getDb().getConnectionsAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[0];
+				category = NormalAchievements.CONNECTIONS;
 				break;
 			case SKULL_ITEM:
 				statistic = plugin.getPoolsManager().getPlayerDeathAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[1];
+				category = NormalAchievements.DEATHS;
 				break;
 			case ARROW:
 				statistic = plugin.getPoolsManager().getPlayerArrowAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[2];
+				category = NormalAchievements.ARROWS;
 				break;
 			case SNOW_BALL:
 				statistic = plugin.getPoolsManager().getPlayerSnowballAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[3];
+				category = NormalAchievements.SNOWBALLS;
 				break;
 			case EGG:
 				statistic = plugin.getPoolsManager().getPlayerEggAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[4];
+				category = NormalAchievements.EGGS;
 				break;
 			case RAW_FISH:
 				statistic = plugin.getPoolsManager().getPlayerFishAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[5];
+				category = NormalAchievements.FISH;
 				break;
 			case FLINT:
 				statistic = plugin.getPoolsManager().getPlayerItemBreakAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[6];
+				category = NormalAchievements.ITEMBREAKS;
 				break;
 			case MELON:
 				statistic = plugin.getPoolsManager().getPlayerEatenItemAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[7];
+				category = NormalAchievements.EATENITEMS;
 				break;
 			case SHEARS:
 				statistic = plugin.getPoolsManager().getPlayerShearAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[8];
+				category = NormalAchievements.SHEARS;
 				break;
 			case MILK_BUCKET:
 				statistic = plugin.getPoolsManager().getPlayerMilkAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[9];
+				category = NormalAchievements.MILKS;
 				break;
 			case EMERALD:
 				statistic = plugin.getPoolsManager().getPlayerTradeAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[10];
+				category = NormalAchievements.TRADES;
 				break;
 			case ANVIL:
 				statistic = plugin.getPoolsManager().getPlayerAnvilAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[11];
+				category = NormalAchievements.ANVILS;
 				break;
 			case ENCHANTMENT_TABLE:
 				statistic = plugin.getPoolsManager().getPlayerEnchantmentAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[12];
+				category = NormalAchievements.ENCHANTMENTS;
 				break;
 			case BED:
 				statistic = plugin.getPoolsManager().getPlayerBedAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[13];
+				category = NormalAchievements.BEDS;
 				break;
 			case EXP_BOTTLE:
 				statistic = plugin.getPoolsManager().getPlayerXPAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[14];
+				category = NormalAchievements.LEVELS;
 				break;
 			case GLASS_BOTTLE:
 				statistic = plugin.getPoolsManager().getPlayerConsumedPotionAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[15];
+				category = NormalAchievements.CONSUMEDPOTIONS;
 				break;
 			case WATCH:
 				statistic = plugin.getPoolsManager().getPlayerPlayTimeAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[16];
+				category = NormalAchievements.PLAYEDTIME;
 				break;
 			case HOPPER:
 				statistic = plugin.getPoolsManager().getPlayerDropAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[17];
+				category = NormalAchievements.DROPS;
 				break;
 			case GRASS:
 				statistic = plugin.getPoolsManager().getPlayerHoePlowingAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[18];
+				category = NormalAchievements.HOEPLOWING;
 				break;
 			case INK_SACK:
 				statistic = plugin.getPoolsManager().getPlayerFertiliseAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[19];
+				category = NormalAchievements.FERTILISING;
 				break;
 			case LEASH:
 				statistic = plugin.getPoolsManager().getPlayerTameAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[20];
+				category = NormalAchievements.TAMES;
 				break;
 			case BREWING_STAND_ITEM:
 				statistic = plugin.getPoolsManager().getPlayerBrewingAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[21];
+				category = NormalAchievements.BREWING;
 				break;
 			case FIREWORK:
 				statistic = plugin.getPoolsManager().getPlayerFireworkAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[22];
+				category = NormalAchievements.FIREWORKS;
 				break;
 			case JUKEBOX:
 				statistic = plugin.getPoolsManager().getPlayerMusicDiscAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[23];
+				category = NormalAchievements.MUSICDISCS;
 				break;
 			case ENDER_PEARL:
 				statistic = plugin.getPoolsManager().getPlayerEnderPearlAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[24];
+				category = NormalAchievements.ENDERPEARLS;
 				break;
 			case LEATHER_BOOTS:
 				statistic = plugin.getPoolsManager().getPlayerDistanceFootAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[25];
+				category = NormalAchievements.DISTANCEFOOT;
 				break;
 			case CARROT_STICK:
 				statistic = plugin.getPoolsManager().getPlayerDistancePigAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[26];
+				category = NormalAchievements.DISTANCEPIG;
 				break;
 			case SADDLE:
 				statistic = plugin.getPoolsManager().getPlayerDistanceHorseAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[27];
+				category = NormalAchievements.DISTANCEHORSE;
 				break;
 			case MINECART:
 				statistic = plugin.getPoolsManager().getPlayerDistanceMinecartAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[28];
+				category = NormalAchievements.DISTANCEMINECART;
 				break;
 			case BOAT:
 				statistic = plugin.getPoolsManager().getPlayerDistanceBoatAmount(player);
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[29];
+				category = NormalAchievements.DISTANCEBOAT;
 				break;
 			case BEDROCK:
 				statistic = 0L;
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[30];
+				category = NormalAchievements.DISTANCEGLIDING;
 				break;
-			case BOOKSHELF:
-				statistic = -1L;
-				category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[31];
-				break;
-			// Default case can happen on Minecraft 1.9+.
+			// Objects exclusive to Minecraft 1.9+ or Commands achievements.
 			default:
 				statistic = -1L;
-				category = "";
+				category = null;
 				break;
 		}
 
 		// Items used for 1.9+ version of Minecraft. This corresponds to the default case of the above switch.
-		if ("".equals(category) && version >= 9) {
+		if (category == null && version >= 9) {
 			switch (clickedItem) {
 				case ELYTRA:
 					statistic = plugin.getPoolsManager().getPlayerDistanceGlidingAmount(player);
-					category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[30];
+					category = NormalAchievements.DISTANCEGLIDING;
 					break;
 				case GRASS_PATH:
 					statistic = plugin.getPoolsManager().getPlayerHoePlowingAmount(player);
-					category = AdvancedAchievements.NORMAL_ACHIEVEMENTS[18];
+					category = NormalAchievements.HOEPLOWING;
 					break;
-				// Default case can not happen.
+				// Default case: Commands achievements.
 				default:
 					statistic = -1L;
-					category = "";
+					category = null;
 					break;
 			}
+		}
+
+		String categoryName;
+		if (category == null) {
+			categoryName = "Commands";
+		} else {
+			categoryName = category.toString();
 		}
 
 		YamlManager config = plugin.getPluginConfig();
@@ -500,7 +539,7 @@ public class ListCommand {
 		// Used to make the GUI as small as possible while still containing all achievements; limit to 99, above the GUI
 		// is really messed up.
 		int inventorySize = getClosestGreaterMultipleOf9(
-				config.getConfigurationSection(category).getKeys(false).size() + 1);
+				config.getConfigurationSection(categoryName).getKeys(false).size() + 1);
 
 		// Create a new chest-like inventory.
 		Inventory inventory = Bukkit.createInventory(null, inventorySize, ChatColor.translateAlternateColorCodes('&',
@@ -511,7 +550,7 @@ public class ListCommand {
 		String previousItemDate = null;
 		Integer previousItemGoal = 0;
 		// Populate the GUI with all of the achievements for the category.
-		for (String ach : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
+		for (String ach : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
 
 			// If the user specifies more than 98 achievements in the category do not display them.
 			if (positionInGUI >= inventorySize - 1)
@@ -521,8 +560,8 @@ public class ListCommand {
 			// Convert it to an integer
 			Integer currentItemGoal = Ints.tryParse(ach);
 
-			String achName = plugin.getPluginConfig().getString(category + '.' + ach + ".Name", "");
-			String displayName = plugin.getPluginConfig().getString(category + '.' + ach + ".DisplayName", "");
+			String achName = plugin.getPluginConfig().getString(categoryName + '.' + ach + ".Name", "");
+			String displayName = plugin.getPluginConfig().getString(categoryName + '.' + ach + ".DisplayName", "");
 			String nameToShowUser;
 
 			if (Strings.isNullOrEmpty(displayName)) {
@@ -534,16 +573,16 @@ public class ListCommand {
 			}
 
 			String achMessage;
-			String goal = config.getString(category + '.' + ach + ".Goal", "");
+			String goal = config.getString(categoryName + '.' + ach + ".Goal", "");
 			if (Strings.isNullOrEmpty(goal)) {
 				// Show the achievement message below the achievement name.
-				achMessage = config.getString(category + '.' + ach + ".Message", "");
+				achMessage = config.getString(categoryName + '.' + ach + ".Message", "");
 			} else {
 				// Show the goal below the achievement name.
 				achMessage = goal;
 			}
 
-			List<String> rewards = plugin.getReward().getRewardType(category + '.' + ach);
+			List<String> rewards = plugin.getReward().getRewardType(categoryName + '.' + ach);
 			String date = plugin.getDb().getPlayerAchievementDate(player, achName);
 
 			boolean inelligibleSeriesItem;
@@ -596,35 +635,38 @@ public class ListCommand {
 	 */
 	public void createCategoryGUIMultiple(Material clickedItem, Player player) {
 
-		String category;
+		MultipleAchievements category;
 
 		// Match the item the player clicked on with a category.
 		switch (clickedItem) {
 			case STONE:
-				category = AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[0];
+				category = MultipleAchievements.PLACES;
 				break;
 			case SMOOTH_BRICK:
-				category = AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[1];
+				category = MultipleAchievements.BREAKS;
 				break;
 			case BONE:
-				category = AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[2];
+				category = MultipleAchievements.KILLS;
 				break;
 			case WORKBENCH:
-				category = AdvancedAchievements.MULTIPLE_ACHIEVEMENTS[3];
+				category = MultipleAchievements.PLACES;
 				break;
+			// Default case cannot happen.
 			default:
-				category = "";
+				category = null;
 				break;
 		}
 
+		String categoryName = category.toString();
+
 		YamlManager config = plugin.getPluginConfig();
-		ConfigurationSection categoryConfig = config.getConfigurationSection(category);
+		ConfigurationSection categoryConfig = config.getConfigurationSection(categoryName);
 
 		int totalAchievementsInCategory = 0;
 
 		// Retrieve total number of achievements in the sub-categories of the category.
 		for (String section : categoryConfig.getKeys(false)) {
-			ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + '.' + section);
+			ConfigurationSection subcategoryConfig = config.getConfigurationSection(categoryName + '.' + section);
 			totalAchievementsInCategory += subcategoryConfig.getKeys(false).size();
 		}
 
@@ -665,7 +707,7 @@ public class ListCommand {
 			int subcategoryIndex = 0;
 
 			// Populate GUI with all the achievements for the current sub-category.
-			ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + '.' + section);
+			ConfigurationSection subcategoryConfig = config.getConfigurationSection(categoryName + '.' + section);
 			for (String level : subcategoryConfig.getKeys(false)) {
 
 				// If the user specifies more than 98 achievements in the category do not display them.
@@ -676,8 +718,8 @@ public class ListCommand {
 				// Convert it to an integer.
 				int currentItemGoal = Integer.parseInt(level);
 
-				String achName = config.getString(category + '.' + section + '.' + level + ".Name", "");
-				String displayName = config.getString(category + '.' + section + '.' + level + ".DisplayName", "");
+				String achName = config.getString(categoryName + '.' + section + '.' + level + ".Name", "");
+				String displayName = config.getString(categoryName + '.' + section + '.' + level + ".DisplayName", "");
 				String nameToShowUser;
 
 				if (Strings.isNullOrEmpty(displayName)) {
@@ -689,16 +731,16 @@ public class ListCommand {
 				}
 
 				String achMessage;
-				String goal = config.getString(category + '.' + section + '.' + level + ".Goal", "");
+				String goal = config.getString(categoryName + '.' + section + '.' + level + ".Goal", "");
 				if (Strings.isNullOrEmpty(goal)) {
 					// Show the achievement message below the achievement name.
-					achMessage = config.getString(category + '.' + section + '.' + level + ".Message", "");
+					achMessage = config.getString(categoryName + '.' + section + '.' + level + ".Message", "");
 				} else {
 					// Show the goal below the achievement name.
 					achMessage = goal;
 				}
 
-				List<String> rewards = plugin.getReward().getRewardType(category + '.' + section + '.' + level);
+				List<String> rewards = plugin.getReward().getRewardType(categoryName + '.' + section + '.' + level);
 				String date = plugin.getDb().getPlayerAchievementDate(player, achName);
 
 				boolean inelligibleSeriesItem;

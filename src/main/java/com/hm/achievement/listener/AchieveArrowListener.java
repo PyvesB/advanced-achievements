@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with Arrows achievements.
@@ -40,7 +41,7 @@ public class AchieveArrowListener implements Listener {
 
 		plugin.getPoolsManager().getArrowHashMap().put(player.getUniqueId().toString(), arrows);
 
-		String configAchievement = "Arrows." + arrows;
+		String configAchievement = NormalAchievements.ARROWS + "." + arrows;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

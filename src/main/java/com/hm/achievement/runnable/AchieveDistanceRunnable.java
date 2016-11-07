@@ -16,6 +16,7 @@ import org.bukkit.util.NumberConversions;
 
 import com.google.common.collect.HashMultimap;
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 import com.hm.achievement.utils.YamlManager;
 
@@ -67,12 +68,12 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		ignoreVerticalDistance = plugin.getConfig().getBoolean("IgnoreVerticalDistance", false);
 
-		footAchievementsCache = extractDistanceAchievementFromConfig("DistanceFoot");
-		horseAchievementsCache = extractDistanceAchievementFromConfig("DistanceHorse");
-		pigAchievementsCache = extractDistanceAchievementFromConfig("DistancePig");
-		minecartAchievementsCache = extractDistanceAchievementFromConfig("DistanceMinecart");
-		boatAchievementsCache = extractDistanceAchievementFromConfig("DistanceBoat");
-		glidingAchievementsCache = extractDistanceAchievementFromConfig("DistanceGliding");
+		footAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEFOOT);
+		horseAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEHORSE);
+		pigAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEPIG);
+		minecartAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEMINECART);
+		boatAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEBOAT);
+		glidingAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEGLIDING);
 	}
 
 	@Override
@@ -116,42 +117,48 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		if (player.isInsideVehicle()) {
 			if (player.getVehicle() instanceof Horse && player.hasPermission("achievement.count.distancehorse")
-					&& !plugin.getDisabledCategorySet().contains("DistanceHorse")) {
+					&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEHORSE.toString())) {
 
 				updateLocation = updateDistanceAndCheckAchievements(difference, player,
-						plugin.getPoolsManager().getDistanceHorseHashMap(), "DistanceHorse", horseAchievementsCache);
+						plugin.getPoolsManager().getDistanceHorseHashMap(), NormalAchievements.DISTANCEHORSE.toString(),
+						horseAchievementsCache);
 
 			} else if (player.getVehicle() instanceof Pig && player.hasPermission("achievement.count.distancepig")
-					&& !plugin.getDisabledCategorySet().contains("DistancePig")) {
+					&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEPIG.toString())) {
 
 				updateLocation = updateDistanceAndCheckAchievements(difference, player,
-						plugin.getPoolsManager().getDistancePigHashMap(), "DistancePig", pigAchievementsCache);
+						plugin.getPoolsManager().getDistancePigHashMap(), NormalAchievements.DISTANCEPIG.toString(),
+						pigAchievementsCache);
 
 			} else if (player.getVehicle() instanceof Minecart
 					&& player.hasPermission("achievement.count.distanceminecart")
-					&& !plugin.getDisabledCategorySet().contains("DistanceMinecart")) {
+					&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEMINECART.toString())) {
 
 				updateLocation = updateDistanceAndCheckAchievements(difference, player,
-						plugin.getPoolsManager().getDistanceMinecartHashMap(), "DistanceMinecart",
-						minecartAchievementsCache);
+						plugin.getPoolsManager().getDistanceMinecartHashMap(),
+						NormalAchievements.DISTANCEMINECART.toString(), minecartAchievementsCache);
 
 			} else if (player.getVehicle() instanceof Boat && player.hasPermission("achievement.count.distanceboat")
-					&& !plugin.getDisabledCategorySet().contains("DistanceBoat")) {
+					&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEBOAT.toString())) {
 
 				updateLocation = updateDistanceAndCheckAchievements(difference, player,
-						plugin.getPoolsManager().getDistanceBoatHashMap(), "DistanceBoat", boatAchievementsCache);
+						plugin.getPoolsManager().getDistanceBoatHashMap(), NormalAchievements.DISTANCEBOAT.toString(),
+						boatAchievementsCache);
 			}
 		} else if (player.hasPermission("achievement.count.distancefoot") && !player.isFlying()
-				&& (version < 9 || !player.isGliding()) && !plugin.getDisabledCategorySet().contains("DistanceFoot")) {
+				&& (version < 9 || !player.isGliding())
+				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEFOOT.toString())) {
 
 			updateLocation = updateDistanceAndCheckAchievements(difference, player,
-					plugin.getPoolsManager().getDistanceFootHashMap(), "DistanceFoot", footAchievementsCache);
+					plugin.getPoolsManager().getDistanceFootHashMap(), NormalAchievements.DISTANCEFOOT.toString(),
+					footAchievementsCache);
 
 		} else if (player.hasPermission("achievement.count.distancegliding") && version >= 9 && player.isGliding()
-				&& !plugin.getDisabledCategorySet().contains("DistanceGliding")) {
+				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEGLIDING.toString())) {
 
 			updateLocation = updateDistanceAndCheckAchievements(difference, player,
-					plugin.getPoolsManager().getDistanceGlidingHashMap(), "DistanceGliding", glidingAchievementsCache);
+					plugin.getPoolsManager().getDistanceGlidingHashMap(), NormalAchievements.DISTANCEGLIDING.toString(),
+					glidingAchievementsCache);
 		}
 
 		if (updateLocation)
@@ -241,9 +248,9 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * @param achievementKeyName
 	 * @return array containing thresholds for the achievement keyName.
 	 */
-	private HashMultimap<Integer, String> extractDistanceAchievementFromConfig(String achievementKeyName) {
+	private HashMultimap<Integer, String> extractDistanceAchievementFromConfig(NormalAchievements category) {
 
-		Set<String> configKeys = plugin.getConfig().getConfigurationSection(achievementKeyName).getKeys(false);
+		Set<String> configKeys = plugin.getConfig().getConfigurationSection(category.toString()).getKeys(false);
 
 		HashMultimap<Integer, String> achievementsCache = HashMultimap.create(configKeys.size(), 1);
 

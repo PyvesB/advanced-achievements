@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with Milk achievements.
@@ -37,7 +38,7 @@ public class AchieveMilkListener implements Listener {
 
 		plugin.getPoolsManager().getMilkHashMap().put(player.getUniqueId().toString(), milks);
 
-		String configAchievement = "Milk." + milks;
+		String configAchievement = NormalAchievements.MILKS + "." + milks;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

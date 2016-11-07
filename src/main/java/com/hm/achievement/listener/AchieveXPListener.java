@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerLevelChangeEvent;
 
 import com.google.common.collect.HashMultimap;
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with MaxLevel achievements.
@@ -38,7 +39,8 @@ public class AchieveXPListener implements Listener {
 
 	public void extractAchievementsFromConfig() {
 
-		Set<String> configKeys = plugin.getConfig().getConfigurationSection("MaxLevel").getKeys(false);
+		Set<String> configKeys = plugin.getConfig().getConfigurationSection(NormalAchievements.LEVELS.toString())
+				.getKeys(false);
 
 		achievementsCache = HashMultimap.create(configKeys.size(), 1);
 
@@ -69,13 +71,16 @@ public class AchieveXPListener implements Listener {
 		for (Integer achievementThreshold : achievementsCache.keySet()) {
 			if (event.getNewLevel() >= achievementThreshold
 					&& !achievementsCache.get(achievementThreshold).contains(uuid)) {
-				if (!plugin.getDb().hasPlayerAchievement(player,
-						plugin.getPluginConfig().getString("MaxLevel." + achievementThreshold + ".Name"))) {
-					plugin.getAchievementDisplay().displayAchievement(player, "MaxLevel." + achievementThreshold);
+				if (!plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig()
+						.getString(NormalAchievements.LEVELS + "." + achievementThreshold + ".Name"))) {
+					plugin.getAchievementDisplay().displayAchievement(player,
+							NormalAchievements.LEVELS + "." + achievementThreshold);
 					plugin.getDb().registerAchievement(player,
-							plugin.getPluginConfig().getString("MaxLevel." + achievementThreshold + ".Name"),
-							plugin.getPluginConfig().getString("MaxLevel." + achievementThreshold + ".Message"));
-					plugin.getReward().checkConfig(player, "MaxLevel." + achievementThreshold);
+							plugin.getPluginConfig()
+									.getString(NormalAchievements.LEVELS + "." + achievementThreshold + ".Name"),
+							plugin.getPluginConfig()
+									.getString(NormalAchievements.LEVELS + "." + achievementThreshold + ".Message"));
+					plugin.getReward().checkConfig(player, NormalAchievements.LEVELS + "." + achievementThreshold);
 				}
 				// Player has received this achievement.
 				achievementsCache.put(achievementThreshold, uuid);

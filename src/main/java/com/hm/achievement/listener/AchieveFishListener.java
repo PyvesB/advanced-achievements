@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with Fish achievements.
@@ -39,7 +40,7 @@ public class AchieveFishListener implements Listener {
 
 		plugin.getPoolsManager().getFishHashMap().put(player.getUniqueId().toString(), fish);
 
-		String configAchievement = "Fish." + fish;
+		String configAchievement = NormalAchievements.FISH + "." + fish;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

@@ -23,6 +23,8 @@ import org.bukkit.entity.Player;
 
 import com.google.common.base.Strings;
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Class used to deal with the database and provide functions to evaluate common queries and retrieve the relevant
@@ -126,7 +128,8 @@ public class SQLDatabaseManager {
 		// Check if using old database prior to version 2.4.1.
 		String type = "";
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT blockid FROM " + tablePrefix + "breaks LIMIT 1");
+			ResultSet rs = st.executeQuery(
+					"SELECT blockid FROM " + tablePrefix + MultipleAchievements.BREAKS.toDBName() + " LIMIT 1");
 			type = rs.getMetaData().getColumnTypeName(1);
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old DB: ", e);
@@ -135,9 +138,9 @@ public class SQLDatabaseManager {
 		// Old column type for versions prior to 2.4.1 was integer for SQLite and smallint unsigned for MySQL.
 		if ("integer".equalsIgnoreCase(type) || "smallint unsigned".equalsIgnoreCase(type)) {
 			plugin.getLogger().warning("Updating database tables, please wait...");
-			updateOldDBToMaterial(tablePrefix + "breaks");
-			updateOldDBToMaterial(tablePrefix + "crafts");
-			updateOldDBToMaterial(tablePrefix + "places");
+			updateOldDBToMaterial(tablePrefix + MultipleAchievements.BREAKS.toDBName());
+			updateOldDBToMaterial(tablePrefix + MultipleAchievements.CRAFTS.toDBName());
+			updateOldDBToMaterial(tablePrefix + MultipleAchievements.PLACES.toDBName());
 		}
 
 		// Check if using old database prior to version 3.0.
@@ -196,77 +199,32 @@ public class SQLDatabaseManager {
 		try (Statement st = sqlConnection.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
 					+ "achievements (playername char(36),achievement varchar(64),description varchar(128),date DATE,PRIMARY KEY (playername, achievement))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "breaks (playername char(36),blockid varchar(32),breaks INT,PRIMARY KEY(playername, blockid))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "places (playername char(36),blockid varchar(32),places INT,PRIMARY KEY(playername, blockid))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "kills (playername char(36),mobname varchar(32),kills INT,PRIMARY KEY (playername, mobname))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "crafts (playername char(36),item varchar(32),crafts INT,PRIMARY KEY (playername, item))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "deaths (playername char(36),deaths INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "arrows (playername char(36),arrows INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "snowballs (playername char(36),snowballs INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "eggs (playername char(36),eggs INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "fish (playername char(36),fish INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + "itembreaks (playername char(36),itembreaks INT,"
-					+ "PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "eatenitems (playername char(36),eatenitems INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "shears (playername char(36),shears INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "milks (playername char(36),milks INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "connections (playername char(36),connections INT,date varchar(10),PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "trades (playername char(36),trades INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "anvils (playername char(36),anvils INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "enchantments (playername char(36),enchantments INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "levels (playername char(36),levels INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "beds (playername char(36),beds INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "consumedpotions (playername char(36),consumedpotions INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "playedtime (playername char(36),playedtime BIGINT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "distancefoot (playername char(36),distancefoot INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "distancepig (playername char(36),distancepig INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "distancehorse (playername char(36),distancehorse INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "distanceminecart (playername char(36),distanceminecart INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "distanceboat (playername char(36),distanceboat INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "distancegliding (playername char(36),distancegliding INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "drops (playername char(36),drops INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "hoeplowing (playername char(36),hoeplowing INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "fertilising (playername char(36),fertilising INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "tames (playername char(36),tames INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "brewing (playername char(36),brewing INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "fireworks (playername char(36),fireworks INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "musicdiscs (playername char(36),musicdiscs INT,PRIMARY KEY (playername))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
-					+ "enderpearls (playername char(36),enderpearls INT,PRIMARY KEY (playername))");
+			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + MultipleAchievements.BREAKS.toDBName()
+					+ " (playername char(36),blockid varchar(32)," + MultipleAchievements.BREAKS.toDBName()
+					+ " INT,PRIMARY KEY(playername, blockid))");
+			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + MultipleAchievements.PLACES.toDBName()
+					+ " (playername char(36),blockid varchar(32)," + MultipleAchievements.PLACES.toDBName()
+					+ " INT,PRIMARY KEY(playername, blockid))");
+			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + MultipleAchievements.KILLS.toDBName()
+					+ " (playername char(36),mobname varchar(32)," + MultipleAchievements.KILLS.toDBName()
+					+ " INT,PRIMARY KEY (playername, mobname))");
+			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + MultipleAchievements.CRAFTS.toDBName()
+					+ " (playername char(36),item varchar(32)," + MultipleAchievements.CRAFTS.toDBName()
+					+ " INT,PRIMARY KEY (playername, item))");
 
+			for (NormalAchievements category : NormalAchievements.values()) {
+				if (category == NormalAchievements.PLAYEDTIME) {
+					st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + category.toDBName()
+							+ " (playername char(36)," + category.toDBName() + " BIGINT,PRIMARY KEY (playername))");
+				} else if (category == NormalAchievements.CONNECTIONS) {
+					st.addBatch(
+							"CREATE TABLE IF NOT EXISTS " + tablePrefix + category.toDBName() + " (playername char(36),"
+									+ category.toDBName() + " INT,date varchar(10),PRIMARY KEY (playername))");
+				} else {
+					st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + category.toDBName()
+							+ " (playername char(36)," + category.toDBName() + " INT,PRIMARY KEY (playername))");
+				}
+			}
 			st.executeBatch();
 		}
 	}
@@ -281,42 +239,14 @@ public class SQLDatabaseManager {
 
 		try (Statement st = sqlConnection.createStatement()) {
 			st.addBatch("ALTER TABLE achievements RENAME TO " + tablePrefix + "achievements");
-			st.addBatch("ALTER TABLE breaks RENAME TO " + tablePrefix + "breaks");
-			st.addBatch("ALTER TABLE places RENAME TO " + tablePrefix + "places");
-			st.addBatch("ALTER TABLE kills RENAME TO " + tablePrefix + "kills");
-			st.addBatch("ALTER TABLE crafts RENAME TO " + tablePrefix + "crafts");
-			st.addBatch("ALTER TABLE deaths RENAME TO " + tablePrefix + "deaths");
-			st.addBatch("ALTER TABLE arrows RENAME TO " + tablePrefix + "arrows");
-			st.addBatch("ALTER TABLE snowballs RENAME TO " + tablePrefix + "snowballs");
-			st.addBatch("ALTER TABLE eggs RENAME TO " + tablePrefix + "eggs");
-			st.addBatch("ALTER TABLE fish RENAME TO " + tablePrefix + "fish");
-			st.addBatch("ALTER TABLE itembreaks RENAME TO " + tablePrefix + "itembreaks");
-			st.addBatch("ALTER TABLE eatenitems RENAME TO " + tablePrefix + "eatenitems");
-			st.addBatch("ALTER TABLE shears RENAME TO " + tablePrefix + "shears");
-			st.addBatch("ALTER TABLE milks RENAME TO " + tablePrefix + "milks");
-			st.addBatch("ALTER TABLE connections RENAME TO " + tablePrefix + "connections");
-			st.addBatch("ALTER TABLE trades RENAME TO " + tablePrefix + "trades");
-			st.addBatch("ALTER TABLE anvils RENAME TO " + tablePrefix + "anvils");
-			st.addBatch("ALTER TABLE enchantments RENAME TO " + tablePrefix + "enchantments");
-			st.addBatch("ALTER TABLE levels RENAME TO " + tablePrefix + "levels");
-			st.addBatch("ALTER TABLE beds RENAME TO " + tablePrefix + "beds");
-			st.addBatch("ALTER TABLE consumedpotions RENAME TO " + tablePrefix + "consumedpotions");
-			st.addBatch("ALTER TABLE playedtime RENAME TO " + tablePrefix + "playedtime");
-			st.addBatch("ALTER TABLE distancefoot RENAME TO " + tablePrefix + "distancefoot");
-			st.addBatch("ALTER TABLE distancepig RENAME TO " + tablePrefix + "distancepig");
-			st.addBatch("ALTER TABLE distancehorse RENAME TO " + tablePrefix + "distancehorse");
-			st.addBatch("ALTER TABLE distanceminecart RENAME TO " + tablePrefix + "distanceminecart");
-			st.addBatch("ALTER TABLE distanceboat RENAME TO " + tablePrefix + "distanceboat");
-			st.addBatch("ALTER TABLE distancegliding RENAME TO " + tablePrefix + "distancegliding");
-			st.addBatch("ALTER TABLE drops RENAME TO " + tablePrefix + "drops");
-			st.addBatch("ALTER TABLE hoeplowing RENAME TO " + tablePrefix + "hoeplowing");
-			st.addBatch("ALTER TABLE fertilising RENAME TO " + tablePrefix + "fertilising");
-			st.addBatch("ALTER TABLE tames RENAME TO " + tablePrefix + "tames");
-			st.addBatch("ALTER TABLE brewing RENAME TO " + tablePrefix + "brewing");
-			st.addBatch("ALTER TABLE fireworks RENAME TO " + tablePrefix + "fireworks");
-			st.addBatch("ALTER TABLE musicdiscs RENAME TO " + tablePrefix + "musicdiscs");
-			st.addBatch("ALTER TABLE enderpearls RENAME TO " + tablePrefix + "enderpearls");
-
+			for (NormalAchievements category : NormalAchievements.values()) {
+				st.addBatch("ALTER TABLE " + category.toString().toLowerCase() + " RENAME TO " + tablePrefix
+						+ category.toString().toLowerCase());
+			}
+			for (MultipleAchievements category : MultipleAchievements.values()) {
+				st.addBatch("ALTER TABLE " + category.toString().toLowerCase() + " RENAME TO " + tablePrefix
+						+ category.toString().toLowerCase());
+			}
 			st.executeBatch();
 		}
 	}
@@ -356,12 +286,12 @@ public class SQLDatabaseManager {
 			conn.setAutoCommit(false);
 
 			// Create new table.
-			if (!"crafts".equals(tableName))
+			if (!MultipleAchievements.CRAFTS.toDBName().equals(tableName))
 				st.execute("CREATE TABLE tempTable (playername char(36),blockid varchar(64)," + tableName
 						+ " INT UNSIGNED,PRIMARY KEY(playername, blockid))");
 			else
-				st.execute(
-						"CREATE TABLE tempTable (playername char(36),item varchar(64),crafts INT UNSIGNED,PRIMARY KEY(playername, item))");
+				st.execute("CREATE TABLE tempTable (playername char(36),item varchar(64)," + tableName
+						+ " INT UNSIGNED,PRIMARY KEY(playername, item))");
 
 			// Populate new table with contents of the old one and material strings. Batch the insert requests.
 			for (int i = 0; i < uuids.size(); ++i) {
@@ -874,11 +804,12 @@ public class SQLDatabaseManager {
 		int entityKills = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT kills FROM " + tablePrefix + "kills WHERE playername = '"
-					+ player.getUniqueId() + "' AND mobname = '" + mobname + "'");
+			ResultSet rs = st.executeQuery("SELECT " + MultipleAchievements.KILLS.toDBName() + " FROM " + tablePrefix
+					+ MultipleAchievements.KILLS.toDBName() + " WHERE playername = '" + player.getUniqueId()
+					+ "' AND mobname = '" + mobname + "'");
 
 			while (rs.next()) {
-				entityKills = rs.getInt("kills");
+				entityKills = rs.getInt(MultipleAchievements.KILLS.toDBName());
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving kill stats: ", e);
@@ -898,10 +829,11 @@ public class SQLDatabaseManager {
 		int blockBreaks = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT places FROM " + tablePrefix + "places WHERE playername = '"
-					+ player.getUniqueId() + "' AND blockid = '" + block + "'");
+			ResultSet rs = st.executeQuery("SELECT " + MultipleAchievements.PLACES.toDBName() + " FROM " + tablePrefix
+					+ MultipleAchievements.PLACES.toDBName() + " WHERE playername = '" + player.getUniqueId()
+					+ "' AND blockid = '" + block + "'");
 			while (rs.next()) {
-				blockBreaks = rs.getInt("places");
+				blockBreaks = rs.getInt(MultipleAchievements.PLACES.toDBName());
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving block place stats: ", e);
@@ -921,10 +853,11 @@ public class SQLDatabaseManager {
 		int blockBreaks = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT breaks FROM " + tablePrefix + "breaks WHERE playername = '"
-					+ player.getUniqueId() + "' AND blockid = '" + block + "'");
+			ResultSet rs = st.executeQuery("SELECT " + MultipleAchievements.BREAKS.toDBName() + " FROM " + tablePrefix
+					+ MultipleAchievements.BREAKS.toDBName() + " WHERE playername = '" + player.getUniqueId()
+					+ "' AND blockid = '" + block + "'");
 			while (rs.next()) {
-				blockBreaks = rs.getInt("breaks");
+				blockBreaks = rs.getInt(MultipleAchievements.BREAKS.toDBName());
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving block break stats: ", e);
@@ -944,10 +877,11 @@ public class SQLDatabaseManager {
 		int itemCrafts = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT crafts FROM " + tablePrefix + "crafts WHERE playername = '"
-					+ player.getUniqueId() + "' AND item = '" + item + "'");
+			ResultSet rs = st.executeQuery("SELECT " + MultipleAchievements.CRAFTS.toDBName() + " FROM " + tablePrefix
+					+ MultipleAchievements.CRAFTS.toDBName() + " WHERE playername = '" + player.getUniqueId()
+					+ "' AND item = '" + item + "'");
 			while (rs.next()) {
-				itemCrafts = rs.getInt("crafts");
+				itemCrafts = rs.getInt(MultipleAchievements.CRAFTS.toDBName());
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while handling craft event: ", e);
@@ -967,10 +901,10 @@ public class SQLDatabaseManager {
 		long amount = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT playedtime FROM " + tablePrefix + "playedtime WHERE playername = '"
-					+ player.getUniqueId() + "'");
+			ResultSet rs = st.executeQuery("SELECT " + NormalAchievements.PLAYEDTIME.toDBName() + " FROM " + tablePrefix
+					+ NormalAchievements.PLAYEDTIME.toDBName() + " WHERE playername = '" + player.getUniqueId() + "'");
 			while (rs.next()) {
-				amount = rs.getLong("playedtime");
+				amount = rs.getLong(NormalAchievements.PLAYEDTIME.toDBName());
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving playedtime stats: ", e);
@@ -1013,10 +947,10 @@ public class SQLDatabaseManager {
 		int connections = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery(
-					"SELECT connections FROM " + tablePrefix + "connections WHERE playername = '" + name + "'");
+			ResultSet rs = st.executeQuery("SELECT " + NormalAchievements.CONNECTIONS.toDBName() + " FROM "
+					+ tablePrefix + NormalAchievements.CONNECTIONS.toDBName() + " WHERE playername = '" + name + "'");
 			while (rs.next()) {
-				connections = rs.getInt("connections");
+				connections = rs.getInt(NormalAchievements.CONNECTIONS.toDBName());
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving connection statistics: ", e);
@@ -1035,8 +969,8 @@ public class SQLDatabaseManager {
 		String date = null;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + "connections WHERE playername = '"
-					+ player.getUniqueId() + "'");
+			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName()
+					+ " WHERE playername = '" + player.getUniqueId() + "'");
 			while (rs.next())
 				date = rs.getString("date");
 		} catch (SQLException e) {
@@ -1058,11 +992,11 @@ public class SQLDatabaseManager {
 		final String name = player.getUniqueId().toString();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery(
-					"SELECT connections FROM " + tablePrefix + "connections WHERE playername = '" + name + "'");
+			ResultSet rs = st.executeQuery("SELECT " + NormalAchievements.CONNECTIONS.toDBName() + " FROM "
+					+ tablePrefix + NormalAchievements.CONNECTIONS.toDBName() + " WHERE playername = '" + name + "'");
 			int prev = 0;
 			while (rs.next()) {
-				prev = rs.getInt("connections");
+				prev = rs.getInt(NormalAchievements.CONNECTIONS.toDBName());
 			}
 			final int newConnections = prev + 1;
 			if (plugin.isAsyncPooledRequestsSender()) {
@@ -1100,12 +1034,13 @@ public class SQLDatabaseManager {
 			if (databaseType == POSTGRESQL) {
 				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
 				// construct, which is available for PostgreSQL 9.5+.
-				st.execute("INSERT INTO " + tablePrefix + "connections VALUES ('" + name + "', " + newConnections
-						+ ", '" + date + "')" + " ON CONFLICT (playername) DO UPDATE SET (connections,date)=('"
-						+ newConnections + "','" + date + "')");
+				st.execute("INSERT INTO " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName() + " VALUES ('"
+						+ name + "', " + newConnections + ", '" + date + "')"
+						+ " ON CONFLICT (playername) DO UPDATE SET (" + NormalAchievements.CONNECTIONS.toDBName()
+						+ ",date)=('" + newConnections + "','" + date + "')");
 			} else {
-				st.execute("REPLACE INTO " + tablePrefix + "connections VALUES ('" + name + "', " + newConnections
-						+ ", '" + date + "')");
+				st.execute("REPLACE INTO " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName() + " VALUES ('"
+						+ name + "', " + newConnections + ", '" + date + "')");
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while updating connection: ", e);
@@ -1126,10 +1061,12 @@ public class SQLDatabaseManager {
 			if (databaseType == POSTGRESQL) {
 				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
 				// construct, which is available for PostgreSQL 9.5+.
-				st.execute("INSERT INTO " + tablePrefix + "playedtime VALUES ('" + name + "', " + time + ")"
-						+ " ON CONFLICT (playername) DO UPDATE SET (playedtime)=('" + time + "')");
+				st.execute("INSERT INTO " + tablePrefix + NormalAchievements.PLAYEDTIME.toDBName() + " VALUES ('" + name
+						+ "', " + time + ")" + " ON CONFLICT (playername) DO UPDATE SET ("
+						+ NormalAchievements.PLAYEDTIME.toDBName() + ")=('" + time + "')");
 			} else {
-				st.execute("REPLACE INTO " + tablePrefix + "playedtime VALUES ('" + name + "', " + time + ")");
+				st.execute("REPLACE INTO " + tablePrefix + NormalAchievements.PLAYEDTIME.toDBName() + " VALUES ('"
+						+ name + "', " + time + ")");
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while handling play time update: ", e);

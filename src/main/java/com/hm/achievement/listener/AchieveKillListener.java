@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
 
 /**
  * Listener class to deal with Kills achievements.
@@ -55,7 +56,7 @@ public class AchieveKillListener implements Listener {
 				}
 			}
 		}
-		if (!plugin.getPluginConfig().isConfigurationSection("Kills." + mobName)
+		if (!plugin.getPluginConfig().isConfigurationSection(MultipleAchievements.KILLS + "." + mobName)
 				|| !player.hasPermission("achievement.count.kills." + mobName))
 			return;
 
@@ -63,7 +64,7 @@ public class AchieveKillListener implements Listener {
 
 		plugin.getPoolsManager().getKillHashMap().put(player.getUniqueId().toString() + mobName, kills);
 
-		String configAchievement = "Kills." + mobName + '.' + kills;
+		String configAchievement = MultipleAchievements.KILLS + "." + mobName + '.' + kills;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

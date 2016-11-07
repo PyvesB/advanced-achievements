@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with Shear achievements.
@@ -37,7 +38,7 @@ public class AchieveShearListener implements Listener {
 
 		plugin.getPoolsManager().getShearHashMap().put(player.getUniqueId().toString(), shears);
 
-		String configAchievement = "Shear." + shears;
+		String configAchievement = NormalAchievements.SHEARS + "." + shears;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with Trades, AnvilsUsed and Brewing achievements.
@@ -40,28 +41,29 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 
 		String configAchievement;
 
-		if (player.hasPermission("achievement.count.trades") && !plugin.getDisabledCategorySet().contains("Trades")
+		if (player.hasPermission("achievement.count.trades")
+				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.TRADES.toString())
 				&& event.getRawSlot() == 2 && event.getInventory().getType() == InventoryType.MERCHANT) {
 			int trades = plugin.getPoolsManager().getPlayerTradeAmount(player) + 1;
 
 			plugin.getPoolsManager().getTradeHashMap().put(player.getUniqueId().toString(), trades);
-			configAchievement = "Trades." + trades;
+			configAchievement = NormalAchievements.TRADES + "." + trades;
 
 		} else if (player.hasPermission("achievement.count.anvilsused")
-				&& !plugin.getDisabledCategorySet().contains("AnvilsUsed") && event.getRawSlot() == 2
-				&& event.getInventory().getType() == InventoryType.ANVIL) {
+				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.ANVILS.toString())
+				&& event.getRawSlot() == 2 && event.getInventory().getType() == InventoryType.ANVIL) {
 			int anvils = plugin.getPoolsManager().getPlayerAnvilAmount(player) + 1;
 
 			plugin.getPoolsManager().getAnvilHashMap().put(player.getUniqueId().toString(), anvils);
-			configAchievement = "AnvilsUsed." + anvils;
+			configAchievement = NormalAchievements.ANVILS + "." + anvils;
 
 		} else if (player.hasPermission("achievement.count.brewing")
-				&& !plugin.getDisabledCategorySet().contains("Brewing")
+				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.BREWING.toString())
 				&& event.getInventory().getType() == InventoryType.BREWING) {
 			int brewings = plugin.getPoolsManager().getPlayerBrewingAmount(player) + 1;
 
 			plugin.getPoolsManager().getBrewingHashMap().put(player.getUniqueId().toString(), brewings);
-			configAchievement = "Brewing." + brewings;
+			configAchievement = NormalAchievements.BREWING + "." + brewings;
 
 		} else
 			return;

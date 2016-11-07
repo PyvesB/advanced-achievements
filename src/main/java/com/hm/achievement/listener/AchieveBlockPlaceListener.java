@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
 
 /**
  * Listener class to deal with Places achievements.
@@ -36,12 +37,13 @@ public class AchieveBlockPlaceListener implements Listener {
 
 		String blockName = block.getType().name().toLowerCase();
 		if (player.hasPermission("achievement.count.places." + blockName + "." + block.getData())
-				&& plugin.getPluginConfig().isConfigurationSection("Places." + blockName + ":" + block.getData()))
+				&& plugin.getPluginConfig()
+						.isConfigurationSection(MultipleAchievements.PLACES + "." + blockName + ":" + block.getData()))
 			blockName += ":" + block.getData();
 		else {
 			if (!player.hasPermission("achievement.count.places." + blockName))
 				return;
-			if (!plugin.getPluginConfig().isConfigurationSection("Places." + blockName))
+			if (!plugin.getPluginConfig().isConfigurationSection(MultipleAchievements.PLACES + "." + blockName))
 				return;
 		}
 
@@ -49,7 +51,7 @@ public class AchieveBlockPlaceListener implements Listener {
 
 		plugin.getPoolsManager().getBlockPlaceHashMap().put(player.getUniqueId().toString() + blockName, places);
 
-		String configAchievement = "Places." + blockName + '.' + places;
+		String configAchievement = MultipleAchievements.PLACES + "." + blockName + '.' + places;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

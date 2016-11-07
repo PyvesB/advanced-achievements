@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with Beds achievements.
@@ -38,7 +39,7 @@ public class AchieveBedListener implements Listener {
 
 		plugin.getPoolsManager().getBedHashMap().put(player.getUniqueId().toString(), beds);
 
-		String configAchievement = "Beds." + beds;
+		String configAchievement = NormalAchievements.BEDS + "." + beds;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTameEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with Taming achievements.
@@ -39,7 +40,7 @@ public class AchieveTameListener implements Listener {
 
 		plugin.getPoolsManager().getTameHashMap().put(player.getUniqueId().toString(), tames);
 
-		String configAchievement = "Taming." + tames;
+		String configAchievement = NormalAchievements.TAMES + "." + tames;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);

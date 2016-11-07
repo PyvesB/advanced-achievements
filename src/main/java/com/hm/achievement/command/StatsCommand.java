@@ -3,7 +3,10 @@ package com.hm.achievement.command;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.particle.ParticleEffect;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
@@ -26,18 +29,24 @@ public class StatsCommand {
 		this.plugin = plugin;
 
 		// Calculate the total number of achievements in the config file.
-		for (String type : AdvancedAchievements.NORMAL_ACHIEVEMENTS) {
-			if (plugin.getDisabledCategorySet().contains(type))
+		for (NormalAchievements category : NormalAchievements.values()) {
+			String categoryName = category.toString();
+			if (plugin.getDisabledCategorySet().contains(categoryName))
 				continue; // ignore this type
-			totalAchievements += plugin.getPluginConfig().getConfigurationSection(type).getKeys(false).size();
+			totalAchievements += plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false).size();
 		}
-		for (String type : AdvancedAchievements.MULTIPLE_ACHIEVEMENTS) {
-			if (plugin.getDisabledCategorySet().contains(type))
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			String categoryName = category.toString();
+			if (plugin.getDisabledCategorySet().contains(categoryName))
 				continue; // ignore this type
-			for (String item : plugin.getPluginConfig().getConfigurationSection(type).getKeys(false))
-				totalAchievements += plugin.getPluginConfig().getConfigurationSection(type + '.' + item).getKeys(false)
-						.size();
+			for (String item : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false))
+				totalAchievements += plugin.getPluginConfig().getConfigurationSection(categoryName + '.' + item)
+						.getKeys(false).size();
 		}
+
+		if (!plugin.getDisabledCategorySet().contains("Commands"))
+			totalAchievements += plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false).size();
+
 		// Load configuration parameters.
 		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		sound = plugin.getPluginConfig().getBoolean("Sound", true);

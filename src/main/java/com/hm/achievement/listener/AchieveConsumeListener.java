@@ -7,12 +7,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.particle.ReflectionUtils.PackageType;
-
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
+
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 /**
  * Listener class to deal with EatenItems and ConsumedPotions achievements.
@@ -42,7 +42,8 @@ public class AchieveConsumeListener implements Listener {
 
 		String configAchievement;
 
-		if (event.getItem().getType() == Material.POTION && !plugin.getDisabledCategorySet().contains("ConsumedPotions")
+		if (event.getItem().getType() == Material.POTION
+				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.CONSUMEDPOTIONS.toString())
 				&& player.hasPermission("achievement.count.consumedpotions")) {
 
 			// Don't count drinking water toward ConsumePotions; check the potion type.
@@ -63,14 +64,14 @@ public class AchieveConsumeListener implements Listener {
 			int consumedPotions = plugin.getPoolsManager().getPlayerConsumedPotionAmount(player) + 1;
 
 			plugin.getPoolsManager().getConsumedPotionsHashMap().put(player.getUniqueId().toString(), consumedPotions);
-			configAchievement = "ConsumedPotions." + consumedPotions;
+			configAchievement = NormalAchievements.CONSUMEDPOTIONS + "." + consumedPotions;
 		} else if (event.getItem().getType() != Material.MILK_BUCKET
 				&& player.hasPermission("achievement.count.eatenitems")
-				&& !plugin.getDisabledCategorySet().contains("EatenItems")) {
+				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.EATENITEMS.toString())) {
 			int eatenItems = plugin.getPoolsManager().getPlayerEatenItemAmount(player) + 1;
 
 			plugin.getPoolsManager().getEatenItemsHashMap().put(player.getUniqueId().toString(), eatenItems);
-			configAchievement = "EatenItems." + eatenItems;
+			configAchievement = NormalAchievements.EATENITEMS + "." + eatenItems;
 		} else
 			return;
 

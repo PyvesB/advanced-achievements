@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Listener class to deal with EnderPearls achievements and update Distances.
@@ -50,7 +51,7 @@ public class AchieveTeleportRespawnListener implements Listener {
 					event.getTo());
 
 		if (event.getCause() != PlayerTeleportEvent.TeleportCause.ENDER_PEARL
-				|| plugin.getDisabledCategorySet().contains("EnderPearls"))
+				|| plugin.getDisabledCategorySet().contains(NormalAchievements.ENDERPEARLS.toString()))
 			return;
 
 		Player player = event.getPlayer();
@@ -63,7 +64,7 @@ public class AchieveTeleportRespawnListener implements Listener {
 
 		plugin.getPoolsManager().getEnderPearlHashMap().put(player.getUniqueId().toString(), enderpearls);
 
-		String configAchievement = "EnderPearls." + enderpearls;
+		String configAchievement = NormalAchievements.ENDERPEARLS + "." + enderpearls;
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
