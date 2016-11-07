@@ -317,7 +317,7 @@ public class ListCommand {
 		ItemStack categoryItem;
 		ItemMeta categoryMeta;
 
-		if (hasReceivedInCategory || !hideNotReceivedCategories) {
+		if (hasReceivedInCategory) {
 			// Create item stack that will be displayed in the GUI, with its category name.
 			categoryItem = normalAchievementCategoryItems[indexInItemStacksArray];
 			categoryMeta = categoryItem.getItemMeta();
@@ -649,7 +649,7 @@ public class ListCommand {
 				category = MultipleAchievements.KILLS;
 				break;
 			case WORKBENCH:
-				category = MultipleAchievements.PLACES;
+				category = MultipleAchievements.CRAFTS;
 				break;
 			// Default case cannot happen.
 			default:
