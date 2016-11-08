@@ -7,7 +7,8 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.AdvancedAchievements;
 
 /**
- * Abstract class in charge of factoring out common functionality for commands with more than one argument.
+ * Abstract class in charge of factoring out common functionality for commands with more than one argument (/aach give,
+ * delete and check).
  * 
  * @author Pyves
  */
@@ -43,6 +44,15 @@ public abstract class AbstractParsableCommand {
 	}
 
 	/**
+	 * Executes actions specific to the class extending this abstract class.
+	 * 
+	 * @param sender
+	 * @param args
+	 * @param player
+	 */
+	protected abstract void executeSpecificActions(CommandSender sender, String[] args, Player player);
+
+	/**
 	 * Extracts the name of the achievement from the command line arguments.
 	 * 
 	 * @param args
@@ -59,14 +69,4 @@ public abstract class AbstractParsableCommand {
 		}
 		return achievementName.toString();
 	}
-
-	/**
-	 * Executes actions specific to the class extending this abstract class.
-	 * 
-	 * @param sender
-	 * @param args
-	 * @param player
-	 */
-	protected abstract void executeSpecificActions(CommandSender sender, String[] args, Player player);
-
 }

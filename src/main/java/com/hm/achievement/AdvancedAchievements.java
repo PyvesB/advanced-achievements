@@ -37,8 +37,10 @@ import com.hm.achievement.command.GiveCommand;
 import com.hm.achievement.command.HelpCommand;
 import com.hm.achievement.command.InfoCommand;
 import com.hm.achievement.command.ListCommand;
+import com.hm.achievement.command.MonthCommand;
 import com.hm.achievement.command.StatsCommand;
 import com.hm.achievement.command.TopCommand;
+import com.hm.achievement.command.WeekCommand;
 import com.hm.achievement.db.DatabasePoolsManager;
 import com.hm.achievement.db.PooledRequestsSender;
 import com.hm.achievement.db.SQLDatabaseManager;
@@ -131,6 +133,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	private GiveCommand giveCommand;
 	private BookCommand bookCommand;
 	private TopCommand topCommand;
+	private WeekCommand weekCommand;
+	private MonthCommand monthCommand;
 	private ListCommand listCommand;
 	private StatsCommand statsCommand;
 	private InfoCommand infoCommand;
@@ -544,6 +548,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		giveCommand = new GiveCommand(this);
 		bookCommand = new BookCommand(this);
 		topCommand = new TopCommand(this);
+		weekCommand = new WeekCommand(this);
+		monthCommand = new MonthCommand(this);
 		statsCommand = new StatsCommand(this);
 		infoCommand = new InfoCommand(this);
 		listCommand = new ListCommand(this);
@@ -817,7 +823,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			} else if ("top".equalsIgnoreCase(args[0])) {
 
 				if (sender.hasPermission("achievement.top")) {
-					topCommand.getTop(sender);
+					topCommand.executeCommand(sender);
 				} else {
 
 					sender.sendMessage(chatHeader
@@ -826,7 +832,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			} else if ("week".equalsIgnoreCase(args[0])) {
 
 				if (sender.hasPermission("achievement.week")) {
-					topCommand.getWeek(sender);
+					weekCommand.executeCommand(sender);
 				} else {
 
 					sender.sendMessage(chatHeader
@@ -835,7 +841,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			} else if ("month".equalsIgnoreCase(args[0])) {
 
 				if (sender.hasPermission("achievement.month")) {
-					topCommand.getMonth(sender);
+					monthCommand.executeCommand(sender);
 				} else {
 
 					sender.sendMessage(chatHeader
