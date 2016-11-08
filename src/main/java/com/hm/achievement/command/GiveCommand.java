@@ -1,9 +1,7 @@
 package com.hm.achievement.command;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 import com.hm.achievement.AdvancedAchievements;
 
@@ -12,9 +10,8 @@ import com.hm.achievement.AdvancedAchievements;
  * 
  * @author Pyves
  */
-public class GiveCommand implements Listener {
+public class GiveCommand extends AbstractParsableCommand {
 
-	private AdvancedAchievements plugin;
 	private boolean multiCommand;
 
 	public GiveCommand(AdvancedAchievements plugin) {
@@ -24,31 +21,10 @@ public class GiveCommand implements Listener {
 		multiCommand = plugin.getPluginConfig().getBoolean("MultiCommand", true);
 	}
 
-	/**
-	 * Give an achievement with an in game or console command.
-	 * 
-	 * @param sender
-	 * @param args
-	 */
-	public void achievementGive(CommandSender sender, String[] args) {
+	@Override
+	protected void executeSpecificActions(CommandSender sender, String[] args, Player player) {
 
 		String configAchievement = "Commands." + args[1];
-
-		Player player = null;
-		// Retrieve player instance with his name.
-		for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
-			if (currentPlayer.getName().equalsIgnoreCase(args[2])) {
-				player = currentPlayer;
-				break;
-			}
-		}
-
-		// If player not found or is offline.
-		if (player == null) {
-			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
-					.getString("player-offline", "The player PLAYER is offline!").replace("PLAYER", args[2]));
-			return;
-		}
 
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 			// Check whether player has already received achievement and cannot receive it again.

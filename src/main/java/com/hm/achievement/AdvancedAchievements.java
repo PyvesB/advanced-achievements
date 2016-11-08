@@ -852,7 +852,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			if (sender.hasPermission("achievement.give")) {
 
-				giveCommand.achievementGive(sender, args);
+				giveCommand.executeCommand(sender, args);
 
 			} else {
 
@@ -864,7 +864,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			if (sender.hasPermission("achievement.check")) {
 
-				checkCommand.achievementCheck(sender, args);
+				checkCommand.executeCommand(sender, args);
 
 			} else {
 
@@ -876,7 +876,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			if (sender.hasPermission("achievement.delete")) {
 
-				deleteCommand.achievementDelete(sender, args);
+				deleteCommand.executeCommand(sender, args);
 
 			} else {
 
