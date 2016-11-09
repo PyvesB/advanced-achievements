@@ -32,8 +32,7 @@ public class AchieveDeathListener implements Listener {
 		if (player == null)
 			return;
 
-		if (!player.hasPermission("achievement.count.deaths") || plugin.isInExludedWorld(player)
-				|| plugin.getDisabledCategorySet().contains(NormalAchievements.DEATHS.toString()))
+		if (!player.hasPermission("achievement.count.deaths") || plugin.isInExludedWorld(player))
 			return;
 
 		int deaths = plugin.getPoolsManager().getPlayerDeathAmount(player) + 1;
