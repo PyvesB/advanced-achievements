@@ -14,7 +14,7 @@ public class CheckCommand extends AbstractParsableCommand {
 
 	public CheckCommand(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@Override

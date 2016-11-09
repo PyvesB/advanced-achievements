@@ -14,7 +14,7 @@ public class DeleteCommand extends AbstractParsableCommand {
 
 	public DeleteCommand(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@Override

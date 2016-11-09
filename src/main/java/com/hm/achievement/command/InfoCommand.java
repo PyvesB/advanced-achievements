@@ -10,21 +10,15 @@ import com.hm.achievement.AdvancedAchievements;
  * 
  * @author Pyves
  */
-public class InfoCommand {
-
-	private AdvancedAchievements plugin;
+public class InfoCommand extends AbstractCommand {
 
 	public InfoCommand(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
-	/**
-	 * Display various information about the plugin to the command sender.
-	 * 
-	 * @param sender
-	 */
-	public void getInfo(CommandSender sender) {
+	@Override
+	protected void executeCommand(CommandSender sender, String[] args) {
 
 		sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 				+ plugin.getPluginLang().getString("version-command-name", "Name:") + " " + ChatColor.GRAY

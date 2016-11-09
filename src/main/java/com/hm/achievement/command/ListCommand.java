@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -26,13 +27,14 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
 import com.hm.achievement.utils.YamlManager;
 
 /**
- * Class in charge of handling the /aach list command, which displays interactive GUIs.
+ * Class in charge of handling the /aach list command, which displays interactive GUIs. The command displays the main
+ * GUI, corresponding to all the different available categories and their names. Users will then be able to click on an
+ * unlocked category to display another GUI with more specific details about the different achievements.
  * 
  * @author Pyves
  */
-public class ListCommand {
+public class ListCommand extends AbstractCommand {
 
-	private AdvancedAchievements plugin;
 	private boolean hideNotReceivedCategories;
 	private boolean obfuscateNotReceived;
 	private boolean obfuscateProgressiveAchievements;
@@ -59,7 +61,7 @@ public class ListCommand {
 
 	public ListCommand(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 		players = new HashMap<>();
 		// Load configuration parameters.
 		hideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
@@ -154,14 +156,19 @@ public class ListCommand {
 					new ItemStack(Material.BEDROCK), new ItemStack(Material.BOOKSHELF) };
 	}
 
-	/**
-	 * Display the main GUI, corresponding to all the different available categories and their names. Users will then be
-	 * able to click on an unlocked category to display another GUI with more specific details about the different
-	 * achievements.
-	 * 
-	 * @param player
-	 */
-	public void createMainGUI(Player player) {
+	@Override
+	protected void executeCommand(CommandSender sender, String[] args) {
+
+		if (!(sender instanceof Player))
+			return;
+
+		Player player = (Player) sender;
+
+		if (!player.hasPermission("achievement.list")) {
+			player.sendMessage(plugin.getChatHeader()
+					+ plugin.getPluginLang().getString("no-permissions", "You do not have the permission to do this."));
+			return;
+		}
 
 		if (timeAuthorisedList(player)) {
 			// Create a new chest-like inventory; make it as small as possible while still containing all elements.

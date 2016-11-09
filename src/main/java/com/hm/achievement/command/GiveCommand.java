@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.AdvancedAchievements;
 
 /**
- * Class in charge of handling the /aach give command, which gives an achievement from the reward category.
+ * Class in charge of handling the /aach give command, which gives an achievement from the Commands category.
  * 
  * @author Pyves
  */
@@ -16,7 +16,7 @@ public class GiveCommand extends AbstractParsableCommand {
 
 	public GiveCommand(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 		// Load configuration parameter.
 		multiCommand = plugin.getPluginConfig().getBoolean("MultiCommand", true);
 	}

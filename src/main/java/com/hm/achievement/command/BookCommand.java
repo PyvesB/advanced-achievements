@@ -11,6 +11,7 @@ import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -25,9 +26,8 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
  * 
  * @author Pyves
  */
-public class BookCommand {
+public class BookCommand extends AbstractCommand {
 
-	private AdvancedAchievements plugin;
 	private int bookTime;
 	private String bookSeparator;
 	private boolean additionalEffects;
@@ -39,7 +39,7 @@ public class BookCommand {
 
 	public BookCommand(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 		players = new HashMap<>();
 		// Load configuration parameters.
 		bookTime = plugin.getPluginConfig().getInt("TimeBook", 0) * 1000;
@@ -51,12 +51,13 @@ public class BookCommand {
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
-	/**
-	 * Give an achievements book to the player, or several books depending on the number of achievements.
-	 * 
-	 * @param player
-	 */
-	public void giveBook(Player player) {
+	@Override
+	protected void executeCommand(CommandSender sender, String[] args) {
+
+		if (!(sender instanceof Player))
+			return;
+
+		Player player = (Player) sender;
 
 		if (timeAuthorisedBook(player)) {
 			// Play special particle effect when receiving the book.

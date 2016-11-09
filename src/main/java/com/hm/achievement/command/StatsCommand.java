@@ -2,6 +2,7 @@ package com.hm.achievement.command;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -16,9 +17,8 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
  * 
  * @author Pyves
  */
-public class StatsCommand {
+public class StatsCommand extends AbstractCommand {
 
-	private AdvancedAchievements plugin;
 	private int totalAchievements;
 	private boolean additionalEffects;
 	private boolean sound;
@@ -26,8 +26,7 @@ public class StatsCommand {
 
 	public StatsCommand(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
-
+		super(plugin);
 		// Calculate the total number of achievements in the config file.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
@@ -55,12 +54,19 @@ public class StatsCommand {
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
-	/**
-	 * Get statistics of the player by displaying number of achievements received and total number of achievements.
-	 * 
-	 * @param player
-	 */
-	public void getStats(Player player) {
+	@Override
+	protected void executeCommand(CommandSender sender, String[] args) {
+
+		if (!(sender instanceof Player))
+			return;
+
+		Player player = (Player) sender;
+
+		if (!player.hasPermission("achievement.stats")) {
+			player.sendMessage(plugin.getChatHeader()
+					+ plugin.getPluginLang().getString("no-permissions", "You do not have the permission to do this."));
+			return;
+		}
 
 		// Retrieve total number of achievements received by the player.
 		int achievements = plugin.getDb().getPlayerAchievementsAmount(player);

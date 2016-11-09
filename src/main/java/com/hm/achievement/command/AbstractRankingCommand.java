@@ -18,12 +18,10 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
  * 
  * @author Pyves
  */
-public abstract class AbstractRankingCommand {
+public abstract class AbstractRankingCommand extends AbstractCommand {
 
 	protected String languageHeaderKey;
 	protected String defaultHeaderMessage;
-
-	private AdvancedAchievements plugin;
 
 	private int topList;
 	private boolean additionalEffects;
@@ -41,7 +39,7 @@ public abstract class AbstractRankingCommand {
 
 	protected AbstractRankingCommand(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 		lastCommandTime = 0L;
 		// Load configuration parameters.
 		topList = plugin.getPluginConfig().getInt("TopList", 5);
@@ -52,13 +50,8 @@ public abstract class AbstractRankingCommand {
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
-	/**
-	 * Executes the command issued by the player.
-	 * 
-	 * @param sender
-	 * @param args
-	 */
-	public void executeCommand(CommandSender sender) {
+	@Override
+	public void executeCommand(CommandSender sender, String[] args) {
 
 		long currentTime = System.currentTimeMillis();
 		int rank = Integer.MAX_VALUE;

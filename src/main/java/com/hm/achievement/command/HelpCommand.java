@@ -12,21 +12,15 @@ import com.hm.achievement.particle.PacketSender;
  * 
  * @author Pyves
  */
-public class HelpCommand {
-
-	private AdvancedAchievements plugin;
+public class HelpCommand extends AbstractCommand {
 
 	public HelpCommand(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
-	/**
-	 * Display plugin help to the command sender.
-	 * 
-	 * @param sender
-	 */
-	public void getHelp(CommandSender sender) {
+	@Override
+	protected void executeCommand(CommandSender sender, String[] args) {
 
 		// Header.
 		sender.sendMessage(plugin.getColor() + "------------ " + ChatColor.GRAY + plugin.getColor() + plugin.getIcon()

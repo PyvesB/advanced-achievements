@@ -43,7 +43,7 @@ public class ListGUIListener implements Listener {
 
 		// Back button; display main GUI again.
 		if (event.getCurrentItem().getType() == Material.PAPER) {
-			plugin.getAchievementListCommand().createMainGUI((Player) event.getWhoClicked());
+			plugin.getAchievementListCommand().executeCommand(event.getWhoClicked(), null, "list");
 		}
 
 		// GUI corresponding to the achievement listing of a given category. Do not let the player interact with it.

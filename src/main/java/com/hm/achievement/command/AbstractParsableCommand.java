@@ -12,17 +12,24 @@ import com.hm.achievement.AdvancedAchievements;
  * 
  * @author Pyves
  */
-public abstract class AbstractParsableCommand {
+public abstract class AbstractParsableCommand extends AbstractCommand {
 
-	protected AdvancedAchievements plugin;
+	protected AbstractParsableCommand(AdvancedAchievements plugin) {
+
+		super(plugin);
+	}
 
 	/**
-	 * Executes the command issued by the player.
+	 * Executes actions specific to the class extending this abstract class.
 	 * 
 	 * @param sender
 	 * @param args
+	 * @param player
 	 */
-	public void executeCommand(CommandSender sender, String[] args) {
+	protected abstract void executeSpecificActions(CommandSender sender, String[] args, Player player);
+
+	@Override
+	protected void executeCommand(CommandSender sender, String[] args) {
 
 		Player player = null;
 		// Retrieve player instance with his name.
@@ -42,15 +49,6 @@ public abstract class AbstractParsableCommand {
 
 		executeSpecificActions(sender, args, player);
 	}
-
-	/**
-	 * Executes actions specific to the class extending this abstract class.
-	 * 
-	 * @param sender
-	 * @param args
-	 * @param player
-	 */
-	protected abstract void executeSpecificActions(CommandSender sender, String[] args, Player player);
 
 	/**
 	 * Extracts the name of the achievement from the command line arguments.

@@ -9,7 +9,6 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public class TopCommand extends AbstractRankingCommand {
 
-
 	public TopCommand(AdvancedAchievements plugin) {
 
 		super(plugin);

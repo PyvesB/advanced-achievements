@@ -38,6 +38,7 @@ import com.hm.achievement.command.HelpCommand;
 import com.hm.achievement.command.InfoCommand;
 import com.hm.achievement.command.ListCommand;
 import com.hm.achievement.command.MonthCommand;
+import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.command.StatsCommand;
 import com.hm.achievement.command.TopCommand;
 import com.hm.achievement.command.WeekCommand;
@@ -141,6 +142,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private HelpCommand helpCommand;
 	private CheckCommand checkCommand;
 	private DeleteCommand deleteCommand;
+	private ReloadCommand reloadCommand;
 	private UpdateChecker updateChecker;
 
 	private YamlManager config;
@@ -427,7 +429,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Load plugin configuration and set values to different parameters; load language file and backup configuration
 	 * files. Register permissions. Initialise command modules.
 	 */
-	private void configurationLoad(boolean attemptUpdate) {
+	public void configurationLoad(boolean attemptUpdate) {
 
 		successfulLoad = true;
 		Logger logger = this.getLogger();
@@ -556,6 +558,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		helpCommand = new HelpCommand(this);
 		checkCommand = new CheckCommand(this);
 		deleteCommand = new DeleteCommand(this);
+		reloadCommand = new ReloadCommand(this);
 	}
 
 	/**
@@ -769,133 +772,38 @@ public class AdvancedAchievements extends JavaPlugin {
 			return false;
 
 		if ((args.length == 1) && !"help".equalsIgnoreCase(args[0])) {
-
-			if ("book".equalsIgnoreCase(args[0]) && sender.hasPermission("achievement.book")
-					&& sender instanceof Player) {
-
-				bookCommand.giveBook(((Player) sender));
-
+			if ("book".equalsIgnoreCase(args[0])) {
+				bookCommand.executeCommand(sender, null, "book");
 			} else if ("hcaa".equalsIgnoreCase(args[0]) && sender.hasPermission("achievement.easteregg")) {
-
 				displayEasterEgg(sender);
-
 			} else if ("reload".equalsIgnoreCase(args[0])) {
-
-				if (sender.hasPermission("achievement.reload")) {
-
-					this.reloadConfig();
-					configurationLoad(false);
-					if (successfulLoad) {
-						if (sender instanceof Player)
-							sender.sendMessage(chatHeader + lang.getString("configuration-successfully-reloaded",
-									"Configuration successfully reloaded."));
-						this.getLogger().info("Configuration successfully reloaded.");
-					} else {
-						sender.sendMessage(chatHeader + lang.getString("configuration-reload-failed",
-								"Errors while reloading configuration. Please view logs for more details."));
-						this.getLogger()
-								.severe("Errors while reloading configuration. Please view logs for more details.");
-					}
-
-				} else {
-
-					sender.sendMessage(chatHeader
-							+ lang.getString("no-permissions", "You do not have the permission to do this."));
-				}
-			} else if ("stats".equalsIgnoreCase(args[0]) && sender instanceof Player) {
-
-				if (sender.hasPermission("achievement.stats")) {
-					statsCommand.getStats((Player) sender);
-				} else {
-
-					sender.sendMessage(chatHeader
-							+ lang.getString("no-permissions", "You do not have the permission to do this."));
-				}
-			} else if ("list".equalsIgnoreCase(args[0]) && sender instanceof Player) {
-
-				if (sender.hasPermission("achievement.list")) {
-					listCommand.createMainGUI((Player) sender);
-				} else {
-
-					sender.sendMessage(chatHeader
-							+ lang.getString("no-permissions", "You do not have the permission to do this."));
-				}
+				reloadCommand.executeCommand(sender, null, "reload");
+			} else if ("stats".equalsIgnoreCase(args[0])) {
+				statsCommand.executeCommand(sender, null, "stats");
+			} else if ("list".equalsIgnoreCase(args[0])) {
+				listCommand.executeCommand(sender, null, "list");
 			} else if ("top".equalsIgnoreCase(args[0])) {
-
-				if (sender.hasPermission("achievement.top")) {
-					topCommand.executeCommand(sender);
-				} else {
-
-					sender.sendMessage(chatHeader
-							+ lang.getString("no-permissions", "You do not have the permission to do this."));
-				}
+				topCommand.executeCommand(sender, null, "top");
 			} else if ("week".equalsIgnoreCase(args[0])) {
-
-				if (sender.hasPermission("achievement.week")) {
-					weekCommand.executeCommand(sender);
-				} else {
-
-					sender.sendMessage(chatHeader
-							+ lang.getString("no-permissions", "You do not have the permission to do this."));
-				}
+				weekCommand.executeCommand(sender, null, "week");
 			} else if ("month".equalsIgnoreCase(args[0])) {
-
-				if (sender.hasPermission("achievement.month")) {
-					monthCommand.executeCommand(sender);
-				} else {
-
-					sender.sendMessage(chatHeader
-							+ lang.getString("no-permissions", "You do not have the permission to do this."));
-				}
+				monthCommand.executeCommand(sender, null, "month");
 			} else if ("info".equalsIgnoreCase(args[0])) {
-
-				infoCommand.getInfo(sender);
+				infoCommand.executeCommand(sender, null, null);
 			} else {
-
-				helpCommand.getHelp(sender);
+				helpCommand.executeCommand(sender, args, null);
 			}
 		} else if ((args.length == 3) && "give".equalsIgnoreCase(args[0])) {
-
-			if (sender.hasPermission("achievement.give")) {
-
-				giveCommand.executeCommand(sender, args);
-
-			} else {
-
-				sender.sendMessage(
-						chatHeader + lang.getString("no-permissions", "You do not have the permission to do this."));
-			}
-
+			giveCommand.executeCommand(sender, args, "give");
 		} else if ((args.length >= 3) && "check".equalsIgnoreCase(args[0])) {
-
-			if (sender.hasPermission("achievement.check")) {
-
-				checkCommand.executeCommand(sender, args);
-
-			} else {
-
-				sender.sendMessage(
-						chatHeader + lang.getString("no-permissions", "You do not have the permission to do this."));
-			}
-
+			checkCommand.executeCommand(sender, args, "check");
 		} else if ((args.length >= 3) && "delete".equalsIgnoreCase(args[0])) {
-
-			if (sender.hasPermission("achievement.delete")) {
-
-				deleteCommand.executeCommand(sender, args);
-
-			} else {
-
-				sender.sendMessage(
-						chatHeader + lang.getString("no-permissions", "You do not have the permission to do this."));
-			}
+			deleteCommand.executeCommand(sender, args, "delete");
 		} else {
-
-			helpCommand.getHelp(sender);
+			helpCommand.executeCommand(sender, args, null);
 		}
 
 		return true;
-
 	}
 
 	/**
