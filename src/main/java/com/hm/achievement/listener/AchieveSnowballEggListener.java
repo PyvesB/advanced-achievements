@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -18,51 +17,35 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveSnowballEggListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveSnowballEggListener extends AbstractListener implements Listener {
 
 	public AchieveSnowballEggListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onProjectileLaunch(ProjectileLaunchEvent event) {
 
-		if (!(event.getEntity() instanceof Snowball) && !(event.getEntity() instanceof Egg)
-				|| !(event.getEntity().getShooter() instanceof Player))
+		if (!(event.getEntity().getShooter() instanceof Player))
 			return;
+
 		Player player = (Player) event.getEntity().getShooter();
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		NormalAchievements category;
+		if (event.getEntity() instanceof Snowball) {
+			category = NormalAchievements.SNOWBALLS;
+		} else if (event.getEntity() instanceof Egg) {
+			category = NormalAchievements.EGGS;
+		} else {
 			return;
-
-		String configAchievement;
-		if (player.hasPermission("achievement.count.snowballs")
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.SNOWBALLS.toString())
-				&& event.getEntity() instanceof Snowball) {
-			int snowballs = plugin.getPoolsManager().getPlayerSnowballAmount(player) + 1;
-
-			plugin.getPoolsManager().getSnowballHashMap().put(player.getUniqueId().toString(), snowballs);
-
-			configAchievement = NormalAchievements.SNOWBALLS + "." + snowballs;
-		} else if (player.hasPermission("achievement.count.eggs")
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.EGGS.toString())) {
-			int eggs = plugin.getPoolsManager().getPlayerEggAmount(player) + 1;
-
-			plugin.getPoolsManager().getEggHashMap().put(player.getUniqueId().toString(), eggs);
-
-			configAchievement = NormalAchievements.EGGS + "." + eggs;
-		} else
-			return;
-
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-
-			plugin.getReward().checkConfig(player, configAchievement);
 		}
+
+		if (plugin.getDisabledCategorySet().contains(category.toString()))
+			return;
+
+		if (!shouldEventBeTakenIntoAccount(player, category))
+			return;
+
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }

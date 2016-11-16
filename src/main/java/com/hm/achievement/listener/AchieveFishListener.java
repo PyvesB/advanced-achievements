@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,13 +15,11 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveFishListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveFishListener extends AbstractListener implements Listener {
 
 	public AchieveFishListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -30,25 +27,12 @@ public class AchieveFishListener implements Listener {
 
 		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH)
 			return;
+
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.count.fish")
-				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		NormalAchievements category = NormalAchievements.FISH;
+		if (!shouldEventBeTakenIntoAccount(player, category))
 			return;
 
-		int fish = plugin.getPoolsManager().getPlayerFishAmount(player) + 1;
-
-		plugin.getPoolsManager().getFishHashMap().put(player.getUniqueId().toString(), fish);
-
-		String configAchievement = NormalAchievements.FISH + "." + fish;
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-
-			plugin.getReward().checkConfig(player, configAchievement);
-
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }

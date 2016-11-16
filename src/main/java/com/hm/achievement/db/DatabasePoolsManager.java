@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 
 /**
@@ -141,499 +142,214 @@ public class DatabasePoolsManager {
 		}
 	}
 
-	public Map<String, Integer> getDeathHashMap() {
+	/**
+	 * Retrieves a HashMap for a NormalAchievement based on the category.
+	 * 
+	 * @param category
+	 * @return
+	 */
+	public Map<String, Integer> getHashMap(NormalAchievements category) {
 
-		return deathHashMap;
+		switch (category) {
+			case ANVILS:
+				return anvilHashMap;
+			case ARROWS:
+				return arrowHashMap;
+			case BEDS:
+				return bedHashMap;
+			case BREWING:
+				return brewingHashMap;
+			case CONNECTIONS:
+				throw new IllegalArgumentException("Connections does not have a corresponding HashMap.");
+			case CONSUMEDPOTIONS:
+				return consumedPotionHashMap;
+			case DEATHS:
+				return deathHashMap;
+			case DISTANCEBOAT:
+				return distanceBoatHashMap;
+			case DISTANCEFOOT:
+				return distanceFootHashMap;
+			case DISTANCEGLIDING:
+				return distanceGlidingHashMap;
+			case DISTANCEHORSE:
+				return distanceHorseHashMap;
+			case DISTANCEMINECART:
+				return distanceMinecartHashMap;
+			case DISTANCEPIG:
+				return distancePigHashMap;
+			case DROPS:
+				return dropHashMap;
+			case EATENITEMS:
+				return eatenItemHashMap;
+			case EGGS:
+				return eggHashMap;
+			case ENCHANTMENTS:
+				return enchantmentHashMap;
+			case ENDERPEARLS:
+				return enderPearlHashMap;
+			case FERTILISING:
+				return fertiliseHashMap;
+			case FIREWORKS:
+				return fireworkHashMap;
+			case FISH:
+				return fishHashMap;
+			case HOEPLOWING:
+				return hoePlowingHashMap;
+			case ITEMBREAKS:
+				return itemBreakHashMap;
+			case LEVELS:
+				return xpHashMap;
+			case MILKS:
+				return milkHashMap;
+			case MUSICDISCS:
+				return musicDiscHashMap;
+			case PLAYEDTIME:
+				throw new IllegalArgumentException("PlayedTime is handled by a separate function.");
+			case SHEARS:
+				return shearHashMap;
+			case SNOWBALLS:
+				return snowballHashMap;
+			case TAMES:
+				return tameHashMap;
+			case TRADES:
+				return tradeHashMap;
+			default:
+				return null;
+		}
 	}
 
-	public int getPlayerDeathAmount(Player player) {
+	/**
+	 * Retrieves a HashMap for a MultipleAchievement based on the category.
+	 * 
+	 * @param category
+	 * @return
+	 */
+	public Map<String, Integer> getHashMap(MultipleAchievements category) {
 
-		Integer amount = deathHashMap.get(player.getUniqueId().toString());
+		switch (category) {
+			case BREAKS:
+				return blockBreakHashMap;
+			case CRAFTS:
+				return craftHashMap;
+			case KILLS:
+				return killHashMap;
+			case PLACES:
+				return blockPlaceHashMap;
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Increases the statistic for a NormalAchievement by the given value and returns the updated statistic. Calls the
+	 * database if not found in the pools.
+	 * 
+	 * @param category
+	 * @param player
+	 * @param value
+	 * @return
+	 */
+	public int getAndIncrementStatisticAmount(NormalAchievements category, Player player, int value) {
+
+		Map<String, Integer> categoryHashMap = getHashMap(category);
+		String uuid = player.getUniqueId().toString();
+		Integer oldAmount = categoryHashMap.get(uuid);
+		if (oldAmount == null)
+			oldAmount = plugin.getDb().getNormalAchievementAmount(player, category.toDBName());
+
+		Integer newValue = oldAmount + value;
+
+		categoryHashMap.put(uuid, newValue);
+		return newValue;
+	}
+
+	/**
+	 * Returns the statistic for a NormalAchievement. Calls the database if not found in the pools.
+	 * 
+	 * @param category
+	 * @param player
+	 * @return
+	 */
+	public int getStatisticAmount(NormalAchievements category, Player player) {
+
+		Map<String, Integer> categoryHashMap = getHashMap(category);
+		String uuid = player.getUniqueId().toString();
+		Integer amount = categoryHashMap.get(uuid);
 		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.DEATHS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getArrowHashMap() {
-
-		return arrowHashMap;
-	}
-
-	public int getPlayerArrowAmount(Player player) {
-
-		Integer amount = arrowHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.ARROWS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getSnowballHashMap() {
-
-		return snowballHashMap;
-	}
-
-	public int getPlayerSnowballAmount(Player player) {
-
-		Integer amount = snowballHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.SNOWBALLS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getEggHashMap() {
-
-		return eggHashMap;
-	}
-
-	public int getPlayerEggAmount(Player player) {
-
-		Integer amount = eggHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.EGGS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getFishHashMap() {
-
-		return fishHashMap;
-	}
-
-	public int getPlayerFishAmount(Player player) {
-
-		Integer amount = fishHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.FISH.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getItemBreakHashMap() {
-
-		return itemBreakHashMap;
-	}
-
-	public int getPlayerItemBreakAmount(Player player) {
-
-		Integer amount = itemBreakHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.ITEMBREAKS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getEatenItemsHashMap() {
-
-		return eatenItemHashMap;
-	}
-
-	public int getPlayerEatenItemAmount(Player player) {
-
-		Integer amount = eatenItemHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.EATENITEMS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getShearHashMap() {
-
-		return shearHashMap;
-	}
-
-	public int getPlayerShearAmount(Player player) {
-
-		Integer amount = shearHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.SHEARS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getMilkHashMap() {
-
-		return milkHashMap;
-	}
-
-	public int getPlayerMilkAmount(Player player) {
-
-		Integer amount = milkHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.MILKS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getTradeHashMap() {
-
-		return tradeHashMap;
-	}
-
-	public int getPlayerTradeAmount(Player player) {
-
-		Integer amount = tradeHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.TRADES.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getAnvilHashMap() {
-
-		return anvilHashMap;
-	}
-
-	public int getPlayerAnvilAmount(Player player) {
-
-		Integer amount = anvilHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.ANVILS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getEnchantmentHashMap() {
-
-		return enchantmentHashMap;
-	}
-
-	public int getPlayerEnchantmentAmount(Player player) {
-
-		Integer amount = enchantmentHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.ENCHANTMENTS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getBedHashMap() {
-
-		return bedHashMap;
-	}
-
-	public int getPlayerBedAmount(Player player) {
-
-		Integer amount = bedHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.BEDS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getXpHashMap() {
-
-		return xpHashMap;
-	}
-
-	public int getPlayerXPAmount(Player player) {
-
-		Integer amount = xpHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.LEVELS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getConsumedPotionsHashMap() {
-
-		return consumedPotionHashMap;
-	}
-
-	public int getPlayerConsumedPotionAmount(Player player) {
-
-		Integer amount = consumedPotionHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.CONSUMEDPOTIONS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getDropHashMap() {
-
-		return dropHashMap;
-	}
-
-	public int getPlayerDropAmount(Player player) {
-
-		Integer amount = dropHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.DROPS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getHoePlowingHashMap() {
-
-		return hoePlowingHashMap;
-	}
-
-	public int getPlayerHoePlowingAmount(Player player) {
-
-		Integer amount = hoePlowingHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.HOEPLOWING.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getFertiliseHashMap() {
-
-		return fertiliseHashMap;
-	}
-
-	public int getPlayerFertiliseAmount(Player player) {
-
-		Integer amount = fertiliseHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.FERTILISING.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getTameHashMap() {
-
-		return tameHashMap;
-	}
-
-	public int getPlayerTameAmount(Player player) {
-
-		Integer amount = tameHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.TAMES.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getBrewingHashMap() {
-
-		return brewingHashMap;
-	}
-
-	public int getPlayerBrewingAmount(Player player) {
-
-		Integer amount = brewingHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.BREWING.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getFireworkHashMap() {
-
-		return fireworkHashMap;
-	}
-
-	public int getPlayerFireworkAmount(Player player) {
-
-		Integer amount = fireworkHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.FIREWORKS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getMusicDiscHashMap() {
-
-		return musicDiscHashMap;
-	}
-
-	public int getPlayerMusicDiscAmount(Player player) {
-
-		Integer amount = musicDiscHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.MUSICDISCS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getEnderPearlHashMap() {
-
-		return enderPearlHashMap;
-	}
-
-	public int getPlayerEnderPearlAmount(Player player) {
-
-		Integer amount = enderPearlHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.ENDERPEARLS.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getBlockPlaceHashMap() {
-
-		return blockPlaceHashMap;
-	}
-
-	public int getPlayerBlockPlaceAmount(Player player, String blockName) {
-
-		// Concatenate player name and block name to put in HashMap.
-		Integer amount = blockPlaceHashMap.get(player.getUniqueId().toString() + blockName);
-		if (amount == null)
-			return plugin.getDb().getPlaces(player, blockName);
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getBlockBreakHashMap() {
-
-		return blockBreakHashMap;
-	}
-
-	public int getPlayerBlockBreakAmount(Player player, String blockName) {
-
-		// Concatenate player name and block name to put in HashMap.
-		Integer amount = blockBreakHashMap.get(player.getUniqueId().toString() + blockName);
-		if (amount == null)
-			return plugin.getDb().getBreaks(player, blockName);
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getKillHashMap() {
-
-		return killHashMap;
-	}
-
-	public int getPlayerKillAmount(Player player, String mobName) {
-
-		// Concatenate player name and mob name to put in HashMap.
-		Integer amount = killHashMap.get(player.getUniqueId().toString() + mobName);
-		if (amount == null)
-			return plugin.getDb().getKills(player, mobName);
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getCraftHashMap() {
-
-		return craftHashMap;
-	}
-
-	public int getPlayerCraftAmount(Player player, String craftName) {
-
-		// Concatenate player name and item name to put in HashMap.
-		Integer amount = craftHashMap.get(player.getUniqueId().toString() + craftName);
-		if (amount == null)
-			return plugin.getDb().getCrafts(player, craftName);
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getDistanceFootHashMap() {
-
-		return distanceFootHashMap;
-	}
-
-	public int getPlayerDistanceFootAmount(Player player) {
-
-		Integer amount = distanceFootHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.DISTANCEFOOT.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getDistanceHorseHashMap() {
-
-		return distanceHorseHashMap;
-	}
-
-	public int getPlayerDistanceHorseAmount(Player player) {
-
-		Integer amount = distanceHorseHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.DISTANCEHORSE.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getDistancePigHashMap() {
-
-		return distancePigHashMap;
-	}
-
-	public int getPlayerDistancePigAmount(Player player) {
-
-		Integer amount = distancePigHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.DISTANCEPIG.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getDistanceMinecartHashMap() {
-
-		return distanceMinecartHashMap;
-	}
-
-	public int getPlayerDistanceMinecartAmount(Player player) {
-
-		Integer amount = distanceMinecartHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.DISTANCEMINECART.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getDistanceBoatHashMap() {
-
-		return distanceBoatHashMap;
-	}
-
-	public int getPlayerDistanceBoatAmount(Player player) {
-
-		Integer amount = distanceBoatHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.DISTANCEBOAT.toDBName());
-		else
-			return amount;
-	}
-
-	public Map<String, Integer> getDistanceGlidingHashMap() {
-
-		return distanceGlidingHashMap;
-	}
-
-	public int getPlayerDistanceGlidingAmount(Player player) {
-
-		Integer amount = distanceGlidingHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
-			return plugin.getDb().getNormalAchievementAmount(player,
-					NormalAchievements.DISTANCEGLIDING.toDBName());
-		else
-			return amount;
+			return plugin.getDb().getNormalAchievementAmount(player, category.toDBName());
+
+		return amount;
+	}
+
+	/**
+	 * Increases the statistic for a MultipleAchievement by the given value and returns the updated statistic. Calls the
+	 * database if not found in the pools.
+	 * 
+	 * @param category
+	 * @param subcategory
+	 * @param player
+	 * @param value
+	 * @return
+	 */
+	public int getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, Player player,
+			int value) {
+
+		Map<String, Integer> categoryHashMap = getHashMap(category);
+		String uuid = player.getUniqueId().toString();
+		Integer oldAmount = categoryHashMap.get(uuid);
+		if (oldAmount == null) {
+			switch (category) {
+				case BREAKS:
+					oldAmount = plugin.getDb().getBreaks(player, subcategory);
+					break;
+				case CRAFTS:
+					oldAmount = plugin.getDb().getCrafts(player, subcategory);
+					break;
+				case KILLS:
+					oldAmount = plugin.getDb().getKills(player, subcategory);
+					break;
+				case PLACES:
+					oldAmount = plugin.getDb().getPlaces(player, subcategory);
+					break;
+				default:
+					oldAmount = 0;
+					break;
+			}
+		}
+		Integer newValue = oldAmount + value;
+
+		categoryHashMap.put(uuid + subcategory, newValue);
+		return newValue;
+	}
+
+	/**
+	 * Returns the statistic for a MultipleAchievement. Calls the database if not found in the pools.
+	 * 
+	 * @param category
+	 * @param subcategory
+	 * @param player
+	 * @return
+	 */
+	public int getStatisticAmount(MultipleAchievements category, String subcategory, Player player) {
+
+		Map<String, Integer> categoryHashMap = getHashMap(category);
+		String uuid = player.getUniqueId().toString();
+		Integer oldAmount = categoryHashMap.get(uuid);
+		if (oldAmount == null) {
+			switch (category) {
+				case BREAKS:
+					return plugin.getDb().getBreaks(player, subcategory);
+				case CRAFTS:
+					return plugin.getDb().getCrafts(player, subcategory);
+				case KILLS:
+					return plugin.getDb().getKills(player, subcategory);
+				case PLACES:
+					return plugin.getDb().getPlaces(player, subcategory);
+				default:
+					return 0;
+			}
+		}
+		return oldAmount;
 	}
 
 	public Map<String, Long> getPlayedTimeHashMap() {

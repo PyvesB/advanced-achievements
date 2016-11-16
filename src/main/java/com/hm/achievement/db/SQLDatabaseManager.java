@@ -240,12 +240,10 @@ public class SQLDatabaseManager {
 		try (Statement st = sqlConnection.createStatement()) {
 			st.addBatch("ALTER TABLE achievements RENAME TO " + tablePrefix + "achievements");
 			for (NormalAchievements category : NormalAchievements.values()) {
-				st.addBatch("ALTER TABLE " + category.toString().toLowerCase() + " RENAME TO " + tablePrefix
-						+ category.toString().toLowerCase());
+				st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + tablePrefix + category.toDBName());
 			}
 			for (MultipleAchievements category : MultipleAchievements.values()) {
-				st.addBatch("ALTER TABLE " + category.toString().toLowerCase() + " RENAME TO " + tablePrefix
-						+ category.toString().toLowerCase());
+				st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + tablePrefix + category.toDBName());
 			}
 			st.executeBatch();
 		}

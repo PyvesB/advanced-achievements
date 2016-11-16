@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,13 +18,11 @@ import com.hm.achievement.category.MultipleAchievements;
  * @author Pyves
  *
  */
-public class AchieveCraftListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveCraftListener extends AbstractListener implements Listener {
 
 	public AchieveCraftListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -35,24 +32,25 @@ public class AchieveCraftListener implements Listener {
 			return;
 
 		Player player = (Player) event.getWhoClicked();
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player)
+		if (!shouldEventBeTakenIntoAccountNoPermission(player)
 				|| event.isShiftClick() && player.getInventory().firstEmpty() < 0)
 			return;
 
+		MultipleAchievements category = MultipleAchievements.CRAFTS;
+
 		ItemStack item = event.getRecipe().getResult();
 		String craftName = item.getType().name().toLowerCase();
-		if (player.hasPermission("achievement.count.crafts." + craftName + "." + item.getDurability())
-				&& plugin.getPluginConfig().isConfigurationSection(
-						MultipleAchievements.CRAFTS + "." + craftName + ":" + item.getDurability()))
+		if (player.hasPermission(category.toPermName() + '.' + craftName + "." + item.getDurability()) && plugin
+				.getPluginConfig().isConfigurationSection(category + "." + craftName + ':' + item.getDurability()))
 			craftName += ":" + item.getDurability();
 		else {
-			if (!player.hasPermission("achievement.count.crafts." + craftName))
+			if (!player.hasPermission(category.toPermName() + '.' + craftName))
 				return;
-			if (!plugin.getPluginConfig().isConfigurationSection(MultipleAchievements.CRAFTS + "." + craftName))
+			if (!plugin.getPluginConfig().isConfigurationSection(category + "." + craftName))
 				return;
 		}
 
-		int amount = item.getAmount();
+		int eventAmount = item.getAmount();
 		if (event.isShiftClick()) {
 			int max = event.getInventory().getMaxStackSize();
 			ItemStack[] matrix = event.getInventory().getMatrix();
@@ -63,29 +61,18 @@ public class AchieveCraftListener implements Listener {
 						max = tmp;
 				}
 			}
-			amount *= max;
+			eventAmount *= max;
 		}
 
-		int times = plugin.getPoolsManager().getPlayerCraftAmount(player, craftName) + amount;
-
-		plugin.getPoolsManager().getCraftHashMap().put(player.getUniqueId().toString() + craftName, times);
+		int amount = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, craftName, player, eventAmount);
 
 		String configAchievement;
-		for (String threshold : plugin.getPluginConfig()
-				.getConfigurationSection(MultipleAchievements.CRAFTS + "." + craftName).getKeys(false))
-			if (times >= Integer.parseInt(threshold)
-					&& !plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig().getString(
-							MultipleAchievements.CRAFTS + "." + craftName + '.' + threshold + '.' + "Name"))) {
-				configAchievement = MultipleAchievements.CRAFTS + "." + craftName + '.' + threshold;
-				if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-					plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-					plugin.getDb().registerAchievement(player,
-							plugin.getPluginConfig().getString(configAchievement + ".Name"),
-							plugin.getPluginConfig().getString(configAchievement + ".Message"));
-					plugin.getReward().checkConfig(player, configAchievement);
-
-				}
+		for (String threshold : plugin.getPluginConfig().getConfigurationSection(category + "." + craftName)
+				.getKeys(false))
+			if (amount >= Integer.parseInt(threshold) && !plugin.getDb().hasPlayerAchievement(player,
+					plugin.getPluginConfig().getString(category + "." + craftName + '.' + threshold + '.' + "Name"))) {
+				configAchievement = category + "." + craftName + '.' + threshold;
+				awardAchievementIfAvailable(player, configAchievement);
 			}
 	}
 }

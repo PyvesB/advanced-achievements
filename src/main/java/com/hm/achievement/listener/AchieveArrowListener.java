@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,13 +15,11 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveArrowListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveArrowListener extends AbstractListener implements Listener {
 
 	public AchieveArrowListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -32,22 +29,10 @@ public class AchieveArrowListener implements Listener {
 			return;
 
 		Player player = (Player) event.getEntity();
-		if (!player.hasPermission("achievement.count.arrows")
-				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		NormalAchievements category = NormalAchievements.ARROWS;
+		if (!shouldEventBeTakenIntoAccount(player, category))
 			return;
 
-		int arrows = plugin.getPoolsManager().getPlayerArrowAmount(player) + 1;
-
-		plugin.getPoolsManager().getArrowHashMap().put(player.getUniqueId().toString(), arrows);
-
-		String configAchievement = NormalAchievements.ARROWS + "." + arrows;
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-			plugin.getReward().checkConfig(player, configAchievement);
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }

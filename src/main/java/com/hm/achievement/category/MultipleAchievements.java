@@ -35,4 +35,15 @@ public enum MultipleAchievements {
 
 		return name().toLowerCase();
 	}
+
+	/**
+	 * Converts to permission name: common prefix + name of the category in lower case.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public String toPermName() {
+
+		return "achievement.count." + categoryName.toLowerCase();
+	}
 }

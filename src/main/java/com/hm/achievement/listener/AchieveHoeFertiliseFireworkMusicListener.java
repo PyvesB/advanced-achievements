@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,14 +19,13 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
  * @author Pyves
  *
  */
-public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
+public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener implements Listener {
 
-	private AdvancedAchievements plugin;
-	private int version;
+	final private int version;
 
 	public AchieveHoeFertiliseFireworkMusicListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
 		// Minecraft versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
@@ -40,28 +38,15 @@ public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 			return;
 
 		Player player = event.getPlayer();
+		NormalAchievements category;
 
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
-			return;
-
-		String configAchievement;
-		if (player.hasPermission("achievement.count.hoeplowings")
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.HOEPLOWING.toString())
-				&& (event.getItem().getType() == Material.DIAMOND_HOE || event.getItem().getType() == Material.IRON_HOE
-						|| event.getItem().getType() == Material.STONE_HOE
-						|| event.getItem().getType() == Material.WOOD_HOE
-						|| event.getItem().getType() == Material.GOLD_HOE)
+		if ((event.getItem().getType() == Material.DIAMOND_HOE || event.getItem().getType() == Material.IRON_HOE
+				|| event.getItem().getType() == Material.STONE_HOE || event.getItem().getType() == Material.WOOD_HOE
+				|| event.getItem().getType() == Material.GOLD_HOE)
 				&& (event.getClickedBlock().getType() == Material.GRASS
 						|| event.getClickedBlock().getType() == Material.DIRT)) {
-			int plowings = plugin.getPoolsManager().getPlayerHoePlowingAmount(player) + 1;
-
-			plugin.getPoolsManager().getHoePlowingHashMap().put(player.getUniqueId().toString(), plowings);
-
-			configAchievement = NormalAchievements.HOEPLOWING + "." + plowings;
-
-		} else if (player.hasPermission("achievement.count.fertilising")
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.FERTILISING.toString())
-				&& event.getItem().isSimilar(new ItemStack(Material.INK_SACK, 1, (short) 15))
+			category = NormalAchievements.HOEPLOWING;
+		} else if (event.getItem().isSimilar(new ItemStack(Material.INK_SACK, 1, (short) 15))
 				&& (event.getClickedBlock().getType() == Material.GRASS
 						|| event.getClickedBlock().getType() == Material.SAPLING
 						|| event.getClickedBlock().getType() == Material.DOUBLE_PLANT
@@ -75,40 +60,22 @@ public class AchieveHoeFertiliseFireworkMusicListener implements Listener {
 						|| event.getClickedBlock().getType() == Material.COCOA
 						|| event.getClickedBlock().getType() == Material.LONG_GRASS
 						|| (version >= 9 && event.getClickedBlock().getType() == Material.BEETROOT_BLOCK))) {
-			int fertilising = plugin.getPoolsManager().getPlayerFertiliseAmount(player) + 1;
-
-			plugin.getPoolsManager().getFertiliseHashMap().put(player.getUniqueId().toString(), fertilising);
-
-			configAchievement = NormalAchievements.FERTILISING + "." + fertilising;
-
-		} else if (player.hasPermission("achievement.count.fireworks")
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.FIREWORKS.toString())
-				&& event.getItem().getType() == Material.FIREWORK) {
-			int fireworks = plugin.getPoolsManager().getPlayerFireworkAmount(player) + 1;
-
-			plugin.getPoolsManager().getFireworkHashMap().put(player.getUniqueId().toString(), fireworks);
-
-			configAchievement = NormalAchievements.FIREWORKS + "." + fireworks;
-
-		} else if (player.hasPermission("achievement.count.musicdiscs")
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.MUSICDISCS.toString())
-				&& event.getItem().getType().name().contains("RECORD")
+			category = NormalAchievements.FERTILISING;
+		} else if (event.getItem().getType() == Material.FIREWORK) {
+			category = NormalAchievements.FIREWORKS;
+		} else if (event.getItem().getType().name().contains("RECORD")
 				&& event.getClickedBlock().getType() == Material.JUKEBOX) {
-			int musicDiscs = plugin.getPoolsManager().getPlayerMusicDiscAmount(player) + 1;
+			category = NormalAchievements.MUSICDISCS;
+		} else {
+			return;
+		}
 
-			plugin.getPoolsManager().getMusicDiscHashMap().put(player.getUniqueId().toString(), musicDiscs);
-
-			configAchievement = NormalAchievements.MUSICDISCS + "." + musicDiscs;
-
-		} else
+		if (plugin.getDisabledCategorySet().contains(category.toString()))
 			return;
 
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
+		if (!shouldEventBeTakenIntoAccount(player, category))
+			return;
 
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-			plugin.getReward().checkConfig(player, configAchievement);
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }

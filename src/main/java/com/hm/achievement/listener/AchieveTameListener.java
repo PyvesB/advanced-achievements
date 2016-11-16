@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,13 +15,11 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveTameListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveTameListener extends AbstractListener implements Listener {
 
 	public AchieveTameListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -30,24 +27,12 @@ public class AchieveTameListener implements Listener {
 
 		if (!(event.getOwner() instanceof Player))
 			return;
+
 		Player player = (Player) event.getOwner();
-		if (!player.hasPermission("achievement.count.taming")
-				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		NormalAchievements category = NormalAchievements.TAMES;
+		if (!shouldEventBeTakenIntoAccount(player, category))
 			return;
 
-		int tames = plugin.getPoolsManager().getPlayerTameAmount(player) + 1;
-
-		plugin.getPoolsManager().getTameHashMap().put(player.getUniqueId().toString(), tames);
-
-		String configAchievement = NormalAchievements.TAMES + "." + tames;
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-
-			plugin.getReward().checkConfig(player, configAchievement);
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }

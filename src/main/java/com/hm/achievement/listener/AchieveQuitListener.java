@@ -1,5 +1,7 @@
 package com.hm.achievement.listener;
 
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,13 +17,11 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveQuitListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveQuitListener extends AbstractListener implements Listener {
 
 	public AchieveQuitListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -86,75 +86,51 @@ public class AchieveQuitListener implements Listener {
 					@Override
 					public void run() {
 
+						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEFOOT);
+						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEPIG);
+						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEHORSE);
+						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEBOAT);
+						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEMINECART);
+						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEGLIDING);
+					}
+
+					private void updateAndRemoveDistance(final String playerUUID, NormalAchievements category) {
+
 						// Items must be removed from HashMaps AFTER write to DB has finished. As this is an async task,
 						// we could end up in a scenario where the player reconnects and data is not yet updated in the
 						// database; in this case, the cached variables will still be valid.
-						Integer distance = plugin.getPoolsManager().getDistanceFootHashMap().get(playerUUID);
+						Map<String, Integer> map = plugin.getPoolsManager().getHashMap(category);
+						Integer distance = map.get(playerUUID);
 						if (distance != null) {
-							plugin.getDb().updateDistance(playerUUID, distance,
-									NormalAchievements.DISTANCEFOOT.toDBName());
-							plugin.getPoolsManager().getDistanceFootHashMap().remove(playerUUID);
-						}
-
-						distance = plugin.getPoolsManager().getDistancePigHashMap().get(playerUUID);
-						if (distance != null) {
-							plugin.getDb().updateDistance(playerUUID, distance,
-									NormalAchievements.DISTANCEPIG.toDBName());
-							plugin.getPoolsManager().getDistancePigHashMap().remove(playerUUID);
-						}
-
-						distance = plugin.getPoolsManager().getDistanceHorseHashMap().get(playerUUID);
-						if (distance != null) {
-							plugin.getDb().updateDistance(playerUUID, distance,
-									NormalAchievements.DISTANCEHORSE.toDBName());
-							plugin.getPoolsManager().getDistanceHorseHashMap().remove(playerUUID);
-						}
-
-						distance = plugin.getPoolsManager().getDistanceBoatHashMap().get(playerUUID);
-						if (distance != null) {
-							plugin.getDb().updateDistance(playerUUID, distance,
-									NormalAchievements.DISTANCEBOAT.toDBName());
-							plugin.getPoolsManager().getDistanceBoatHashMap().remove(playerUUID);
-						}
-
-						distance = plugin.getPoolsManager().getDistanceMinecartHashMap().get(playerUUID);
-						if (distance != null) {
-							plugin.getDb().updateDistance(playerUUID, distance,
-									NormalAchievements.DISTANCEMINECART.toDBName());
-							plugin.getPoolsManager().getDistanceMinecartHashMap().remove(playerUUID);
-						}
-
-						distance = plugin.getPoolsManager().getDistanceGlidingHashMap().get(playerUUID);
-						if (distance != null) {
-							plugin.getDb().updateDistance(playerUUID, distance,
-									NormalAchievements.DISTANCEGLIDING.toDBName());
-							plugin.getPoolsManager().getDistanceGlidingHashMap().remove(playerUUID);
+							plugin.getDb().updateDistance(playerUUID, distance, category.toDBName());
+							map.remove(playerUUID);
 						}
 					}
 				});
 			} else {
 				// Items can be removed from HashMaps directly, as this is done in the main thread of execution.
-				Integer distance = plugin.getPoolsManager().getDistanceFootHashMap().remove(playerUUID);
+				Integer distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEFOOT)
+						.remove(playerUUID);
 				if (distance != null)
 					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEFOOT.toDBName());
 
-				distance = plugin.getPoolsManager().getDistancePigHashMap().remove(playerUUID);
+				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEPIG).remove(playerUUID);
 				if (distance != null)
 					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEPIG.toDBName());
 
-				distance = plugin.getPoolsManager().getDistanceHorseHashMap().remove(playerUUID);
+				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEHORSE).remove(playerUUID);
 				if (distance != null)
 					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEHORSE.toDBName());
 
-				distance = plugin.getPoolsManager().getDistanceBoatHashMap().remove(playerUUID);
+				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEBOAT).remove(playerUUID);
 				if (distance != null)
 					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEBOAT.toDBName());
 
-				distance = plugin.getPoolsManager().getDistanceMinecartHashMap().remove(playerUUID);
+				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEMINECART).remove(playerUUID);
 				if (distance != null)
 					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEMINECART.toDBName());
 
-				distance = plugin.getPoolsManager().getDistanceGlidingHashMap().remove(playerUUID);
+				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEGLIDING).remove(playerUUID);
 				if (distance != null)
 					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEGLIDING.toDBName());
 			}

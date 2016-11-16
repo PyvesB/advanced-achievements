@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,14 +19,13 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
  * @author Pyves
  *
  */
-public class AchieveConsumeListener implements Listener {
+public class AchieveConsumeListener extends AbstractListener implements Listener {
 
-	private AdvancedAchievements plugin;
-	private int version;
+	final private int version;
 
 	public AchieveConsumeListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 		// Simple and fast check to retrieve Minecraft version. Might need to be updated depending on how the
 		// Minecraft versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
@@ -37,15 +35,9 @@ public class AchieveConsumeListener implements Listener {
 	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
 
 		Player player = event.getPlayer();
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
-			return;
+		NormalAchievements category;
 
-		String configAchievement;
-
-		if (event.getItem().getType() == Material.POTION
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.CONSUMEDPOTIONS.toString())
-				&& player.hasPermission("achievement.count.consumedpotions")) {
-
+		if (event.getItem().getType() == Material.POTION) {
 			// Don't count drinking water toward ConsumePotions; check the potion type.
 			if (version >= 9) {
 				PotionMeta meta = (PotionMeta) (event.getItem().getItemMeta());
@@ -61,26 +53,19 @@ public class AchieveConsumeListener implements Listener {
 				}
 			}
 
-			int consumedPotions = plugin.getPoolsManager().getPlayerConsumedPotionAmount(player) + 1;
+			category = NormalAchievements.CONSUMEDPOTIONS;
+		} else if (event.getItem().getType() != Material.MILK_BUCKET) {
+			category = NormalAchievements.EATENITEMS;
+		} else {
+			return;
+		}
 
-			plugin.getPoolsManager().getConsumedPotionsHashMap().put(player.getUniqueId().toString(), consumedPotions);
-			configAchievement = NormalAchievements.CONSUMEDPOTIONS + "." + consumedPotions;
-		} else if (event.getItem().getType() != Material.MILK_BUCKET
-				&& player.hasPermission("achievement.count.eatenitems")
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.EATENITEMS.toString())) {
-			int eatenItems = plugin.getPoolsManager().getPlayerEatenItemAmount(player) + 1;
-
-			plugin.getPoolsManager().getEatenItemsHashMap().put(player.getUniqueId().toString(), eatenItems);
-			configAchievement = NormalAchievements.EATENITEMS + "." + eatenItems;
-		} else
+		if (plugin.getDisabledCategorySet().contains(category.toString()))
 			return;
 
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
+		if (!shouldEventBeTakenIntoAccount(player, category))
+			return;
 
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-			plugin.getReward().checkConfig(player, configAchievement);
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }

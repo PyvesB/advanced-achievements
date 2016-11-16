@@ -19,13 +19,11 @@ import com.hm.achievement.category.MultipleAchievements;
  * @author Pyves
  *
  */
-public class AchieveKillListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveKillListener extends AbstractListener implements Listener {
 
 	public AchieveKillListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -56,22 +54,13 @@ public class AchieveKillListener implements Listener {
 				}
 			}
 		}
-		if (!plugin.getPluginConfig().isConfigurationSection(MultipleAchievements.KILLS + "." + mobName)
-				|| !player.hasPermission("achievement.count.kills." + mobName))
+
+		MultipleAchievements category = MultipleAchievements.KILLS;
+
+		if (!plugin.getPluginConfig().isConfigurationSection(category + "." + mobName)
+				|| !player.hasPermission(category.toPermName() + '.' + mobName))
 			return;
 
-		int kills = plugin.getPoolsManager().getPlayerKillAmount(player, mobName) + 1;
-
-		plugin.getPoolsManager().getKillHashMap().put(player.getUniqueId().toString() + mobName, kills);
-
-		String configAchievement = MultipleAchievements.KILLS + "." + mobName + '.' + kills;
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-
-			plugin.getReward().checkConfig(player, configAchievement);
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, mobName, 1);
 	}
 }

@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,36 +15,21 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveShearListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveShearListener extends AbstractListener implements Listener {
 
 	public AchieveShearListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerShearEntity(PlayerShearEntityEvent event) {
 
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.count.shear")
-				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		NormalAchievements category = NormalAchievements.SHEARS;
+		if (!shouldEventBeTakenIntoAccount(player, category))
 			return;
 
-		int shears = plugin.getPoolsManager().getPlayerShearAmount(player) + 1;
-
-		plugin.getPoolsManager().getShearHashMap().put(player.getUniqueId().toString(), shears);
-
-		String configAchievement = NormalAchievements.SHEARS + "." + shears;
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-
-			plugin.getReward().checkConfig(player, configAchievement);
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }

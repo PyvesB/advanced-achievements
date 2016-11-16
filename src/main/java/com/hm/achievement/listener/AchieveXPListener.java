@@ -2,7 +2,6 @@ package com.hm.achievement.listener;
 
 import java.util.Set;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,9 +18,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveXPListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveXPListener extends AbstractListener implements Listener {
 
 	// Multimaps corresponding to the players who have received max level achievements.
 	// Each key in the multimap corresponds to one achievement threshold, and has its associated player Set.
@@ -32,11 +29,14 @@ public class AchieveXPListener implements Listener {
 
 	public AchieveXPListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
-
+		super(plugin);
 		extractAchievementsFromConfig();
 	}
 
+	/**
+	 * Loads achievements from configuration.
+	 * 
+	 */
 	public void extractAchievementsFromConfig() {
 
 		Set<String> configKeys = plugin.getConfig().getConfigurationSection(NormalAchievements.LEVELS.toString())
@@ -56,31 +56,24 @@ public class AchieveXPListener implements Listener {
 		Player player = event.getPlayer();
 		String uuid = player.getUniqueId().toString();
 
-		if (!player.hasPermission("achievement.count.maxlevel")
-				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		NormalAchievements category = NormalAchievements.LEVELS;
+		if (!shouldEventBeTakenIntoAccount(player, category))
 			return;
 
-		int levels = plugin.getPoolsManager().getPlayerXPAmount(player);
+		int levels = plugin.getPoolsManager().getStatisticAmount(category, player);
 
 		if (event.getNewLevel() > levels)
-			plugin.getPoolsManager().getXpHashMap().put(player.getUniqueId().toString(), event.getNewLevel());
+			plugin.getPoolsManager().getHashMap(category).put(player.getUniqueId().toString(), event.getNewLevel());
 		else
 			return;
 
 		for (Integer achievementThreshold : achievementsCache.keySet()) {
 			if (event.getNewLevel() >= achievementThreshold
 					&& !achievementsCache.get(achievementThreshold).contains(uuid)) {
-				if (!plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig()
-						.getString(NormalAchievements.LEVELS + "." + achievementThreshold + ".Name"))) {
-					plugin.getAchievementDisplay().displayAchievement(player,
-							NormalAchievements.LEVELS + "." + achievementThreshold);
-					plugin.getDb().registerAchievement(player,
-							plugin.getPluginConfig()
-									.getString(NormalAchievements.LEVELS + "." + achievementThreshold + ".Name"),
-							plugin.getPluginConfig()
-									.getString(NormalAchievements.LEVELS + "." + achievementThreshold + ".Message"));
-					plugin.getReward().checkConfig(player, NormalAchievements.LEVELS + "." + achievementThreshold);
+				String configAchievement = category + "." + achievementThreshold;
+				if (!plugin.getDb().hasPlayerAchievement(player,
+						plugin.getPluginConfig().getString(configAchievement + ".Name"))) {
+					awardAchievementIfAvailable(player, configAchievement + achievementThreshold);
 				}
 				// Player has received this achievement.
 				achievementsCache.put(achievementThreshold, uuid);
@@ -92,5 +85,4 @@ public class AchieveXPListener implements Listener {
 
 		return achievementsCache;
 	}
-
 }

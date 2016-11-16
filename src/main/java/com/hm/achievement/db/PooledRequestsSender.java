@@ -53,74 +53,29 @@ public class PooledRequestsSender implements Runnable {
 
 		Connection conn = plugin.getDb().getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getDeathHashMap(),
-					NormalAchievements.DEATHS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getArrowHashMap(),
-					NormalAchievements.ARROWS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getSnowballHashMap(),
-					NormalAchievements.SNOWBALLS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getEggHashMap(),
-					NormalAchievements.EGGS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getFishHashMap(),
-					NormalAchievements.FISH.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getItemBreakHashMap(),
-					NormalAchievements.ITEMBREAKS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getEatenItemsHashMap(),
-					NormalAchievements.EATENITEMS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getShearHashMap(),
-					NormalAchievements.SHEARS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getMilkHashMap(),
-					NormalAchievements.MILKS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getTradeHashMap(),
-					NormalAchievements.TRADES.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getAnvilHashMap(),
-					NormalAchievements.ANVILS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getEnchantmentHashMap(),
-					NormalAchievements.ENCHANTMENTS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getBedHashMap(),
-					NormalAchievements.BEDS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getXpHashMap(),
-					NormalAchievements.LEVELS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getConsumedPotionsHashMap(),
-					NormalAchievements.CONSUMEDPOTIONS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getDropHashMap(),
-					NormalAchievements.DROPS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getHoePlowingHashMap(),
-					NormalAchievements.HOEPLOWING.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getFertiliseHashMap(),
-					NormalAchievements.FERTILISING.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getTameHashMap(),
-					NormalAchievements.TAMES.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getBrewingHashMap(),
-					NormalAchievements.BREWING.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getFireworkHashMap(),
-					NormalAchievements.FIREWORKS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getMusicDiscHashMap(),
-					NormalAchievements.MUSICDISCS.toDBName());
-
-			performRequestsForNormalCategory(st, plugin.getPoolsManager().getEnderPearlHashMap(),
-					NormalAchievements.ENDERPEARLS.toDBName());
+			performRequestsForNormalCategory(st, NormalAchievements.DEATHS);
+			performRequestsForNormalCategory(st, NormalAchievements.ARROWS);
+			performRequestsForNormalCategory(st, NormalAchievements.SNOWBALLS);
+			performRequestsForNormalCategory(st, NormalAchievements.EGGS);
+			performRequestsForNormalCategory(st, NormalAchievements.FISH);
+			performRequestsForNormalCategory(st, NormalAchievements.ITEMBREAKS);
+			performRequestsForNormalCategory(st, NormalAchievements.EATENITEMS);
+			performRequestsForNormalCategory(st, NormalAchievements.SHEARS);
+			performRequestsForNormalCategory(st, NormalAchievements.MILKS);
+			performRequestsForNormalCategory(st, NormalAchievements.TRADES);
+			performRequestsForNormalCategory(st, NormalAchievements.ANVILS);
+			performRequestsForNormalCategory(st, NormalAchievements.ENCHANTMENTS);
+			performRequestsForNormalCategory(st, NormalAchievements.BEDS);
+			performRequestsForNormalCategory(st, NormalAchievements.LEVELS);
+			performRequestsForNormalCategory(st, NormalAchievements.CONSUMEDPOTIONS);
+			performRequestsForNormalCategory(st, NormalAchievements.DROPS);
+			performRequestsForNormalCategory(st, NormalAchievements.HOEPLOWING);
+			performRequestsForNormalCategory(st, NormalAchievements.FERTILISING);
+			performRequestsForNormalCategory(st, NormalAchievements.TAMES);
+			performRequestsForNormalCategory(st, NormalAchievements.BREWING);
+			performRequestsForNormalCategory(st, NormalAchievements.FIREWORKS);
+			performRequestsForNormalCategory(st, NormalAchievements.MUSICDISCS);
+			performRequestsForNormalCategory(st, NormalAchievements.ENDERPEARLS);
 
 			if (plugin.isAsyncPooledRequestsSender())
 				performRequestsForMultipleCategoriesAsync(st);
@@ -133,36 +88,6 @@ public class PooledRequestsSender implements Runnable {
 			plugin.getLogger().log(Level.SEVERE, "Error while sending async pooled requests to database: ", e);
 		}
 
-		if (!plugin.isAsyncPooledRequestsSender()) {
-			// Clear entries in HashMaps; in async mode, this is done progressivily and must NOT be done at the end as
-			// the main thread could have repopulated the maps in the meantime..
-			plugin.getPoolsManager().getDeathHashMap().clear();
-			plugin.getPoolsManager().getArrowHashMap().clear();
-			plugin.getPoolsManager().getSnowballHashMap().clear();
-			plugin.getPoolsManager().getEggHashMap().clear();
-			plugin.getPoolsManager().getFishHashMap().clear();
-			plugin.getPoolsManager().getItemBreakHashMap().clear();
-			plugin.getPoolsManager().getEatenItemsHashMap().clear();
-			plugin.getPoolsManager().getShearHashMap().clear();
-			plugin.getPoolsManager().getMilkHashMap().clear();
-			plugin.getPoolsManager().getTradeHashMap().clear();
-			plugin.getPoolsManager().getAnvilHashMap().clear();
-			plugin.getPoolsManager().getEnchantmentHashMap().clear();
-			plugin.getPoolsManager().getBedHashMap().clear();
-			plugin.getPoolsManager().getXpHashMap().clear();
-			plugin.getPoolsManager().getConsumedPotionsHashMap().clear();
-			plugin.getPoolsManager().getDropHashMap().clear();
-			plugin.getPoolsManager().getHoePlowingHashMap().clear();
-			plugin.getPoolsManager().getFertiliseHashMap().clear();
-			plugin.getPoolsManager().getTameHashMap().clear();
-			plugin.getPoolsManager().getBrewingHashMap().clear();
-			plugin.getPoolsManager().getFireworkHashMap().clear();
-			plugin.getPoolsManager().getBlockPlaceHashMap().clear();
-			plugin.getPoolsManager().getBlockBreakHashMap().clear();
-			plugin.getPoolsManager().getKillHashMap().clear();
-			plugin.getPoolsManager().getCraftHashMap().clear();
-		}
-
 	}
 
 	/**
@@ -173,60 +98,21 @@ public class PooledRequestsSender implements Runnable {
 	 */
 	private void performRequestsForMultipleCategoriesAsync(Statement st) throws SQLException {
 
-		for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockPlaceHashMap().entrySet()) {
-			if (plugin.getDb().isPostgres())
-				st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.PLACES.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")" + " ON CONFLICT (playername,blockid) DO UPDATE SET ("
-						+ MultipleAchievements.PLACES.toDBName() + ")=(" + entry.getValue() + ")");
-			else
-				st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.PLACES.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")");
-			((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBlockPlaceHashMap())
-					.remove(entry.getKey(), entry.getValue());
-		}
-
-		for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockBreakHashMap().entrySet()) {
-			if (plugin.getDb().isPostgres())
-				st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.BREAKS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")" + " ON CONFLICT (playername,blockid) DO UPDATE SET ("
-						+ MultipleAchievements.BREAKS.toDBName() + ")=(" + entry.getValue() + ")");
-			else
-				st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.BREAKS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")");
-			((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getBlockBreakHashMap())
-					.remove(entry.getKey(), entry.getValue());
-		}
-
-		for (Entry<String, Integer> entry : plugin.getPoolsManager().getKillHashMap().entrySet()) {
-			if (plugin.getDb().isPostgres())
-				st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.KILLS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")" + " ON CONFLICT (playername,mobname) DO UPDATE SET ("
-						+ MultipleAchievements.KILLS.toDBName() + ")=(" + entry.getValue() + ")");
-			else
-				st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.KILLS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")");
-			((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getKillHashMap()).remove(entry.getKey(),
-					entry.getValue());
-		}
-
-		for (Entry<String, Integer> entry : plugin.getPoolsManager().getCraftHashMap().entrySet()) {
-			if (plugin.getDb().isPostgres())
-				st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.CRAFTS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")" + " ON CONFLICT (playername,item) DO UPDATE SET ("
-						+ MultipleAchievements.CRAFTS.toDBName() + ")=(" + entry.getValue() + ")");
-			else
-				st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.CRAFTS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")");
-			((ConcurrentHashMap<String, Integer>) plugin.getPoolsManager().getCraftHashMap()).remove(entry.getKey(),
-					entry.getValue());
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			String dbColumn = getSubcategoryDatabaseName(category);
+			Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
+			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
+				if (plugin.getDb().isPostgres())
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")" + " ON CONFLICT (playername," + dbColumn + ") DO UPDATE SET ("
+							+ category.toDBName() + ")=(" + entry.getValue() + ")");
+				else
+					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")");
+				((ConcurrentHashMap<String, Integer>) categoryMap).remove(entry.getKey(), entry.getValue());
+			}
 		}
 	}
 
@@ -238,49 +124,43 @@ public class PooledRequestsSender implements Runnable {
 	 */
 	private void performRequestsForMultipleCategoriesSync(Statement st) throws SQLException {
 
-		for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockPlaceHashMap().entrySet())
-			if (plugin.getDb().isPostgres())
-				st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.PLACES.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")" + " ON CONFLICT (playername,blockid) DO UPDATE SET ("
-						+ MultipleAchievements.PLACES.toDBName() + ")=(" + entry.getValue() + ")");
-			else
-				st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.PLACES.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")");
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			String dbColumn = getSubcategoryDatabaseName(category);
+			Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
+			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
+				if (plugin.getDb().isPostgres())
+					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")" + " ON CONFLICT (playername," + dbColumn + ") DO UPDATE SET ("
+							+ category.toDBName() + ")=(" + entry.getValue() + ")");
+				else
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")");
+			}
+			categoryMap.clear();
+		}
+	}
 
-		for (Entry<String, Integer> entry : plugin.getPoolsManager().getBlockBreakHashMap().entrySet())
-			if (plugin.getDb().isPostgres())
-				st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.BREAKS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")" + " ON CONFLICT (playername,blockid) DO UPDATE SET ("
-						+ MultipleAchievements.BREAKS.toDBName() + ")=(" + entry.getValue() + ")");
-			else
-				st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.BREAKS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")");
+	/**
+	 * Returns database name of the subcategory parameter.
+	 * 
+	 * @param category
+	 * @return
+	 */
+	private String getSubcategoryDatabaseName(MultipleAchievements category) {
 
-		for (Entry<String, Integer> entry : plugin.getPoolsManager().getKillHashMap().entrySet())
-			if (plugin.getDb().isPostgres())
-				st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.KILLS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")" + " ON CONFLICT (playername,mobname) DO UPDATE SET ("
-						+ MultipleAchievements.KILLS.toDBName() + ")=(" + entry.getValue() + ")");
-			else
-				st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.KILLS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")");
-
-		for (Entry<String, Integer> entry : plugin.getPoolsManager().getCraftHashMap().entrySet())
-			if (plugin.getDb().isPostgres())
-				st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.CRAFTS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")" + " ON CONFLICT (playername,item) DO UPDATE SET ("
-						+ MultipleAchievements.CRAFTS.toDBName() + ")=(" + entry.getValue() + ")");
-			else
-				st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + MultipleAchievements.CRAFTS.toDBName()
-						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ")");
+		switch (category) {
+			case BREAKS:
+			case PLACES:
+				return "blockid";
+			case CRAFTS:
+				return "item";
+			case KILLS:
+				return "mobname";
+			default:
+				return null;
+		}
 	}
 
 	/**
@@ -291,32 +171,34 @@ public class PooledRequestsSender implements Runnable {
 	 * @param categoryName
 	 * @throws SQLException
 	 */
-	private void performRequestsForNormalCategory(Statement st, Map<String, Integer> map, String categoryName)
-			throws SQLException {
+	private void performRequestsForNormalCategory(Statement st, NormalAchievements category) throws SQLException {
+
+		Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
 
 		if (plugin.isAsyncPooledRequestsSender()) {
-			for (Entry<String, Integer> entry : map.entrySet()) {
+			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
 				if (plugin.getDb().isPostgres())
-					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + categoryName + " VALUES ('"
+					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")"
-							+ " ON CONFLICT (playername) DO UPDATE SET (" + categoryName + ")=(" + entry.getValue()
-							+ ")");
+							+ " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
+							+ entry.getValue() + ")");
 				else
-					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + categoryName + " VALUES ('"
+					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")");
-				((ConcurrentHashMap<String, Integer>) map).remove(entry.getKey(), entry.getValue());
+				((ConcurrentHashMap<String, Integer>) categoryMap).remove(entry.getKey(), entry.getValue());
 			}
 		} else {
-			for (Entry<String, Integer> entry : map.entrySet()) {
+			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
 				if (plugin.getDb().isPostgres())
-					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + categoryName + " VALUES ('"
+					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")"
-							+ " ON CONFLICT (playername) DO UPDATE SET (" + categoryName + ")=(" + entry.getValue()
-							+ ")");
+							+ " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
+							+ entry.getValue() + ")");
 				else
-					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + categoryName + " VALUES ('"
+					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")");
 			}
+			categoryMap.clear();
 		}
 	}
 }

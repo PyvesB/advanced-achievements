@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,36 +15,21 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveDropListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveDropListener extends AbstractListener implements Listener {
 
 	public AchieveDropListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
 
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.count.itemdrops")
-				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player))
+		NormalAchievements category = NormalAchievements.DROPS;
+		if (!shouldEventBeTakenIntoAccount(player, category))
 			return;
 
-		int drops = plugin.getPoolsManager().getPlayerDropAmount(player) + 1;
-
-		plugin.getPoolsManager().getDropHashMap().put(player.getUniqueId().toString(), drops);
-
-		String configAchievement = NormalAchievements.DROPS + "." + drops;
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-
-			plugin.getReward().checkConfig(player, configAchievement);
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }

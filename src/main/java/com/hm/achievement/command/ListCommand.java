@@ -380,132 +380,101 @@ public class ListCommand extends AbstractCommand {
 	public void createCategoryGUINormal(Material clickedItem, Player player) {
 
 		NormalAchievements category;
-		long statistic;
+		long statistic = 0L;
 
 		// Match the item the player clicked on with a category and its database statistic.
 		switch (clickedItem) {
 			case BOOK_AND_QUILL:
-				statistic = plugin.getDb().getConnectionsAmount(player);
 				category = NormalAchievements.CONNECTIONS;
 				break;
 			case SKULL_ITEM:
-				statistic = plugin.getPoolsManager().getPlayerDeathAmount(player);
 				category = NormalAchievements.DEATHS;
 				break;
 			case ARROW:
-				statistic = plugin.getPoolsManager().getPlayerArrowAmount(player);
 				category = NormalAchievements.ARROWS;
 				break;
 			case SNOW_BALL:
-				statistic = plugin.getPoolsManager().getPlayerSnowballAmount(player);
 				category = NormalAchievements.SNOWBALLS;
 				break;
 			case EGG:
-				statistic = plugin.getPoolsManager().getPlayerEggAmount(player);
 				category = NormalAchievements.EGGS;
 				break;
 			case RAW_FISH:
-				statistic = plugin.getPoolsManager().getPlayerFishAmount(player);
 				category = NormalAchievements.FISH;
 				break;
 			case FLINT:
-				statistic = plugin.getPoolsManager().getPlayerItemBreakAmount(player);
 				category = NormalAchievements.ITEMBREAKS;
 				break;
 			case MELON:
-				statistic = plugin.getPoolsManager().getPlayerEatenItemAmount(player);
 				category = NormalAchievements.EATENITEMS;
 				break;
 			case SHEARS:
-				statistic = plugin.getPoolsManager().getPlayerShearAmount(player);
 				category = NormalAchievements.SHEARS;
 				break;
 			case MILK_BUCKET:
-				statistic = plugin.getPoolsManager().getPlayerMilkAmount(player);
 				category = NormalAchievements.MILKS;
 				break;
 			case EMERALD:
-				statistic = plugin.getPoolsManager().getPlayerTradeAmount(player);
 				category = NormalAchievements.TRADES;
 				break;
 			case ANVIL:
-				statistic = plugin.getPoolsManager().getPlayerAnvilAmount(player);
 				category = NormalAchievements.ANVILS;
 				break;
 			case ENCHANTMENT_TABLE:
-				statistic = plugin.getPoolsManager().getPlayerEnchantmentAmount(player);
 				category = NormalAchievements.ENCHANTMENTS;
 				break;
 			case BED:
-				statistic = plugin.getPoolsManager().getPlayerBedAmount(player);
 				category = NormalAchievements.BEDS;
 				break;
 			case EXP_BOTTLE:
-				statistic = plugin.getPoolsManager().getPlayerXPAmount(player);
 				category = NormalAchievements.LEVELS;
 				break;
 			case GLASS_BOTTLE:
-				statistic = plugin.getPoolsManager().getPlayerConsumedPotionAmount(player);
 				category = NormalAchievements.CONSUMEDPOTIONS;
 				break;
 			case WATCH:
-				statistic = plugin.getPoolsManager().getPlayerPlayTimeAmount(player);
 				category = NormalAchievements.PLAYEDTIME;
 				break;
 			case HOPPER:
-				statistic = plugin.getPoolsManager().getPlayerDropAmount(player);
 				category = NormalAchievements.DROPS;
 				break;
 			case GRASS:
-				statistic = plugin.getPoolsManager().getPlayerHoePlowingAmount(player);
 				category = NormalAchievements.HOEPLOWING;
 				break;
 			case INK_SACK:
-				statistic = plugin.getPoolsManager().getPlayerFertiliseAmount(player);
 				category = NormalAchievements.FERTILISING;
 				break;
 			case LEASH:
-				statistic = plugin.getPoolsManager().getPlayerTameAmount(player);
 				category = NormalAchievements.TAMES;
 				break;
 			case BREWING_STAND_ITEM:
-				statistic = plugin.getPoolsManager().getPlayerBrewingAmount(player);
 				category = NormalAchievements.BREWING;
 				break;
 			case FIREWORK:
-				statistic = plugin.getPoolsManager().getPlayerFireworkAmount(player);
 				category = NormalAchievements.FIREWORKS;
 				break;
 			case JUKEBOX:
-				statistic = plugin.getPoolsManager().getPlayerMusicDiscAmount(player);
 				category = NormalAchievements.MUSICDISCS;
 				break;
 			case ENDER_PEARL:
-				statistic = plugin.getPoolsManager().getPlayerEnderPearlAmount(player);
 				category = NormalAchievements.ENDERPEARLS;
 				break;
 			case LEATHER_BOOTS:
-				statistic = plugin.getPoolsManager().getPlayerDistanceFootAmount(player);
 				category = NormalAchievements.DISTANCEFOOT;
 				break;
 			case CARROT_STICK:
-				statistic = plugin.getPoolsManager().getPlayerDistancePigAmount(player);
 				category = NormalAchievements.DISTANCEPIG;
 				break;
 			case SADDLE:
-				statistic = plugin.getPoolsManager().getPlayerDistanceHorseAmount(player);
 				category = NormalAchievements.DISTANCEHORSE;
 				break;
 			case MINECART:
-				statistic = plugin.getPoolsManager().getPlayerDistanceMinecartAmount(player);
 				category = NormalAchievements.DISTANCEMINECART;
 				break;
 			case BOAT:
-				statistic = plugin.getPoolsManager().getPlayerDistanceBoatAmount(player);
 				category = NormalAchievements.DISTANCEBOAT;
 				break;
 			case BEDROCK:
-				statistic = 0L;
 				category = NormalAchievements.DISTANCEGLIDING;
 				break;
 			// Objects exclusive to Minecraft 1.9+ or Commands achievements.
@@ -519,11 +488,9 @@ public class ListCommand extends AbstractCommand {
 		if (category == null && version >= 9) {
 			switch (clickedItem) {
 				case ELYTRA:
-					statistic = plugin.getPoolsManager().getPlayerDistanceGlidingAmount(player);
 					category = NormalAchievements.DISTANCEGLIDING;
 					break;
 				case GRASS_PATH:
-					statistic = plugin.getPoolsManager().getPlayerHoePlowingAmount(player);
 					category = NormalAchievements.HOEPLOWING;
 					break;
 				// Default case: Commands achievements.
@@ -539,6 +506,12 @@ public class ListCommand extends AbstractCommand {
 			categoryName = "Commands";
 		} else {
 			categoryName = category.toString();
+		}
+
+		if (category == NormalAchievements.PLAYEDTIME) {
+			statistic = plugin.getPoolsManager().getPlayerPlayTimeAmount(player);
+		} else if (category != null) {
+			statistic = plugin.getPoolsManager().getStatisticAmount(category, player);
 		}
 
 		YamlManager config = plugin.getPluginConfig();
@@ -690,24 +663,8 @@ public class ListCommand extends AbstractCommand {
 		// Match the item the player clicked on with its database statistic.
 		for (String section : categoryConfig.getKeys(false)) {
 
-			int statistic;
-			switch (clickedItem) {
-				case STONE:
-					statistic = plugin.getPoolsManager().getPlayerBlockPlaceAmount(player, section);
-					break;
-				case SMOOTH_BRICK:
-					statistic = plugin.getPoolsManager().getPlayerBlockBreakAmount(player, section);
-					break;
-				case BONE:
-					statistic = plugin.getPoolsManager().getPlayerKillAmount(player, section);
-					break;
-				case WORKBENCH:
-					statistic = plugin.getPoolsManager().getPlayerCraftAmount(player, section);
-					break;
-				default:
-					statistic = -1;
-					break;
-			}
+			// Retrieve statistic from category and subcategory.
+			int statistic = plugin.getPoolsManager().getStatisticAmount(category, section, player);
 
 			String previousItemDate = null;
 			int previousItemGoal = 0;

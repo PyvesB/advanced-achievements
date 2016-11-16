@@ -15,37 +15,24 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveDeathListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveDeathListener extends AbstractListener implements Listener {
 
 	public AchieveDeathListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 
 		Player player = event.getEntity();
-
 		if (player == null)
 			return;
 
-		if (!player.hasPermission("achievement.count.deaths") || plugin.isInExludedWorld(player))
+		NormalAchievements category = NormalAchievements.DEATHS;
+		if (!shouldEventBeTakenIntoAccountNoCreative(player, category))
 			return;
 
-		int deaths = plugin.getPoolsManager().getPlayerDeathAmount(player) + 1;
-
-		plugin.getPoolsManager().getDeathHashMap().put(player.getUniqueId().toString(), deaths);
-
-		String configAchievement = NormalAchievements.DEATHS + "." + deaths;
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-			plugin.getReward().checkConfig(player, configAchievement);
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }

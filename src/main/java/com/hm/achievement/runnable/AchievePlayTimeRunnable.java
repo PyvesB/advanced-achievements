@@ -18,7 +18,7 @@ import com.hm.achievement.category.NormalAchievements;
  */
 public class AchievePlayTimeRunnable implements Runnable {
 
-	private AdvancedAchievements plugin;
+	final private AdvancedAchievements plugin;
 
 	private long previousRunMillis;
 
@@ -37,9 +37,8 @@ public class AchievePlayTimeRunnable implements Runnable {
 	}
 
 	/**
-	 * Load list of achievements from configuration.
+	 * Loads list of achievements from configuration.
 	 * 
-	 * @param plugin
 	 */
 	public void extractAchievementsFromConfig() {
 
@@ -65,7 +64,7 @@ public class AchievePlayTimeRunnable implements Runnable {
 	}
 
 	/**
-	 * Update play times and store them into server's memory until player disconnects.
+	 * Updates play times and stores them into server's memory until player disconnects.
 	 * 
 	 * @param player
 	 */
@@ -75,8 +74,10 @@ public class AchievePlayTimeRunnable implements Runnable {
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
 			return;
 
+		NormalAchievements category = NormalAchievements.PLAYEDTIME;
+
 		// Do not register any times if player does not have permission.
-		if (!player.hasPermission("achievement.count.playedtime"))
+		if (!player.hasPermission(category.toPermName()))
 			return;
 
 		String uuid = player.getUniqueId().toString();
@@ -97,16 +98,13 @@ public class AchievePlayTimeRunnable implements Runnable {
 					&& !achievementsCache.get(achievementThreshold).contains(uuid)) {
 				// The cache does not contain information about the reception of the achievement. Query
 				// database.
-				if (!plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig()
-						.getString(NormalAchievements.PLAYEDTIME + "." + achievementThreshold + ".Name"))) {
-					plugin.getAchievementDisplay().displayAchievement(player,
-							NormalAchievements.PLAYEDTIME + "." + achievementThreshold);
+				if (!plugin.getDb().hasPlayerAchievement(player,
+						plugin.getPluginConfig().getString(category + "." + achievementThreshold + ".Name"))) {
+					plugin.getAchievementDisplay().displayAchievement(player, category + "." + achievementThreshold);
 					plugin.getDb().registerAchievement(player,
-							plugin.getPluginConfig()
-									.getString(NormalAchievements.PLAYEDTIME + "." + achievementThreshold + ".Name"),
-							plugin.getPluginConfig().getString(
-									NormalAchievements.PLAYEDTIME + "." + achievementThreshold + ".Message"));
-					plugin.getReward().checkConfig(player, NormalAchievements.PLAYEDTIME + "." + achievementThreshold);
+							plugin.getPluginConfig().getString(category + "." + achievementThreshold + ".Name"),
+							plugin.getPluginConfig().getString(category + "." + achievementThreshold + ".Message"));
+					plugin.getReward().checkConfig(player, category + "." + achievementThreshold);
 
 				}
 				// Player has received this achievement.
@@ -119,5 +117,4 @@ public class AchievePlayTimeRunnable implements Runnable {
 
 		return achievementsCache;
 	}
-
 }

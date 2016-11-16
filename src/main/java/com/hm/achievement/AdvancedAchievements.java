@@ -647,12 +647,9 @@ public class AdvancedAchievements extends JavaPlugin {
 			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
 				// Bukkit only allows permissions to be set once, so must do
 				// additional check for /aach reload correctness.
-				if (this.getServer().getPluginManager().getPermission(
-						"achievement.count." + category.toString().toLowerCase() + "." + section) == null)
-					this.getServer().getPluginManager()
-							.addPermission(new Permission(
-									"achievement.count." + category.toString().toLowerCase() + "." + section,
-									PermissionDefault.TRUE));
+				if (this.getServer().getPluginManager().getPermission(category.toPermName() + "." + section) == null)
+					this.getServer().getPluginManager().addPermission(
+							new Permission(category.toPermName() + "." + section, PermissionDefault.TRUE));
 			}
 	}
 
@@ -686,27 +683,27 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Send traveled distance stats to the database, forcing synchronous
 		// writes.
 		if (achieveDistanceRunnable != null) {
-			for (Entry<String, Integer> entry : poolsManager.getDistanceFootHashMap().entrySet())
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEFOOT).entrySet())
 				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
 						NormalAchievements.DISTANCEFOOT.toDBName());
 
-			for (Entry<String, Integer> entry : poolsManager.getDistancePigHashMap().entrySet())
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEPIG).entrySet())
 				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
 						NormalAchievements.DISTANCEPIG.toDBName());
 
-			for (Entry<String, Integer> entry : poolsManager.getDistanceHorseHashMap().entrySet())
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEHORSE).entrySet())
 				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
 						NormalAchievements.DISTANCEHORSE.toDBName());
 
-			for (Entry<String, Integer> entry : poolsManager.getDistanceBoatHashMap().entrySet())
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEBOAT).entrySet())
 				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
 						NormalAchievements.DISTANCEBOAT.toDBName());
 
-			for (Entry<String, Integer> entry : poolsManager.getDistanceMinecartHashMap().entrySet())
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEMINECART).entrySet())
 				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
 						NormalAchievements.DISTANCEMINECART.toDBName());
 
-			for (Entry<String, Integer> entry : poolsManager.getDistanceGlidingHashMap().entrySet())
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEGLIDING).entrySet())
 				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
 						NormalAchievements.DISTANCEGLIDING.toDBName());
 		}

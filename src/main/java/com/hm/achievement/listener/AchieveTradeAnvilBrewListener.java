@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,13 +17,11 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveTradeAnvilBrewListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveTradeAnvilBrewListener extends AbstractListener implements Listener {
 
 	public AchieveTradeAnvilBrewListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -35,46 +32,27 @@ public class AchieveTradeAnvilBrewListener implements Listener {
 			return;
 
 		Player player = (Player) event.getWhoClicked();
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player)
+		if (!shouldEventBeTakenIntoAccountNoPermission(player)
 				|| event.isShiftClick() && player.getInventory().firstEmpty() < 0)
 			return;
 
-		String configAchievement;
+		NormalAchievements category;
+		if (event.getRawSlot() == 2 && event.getInventory().getType() == InventoryType.MERCHANT) {
+			category = NormalAchievements.TRADES;
+		} else if (event.getRawSlot() == 2 && event.getInventory().getType() == InventoryType.ANVIL) {
+			category = NormalAchievements.ANVILS;
+		} else if (event.getInventory().getType() == InventoryType.BREWING) {
+			category = NormalAchievements.BREWING;
+		} else {
+			return;
+		}
 
-		if (player.hasPermission("achievement.count.trades")
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.TRADES.toString())
-				&& event.getRawSlot() == 2 && event.getInventory().getType() == InventoryType.MERCHANT) {
-			int trades = plugin.getPoolsManager().getPlayerTradeAmount(player) + 1;
-
-			plugin.getPoolsManager().getTradeHashMap().put(player.getUniqueId().toString(), trades);
-			configAchievement = NormalAchievements.TRADES + "." + trades;
-
-		} else if (player.hasPermission("achievement.count.anvilsused")
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.ANVILS.toString())
-				&& event.getRawSlot() == 2 && event.getInventory().getType() == InventoryType.ANVIL) {
-			int anvils = plugin.getPoolsManager().getPlayerAnvilAmount(player) + 1;
-
-			plugin.getPoolsManager().getAnvilHashMap().put(player.getUniqueId().toString(), anvils);
-			configAchievement = NormalAchievements.ANVILS + "." + anvils;
-
-		} else if (player.hasPermission("achievement.count.brewing")
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.BREWING.toString())
-				&& event.getInventory().getType() == InventoryType.BREWING) {
-			int brewings = plugin.getPoolsManager().getPlayerBrewingAmount(player) + 1;
-
-			plugin.getPoolsManager().getBrewingHashMap().put(player.getUniqueId().toString(), brewings);
-			configAchievement = NormalAchievements.BREWING + "." + brewings;
-
-		} else
+		if (plugin.getDisabledCategorySet().contains(category.toString()))
 			return;
 
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
+		if (!shouldEventBeTakenIntoAccount(player, category))
+			return;
 
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-
-			plugin.getReward().checkConfig(player, configAchievement);
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }

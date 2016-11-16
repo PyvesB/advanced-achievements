@@ -17,8 +17,8 @@ import com.hm.achievement.category.NormalAchievements;
  */
 public class AchieveConnectionRunnable implements Runnable {
 
-	private Player player;
-	private AdvancedAchievements plugin;
+	final private Player player;
+	final private AdvancedAchievements plugin;
 
 	public AchieveConnectionRunnable(Player player, AdvancedAchievements plugin) {
 
@@ -42,7 +42,9 @@ public class AchieveConnectionRunnable implements Runnable {
 		if (plugin.getConnectionListener().getPlayersAchieveConnectionRan().contains(player.getUniqueId().toString()))
 			return;
 
-		if (!player.hasPermission("achievement.count.connections"))
+		NormalAchievements category = NormalAchievements.CONNECTIONS;
+
+		if (!player.hasPermission(category.toPermName()))
 			return;
 
 		Date now = new Date();
@@ -51,7 +53,7 @@ public class AchieveConnectionRunnable implements Runnable {
 		if (!format.format(now).equals(plugin.getDb().getPlayerConnectionDate(player))) {
 
 			int connections = plugin.getDb().updateAndGetConnection(player, format.format(now));
-			String configAchievement = NormalAchievements.CONNECTIONS + "." + connections;
+			String configAchievement = category + "." + connections;
 			if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 
 				plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
@@ -65,5 +67,4 @@ public class AchieveConnectionRunnable implements Runnable {
 		// Ran successfully to completion: no need to re-run while player is connected.
 		plugin.getConnectionListener().getPlayersAchieveConnectionRan().add(player.getUniqueId().toString());
 	}
-
 }

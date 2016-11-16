@@ -4,6 +4,11 @@ import org.bukkit.command.CommandSender;
 
 import com.hm.achievement.AdvancedAchievements;
 
+/**
+ * Abstract class in charge of factoring out common functionality for commands.
+ * 
+ * @author Pyves
+ */
 public abstract class AbstractCommand {
 
 	protected AdvancedAchievements plugin;

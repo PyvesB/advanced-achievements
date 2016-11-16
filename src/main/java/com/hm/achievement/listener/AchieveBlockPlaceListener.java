@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,13 +16,11 @@ import com.hm.achievement.category.MultipleAchievements;
  * @author Pyves
  *
  */
-public class AchieveBlockPlaceListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveBlockPlaceListener extends AbstractListener implements Listener {
 
 	public AchieveBlockPlaceListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -31,33 +28,24 @@ public class AchieveBlockPlaceListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 
 		Player player = event.getPlayer();
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (!shouldEventBeTakenIntoAccountNoPermission(player))
 			return;
+
 		Block block = event.getBlock();
 
+		MultipleAchievements category = MultipleAchievements.PLACES;
+
 		String blockName = block.getType().name().toLowerCase();
-		if (player.hasPermission("achievement.count.places." + blockName + "." + block.getData())
-				&& plugin.getPluginConfig()
-						.isConfigurationSection(MultipleAchievements.PLACES + "." + blockName + ":" + block.getData()))
+		if (player.hasPermission(category.toPermName() + '.' + blockName + '.' + block.getData())
+				&& plugin.getPluginConfig().isConfigurationSection(category + "." + blockName + ':' + block.getData()))
 			blockName += ":" + block.getData();
 		else {
-			if (!player.hasPermission("achievement.count.places." + blockName))
+			if (!player.hasPermission(category.toPermName() + '.' + blockName))
 				return;
-			if (!plugin.getPluginConfig().isConfigurationSection(MultipleAchievements.PLACES + "." + blockName))
+			if (!plugin.getPluginConfig().isConfigurationSection(category + "." + blockName))
 				return;
 		}
 
-		int places = plugin.getPoolsManager().getPlayerBlockPlaceAmount(player, blockName) + 1;
-
-		plugin.getPoolsManager().getBlockPlaceHashMap().put(player.getUniqueId().toString() + blockName, places);
-
-		String configAchievement = MultipleAchievements.PLACES + "." + blockName + '.' + places;
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-			plugin.getReward().checkConfig(player, configAchievement);
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, blockName, 1);
 	}
 }

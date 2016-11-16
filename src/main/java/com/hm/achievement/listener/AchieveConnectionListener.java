@@ -20,22 +20,19 @@ import com.hm.achievement.runnable.AchieveConnectionRunnable;
 import com.hm.achievement.utils.UpdateChecker;
 
 /**
- * Listener class to deal with Connections achievements, as well as update checker and initialisation of played time
- * statistics.
+ * Listener class to deal with Connections achievements, as well as update checker.
  * 
  * @author Pyves
  *
  */
-public class AchieveConnectionListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveConnectionListener extends AbstractListener implements Listener {
 
 	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
-	private Set<String> playersAchieveConnectionRan;
+	final private Set<String> playersAchieveConnectionRan;
 
 	public AchieveConnectionListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 		playersAchieveConnectionRan = new HashSet<>();
 	}
 

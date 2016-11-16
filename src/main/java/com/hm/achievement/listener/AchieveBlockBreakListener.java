@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -19,16 +18,15 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
  * @author Pyves
  *
  */
-public class AchieveBlockBreakListener implements Listener {
+public class AchieveBlockBreakListener extends AbstractListener implements Listener {
 
-	private AdvancedAchievements plugin;
-	private int version;
-	private boolean disableSilkTouchBreaks;
-	private boolean disableSilkTouchOreBreaks;
+	final private int version;
+	final private boolean disableSilkTouchBreaks;
+	final private boolean disableSilkTouchOreBreaks;
 
 	public AchieveBlockBreakListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 		// Load configuration parameter.
 		disableSilkTouchBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchBreaks", false);
 		disableSilkTouchOreBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchOreBreaks", false);
@@ -43,11 +41,10 @@ public class AchieveBlockBreakListener implements Listener {
 
 		Player player = event.getPlayer();
 		boolean silkTouchBreak = (version >= 9
-				&& event.getPlayer().getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
-				|| version < 9 && event.getPlayer().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
+				&& player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
+				|| version < 9 && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
 
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player)
-				|| disableSilkTouchBreaks && silkTouchBreak)
+		if (!shouldEventBeTakenIntoAccountNoPermission(player) || disableSilkTouchBreaks && silkTouchBreak)
 			return;
 
 		Block block = event.getBlock();
@@ -66,31 +63,19 @@ public class AchieveBlockBreakListener implements Listener {
 			}
 		}
 
+		MultipleAchievements category = MultipleAchievements.BREAKS;
+
 		String blockName = block.getType().name().toLowerCase();
-		if (player.hasPermission("achievement.count.breaks." + blockName + "." + block.getData())
-				&& plugin.getPluginConfig()
-						.isConfigurationSection(MultipleAchievements.BREAKS + "." + blockName + ":" + block.getData()))
+		if (player.hasPermission(category.toPermName() + '.' + blockName + '.' + block.getData()) && plugin
+				.getPluginConfig().isConfigurationSection(category + "." + blockName + ':' + block.getData())) {
 			blockName += ":" + block.getData();
-		else {
-			if (!player.hasPermission("achievement.count.breaks." + blockName))
+		} else {
+			if (!player.hasPermission(category.toPermName() + '.' + blockName))
 				return;
-			if (!plugin.getPluginConfig().isConfigurationSection(MultipleAchievements.BREAKS + "." + blockName))
+			if (!plugin.getPluginConfig().isConfigurationSection(category + "." + blockName))
 				return;
 		}
 
-		int breaks = plugin.getPoolsManager().getPlayerBlockBreakAmount(player, blockName) + 1;
-
-		plugin.getPoolsManager().getBlockBreakHashMap().put(player.getUniqueId().toString() + blockName, breaks);
-
-		String configAchievement = MultipleAchievements.BREAKS + "." + blockName + '.' + breaks;
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-			plugin.getReward().checkConfig(player, configAchievement);
-
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, blockName, 1);
 	}
-
 }

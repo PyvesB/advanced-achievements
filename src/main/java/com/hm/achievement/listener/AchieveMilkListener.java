@@ -16,13 +16,11 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveMilkListener implements Listener {
-
-	private AdvancedAchievements plugin;
+public class AchieveMilkListener extends AbstractListener implements Listener {
 
 	public AchieveMilkListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -30,22 +28,12 @@ public class AchieveMilkListener implements Listener {
 
 		if (event.getItemStack().getType() != Material.MILK_BUCKET)
 			return;
+
 		Player player = event.getPlayer();
-		if (!player.hasPermission("achievement.count.milk") || plugin.isInExludedWorld(player))
+		NormalAchievements category = NormalAchievements.MILKS;
+		if (!shouldEventBeTakenIntoAccountNoCreative(player, category))
 			return;
 
-		int milks = plugin.getPoolsManager().getPlayerMilkAmount(player) + 1;
-
-		plugin.getPoolsManager().getMilkHashMap().put(player.getUniqueId().toString(), milks);
-
-		String configAchievement = NormalAchievements.MILKS + "." + milks;
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-
-			plugin.getReward().checkConfig(player, configAchievement);
-		}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }
