@@ -40,31 +40,16 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener i
 		Player player = event.getPlayer();
 		NormalAchievements category;
 
-		if ((event.getItem().getType() == Material.DIAMOND_HOE || event.getItem().getType() == Material.IRON_HOE
-				|| event.getItem().getType() == Material.STONE_HOE || event.getItem().getType() == Material.WOOD_HOE
-				|| event.getItem().getType() == Material.GOLD_HOE)
-				&& (event.getClickedBlock().getType() == Material.GRASS
-						|| event.getClickedBlock().getType() == Material.DIRT)) {
+		Material clickedMaterial = event.getClickedBlock().getType();
+		if (event.getItem().getType().name().contains("HOE")
+				&& (clickedMaterial == Material.GRASS || clickedMaterial == Material.DIRT)) {
 			category = NormalAchievements.HOEPLOWING;
 		} else if (event.getItem().isSimilar(new ItemStack(Material.INK_SACK, 1, (short) 15))
-				&& (event.getClickedBlock().getType() == Material.GRASS
-						|| event.getClickedBlock().getType() == Material.SAPLING
-						|| event.getClickedBlock().getType() == Material.DOUBLE_PLANT
-						|| event.getClickedBlock().getType() == Material.POTATO
-						|| event.getClickedBlock().getType() == Material.CARROT
-						|| event.getClickedBlock().getType() == Material.CROPS
-						|| event.getClickedBlock().getType() == Material.PUMPKIN_STEM
-						|| event.getClickedBlock().getType() == Material.MELON_STEM
-						|| event.getClickedBlock().getType() == Material.BROWN_MUSHROOM
-						|| event.getClickedBlock().getType() == Material.RED_MUSHROOM
-						|| event.getClickedBlock().getType() == Material.COCOA
-						|| event.getClickedBlock().getType() == Material.LONG_GRASS
-						|| (version >= 9 && event.getClickedBlock().getType() == Material.BEETROOT_BLOCK))) {
+				&& canBeFertilised(clickedMaterial)) {
 			category = NormalAchievements.FERTILISING;
 		} else if (event.getItem().getType() == Material.FIREWORK) {
 			category = NormalAchievements.FIREWORKS;
-		} else if (event.getItem().getType().name().contains("RECORD")
-				&& event.getClickedBlock().getType() == Material.JUKEBOX) {
+		} else if (event.getItem().getType().isRecord() && clickedMaterial == Material.JUKEBOX) {
 			category = NormalAchievements.MUSICDISCS;
 		} else {
 			return;
@@ -77,5 +62,22 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener i
 			return;
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+	}
+
+	/**
+	 * Determines whether clickedMaterial can be fertilised.
+	 * 
+	 * @param clickedMaterial
+	 * @return
+	 */
+	private boolean canBeFertilised(Material clickedMaterial) {
+
+		return clickedMaterial == Material.GRASS || clickedMaterial == Material.SAPLING
+				|| clickedMaterial == Material.DOUBLE_PLANT || clickedMaterial == Material.POTATO
+				|| clickedMaterial == Material.CARROT || clickedMaterial == Material.CROPS
+				|| clickedMaterial == Material.PUMPKIN_STEM || clickedMaterial == Material.MELON_STEM
+				|| clickedMaterial == Material.BROWN_MUSHROOM || clickedMaterial == Material.RED_MUSHROOM
+				|| clickedMaterial == Material.COCOA || clickedMaterial == Material.LONG_GRASS
+				|| (version >= 9 && clickedMaterial == Material.BEETROOT_BLOCK);
 	}
 }

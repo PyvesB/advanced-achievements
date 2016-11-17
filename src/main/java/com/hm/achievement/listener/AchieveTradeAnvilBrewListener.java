@@ -27,8 +27,8 @@ public class AchieveTradeAnvilBrewListener extends AbstractListener implements L
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
 
-		if (event.getRawSlot() != 0 && event.getRawSlot() != 1 && event.getRawSlot() != 2
-				|| event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
+		if (event.getRawSlot() < 0 || event.getRawSlot() > 2 || event.getCurrentItem() == null
+				|| event.getCurrentItem().getType() == Material.AIR)
 			return;
 
 		Player player = (Player) event.getWhoClicked();
@@ -37,11 +37,13 @@ public class AchieveTradeAnvilBrewListener extends AbstractListener implements L
 			return;
 
 		NormalAchievements category;
-		if (event.getRawSlot() == 2 && event.getInventory().getType() == InventoryType.MERCHANT) {
+
+		InventoryType inventoryMaterial = event.getInventory().getType();
+		if (event.getRawSlot() == 2 && inventoryMaterial == InventoryType.MERCHANT) {
 			category = NormalAchievements.TRADES;
-		} else if (event.getRawSlot() == 2 && event.getInventory().getType() == InventoryType.ANVIL) {
+		} else if (event.getRawSlot() == 2 && inventoryMaterial == InventoryType.ANVIL) {
 			category = NormalAchievements.ANVILS;
-		} else if (event.getInventory().getType() == InventoryType.BREWING) {
+		} else if (inventoryMaterial == InventoryType.BREWING) {
 			category = NormalAchievements.BREWING;
 		} else {
 			return;

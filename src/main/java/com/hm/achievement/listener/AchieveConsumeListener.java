@@ -37,7 +37,8 @@ public class AchieveConsumeListener extends AbstractListener implements Listener
 		Player player = event.getPlayer();
 		NormalAchievements category;
 
-		if (event.getItem().getType() == Material.POTION) {
+		Material itemMaterial = event.getItem().getType();
+		if (itemMaterial == Material.POTION) {
 			// Don't count drinking water toward ConsumePotions; check the potion type.
 			if (version >= 9) {
 				PotionMeta meta = (PotionMeta) (event.getItem().getItemMeta());
@@ -52,9 +53,8 @@ public class AchieveConsumeListener extends AbstractListener implements Listener
 					return;
 				}
 			}
-
 			category = NormalAchievements.CONSUMEDPOTIONS;
-		} else if (event.getItem().getType() != Material.MILK_BUCKET) {
+		} else if (itemMaterial != Material.MILK_BUCKET) {
 			category = NormalAchievements.EATENITEMS;
 		} else {
 			return;
