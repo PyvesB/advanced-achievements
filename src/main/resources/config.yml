@@ -170,7 +170,7 @@ AsyncPooledRequestsSender: true
 # 5---------------------------------------------------------5 #
 #============================ooooo============================#
 
-# When a player connects during the day.
+# When a player connects during the day; statistic increases at most once per day.
 Connections:
   '1':
     Message: You connected to our server for the first time!
