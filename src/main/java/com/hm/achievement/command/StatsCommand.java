@@ -1,7 +1,6 @@
 package com.hm.achievement.command;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -9,7 +8,6 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.particle.ParticleEffect;
-import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 /**
  * Class in charge of handling the /aach stats command, which creates and displays a progress bar of the player's
@@ -19,10 +17,10 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
  */
 public class StatsCommand extends AbstractCommand {
 
+	private final boolean additionalEffects;
+	private final boolean sound;
+
 	private int totalAchievements;
-	private boolean additionalEffects;
-	private boolean sound;
-	private int version;
 
 	public StatsCommand(AdvancedAchievements plugin) {
 
@@ -30,35 +28,39 @@ public class StatsCommand extends AbstractCommand {
 		// Calculate the total number of achievements in the config file.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
-			if (plugin.getDisabledCategorySet().contains(categoryName))
-				continue; // ignore this type
+			if (plugin.getDisabledCategorySet().contains(categoryName)) {
+				// Ignore this type.
+				continue;
+			}
 			totalAchievements += plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false).size();
 		}
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
-			if (plugin.getDisabledCategorySet().contains(categoryName))
-				continue; // ignore this type
-			for (String item : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false))
+			if (plugin.getDisabledCategorySet().contains(categoryName)) {
+				// Ignore this type.
+				continue;
+			}
+			for (String item : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
 				totalAchievements += plugin.getPluginConfig().getConfigurationSection(categoryName + '.' + item)
 						.getKeys(false).size();
+			}
 		}
 
-		if (!plugin.getDisabledCategorySet().contains("Commands"))
+		if (!plugin.getDisabledCategorySet().contains("Commands")) {
 			totalAchievements += plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false).size();
+		}
 
 		// Load configuration parameters.
 		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		sound = plugin.getPluginConfig().getBoolean("Sound", true);
-		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
-		// Minecraft versions change in the future.
-		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
 
-		if (!(sender instanceof Player))
+		if (!(sender instanceof Player)) {
 			return;
+		}
 
 		Player player = (Player) sender;
 
@@ -82,10 +84,11 @@ public class StatsCommand extends AbstractCommand {
 			// bar.
 			StringBuilder barDisplay = new StringBuilder(150);
 			for (int i = 1; i <= 146 - plugin.getIcon().length(); i++) {
-				if (i < ((146 - plugin.getIcon().length()) * achievements) / totalAchievements)
+				if (i < ((146 - plugin.getIcon().length()) * achievements) / totalAchievements) {
 					barDisplay.append(plugin.getColor()).append('|');
-				else
+				} else {
 					barDisplay.append("&8|");
+				}
 			}
 			player.sendMessage(plugin.getChatHeader() + "["
 					+ ChatColor.translateAlternateColorCodes('&', barDisplay.toString()) + ChatColor.GRAY + "]");
@@ -95,22 +98,16 @@ public class StatsCommand extends AbstractCommand {
 		if (achievements >= totalAchievements) {
 			try {
 				// Play special effect.
-				if (additionalEffects)
+				if (additionalEffects) {
 					ParticleEffect.SPELL_WITCH.display(0, 1, 0, 0.5f, 400, player.getLocation(), 1);
+				}
 			} catch (Exception e) {
 				plugin.getLogger().severe("Error while displaying additional particle effects.");
 			}
 
 			// Play special sound.
 			if (sound) {
-				if (version < 9) {
-					// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in
-					// newer versions.
-					player.getWorld().playSound(player.getLocation(), Sound.valueOf("FIREWORK_BLAST"), 1, 0.6f);
-				} else {
-					// Play sound with enum for newer versions.
-					player.getWorld().playSound(player.getLocation(), Sound.ENTITY_FIREWORK_LARGE_BLAST, 1, 0.9f);
-				}
+				playFireworkSound(player);
 			}
 		}
 	}

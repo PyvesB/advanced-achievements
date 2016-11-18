@@ -40,9 +40,10 @@ public enum NormalAchievements {
 	DISTANCEBOAT("DistanceBoat"),
 	DISTANCEGLIDING("DistanceGliding");
 
-	private String categoryName;
+	private final String categoryName;
 
 	private NormalAchievements(String categoryName) {
+
 		this.categoryName = categoryName;
 	}
 

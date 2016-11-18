@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -23,9 +24,10 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public class UpdateChecker {
 
-	private AdvancedAchievements plugin;
+	private final AdvancedAchievements plugin;
+	private final FutureTask<Boolean> updateCheckerFutureTask;
+
 	private Boolean updateNeeded = null;
-	private FutureTask<Boolean> updateCheckerFutureTask;
 	// Marked as volatile to ensure that once the updateCheckerFutureTask is done, the version is visible to the main
 	// thread of execution.
 	private volatile String version;
@@ -90,8 +92,9 @@ public class UpdateChecker {
 			version = document.getElementsByTagName("version").item(0).getTextContent();
 		}
 
-		if (version.equals(plugin.getDescription().getVersion()))
+		if (version.equals(plugin.getDescription().getVersion())) {
 			return false;
+		}
 
 		// Version of current plugin.
 		String[] pluginVersion = plugin.getDescription().getVersion().split("\\.");
@@ -101,9 +104,9 @@ public class UpdateChecker {
 
 		// Compare version numbers.
 		for (int i = 0; i < Math.min(pluginVersion.length, onlineVersion.length); i++) {
-			if (Integer.parseInt(pluginVersion[i]) > Integer.parseInt(onlineVersion[i]))
+			if (Integer.parseInt(pluginVersion[i]) > Integer.parseInt(onlineVersion[i])) {
 				return false;
-			else if (Integer.parseInt(pluginVersion[i]) < Integer.parseInt(onlineVersion[i])) {
+			} else if (Integer.parseInt(pluginVersion[i]) < Integer.parseInt(onlineVersion[i])) {
 				logUpdate();
 				return true;
 			}
@@ -114,7 +117,6 @@ public class UpdateChecker {
 			logUpdate();
 			return true;
 		}
-
 		return false;
 	}
 

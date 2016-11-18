@@ -28,7 +28,7 @@ import com.hm.achievement.utils.UpdateChecker;
 public class AchieveConnectionListener extends AbstractListener implements Listener {
 
 	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
-	final private Set<String> playersAchieveConnectionRan;
+	private final Set<String> playersAchieveConnectionRan;
 
 	public AchieveConnectionListener(AdvancedAchievements plugin) {
 
@@ -56,8 +56,9 @@ public class AchieveConnectionListener extends AbstractListener implements Liste
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onWorldChanged(PlayerChangedWorldEvent event) {
 
-		if (playersAchieveConnectionRan.contains(event.getPlayer().getUniqueId().toString()))
+		if (playersAchieveConnectionRan.contains(event.getPlayer().getUniqueId().toString())) {
 			return;
+		}
 
 		scheduleTaskIfAllowed(event.getPlayer());
 	}
@@ -65,8 +66,9 @@ public class AchieveConnectionListener extends AbstractListener implements Liste
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameModeChange(PlayerGameModeChangeEvent event) {
 
-		if (playersAchieveConnectionRan.contains(event.getPlayer().getUniqueId().toString()))
+		if (playersAchieveConnectionRan.contains(event.getPlayer().getUniqueId().toString())) {
 			return;
+		}
 
 		scheduleTaskIfAllowed(event.getPlayer());
 	}
@@ -80,14 +82,17 @@ public class AchieveConnectionListener extends AbstractListener implements Liste
 	private void scheduleTaskIfAllowed(Player player) {
 
 		// Do not schedule task as player is in restricted creative mode or is in a blocked world.
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player)) {
 			return;
+		}
 
 		// Schedule delayed task to check if player should receive a Connections achievement.
-		if (!plugin.getDisabledCategorySet().contains(NormalAchievements.CONNECTIONS.toString()))
+		if (!plugin.getDisabledCategorySet().contains(NormalAchievements.CONNECTIONS.toString())) {
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
+					Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()),
 					new AchieveConnectionRunnable(player, plugin), 100);
+		}
 	}
 
 	public Set<String> getPlayersAchieveConnectionRan() {

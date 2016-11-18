@@ -18,7 +18,6 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.particle.ParticleEffect;
-import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 /**
  * Class in charge of handling the /aach book command, which creates and gives a book containing the player's
@@ -28,34 +27,31 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
  */
 public class BookCommand extends AbstractCommand {
 
-	private int bookTime;
-	private String bookSeparator;
-	private boolean additionalEffects;
-	private boolean sound;
-	private int version;
+	private final int bookTime;
+	private final String bookSeparator;
+	private final boolean additionalEffects;
+	private final boolean sounds;
 
 	// Corresponds to times at which players have received their books. Cooldown structure.
-	private HashMap<String, Long> players;
+	private final HashMap<String, Long> playersBookTime;
 
 	public BookCommand(AdvancedAchievements plugin) {
 
 		super(plugin);
-		players = new HashMap<>();
+		playersBookTime = new HashMap<>();
 		// Load configuration parameters.
 		bookTime = plugin.getPluginConfig().getInt("TimeBook", 0) * 1000;
 		bookSeparator = plugin.getPluginConfig().getString("BookSeparator", "");
 		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
-		sound = plugin.getPluginConfig().getBoolean("Sound", true);
-		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
-		// Minecraft versions change in the future.
-		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
+		sounds = plugin.getPluginConfig().getBoolean("Sound", true);
 	}
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
 
-		if (!(sender instanceof Player))
+		if (!(sender instanceof Player)) {
 			return;
+		}
 
 		Player player = (Player) sender;
 
@@ -70,15 +66,15 @@ public class BookCommand extends AbstractCommand {
 			}
 
 			// Play special sound when receiving the book.
-			if (sound) {
-				if (version < 9) {
-					// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in
-					// newer versions.
-					player.getWorld().playSound(player.getLocation(), Sound.valueOf("LEVEL_UP"), 1, 0);
-				} else {
+			if (sounds) {
+				// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in
+				// newer versions.
+				Sound sound = Sound.valueOf("LEVEL_UP");
+				if (sound == null) {
 					// Play sound with enum for newer versions.
-					player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 0);
+					sound = Sound.ENTITY_PLAYER_LEVELUP;
 				}
+				player.getWorld().playSound(player.getLocation(), sound, 1.0f, 0.0f);
 			}
 
 			List<String> achievements = plugin.getDb().getPlayerAchievementsList(player);
@@ -96,7 +92,7 @@ public class BookCommand extends AbstractCommand {
 	}
 
 	/**
-	 * Check if player hasn't received a book too recently (with "too recently" being defined in configuration file).
+	 * Checks if player hasn't received a book too recently (with "too recently" being defined in configuration file).
 	 * 
 	 * @param player
 	 * @return whether a player is authorised to receive a book
@@ -104,21 +100,24 @@ public class BookCommand extends AbstractCommand {
 	private boolean timeAuthorisedBook(Player player) {
 
 		// Player bypasses cooldown if he has full plugin permissions.
-		if (player.hasPermission("achievement.*"))
+		if (player.hasPermission("achievement.*")) {
 			return true;
+		}
 		long currentTime = System.currentTimeMillis();
 		long lastBookTime = 0;
 		String uuid = player.getUniqueId().toString();
-		if (players.containsKey(uuid))
-			lastBookTime = players.get(uuid);
-		if (currentTime - lastBookTime < bookTime)
+		if (playersBookTime.containsKey(uuid)) {
+			lastBookTime = playersBookTime.get(uuid);
+		}
+		if (currentTime - lastBookTime < bookTime) {
 			return false;
-		players.put(uuid, currentTime);
+		}
+		playersBookTime.put(uuid, currentTime);
 		return true;
 	}
 
 	/**
-	 * Construct the pages of a book.
+	 * Constructs the pages of a book.
 	 * 
 	 * @param achievements
 	 * @param player
@@ -154,21 +153,15 @@ public class BookCommand extends AbstractCommand {
 		book.setItemMeta(bm);
 
 		// Check whether player has room in his inventory, else drop book on the ground.
-		if (player.getInventory().firstEmpty() != -1)
+		if (player.getInventory().firstEmpty() != -1) {
 			player.getInventory().addItem(book);
-		else
+		} else {
 			player.getWorld().dropItem(player.getLocation(), book);
-
+		}
 	}
 
-	/**
-	 * Retrieve cooldown structure.
-	 * 
-	 * @return book cooldown structure
-	 */
-	public Map<String, Long> getPlayers() {
+	public Map<String, Long> getPlayersBookTime() {
 
-		return players;
+		return playersBookTime;
 	}
-
 }

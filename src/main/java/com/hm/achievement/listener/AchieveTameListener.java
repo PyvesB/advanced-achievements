@@ -25,13 +25,15 @@ public class AchieveTameListener extends AbstractListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerTame(EntityTameEvent event) {
 
-		if (!(event.getOwner() instanceof Player))
+		if (!(event.getOwner() instanceof Player)) {
 			return;
+		}
 
 		Player player = (Player) event.getOwner();
 		NormalAchievements category = NormalAchievements.TAMES;
-		if (!shouldEventBeTakenIntoAccount(player, category))
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}

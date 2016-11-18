@@ -1,6 +1,8 @@
 package com.hm.achievement.command;
 
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 
@@ -11,7 +13,7 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public abstract class AbstractCommand {
 
-	protected AdvancedAchievements plugin;
+	protected final AdvancedAchievements plugin;
 
 	protected AbstractCommand(AdvancedAchievements plugin) {
 
@@ -44,4 +46,20 @@ public abstract class AbstractCommand {
 	 */
 	protected abstract void executeCommand(CommandSender sender, String[] args);
 
+	/**
+	 * Plays a firework sound.
+	 * 
+	 * @param player
+	 */
+	protected void playFireworkSound(Player player) {
+
+		// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in newer
+		// versions.
+		Sound sound = Sound.valueOf("FIREWORK_BLAST");
+		if (sound == null) {
+			// Play sound with enum for newer versions.
+			sound = Sound.ENTITY_FIREWORK_LARGE_BLAST;
+		}
+		player.getWorld().playSound(player.getLocation(), sound, 1, 0.7f);
+	}
 }

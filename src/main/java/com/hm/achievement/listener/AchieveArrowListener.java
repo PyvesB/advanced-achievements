@@ -25,13 +25,15 @@ public class AchieveArrowListener extends AbstractListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityShootBow(EntityShootBowEvent event) {
 
-		if (!(event.getEntity() instanceof Player))
+		if (!(event.getEntity() instanceof Player)) {
 			return;
+		}
 
 		Player player = (Player) event.getEntity();
 		NormalAchievements category = NormalAchievements.ARROWS;
-		if (!shouldEventBeTakenIntoAccount(player, category))
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}

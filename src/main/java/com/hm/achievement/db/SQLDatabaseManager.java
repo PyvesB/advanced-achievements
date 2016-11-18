@@ -35,7 +35,10 @@ import com.hm.achievement.category.NormalAchievements;
  */
 public class SQLDatabaseManager {
 
-	private AdvancedAchievements plugin;
+	private final AdvancedAchievements plugin;
+	// Used to do some write operations to the database asynchronously.
+	private final ExecutorService pool;
+
 	private String databaseAddress;
 	private String databaseUser;
 	private String databasePassword;
@@ -45,9 +48,6 @@ public class SQLDatabaseManager {
 
 	// Connection to the database; remains opened and shared except when plugin disabled.
 	private Connection sqlConnection;
-
-	// Used to do some write operations to the database asynchronously.
-	private final ExecutorService pool;
 
 	private static final byte SQLITE = 0;
 	private static final byte MYSQL = 1;
@@ -61,7 +61,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Initialise database system and plugin settings.
+	 * Initialises database system and plugin settings.
 	 */
 	public void initialise() {
 
@@ -70,12 +70,13 @@ public class SQLDatabaseManager {
 
 		// Check if JDBC library for the specified database system is available.
 		try {
-			if (databaseType == SQLITE)
+			if (databaseType == SQLITE) {
 				Class.forName("org.sqlite.JDBC");
-			else if (databaseType == MYSQL)
+			} else if (databaseType == MYSQL) {
 				Class.forName("com.mysql.jdbc.Driver");
-			else
+			} else {
 				Class.forName("org.postgresql.Driver");
+			}
 		} catch (ClassNotFoundException e) {
 			plugin.getLogger().severe(
 					"The JBDC library for your database type was not found. Please read the plugin's support for more information.");
@@ -109,8 +110,9 @@ public class SQLDatabaseManager {
 				}
 				// Table achievements still has its default name (ie. no prefix), but a prefix is set in the
 				// configuration; do a renaming of all tables.
-				if (rs.next())
+				if (rs.next()) {
 					renameTables();
+				}
 			} catch (SQLException e) {
 				plugin.getLogger().log(Level.SEVERE, "Error while attempting to set prefix of database tables: ", e);
 				plugin.setSuccessfulLoad(false);
@@ -160,7 +162,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Load plugin configuration and set parameters relevant to the database system.
+	 * Loads plugin configuration and sets parameters relevant to the database system.
 	 */
 	private void configurationLoad() {
 
@@ -189,7 +191,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Initialise database tables by creating non existing ones. We batch the requests to send a unique batch to the
+	 * Initialises database tables by creating non existing ones. We batch the requests to send a unique batch to the
 	 * database.
 	 * 
 	 * @throws SQLException
@@ -230,7 +232,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Rename the database tables with the prefix given in the configuration file. This method is only used and only
+	 * Renames the database tables with the prefix given in the configuration file. This method is only used and only
 	 * works if the tables had the default name. It does not support multiple successive table renamings.
 	 * 
 	 * @throws SQLException
@@ -284,12 +286,14 @@ public class SQLDatabaseManager {
 			conn.setAutoCommit(false);
 
 			// Create new table.
-			if (!MultipleAchievements.CRAFTS.toDBName().equals(tableName))
-				st.execute("CREATE TABLE tempTable (playername char(36),blockid varchar(64)," + tableName
-						+ " INT UNSIGNED,PRIMARY KEY(playername, blockid))");
-			else
-				st.execute("CREATE TABLE tempTable (playername char(36),item varchar(64)," + tableName
-						+ " INT UNSIGNED,PRIMARY KEY(playername, item))");
+			String columnName;
+			if (!MultipleAchievements.CRAFTS.toDBName().equals(tableName)) {
+				columnName = "blockid";
+			} else {
+				columnName = "item";
+			}
+			st.execute("CREATE TABLE tempTable (playername char(36)," + columnName + " varchar(64)," + tableName
+					+ " INT UNSIGNED,PRIMARY KEY(playername, " + columnName + "))");
 
 			// Populate new table with contents of the old one and material strings. Batch the insert requests.
 			for (int i = 0; i < uuids.size(); ++i) {
@@ -313,7 +317,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Update the database tables achievements. The table is now using a date type for the date column (previously was
+	 * Updates the database tables achievements. The table is now using a date type for the date column (previously was
 	 * char type). We also increase the number of chars allowed for the achievement names and descriptions.
 	 */
 	private void updateOldDBToDates() {
@@ -348,8 +352,8 @@ public class SQLDatabaseManager {
 			try {
 				for (String date : oldDates) {
 					// Convert to SQL date format.
-					newDates.add((new java.sql.Date(
-							oldFormat.parse(date.replaceAll(regexPattern.pattern(), "")).getTime())));
+					newDates.add(
+							new java.sql.Date(oldFormat.parse(date.replaceAll(regexPattern.pattern(), "")).getTime()));
 				}
 			} catch (ParseException e) {
 				plugin.getLogger().log(Level.SEVERE, "Error while parsing dates: ", e);
@@ -384,14 +388,13 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Retrieve SQL connection to MySQL, PostgreSQL or SQLite database.
+	 * Retrieves SQL connection to MySQL, PostgreSQL or SQLite database.
 	 */
 	public Connection getSQLConnection() {
 
 		// Check if Connection was not previously closed.
 		try {
 			if (sqlConnection == null || sqlConnection.isClosed()) {
-
 				if (databaseType == MYSQL || databaseType == POSTGRESQL) {
 					sqlConnection = createRemoteSQLConnection();
 				} else {
@@ -406,7 +409,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Create a new Connection object to SQLite database.
+	 * Creates a new Connection object to SQLite database.
 	 * 
 	 * @return connection object to database
 	 * @throws SQLException
@@ -415,8 +418,9 @@ public class SQLDatabaseManager {
 
 		File dbfile = new File(plugin.getDataFolder(), "achievements.db");
 		try {
-			if (dbfile.createNewFile())
+			if (dbfile.createNewFile()) {
 				plugin.getLogger().info("Successfully created database file.");
+			}
 		} catch (IOException e) {
 			plugin.getLogger().log(Level.SEVERE, "Error while creating database file: ", e);
 			plugin.setSuccessfulLoad(false);
@@ -425,7 +429,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Create a new Connection object to MySQL or PostgreSQL database.
+	 * Creates a new Connection object to MySQL or PostgreSQL database.
 	 * 
 	 * @return connection object to database
 	 * @throws SQLException
@@ -437,7 +441,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get the list of all the achievements of a player.
+	 * Gets the list of all the achievements of a player.
 	 * 
 	 * @param player
 	 * @return array list with groups of 3 strings: achievement name, description and date
@@ -448,15 +452,16 @@ public class SQLDatabaseManager {
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs;
+			String chronology;
 			if (achievementsChronologicalOrder) {
 				// Oldest date to newest one.
-				rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements WHERE playername = '"
-						+ player.getUniqueId() + "' ORDER BY date ASC");
+				chronology = "ASC";
 			} else {
 				// Newest date to oldest one.
-				rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements WHERE playername = '"
-						+ player.getUniqueId() + "' ORDER BY date DESC");
+				chronology = "DESC";
 			}
+			rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements WHERE playername = '"
+					+ player.getUniqueId() + "' ORDER BY date " + chronology);
 
 			Map<String, String> achievementsAndDisplayNames = plugin.getAchievementsAndDisplayNames();
 			while (rs.next()) {
@@ -478,7 +483,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get the date of reception of a specific achievement.
+	 * Gets the date of reception of a specific achievement.
 	 * 
 	 * @param player
 	 * @param name
@@ -493,7 +498,6 @@ public class SQLDatabaseManager {
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + "achievements WHERE playername = '"
 					+ player.getUniqueId() + "' AND achievement = '" + dbName + "'");
-
 			if (rs.next()) {
 				achievementDate = rs.getDate(1).toString();
 			}
@@ -504,7 +508,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get the total number of achievements received by a player.
+	 * Gets the total number of achievements received by a player.
 	 * 
 	 * @param player
 	 * @return number of achievements
@@ -526,7 +530,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get the list of players with the most achievements over a given period.
+	 * Gets the list of players with the most achievements over a given period.
 	 * 
 	 * @param listLength
 	 * @param start
@@ -567,7 +571,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get number of players who have received at least one achievement after start date.
+	 * Gets number of players who have received at least one achievement after start date.
 	 * 
 	 * @param start
 	 * @return list with player UUIDs
@@ -603,7 +607,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get the rank of a player given his number of achievements received after start date.
+	 * Gets the rank of a player given his number of achievements received after start date.
 	 * 
 	 * @param player
 	 * @param start
@@ -647,7 +651,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Register a new achievement for a player; this method will distinguish between asynchronous and synchronous
+	 * Registers a new achievement for a player; this method will distinguish between asynchronous and synchronous
 	 * processing.
 	 * 
 	 * @param player
@@ -675,7 +679,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Write to DB to register new achievement for a player. Method executed on main server thread or in parallel.
+	 * Writes to DB to register new achievement for a player. Method executed on main server thread or in parallel.
 	 * 
 	 * @param achievement
 	 * @param desc
@@ -709,7 +713,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Check whether player has received a specific achievement.
+	 * Checks whether player has received a specific achievement.
 	 * 
 	 * @param player
 	 * @param name
@@ -747,7 +751,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Delete an achievement from a player.
+	 * Deletes an achievement from a player.
 	 * 
 	 * @param player
 	 * @param ach
@@ -772,7 +776,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Delete an achievement from a player in the DB. Method executed on main server thread or in parallel.
+	 * Deletes an achievement from a player in the DB. Method executed on main server thread or in parallel.
 	 * 
 	 * @param player
 	 * @param name
@@ -791,7 +795,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get number of player's kills for a specific mob.
+	 * Gets number of player's kills for a specific mob.
 	 * 
 	 * @param player
 	 * @param mobname
@@ -805,7 +809,6 @@ public class SQLDatabaseManager {
 			ResultSet rs = st.executeQuery("SELECT " + MultipleAchievements.KILLS.toDBName() + " FROM " + tablePrefix
 					+ MultipleAchievements.KILLS.toDBName() + " WHERE playername = '" + player.getUniqueId()
 					+ "' AND mobname = '" + mobname + "'");
-
 			while (rs.next()) {
 				entityKills = rs.getInt(MultipleAchievements.KILLS.toDBName());
 			}
@@ -816,7 +819,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get number of player's places for a specific block.
+	 * Gets number of player's places for a specific block.
 	 * 
 	 * @param player
 	 * @param block
@@ -840,7 +843,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get number of player's breaks for a specific block.
+	 * Gets number of player's breaks for a specific block.
 	 * 
 	 * @param player
 	 * @param block
@@ -864,7 +867,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get number of player's crafts for a specific object.
+	 * Gets number of player's crafts for a specific object.
 	 * 
 	 * @param player
 	 * @param item
@@ -888,7 +891,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get the time played by a player in millis.
+	 * Gets the time played by a player in millis.
 	 * 
 	 * @param player
 	 * @param table
@@ -911,7 +914,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get the amount of a normal achievement statistic.
+	 * Gets the amount of a normal achievement statistic.
 	 * 
 	 * @param player
 	 * @param table
@@ -934,7 +937,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Return player's number of connections on separate days (used by GUI).
+	 * Returns player's number of connections on separate days (used by GUI).
 	 * 
 	 * @param player
 	 * @return connections statistic
@@ -957,7 +960,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Get a player's last connection date.
+	 * Gets a player's last connection date.
 	 * 
 	 * @param player
 	 * @return String with date
@@ -969,8 +972,9 @@ public class SQLDatabaseManager {
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName()
 					+ " WHERE playername = '" + player.getUniqueId() + "'");
-			while (rs.next())
+			while (rs.next()) {
 				date = rs.getString("date");
+			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving connection date stats: ", e);
 		}
@@ -978,7 +982,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Update player's number of connections and last connection date and return number of connections (used by
+	 * Updates player's number of connections and last connection date and returns number of connections (used by
 	 * Connections listener).
 	 * 
 	 * @param player
@@ -1019,7 +1023,7 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Update player's number of connections and last connection date.
+	 * Updates player's number of connections and last connection date.
 	 * 
 	 * @param date
 	 * @param name
@@ -1106,5 +1110,4 @@ public class SQLDatabaseManager {
 
 		return databaseType == POSTGRESQL;
 	}
-
 }

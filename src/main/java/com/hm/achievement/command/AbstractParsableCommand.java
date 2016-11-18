@@ -62,8 +62,9 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 		// Rebuild name of achievement by concatenating elements in the string array. The name of the player is last.
 		for (int i = 1; i < args.length - 1; i++) {
 			achievementName.append(args[i]);
-			if (i != args.length - 2)
+			if (i != args.length - 2) {
 				achievementName.append(' ');
+			}
 		}
 		return achievementName.toString();
 	}

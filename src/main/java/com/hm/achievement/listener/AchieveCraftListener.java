@@ -28,26 +28,30 @@ public class AchieveCraftListener extends AbstractListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(CraftItemEvent event) {
 
-		if (!(event.getWhoClicked() instanceof Player) || event.getAction() == InventoryAction.NOTHING)
+		if (!(event.getWhoClicked() instanceof Player) || event.getAction() == InventoryAction.NOTHING) {
 			return;
+		}
 
 		Player player = (Player) event.getWhoClicked();
 		if (!shouldEventBeTakenIntoAccountNoPermission(player)
-				|| event.isShiftClick() && player.getInventory().firstEmpty() < 0)
+				|| event.isShiftClick() && player.getInventory().firstEmpty() < 0) {
 			return;
+		}
 
 		MultipleAchievements category = MultipleAchievements.CRAFTS;
 
 		ItemStack item = event.getRecipe().getResult();
 		String craftName = item.getType().name().toLowerCase();
 		if (player.hasPermission(category.toPermName() + '.' + craftName + "." + item.getDurability()) && plugin
-				.getPluginConfig().isConfigurationSection(category + "." + craftName + ':' + item.getDurability()))
+				.getPluginConfig().isConfigurationSection(category + "." + craftName + ':' + item.getDurability())) {
 			craftName += ":" + item.getDurability();
-		else {
-			if (!player.hasPermission(category.toPermName() + '.' + craftName))
+		} else {
+			if (!player.hasPermission(category.toPermName() + '.' + craftName)) {
 				return;
-			if (!plugin.getPluginConfig().isConfigurationSection(category + "." + craftName))
+			}
+			if (!plugin.getPluginConfig().isConfigurationSection(category + "." + craftName)) {
 				return;
+			}
 		}
 
 		int eventAmount = item.getAmount();
@@ -56,9 +60,10 @@ public class AchieveCraftListener extends AbstractListener implements Listener {
 			ItemStack[] matrix = event.getInventory().getMatrix();
 			for (ItemStack itemStack : matrix) {
 				if (itemStack != null && itemStack.getType() != Material.AIR) {
-					int tmp = itemStack.getAmount();
-					if (tmp < max && tmp > 0)
-						max = tmp;
+					int itemStackAmount = itemStack.getAmount();
+					if (itemStackAmount < max && itemStackAmount > 0) {
+						max = itemStackAmount;
+					}
 				}
 			}
 			eventAmount *= max;

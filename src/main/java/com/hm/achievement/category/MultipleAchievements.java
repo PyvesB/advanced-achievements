@@ -13,9 +13,10 @@ public enum MultipleAchievements {
 	KILLS("Kills"),
 	CRAFTS("Crafts");
 
-	private String categoryName;
+	private final String categoryName;
 
 	private MultipleAchievements(String categoryName) {
+
 		this.categoryName = categoryName;
 	}
 

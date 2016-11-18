@@ -27,9 +27,10 @@ public class AchieveTeleportRespawnListener extends AbstractListener implements 
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 
 		// Update location of player if he respawns after dying.
-		if (plugin.getAchieveDistanceRunnable() != null)
+		if (plugin.getAchieveDistanceRunnable() != null) {
 			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer().getUniqueId().toString(),
 					event.getRespawnLocation());
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -41,22 +42,26 @@ public class AchieveTeleportRespawnListener extends AbstractListener implements 
 		// NETHER_PORTAL, then later on to change location in nether; we must only consider the second change because
 		// the location of the player is not updated during the first event; if the distances are monitored by the
 		// plugin between the two events, it would lead to incorrect results.
-		if (event.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)
+		if (event.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) {
 			return;
+		}
 
 		// Update location of player if he teleports somewhere else.
-		if (plugin.getAchieveDistanceRunnable() != null)
+		if (plugin.getAchieveDistanceRunnable() != null) {
 			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(player.getUniqueId().toString(),
 					event.getTo());
+		}
 
 		NormalAchievements category = NormalAchievements.ENDERPEARLS;
 
 		if (event.getCause() != PlayerTeleportEvent.TeleportCause.ENDER_PEARL
-				|| plugin.getDisabledCategorySet().contains(category.toString()))
+				|| plugin.getDisabledCategorySet().contains(category.toString())) {
 			return;
+		}
 
-		if (!shouldEventBeTakenIntoAccount(player, category))
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 

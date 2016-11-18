@@ -23,14 +23,14 @@ public class CheckCommand extends AbstractParsableCommand {
 		String achievementName = parseAchievementName(args);
 
 		// Check if achievement exists in database and display message accordingly.
-		if (plugin.getDb().hasPlayerAchievement(player, achievementName))
+		if (plugin.getDb().hasPlayerAchievement(player, achievementName)) {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
 					.getString("check-achievement-true", "PLAYER has received the achievement ACH!")
 					.replace("PLAYER", args[args.length - 1]).replace("ACH", achievementName));
-		else
+		} else {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
 					.getString("check-achievements-false", "PLAYER has not received the achievement ACH!")
 					.replace("PLAYER", args[args.length - 1]).replace("ACH", achievementName));
-
+		}
 	}
 }

@@ -12,7 +12,7 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public class GiveCommand extends AbstractParsableCommand {
 
-	private boolean multiCommand;
+	private final boolean multiCommand;
 
 	public GiveCommand(AdvancedAchievements plugin) {
 

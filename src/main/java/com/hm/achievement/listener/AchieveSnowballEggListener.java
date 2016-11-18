@@ -27,8 +27,9 @@ public class AchieveSnowballEggListener extends AbstractListener implements List
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onProjectileLaunch(ProjectileLaunchEvent event) {
 
-		if (!(event.getEntity().getShooter() instanceof Player))
+		if (!(event.getEntity().getShooter() instanceof Player)) {
 			return;
+		}
 
 		Player player = (Player) event.getEntity().getShooter();
 		NormalAchievements category;
@@ -40,11 +41,13 @@ public class AchieveSnowballEggListener extends AbstractListener implements List
 			return;
 		}
 
-		if (plugin.getDisabledCategorySet().contains(category.toString()))
+		if (plugin.getDisabledCategorySet().contains(category.toString())) {
 			return;
+		}
 
-		if (!shouldEventBeTakenIntoAccount(player, category))
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}

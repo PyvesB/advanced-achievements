@@ -28,10 +28,10 @@ import com.hm.achievement.utils.YamlManager;
  */
 public class AchieveDistanceRunnable implements Runnable {
 
-	final private AdvancedAchievements plugin;
-	final private HashMap<String, Location> playerLocations;
+	private final AdvancedAchievements plugin;
+	private final HashMap<String, Location> playerLocations;
 	// Minecraft version to deal with gliding.
-	final private int version;
+	private final int version;
 
 	private boolean ignoreVerticalDistance;
 
@@ -90,7 +90,6 @@ public class AchieveDistanceRunnable implements Runnable {
 	public void refreshDistance(Player player) {
 
 		String uuid = player.getUniqueId().toString();
-
 		Location previousLocation = playerLocations.get(uuid);
 
 		// If player location not found, add it in table. If player has changed world, ignore previous location.
@@ -102,13 +101,16 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		// If player is in restricted creative mode or is in a blocked world,
 		// don't update distances.
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player)) {
 			return;
+		}
 
 		int difference = getDistanceDifference(player, previousLocation);
 		// Player has not moved.
-		if (difference == 0)
+		if (difference == 0) {
 			return;
+		}
 
 		// Should be the player's location be updated in the map?
 		boolean updateLocation = true;
@@ -141,8 +143,9 @@ public class AchieveDistanceRunnable implements Runnable {
 					glidingAchievementsCache);
 		}
 
-		if (updateLocation)
+		if (updateLocation) {
 			playerLocations.put(uuid, player.getLocation());
+		}
 	}
 
 	/**
@@ -156,11 +159,12 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		// Distance difference since last runnable; ignore the vertical axis or not.
 		int difference;
-		if (ignoreVerticalDistance)
+		if (ignoreVerticalDistance) {
 			difference = (int) Math.sqrt(NumberConversions.square(previousLocation.getX() - player.getLocation().getX())
 					+ NumberConversions.square(previousLocation.getZ() - player.getLocation().getZ()));
-		else
+		} else {
 			difference = (int) previousLocation.distance(player.getLocation());
+		}
 
 		return difference;
 	}
@@ -194,8 +198,9 @@ public class AchieveDistanceRunnable implements Runnable {
 	private boolean updateDistanceAndCheckAchievements(int difference, Player player, NormalAchievements category,
 			HashMultimap<Integer, String> achievementsCache) {
 
-		if (!player.hasPermission(category.toPermName()))
+		if (!player.hasPermission(category.toPermName())) {
 			return true;
+		}
 
 		Map<String, Integer> map = plugin.getPoolsManager().getHashMap(category);
 		String uuid = player.getUniqueId().toString();
@@ -216,8 +221,9 @@ public class AchieveDistanceRunnable implements Runnable {
 				String achievementName = plugin.getPluginConfig()
 						.getString(category + "." + achievementThreshold + ".Name");
 				// The cache does not contain information about the reception of the achievement. Query database.
-				if (!plugin.getDb().hasPlayerAchievement(player, achievementName))
+				if (!plugin.getDb().hasPlayerAchievement(player, achievementName)) {
 					awardDistanceAchievement(player, achievementThreshold, category + ".");
+				}
 				// Player has received this achievement.
 				achievementsCache.put(achievementThreshold, uuid);
 			}
@@ -226,7 +232,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	}
 
 	/**
-	 * Extract the different thresholds from the config to initially populate the cache.
+	 * Extracts the different thresholds from the config to initially populate the cache.
 	 * 
 	 * @param achievementKeyName
 	 * @return array containing thresholds for the achievement keyName.
@@ -239,9 +245,9 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		// Populate the multimap with the different threshold keys and null values. This is used to easily iterate
 		// through the thresholds without referring to the config file again.
-		for (String distance : configKeys)
+		for (String distance : configKeys) {
 			achievementsCache.put(Integer.valueOf(distance), null);
-
+		}
 		return achievementsCache;
 	}
 

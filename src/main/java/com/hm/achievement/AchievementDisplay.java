@@ -1,13 +1,11 @@
 package com.hm.achievement;
 
-import com.google.common.base.Strings;
-import com.hm.achievement.utils.YamlManager;
-
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -15,8 +13,10 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
 
+import com.google.common.base.Strings;
 import com.hm.achievement.particle.PacketSender;
 import com.hm.achievement.particle.ParticleEffect;
+import com.hm.achievement.utils.YamlManager;
 
 /**
  * Class in charge of displaying of achievements (title, firework, chat messages).
@@ -25,11 +25,11 @@ import com.hm.achievement.particle.ParticleEffect;
  */
 public class AchievementDisplay {
 
-	private AdvancedAchievements plugin;
-	private String fireworkStyle;
-	private boolean firework;
-	private boolean chatNotify;
-	private boolean titleScreen;
+	private final AdvancedAchievements plugin;
+	private final String fireworkStyle;
+	private final boolean fireworks;
+	private final boolean chatNotify;
+	private final boolean titleScreen;
 
 	public AchievementDisplay(AdvancedAchievements achievement) {
 
@@ -37,13 +37,13 @@ public class AchievementDisplay {
 		// Load configuration parameters.
 		YamlManager config = plugin.getPluginConfig();
 		fireworkStyle = config.getString("FireworkStyle", "BALL_LARGE");
-		firework = config.getBoolean("Firework", true);
+		fireworks = config.getBoolean("Firework", true);
 		chatNotify = config.getBoolean("ChatNotify", false);
 		titleScreen = config.getBoolean("TitleScreen", true);
 	}
 
 	/**
-	 * Display chat messages, screen title and set firework when a player receives an achievement.
+	 * Displays chat messages, screen title and launches a firework when a player receives an achievement.
 	 * 
 	 * @param player
 	 * @param configAchievement
@@ -58,11 +58,11 @@ public class AchievementDisplay {
 		String nameToShowUser;
 
 		if (Strings.isNullOrEmpty(displayName)) {
-			// Use the achievement key name (this name is used in the achievements table in the database)
+			// Use the achievement key name (this name is used in the achievements table in the database).
 			nameToShowUser = ChatColor.translateAlternateColorCodes('&', achievementName);
 			plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + achievementName);
 		} else {
-			// Display name is defined; use it
+			// Display name is defined; use it.
 			nameToShowUser = ChatColor.translateAlternateColorCodes('&', displayName);
 			plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + achievementName
 					+ " (" + displayName + ")");
@@ -84,22 +84,22 @@ public class AchievementDisplay {
 											.getString("achievement-received", "PLAYER received the achievement:")
 											.replace("PLAYER", player.getName())
 									+ " " + ChatColor.WHITE + nameToShowUser);
-
 				}
 			}
 		}
-
 		player.sendMessage(plugin.getChatHeader() + ChatColor.WHITE + msg);
 
-		if (firework)
+		if (fireworks) {
 			displayFirework(player);
+		}
 
-		if (titleScreen)
+		if (titleScreen) {
 			displayTitle(player, nameToShowUser, msg);
+		}
 	}
 
 	/**
-	 * Display title when receiving an achievement.
+	 * Displays title when receiving an achievement.
 	 * 
 	 * @param player
 	 * @param nameToShowUser
@@ -116,39 +116,36 @@ public class AchievementDisplay {
 	}
 
 	/**
-	 * Display firework when receiving an achievement.
+	 * Launches firework when receiving an achievement.
 	 * 
 	 * @param player
 	 */
 	private void displayFirework(Player player) {
 
 		Location location = player.getLocation();
-
 		try {
 			// Set firework to launch beneath user.
 			location.setY(location.getY() - 1);
 
 			Firework firework = player.getWorld().spawn(location, Firework.class);
 			FireworkMeta fireworkMeta = firework.getFireworkMeta();
-			FireworkEffect effect;
-			// Firework style must be one of the following: BALL_LARGE,
-			// BALL, BURST, CREEPER or STAR.
-			try {
-				effect = FireworkEffect.builder().flicker(false).trail(false)
-						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))
-						.with(Type.valueOf(fireworkStyle.toUpperCase())).withFade(Color.PURPLE).build();
-			} catch (Exception e) {
-				effect = FireworkEffect.builder().flicker(false).trail(false)
-						.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).with(Type.BALL_LARGE)
-						.withFade(Color.PURPLE).build();
+			Builder effectBuilder = FireworkEffect.builder().flicker(false).trail(false)
+					.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).withFade(Color.PURPLE);
+			// Firework style must be one of the following: BALL_LARGE, BALL, BURST, CREEPER or STAR.
+			Type fireworkType = Type.valueOf(fireworkStyle.toUpperCase());
+			if (fireworkType != null) {
+				effectBuilder.with(fireworkType);
+			} else {
+				effectBuilder.with(Type.BALL_LARGE);
 				plugin.getLogger()
-						.severe("Error while loading FireworkStyle. Please check your config. Loading default style.");
+						.warning("Error while loading FireworkStyle. Please check your config. Loading default style.");
 			}
-			fireworkMeta.addEffects(effect);
+			fireworkMeta.addEffects(effectBuilder.build());
 			firework.setVelocity(player.getLocation().getDirection().multiply(0));
 			firework.setFireworkMeta(fireworkMeta);
-		} catch (IllegalArgumentException e) {
-			// Particle effect workaround to handle bug in early Spigot 1.9 releases. We try to simulate a firework.
+		} catch (Exception e) {
+			// Particle effect workaround to handle bug in early Spigot 1.9 and 1.11 releases. We try to simulate a
+			// firework.
 			player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_LAUNCH, 1, 0.6f);
 			ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, location, 1);
 			player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_BLAST, 1, 0.6f);

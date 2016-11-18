@@ -19,7 +19,7 @@ import com.hm.achievement.category.NormalAchievements;
  */
 public class DatabasePoolsManager {
 
-	private AdvancedAchievements plugin;
+	private final AdvancedAchievements plugin;
 
 	// Statistics of the different players for normal achievements; keys correspond to UUIDs.
 	private Map<String, Integer> deathHashMap;
@@ -254,9 +254,9 @@ public class DatabasePoolsManager {
 		Map<String, Integer> categoryHashMap = getHashMap(category);
 		String uuid = player.getUniqueId().toString();
 		Integer oldAmount = categoryHashMap.get(uuid);
-		if (oldAmount == null)
+		if (oldAmount == null) {
 			oldAmount = plugin.getDb().getNormalAchievementAmount(player, category.toDBName());
-
+		}
 		Integer newValue = oldAmount + value;
 
 		categoryHashMap.put(uuid, newValue);
@@ -275,9 +275,9 @@ public class DatabasePoolsManager {
 		Map<String, Integer> categoryHashMap = getHashMap(category);
 		String uuid = player.getUniqueId().toString();
 		Integer amount = categoryHashMap.get(uuid);
-		if (amount == null)
+		if (amount == null) {
 			return plugin.getDb().getNormalAchievementAmount(player, category.toDBName());
-
+		}
 		return amount;
 	}
 
@@ -357,13 +357,22 @@ public class DatabasePoolsManager {
 		return playTimeHashMap;
 	}
 
+	/**
+	 * Returns the PlayedTime statistic.
+	 * 
+	 * @param category
+	 * @param subcategory
+	 * @param player
+	 * @return
+	 */
 	public long getPlayerPlayTimeAmount(Player player) {
 
 		Long amount = playTimeHashMap.get(player.getUniqueId().toString());
-		if (amount == null)
+		if (amount == null) {
 			return plugin.getDb().getPlaytime(player);
-		else
+		} else {
 			return amount;
+		}
 	}
 
 }

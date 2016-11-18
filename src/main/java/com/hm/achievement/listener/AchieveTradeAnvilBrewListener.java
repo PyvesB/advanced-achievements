@@ -28,13 +28,15 @@ public class AchieveTradeAnvilBrewListener extends AbstractListener implements L
 	public void onInventoryClick(InventoryClickEvent event) {
 
 		if (event.getRawSlot() < 0 || event.getRawSlot() > 2 || event.getCurrentItem() == null
-				|| event.getCurrentItem().getType() == Material.AIR)
+				|| event.getCurrentItem().getType() == Material.AIR) {
 			return;
+		}
 
 		Player player = (Player) event.getWhoClicked();
 		if (!shouldEventBeTakenIntoAccountNoPermission(player)
-				|| event.isShiftClick() && player.getInventory().firstEmpty() < 0)
+				|| event.isShiftClick() && player.getInventory().firstEmpty() < 0) {
 			return;
+		}
 
 		NormalAchievements category;
 
@@ -49,11 +51,13 @@ public class AchieveTradeAnvilBrewListener extends AbstractListener implements L
 			return;
 		}
 
-		if (plugin.getDisabledCategorySet().contains(category.toString()))
+		if (plugin.getDisabledCategorySet().contains(category.toString())) {
 			return;
+		}
 
-		if (!shouldEventBeTakenIntoAccount(player, category))
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}

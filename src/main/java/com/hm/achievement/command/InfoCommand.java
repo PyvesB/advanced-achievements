@@ -37,26 +37,29 @@ public class InfoCommand extends AbstractCommand {
 				+ plugin.getPluginLang().getString("version-command-description-details",
 						"Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"));
 		// Display whether Advanced Achievements is linked to Vault.
-		if (plugin.setUpEconomy(false))
+		if (plugin.setUpEconomy(false)) {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " "
 					+ ChatColor.GRAY + "ON");
-		else
+		} else {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " "
 					+ ChatColor.GRAY + "OFF");
+		}
+
 		// Display database type.
-		if ("mysql".equalsIgnoreCase(plugin.getPluginConfig().getString("DatabaseType", "sqlite")))
+		if ("mysql".equalsIgnoreCase(plugin.getPluginConfig().getString("DatabaseType", "sqlite"))) {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
 					+ ChatColor.GRAY + "MySQL");
-		else if ("postgresql".equalsIgnoreCase(plugin.getPluginConfig().getString("DatabaseType", "sqlite")))
+		} else if ("postgresql".equalsIgnoreCase(plugin.getPluginConfig().getString("DatabaseType", "sqlite"))) {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
 					+ ChatColor.GRAY + "PostgreSQL");
-		else
+		} else {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
 					+ ChatColor.GRAY + "SQLite");
+		}
 	}
 }

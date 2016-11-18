@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 /**
  * Listener class to deal with HoePlowings, Fertilising, Fireworks and MusicDiscs achievements.
@@ -21,21 +20,17 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
  */
 public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener implements Listener {
 
-	final private int version;
-
 	public AchieveHoeFertiliseFireworkMusicListener(AdvancedAchievements plugin) {
 
 		super(plugin);
-		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
-		// Minecraft versions change in the future.
-		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 
-		if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getItem() == null)
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getItem() == null) {
 			return;
+		}
 
 		Player player = event.getPlayer();
 		NormalAchievements category;
@@ -55,11 +50,13 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener i
 			return;
 		}
 
-		if (plugin.getDisabledCategorySet().contains(category.toString()))
+		if (plugin.getDisabledCategorySet().contains(category.toString())) {
 			return;
+		}
 
-		if (!shouldEventBeTakenIntoAccount(player, category))
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}

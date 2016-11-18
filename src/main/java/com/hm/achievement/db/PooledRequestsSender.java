@@ -20,7 +20,7 @@ import com.hm.achievement.category.NormalAchievements;
  */
 public class PooledRequestsSender implements Runnable {
 
-	private AdvancedAchievements plugin;
+	private final AdvancedAchievements plugin;
 
 	public PooledRequestsSender(AdvancedAchievements plugin) {
 
@@ -77,17 +77,15 @@ public class PooledRequestsSender implements Runnable {
 			performRequestsForNormalCategory(st, NormalAchievements.MUSICDISCS);
 			performRequestsForNormalCategory(st, NormalAchievements.ENDERPEARLS);
 
-			if (plugin.isAsyncPooledRequestsSender())
+			if (plugin.isAsyncPooledRequestsSender()) {
 				performRequestsForMultipleCategoriesAsync(st);
-			else
+			} else {
 				performRequestsForMultipleCategoriesSync(st);
-
-			if (!plugin.isAsyncPooledRequestsSender())
 				st.executeBatch();
+			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "Error while sending async pooled requests to database: ", e);
 		}
-
 	}
 
 	/**
@@ -102,15 +100,16 @@ public class PooledRequestsSender implements Runnable {
 			String dbColumn = getSubcategoryDatabaseName(category);
 			Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
-				if (plugin.getDb().isPostgres())
+				if (plugin.getDb().isPostgres()) {
 					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
 							+ entry.getValue() + ")" + " ON CONFLICT (playername," + dbColumn + ") DO UPDATE SET ("
 							+ category.toDBName() + ")=(" + entry.getValue() + ")");
-				else
+				} else {
 					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
 							+ entry.getValue() + ")");
+				}
 				((ConcurrentHashMap<String, Integer>) categoryMap).remove(entry.getKey(), entry.getValue());
 			}
 		}
@@ -128,15 +127,16 @@ public class PooledRequestsSender implements Runnable {
 			String dbColumn = getSubcategoryDatabaseName(category);
 			Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
-				if (plugin.getDb().isPostgres())
+				if (plugin.getDb().isPostgres()) {
 					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
 							+ entry.getValue() + ")" + " ON CONFLICT (playername," + dbColumn + ") DO UPDATE SET ("
 							+ category.toDBName() + ")=(" + entry.getValue() + ")");
-				else
+				} else {
 					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
 							+ entry.getValue() + ")");
+				}
 			}
 			categoryMap.clear();
 		}
@@ -177,26 +177,28 @@ public class PooledRequestsSender implements Runnable {
 
 		if (plugin.isAsyncPooledRequestsSender()) {
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
-				if (plugin.getDb().isPostgres())
+				if (plugin.getDb().isPostgres()) {
 					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")"
 							+ " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
 							+ entry.getValue() + ")");
-				else
+				} else {
 					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")");
+				}
 				((ConcurrentHashMap<String, Integer>) categoryMap).remove(entry.getKey(), entry.getValue());
 			}
 		} else {
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
-				if (plugin.getDb().isPostgres())
+				if (plugin.getDb().isPostgres()) {
 					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")"
 							+ " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
 							+ entry.getValue() + ")");
-				else
+				} else {
 					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")");
+				}
 			}
 			categoryMap.clear();
 		}

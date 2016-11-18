@@ -46,8 +46,9 @@ public class AchieveXPListener extends AbstractListener implements Listener {
 
 		// Populate the multimap with the different threshold keys and null values. This is used to easily iterate
 		// through the thresholds without referring to the config file again.
-		for (String level : configKeys)
+		for (String level : configKeys) {
 			achievementsCache.put(Integer.valueOf(level), null);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -57,15 +58,17 @@ public class AchieveXPListener extends AbstractListener implements Listener {
 		String uuid = player.getUniqueId().toString();
 
 		NormalAchievements category = NormalAchievements.LEVELS;
-		if (!shouldEventBeTakenIntoAccount(player, category))
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
+		}
 
 		int levels = plugin.getPoolsManager().getStatisticAmount(category, player);
 
-		if (event.getNewLevel() > levels)
+		if (event.getNewLevel() > levels) {
 			plugin.getPoolsManager().getHashMap(category).put(player.getUniqueId().toString(), event.getNewLevel());
-		else
+		} else {
 			return;
+		}
 
 		for (Integer achievementThreshold : achievementsCache.keySet()) {
 			if (event.getNewLevel() >= achievementThreshold

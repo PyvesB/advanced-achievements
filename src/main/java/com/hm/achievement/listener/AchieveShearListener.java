@@ -27,8 +27,9 @@ public class AchieveShearListener extends AbstractListener implements Listener {
 
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.SHEARS;
-		if (!shouldEventBeTakenIntoAccount(player, category))
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}

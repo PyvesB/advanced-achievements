@@ -10,7 +10,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 /**
  * Listener class to deal with Breaks achievements.
@@ -20,9 +19,8 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
  */
 public class AchieveBlockBreakListener extends AbstractListener implements Listener {
 
-	final private int version;
-	final private boolean disableSilkTouchBreaks;
-	final private boolean disableSilkTouchOreBreaks;
+	private final boolean disableSilkTouchBreaks;
+	private final boolean disableSilkTouchOreBreaks;
 
 	public AchieveBlockBreakListener(AdvancedAchievements plugin) {
 
@@ -30,9 +28,6 @@ public class AchieveBlockBreakListener extends AbstractListener implements Liste
 		// Load configuration parameter.
 		disableSilkTouchBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchBreaks", false);
 		disableSilkTouchOreBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchOreBreaks", false);
-		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
-		// Minecraft versions change in the future.
-		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -44,8 +39,9 @@ public class AchieveBlockBreakListener extends AbstractListener implements Liste
 				&& player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
 				|| version < 9 && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
 
-		if (!shouldEventBeTakenIntoAccountNoPermission(player) || disableSilkTouchBreaks && silkTouchBreak)
+		if (!shouldEventBeTakenIntoAccountNoPermission(player) || disableSilkTouchBreaks && silkTouchBreak) {
 			return;
+		}
 
 		Block block = event.getBlock();
 		if (disableSilkTouchOreBreaks && silkTouchBreak) {
@@ -70,10 +66,12 @@ public class AchieveBlockBreakListener extends AbstractListener implements Liste
 				.getPluginConfig().isConfigurationSection(category + "." + blockName + ':' + block.getData())) {
 			blockName += ":" + block.getData();
 		} else {
-			if (!player.hasPermission(category.toPermName() + '.' + blockName))
+			if (!player.hasPermission(category.toPermName() + '.' + blockName)) {
 				return;
-			if (!plugin.getPluginConfig().isConfigurationSection(category + "." + blockName))
+			}
+			if (!plugin.getPluginConfig().isConfigurationSection(category + "." + blockName)) {
 				return;
+			}
 		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, blockName, 1);

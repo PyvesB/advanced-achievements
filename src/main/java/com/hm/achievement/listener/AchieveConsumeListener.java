@@ -11,7 +11,6 @@ import org.bukkit.potion.PotionType;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 /**
  * Listener class to deal with EatenItems and ConsumedPotions achievements.
@@ -21,14 +20,9 @@ import com.hm.achievement.particle.ReflectionUtils.PackageType;
  */
 public class AchieveConsumeListener extends AbstractListener implements Listener {
 
-	final private int version;
-
 	public AchieveConsumeListener(AdvancedAchievements plugin) {
 
 		super(plugin);
-		// Simple and fast check to retrieve Minecraft version. Might need to be updated depending on how the
-		// Minecraft versions change in the future.
-		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -60,11 +54,13 @@ public class AchieveConsumeListener extends AbstractListener implements Listener
 			return;
 		}
 
-		if (plugin.getDisabledCategorySet().contains(category.toString()))
+		if (plugin.getDisabledCategorySet().contains(category.toString())) {
 			return;
+		}
 
-		if (!shouldEventBeTakenIntoAccount(player, category))
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}

@@ -25,13 +25,15 @@ public class AchieveFishListener extends AbstractListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerFish(PlayerFishEvent event) {
 
-		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH)
+		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) {
 			return;
+		}
 
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.FISH;
-		if (!shouldEventBeTakenIntoAccount(player, category))
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}

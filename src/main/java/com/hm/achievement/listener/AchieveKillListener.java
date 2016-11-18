@@ -31,11 +31,14 @@ public class AchieveKillListener extends AbstractListener implements Listener {
 
 		Player player = event.getEntity().getKiller();
 
-		if (player == null)
+		if (player == null) {
 			return;
+		}
 
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player)) {
 			return;
+		}
 		Entity entity = event.getEntity();
 
 		if (!(entity instanceof LivingEntity)) {
@@ -58,8 +61,9 @@ public class AchieveKillListener extends AbstractListener implements Listener {
 		MultipleAchievements category = MultipleAchievements.KILLS;
 
 		if (!plugin.getPluginConfig().isConfigurationSection(category + "." + mobName)
-				|| !player.hasPermission(category.toPermName() + '.' + mobName))
+				|| !player.hasPermission(category.toPermName() + '.' + mobName)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, mobName, 1);
 	}

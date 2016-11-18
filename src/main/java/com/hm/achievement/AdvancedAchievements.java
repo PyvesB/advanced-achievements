@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -80,9 +79,6 @@ import net.milkbowl.vault.economy.Economy;
 /**
  * Advanced Achievements enables unique and challenging achievements on your server. Try to collect as many as you can,
  * earn rewards, climb the rankings and receive RP books!
- * 
- * Some minor parts of the code and ideas are based on Achievement plugin by Death_marine and captainawesome7, under
- * Federation of Lost Lawn Chairs license (http://dev.bukkit.org/licenses/1332-federation-of-lost-lawn-chairs).
  * 
  * AdvancedAchievements is under GNU General Public License version 3. Please visit the plugin's GitHub for more
  * information : https://github.com/PyvesB/AdvancedAchievements
@@ -235,8 +231,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		// Check for available plugin update.
-		if (config.getBoolean("CheckForUpdate", true))
+		if (config.getBoolean("CheckForUpdate", true)) {
 			updateChecker = new UpdateChecker(this);
+		}
 
 		this.getLogger().info("Registering listeners...");
 
@@ -351,27 +348,21 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(hoeFertiliseFireworkMusicListener, this);
 		}
 
-		if (!disabledCategorySet.contains(NormalAchievements.LEVELS.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEFOOT.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEPIG.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())) {
-			quitListener = new AchieveQuitListener(this);
-			pm.registerEvents(quitListener, this);
-		}
-
 		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEFOOT.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEPIG.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.ENDERPEARLS.toString())) {
-			teleportRespawnListener = new AchieveTeleportRespawnListener(this);
-			pm.registerEvents(teleportRespawnListener, this);
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())) {
+			if (!disabledCategorySet.contains(NormalAchievements.LEVELS.toString())
+					|| !disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
+				quitListener = new AchieveQuitListener(this);
+				pm.registerEvents(quitListener, this);
+			}
+			if (!disabledCategorySet.contains(NormalAchievements.ENDERPEARLS.toString())) {
+				teleportRespawnListener = new AchieveTeleportRespawnListener(this);
+				pm.registerEvents(teleportRespawnListener, this);
+			}
 		}
 
 		listGUIListener = new ListGUIListener(this);
@@ -392,20 +383,18 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Schedule a repeating task to group database queries for some frequent
 		// events.
 		pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(
-				Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), pooledRequestsSender,
+				Bukkit.getPluginManager().getPlugin(this.getDescription().getName()), pooledRequestsSender,
 				pooledRequestsTaskInterval * 40L, pooledRequestsTaskInterval * 20L);
 
-		// Schedule a repeating task to monitor played time for each player (not
-		// directly related to an event).
+		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
 		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
 			achievePlayTimeRunnable = new AchievePlayTimeRunnable(this);
 			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(
-					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achievePlayTimeRunnable,
+					Bukkit.getPluginManager().getPlugin(this.getDescription().getName()), achievePlayTimeRunnable,
 					playtimeTaskInterval * 10L, playtimeTaskInterval * 20L);
 		}
 
-		// Schedule a repeating task to monitor distances travelled by each
-		// player (not directly related to an event).
+		// Schedule a repeating task to monitor distances travelled by each player (not directly related to an event).
 		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEFOOT.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEPIG.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
@@ -414,20 +403,23 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())) {
 			achieveDistanceRunnable = new AchieveDistanceRunnable(this);
 			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(
-					Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), achieveDistanceRunnable,
+					Bukkit.getPluginManager().getPlugin(this.getDescription().getName()), achieveDistanceRunnable,
 					distanceTaskInterval * 40L, distanceTaskInterval * 20L);
 		}
 
-		if (successfulLoad)
+		if (successfulLoad) {
 			this.getLogger().info("Plugin successfully enabled and ready to run! Took "
 					+ (System.currentTimeMillis() - startTime) + "ms.");
-		else
+		} else {
 			this.getLogger().severe("Error(s) while loading plugin. Please view previous logs for more information.");
+		}
 	}
 
 	/**
-	 * Load plugin configuration and set values to different parameters; load language file and backup configuration
-	 * files. Register permissions. Initialise command modules.
+	 * Loads the plugin configuration and sets values to different parameters; loads the language file and backs
+	 * configuration files up. Register permissions. Initialises command modules.
+	 * 
+	 * @param attemptUpdate
 	 */
 	public void configurationLoad(boolean attemptUpdate) {
 
@@ -447,7 +439,7 @@ public class AdvancedAchievements extends JavaPlugin {
 					"Verify your syntax by visiting yaml-online-parser.appspot.com and using the following logs: ", e);
 			successfulLoad = false;
 			overrideDisable = true;
-			this.getServer().getPluginManager().disablePlugin(this);
+			Bukkit.getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
 
@@ -483,12 +475,15 @@ public class AdvancedAchievements extends JavaPlugin {
 		initialiseCommands();
 
 		// Reload achievements in distance, max level and play time runnables on plugin reload (when objects are null).
-		if (achieveDistanceRunnable != null)
+		if (achieveDistanceRunnable != null) {
 			achieveDistanceRunnable.extractAchievementsFromConfig();
-		if (achievePlayTimeRunnable != null)
+		}
+		if (achievePlayTimeRunnable != null) {
 			achievePlayTimeRunnable.extractAchievementsFromConfig();
-		if (xpListener != null)
+		}
+		if (xpListener != null) {
 			xpListener.extractAchievementsFromConfig();
+		}
 
 		// Set to null in case user changed the option and did an /aach reload. We do not recheck for update on /aach
 		// reload.
@@ -522,7 +517,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	/**
 	 * Extracts plugin parameters from the configuration file.
 	 */
-	@SuppressWarnings("unchecked")
 	private void extractParameters() {
 
 		icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
@@ -530,10 +524,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
 		restrictCreative = config.getBoolean("RestrictCreative", false);
 		databaseBackup = config.getBoolean("DatabaseBackup", true);
-		for (String world : (List<String>) config.getList("ExcludedWorlds"))
+		for (String world : config.getList("ExcludedWorlds")) {
 			excludedWorldSet.add(world);
-		for (String category : (List<String>) config.getList("DisabledCategories"))
+		}
+		for (String category : config.getList("DisabledCategories")) {
 			disabledCategorySet.add(category);
+		}
 		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 60);
 		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 60);
@@ -562,14 +558,14 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Log number of achievements and disabled categories.
+	 * Logs number of achievements and disabled categories.
 	 */
 	private void logAchievementStats() {
 
 		int totalAchievements = 0;
 		int categoriesInUse = 0;
 
-		// Enumerate Commands achievements
+		// Enumerate Commands achievements.
 		if (!disabledCategorySet.contains("Commands")) {
 			ConfigurationSection categoryConfig = config.getConfigurationSection("Commands");
 			int keyCount = categoryConfig.getKeys(false).size();
@@ -579,10 +575,11 @@ public class AdvancedAchievements extends JavaPlugin {
 			}
 		}
 
-		// Enumerate the normal achievements
+		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
-			if (disabledCategorySet.contains(category.toString()))
+			if (disabledCategorySet.contains(category.toString())) {
 				continue;
+			}
 
 			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
 			int keyCount = categoryConfig.getKeys(false).size();
@@ -592,16 +589,18 @@ public class AdvancedAchievements extends JavaPlugin {
 			}
 		}
 
-		// Enumerate the achievements with multiple categories
+		// Enumerate the achievements with multiple categories.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			if (disabledCategorySet.contains(category.toString()))
+			if (disabledCategorySet.contains(category.toString())) {
 				continue;
+			}
 
 			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
 			Set<String> categorySections = categoryConfig.getKeys(false);
 
-			if (categorySections.isEmpty())
+			if (categorySections.isEmpty()) {
 				continue;
+			}
 
 			categoriesInUse += 1;
 
@@ -614,22 +613,22 @@ public class AdvancedAchievements extends JavaPlugin {
 				}
 			}
 		}
-
 		this.getLogger().info("Loaded " + totalAchievements + " achievements in " + categoriesInUse + " categories.");
 
 		if (!disabledCategorySet.isEmpty()) {
 			StringBuilder disabledCategories = new StringBuilder();
 
-			if (disabledCategorySet.size() == 1)
+			if (disabledCategorySet.size() == 1) {
 				disabledCategories.append(disabledCategorySet.size() + " disabled category: ");
-			else
+			} else {
 				disabledCategories.append(disabledCategorySet.size() + " disabled categories: ");
+			}
 
 			for (String category : disabledCategorySet) {
 				disabledCategories.append(category + ", ");
 			}
 
-			// Remove the trailing comma and space
+			// Remove the trailing comma and space.
 			disabledCategories.deleteCharAt(disabledCategories.length() - 1);
 			disabledCategories.deleteCharAt(disabledCategories.length() - 1);
 
@@ -638,18 +637,20 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Register permissions that depend on the user's configuration file (based on multiple type achievements; for
-	 * instance for stone breaks, achievement.count.breaks.stone will be registered).
+	 * Registers permissions that depend on the user's configuration file (for MultipleAchievements; for instance for
+	 * stone breaks, achievement.count.breaks.stone will be registered).
 	 */
 	private void registerPermissions() {
 
+		PluginManager pluginManager = this.getServer().getPluginManager();
 		for (MultipleAchievements category : MultipleAchievements.values())
 			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
-				// Bukkit only allows permissions to be set once, so must do
-				// additional check for /aach reload correctness.
-				if (this.getServer().getPluginManager().getPermission(category.toPermName() + "." + section) == null)
-					this.getServer().getPluginManager().addPermission(
+				// Bukkit only allows permissions to be set once, so must do additional check for /aach reload
+				// correctness.
+				if (pluginManager.getPermission(category.toPermName() + "." + section) == null) {
+					pluginManager.addPermission(
 							new Permission(category.toPermName() + "." + section, PermissionDefault.TRUE));
+				}
 			}
 	}
 
@@ -659,103 +660,65 @@ public class AdvancedAchievements extends JavaPlugin {
 	@Override
 	public void onDisable() {
 
-		// Error while loading .yml files or database; do not do any further
-		// work.
-		if (overrideDisable)
+		// Error while loading .yml files or database; do not do any further work.
+		if (overrideDisable) {
 			return;
+		}
 
 		// Cancel scheduled tasks.
-		if (pooledRequestsSenderTask != null)
+		if (pooledRequestsSenderTask != null) {
 			pooledRequestsSenderTask.cancel();
-		if (playedTimeTask != null)
+		}
+		if (playedTimeTask != null) {
 			playedTimeTask.cancel();
-		if (distanceTask != null)
+		}
+		if (distanceTask != null) {
 			distanceTask.cancel();
+		}
 
 		// Send remaining stats for pooled events to the database.
 		pooledRequestsSender.sendRequests();
 
 		// Send played time stats to the database, forcing synchronous writes.
-		if (achievePlayTimeRunnable != null)
-			for (Entry<String, Long> entry : poolsManager.getPlayedTimeHashMap().entrySet())
-				this.getDb().updatePlaytime(entry.getKey(), entry.getValue());
+		if (achievePlayTimeRunnable != null) {
+			for (Entry<String, Long> entry : poolsManager.getPlayedTimeHashMap().entrySet()) {
+				db.updatePlaytime(entry.getKey(), entry.getValue());
+			}
+		}
 
-		// Send traveled distance stats to the database, forcing synchronous
-		// writes.
+		// Send traveled distance stats to the database, synchronous writes.
 		if (achieveDistanceRunnable != null) {
-			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEFOOT).entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEFOOT.toDBName());
-
-			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEPIG).entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEPIG.toDBName());
-
-			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEHORSE).entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEHORSE.toDBName());
-
-			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEBOAT).entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEBOAT.toDBName());
-
-			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEMINECART).entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEMINECART.toDBName());
-
-			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEGLIDING).entrySet())
-				this.getDb().updateDistance(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEGLIDING.toDBName());
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEFOOT).entrySet()) {
+				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEFOOT.toDBName());
+			}
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEPIG).entrySet()) {
+				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEPIG.toDBName());
+			}
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEHORSE).entrySet()) {
+				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEHORSE.toDBName());
+			}
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEBOAT).entrySet()) {
+				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEBOAT.toDBName());
+			}
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEMINECART)
+					.entrySet()) {
+				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEMINECART.toDBName());
+			}
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEGLIDING)
+					.entrySet()) {
+				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEGLIDING.toDBName());
+			}
 		}
 
 		try {
-			if (this.getDb().getSQLConnection() != null)
-				this.getDb().getSQLConnection().close();
+			if (db.getSQLConnection() != null) {
+				db.getSQLConnection().close();
+			}
 		} catch (SQLException e) {
 			this.getLogger().log(Level.SEVERE, "Error while closing connection to database: ", e);
 		}
 
 		this.getLogger().info("Remaining requests sent to database, plugin disabled.");
-	}
-
-	/**
-	 * Check if player is in a world in which achievements must not be received.
-	 * 
-	 * @param player
-	 * @return true if player is in excluded world, false otherwise
-	 */
-	public boolean isInExludedWorld(Player player) {
-
-		if (excludedWorldSet.isEmpty())
-			return false;
-
-		return excludedWorldSet.contains(player.getWorld().getName());
-	}
-
-	/**
-	 * Try to hook up with Vault, and log if this is called on plugin initialisation.
-	 * 
-	 * @param log
-	 * @return true if Vault available, false otherwise
-	 */
-	public boolean setUpEconomy(boolean log) {
-
-		if (economy != null)
-			return true;
-
-		try {
-			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
-					.getRegistration(net.milkbowl.vault.economy.Economy.class);
-			if (economyProvider != null) {
-				economy = economyProvider.getProvider();
-			}
-
-			return (economy != null);
-		} catch (NoClassDefFoundError e) {
-			if (log)
-				this.getLogger().warning("Attempt to hook up with Vault failed. Money reward ignored.");
-			return false;
-		}
 	}
 
 	/**
@@ -765,8 +728,9 @@ public class AdvancedAchievements extends JavaPlugin {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]) {
 
-		if (!"aach".equalsIgnoreCase(cmd.getName()))
+		if (!"aach".equalsIgnoreCase(cmd.getName())) {
 			return false;
+		}
 
 		if ((args.length == 1) && !"help".equalsIgnoreCase(args[0])) {
 			if ("book".equalsIgnoreCase(args[0])) {
@@ -799,7 +763,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		} else {
 			helpCommand.executeCommand(sender, args, null);
 		}
-
 		return true;
 	}
 
@@ -876,7 +839,103 @@ public class AdvancedAchievements extends JavaPlugin {
 				"§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§7\u2592§5\u2592§5\u2592§5\u2592§5\u2592§7\u2592§r"));
 	}
 
-	// Various getters and setters. Names are self-explanatory.
+	/**
+	 * Checks if a player is in a world in which achievements must not be received.
+	 * 
+	 * @param player
+	 * @return true if player is in excluded world, false otherwise
+	 */
+	public boolean isInExludedWorld(Player player) {
+
+		if (excludedWorldSet.isEmpty()) {
+			return false;
+		}
+
+		return excludedWorldSet.contains(player.getWorld().getName());
+	}
+
+	/**
+	 * Tries to hook up with Vault, and log if this is called on plugin initialisation.
+	 * 
+	 * @param log
+	 * @return true if Vault available, false otherwise
+	 */
+	public boolean setUpEconomy(boolean log) {
+
+		if (economy != null) {
+			return true;
+		}
+
+		try {
+			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
+					.getRegistration(net.milkbowl.vault.economy.Economy.class);
+			if (economyProvider != null) {
+				economy = economyProvider.getProvider();
+			}
+			return economy != null;
+		} catch (NoClassDefFoundError e) {
+			if (log) {
+				this.getLogger().warning("Attempt to hook up with Vault failed. Money reward ignored.");
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * Returns a map from achievement name (as stored in the database) to DisplayName. If multiple achievements have the
+	 * same achievement name, only the first DisplayName will be tracked. If DisplayName for an achievement is empty or
+	 * undefined, the value in the returned map will be an empty string.
+	 * 
+	 * @return Map from achievement name to user-friendly display name
+	 */
+	public Map<String, String> getAchievementsAndDisplayNames() {
+
+		Map<String, String> achievementsAndDisplayNames = new HashMap<>();
+
+		// Enumerate Commands achievements
+		for (String ach : config.getConfigurationSection("Commands").getKeys(false)) {
+
+			String achName = config.getString("Commands." + ach + ".Name", "");
+			String displayName = config.getString("Commands." + ach + ".DisplayName", "");
+
+			if (!achievementsAndDisplayNames.containsKey(achName)) {
+				achievementsAndDisplayNames.put(achName, displayName);
+			}
+		}
+
+		// Enumerate the normal achievements
+		for (NormalAchievements category : NormalAchievements.values()) {
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
+			for (String ach : categoryConfig.getKeys(false)) {
+
+				String achName = config.getString(category + "." + ach + ".Name", "");
+				String displayName = config.getString(category + "." + ach + ".DisplayName", "");
+
+				if (!achievementsAndDisplayNames.containsKey(achName)) {
+					achievementsAndDisplayNames.put(achName, displayName);
+				}
+			}
+		}
+
+		// Enumerate the achievements with multiple categories
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
+			for (String section : categoryConfig.getKeys(false)) {
+				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
+				for (String level : subcategoryConfig.getKeys(false)) {
+
+					String achName = config.getString(category + "." + section + '.' + level + ".Name", "");
+					String displayName = config.getString(category + "." + section + '.' + level + ".DisplayName", "");
+
+					if (!achievementsAndDisplayNames.containsKey(achName)) {
+						achievementsAndDisplayNames.put(achName, displayName);
+					}
+				}
+			}
+		}
+
+		return achievementsAndDisplayNames;
+	}
 
 	public Economy getEconomy() {
 
@@ -966,62 +1025,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AchieveXPListener getXpListener() {
 
 		return xpListener;
-	}
-
-	/**
-	 * Return a map from achievement name (as stored in the database) to DisplayName. If multiple achievements have the
-	 * same achievement name, only the first DisplayName will be tracked. If DisplayName for an achievement is empty or
-	 * undefined, the value in the returned map will be an empty string.
-	 * 
-	 * @return Map from achievement name to user-friendly display name
-	 */
-	public Map<String, String> getAchievementsAndDisplayNames() {
-
-		Map<String, String> achievementsAndDisplayNames = new HashMap<>();
-
-		// Enumerate Commands achievements
-		for (String ach : config.getConfigurationSection("Commands").getKeys(false)) {
-
-			String achName = config.getString("Commands." + ach + ".Name", "");
-			String displayName = config.getString("Commands." + ach + ".DisplayName", "");
-
-			if (!achievementsAndDisplayNames.containsKey(achName)) {
-				achievementsAndDisplayNames.put(achName, displayName);
-			}
-		}
-
-		// Enumerate the normal achievements
-		for (NormalAchievements category : NormalAchievements.values()) {
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
-			for (String ach : categoryConfig.getKeys(false)) {
-
-				String achName = config.getString(category + "." + ach + ".Name", "");
-				String displayName = config.getString(category + "." + ach + ".DisplayName", "");
-
-				if (!achievementsAndDisplayNames.containsKey(achName)) {
-					achievementsAndDisplayNames.put(achName, displayName);
-				}
-			}
-		}
-
-		// Enumerate the achievements with multiple categories
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
-			for (String section : categoryConfig.getKeys(false)) {
-				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
-				for (String level : subcategoryConfig.getKeys(false)) {
-
-					String achName = config.getString(category + "." + section + '.' + level + ".Name", "");
-					String displayName = config.getString(category + "." + section + '.' + level + ".DisplayName", "");
-
-					if (!achievementsAndDisplayNames.containsKey(achName)) {
-						achievementsAndDisplayNames.put(achName, displayName);
-					}
-				}
-			}
-		}
-
-		return achievementsAndDisplayNames;
 	}
 
 	public String getIcon() {

@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.utils.YamlManager;
 
 /**
  * Runnable task to check for Connection achievements after a player has connected.
@@ -17,8 +18,8 @@ import com.hm.achievement.category.NormalAchievements;
  */
 public class AchieveConnectionRunnable implements Runnable {
 
-	final private Player player;
-	final private AdvancedAchievements plugin;
+	private final Player player;
+	private final AdvancedAchievements plugin;
 
 	public AchieveConnectionRunnable(Player player, AdvancedAchievements plugin) {
 
@@ -30,22 +31,27 @@ public class AchieveConnectionRunnable implements Runnable {
 	public void run() {
 
 		// Check if player is still online.
-		if (!player.isOnline())
+		if (!player.isOnline()) {
 			return;
+		}
 
 		// Check again in case player has changed world or game mode by the time this runnable was scheduled.
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player)) {
 			return;
+		}
 
 		// Check whether another runnable has already done the work (even though this method is intended to run once
 		// per player per connection instance, this might happen in some server configurations).
-		if (plugin.getConnectionListener().getPlayersAchieveConnectionRan().contains(player.getUniqueId().toString()))
+		if (plugin.getConnectionListener().getPlayersAchieveConnectionRan().contains(player.getUniqueId().toString())) {
 			return;
+		}
 
 		NormalAchievements category = NormalAchievements.CONNECTIONS;
 
-		if (!player.hasPermission(category.toPermName()))
+		if (!player.hasPermission(category.toPermName())) {
 			return;
+		}
 
 		Date now = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
@@ -54,12 +60,12 @@ public class AchieveConnectionRunnable implements Runnable {
 
 			int connections = plugin.getDb().updateAndGetConnection(player, format.format(now));
 			String configAchievement = category + "." + connections;
-			if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-
+			YamlManager pluginConfig = plugin.getPluginConfig();
+			if (pluginConfig.getString(configAchievement + ".Message", null) != null) {
 				plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 				plugin.getDb().registerAchievement(player,
-						plugin.getPluginConfig().getString(configAchievement + ".Name"),
-						plugin.getPluginConfig().getString(configAchievement + ".Message"));
+						pluginConfig.getString(configAchievement + ".Name"),
+						pluginConfig.getString(configAchievement + ".Message"));
 				plugin.getReward().checkConfig(player, configAchievement);
 			}
 		}

@@ -20,7 +20,7 @@ import com.hm.achievement.category.NormalAchievements;
  */
 public class ListGUIListener implements Listener {
 
-	private AdvancedAchievements plugin;
+	private final AdvancedAchievements plugin;
 
 	public ListGUIListener(AdvancedAchievements plugin) {
 
@@ -47,8 +47,9 @@ public class ListGUIListener implements Listener {
 		}
 
 		// GUI corresponding to the achievement listing of a given category. Do not let the player interact with it.
-		if (event.getInventory().getItem(0).getType() == Material.STAINED_CLAY)
+		if (event.getInventory().getItem(0).getType() == Material.STAINED_CLAY) {
 			return;
+		}
 
 		// Main GUI displaying all the categories. Do not let players interact with locked categories or slots not
 		// corresponding to a category item.
@@ -56,8 +57,9 @@ public class ListGUIListener implements Listener {
 				&& (event.getCurrentItem().getType() == Material.BARRIER
 						|| event.getCurrentItem().getType() == Material.BEDROCK
 						|| event.getRawSlot() > NormalAchievements.values().length
-								+ MultipleAchievements.values().length - plugin.getDisabledCategorySet().size()))
+								+ MultipleAchievements.values().length - plugin.getDisabledCategorySet().size())) {
 			return;
+		}
 
 		// Create GUI according to whether the player clicked on a normal achievements category or a multiple
 		// achievement category.

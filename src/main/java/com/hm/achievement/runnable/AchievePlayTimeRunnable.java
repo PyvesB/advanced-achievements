@@ -18,7 +18,7 @@ import com.hm.achievement.category.NormalAchievements;
  */
 public class AchievePlayTimeRunnable implements Runnable {
 
-	final private AdvancedAchievements plugin;
+	private final AdvancedAchievements plugin;
 
 	private long previousRunMillis;
 
@@ -71,8 +71,10 @@ public class AchievePlayTimeRunnable implements Runnable {
 	public void registerTimes(Player player) {
 
 		// If player is in restricted creative mode or is in a blocked world, don't update played time.
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE || plugin.isInExludedWorld(player))
+		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+				|| plugin.isInExludedWorld(player)) {
 			return;
+		}
 
 		NormalAchievements category = NormalAchievements.PLAYEDTIME;
 

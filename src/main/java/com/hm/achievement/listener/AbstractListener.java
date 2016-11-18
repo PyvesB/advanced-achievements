@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 import com.hm.achievement.utils.YamlManager;
 
 /**
@@ -15,11 +16,15 @@ import com.hm.achievement.utils.YamlManager;
  */
 public abstract class AbstractListener {
 
-	final protected AdvancedAchievements plugin;
+	protected final int version;
+	protected final AdvancedAchievements plugin;
 
 	protected AbstractListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
+		// Minecraft versions change in the future.
+		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	/**

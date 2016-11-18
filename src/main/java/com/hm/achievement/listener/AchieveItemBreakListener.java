@@ -27,8 +27,9 @@ public class AchieveItemBreakListener extends AbstractListener implements Listen
 
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.ITEMBREAKS;
-		if (!shouldEventBeTakenIntoAccountNoCreative(player, category))
+		if (!shouldEventBeTakenIntoAccountNoCreative(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}

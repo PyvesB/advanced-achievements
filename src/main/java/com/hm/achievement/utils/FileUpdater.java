@@ -26,7 +26,6 @@ public class FileUpdater {
 	 * Updates configuration file from older plugin versions by adding missing parameters. Upgrades from versions prior
 	 * to 2.0 are not supported.
 	 */
-	@SuppressWarnings("unchecked")
 	public void updateOldConfiguration() {
 
 		boolean updateDone = false;
@@ -94,7 +93,7 @@ public class FileUpdater {
 			plugin.getPluginConfig().set("Brewing", emptyMap, "When a potion is brewed.");
 			// As no achievements are set, we initially disable this new
 			// category.
-			List<String> disabledCategories = (List<String>) plugin.getPluginConfig().getList("DisabledCategories");
+			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
 			disabledCategories.add("Brewing");
 			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
 			updateDone = true;
@@ -105,7 +104,7 @@ public class FileUpdater {
 			plugin.getPluginConfig().set("Taming", emptyMap, "When an animal is tamed.");
 			// As no achievements are set, we initially disable this new
 			// category.
-			List<String> disabledCategories = (List<String>) plugin.getPluginConfig().getList("DisabledCategories");
+			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
 			disabledCategories.add("Taming");
 			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
 			updateDone = true;
@@ -116,7 +115,7 @@ public class FileUpdater {
 			HashMap<Object, Object> emptyMap = new HashMap<>();
 			// As no achievements are set, we initially disable this new
 			// category.
-			List<String> disabledCategories = (List<String>) plugin.getPluginConfig().getList("DisabledCategories");
+			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
 			disabledCategories.add("Fireworks");
 			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
 			plugin.getPluginConfig().set("Fireworks", emptyMap, "When a firework is launched.");
@@ -137,7 +136,7 @@ public class FileUpdater {
 					"When a distance is traveled with elytra.", "(ignored on Minecraft versions prior to 1.9)" });
 			// As no achievements are set, we initially disable this new
 			// category.
-			List<String> disabledCategories = (List<String>) plugin.getPluginConfig().getList("DisabledCategories");
+			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
 			disabledCategories.add("DistanceGliding");
 			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
 			updateDone = true;
@@ -148,7 +147,7 @@ public class FileUpdater {
 			plugin.getPluginConfig().set("MusicDiscs", emptyMap, "When a music disc is played.");
 			// As no achievements are set, we initially disable this new
 			// category.
-			List<String> disabledCategories = (List<String>) plugin.getPluginConfig().getList("DisabledCategories");
+			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
 			disabledCategories.add("MusicDiscs");
 			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
 			updateDone = true;
@@ -159,7 +158,7 @@ public class FileUpdater {
 			plugin.getPluginConfig().set("EnderPearls", emptyMap, "When a player teleports with an enderpearl.");
 			// As no achievements are set, we initially disable this new
 			// category.
-			List<String> disabledCategories = (List<String>) plugin.getPluginConfig().getList("DisabledCategories");
+			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
 			disabledCategories.add("EnderPearls");
 			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
 			updateDone = true;

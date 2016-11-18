@@ -26,12 +26,14 @@ public class AchieveDeathListener extends AbstractListener implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent event) {
 
 		Player player = event.getEntity();
-		if (player == null)
+		if (player == null) {
 			return;
+		}
 
 		NormalAchievements category = NormalAchievements.DEATHS;
-		if (!shouldEventBeTakenIntoAccountNoCreative(player, category))
+		if (!shouldEventBeTakenIntoAccountNoCreative(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}

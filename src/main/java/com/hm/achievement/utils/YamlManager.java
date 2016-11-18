@@ -23,16 +23,16 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public class YamlManager {
 
-	private int comments;
-	private FileManager manager;
+	private final FileManager manager;
+	private final File file;
+	private final AdvancedAchievements plugin;
 
-	private File file;
 	private FileConfiguration config;
-
-	private AdvancedAchievements plugin;
+	private int comments;
 
 	public YamlManager(Reader reader, File configFile, int comments, AdvancedAchievements plugin)
 			throws IOException, InvalidConfigurationException {
+
 		this.plugin = plugin;
 		this.comments = comments;
 		this.manager = new FileManager(plugin);
@@ -51,19 +51,9 @@ public class YamlManager {
 		return this.config.getString(path, def);
 	}
 
-	public int getInt(String path) {
-
-		return this.config.getInt(path);
-	}
-
 	public int getInt(String path, int def) {
 
 		return this.config.getInt(path, def);
-	}
-
-	public boolean getBoolean(String path) {
-
-		return this.config.getBoolean(path);
 	}
 
 	public boolean getBoolean(String path, boolean def) {
@@ -91,19 +81,10 @@ public class YamlManager {
 		return this.config.isConfigurationSection(path);
 	}
 
-	public List<?> getList(String path) {
+	@SuppressWarnings("unchecked")
+	public List<String> getList(String path) {
 
-		return this.config.getList(path);
-	}
-
-	public List<?> getList(String path, List<?> def) {
-
-		return this.config.getList(path, def);
-	}
-
-	public boolean contains(String path) {
-
-		return this.config.contains(path);
+		return (List<String>) this.config.getList(path);
 	}
 
 	public void set(String path, Object value) {
@@ -124,8 +105,7 @@ public class YamlManager {
 
 		for (String comm : comment) {
 			if (!this.config.contains(path)) {
-				// Insert comment as new value in the file; will be converted
-				// back to a comment later.
+				// Insert comment as new value in the file; will be converted back to a comment later.
 				this.config.set(plugin.getDescription().getName() + "_COMMENT_" + comments, comm);
 				comments++;
 			}
@@ -140,8 +120,8 @@ public class YamlManager {
 
 	public void saveConfig() throws IOException {
 
-		String config = this.config.saveToString();
-		manager.saveConfig(config, this.file);
+		String configString = this.config.saveToString();
+		manager.saveConfig(configString, this.file);
 	}
 
 	public Set<String> getKeys(boolean deep) {

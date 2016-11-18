@@ -27,8 +27,9 @@ public class AchieveEnchantListener extends AbstractListener implements Listener
 
 		Player player = event.getEnchanter();
 		NormalAchievements category = NormalAchievements.ENCHANTMENTS;
-		if (!shouldEventBeTakenIntoAccount(player, category))
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
+		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}

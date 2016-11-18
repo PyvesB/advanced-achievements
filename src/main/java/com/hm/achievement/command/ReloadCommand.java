@@ -29,15 +29,17 @@ public class ReloadCommand extends AbstractCommand {
 		plugin.reloadConfig();
 		plugin.configurationLoad(false);
 		if (plugin.isSuccessfulLoad()) {
-			if (sender instanceof Player)
+			if (sender instanceof Player) {
 				sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
 						.getString("configuration-successfully-reloaded", "Configuration successfully reloaded."));
+			}
 			plugin.getLogger().info("Configuration successfully reloaded.");
 		} else {
-			if (sender instanceof Player)
+			if (sender instanceof Player) {
 				sender.sendMessage(
 						plugin.getChatHeader() + plugin.getPluginLang().getString("configuration-reload-failed",
 								"Errors while reloading configuration. Please view logs for more details."));
+			}
 			plugin.getLogger().severe("Errors while reloading configuration. Please view logs for more details.");
 		}
 	}
