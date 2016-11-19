@@ -525,7 +525,7 @@ public class SQLDatabaseManager {
 	 */
 	public List<String> getTopList(int listLength, long start) {
 
-		ArrayList<String> topList = new ArrayList<>();
+		ArrayList<String> topList = new ArrayList<>(listLength);
 		String query;
 		if (start == 0L) {
 			// We consider all the achievements; no date comparison.

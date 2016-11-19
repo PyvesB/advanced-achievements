@@ -21,7 +21,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	protected String languageHeaderKey;
 	protected String defaultHeaderMessage;
 
-	private final int topList;
+	private final int topListLength;
 	private final boolean additionalEffects;
 	private final boolean sound;
 
@@ -39,7 +39,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		super(plugin);
 		lastCommandTime = 0L;
 		// Load configuration parameters.
-		topList = plugin.getPluginConfig().getInt("TopList", 5);
+		topListLength = plugin.getPluginConfig().getInt("TopList", 5);
 		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		sound = plugin.getPluginConfig().getBoolean("Sound", true);
 	}
@@ -57,7 +57,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		}
 		// Update top list on given period if too old.
 		if (currentTime - lastCommandTime >= VALUES_EXPIRATION_DELAY) {
-			playersRanking = plugin.getDb().getTopList(topList, rankingStartTime);
+			playersRanking = plugin.getDb().getTopList(topListLength, rankingStartTime);
 		}
 
 		sender.sendMessage(
@@ -79,7 +79,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 			}
 		}
 		// Launch effect if player is in top list.
-		if (rank <= topList) {
+		if (rank <= topListLength) {
 			launchEffects((Player) sender);
 		}
 
