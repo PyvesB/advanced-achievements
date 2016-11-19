@@ -36,30 +36,29 @@ public class InfoCommand extends AbstractCommand {
 				+ plugin.getPluginLang().getString("version-command-description", "Description:") + " " + ChatColor.GRAY
 				+ plugin.getPluginLang().getString("version-command-description-details",
 						"Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"));
+
 		// Display whether Advanced Achievements is linked to Vault.
+		String state;
 		if (plugin.setUpEconomy(false)) {
-			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
-					+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " "
-					+ ChatColor.GRAY + "ON");
+			state = "ON";
 		} else {
-			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
-					+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " "
-					+ ChatColor.GRAY + "OFF");
+			state = "OFF";
 		}
+		sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
+				+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " " + ChatColor.GRAY
+				+ state);
 
 		// Display database type.
+		String databaseType;
 		if ("mysql".equalsIgnoreCase(plugin.getPluginConfig().getString("DatabaseType", "sqlite"))) {
-			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
-					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
-					+ ChatColor.GRAY + "MySQL");
+			databaseType = "MySQL";
 		} else if ("postgresql".equalsIgnoreCase(plugin.getPluginConfig().getString("DatabaseType", "sqlite"))) {
-			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
-					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
-					+ ChatColor.GRAY + "PostgreSQL");
+			databaseType = "PostgreSQL";
 		} else {
-			sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
-					+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " "
-					+ ChatColor.GRAY + "SQLite");
+			databaseType = "SQLite";
 		}
+		sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
+				+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " " + ChatColor.GRAY
+				+ databaseType);
 	}
 }
