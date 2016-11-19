@@ -8,16 +8,23 @@ package com.hm.achievement.category;
  */
 public enum MultipleAchievements {
 
-	PLACES("Places"),
-	BREAKS("Breaks"),
-	KILLS("Kills"),
-	CRAFTS("Crafts");
+	PLACES("Places", "Blocks Placed", "When a specific block is placed (specify material name, lower case).", "blockid"),
+	BREAKS("Breaks", "Blocks Broken", "When a specific block is broken (specify material name, lower case).", "blockid"),
+	KILLS("Kills", "Entities Killed", "When a specific mob is killed (specify an entity name or poweredcreeper or player, lower case).", "mobname"),
+	CRAFTS("Crafts", "Items Crafted", "When a specific item is crafted (specify material name, lower case).", "item");
 
 	private final String categoryName;
+	private final String langDefault;
+	private final String configComment;
+	private final String subcategoryDBName;
 
-	private MultipleAchievements(String categoryName) {
+	private MultipleAchievements(String categoryName, String langDefault, String configComment,
+			String subcategoryName) {
 
 		this.categoryName = categoryName;
+		this.langDefault = langDefault;
+		this.configComment = configComment;
+		this.subcategoryDBName = subcategoryName;
 	}
 
 	@Override
@@ -46,5 +53,49 @@ public enum MultipleAchievements {
 	public String toPermName() {
 
 		return "achievement.count." + categoryName.toLowerCase();
+	}
+
+	/**
+	 * Converts to the key in the language file used in the list command.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public String toLangName() {
+
+		return "list-" + name().toLowerCase();
+	}
+
+	/**
+	 * Converts to the default name that appears in the list command, if not found in the configuration.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public String toLangDefault() {
+
+		return langDefault;
+	}
+
+	/**
+	 * Converts to the comment that is inserted about the category name in the configuration file.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public String toConfigComment() {
+
+		return configComment;
+	}
+
+	/**
+	 * Converts to the name of the column name containing the subcategory information in the database.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public String toSubcategoryDBName() {
+
+		return subcategoryDBName;
 	}
 }

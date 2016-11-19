@@ -140,9 +140,9 @@ public class SQLDatabaseManager {
 		// Old column type for versions prior to 2.4.1 was integer for SQLite and smallint unsigned for MySQL.
 		if ("integer".equalsIgnoreCase(type) || "smallint unsigned".equalsIgnoreCase(type)) {
 			plugin.getLogger().warning("Updating database tables, please wait...");
-			updateOldDBToMaterial(tablePrefix + MultipleAchievements.BREAKS.toDBName());
-			updateOldDBToMaterial(tablePrefix + MultipleAchievements.CRAFTS.toDBName());
-			updateOldDBToMaterial(tablePrefix + MultipleAchievements.PLACES.toDBName());
+			updateOldDBToMaterial(MultipleAchievements.BREAKS);
+			updateOldDBToMaterial(MultipleAchievements.CRAFTS);
+			updateOldDBToMaterial(MultipleAchievements.PLACES);
 		}
 
 		// Check if using old database prior to version 3.0.
@@ -201,19 +201,11 @@ public class SQLDatabaseManager {
 		try (Statement st = sqlConnection.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
 					+ "achievements (playername char(36),achievement varchar(64),description varchar(128),date DATE,PRIMARY KEY (playername, achievement))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + MultipleAchievements.BREAKS.toDBName()
-					+ " (playername char(36),blockid varchar(32)," + MultipleAchievements.BREAKS.toDBName()
-					+ " INT,PRIMARY KEY(playername, blockid))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + MultipleAchievements.PLACES.toDBName()
-					+ " (playername char(36),blockid varchar(32)," + MultipleAchievements.PLACES.toDBName()
-					+ " INT,PRIMARY KEY(playername, blockid))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + MultipleAchievements.KILLS.toDBName()
-					+ " (playername char(36),mobname varchar(32)," + MultipleAchievements.KILLS.toDBName()
-					+ " INT,PRIMARY KEY (playername, mobname))");
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + MultipleAchievements.CRAFTS.toDBName()
-					+ " (playername char(36),item varchar(32)," + MultipleAchievements.CRAFTS.toDBName()
-					+ " INT,PRIMARY KEY (playername, item))");
-
+			for (MultipleAchievements category : MultipleAchievements.values()) {
+				st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + category.toDBName() + " (playername char(36),"
+						+ category.toSubcategoryDBName() + " varchar(32)," + category.toDBName()
+						+ " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
+			}
 			for (NormalAchievements category : NormalAchievements.values()) {
 				if (category == NormalAchievements.PLAYEDTIME) {
 					st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + category.toDBName()
@@ -259,8 +251,9 @@ public class SQLDatabaseManager {
 	 * @param tableName
 	 */
 	@SuppressWarnings("deprecation")
-	private void updateOldDBToMaterial(String tableName) {
+	private void updateOldDBToMaterial(MultipleAchievements category) {
 
+		String tableName = tablePrefix + category.toDBName();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement();
 				PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
@@ -286,14 +279,8 @@ public class SQLDatabaseManager {
 			conn.setAutoCommit(false);
 
 			// Create new table.
-			String columnName;
-			if (!MultipleAchievements.CRAFTS.toDBName().equals(tableName)) {
-				columnName = "blockid";
-			} else {
-				columnName = "item";
-			}
-			st.execute("CREATE TABLE tempTable (playername char(36)," + columnName + " varchar(64)," + tableName
-					+ " INT UNSIGNED,PRIMARY KEY(playername, " + columnName + "))");
+			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(64),"
+					+ tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 
 			// Populate new table with contents of the old one and material strings. Batch the insert requests.
 			for (int i = 0; i < uuids.size(); ++i) {
@@ -795,99 +782,53 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Gets number of player's kills for a specific mob.
+	 * Gets the amount of a NormalAchievement statistic.
 	 * 
 	 * @param player
-	 * @param mobname
-	 * @return kill statistic
+	 * @param table
+	 * @return statistic
 	 */
-	public int getKills(Player player, String mobname) {
+	public int getNormalAchievementAmount(Player player, NormalAchievements category) {
 
-		int entityKills = 0;
+		int amount = 0;
+		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT " + MultipleAchievements.KILLS.toDBName() + " FROM " + tablePrefix
-					+ MultipleAchievements.KILLS.toDBName() + " WHERE playername = '" + player.getUniqueId()
-					+ "' AND mobname = '" + mobname + "'");
+			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix + dbName + " WHERE playername = '"
+					+ player.getUniqueId() + "'");
 			while (rs.next()) {
-				entityKills = rs.getInt(MultipleAchievements.KILLS.toDBName());
+				amount = rs.getInt(dbName);
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving kill stats: ", e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving " + dbName + " stats: ", e);
 		}
-		return entityKills;
+		return amount;
 	}
 
 	/**
-	 * Gets number of player's places for a specific block.
+	 * Gets the amount of a MultipleAchievement statistic.
 	 * 
 	 * @param player
-	 * @param block
-	 * @return place statistics
+	 * @param category
+	 * @param subcategory
+	 * @return statistic
 	 */
-	public int getPlaces(Player player, String block) {
+	public int getMultipleAchievementAmount(Player player, MultipleAchievements category, String subcategory) {
 
-		int blockBreaks = 0;
+		int amount = 0;
+		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT " + MultipleAchievements.PLACES.toDBName() + " FROM " + tablePrefix
-					+ MultipleAchievements.PLACES.toDBName() + " WHERE playername = '" + player.getUniqueId()
-					+ "' AND blockid = '" + block + "'");
+			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix
+					+ dbName + " WHERE playername = '" + player.getUniqueId() + "' AND "
+					+ category.toSubcategoryDBName() + " = '" + subcategory + "'");
 			while (rs.next()) {
-				blockBreaks = rs.getInt(MultipleAchievements.PLACES.toDBName());
+				amount = rs.getInt(dbName);
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving block place stats: ", e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving " + dbName + " stats: ", e);
 		}
-		return blockBreaks;
-	}
-
-	/**
-	 * Gets number of player's breaks for a specific block.
-	 * 
-	 * @param player
-	 * @param block
-	 * @return breaks statistics
-	 */
-	public int getBreaks(Player player, String block) {
-
-		int blockBreaks = 0;
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT " + MultipleAchievements.BREAKS.toDBName() + " FROM " + tablePrefix
-					+ MultipleAchievements.BREAKS.toDBName() + " WHERE playername = '" + player.getUniqueId()
-					+ "' AND blockid = '" + block + "'");
-			while (rs.next()) {
-				blockBreaks = rs.getInt(MultipleAchievements.BREAKS.toDBName());
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving block break stats: ", e);
-		}
-		return blockBreaks;
-	}
-
-	/**
-	 * Gets number of player's crafts for a specific object.
-	 * 
-	 * @param player
-	 * @param item
-	 * @return craft statistics
-	 */
-	public int getCrafts(Player player, String item) {
-
-		int itemCrafts = 0;
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT " + MultipleAchievements.CRAFTS.toDBName() + " FROM " + tablePrefix
-					+ MultipleAchievements.CRAFTS.toDBName() + " WHERE playername = '" + player.getUniqueId()
-					+ "' AND item = '" + item + "'");
-			while (rs.next()) {
-				itemCrafts = rs.getInt(MultipleAchievements.CRAFTS.toDBName());
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while handling craft event: ", e);
-		}
-		return itemCrafts;
+		return amount;
 	}
 
 	/**
@@ -897,7 +838,7 @@ public class SQLDatabaseManager {
 	 * @param table
 	 * @return statistic
 	 */
-	public long getPlaytime(Player player) {
+	public long getPlaytimeAmount(Player player) {
 
 		long amount = 0;
 		Connection conn = getSQLConnection();
@@ -909,29 +850,6 @@ public class SQLDatabaseManager {
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving playedtime stats: ", e);
-		}
-		return amount;
-	}
-
-	/**
-	 * Gets the amount of a normal achievement statistic.
-	 * 
-	 * @param player
-	 * @param table
-	 * @return statistic
-	 */
-	public int getNormalAchievementAmount(Player player, String table) {
-
-		int amount = 0;
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT " + table + " FROM " + tablePrefix + table + " WHERE playername = '"
-					+ player.getUniqueId() + "'");
-			while (rs.next()) {
-				amount = rs.getInt(table);
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving " + table + " stats: ", e);
 		}
 		return amount;
 	}

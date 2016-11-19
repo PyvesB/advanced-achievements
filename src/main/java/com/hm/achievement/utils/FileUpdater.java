@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Class in charge of updating the language and configuration files when a new version of the plugin is released.
@@ -32,13 +34,37 @@ public class FileUpdater {
 
 		// Added in version 2.5.2 (put first to enable adding elements to it):
 		if (!plugin.getPluginConfig().getKeys(false).contains("DisabledCategories")) {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			plugin.getPluginConfig().set("DisabledCategories", list,
 					new String[] {
 							"Don't show these categories in the achievement GUI or in the stats output (delete the [] before using).",
 							"Also prevent obtaining achievements for these categories and prevent stats from increasing.",
 							"If changed, do a full server reload, and not just /aach reload." });
 			updateDone = true;
+		}
+		// Iterate through all categories to add missing ones.
+		for (NormalAchievements category : NormalAchievements.values()) {
+			if (!plugin.getPluginConfig().getKeys(false).contains(category.toString())) {
+				HashMap<Object, Object> emptyMap = new HashMap<>();
+				plugin.getPluginConfig().set(category.toString(), emptyMap, category.toConfigComment());
+				// As no achievements are set, we initially disable this new category.
+				List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
+				disabledCategories.add(category.toString());
+				plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
+				updateDone = true;
+			}
+		}
+
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			if (!plugin.getPluginConfig().getKeys(false).contains(category.toString())) {
+				HashMap<Object, Object> emptyMap = new HashMap<>();
+				plugin.getPluginConfig().set(category.toString(), emptyMap, category.toConfigComment());
+				// As no achievements are set, we initially disable this new category.
+				List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
+				disabledCategories.add(category.toString());
+				plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
+				updateDone = true;
+			}
 		}
 
 		// Added in version 2.1:
@@ -88,79 +114,10 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("Brewing")) {
-			HashMap<Object, Object> emptyMap = new HashMap<>();
-			plugin.getPluginConfig().set("Brewing", emptyMap, "When a potion is brewed.");
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
-			disabledCategories.add("Brewing");
-			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
-			updateDone = true;
-		}
-
-		if (!plugin.getPluginConfig().getKeys(false).contains("Taming")) {
-			HashMap<Object, Object> emptyMap = new HashMap<>();
-			plugin.getPluginConfig().set("Taming", emptyMap, "When an animal is tamed.");
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
-			disabledCategories.add("Taming");
-			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
-			updateDone = true;
-		}
-
-		// Added in version 2.3:
-		if (!plugin.getPluginConfig().getKeys(false).contains("Fireworks")) {
-			HashMap<Object, Object> emptyMap = new HashMap<>();
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
-			disabledCategories.add("Fireworks");
-			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
-			plugin.getPluginConfig().set("Fireworks", emptyMap, "When a firework is launched.");
-			updateDone = true;
-		}
-
 		// Added in version 2.3.2:
 		if (!plugin.getPluginConfig().getKeys(false).contains("AsyncPooledRequestsSender")) {
 			plugin.getPluginConfig().set("AsyncPooledRequestsSender", true,
 					"Enable multithreading for database write operations.");
-			updateDone = true;
-		}
-
-		// Added in version 2.5:
-		if (!plugin.getPluginConfig().getKeys(false).contains("DistanceGliding")) {
-			HashMap<Object, Object> emptyMap = new HashMap<>();
-			plugin.getPluginConfig().set("DistanceGliding", emptyMap, new String[] {
-					"When a distance is traveled with elytra.", "(ignored on Minecraft versions prior to 1.9)" });
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
-			disabledCategories.add("DistanceGliding");
-			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
-			updateDone = true;
-		}
-
-		if (!plugin.getPluginConfig().getKeys(false).contains("MusicDiscs")) {
-			HashMap<Object, Object> emptyMap = new HashMap<>();
-			plugin.getPluginConfig().set("MusicDiscs", emptyMap, "When a music disc is played.");
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
-			disabledCategories.add("MusicDiscs");
-			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
-			updateDone = true;
-		}
-
-		if (!plugin.getPluginConfig().getKeys(false).contains("EnderPearls")) {
-			HashMap<Object, Object> emptyMap = new HashMap<>();
-			plugin.getPluginConfig().set("EnderPearls", emptyMap, "When a player teleports with an enderpearl.");
-			// As no achievements are set, we initially disable this new
-			// category.
-			List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
-			disabledCategories.add("EnderPearls");
-			plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
 			updateDone = true;
 		}
 
@@ -250,20 +207,18 @@ public class FileUpdater {
 
 		boolean updateDone = false;
 
-		// Added in version 2.5:
-		if (!plugin.getPluginLang().getKeys(false).contains("list-distance-gliding")) {
-			plugin.getPluginLang().set("list-distance-gliding", "Distance Travelled with Elytra");
-			updateDone = true;
+		// Iterate through all categories to add missing ones.
+		for (NormalAchievements category : NormalAchievements.values()) {
+			if (!plugin.getPluginLang().getKeys(false).contains(category.toLangName())) {
+				plugin.getPluginLang().set(category.toLangName(), category.toLangDefault());
+				updateDone = true;
+			}
 		}
-
-		if (!plugin.getPluginLang().getKeys(false).contains("list-musicdiscs")) {
-			plugin.getPluginLang().set("list-musicdiscs", "Music Discs Played");
-			updateDone = true;
-		}
-
-		if (!plugin.getPluginLang().getKeys(false).contains("list-enderpearls")) {
-			plugin.getPluginLang().set("list-enderpearls", "Teleportations with Ender Pearls");
-			updateDone = true;
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			if (!plugin.getPluginLang().getKeys(false).contains(category.toLangName())) {
+				plugin.getPluginLang().set(category.toLangName(), category.toLangDefault());
+				updateDone = true;
+			}
 		}
 
 		// Added in version 2.5.2:

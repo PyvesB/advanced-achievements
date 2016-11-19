@@ -255,7 +255,7 @@ public class DatabasePoolsManager {
 		String uuid = player.getUniqueId().toString();
 		Integer oldAmount = categoryHashMap.get(uuid);
 		if (oldAmount == null) {
-			oldAmount = plugin.getDb().getNormalAchievementAmount(player, category.toDBName());
+			oldAmount = plugin.getDb().getNormalAchievementAmount(player, category);
 		}
 		Integer newValue = oldAmount + value;
 
@@ -276,7 +276,7 @@ public class DatabasePoolsManager {
 		String uuid = player.getUniqueId().toString();
 		Integer amount = categoryHashMap.get(uuid);
 		if (amount == null) {
-			return plugin.getDb().getNormalAchievementAmount(player, category.toDBName());
+			return plugin.getDb().getNormalAchievementAmount(player, category);
 		}
 		return amount;
 	}
@@ -298,23 +298,7 @@ public class DatabasePoolsManager {
 		String uuid = player.getUniqueId().toString();
 		Integer oldAmount = categoryHashMap.get(uuid);
 		if (oldAmount == null) {
-			switch (category) {
-				case BREAKS:
-					oldAmount = plugin.getDb().getBreaks(player, subcategory);
-					break;
-				case CRAFTS:
-					oldAmount = plugin.getDb().getCrafts(player, subcategory);
-					break;
-				case KILLS:
-					oldAmount = plugin.getDb().getKills(player, subcategory);
-					break;
-				case PLACES:
-					oldAmount = plugin.getDb().getPlaces(player, subcategory);
-					break;
-				default:
-					oldAmount = 0;
-					break;
-			}
+			oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategory);
 		}
 		Integer newValue = oldAmount + value;
 
@@ -336,18 +320,7 @@ public class DatabasePoolsManager {
 		String uuid = player.getUniqueId().toString();
 		Integer oldAmount = categoryHashMap.get(uuid);
 		if (oldAmount == null) {
-			switch (category) {
-				case BREAKS:
-					return plugin.getDb().getBreaks(player, subcategory);
-				case CRAFTS:
-					return plugin.getDb().getCrafts(player, subcategory);
-				case KILLS:
-					return plugin.getDb().getKills(player, subcategory);
-				case PLACES:
-					return plugin.getDb().getPlaces(player, subcategory);
-				default:
-					return 0;
-			}
+			oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategory);
 		}
 		return oldAmount;
 	}
@@ -369,7 +342,7 @@ public class DatabasePoolsManager {
 
 		Long amount = playTimeHashMap.get(player.getUniqueId().toString());
 		if (amount == null) {
-			return plugin.getDb().getPlaytime(player);
+			return plugin.getDb().getPlaytimeAmount(player);
 		} else {
 			return amount;
 		}

@@ -97,13 +97,13 @@ public class PooledRequestsSender implements Runnable {
 	private void performRequestsForMultipleCategoriesAsync(Statement st) throws SQLException {
 
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			String dbColumn = getSubcategoryDatabaseName(category);
 			Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
 				if (plugin.getDb().isPostgres()) {
 					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-							+ entry.getValue() + ")" + " ON CONFLICT (playername," + dbColumn + ") DO UPDATE SET ("
+							+ entry.getValue() + ")" + " ON CONFLICT (playername," + category.toSubcategoryDBName()
+							+ ") DO UPDATE SET ("
 							+ category.toDBName() + ")=(" + entry.getValue() + ")");
 				} else {
 					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
@@ -124,14 +124,13 @@ public class PooledRequestsSender implements Runnable {
 	private void performRequestsForMultipleCategoriesSync(Statement st) throws SQLException {
 
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			String dbColumn = getSubcategoryDatabaseName(category);
 			Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
 				if (plugin.getDb().isPostgres()) {
 					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-							+ entry.getValue() + ")" + " ON CONFLICT (playername," + dbColumn + ") DO UPDATE SET ("
-							+ category.toDBName() + ")=(" + entry.getValue() + ")");
+							+ entry.getValue() + ")" + " ON CONFLICT (playername," + category.toSubcategoryDBName()
+							+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue() + ")");
 				} else {
 					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
@@ -139,27 +138,6 @@ public class PooledRequestsSender implements Runnable {
 				}
 			}
 			categoryMap.clear();
-		}
-	}
-
-	/**
-	 * Returns database name of the subcategory parameter.
-	 * 
-	 * @param category
-	 * @return
-	 */
-	private String getSubcategoryDatabaseName(MultipleAchievements category) {
-
-		switch (category) {
-			case BREAKS:
-			case PLACES:
-				return "blockid";
-			case CRAFTS:
-				return "item";
-			case KILLS:
-				return "mobname";
-			default:
-				return null;
 		}
 	}
 

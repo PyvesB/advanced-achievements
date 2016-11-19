@@ -45,10 +45,6 @@ public class ListCommand extends AbstractCommand {
 	// Corresponds to times at which players have entered list commands. Cooldown structure.
 	private final HashMap<String, Long> playersListTime;
 
-	// Array of category names from language file.
-	private final String[] normalAchievementCategoryNames;
-	private final String[] multipleAchievementCategoryNames;
-
 	// Array of item stacks for items displayed in the GUI.
 	private final ItemStack[] multipleAchievementCategoryItems;
 	private final ItemStack[] normalAchievementCategoryItems;
@@ -70,43 +66,6 @@ public class ListCommand extends AbstractCommand {
 				false);
 		hideRewardDisplay = plugin.getPluginConfig().getBoolean("HideRewardDisplayInList", false);
 		listTime = plugin.getPluginConfig().getInt("TimeList", 0) * 1000;
-		// Get array of category names from configuration.
-		YamlManager pluginLang = plugin.getPluginLang();
-		normalAchievementCategoryNames = new String[] { pluginLang.getString("list-connections", "Connections"),
-				pluginLang.getString("list-deaths", "Number of Deaths"),
-				pluginLang.getString("list-arrows", "Arrows Shot"),
-				pluginLang.getString("list-snowballs", "Snowballs Thrown"),
-				pluginLang.getString("list-eggs", "Eggs Thrown"), pluginLang.getString("list-fish", "Fish Caught"),
-				pluginLang.getString("list-itembreaks", "Items Broken"),
-				pluginLang.getString("list-eatenitems", "Items Eaten"),
-				pluginLang.getString("list-shear", "Sheeps Sheared"), pluginLang.getString("list-milk", "Cows Milked"),
-				pluginLang.getString("list-trades", "Number of Trades"),
-				pluginLang.getString("list-anvils", "Anvils Used"),
-				pluginLang.getString("list-enchantments", "Items Enchanted"),
-				pluginLang.getString("list-beds", "Beds Entered"),
-				pluginLang.getString("list-maxlevel", "Max Level Reached"),
-				pluginLang.getString("list-potions", "Potions Consumed"),
-				pluginLang.getString("list-playedtime", "Time Played"),
-				pluginLang.getString("list-itemdrops", "Items Dropped"),
-				pluginLang.getString("list-hoeplowings", "Surface Plowed"),
-				pluginLang.getString("list-fertilising", "Plants Fertilised"),
-				pluginLang.getString("list-taming", "Animals Tamed"),
-				pluginLang.getString("list-brewing", "Potions Brewed"),
-				pluginLang.getString("list-fireworks", "Fireworks Launched"),
-				pluginLang.getString("list-musicdiscs", "Music Discs Played"),
-				pluginLang.getString("list-enderpearls", "Teleportations with Ender Pearls"),
-				pluginLang.getString("list-distance-foot", "Distance Travelled by Foot"),
-				pluginLang.getString("list-distance-pig", "Distance Travelled on a Pig"),
-				pluginLang.getString("list-distance-horse", "Distance Travelled on a Horse"),
-				pluginLang.getString("list-distance-minecart", "Distance Travelled in a Minecart"),
-				pluginLang.getString("list-distance-boat", "Distance Travelled in a Boat"),
-				pluginLang.getString("list-distance-gliding", "Distance Travelled with Elytra"),
-				pluginLang.getString("list-commands", "Other Achievements") };
-
-		multipleAchievementCategoryNames = new String[] { pluginLang.getString("list-places", "Blocks Placed"),
-				pluginLang.getString("list-breaks", "Blocks Broken"),
-				pluginLang.getString("list-kills", "Entities Killed"),
-				pluginLang.getString("list-crafts", "Items Crafted") };
 
 		// Simple and fast check to retrieve Minecraft version. Might need to be updated depending on how the
 		// Minecraft versions change in the future.
@@ -195,8 +154,9 @@ public class ListCommand extends AbstractCommand {
 			// HideNotReceivedCategories config option.
 			boolean hasReceivedInCategory = true;
 
+			String displayName = plugin.getPluginLang().getString(category.toLangName(), category.toLangDefault());
 			// Hide category if the user has defined an empty name for it.
-			if (multipleAchievementCategoryNames[category.ordinal()].length() != 0) {
+			if (displayName.length() != 0) {
 				// Retrieve the name of the category, defined by the user.
 				String categoryName = category.toString();
 				// Ignore this category if it's in the disabled list.
@@ -222,8 +182,9 @@ public class ListCommand extends AbstractCommand {
 							}
 						}
 						// No need to check next sub-category, break and move to next category.
-						if (hasReceivedInCategory)
+						if (hasReceivedInCategory) {
 							break;
+						}
 					}
 				}
 
@@ -236,8 +197,7 @@ public class ListCommand extends AbstractCommand {
 					categoryMeta = categoryItem.getItemMeta();
 					categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 							"&8" + config.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
-									.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%",
-											multipleAchievementCategoryNames[category.ordinal()])));
+									.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%", displayName)));
 				} else {
 					// The player has not unlocked any achievements in the category: display barrier item with message.
 					categoryItem = new ItemStack(Material.BARRIER);
@@ -256,8 +216,9 @@ public class ListCommand extends AbstractCommand {
 
 		// Display categories with normal achievements in GUI.
 		for (NormalAchievements category : NormalAchievements.values()) {
+			String displayName = plugin.getPluginLang().getString(category.toLangName(), category.toLangDefault());
 			// Hide category if the user has defined an empty name for it.
-			if (normalAchievementCategoryNames[category.ordinal()].length() != 0) {
+			if (displayName.length() != 0) {
 				// Retrieve the name of the category, defined by the user.
 				String categoryName = category.toString();
 				// Ignore this category if it's in the disabled list.
@@ -265,17 +226,17 @@ public class ListCommand extends AbstractCommand {
 					continue;
 				}
 
-				ItemStack itemInMainGui = createNormalMainItem(categoryName, player, category.ordinal());
+				ItemStack itemInMainGui = createNormalMainItem(categoryName, displayName, player, category.ordinal());
 				guiInv.setItem(numberOfCategories, itemInMainGui);
 				numberOfCategories++;
 			}
 		}
 
+		String commandsDisplayName = plugin.getPluginLang().getString("list-commands", "Other Achievements");
 		// Hide Commands category if the user has defined an empty name for it or if it was disabled.
-		if (normalAchievementCategoryNames[normalAchievementCategoryNames.length - 1].length() != 0
-				&& !plugin.getDisabledCategorySet().contains("Commands")) {
-			ItemStack itemInMainGui = createNormalMainItem("Commands", player,
-					normalAchievementCategoryNames.length - 1);
+		if (commandsDisplayName.length() != 0 && !plugin.getDisabledCategorySet().contains("Commands")) {
+			ItemStack itemInMainGui = createNormalMainItem("Commands", commandsDisplayName, player,
+					NormalAchievements.values().length);
 			guiInv.setItem(numberOfCategories, itemInMainGui);
 		}
 
@@ -293,7 +254,8 @@ public class ListCommand extends AbstractCommand {
 	 * @param guiInv
 	 * @return
 	 */
-	private ItemStack createNormalMainItem(String categoryName, Player player, int indexInItemStacksArray) {
+	private ItemStack createNormalMainItem(String categoryName, String displayName, Player player,
+			int indexInItemStacksArray) {
 
 		YamlManager config = plugin.getPluginConfig();
 
@@ -327,8 +289,7 @@ public class ListCommand extends AbstractCommand {
 			categoryMeta = categoryItem.getItemMeta();
 			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 					"&8" + config.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
-							.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%",
-									normalAchievementCategoryNames[indexInItemStacksArray])));
+							.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%", displayName)));
 		} else {
 			// The player has not unlocked any achievements in the category: display barrier item with
 			// message.
@@ -907,5 +868,4 @@ public class ListCommand extends AbstractCommand {
 
 		return playersListTime;
 	}
-
 }

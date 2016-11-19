@@ -208,7 +208,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		Integer distance = map.get(uuid);
 		// Distance didn't previously exist in the cache; retrieve it from the database and return.
 		if (distance == null) {
-			map.put(uuid, plugin.getDb().getNormalAchievementAmount(player, category.toDBName()));
+			map.put(uuid, plugin.getDb().getNormalAchievementAmount(player, category));
 			return false;
 		}
 

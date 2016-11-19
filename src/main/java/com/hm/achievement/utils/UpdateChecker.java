@@ -44,7 +44,7 @@ public class UpdateChecker {
 	public UpdateChecker(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
-		updateCheckerFutureTask = new FutureTask<Boolean>(new Callable<Boolean>() {
+		updateCheckerFutureTask = new FutureTask<>(new Callable<Boolean>() {
 
 			@Override
 			public Boolean call() throws Exception {
