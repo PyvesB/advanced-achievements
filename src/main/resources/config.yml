@@ -99,6 +99,9 @@ HideNotReceivedCategories: false
 # Hide the reward display in /aach list.
 HideRewardDisplayInList: false
 
+# Display precise statistic information in the /aach list progress bars.
+EnrichedListProgressBars: true
+
 # Display achievement name and description as screen titles.
 TitleScreen: true
 

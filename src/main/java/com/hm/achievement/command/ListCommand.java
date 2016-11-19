@@ -47,6 +47,7 @@ public class ListCommand extends AbstractCommand {
 	private final boolean obfuscateNotReceived;
 	private final boolean obfuscateProgressiveAchievements;
 	private final boolean hideRewardDisplay;
+	private final boolean enrichedProgressBars;
 	private final int listCooldownTime;
 	private final int version;
 
@@ -68,6 +69,7 @@ public class ListCommand extends AbstractCommand {
 				false);
 		hideRewardDisplay = plugin.getPluginConfig().getBoolean("HideRewardDisplayInList", false);
 		listCooldownTime = plugin.getPluginConfig().getInt("TimeList", 0) * 1000;
+		enrichedProgressBars = plugin.getPluginConfig().getBoolean("EnrichedListProgressBars", true);
 
 		// Simple and fast check to retrieve Minecraft version. Might need to be updated depending on how the Minecraft
 		// versions change in the future.
@@ -848,36 +850,8 @@ public class ListCommand extends AbstractCommand {
 			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + date.replaceAll(REGEX_PATTERN.pattern(), "")));
 			lore.add("");
 		} else if (!obfuscateNotReceived && statistic >= 0) {
-			StringBuilder barDisplay = new StringBuilder("&7[");
-			// Length of the progress bar; we make it the same size as Goal/Message.
-			int textSize;
-			// MinecraftFont essentially supports latin alphabet characters. If invalid characters are found just use
-			// number of chars.
-			if (FONT.isValid(achMessage)) {
-				textSize = FONT.getWidth(achMessage.replaceAll(REGEX_PATTERN.pattern(), ""));
-			} else {
-				textSize = (achMessage.replaceAll(REGEX_PATTERN.pattern(), "")).length() * 3;
-			}
-
-			double statisticDouble;
-			if (playedTime) {
-				// Convert from millis to hours.
-				statisticDouble = statistic / 3600000.0;
-			} else {
-				// Cast to double.
-				statisticDouble = statistic;
-			}
-
-			for (int i = 1; i < textSize / 2; i++) {
-				if (i < ((textSize / 2 - 1) * statisticDouble) / Integer.parseInt(level)) {
-					barDisplay.append(plugin.getColor()).append('|');
-				} else {
-					barDisplay.append("&8|");
-				}
-			}
-
-			barDisplay.append("&7]");
-			lore.add(ChatColor.translateAlternateColorCodes('&', barDisplay.toString()));
+			lore.add(ChatColor.translateAlternateColorCodes('&',
+					constructProgressBar(achMessage, level, statistic, playedTime)));
 			lore.add("");
 		}
 
@@ -898,6 +872,70 @@ public class ListCommand extends AbstractCommand {
 			}
 		}
 		return lore;
+	}
+
+	/**
+	 * Constructs the progress bar to be displayed in an achievement's item lore.
+	 * 
+	 * @param achMessage
+	 * @param level
+	 * @param statistic
+	 * @param playedTime
+	 * @return progress bar
+	 */
+	private String constructProgressBar(String achMessage, String level, long statistic, boolean playedTime) {
+
+		StringBuilder barDisplay = new StringBuilder("&7[");
+		// Length of the progress bar; we make it the same size as Goal/Message.
+		int textSize;
+		// MinecraftFont essentially supports latin alphabet characters. If invalid characters are found just use
+		// number of chars.
+		if (FONT.isValid(achMessage)) {
+			textSize = FONT.getWidth(achMessage.replaceAll(REGEX_PATTERN.pattern(), ""));
+		} else {
+			textSize = (achMessage.replaceAll(REGEX_PATTERN.pattern(), "")).length() * 3;
+		}
+
+		int levelInt = Integer.parseInt(level);
+		String middleText;
+		double statisticDouble;
+		if (playedTime) {
+			// Convert from millis to hours.
+			statisticDouble = statistic / 3600000.0;
+			// Display one floating digit in the progress bar.
+			middleText = "&7" + String.format("%.1f", statisticDouble) + "/" + levelInt;
+		} else {
+			middleText = "&7 " + statistic + "/" + levelInt + " ";
+			// Cast to double.
+			statisticDouble = statistic;
+		}
+
+		int middleTextSize = FONT.getWidth(middleText.replaceAll(REGEX_PATTERN.pattern(), ""));
+
+		boolean hasDisplayedMiddleText = false;
+		int i = 1;
+		while (i < textSize / 2) {
+			if (enrichedProgressBars && !hasDisplayedMiddleText && i >= (textSize - middleTextSize) / 4) {
+				// Middle reached: append enriched statistic information.
+				barDisplay.append(middleText);
+				// Do not display middleText again.
+				hasDisplayedMiddleText = true;
+				// Iterate a number of times equal to the number of iterations so far to have the same number of
+				// vertical bars left and right from the middle text.
+				i = textSize / 2 + 1 - i;
+			} else if (i < ((textSize / 2 - 1) * statisticDouble) / levelInt) {
+				// Color: progress by user.
+				barDisplay.append(plugin.getColor()).append('|');
+				i++;
+			} else {
+				// Grey: amount not yet reached by user.
+				barDisplay.append("&8|");
+				i++;
+			}
+		}
+
+		barDisplay.append("&7]");
+		return barDisplay.toString();
 	}
 
 	/**

@@ -183,6 +183,12 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!plugin.getPluginConfig().getKeys(false).contains("EnrichedListProgressBars")) {
+			plugin.getPluginConfig().set("EnrichedListProgressBars", true,
+					"Display precise statistic information in the /aach list progress bars.");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {
