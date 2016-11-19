@@ -335,6 +335,16 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!plugin.getPluginLang().getKeys(false).contains("list-achievements-in-category-singular")) {
+			plugin.getPluginLang().set("list-achievements-in-category", "AMOUNT achievement");
+			updateDone = true;
+		}
+
+		if (!plugin.getPluginLang().getKeys(false).contains("list-achievements-in-category-plural")) {
+			plugin.getPluginLang().set("list-achievements-in-category-plural", "AMOUNT achievements");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the language file: save and do a fresh load.
 			try {

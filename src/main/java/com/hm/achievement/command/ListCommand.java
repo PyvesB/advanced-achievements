@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -19,6 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MinecraftFont;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
@@ -540,7 +542,7 @@ public class ListCommand extends AbstractCommand {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			// Boolean corresponding to whether a player has received achievements in the current category. Used for
 			// HideNotReceivedCategories config option.
-			boolean hasReceivedInCategory = true;
+			boolean hasReceivedInCategory = !hideNotReceivedCategories;
 
 			String displayName = plugin.getPluginLang().getString(category.toLangName(), category.toLangDefault());
 			String categoryName = category.toString();
@@ -549,32 +551,33 @@ public class ListCommand extends AbstractCommand {
 				continue;
 			}
 
-			// Hide not yet unlocked categories: we must check whether the player has received at least one achievement
-			// in the category.
-			if (hideNotReceivedCategories) {
-				hasReceivedInCategory = false;
-				// Iterate through all sub-categories.
-				for (String section : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
-					// Iterate through all achievements in sub-category.
-					for (String level : plugin.getPluginConfig().getConfigurationSection(categoryName + '.' + section)
-							.getKeys(false)) {
-						// Check whether player has received achievement.
-						if (plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig()
-								.getString(categoryName + '.' + section + '.' + level + ".Name", ""))) {
-							// At least one achievement was received in the current category; it is unlocked, can
-							// continue processing.
-							hasReceivedInCategory = true;
-							break;
-						}
-					}
-					// No need to check next sub-category, break and move to next category.
-					if (hasReceivedInCategory) {
+			int totalAchievementsInCategory = 0;
+
+			// Iterate through all sub-categories.
+			for (String section : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
+				Set<String> configSubcategory = plugin.getPluginConfig()
+						.getConfigurationSection(categoryName + '.' + section).getKeys(false);
+				totalAchievementsInCategory += configSubcategory.size();
+				// No need to check next sub-category, continue and move to next sub-category.
+				if (hasReceivedInCategory) {
+					continue;
+				}
+				// Hide not yet unlocked categories: we must check whether the player has received at least one
+				// achievement
+				// in the category. Iterate through all achievements in sub-category.
+				for (String level : configSubcategory) {
+					// Check whether player has received achievement.
+					if (plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig()
+							.getString(categoryName + '.' + section + '.' + level + ".Name", ""))) {
+						// At least one achievement was received in the current category; it is unlocked, can
+						// continue processing.
+						hasReceivedInCategory = true;
 						break;
 					}
 				}
 			}
 			ItemStack categoryItem = getItemStack(multipleAchievementCategoryItems, displayName, category.ordinal(),
-					hasReceivedInCategory);
+					hasReceivedInCategory, totalAchievementsInCategory);
 			guiInv.setItem(categoriesProcessed, categoryItem);
 			categoriesProcessed++;
 		}
@@ -606,12 +609,15 @@ public class ListCommand extends AbstractCommand {
 			// HideNotReceivedCategories config option.
 			boolean hasReceivedInCategory = true;
 
+			Set<String> configCategory = plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false);
+
 			// Hide not yet unlocked categories: we must check whether the player has received at least one achievement
 			// in the category.
 			if (hideNotReceivedCategories) {
 				hasReceivedInCategory = false;
 				// Iterate through all achievements in category.
-				for (String level : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
+
+				for (String level : configCategory) {
 					/// Check whether player has received achievement.
 					if (plugin.getDb().hasPlayerAchievement(player,
 							plugin.getPluginConfig().getString(categoryName + '.' + level + ".Name", ""))) {
@@ -623,7 +629,7 @@ public class ListCommand extends AbstractCommand {
 				}
 			}
 			ItemStack itemInMainGui = getItemStack(normalAchievementCategoryItems, displayName, category.ordinal(),
-					hasReceivedInCategory);
+					hasReceivedInCategory, configCategory.size());
 			guiInv.setItem(categoriesPreviouslyProcessed + categoriesProcessed, itemInMainGui);
 			categoriesProcessed++;
 		}
@@ -649,12 +655,14 @@ public class ListCommand extends AbstractCommand {
 		// HideNotReceivedCategories config option.
 		boolean hasReceivedInCategory = true;
 
+		Set<String> configCategory = plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false);
+
 		// Hide not yet unlocked categories: we must check whether the player has received at least one achievement in
 		// the category.
 		if (hideNotReceivedCategories) {
 			hasReceivedInCategory = false;
 			// Iterate through all achievements in category.
-			for (String ach : plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false)) {
+			for (String ach : configCategory) {
 				/// Check whether player has received achievement.
 				if (plugin.getDb().hasPlayerAchievement(player,
 						plugin.getPluginConfig().getString("Commands." + ach + ".Name", ""))) {
@@ -666,7 +674,7 @@ public class ListCommand extends AbstractCommand {
 			}
 		}
 		ItemStack itemInMainGui = getItemStack(normalAchievementCategoryItems, commandsDisplayName,
-				NormalAchievements.values().length, hasReceivedInCategory);
+				NormalAchievements.values().length, hasReceivedInCategory, configCategory.size());
 		guiInv.setItem(categoriesPreviouslyProcessed, itemInMainGui);
 	}
 
@@ -677,10 +685,11 @@ public class ListCommand extends AbstractCommand {
 	 * @param displayName
 	 * @param indexInItemStacksArray
 	 * @param hasReceivedInCategory
+	 * @param i
 	 * @return
 	 */
 	private ItemStack getItemStack(ItemStack[] itemStacks, String displayName, int indexInItemStacksArray,
-			boolean hasReceivedInCategory) {
+			boolean hasReceivedInCategory, int totalAchievementsInCategory) {
 
 		ItemStack categoryItem;
 		ItemMeta categoryMeta;
@@ -698,7 +707,18 @@ public class ListCommand extends AbstractCommand {
 			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&8" + plugin.getPluginLang()
 					.getString("list-category-not-unlocked", "You have not yet unlocked this category.")));
 		}
+		String loreAmountMessage;
+		if (totalAchievementsInCategory > 1) {
+			loreAmountMessage = plugin.getPluginLang().getString("list-achievements-in-category-plural",
+					"AMOUNT achievements");
 
+		} else {
+			loreAmountMessage = plugin.getPluginLang().getString("list-achievements-in-category-singular",
+					"AMOUNT achievement");
+		}
+		// Set item lore.
+		categoryMeta.setLore(ImmutableList.of(ChatColor.translateAlternateColorCodes('&',
+				"&8" + loreAmountMessage.replace("AMOUNT", Integer.toString(totalAchievementsInCategory)))));
 		// Set item meta.
 		categoryItem.setItemMeta(categoryMeta);
 

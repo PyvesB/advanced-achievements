@@ -96,6 +96,8 @@ list-achievement-received: "&5\u2713&f "
 list-achievement-not-received: "&4\u2717&8 "
 list-category-not-unlocked: "You have not yet unlocked this category."
 list-back-message: "&7Back"
+list-achievements-in-category-singular: "AMOUNT achievement"
+list-achievements-in-category-plural: "AMOUNT achievements"
 
 # Related to category names in /aach list.
 list-connections: "Connections"
