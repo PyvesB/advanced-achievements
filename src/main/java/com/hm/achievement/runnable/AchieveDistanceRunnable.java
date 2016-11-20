@@ -74,7 +74,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		minecartAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEMINECART);
 		boatAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEBOAT);
 		glidingAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEGLIDING);
-		glidingAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCELLAMA);
+		llamaAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCELLAMA);
 	}
 
 	@Override
