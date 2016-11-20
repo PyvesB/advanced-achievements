@@ -487,6 +487,13 @@ PetMasterReceive:
     Name: petmasterreceive_10
     DisplayName: Receiver
     
+# When an item is smelt in a furnace.
+Smelting:
+  '250':
+    Message: 250 items smelt in a furnace!
+    Name: smeltitems_250
+    DisplayName: The Smelter
+    
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
 # |                  Command achievements                   | #

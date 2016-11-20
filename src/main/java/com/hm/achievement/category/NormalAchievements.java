@@ -36,6 +36,7 @@ public enum NormalAchievements {
 	ENDERPEARLS("EnderPearls", "list-enderpearls", "Teleportations with Ender Pearls", "When a player teleports with an enderpearl."),
 	PETMASTERGIVE("PetMasterGive", "list-petmastergive", "Pets Given to Another Player", "When a player gives a pet to another player (requires PetMaster plugin version 1.3 or above)."),
 	PETMASTERRECEIVE("PetMasterReceive", "list-petmasterreceive", "Pets Received from Another Player", "When a player receives a pet from another player (requires PetMaster plugin version 1.3 or above)."),
+	SMELTING("Smelting", "list-smelting", "Items Smelt", "When an item is smelt in a furnace."),
 	DISTANCEFOOT("DistanceFoot", "list-distance-foot", "Distance Travelled by Foot", "When a distance is traveled by foot."),
 	DISTANCEPIG("DistancePig", "list-distance-pig", "Distance Travelled on a Pig", "When a distance is traveled on a pig."),
 	DISTANCEHORSE("DistanceHorse", "list-distance-horse", "Distance Travelled on a Horse", "When a distance is traveled on a horse."),

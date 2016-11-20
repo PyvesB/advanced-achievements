@@ -17,9 +17,9 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveTradeAnvilBrewListener extends AbstractListener implements Listener {
+public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener implements Listener {
 
-	public AchieveTradeAnvilBrewListener(AdvancedAchievements plugin) {
+	public AchieveTradeAnvilBrewSmeltListener(AdvancedAchievements plugin) {
 
 		super(plugin);
 	}
@@ -47,6 +47,8 @@ public class AchieveTradeAnvilBrewListener extends AbstractListener implements L
 			category = NormalAchievements.ANVILS;
 		} else if (inventoryMaterial == InventoryType.BREWING) {
 			category = NormalAchievements.BREWING;
+		} else if (inventoryMaterial == InventoryType.FURNACE) {
+			category = NormalAchievements.SMELTING;
 		} else {
 			return;
 		}

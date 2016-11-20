@@ -96,10 +96,11 @@ public class ListCommand extends AbstractCommand {
 					new ItemStack(Material.LEASH), new ItemStack(Material.BREWING_STAND_ITEM),
 					new ItemStack(Material.FIREWORK), new ItemStack(Material.JUKEBOX),
 					new ItemStack(Material.ENDER_PEARL), new ItemStack(Material.GOLD_BARDING),
-					new ItemStack(Material.IRON_BARDING), new ItemStack(Material.LEATHER_BOOTS),
-					new ItemStack(Material.CARROT_STICK), new ItemStack(Material.SADDLE),
-					new ItemStack(Material.MINECART), new ItemStack(Material.BOAT), new ItemStack(Material.ELYTRA),
-					new ItemStack(Material.CARPET, 1, (short) 9), new ItemStack(Material.BOOKSHELF) };
+					new ItemStack(Material.IRON_BARDING), new ItemStack(Material.BURNING_FURNACE),
+					new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK),
+					new ItemStack(Material.SADDLE), new ItemStack(Material.MINECART), new ItemStack(Material.BOAT),
+					new ItemStack(Material.ELYTRA), new ItemStack(Material.CARPET, 1, (short) 9),
+					new ItemStack(Material.BOOKSHELF) };
 		} else {
 			normalAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
 					new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW),
@@ -114,10 +115,11 @@ public class ListCommand extends AbstractCommand {
 					new ItemStack(Material.LEASH), new ItemStack(Material.BREWING_STAND_ITEM),
 					new ItemStack(Material.FIREWORK), new ItemStack(Material.JUKEBOX),
 					new ItemStack(Material.ENDER_PEARL), new ItemStack(Material.GOLD_BARDING),
-					new ItemStack(Material.IRON_BARDING), new ItemStack(Material.LEATHER_BOOTS),
-					new ItemStack(Material.CARROT_STICK), new ItemStack(Material.SADDLE),
-					new ItemStack(Material.MINECART), new ItemStack(Material.BOAT), new ItemStack(Material.BEDROCK),
-					new ItemStack(Material.CARPET, 1, (short) 9), new ItemStack(Material.BOOKSHELF) };
+					new ItemStack(Material.IRON_BARDING), new ItemStack(Material.BURNING_FURNACE),
+					new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK),
+					new ItemStack(Material.SADDLE), new ItemStack(Material.MINECART), new ItemStack(Material.BOAT),
+					new ItemStack(Material.BEDROCK), new ItemStack(Material.CARPET, 1, (short) 9),
+					new ItemStack(Material.BOOKSHELF) };
 		}
 	}
 
@@ -394,6 +396,9 @@ public class ListCommand extends AbstractCommand {
 				break;
 			case CARPET:
 				category = NormalAchievements.DISTANCELLAMA;
+				break;
+			case BURNING_FURNACE:
+				category = NormalAchievements.SMELTING;
 				break;
 			// Objects exclusive to Minecraft 1.9+ or Commands achievements.
 			default:

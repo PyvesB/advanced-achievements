@@ -66,7 +66,7 @@ import com.hm.achievement.listener.AchieveShearListener;
 import com.hm.achievement.listener.AchieveSnowballEggListener;
 import com.hm.achievement.listener.AchieveTameListener;
 import com.hm.achievement.listener.AchieveTeleportRespawnListener;
-import com.hm.achievement.listener.AchieveTradeAnvilBrewListener;
+import com.hm.achievement.listener.AchieveTradeAnvilBrewSmeltListener;
 import com.hm.achievement.listener.AchieveXPListener;
 import com.hm.achievement.listener.ListGUIListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
@@ -110,7 +110,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveConsumeListener consumeListener;
 	private AchieveShearListener shearListener;
 	private AchieveMilkListener milkListener;
-	private AchieveTradeAnvilBrewListener inventoryClickListener;
+	private AchieveTradeAnvilBrewSmeltListener inventoryClickListener;
 	private AchieveEnchantListener enchantmentListener;
 	private AchieveBedListener bedListener;
 	private AchieveXPListener xpListener;
@@ -314,8 +314,9 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (!disabledCategorySet.contains(NormalAchievements.TRADES.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.ANVILS.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.BREWING.toString())) {
-			inventoryClickListener = new AchieveTradeAnvilBrewListener(this);
+				|| !disabledCategorySet.contains(NormalAchievements.BREWING.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.SMELTING.toString())) {
+			inventoryClickListener = new AchieveTradeAnvilBrewSmeltListener(this);
 			pm.registerEvents(inventoryClickListener, this);
 		}
 

@@ -139,6 +139,7 @@ list-musicdiscs: "Music Discs Played"
 list-enderpearls: "Teleportations with Ender Pearls"
 list-petmastergive: "Pets Given to Another Player"
 list-petmasterreceive: "Pets Received from Another Player"
+list-smelting: "Items Smelt"
 
 list-commands: "Other Achievements"
 
