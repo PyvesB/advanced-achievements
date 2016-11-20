@@ -56,7 +56,8 @@ public class PooledRequestsSender implements Runnable {
 			for (NormalAchievements category : NormalAchievements.values()) {
 				// Distance and PlayedTIme achievements are handled by scheduled runnables and corresponding statistics
 				// are only written to the database when player disconnects.
-				if (category != NormalAchievements.PLAYEDTIME || !"DISTANCE".contains(category.name())) {
+				if (category != NormalAchievements.PLAYEDTIME && category != NormalAchievements.CONNECTIONS
+						&& !"DISTANCE".contains(category.name())) {
 					performRequestsForNormalCategory(st, category);
 				}
 			}
