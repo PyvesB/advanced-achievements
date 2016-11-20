@@ -48,6 +48,7 @@ public class DatabasePoolsManager {
 	private Map<String, Integer> enderPearlHashMap;
 	private Map<String, Integer> petMasterGiveHashMap;
 	private Map<String, Integer> petMasterReceiveHashMap;
+	private Map<String, Integer> smeltingHashMap;
 	private Map<String, Integer> distanceFootHashMap;
 	private Map<String, Integer> distanceHorseHashMap;
 	private Map<String, Integer> distancePigHashMap;
@@ -100,6 +101,7 @@ public class DatabasePoolsManager {
 			enderPearlHashMap = new ConcurrentHashMap<>();
 			petMasterGiveHashMap = new ConcurrentHashMap<>();
 			petMasterReceiveHashMap = new ConcurrentHashMap<>();
+			smeltingHashMap = new ConcurrentHashMap<>();
 			blockPlaceHashMap = new ConcurrentHashMap<>();
 			blockBreakHashMap = new ConcurrentHashMap<>();
 			killHashMap = new ConcurrentHashMap<>();
@@ -143,6 +145,7 @@ public class DatabasePoolsManager {
 			blockBreakHashMap = new HashMap<>();
 			killHashMap = new HashMap<>();
 			craftHashMap = new HashMap<>();
+			smeltingHashMap = new HashMap<>();
 			distanceFootHashMap = new HashMap<>();
 			distanceHorseHashMap = new HashMap<>();
 			distancePigHashMap = new HashMap<>();
@@ -227,6 +230,8 @@ public class DatabasePoolsManager {
 				throw new IllegalArgumentException("PlayedTime is handled by a separate function.");
 			case SHEARS:
 				return shearHashMap;
+			case SMELTING:
+				return smeltingHashMap;
 			case SNOWBALLS:
 				return snowballHashMap;
 			case TAMES:
