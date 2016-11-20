@@ -27,6 +27,7 @@ public class DatabasePoolsManager {
 	private Map<String, Integer> snowballHashMap;
 	private Map<String, Integer> eggHashMap;
 	private Map<String, Integer> fishHashMap;
+	private Map<String, Integer> treasureHashMap;
 	private Map<String, Integer> itemBreakHashMap;
 	private Map<String, Integer> eatenItemHashMap;
 	private Map<String, Integer> shearHashMap;
@@ -80,6 +81,7 @@ public class DatabasePoolsManager {
 			snowballHashMap = new ConcurrentHashMap<>();
 			eggHashMap = new ConcurrentHashMap<>();
 			fishHashMap = new ConcurrentHashMap<>();
+			treasureHashMap = new ConcurrentHashMap<>();
 			itemBreakHashMap = new ConcurrentHashMap<>();
 			eatenItemHashMap = new ConcurrentHashMap<>();
 			shearHashMap = new ConcurrentHashMap<>();
@@ -120,6 +122,7 @@ public class DatabasePoolsManager {
 			snowballHashMap = new HashMap<>();
 			eggHashMap = new HashMap<>();
 			fishHashMap = new HashMap<>();
+			treasureHashMap = new HashMap<>();
 			itemBreakHashMap = new HashMap<>();
 			eatenItemHashMap = new HashMap<>();
 			shearHashMap = new HashMap<>();
@@ -238,6 +241,8 @@ public class DatabasePoolsManager {
 				return tameHashMap;
 			case TRADES:
 				return tradeHashMap;
+			case TREASURES:
+				return treasureHashMap;
 			default:
 				return null;
 		}

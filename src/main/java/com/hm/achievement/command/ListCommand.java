@@ -86,9 +86,9 @@ public class ListCommand extends AbstractCommand {
 			normalAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
 					new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW),
 					new ItemStack(Material.SNOW_BALL), new ItemStack(Material.EGG),
-					new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FLINT),
-					new ItemStack(Material.MELON), new ItemStack(Material.SHEARS), new ItemStack(Material.MILK_BUCKET),
-					new ItemStack(Material.EMERALD), new ItemStack(Material.ANVIL),
+					new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FISHING_ROD),
+					new ItemStack(Material.FLINT), new ItemStack(Material.MELON), new ItemStack(Material.SHEARS),
+					new ItemStack(Material.MILK_BUCKET), new ItemStack(Material.EMERALD), new ItemStack(Material.ANVIL),
 					new ItemStack(Material.ENCHANTMENT_TABLE), new ItemStack(Material.BED),
 					new ItemStack(Material.EXP_BOTTLE), new ItemStack(Material.GLASS_BOTTLE),
 					new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.CHEST),
@@ -105,9 +105,9 @@ public class ListCommand extends AbstractCommand {
 			normalAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
 					new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW),
 					new ItemStack(Material.SNOW_BALL), new ItemStack(Material.EGG),
-					new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FLINT),
-					new ItemStack(Material.MELON), new ItemStack(Material.SHEARS), new ItemStack(Material.MILK_BUCKET),
-					new ItemStack(Material.EMERALD), new ItemStack(Material.ANVIL),
+					new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FISHING_ROD),
+					new ItemStack(Material.FLINT), new ItemStack(Material.MELON), new ItemStack(Material.SHEARS),
+					new ItemStack(Material.MILK_BUCKET), new ItemStack(Material.EMERALD), new ItemStack(Material.ANVIL),
 					new ItemStack(Material.ENCHANTMENT_TABLE), new ItemStack(Material.BED),
 					new ItemStack(Material.EXP_BOTTLE), new ItemStack(Material.GLASS_BOTTLE),
 					new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER), new ItemStack(Material.CHEST),
@@ -399,6 +399,9 @@ public class ListCommand extends AbstractCommand {
 				break;
 			case FURNACE:
 				category = NormalAchievements.SMELTING;
+				break;
+			case FISHING_ROD:
+				category = NormalAchievements.TREASURES;
 				break;
 			// Objects exclusive to Minecraft 1.9+ or Commands achievements.
 			default:

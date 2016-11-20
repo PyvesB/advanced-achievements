@@ -1,5 +1,7 @@
 package com.hm.achievement.listener;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,12 +27,19 @@ public class AchieveFishListener extends AbstractListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerFish(PlayerFishEvent event) {
 
-		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) {
+		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH
+				&& event.getState() != PlayerFishEvent.State.CAUGHT_ENTITY) {
 			return;
 		}
 
 		Player player = event.getPlayer();
-		NormalAchievements category = NormalAchievements.FISH;
+		NormalAchievements category;
+		Item caughtItem = (Item) event.getCaught();
+		if (caughtItem.getItemStack().getType() == Material.RAW_FISH) {
+			category = NormalAchievements.FISH;
+		} else {
+			category = NormalAchievements.TREASURES;
+		}
 		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
 		}

@@ -279,6 +279,13 @@ Fish:
     Message: The first time you caught a fish!
     Name: fish_1
     DisplayName: Time for Fish and Chips
+    
+# When a treasure is caught with a fishing rod.
+Treasures:
+  '1':
+    Message: Your first treasure from the sea!
+    Name: treasure_1
+    DisplayName: Treasure Hunter
 
 # When a tool/armor/weapon is broken.  
 ItemBreaks:

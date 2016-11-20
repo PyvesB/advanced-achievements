@@ -14,6 +14,7 @@ public enum NormalAchievements {
 	SNOWBALLS("Snowballs", "list-snowballs", "Snowballs Thrown", "When a snowball is thrown."),
 	EGGS("Eggs", "list-eggs", "Eggs Thrown", "When an egg is thrown."),
 	FISH("Fish", "list-fish", "Fish Caught", "When a fish is caught."),
+	TREASURES("Treasures", "list-treasure", "Treasures Fished", "When a treasure is caught with a fishing rod."),
 	ITEMBREAKS("ItemBreaks", "list-itembreaks", "Items Broken", "When a tool/armor/weapon is broken."),
 	EATENITEMS("EatenItems", "list-eatenitems", "Items Eaten", "When an item is eaten (excludes potions and milk)."),
 	SHEARS("Shear", "list-shear", "Sheeps Sheared", "When a sheep is sheared."),

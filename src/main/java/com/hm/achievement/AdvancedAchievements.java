@@ -280,7 +280,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(snowballEggListener, this);
 		}
 
-		if (!disabledCategorySet.contains(NormalAchievements.FISH.toString())) {
+		if (!disabledCategorySet.contains(NormalAchievements.FISH.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.TREASURES.toString())) {
 			fishListener = new AchieveFishListener(this);
 			pm.registerEvents(fishListener, this);
 		}
