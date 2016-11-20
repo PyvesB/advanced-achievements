@@ -95,6 +95,7 @@ public class ListCommand extends AbstractCommand {
 					new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.LEASH),
 					new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
 					new ItemStack(Material.JUKEBOX), new ItemStack(Material.ENDER_PEARL),
+					new ItemStack(Material.GOLD_BARDING), new ItemStack(Material.IRON_BARDING),
 					new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK),
 					new ItemStack(Material.SADDLE), new ItemStack(Material.MINECART), new ItemStack(Material.BOAT),
 					new ItemStack(Material.ELYTRA), new ItemStack(Material.BOOKSHELF) };
@@ -111,6 +112,7 @@ public class ListCommand extends AbstractCommand {
 					new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.LEASH),
 					new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
 					new ItemStack(Material.JUKEBOX), new ItemStack(Material.ENDER_PEARL),
+					new ItemStack(Material.GOLD_BARDING), new ItemStack(Material.IRON_BARDING),
 					new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK),
 					new ItemStack(Material.SADDLE), new ItemStack(Material.MINECART), new ItemStack(Material.BOAT),
 					new ItemStack(Material.BEDROCK), new ItemStack(Material.BOOKSHELF) };
@@ -378,6 +380,12 @@ public class ListCommand extends AbstractCommand {
 				break;
 			case BEDROCK:
 				category = NormalAchievements.DISTANCEGLIDING;
+				break;
+			case IRON_BARDING:
+				category = NormalAchievements.PETMASTERRECEIVE;
+				break;
+			case GOLD_BARDING:
+				category = NormalAchievements.PETMASTERGIVE;
 				break;
 			// Objects exclusive to Minecraft 1.9+ or Commands achievements.
 			default:

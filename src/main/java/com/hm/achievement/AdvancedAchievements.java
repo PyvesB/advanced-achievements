@@ -59,6 +59,7 @@ import com.hm.achievement.listener.AchieveHoeFertiliseFireworkMusicListener;
 import com.hm.achievement.listener.AchieveItemBreakListener;
 import com.hm.achievement.listener.AchieveKillListener;
 import com.hm.achievement.listener.AchieveMilkListener;
+import com.hm.achievement.listener.AchievePetMasterGiveReceiveListener;
 import com.hm.achievement.listener.AchieveQuitListener;
 import com.hm.achievement.listener.AchieveShearListener;
 import com.hm.achievement.listener.AchieveSnowballEggListener;
@@ -121,6 +122,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveCraftListener craftListener;
 	private AchieveQuitListener quitListener;
 	private AchieveTeleportRespawnListener teleportRespawnListener;
+	private AchievePetMasterGiveReceiveListener petMasterGiveReceiveListener;
 
 	private ListGUIListener listGUIListener;
 
@@ -363,6 +365,12 @@ public class AdvancedAchievements extends JavaPlugin {
 				teleportRespawnListener = new AchieveTeleportRespawnListener(this);
 				pm.registerEvents(teleportRespawnListener, this);
 			}
+		}
+
+		if (!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString())) {
+			petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
+			pm.registerEvents(petMasterGiveReceiveListener, this);
 		}
 
 		listGUIListener = new ListGUIListener(this);

@@ -45,6 +45,8 @@ public class DatabasePoolsManager {
 	private Map<String, Integer> fireworkHashMap;
 	private Map<String, Integer> musicDiscHashMap;
 	private Map<String, Integer> enderPearlHashMap;
+	private Map<String, Integer> petMasterGiveHashMap;
+	private Map<String, Integer> petMasterReceiveHashMap;
 	private Map<String, Integer> distanceFootHashMap;
 	private Map<String, Integer> distanceHorseHashMap;
 	private Map<String, Integer> distancePigHashMap;
@@ -93,6 +95,8 @@ public class DatabasePoolsManager {
 			fireworkHashMap = new ConcurrentHashMap<>();
 			musicDiscHashMap = new ConcurrentHashMap<>();
 			enderPearlHashMap = new ConcurrentHashMap<>();
+			petMasterGiveHashMap = new ConcurrentHashMap<>();
+			petMasterReceiveHashMap = new ConcurrentHashMap<>();
 			blockPlaceHashMap = new ConcurrentHashMap<>();
 			blockBreakHashMap = new ConcurrentHashMap<>();
 			killHashMap = new ConcurrentHashMap<>();
@@ -126,8 +130,10 @@ public class DatabasePoolsManager {
 			tameHashMap = new HashMap<>();
 			brewingHashMap = new HashMap<>();
 			fireworkHashMap = new HashMap<>();
-			enderPearlHashMap = new HashMap<>();
 			musicDiscHashMap = new HashMap<>();
+			enderPearlHashMap = new HashMap<>();
+			petMasterGiveHashMap = new HashMap<>();
+			petMasterReceiveHashMap = new HashMap<>();
 			blockPlaceHashMap = new HashMap<>();
 			blockBreakHashMap = new HashMap<>();
 			killHashMap = new HashMap<>();
@@ -203,6 +209,10 @@ public class DatabasePoolsManager {
 				return milkHashMap;
 			case MUSICDISCS:
 				return musicDiscHashMap;
+			case PETMASTERGIVE:
+				return petMasterGiveHashMap;
+			case PETMASTERRECEIVE:
+				return petMasterReceiveHashMap;
 			case PLAYEDTIME:
 				throw new IllegalArgumentException("PlayedTime is handled by a separate function.");
 			case SHEARS:

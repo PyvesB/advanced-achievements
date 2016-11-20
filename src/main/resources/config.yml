@@ -458,6 +458,20 @@ EnderPearls:
     Name: enderpearls_10
     DisplayName: Teleport Man
     
+# When a player gives a pet to another player (requires PetMaster plugin version 1.3 or above).
+PetMasterGive:
+  '3':
+    Message: 3 pets given to friends!
+    Name: petmastergive_3
+    DisplayName: Donator
+
+# When a player receives a pet from another player (requires PetMaster plugin version 1.3 or above).
+PetMasterReceive:
+  '10':
+    Message: 10 pets received from friends!
+    Name: petmasterreceive_10
+    DisplayName: Receiver
+    
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
 # |                  Command achievements                   | #
