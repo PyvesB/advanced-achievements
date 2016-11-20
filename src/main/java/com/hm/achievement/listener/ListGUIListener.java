@@ -18,13 +18,11 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class ListGUIListener implements Listener {
-
-	private final AdvancedAchievements plugin;
+public class ListGUIListener extends AbstractListener implements Listener {
 
 	public ListGUIListener(AdvancedAchievements plugin) {
 
-		this.plugin = plugin;
+		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -56,6 +54,7 @@ public class ListGUIListener implements Listener {
 		if (event.getInventory().getItem(0).getType() != Material.STAINED_CLAY
 				&& (event.getCurrentItem().getType() == Material.BARRIER
 						|| event.getCurrentItem().getType() == Material.BEDROCK
+						|| version < 11 && event.getCurrentItem().getType() == Material.CARPET
 						|| event.getRawSlot() > NormalAchievements.values().length
 								+ MultipleAchievements.values().length - plugin.getDisabledCategorySet().size())) {
 			return;

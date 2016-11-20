@@ -393,12 +393,20 @@ DistanceBoat:
     DisplayName: Great Sailor
 
 # When a distance is traveled with elytra.
-# (ignored on Minecraft versions prior to 1.9)
+# (ignored on Minecraft versions prior to 1.9, should be added to DisabledCategories)
 DistanceGliding:
   '100':
     Message: You traveled 100 blocks with elytra!
     Name: distancegliding_100
     DisplayName: Angel
+    
+# When a distance is traveled on a llama.
+# (ignored on Minecraft versions prior to 1.11, should be added to DisabledCategories)
+DistanceLlama:
+  '50':
+    Message: You traveled 50 blocks on a llama!
+    Name: distancellama_50
+    DisplayName: Llama Rider
 
 # When an item is dropped on the ground.
 ItemDrops:

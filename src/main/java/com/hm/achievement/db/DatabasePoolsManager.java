@@ -53,6 +53,7 @@ public class DatabasePoolsManager {
 	private Map<String, Integer> distanceBoatHashMap;
 	private Map<String, Integer> distanceMinecartHashMap;
 	private Map<String, Integer> distanceGlidingHashMap;
+	private Map<String, Integer> distanceLlamaHashMap;
 	private Map<String, Long> playTimeHashMap;
 
 	// Statistics of the different players for multiple achievements; keys correspond to concatenated UUIDs and
@@ -107,6 +108,7 @@ public class DatabasePoolsManager {
 			distanceBoatHashMap = new ConcurrentHashMap<>();
 			distanceMinecartHashMap = new ConcurrentHashMap<>();
 			distanceGlidingHashMap = new ConcurrentHashMap<>();
+			distanceLlamaHashMap = new ConcurrentHashMap<>();
 			playTimeHashMap = new ConcurrentHashMap<>();
 		} else {
 			deathHashMap = new HashMap<>();
@@ -144,6 +146,7 @@ public class DatabasePoolsManager {
 			distanceBoatHashMap = new HashMap<>();
 			distanceMinecartHashMap = new HashMap<>();
 			distanceGlidingHashMap = new HashMap<>();
+			distanceLlamaHashMap = new HashMap<>();
 			playTimeHashMap = new HashMap<>();
 		}
 	}
@@ -179,6 +182,8 @@ public class DatabasePoolsManager {
 				return distanceGlidingHashMap;
 			case DISTANCEHORSE:
 				return distanceHorseHashMap;
+			case DISTANCELLAMA:
+				return distanceLlamaHashMap;
 			case DISTANCEMINECART:
 				return distanceMinecartHashMap;
 			case DISTANCEPIG:

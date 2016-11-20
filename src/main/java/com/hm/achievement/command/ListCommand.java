@@ -98,7 +98,8 @@ public class ListCommand extends AbstractCommand {
 					new ItemStack(Material.GOLD_BARDING), new ItemStack(Material.IRON_BARDING),
 					new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK),
 					new ItemStack(Material.SADDLE), new ItemStack(Material.MINECART), new ItemStack(Material.BOAT),
-					new ItemStack(Material.ELYTRA), new ItemStack(Material.BOOKSHELF) };
+					new ItemStack(Material.ELYTRA), new ItemStack(Material.CARPET, 1, (short) 9),
+					new ItemStack(Material.BOOKSHELF) };
 		} else {
 			normalAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
 					new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW),
@@ -115,7 +116,8 @@ public class ListCommand extends AbstractCommand {
 					new ItemStack(Material.GOLD_BARDING), new ItemStack(Material.IRON_BARDING),
 					new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CARROT_STICK),
 					new ItemStack(Material.SADDLE), new ItemStack(Material.MINECART), new ItemStack(Material.BOAT),
-					new ItemStack(Material.BEDROCK), new ItemStack(Material.BOOKSHELF) };
+					new ItemStack(Material.BEDROCK), new ItemStack(Material.CARPET, 1, (short) 9),
+					new ItemStack(Material.BOOKSHELF) };
 		}
 	}
 
@@ -386,6 +388,9 @@ public class ListCommand extends AbstractCommand {
 				break;
 			case GOLD_BARDING:
 				category = NormalAchievements.PETMASTERGIVE;
+				break;
+			case CARPET:
+				category = NormalAchievements.DISTANCELLAMA;
 				break;
 			// Objects exclusive to Minecraft 1.9+ or Commands achievements.
 			default:

@@ -89,6 +89,11 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 				plugin.getAchieveDistanceRunnable().getGlidingAchievementsCache().remove(achievementThreshold,
 						playerUUID);
 			}
+			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getLlamaAchievementsCache()
+					.keySet()) {
+				plugin.getAchieveDistanceRunnable().getLlamaAchievementsCache().remove(achievementThreshold,
+						playerUUID);
+			}
 
 			// Update database statistics for distances and clean HashMaps.
 			if (plugin.isAsyncPooledRequestsSender()) {
@@ -103,6 +108,7 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEBOAT);
 						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEMINECART);
 						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEGLIDING);
+						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCELLAMA);
 					}
 
 					private void updateAndRemoveDistance(final String playerUUID, NormalAchievements category) {
@@ -149,6 +155,11 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEGLIDING).remove(playerUUID);
 				if (distance != null) {
 					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEGLIDING.toDBName());
+				}
+
+				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCELLAMA).remove(playerUUID);
+				if (distance != null) {
+					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCELLAMA.toDBName());
 				}
 			}
 		}

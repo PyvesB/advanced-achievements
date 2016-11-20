@@ -40,7 +40,8 @@ public enum NormalAchievements {
 	DISTANCEHORSE("DistanceHorse", "list-distance-horse", "Distance Travelled on a Horse", "When a distance is traveled on a horse."),
 	DISTANCEMINECART("DistanceMinecart", "list-distance-minecart", "Distance Travelled in a Minecart", "When a distance is traveled in a minecart."),
 	DISTANCEBOAT("DistanceBoat", "list-distance-boat", "Distance Travelled in a Boat", "When a distance is traveled in a boat."),
-	DISTANCEGLIDING("DistanceGliding", "list-distance-gliding", "Distance Travelled with Elytra", "When a distance is traveled with elytra.");
+	DISTANCEGLIDING("DistanceGliding", "list-distance-gliding", "Distance Travelled with Elytra", "When a distance is traveled with elytra."),
+	DISTANCELLAMA("DistanceLlama", "list-distance-llama", "Distance Travelled on a Llama", "When a distance is traveled on a llama.");
 
 	private final String categoryName;
 	private final String langName;

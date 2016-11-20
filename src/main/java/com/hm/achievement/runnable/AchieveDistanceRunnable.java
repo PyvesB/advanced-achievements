@@ -9,6 +9,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.Llama;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
@@ -44,6 +45,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	private HashMultimap<Integer, String> minecartAchievementsCache;
 	private HashMultimap<Integer, String> boatAchievementsCache;
 	private HashMultimap<Integer, String> glidingAchievementsCache;
+	private HashMultimap<Integer, String> llamaAchievementsCache;
 
 	public AchieveDistanceRunnable(AdvancedAchievements plugin) {
 
@@ -72,6 +74,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		minecartAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEMINECART);
 		boatAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEBOAT);
 		glidingAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEGLIDING);
+		glidingAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCELLAMA);
 	}
 
 	@Override
@@ -132,6 +135,10 @@ public class AchieveDistanceRunnable implements Runnable {
 					&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEBOAT.toString())) {
 				updateLocation = updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEBOAT,
 						boatAchievementsCache);
+			} else if (version >= 11 && player.getVehicle() instanceof Llama
+					&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCELLAMA.toString())) {
+				updateLocation = updateDistanceAndCheckAchievements(difference, player,
+						NormalAchievements.DISTANCELLAMA, llamaAchievementsCache);
 			}
 		} else if (!player.isFlying() && (version < 9 || !player.isGliding())
 				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEFOOT.toString())) {
@@ -284,5 +291,10 @@ public class AchieveDistanceRunnable implements Runnable {
 	public HashMultimap<Integer, String> getGlidingAchievementsCache() {
 
 		return glidingAchievementsCache;
+	}
+
+	public HashMultimap<Integer, String> getLlamaAchievementsCache() {
+
+		return llamaAchievementsCache;
 	}
 }

@@ -355,7 +355,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())) {
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
 			if (!disabledCategorySet.contains(NormalAchievements.LEVELS.toString())
 					|| !disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
 				quitListener = new AchieveQuitListener(this);
@@ -408,7 +409,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())) {
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
 			achieveDistanceRunnable = new AchieveDistanceRunnable(this);
 			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(
 					Bukkit.getPluginManager().getPlugin(this.getDescription().getName()), achieveDistanceRunnable,
@@ -715,6 +717,9 @@ public class AdvancedAchievements extends JavaPlugin {
 			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEGLIDING)
 					.entrySet()) {
 				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEGLIDING.toDBName());
+			}
+			for (Entry<String, Integer> entry : poolsManager.getHashMap(NormalAchievements.DISTANCELLAMA).entrySet()) {
+				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCELLAMA.toDBName());
 			}
 		}
 
