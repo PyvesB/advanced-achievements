@@ -10,7 +10,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.petmaster.event.PlayerChangeAnimalOwnershipEvent;
 
 /**
- * Listener class to deal with PetMasterChangeOwnership achievements.
+ * Listener class to deal with PetMasterGive and PetMasterReceive achievements.
  * 
  * @author Pyves
  *

@@ -127,7 +127,9 @@ list-distance-horse: "Distance Traveled on a Horse"
 list-distance-minecart: "Distance Traveled in a Minecart"
 list-distance-boat: "Distance Traveled in a Boat"
 list-distance-gliding: "Distance Travelled with Elytra"
+list-distance-llama: "Distance Travelled on a Llama"
 list-itemdrops: "Items Dropped"
+list-itempickups: "Items Picked Up"
 list-hoeplowings: "Surface Plowed"
 list-fertilising: "Plants Fertilised"
 list-taming: "Animals Tamed"
@@ -137,7 +139,7 @@ list-musicdiscs: "Music Discs Played"
 list-enderpearls: "Teleportations with Ender Pearls"
 list-petmastergive: "Pets Given to Another Player"
 list-petmasterreceive: "Pets Received from Another Player"
-list-distance-llama: "Distance Travelled on a Llama"
+
 list-commands: "Other Achievements"
 
 #============================================================#

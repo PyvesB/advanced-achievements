@@ -415,6 +415,13 @@ ItemDrops:
     Name: itemdrops_15
     DisplayName: Polluter
     
+# When an item is picked up from the ground.
+ItemPickups:
+  '40':
+    Message: You're saving the planet!
+    Name: itempickups_40
+    DisplayName: Environmentalist
+    
 # When soil is plowed with a hoe.
 HoePlowings:
   '10':

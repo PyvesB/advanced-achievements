@@ -60,6 +60,7 @@ import com.hm.achievement.listener.AchieveItemBreakListener;
 import com.hm.achievement.listener.AchieveKillListener;
 import com.hm.achievement.listener.AchieveMilkListener;
 import com.hm.achievement.listener.AchievePetMasterGiveReceiveListener;
+import com.hm.achievement.listener.AchievePickupListener;
 import com.hm.achievement.listener.AchieveQuitListener;
 import com.hm.achievement.listener.AchieveShearListener;
 import com.hm.achievement.listener.AchieveSnowballEggListener;
@@ -114,6 +115,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveBedListener bedListener;
 	private AchieveXPListener xpListener;
 	private AchieveDropListener dropListener;
+	private AchievePickupListener pickupListener;
 	private AchieveHoeFertiliseFireworkMusicListener hoeFertiliseFireworkMusicListener;
 	private AchieveTameListener tameListener;
 	private AchieveBlockPlaceListener blockPlaceListener;
@@ -335,6 +337,11 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (!disabledCategorySet.contains(NormalAchievements.DROPS.toString())) {
 			dropListener = new AchieveDropListener(this);
 			pm.registerEvents(dropListener, this);
+		}
+
+		if (!disabledCategorySet.contains(NormalAchievements.PICKUPS.toString())) {
+			pickupListener = new AchievePickupListener(this);
+			pm.registerEvents(pickupListener, this);
 		}
 
 		if (!disabledCategorySet.contains(NormalAchievements.TAMES.toString())) {

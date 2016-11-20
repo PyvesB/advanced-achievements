@@ -26,6 +26,7 @@ public enum NormalAchievements {
 	CONSUMEDPOTIONS("ConsumedPotions", "list-potions", "Potions Consumed", "When a potion is consumed."),
 	PLAYEDTIME("PlayedTime", "list-playedtime", "Time Played", "Amount of time played on the server (in hours, use integers)."),
 	DROPS("ItemDrops", "list-itemdrops", "Items Dropped", "When an item is dropped on the ground."),
+	PICKUPS("ItemPickups", "list-itempickups", "Items Picked Up", "When an item is picked up from the ground."),
 	HOEPLOWING("HoePlowings", "list-hoeplowings", "Surface Plowed", "When soil is plowed with a hoe."),
 	FERTILISING("Fertilising", "list-fertilising", "Plants Fertilised", "When bone meal is used to fertilise plants."),
 	TAMES("Taming", "list-taming", "Animals Tamed", "When an animal is tamed."),

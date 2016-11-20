@@ -38,6 +38,7 @@ public class DatabasePoolsManager {
 	private Map<String, Integer> xpHashMap;
 	private Map<String, Integer> consumedPotionHashMap;
 	private Map<String, Integer> dropHashMap;
+	private Map<String, Integer> pickupHashMap;
 	private Map<String, Integer> hoePlowingHashMap;
 	private Map<String, Integer> fertiliseHashMap;
 	private Map<String, Integer> tameHashMap;
@@ -89,6 +90,7 @@ public class DatabasePoolsManager {
 			xpHashMap = new ConcurrentHashMap<>();
 			consumedPotionHashMap = new ConcurrentHashMap<>();
 			dropHashMap = new ConcurrentHashMap<>();
+			pickupHashMap = new ConcurrentHashMap<>();
 			hoePlowingHashMap = new ConcurrentHashMap<>();
 			fertiliseHashMap = new ConcurrentHashMap<>();
 			tameHashMap = new ConcurrentHashMap<>();
@@ -127,6 +129,7 @@ public class DatabasePoolsManager {
 			xpHashMap = new HashMap<>();
 			consumedPotionHashMap = new HashMap<>();
 			dropHashMap = new HashMap<>();
+			pickupHashMap = new HashMap<>();
 			hoePlowingHashMap = new HashMap<>();
 			fertiliseHashMap = new HashMap<>();
 			tameHashMap = new HashMap<>();
@@ -218,6 +221,8 @@ public class DatabasePoolsManager {
 				return petMasterGiveHashMap;
 			case PETMASTERRECEIVE:
 				return petMasterReceiveHashMap;
+			case PICKUPS:
+				return pickupHashMap;
 			case PLAYEDTIME:
 				throw new IllegalArgumentException("PlayedTime is handled by a separate function.");
 			case SHEARS:
