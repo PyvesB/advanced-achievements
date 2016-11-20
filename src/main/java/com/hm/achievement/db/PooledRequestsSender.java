@@ -53,31 +53,13 @@ public class PooledRequestsSender implements Runnable {
 
 		Connection conn = plugin.getDb().getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			performRequestsForNormalCategory(st, NormalAchievements.DEATHS);
-			performRequestsForNormalCategory(st, NormalAchievements.ARROWS);
-			performRequestsForNormalCategory(st, NormalAchievements.SNOWBALLS);
-			performRequestsForNormalCategory(st, NormalAchievements.EGGS);
-			performRequestsForNormalCategory(st, NormalAchievements.FISH);
-			performRequestsForNormalCategory(st, NormalAchievements.ITEMBREAKS);
-			performRequestsForNormalCategory(st, NormalAchievements.EATENITEMS);
-			performRequestsForNormalCategory(st, NormalAchievements.SHEARS);
-			performRequestsForNormalCategory(st, NormalAchievements.MILKS);
-			performRequestsForNormalCategory(st, NormalAchievements.TRADES);
-			performRequestsForNormalCategory(st, NormalAchievements.ANVILS);
-			performRequestsForNormalCategory(st, NormalAchievements.ENCHANTMENTS);
-			performRequestsForNormalCategory(st, NormalAchievements.BEDS);
-			performRequestsForNormalCategory(st, NormalAchievements.LEVELS);
-			performRequestsForNormalCategory(st, NormalAchievements.CONSUMEDPOTIONS);
-			performRequestsForNormalCategory(st, NormalAchievements.DROPS);
-			performRequestsForNormalCategory(st, NormalAchievements.HOEPLOWING);
-			performRequestsForNormalCategory(st, NormalAchievements.FERTILISING);
-			performRequestsForNormalCategory(st, NormalAchievements.TAMES);
-			performRequestsForNormalCategory(st, NormalAchievements.BREWING);
-			performRequestsForNormalCategory(st, NormalAchievements.FIREWORKS);
-			performRequestsForNormalCategory(st, NormalAchievements.MUSICDISCS);
-			performRequestsForNormalCategory(st, NormalAchievements.ENDERPEARLS);
-			performRequestsForNormalCategory(st, NormalAchievements.PETMASTERGIVE);
-			performRequestsForNormalCategory(st, NormalAchievements.PETMASTERRECEIVE);
+			for (NormalAchievements category : NormalAchievements.values()) {
+				// Distance and PlayedTIme achievements are handled by scheduled runnables and corresponding statistics
+				// are only written to the database when player disconnects.
+				if (category != NormalAchievements.PLAYEDTIME || !"DISTANCE".contains(category.name())) {
+					performRequestsForNormalCategory(st, category);
+				}
+			}
 
 			if (plugin.isAsyncPooledRequestsSender()) {
 				performRequestsForMultipleCategoriesAsync(st);
@@ -105,8 +87,7 @@ public class PooledRequestsSender implements Runnable {
 					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
 							+ entry.getValue() + ")" + " ON CONFLICT (playername," + category.toSubcategoryDBName()
-							+ ") DO UPDATE SET ("
-							+ category.toDBName() + ")=(" + entry.getValue() + ")");
+							+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue() + ")");
 				} else {
 					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
