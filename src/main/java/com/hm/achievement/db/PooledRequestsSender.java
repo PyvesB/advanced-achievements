@@ -76,6 +76,8 @@ public class PooledRequestsSender implements Runnable {
 			performRequestsForNormalCategory(st, NormalAchievements.FIREWORKS);
 			performRequestsForNormalCategory(st, NormalAchievements.MUSICDISCS);
 			performRequestsForNormalCategory(st, NormalAchievements.ENDERPEARLS);
+			performRequestsForNormalCategory(st, NormalAchievements.PETMASTERGIVE);
+			performRequestsForNormalCategory(st, NormalAchievements.PETMASTERRECEIVE);
 
 			if (plugin.isAsyncPooledRequestsSender()) {
 				performRequestsForMultipleCategoriesAsync(st);
