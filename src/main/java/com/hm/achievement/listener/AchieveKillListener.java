@@ -1,6 +1,5 @@
 package com.hm.achievement.listener;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -35,10 +34,10 @@ public class AchieveKillListener extends AbstractListener implements Listener {
 			return;
 		}
 
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isInExludedWorld(player)) {
+		if (!shouldEventBeTakenIntoAccountNoPermission(player)) {
 			return;
 		}
+
 		Entity entity = event.getEntity();
 
 		if (!(entity instanceof LivingEntity)) {
