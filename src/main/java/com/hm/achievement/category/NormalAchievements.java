@@ -19,6 +19,8 @@ public enum NormalAchievements {
 	EATENITEMS("EatenItems", "list-eatenitems", "Items Eaten", "When an item is eaten (excludes potions and milk)."),
 	SHEARS("Shear", "list-shear", "Sheeps Sheared", "When a sheep is sheared."),
 	MILKS("Milk", "list-milk", "Cows Milked", "When a cow is milked."),
+	LAVABUCKETS("LavaBuckets", "list-lavabuckets", "Buckets Filled with Lava", "When a bucket is filled with lava."),
+	WATERBUCKETS("WaterBuckets", "list-milkbuckets", "Buckets Filled with Water", "When a bucket is filled with water."),
 	TRADES("Trades", "list-trades", "Number of Trades", "When a trade with a villager is made."),
 	ANVILS("AnvilsUsed", "list-anvils", "Anvils Used", "When an anvil is used."),
 	ENCHANTMENTS("Enchantments", "list-enchantments", "Items Enchanted", "When an enchantment is performed."),

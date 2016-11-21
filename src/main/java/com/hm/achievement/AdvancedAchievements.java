@@ -58,7 +58,7 @@ import com.hm.achievement.listener.AchieveFishListener;
 import com.hm.achievement.listener.AchieveHoeFertiliseFireworkMusicListener;
 import com.hm.achievement.listener.AchieveItemBreakListener;
 import com.hm.achievement.listener.AchieveKillListener;
-import com.hm.achievement.listener.AchieveMilkListener;
+import com.hm.achievement.listener.AchieveMilkLavaWaterListener;
 import com.hm.achievement.listener.AchievePetMasterGiveReceiveListener;
 import com.hm.achievement.listener.AchievePickupListener;
 import com.hm.achievement.listener.AchievePlayerCommandListener;
@@ -110,7 +110,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveItemBreakListener itemBreakListener;
 	private AchieveConsumeListener consumeListener;
 	private AchieveShearListener shearListener;
-	private AchieveMilkListener milkListener;
+	private AchieveMilkLavaWaterListener milkLavaWaterListener;
 	private AchieveTradeAnvilBrewSmeltListener inventoryClickListener;
 	private AchieveEnchantListener enchantmentListener;
 	private AchieveBedListener bedListener;
@@ -309,9 +309,11 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(shearListener, this);
 		}
 
-		if (!disabledCategorySet.contains(NormalAchievements.MILKS.toString())) {
-			milkListener = new AchieveMilkListener(this);
-			pm.registerEvents(milkListener, this);
+		if (!disabledCategorySet.contains(NormalAchievements.MILKS.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.LAVABUCKETS.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.WATERBUCKETS.toString())) {
+			milkLavaWaterListener = new AchieveMilkLavaWaterListener(this);
+			pm.registerEvents(milkLavaWaterListener, this);
 		}
 
 		if (config.getBoolean("CheckForUpdate", true)

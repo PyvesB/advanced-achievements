@@ -50,6 +50,8 @@ public class DatabasePoolsManager {
 	private Map<String, Integer> petMasterGiveHashMap;
 	private Map<String, Integer> petMasterReceiveHashMap;
 	private Map<String, Integer> smeltingHashMap;
+	private Map<String, Integer> lavaBucketHashMap;
+	private Map<String, Integer> waterBucketHashMap;
 	private Map<String, Integer> distanceFootHashMap;
 	private Map<String, Integer> distanceHorseHashMap;
 	private Map<String, Integer> distancePigHashMap;
@@ -105,6 +107,8 @@ public class DatabasePoolsManager {
 			petMasterGiveHashMap = new ConcurrentHashMap<>();
 			petMasterReceiveHashMap = new ConcurrentHashMap<>();
 			smeltingHashMap = new ConcurrentHashMap<>();
+			lavaBucketHashMap = new ConcurrentHashMap<>();
+			waterBucketHashMap = new ConcurrentHashMap<>();
 			blockPlaceHashMap = new ConcurrentHashMap<>();
 			blockBreakHashMap = new ConcurrentHashMap<>();
 			killHashMap = new ConcurrentHashMap<>();
@@ -147,6 +151,8 @@ public class DatabasePoolsManager {
 			petMasterGiveHashMap = new HashMap<>();
 			petMasterReceiveHashMap = new HashMap<>();
 			smeltingHashMap = new HashMap<>();
+			lavaBucketHashMap = new HashMap<>();
+			waterBucketHashMap = new HashMap<>();
 			blockPlaceHashMap = new HashMap<>();
 			blockBreakHashMap = new HashMap<>();
 			killHashMap = new HashMap<>();
@@ -220,6 +226,8 @@ public class DatabasePoolsManager {
 				return hoePlowingHashMap;
 			case ITEMBREAKS:
 				return itemBreakHashMap;
+			case LAVABUCKETS:
+				return lavaBucketHashMap;
 			case LEVELS:
 				return xpHashMap;
 			case MILKS:
@@ -246,6 +254,8 @@ public class DatabasePoolsManager {
 				return tradeHashMap;
 			case TREASURES:
 				return treasureHashMap;
+			case WATERBUCKETS:
+				return waterBucketHashMap;
 			default:
 				return null;
 		}
@@ -382,5 +392,4 @@ public class DatabasePoolsManager {
 			return amount;
 		}
 	}
-
 }

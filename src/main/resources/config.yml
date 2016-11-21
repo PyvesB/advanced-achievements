@@ -315,6 +315,20 @@ Milk:
     Name: milk_1
     DisplayName: First Milk    
     
+# When a bucket is filled with lava.
+LavaBuckets:
+  '10':
+    Message: 10 buckets filled with lava!
+    Name: lavabuckets_10
+    DisplayName: Pyroman
+    
+# When a bucket is filled with water.
+WaterBuckets:
+  '15':
+    Message: 15 buckets filled with water!
+    Name: waterbuckets_15
+    DisplayName: Fireman    
+    
 # When a trade with a villager is made.
 Trades:
   '1':

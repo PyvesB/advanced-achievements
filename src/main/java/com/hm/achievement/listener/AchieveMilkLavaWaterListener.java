@@ -16,9 +16,9 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveMilkListener extends AbstractListener implements Listener {
+public class AchieveMilkLavaWaterListener extends AbstractListener implements Listener {
 
-	public AchieveMilkListener(AdvancedAchievements plugin) {
+	public AchieveMilkLavaWaterListener(AdvancedAchievements plugin) {
 
 		super(plugin);
 	}
@@ -26,12 +26,17 @@ public class AchieveMilkListener extends AbstractListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerBucketFill(PlayerBucketFillEvent event) {
 
-		if (event.getItemStack().getType() != Material.MILK_BUCKET) {
-			return;
+		Player player = event.getPlayer();
+
+		NormalAchievements category;
+		if (event.getBucket() == Material.MILK_BUCKET) {
+			category = NormalAchievements.MILKS;
+		} else if (event.getBucket() == Material.LAVA_BUCKET) {
+			category = NormalAchievements.LAVABUCKETS;
+		} else {
+			category = NormalAchievements.WATERBUCKETS;
 		}
 
-		Player player = event.getPlayer();
-		NormalAchievements category = NormalAchievements.MILKS;
 		if (!shouldEventBeTakenIntoAccountNoCreative(player, category)) {
 			return;
 		}
