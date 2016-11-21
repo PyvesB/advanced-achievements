@@ -501,6 +501,15 @@ Smelting:
     Name: smeltitems_250
     DisplayName: The Smelter
     
+# When a player enters a specific command (specify command prefixes in lower case without spaces).
+# For instance a command /awf add world from the AntiWorldFly plugin matches with subcategory 'awfadd'.
+PlayerCommands:
+  'aachbook':
+    '10':
+      Message: Obatin 10 achievement books!
+      Name: playercommand_aachbook_10
+      DisplayName: Reader
+    
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
 # |                  Command achievements                   | #

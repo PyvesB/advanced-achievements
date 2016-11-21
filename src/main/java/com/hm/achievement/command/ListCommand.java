@@ -78,7 +78,7 @@ public class ListCommand extends AbstractCommand {
 		// Get list of item stacks for items displayed in the GUI, for multiple achievements.
 		multipleAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.STONE, 1, (short) 6),
 				new ItemStack(Material.SMOOTH_BRICK, 1, (short) 2), new ItemStack(Material.BONE),
-				new ItemStack(Material.WORKBENCH) };
+				new ItemStack(Material.WORKBENCH), new ItemStack(Material.PAPER) };
 
 		// Get list of item stacks for items displayed in the GUI, for multiple achievements.
 		// Elytra and Grass paths only available in Minecraft 1.9+, we construct the list depending on the game version.
@@ -187,6 +187,9 @@ public class ListCommand extends AbstractCommand {
 				break;
 			case WORKBENCH:
 				category = MultipleAchievements.CRAFTS;
+				break;
+			case PAPER:
+				category = MultipleAchievements.PLAYERCOMMANDS;
 				break;
 			// Default case cannot happen.
 			default:

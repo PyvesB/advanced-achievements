@@ -60,11 +60,12 @@ public class DatabasePoolsManager {
 	private Map<String, Long> playTimeHashMap;
 
 	// Statistics of the different players for multiple achievements; keys correspond to concatenated UUIDs and
-	// block/entity identifiers.
+	// block/entity/command identifiers.
 	private Map<String, Integer> blockPlaceHashMap;
 	private Map<String, Integer> blockBreakHashMap;
 	private Map<String, Integer> killHashMap;
 	private Map<String, Integer> craftHashMap;
+	private Map<String, Integer> playerCommandHashMap;
 
 	public DatabasePoolsManager(AdvancedAchievements plugin) {
 
@@ -108,6 +109,7 @@ public class DatabasePoolsManager {
 			blockBreakHashMap = new ConcurrentHashMap<>();
 			killHashMap = new ConcurrentHashMap<>();
 			craftHashMap = new ConcurrentHashMap<>();
+			playerCommandHashMap = new ConcurrentHashMap<>();
 			distanceFootHashMap = new ConcurrentHashMap<>();
 			distanceHorseHashMap = new ConcurrentHashMap<>();
 			distancePigHashMap = new ConcurrentHashMap<>();
@@ -144,11 +146,12 @@ public class DatabasePoolsManager {
 			enderPearlHashMap = new HashMap<>();
 			petMasterGiveHashMap = new HashMap<>();
 			petMasterReceiveHashMap = new HashMap<>();
+			smeltingHashMap = new HashMap<>();
 			blockPlaceHashMap = new HashMap<>();
 			blockBreakHashMap = new HashMap<>();
 			killHashMap = new HashMap<>();
 			craftHashMap = new HashMap<>();
-			smeltingHashMap = new HashMap<>();
+			playerCommandHashMap = new HashMap<>();
 			distanceFootHashMap = new HashMap<>();
 			distanceHorseHashMap = new HashMap<>();
 			distancePigHashMap = new HashMap<>();
@@ -265,6 +268,8 @@ public class DatabasePoolsManager {
 				return killHashMap;
 			case PLACES:
 				return blockPlaceHashMap;
+			case PLAYERCOMMANDS:
+				return playerCommandHashMap;
 			default:
 				return null;
 		}

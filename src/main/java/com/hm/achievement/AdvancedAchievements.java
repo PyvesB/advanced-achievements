@@ -61,6 +61,7 @@ import com.hm.achievement.listener.AchieveKillListener;
 import com.hm.achievement.listener.AchieveMilkListener;
 import com.hm.achievement.listener.AchievePetMasterGiveReceiveListener;
 import com.hm.achievement.listener.AchievePickupListener;
+import com.hm.achievement.listener.AchievePlayerCommandListener;
 import com.hm.achievement.listener.AchieveQuitListener;
 import com.hm.achievement.listener.AchieveShearListener;
 import com.hm.achievement.listener.AchieveSnowballEggListener;
@@ -122,6 +123,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveBlockBreakListener blockBreakListener;
 	private AchieveKillListener killListener;
 	private AchieveCraftListener craftListener;
+	private AchievePlayerCommandListener playerCommandListener;
 	private AchieveQuitListener quitListener;
 	private AchieveTeleportRespawnListener teleportRespawnListener;
 	private AchievePetMasterGiveReceiveListener petMasterGiveReceiveListener;
@@ -262,6 +264,11 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (!disabledCategorySet.contains(MultipleAchievements.CRAFTS.toString())) {
 			craftListener = new AchieveCraftListener(this);
 			pm.registerEvents(craftListener, this);
+		}
+
+		if (!disabledCategorySet.contains(MultipleAchievements.PLAYERCOMMANDS.toString())) {
+			playerCommandListener = new AchievePlayerCommandListener(this);
+			pm.registerEvents(playerCommandListener, this);
 		}
 
 		if (!disabledCategorySet.contains(NormalAchievements.DEATHS.toString())) {
