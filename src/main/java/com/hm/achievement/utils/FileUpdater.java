@@ -1,8 +1,10 @@
 package com.hm.achievement.utils;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -33,17 +35,20 @@ public class FileUpdater {
 
 		// Added in version 2.5.2 (put first to enable adding elements to it):
 		if (!plugin.getPluginConfig().getKeys(false).contains("DisabledCategories")) {
-			plugin.getPluginConfig().set("DisabledCategories", Collections.emptyList(),
+			List<String> emptyList = new ArrayList<>();
+			plugin.getPluginConfig().set("DisabledCategories", emptyList,
 					new String[] {
 							"Don't show these categories in the achievement GUI or in the stats output (delete the [] before using).",
 							"Also prevent obtaining achievements for these categories and prevent stats from increasing.",
 							"If changed, do a full server reload, and not just /aach reload." });
 			updateDone = true;
 		}
+
 		// Iterate through all categories to add missing ones.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			if (!plugin.getPluginConfig().getKeys(false).contains(category.toString())) {
-				plugin.getPluginConfig().set(category.toString(), Collections.emptyMap(), category.toConfigComment());
+				Map<Object, Object> emptyMap = new HashMap<>();
+				plugin.getPluginConfig().set(category.toString(), emptyMap, category.toConfigComment());
 				// As no achievements are set, we initially disable this new category.
 				List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
 				disabledCategories.add(category.toString());
@@ -51,10 +56,10 @@ public class FileUpdater {
 				updateDone = true;
 			}
 		}
-
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			if (!plugin.getPluginConfig().getKeys(false).contains(category.toString())) {
-				plugin.getPluginConfig().set(category.toString(), Collections.emptyMap(), category.toConfigComment());
+				Map<Object, Object> emptyMap = new HashMap<>();
+				plugin.getPluginConfig().set(category.toString(), emptyMap, category.toConfigComment());
 				// As no achievements are set, we initially disable this new category.
 				List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
 				disabledCategories.add(category.toString());
