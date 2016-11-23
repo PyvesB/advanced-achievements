@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 
@@ -28,7 +29,7 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener impleme
 	public void onInventoryClick(InventoryClickEvent event) {
 
 		if (event.getRawSlot() < 0 || event.getRawSlot() > 2 || event.getCurrentItem() == null
-				|| event.getCurrentItem().getType() == Material.AIR) {
+				|| event.getCurrentItem().getType() == Material.AIR || event.getAction() == InventoryAction.NOTHING) {
 			return;
 		}
 
