@@ -520,7 +520,7 @@ Smelting:
 PlayerCommands:
   'aachbook':
     '10':
-      Message: Obatin 10 achievement books!
+      Message: Obtain 10 achievement books!
       Name: playercommand_aachbook_10
       DisplayName: Reader
     
