@@ -37,8 +37,7 @@ public abstract class AbstractListener {
 	protected boolean shouldEventBeTakenIntoAccount(Player player, NormalAchievements category) {
 
 		boolean permission = player.hasPermission(category.toPermName());
-		boolean restrictedCreative = !plugin.isRestrictCreative()
-				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
+		boolean restrictedCreative = plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
 		boolean excludedWorld = plugin.isInExludedWorld(player);
 
 		return permission && !restrictedCreative && !excludedWorld;
@@ -68,11 +67,10 @@ public abstract class AbstractListener {
 	 */
 	protected boolean shouldEventBeTakenIntoAccountNoPermission(Player player) {
 
-		boolean restrictedCreative = !plugin.isRestrictCreative()
-				|| plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
+		boolean restrictedCreative = plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
 		boolean excludedWorld = plugin.isInExludedWorld(player);
 
-		return restrictedCreative && !excludedWorld;
+		return !restrictedCreative && !excludedWorld;
 	}
 
 	/**
