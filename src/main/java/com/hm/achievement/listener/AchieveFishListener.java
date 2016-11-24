@@ -40,6 +40,11 @@ public class AchieveFishListener extends AbstractListener implements Listener {
 		} else {
 			category = NormalAchievements.TREASURES;
 		}
+
+		if (plugin.getDisabledCategorySet().contains(category.toString())) {
+			return;
+		}
+
 		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
 		}

@@ -59,7 +59,7 @@ public class AchieveTeleportRespawnListener extends AbstractListener implements 
 			return;
 		}
 
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldEventBeTakenIntoAccountNoCreative(player, category)) {
 			return;
 		}
 

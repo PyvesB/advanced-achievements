@@ -26,7 +26,7 @@ public class AchievePickupListener extends AbstractListener implements Listener 
 	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
 
 		Player player = event.getPlayer();
-		NormalAchievements category = NormalAchievements.DROPS;
+		NormalAchievements category = NormalAchievements.PICKUPS;
 		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
 		}

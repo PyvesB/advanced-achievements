@@ -38,6 +38,10 @@ public class AchieveMilkLavaWaterListener extends AbstractListener implements Li
 			category = NormalAchievements.WATERBUCKETS;
 		}
 
+		if (plugin.getDisabledCategorySet().contains(category.toString())) {
+			return;
+		}
+
 		if (!shouldEventBeTakenIntoAccountNoCreative(player, category)) {
 			return;
 		}

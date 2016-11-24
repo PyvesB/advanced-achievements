@@ -24,21 +24,26 @@ public class AchievePetMasterGiveReceiveListener extends AbstractListener implem
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onChangeOwnership(PlayerChangeAnimalOwnershipEvent event) {
-		
+
 		Player giverPlayer = (Player) event.getOldOwner();
 		NormalAchievements categoryGive = NormalAchievements.PETMASTERGIVE;
 		if (!shouldEventBeTakenIntoAccount(giverPlayer, categoryGive)) {
 			return;
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(giverPlayer, categoryGive, 1);
+		if (!plugin.getDisabledCategorySet().contains(categoryGive.toString())) {
+			updateStatisticAndAwardAchievementsIfAvailable(giverPlayer, categoryGive, 1);
+		}
 
 		Player receiverPlayer = (Player) event.getNewOwner();
 		NormalAchievements categoryReceive = NormalAchievements.PETMASTERRECEIVE;
+
 		if (!shouldEventBeTakenIntoAccount(receiverPlayer, categoryReceive)) {
 			return;
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(receiverPlayer, categoryReceive, 1);
+		if (!plugin.getDisabledCategorySet().contains(categoryReceive.toString())) {
+			updateStatisticAndAwardAchievementsIfAvailable(receiverPlayer, categoryReceive, 1);
+		}
 	}
 }
