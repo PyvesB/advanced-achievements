@@ -29,9 +29,10 @@ public class AchieveMilkLavaWaterListener extends AbstractListener implements Li
 		Player player = event.getPlayer();
 
 		NormalAchievements category;
-		if (event.getBucket() == Material.MILK_BUCKET) {
+		Material resultBucket = event.getItemStack().getType();
+		if (resultBucket == Material.MILK_BUCKET) {
 			category = NormalAchievements.MILKS;
-		} else if (event.getBucket() == Material.LAVA_BUCKET) {
+		} else if (resultBucket == Material.LAVA_BUCKET) {
 			category = NormalAchievements.LAVABUCKETS;
 		} else {
 			category = NormalAchievements.WATERBUCKETS;
