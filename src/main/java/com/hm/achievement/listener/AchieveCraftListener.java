@@ -54,7 +54,8 @@ public class AchieveCraftListener extends AbstractListener implements Listener {
 			}
 		}
 
-		int eventAmount = item.getAmount();
+		// Some items appear as having amount equal to 0 (for instance fireworks). Probably a bug in Spigot.
+		int eventAmount = item.getAmount() > 0 ? item.getAmount() : 1;
 		if (event.isShiftClick()) {
 			int max = event.getInventory().getMaxStackSize();
 			ItemStack[] matrix = event.getInventory().getMatrix();
