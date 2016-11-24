@@ -644,23 +644,17 @@ public class AdvancedAchievements extends JavaPlugin {
 		this.getLogger().info("Loaded " + totalAchievements + " achievements in " + categoriesInUse + " categories.");
 
 		if (!disabledCategorySet.isEmpty()) {
-			StringBuilder disabledCategories = new StringBuilder();
+			String disabledCategories;
 
 			if (disabledCategorySet.size() == 1) {
-				disabledCategories.append(disabledCategorySet.size() + " disabled category: ");
+				disabledCategories = disabledCategorySet.size() + " disabled category: "
+						+ disabledCategorySet.toString();
 			} else {
-				disabledCategories.append(disabledCategorySet.size() + " disabled categories: ");
+				disabledCategories = disabledCategorySet.size() + " disabled categories: "
+						+ disabledCategorySet.toString();
 			}
 
-			for (String category : disabledCategorySet) {
-				disabledCategories.append(category + ", ");
-			}
-
-			// Remove the trailing comma and space.
-			disabledCategories.deleteCharAt(disabledCategories.length() - 1);
-			disabledCategories.deleteCharAt(disabledCategories.length() - 1);
-
-			this.getLogger().info(disabledCategories.toString());
+			this.getLogger().info(disabledCategories);
 		}
 	}
 
@@ -757,7 +751,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * command modules.
 	 */
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]) {
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 
 		if (!"aach".equalsIgnoreCase(cmd.getName())) {
 			return false;
