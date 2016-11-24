@@ -341,7 +341,7 @@ public class DatabasePoolsManager {
 
 		Map<String, Integer> categoryHashMap = getHashMap(category);
 		String uuid = player.getUniqueId().toString();
-		Integer oldAmount = categoryHashMap.get(uuid);
+		Integer oldAmount = categoryHashMap.get(uuid + subcategory);
 		if (oldAmount == null) {
 			oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategory);
 		}
