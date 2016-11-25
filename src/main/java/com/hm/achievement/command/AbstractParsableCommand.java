@@ -34,7 +34,7 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 		Player player = null;
 		// Retrieve player instance with his name.
 		for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
-			if (currentPlayer.getName().equalsIgnoreCase(args[2])) {
+			if (currentPlayer.getName().equalsIgnoreCase(args[args.length - 1])) {
 				player = currentPlayer;
 				break;
 			}
@@ -43,7 +43,8 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 		// If player not found or is offline.
 		if (player == null) {
 			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
-					.getString("player-offline", "The player PLAYER is offline!").replace("PLAYER", args[2]));
+					.getString("player-offline", "The player PLAYER is offline!")
+					.replace("PLAYER", args[args.length - 1]));
 			return;
 		}
 
