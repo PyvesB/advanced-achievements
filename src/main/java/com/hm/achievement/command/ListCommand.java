@@ -151,7 +151,7 @@ public class ListCommand extends AbstractCommand {
 		// Create a new chest-like inventory; make it as small as possible while still containing all elements.
 		Inventory guiInv = Bukkit.createInventory(null,
 				getClosestGreaterMultipleOf9(MultipleAchievements.values().length + NormalAchievements.values().length
-						- plugin.getDisabledCategorySet().size()),
+						- plugin.getDisabledCategorySet().size() + 1),
 				ChatColor.translateAlternateColorCodes('&',
 						plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
 
@@ -416,6 +416,7 @@ public class ListCommand extends AbstractCommand {
 				break;
 			// Objects exclusive to Minecraft 1.9+ or Commands achievements.
 			default:
+				statistic = -1L;
 				break;
 		}
 
@@ -430,7 +431,6 @@ public class ListCommand extends AbstractCommand {
 					break;
 				// Default case: Commands achievements.
 				default:
-					statistic = -1L;
 					break;
 			}
 		}
