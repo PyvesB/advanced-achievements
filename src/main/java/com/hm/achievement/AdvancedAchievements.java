@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
@@ -186,9 +185,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	public AdvancedAchievements() {
 
+		successfulLoad = true;
 		overrideDisable = false;
-		excludedWorldSet = new HashSet<>();
-		disabledCategorySet = new HashSet<>();
 		fileManager = new FileManager(this);
 		db = new SQLDatabaseManager(this);
 		poolsManager = new DatabasePoolsManager(this);
@@ -204,13 +202,20 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Start enabling plugin.
 		long startTime = System.currentTimeMillis();
 
-		configurationLoad(true);
+		YamlManager configFile = loadAndBackupFile("config.yml");
+		YamlManager langFile = loadAndBackupFile(configFile.getString("LanguageFileName", "lang.yml"));
 
 		// Error while loading .yml files; do not do any further work.
 		if (overrideDisable) {
 			overrideDisable = false;
 			return;
 		}
+
+		// Update configurations from previous versions of the plugin; only if server reload or restart.
+		fileUpdater.updateOldConfiguration(configFile);
+		fileUpdater.updateOldLanguage(langFile);
+
+		configurationLoad(configFile, langFile);
 
 		// Load Metrics Lite.
 		try {
@@ -243,8 +248,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		this.getLogger().info("Registering listeners...");
 
-		// Register listeners so they can monitor server events; if there are no
-		// config related achievements, listeners aren't registered.
+		// Register listeners so they can monitor server events; if there are no config related achievements, listeners
+		// aren't registered.
 		PluginManager pm = getServer().getPluginManager();
 		if (!disabledCategorySet.contains(MultipleAchievements.PLACES.toString())) {
 			blockPlaceListener = new AchieveBlockPlaceListener(this);
@@ -447,54 +452,15 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Loads the plugin configuration and sets values to different parameters; loads the language file and backs
 	 * configuration files up. Register permissions. Initialises command modules.
 	 * 
-	 * @param attemptUpdate
+	 * @param config
+	 * @param lang
 	 */
-	public void configurationLoad(boolean attemptUpdate) {
+	public void configurationLoad(YamlManager config, YamlManager lang) {
 
-		successfulLoad = true;
-		Logger logger = this.getLogger();
+		this.config = config;
+		this.lang = lang;
 
-		logger.info("Backing up and loading configuration files...");
-
-		try {
-			config = fileManager.getNewConfig("config.yml");
-		} catch (IOException e) {
-			this.getLogger().log(Level.SEVERE, "Error while loading configuration file: ", e);
-			successfulLoad = false;
-		} catch (InvalidConfigurationException e) {
-			logger.severe("Error while loading configuration file, disabling plugin.");
-			logger.log(Level.SEVERE,
-					"Verify your syntax by visiting yaml-online-parser.appspot.com and using the following logs: ", e);
-			successfulLoad = false;
-			overrideDisable = true;
-			Bukkit.getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
-
-		try {
-			lang = fileManager.getNewConfig(config.getString("LanguageFileName", "lang.yml"));
-		} catch (IOException e) {
-			this.getLogger().log(Level.SEVERE, "Error while loading language file: ", e);
-			successfulLoad = false;
-		} catch (InvalidConfigurationException e) {
-			logger.severe("Error while loading language file, disabling plugin.");
-			this.getLogger().log(Level.SEVERE,
-					"Verify your syntax by visiting yaml-online-parser.appspot.com and using the following logs: ", e);
-			successfulLoad = false;
-			overrideDisable = true;
-			this.getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
-
-		backupFiles();
-
-		// Update configurations from previous versions of the plugin if server reload or restart.
-		if (attemptUpdate) {
-			fileUpdater.updateOldConfiguration();
-			fileUpdater.updateOldLanguage();
-		}
-
-		logger.info("Loading configs, registering permissions and initialising command modules...");
+		this.getLogger().info("Loading parameters, registering permissions and initialising command modules...");
 
 		extractParameters();
 
@@ -523,23 +489,34 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Performs a backup of the language and configuration files.
+	 * Loads and backs file with name fileName up.
+	 * 
+	 * @param fileName
+	 * @return the loaded file YamlManager
 	 */
-	private void backupFiles() {
+	public YamlManager loadAndBackupFile(String fileName) {
 
+		YamlManager configFile = null;
+		this.getLogger().info("Loading and backing up " + fileName + " file...");
 		try {
-			fileManager.backupFile("config.yml");
-		} catch (IOException e) {
-			this.getLogger().log(Level.SEVERE, "Error while backing up configuration file: ", e);
+			configFile = fileManager.getNewConfig(fileName);
+		} catch (IOException | InvalidConfigurationException e) {
+			this.getLogger().severe("Error while loading " + fileName + " file, disabling plugin.");
+			this.getLogger().log(Level.SEVERE,
+					"Verify your syntax by visiting yaml-online-parser.appspot.com and using the following logs: ", e);
 			successfulLoad = false;
+			overrideDisable = true;
+			Bukkit.getServer().getPluginManager().disablePlugin(this);
+			return null;
 		}
 
 		try {
-			fileManager.backupFile(config.getString("LanguageFileName", "lang.yml"));
+			fileManager.backupFile(fileName);
 		} catch (IOException e) {
-			this.getLogger().log(Level.SEVERE, "Error while backing up language file: ", e);
+			this.getLogger().log(Level.SEVERE, "Error while backing up " + fileName + " file: ", e);
 			successfulLoad = false;
 		}
+		return configFile;
 	}
 
 	/**
@@ -552,12 +529,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
 		restrictCreative = config.getBoolean("RestrictCreative", false);
 		databaseBackup = config.getBoolean("DatabaseBackup", true);
-		for (String world : config.getList("ExcludedWorlds")) {
-			excludedWorldSet.add(world);
-		}
-		for (String category : config.getList("DisabledCategories")) {
-			disabledCategorySet.add(category);
-		}
+		excludedWorldSet = new HashSet<>(config.getList("ExcludedWorlds"));
+		disabledCategorySet = new HashSet<>(config.getList("DisabledCategories"));
 		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 60);
 		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 60);
@@ -665,15 +638,16 @@ public class AdvancedAchievements extends JavaPlugin {
 	private void registerPermissions() {
 
 		PluginManager pluginManager = this.getServer().getPluginManager();
-		for (MultipleAchievements category : MultipleAchievements.values())
+		for (MultipleAchievements category : MultipleAchievements.values()) {
 			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
-				// Bukkit only allows permissions to be set once, so must do additional check for /aach reload
-				// correctness.
+				// Bukkit only allows permissions to be set once, so must do additional check to make sure they are not
+				// being set again during an /aach reload.
 				if (pluginManager.getPermission(category.toPermName() + "." + section) == null) {
 					pluginManager.addPermission(
 							new Permission(category.toPermName() + "." + section, PermissionDefault.TRUE));
 				}
 			}
+		}
 	}
 
 	/**

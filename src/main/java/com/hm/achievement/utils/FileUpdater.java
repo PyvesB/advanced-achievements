@@ -28,15 +28,17 @@ public class FileUpdater {
 	/**
 	 * Updates configuration file from older plugin versions by adding missing parameters. Upgrades from versions prior
 	 * to 2.0 are not supported.
+	 * 
+	 * @param configFile
 	 */
-	public void updateOldConfiguration() {
+	public void updateOldConfiguration(YamlManager configFile) {
 
 		boolean updateDone = false;
 
 		// Added in version 2.5.2 (put first to enable adding elements to it):
-		if (!plugin.getPluginConfig().getKeys(false).contains("DisabledCategories")) {
+		if (!configFile.getKeys(false).contains("DisabledCategories")) {
 			List<String> emptyList = new ArrayList<>();
-			plugin.getPluginConfig().set("DisabledCategories", emptyList,
+			configFile.set("DisabledCategories", emptyList,
 					new String[] {
 							"Don't show these categories in the achievement GUI or in the stats output (delete the [] before using).",
 							"Also prevent obtaining achievements for these categories and prevent stats from increasing.",
@@ -46,103 +48,100 @@ public class FileUpdater {
 
 		// Iterate through all categories to add missing ones.
 		for (NormalAchievements category : NormalAchievements.values()) {
-			if (!plugin.getPluginConfig().getKeys(false).contains(category.toString())) {
+			if (!configFile.getKeys(false).contains(category.toString())) {
 				Map<Object, Object> emptyMap = new HashMap<>();
-				plugin.getPluginConfig().set(category.toString(), emptyMap, category.toConfigComment());
+				configFile.set(category.toString(), emptyMap, category.toConfigComment());
 				// As no achievements are set, we initially disable this new category.
-				List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
+				List<String> disabledCategories = configFile.getList("DisabledCategories");
 				disabledCategories.add(category.toString());
-				plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
+				configFile.set("DisabledCategories", disabledCategories);
 				updateDone = true;
 			}
 		}
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			if (!plugin.getPluginConfig().getKeys(false).contains(category.toString())) {
+			if (!configFile.getKeys(false).contains(category.toString())) {
 				Map<Object, Object> emptyMap = new HashMap<>();
-				plugin.getPluginConfig().set(category.toString(), emptyMap, category.toConfigComment());
+				configFile.set(category.toString(), emptyMap, category.toConfigComment());
 				// As no achievements are set, we initially disable this new category.
-				List<String> disabledCategories = plugin.getPluginConfig().getList("DisabledCategories");
+				List<String> disabledCategories = configFile.getList("DisabledCategories");
 				disabledCategories.add(category.toString());
-				plugin.getPluginConfig().set("DisabledCategories", disabledCategories);
+				configFile.set("DisabledCategories", disabledCategories);
 				updateDone = true;
 			}
 		}
 
 		// Added in version 2.1:
-		if (!plugin.getPluginConfig().getKeys(false).contains("AdditionalEffects")) {
-			plugin.getPluginConfig().set("AdditionalEffects", true,
+		if (!configFile.getKeys(false).contains("AdditionalEffects")) {
+			configFile.set("AdditionalEffects", true,
 					"Set to true to activate particle effects when receiving book and for players in top list.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("FireworkStyle")) {
-			plugin.getPluginConfig().set("FireworkStyle", "BALL_LARGE",
-					"Choose BALL_LARGE, BALL, BURST, CREEPER or STAR.");
+		if (!configFile.getKeys(false).contains("FireworkStyle")) {
+			configFile.set("FireworkStyle", "BALL_LARGE", "Choose BALL_LARGE, BALL, BURST, CREEPER or STAR.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("ObfuscateNotReceived")) {
-			plugin.getPluginConfig().set("ObfuscateNotReceived", true,
+		if (!configFile.getKeys(false).contains("ObfuscateNotReceived")) {
+			configFile.set("ObfuscateNotReceived", true,
 					"Obfuscate achievements that have not yet been received in /aach list.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("HideNotReceivedCategories")) {
-			plugin.getPluginConfig().set("HideNotReceivedCategories", false,
+		if (!configFile.getKeys(false).contains("HideNotReceivedCategories")) {
+			configFile.set("HideNotReceivedCategories", false,
 					"Hide categories with no achievements yet received in /aach list.");
 			updateDone = true;
 		}
 
 		// Added in version 2.2:
-		if (!plugin.getPluginConfig().getKeys(false).contains("TitleScreen")) {
-			plugin.getPluginConfig().set("TitleScreen", true,
-					"Display achievement name and description as screen titles.");
+		if (!configFile.getKeys(false).contains("TitleScreen")) {
+			configFile.set("TitleScreen", true, "Display achievement name and description as screen titles.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("Color")) {
-			plugin.getPluginConfig().set("Color", "5", "Set the color of the plugin (default: 5, dark purple).");
+		if (!configFile.getKeys(false).contains("Color")) {
+			configFile.set("Color", "5", "Set the color of the plugin (default: 5, dark purple).");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("TimeBook")) {
-			plugin.getPluginConfig().set("TimeBook", 900, "Time in seconds between each /aach book.");
+		if (!configFile.getKeys(false).contains("TimeBook")) {
+			configFile.set("TimeBook", 900, "Time in seconds between each /aach book.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("TimeList")) {
-			plugin.getPluginConfig().set("TimeList", 0, "Time in seconds between each /aach list.");
+		if (!configFile.getKeys(false).contains("TimeList")) {
+			configFile.set("TimeList", 0, "Time in seconds between each /aach list.");
 			updateDone = true;
 		}
 
 		// Added in version 2.3.2:
-		if (!plugin.getPluginConfig().getKeys(false).contains("AsyncPooledRequestsSender")) {
-			plugin.getPluginConfig().set("AsyncPooledRequestsSender", true,
-					"Enable multithreading for database write operations.");
+		if (!configFile.getKeys(false).contains("AsyncPooledRequestsSender")) {
+			configFile.set("AsyncPooledRequestsSender", true, "Enable multithreading for database write operations.");
 			updateDone = true;
 		}
 
 		// Added in version 2.5.2:
-		if (!plugin.getPluginConfig().getKeys(false).contains("ListAchievementFormat")) {
-			plugin.getPluginConfig().set("ListAchievementFormat", "%ICON% %NAME% %ICON%",
+		if (!configFile.getKeys(false).contains("ListAchievementFormat")) {
+			configFile.set("ListAchievementFormat", "%ICON% %NAME% %ICON%",
 					"Set the format of the achievement name in /aach list.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("HideRewardDisplayInList")) {
-			plugin.getPluginConfig().set("HideRewardDisplayInList", false, "Hide the reward display in /aach list.");
+		if (!configFile.getKeys(false).contains("HideRewardDisplayInList")) {
+			configFile.set("HideRewardDisplayInList", false, "Hide the reward display in /aach list.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("IgnoreVerticalDistance")) {
-			plugin.getPluginConfig().set("IgnoreVerticalDistance", false,
+		if (!configFile.getKeys(false).contains("IgnoreVerticalDistance")) {
+			configFile.set("IgnoreVerticalDistance", false,
 					"Ignore vertical dimension (Y axis) when calculating distance statistics.");
 			updateDone = true;
 		}
 
 		// Added in version 3.0:
-		if (!plugin.getPluginConfig().getKeys(false).contains("TablePrefix")) {
-			plugin.getPluginConfig().set("TablePrefix", "",
+		if (!configFile.getKeys(false).contains("TablePrefix")) {
+			configFile.set("TablePrefix", "",
 					new String[] {
 							"Prefix added to the tables in the database. If you switch from the default tables names (no prefix),",
 							"the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.",
@@ -150,20 +149,20 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("BookChronologicalOrder")) {
-			plugin.getPluginConfig().set("BookChronologicalOrder", true,
+		if (!configFile.getKeys(false).contains("BookChronologicalOrder")) {
+			configFile.set("BookChronologicalOrder", true,
 					"Sort pages of the book in chronological order (false for reverse chronological order).");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("DisableSilkTouchBreaks")) {
-			plugin.getPluginConfig().set("DisableSilkTouchBreaks", false,
+		if (!configFile.getKeys(false).contains("DisableSilkTouchBreaks")) {
+			configFile.set("DisableSilkTouchBreaks", false,
 					"Do not take into accound items broken with Silk Touch for the Breaks achievements.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("ObfuscateProgressiveAchievements")) {
-			plugin.getPluginConfig().set("ObfuscateProgressiveAchievements", false,
+		if (!configFile.getKeys(false).contains("ObfuscateProgressiveAchievements")) {
+			configFile.set("ObfuscateProgressiveAchievements", false,
 					new String[] { "Obfuscate progressive achievements:",
 							"For categories with a series of related achievements where the only thing changing is the number of times",
 							"the event has occurred, show achievements that have been obtained and show the next obtainable achievement,",
@@ -176,20 +175,20 @@ public class FileUpdater {
 		}
 
 		// Added in version 3.0.2:
-		if (!plugin.getPluginConfig().getKeys(false).contains("DisableSilkTouchOreBreaks")) {
-			plugin.getPluginConfig().set("DisableSilkTouchOreBreaks", false,
+		if (!configFile.getKeys(false).contains("DisableSilkTouchOreBreaks")) {
+			configFile.set("DisableSilkTouchOreBreaks", false,
 					new String[] { "Do not take into account ores broken with Silk Touch for the Breaks achievements.",
 							"DisableSilkTouchBreaks takes precedence over this." });
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("LanguageFileName")) {
-			plugin.getPluginConfig().set("LanguageFileName", "lang.yml", "Name of the language file.");
+		if (!configFile.getKeys(false).contains("LanguageFileName")) {
+			configFile.set("LanguageFileName", "lang.yml", "Name of the language file.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginConfig().getKeys(false).contains("EnrichedListProgressBars")) {
-			plugin.getPluginConfig().set("EnrichedListProgressBars", true,
+		if (!configFile.getKeys(false).contains("EnrichedListProgressBars")) {
+			configFile.set("EnrichedListProgressBars", true,
 					"Display precise statistic information in the /aach list progress bars.");
 			updateDone = true;
 		}
@@ -197,8 +196,8 @@ public class FileUpdater {
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {
-				plugin.getPluginConfig().saveConfig();
-				plugin.getPluginConfig().reloadConfig();
+				configFile.saveConfig();
+				configFile.reloadConfig();
 			} catch (IOException e) {
 				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the configuration file: ", e);
 				plugin.setSuccessfulLoad(false);
@@ -209,158 +208,158 @@ public class FileUpdater {
 	/**
 	 * Updates language file from older plugin versions by adding missing parameters. Upgrades from versions prior to
 	 * 2.3 are not supported.
+	 * 
+	 * @param langFile
 	 */
-	public void updateOldLanguage() {
+	public void updateOldLanguage(YamlManager langFile) {
 
 		boolean updateDone = false;
 
 		// Iterate through all categories to add missing ones.
 		for (NormalAchievements category : NormalAchievements.values()) {
-			if (!plugin.getPluginLang().getKeys(false).contains(category.toLangName())) {
-				plugin.getPluginLang().set(category.toLangName(), category.toLangDefault());
+			if (!langFile.getKeys(false).contains(category.toLangName())) {
+				langFile.set(category.toLangName(), category.toLangDefault());
 				updateDone = true;
 			}
 		}
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			if (!plugin.getPluginLang().getKeys(false).contains(category.toLangName())) {
-				plugin.getPluginLang().set(category.toLangName(), category.toLangDefault());
+			if (!langFile.getKeys(false).contains(category.toLangName())) {
+				langFile.set(category.toLangName(), category.toLangDefault());
 				updateDone = true;
 			}
 		}
 
 		// Added in version 2.5.2:
-		if (!plugin.getPluginLang().getKeys(false).contains("list-achievement-received")) {
-			plugin.getPluginLang().set("list-achievement-received", "&a\u2713&f ");
+		if (!langFile.getKeys(false).contains("list-achievement-received")) {
+			langFile.set("list-achievement-received", "&a\u2713&f ");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("list-achievement-not-received")) {
-			plugin.getPluginLang().set("list-achievement-not-received", "&4\u2717&8 ");
+		if (!langFile.getKeys(false).contains("list-achievement-not-received")) {
+			langFile.set("list-achievement-not-received", "&4\u2717&8 ");
 			updateDone = true;
 		}
 
 		// Added in version 3.0:
-		if (!plugin.getPluginLang().getKeys(false).contains("book-date")) {
-			plugin.getPluginLang().set("book-date", "Book created on DATE.");
+		if (!langFile.getKeys(false).contains("book-date")) {
+			langFile.set("book-date", "Book created on DATE.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("list-back-message")) {
-			plugin.getPluginLang().set("list-back-message", "&7Back");
+		if (!langFile.getKeys(false).contains("list-back-message")) {
+			langFile.set("list-back-message", "&7Back");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("week-achievement")) {
-			plugin.getPluginLang().set("week-achievement", "Weekly achievement rankings:");
+		if (!langFile.getKeys(false).contains("week-achievement")) {
+			langFile.set("week-achievement", "Weekly achievement rankings:");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("month-achievement")) {
-			plugin.getPluginLang().set("month-achievement", "Monthly achievement rankings:");
+		if (!langFile.getKeys(false).contains("month-achievement")) {
+			langFile.set("month-achievement", "Monthly achievement rankings:");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-week")) {
-			plugin.getPluginLang().set("aach-command-week", "Display weekly rankings.");
+		if (!langFile.getKeys(false).contains("aach-command-week")) {
+			langFile.set("aach-command-week", "Display weekly rankings.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-month")) {
-			plugin.getPluginLang().set("aach-command-month", "Display monthly rankings.");
+		if (!langFile.getKeys(false).contains("aach-command-month")) {
+			langFile.set("aach-command-month", "Display monthly rankings.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("not-ranked")) {
-			plugin.getPluginLang().set("not-ranked", "You are currently not ranked for this period.");
+		if (!langFile.getKeys(false).contains("not-ranked")) {
+			langFile.set("not-ranked", "You are currently not ranked for this period.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-book-hover")) {
-			plugin.getPluginLang().set("aach-command-book-hover",
+		if (!langFile.getKeys(false).contains("aach-command-book-hover")) {
+			langFile.set("aach-command-book-hover",
 					"RP items you can collect and exchange with others! Time-based listing.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-stats-hover")) {
-			plugin.getPluginLang().set("aach-command-stats-hover", "Progress bar. Gotta catch 'em all!");
+		if (!langFile.getKeys(false).contains("aach-command-stats-hover")) {
+			langFile.set("aach-command-stats-hover", "Progress bar. Gotta catch 'em all!");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-list-hover")) {
-			plugin.getPluginLang().set("aach-command-list-hover",
+		if (!langFile.getKeys(false).contains("aach-command-list-hover")) {
+			langFile.set("aach-command-list-hover",
 					"Fancy GUI to get an overview of all achievements and your progress!");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-top-hover")) {
-			plugin.getPluginLang().set("aach-command-top-hover",
-					"Who are the server's leaders and how do you compare to them?");
+		if (!langFile.getKeys(false).contains("aach-command-top-hover")) {
+			langFile.set("aach-command-top-hover", "Who are the server's leaders and how do you compare to them?");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-give-hover")) {
-			plugin.getPluginLang().set("aach-command-give-hover",
-					"Player must be online; only Commands achievements can be used.");
+		if (!langFile.getKeys(false).contains("aach-command-give-hover")) {
+			langFile.set("aach-command-give-hover", "Player must be online; only Commands achievements can be used.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-reload-hover")) {
-			plugin.getPluginLang().set("aach-command-reload-hover",
-					"Reload most settings in config.yml and lang.yml files.");
+		if (!langFile.getKeys(false).contains("aach-command-reload-hover")) {
+			langFile.set("aach-command-reload-hover", "Reload most settings in config.yml and lang.yml files.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-info-hover")) {
-			plugin.getPluginLang().set("aach-command-info-hover",
-					"Some extra info about the plugin and its awesome author!");
+		if (!langFile.getKeys(false).contains("aach-command-info-hover")) {
+			langFile.set("aach-command-info-hover", "Some extra info about the plugin and its awesome author!");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-check-hover")) {
-			plugin.getPluginLang().set("aach-command-check-hover",
-					"Don't forget to add the colors defined in the config file.");
+		if (!langFile.getKeys(false).contains("aach-command-check-hover")) {
+			langFile.set("aach-command-check-hover", "Don't forget to add the colors defined in the config file.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-delete-hover")) {
-			plugin.getPluginLang().set("aach-command-delete-hover",
+		if (!langFile.getKeys(false).contains("aach-command-delete-hover")) {
+			langFile.set("aach-command-delete-hover",
 					"Player must be online; does not reset any associated statistics.");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-week-hover")) {
-			plugin.getPluginLang().set("aach-command-week-hover",
-					"Best achievement hunters since the start of the week!");
+		if (!langFile.getKeys(false).contains("aach-command-week-hover")) {
+			langFile.set("aach-command-week-hover", "Best achievement hunters since the start of the week!");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-command-month-hover")) {
-			plugin.getPluginLang().set("aach-command-month-hover",
-					"Best achievement hunters since the start of the month!");
+		if (!langFile.getKeys(false).contains("aach-command-month-hover")) {
+			langFile.set("aach-command-month-hover", "Best achievement hunters since the start of the month!");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("aach-tip")) {
-			plugin.getPluginLang().set("aach-tip",
-					"&lHINT&r &8You can &7&n&ohover&r &8or &7&n&oclick&r &8on the commands!");
+		if (!langFile.getKeys(false).contains("aach-tip")) {
+			langFile.set("aach-tip", "&lHINT&r &8You can &7&n&ohover&r &8or &7&n&oclick&r &8on the commands!");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("list-achievements-in-category-singular")) {
-			plugin.getPluginLang().set("list-achievements-in-category", "AMOUNT achievement");
+		if (!langFile.getKeys(false).contains("list-achievements-in-category-singular")) {
+			langFile.set("list-achievements-in-category", "AMOUNT achievement");
 			updateDone = true;
 		}
 
-		if (!plugin.getPluginLang().getKeys(false).contains("list-achievements-in-category-plural")) {
-			plugin.getPluginLang().set("list-achievements-in-category-plural", "AMOUNT achievements");
+		if (!langFile.getKeys(false).contains("list-achievements-in-category-plural")) {
+			langFile.set("list-achievements-in-category-plural", "AMOUNT achievements");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("server-restart-reload")) {
+			langFile.set("server-restart-reload",
+					"DisabledCategories list was modified. Server must be fully reloaded or restarted for your changes to take effect.");
 			updateDone = true;
 		}
 
 		if (updateDone) {
 			// Changes in the language file: save and do a fresh load.
 			try {
-				plugin.getPluginLang().saveConfig();
-				plugin.getPluginLang().reloadConfig();
+				langFile.saveConfig();
+				langFile.reloadConfig();
 			} catch (IOException e) {
 				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the language file: ", e);
 				plugin.setSuccessfulLoad(false);

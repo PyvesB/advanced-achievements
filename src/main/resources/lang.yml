@@ -10,6 +10,7 @@ no-permissions: "You do not have the permission to do this."
 # Related to /aach reload.
 configuration-successfully-reloaded: "Configuration successfully reloaded."
 configuration-reload-failed: "Errors while reloading configuration. Please view logs for more details."
+server-restart-reload: "DisabledCategories list was modified. Server must be fully reloaded or restarted for your changes to take effect."
 
 # Related to /aach top week and month.
 top-achievement: "Top achievement owners:"
