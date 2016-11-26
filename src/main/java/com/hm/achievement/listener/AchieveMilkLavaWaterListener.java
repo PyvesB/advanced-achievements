@@ -42,7 +42,8 @@ public class AchieveMilkLavaWaterListener extends AbstractListener implements Li
 			return;
 		}
 
-		if (!shouldEventBeTakenIntoAccountNoCreative(player, category)) {
+		if (!shouldEventBeTakenIntoAccountNoCreative(player, category)
+				|| category != NormalAchievements.MILKS && isInCooldownPeriod(player)) {
 			return;
 		}
 

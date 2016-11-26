@@ -6,6 +6,7 @@
 #============================================================#
 
 no-permissions: "You do not have the permission to do this."
+statistic-cooldown: "Achievements cooldown: wait TIME seconds before this action counts again."
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "Configuration successfully reloaded."

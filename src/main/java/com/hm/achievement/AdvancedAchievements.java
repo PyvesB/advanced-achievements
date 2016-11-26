@@ -97,6 +97,7 @@ import net.milkbowl.vault.economy.Economy;
  */
 public class AdvancedAchievements extends JavaPlugin {
 
+
 	// Used for Vault plugin integration.
 	private Economy economy;
 
@@ -1024,6 +1025,26 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AchieveXPListener getXpListener() {
 
 		return xpListener;
+	}
+
+	public AchieveMilkLavaWaterListener getMilkLavaWaterListener() {
+
+		return milkLavaWaterListener;
+	}
+
+	public AchieveTradeAnvilBrewSmeltListener getInventoryClickListener() {
+
+		return inventoryClickListener;
+	}
+
+	public AchieveBedListener getBedListener() {
+
+		return bedListener;
+	}
+
+	public AchieveHoeFertiliseFireworkMusicListener getHoeFertiliseFireworkMusicListener() {
+
+		return hoeFertiliseFireworkMusicListener;
 	}
 
 	public String getIcon() {

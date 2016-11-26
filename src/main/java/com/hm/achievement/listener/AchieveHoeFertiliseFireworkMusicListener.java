@@ -54,7 +54,8 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener i
 			return;
 		}
 
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldEventBeTakenIntoAccount(player, category)
+				|| category == NormalAchievements.MUSICDISCS && isInCooldownPeriod(player)) {
 			return;
 		}
 

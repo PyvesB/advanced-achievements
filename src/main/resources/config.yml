@@ -88,7 +88,7 @@ ObfuscateNotReceived: false
 # the event has occurred, show achievements that have been obtained and show the next obtainable achievement,
 # but obfuscate the additional achievements. In order for this to work properly, achievements must be sorted
 # in order of increasing difficulty. For example, under Places, stone, the first achievement could have a
-# target of 100 stone,# the second 500 stone, and the third 1000 stone.  When ObfuscateProgressiveAchievements
+# target of 100 stone, the second 500 stone, and the third 1000 stone.  When ObfuscateProgressiveAchievements
 # is true, initially only the 100 stone achievement will be readable in the GUI.  Once 100 stone have been placed,
 # the 500 stone achievement will become legible.
 ObfuscateProgressiveAchievements: false
@@ -117,6 +117,13 @@ DisableSilkTouchOreBreaks: false
 
 # Name of the language file.
 LanguageFileName: 'lang.yml'
+
+# Time in seconds between each statistic count for the following categories. 
+# LavaBuckets, WaterBuckets, Beds, Brewing, MusicDiscs.
+StatisticCooldown: 10
+
+# Display action bar message when player does an action while in the cooldown period.
+CooldownActionBar: true
 
 #=============================OOO=============================#
 # III-----------------------------------------------------III #

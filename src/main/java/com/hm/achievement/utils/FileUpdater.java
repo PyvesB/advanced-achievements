@@ -193,6 +193,19 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!configFile.getKeys(false).contains("StatisticCooldown")) {
+			configFile.set("StatisticCooldown", false,
+					new String[] { "Time in seconds between each statistic count for the following categories.",
+							"LavaBuckets, WaterBuckets, Beds, Brewing, MusicDiscs." });
+			updateDone = true;
+		}
+
+		if (!configFile.getKeys(false).contains("CooldownActionBar")) {
+			configFile.set("CooldownActionBar", true,
+					"Display action bar message when player does an action while in the cooldown period.");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {
@@ -352,6 +365,12 @@ public class FileUpdater {
 		if (!langFile.getKeys(false).contains("server-restart-reload")) {
 			langFile.set("server-restart-reload",
 					"DisabledCategories list was modified. Server must be fully reloaded or restarted for your changes to take effect.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("statistic-cooldown")) {
+			langFile.set("statistic-cooldown",
+					"Achievements cooldown: wait TIME seconds before this action counts again.");
 			updateDone = true;
 		}
 

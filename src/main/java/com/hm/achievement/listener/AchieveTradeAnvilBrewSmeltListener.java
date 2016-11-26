@@ -58,7 +58,8 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener impleme
 			return;
 		}
 
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldEventBeTakenIntoAccount(player, category)
+				|| category == NormalAchievements.BREWING && isInCooldownPeriod(player)) {
 			return;
 		}
 

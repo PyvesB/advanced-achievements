@@ -1,11 +1,15 @@
 package com.hm.achievement.listener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.particle.PacketSender;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 import com.hm.achievement.utils.YamlManager;
 
@@ -19,12 +23,25 @@ public abstract class AbstractListener {
 	protected final int version;
 	protected final AdvancedAchievements plugin;
 
+	private final Map<String, Long> cooldownMap;
+	private final int cooldownTime;
+	private final boolean cooldownActionBar;
+
 	protected AbstractListener(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
 		// Minecraft versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
+		cooldownTime = plugin.getPluginConfig().getInt("StatisticCooldown", 10) * 1000;
+		cooldownMap = new HashMap<>();
+		cooldownActionBar = plugin.getPluginConfig().getBoolean("CooldownActionBar", true);
+
+	}
+
+	public Map<String, Long> getCooldownMap() {
+
+		return cooldownMap;
 	}
 
 	/**
@@ -71,6 +88,36 @@ public abstract class AbstractListener {
 		boolean excludedWorld = plugin.isInExludedWorld(player);
 
 		return !restrictedCreative && !excludedWorld;
+	}
+
+	/**
+	 * Determines whether a similar event was taken into account too recently and the player is still in the cooldown
+	 * period.
+	 * 
+	 * @param player
+	 * @return
+	 */
+	protected boolean isInCooldownPeriod(Player player) {
+
+		String uuid = player.getUniqueId().toString();
+		Long lastEventTime = cooldownMap.getOrDefault(uuid, 0L);
+		long timeToWait = lastEventTime + cooldownTime - System.currentTimeMillis();
+		if (timeToWait > 0) {
+			if (cooldownActionBar) {
+				String actionBarJsonMessage = "{\"text\":\"&o" + plugin.getPluginLang()
+						.getString("statistic-cooldown",
+								"Achievements cooldown: wait TIME seconds before this action counts again.")
+						.replace("TIME", String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
+				try {
+					PacketSender.sendChatPacket(player, actionBarJsonMessage, PacketSender.ACTION_BAR_BYTE);
+				} catch (Exception e) {
+					plugin.getLogger().warning("Errors while trying to display action bar message for cooldown.");
+				}
+			}
+			return true;
+		}
+		cooldownMap.put(uuid, System.currentTimeMillis());
+		return false;
 	}
 
 	/**

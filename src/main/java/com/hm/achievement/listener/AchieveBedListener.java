@@ -27,7 +27,7 @@ public class AchieveBedListener extends AbstractListener implements Listener {
 
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.BEDS;
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldEventBeTakenIntoAccount(player, category) || isInCooldownPeriod(player)) {
 			return;
 		}
 
