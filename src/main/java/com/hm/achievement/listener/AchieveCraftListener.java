@@ -54,7 +54,8 @@ public class AchieveCraftListener extends AbstractListener implements Listener {
 			}
 		}
 
-		// Some items appear as having amount equal to 0 (for instance fireworks). Probably a bug in Spigot.
+		// Some items appear as having amount equal to 0, regardless of the amount crafted (for instance fireworks).
+		// Probably a bug in Spigot.
 		int eventAmount = item.getAmount() > 0 ? item.getAmount() : 1;
 		if (event.isShiftClick()) {
 			int max = event.getInventory().getMaxStackSize();
@@ -70,15 +71,6 @@ public class AchieveCraftListener extends AbstractListener implements Listener {
 			eventAmount *= max;
 		}
 
-		int amount = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, craftName, player, eventAmount);
-
-		String configAchievement;
-		for (String threshold : plugin.getPluginConfig().getConfigurationSection(category + "." + craftName)
-				.getKeys(false))
-			if (amount >= Integer.parseInt(threshold) && !plugin.getDb().hasPlayerAchievement(player,
-					plugin.getPluginConfig().getString(category + "." + craftName + '.' + threshold + '.' + "Name"))) {
-				configAchievement = category + "." + craftName + '.' + threshold;
-				awardAchievementIfAvailable(player, configAchievement);
-			}
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, craftName, eventAmount);
 	}
 }

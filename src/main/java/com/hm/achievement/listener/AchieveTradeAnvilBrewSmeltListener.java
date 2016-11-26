@@ -40,7 +40,6 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener impleme
 		}
 
 		NormalAchievements category;
-
 		InventoryType inventoryMaterial = event.getInventory().getType();
 		if (event.getRawSlot() == 2 && inventoryMaterial == InventoryType.MERCHANT) {
 			category = NormalAchievements.TRADES;
@@ -63,6 +62,6 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener impleme
 			return;
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, event.getCurrentItem().getAmount());
 	}
 }

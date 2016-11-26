@@ -476,9 +476,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (achievePlayTimeRunnable != null) {
 			achievePlayTimeRunnable.extractAchievementsFromConfig();
 		}
-		if (xpListener != null) {
-			xpListener.extractAchievementsFromConfig();
-		}
 
 		// Set to null in case user changed the option and did an /aach reload. We do not recheck for update on /aach
 		// reload.
@@ -1020,11 +1017,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AchieveConnectionListener getConnectionListener() {
 
 		return connectionListener;
-	}
-
-	public AchieveXPListener getXpListener() {
-
-		return xpListener;
 	}
 
 	public AchieveMilkLavaWaterListener getMilkLavaWaterListener() {
