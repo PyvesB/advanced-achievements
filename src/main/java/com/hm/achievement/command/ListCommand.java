@@ -938,7 +938,7 @@ public class ListCommand extends AbstractCommand {
 			// Convert from millis to hours.
 			statisticDouble = statistic / 3600000.0;
 			// Display one floating digit in the progress bar.
-			middleText = "&7" + String.format("%.1f", statisticDouble) + "/" + levelInt;
+			middleText = "&7 " + String.format("%.1f", statisticDouble) + "/" + levelInt + " ";
 		} else {
 			middleText = "&7 " + statistic + "/" + levelInt + " ";
 			// Cast to double.
