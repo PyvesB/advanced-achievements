@@ -27,7 +27,7 @@ public class FileUpdater {
 
 	/**
 	 * Updates configuration file from older plugin versions by adding missing parameters. Upgrades from versions prior
-	 * to 2.0 are not supported.
+	 * to 2.5.2 are not supported.
 	 * 
 	 * @param configFile
 	 */
@@ -35,7 +35,7 @@ public class FileUpdater {
 
 		boolean updateDone = false;
 
-		// Added in version 2.5.2 (put first to enable adding elements to it):
+		// Make sure DisabledCategories exists so elements can then be added to it:
 		if (!configFile.getKeys(false).contains("DisabledCategories")) {
 			List<String> emptyList = new ArrayList<>();
 			configFile.set("DisabledCategories", emptyList,
@@ -68,75 +68,6 @@ public class FileUpdater {
 				configFile.set("DisabledCategories", disabledCategories);
 				updateDone = true;
 			}
-		}
-
-		// Added in version 2.1:
-		if (!configFile.getKeys(false).contains("AdditionalEffects")) {
-			configFile.set("AdditionalEffects", true,
-					"Set to true to activate particle effects when receiving book and for players in top list.");
-			updateDone = true;
-		}
-
-		if (!configFile.getKeys(false).contains("FireworkStyle")) {
-			configFile.set("FireworkStyle", "BALL_LARGE", "Choose BALL_LARGE, BALL, BURST, CREEPER or STAR.");
-			updateDone = true;
-		}
-
-		if (!configFile.getKeys(false).contains("ObfuscateNotReceived")) {
-			configFile.set("ObfuscateNotReceived", true,
-					"Obfuscate achievements that have not yet been received in /aach list.");
-			updateDone = true;
-		}
-
-		if (!configFile.getKeys(false).contains("HideNotReceivedCategories")) {
-			configFile.set("HideNotReceivedCategories", false,
-					"Hide categories with no achievements yet received in /aach list.");
-			updateDone = true;
-		}
-
-		// Added in version 2.2:
-		if (!configFile.getKeys(false).contains("TitleScreen")) {
-			configFile.set("TitleScreen", true, "Display achievement name and description as screen titles.");
-			updateDone = true;
-		}
-
-		if (!configFile.getKeys(false).contains("Color")) {
-			configFile.set("Color", "5", "Set the color of the plugin (default: 5, dark purple).");
-			updateDone = true;
-		}
-
-		if (!configFile.getKeys(false).contains("TimeBook")) {
-			configFile.set("TimeBook", 900, "Time in seconds between each /aach book.");
-			updateDone = true;
-		}
-
-		if (!configFile.getKeys(false).contains("TimeList")) {
-			configFile.set("TimeList", 0, "Time in seconds between each /aach list.");
-			updateDone = true;
-		}
-
-		// Added in version 2.3.2:
-		if (!configFile.getKeys(false).contains("AsyncPooledRequestsSender")) {
-			configFile.set("AsyncPooledRequestsSender", true, "Enable multithreading for database write operations.");
-			updateDone = true;
-		}
-
-		// Added in version 2.5.2:
-		if (!configFile.getKeys(false).contains("ListAchievementFormat")) {
-			configFile.set("ListAchievementFormat", "%ICON% %NAME% %ICON%",
-					"Set the format of the achievement name in /aach list.");
-			updateDone = true;
-		}
-
-		if (!configFile.getKeys(false).contains("HideRewardDisplayInList")) {
-			configFile.set("HideRewardDisplayInList", false, "Hide the reward display in /aach list.");
-			updateDone = true;
-		}
-
-		if (!configFile.getKeys(false).contains("IgnoreVerticalDistance")) {
-			configFile.set("IgnoreVerticalDistance", false,
-					"Ignore vertical dimension (Y axis) when calculating distance statistics.");
-			updateDone = true;
 		}
 
 		// Added in version 3.0:
@@ -187,6 +118,7 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 4.0:
 		if (!configFile.getKeys(false).contains("EnrichedListProgressBars")) {
 			configFile.set("EnrichedListProgressBars", true,
 					"Display precise statistic information in the /aach list progress bars.");
@@ -220,7 +152,7 @@ public class FileUpdater {
 
 	/**
 	 * Updates language file from older plugin versions by adding missing parameters. Upgrades from versions prior to
-	 * 2.3 are not supported.
+	 * 2.5.2 are not supported.
 	 * 
 	 * @param langFile
 	 */
@@ -240,17 +172,6 @@ public class FileUpdater {
 				langFile.set(category.toLangName(), category.toLangDefault());
 				updateDone = true;
 			}
-		}
-
-		// Added in version 2.5.2:
-		if (!langFile.getKeys(false).contains("list-achievement-received")) {
-			langFile.set("list-achievement-received", "&a\u2713&f ");
-			updateDone = true;
-		}
-
-		if (!langFile.getKeys(false).contains("list-achievement-not-received")) {
-			langFile.set("list-achievement-not-received", "&4\u2717&8 ");
-			updateDone = true;
 		}
 
 		// Added in version 3.0:
@@ -352,6 +273,7 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 4.0:
 		if (!langFile.getKeys(false).contains("list-achievements-in-category-singular")) {
 			langFile.set("list-achievements-in-category", "AMOUNT achievement");
 			updateDone = true;

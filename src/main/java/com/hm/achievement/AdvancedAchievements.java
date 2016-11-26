@@ -92,7 +92,7 @@ import net.milkbowl.vault.economy.Economy;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 3.0.5
+ * @version 4.0
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin {
