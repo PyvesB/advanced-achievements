@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 /**
  * Abstract class in charge of factoring out common functionality for commands.
@@ -15,9 +16,14 @@ public abstract class AbstractCommand {
 
 	protected final AdvancedAchievements plugin;
 
+	protected final int version;
+
 	protected AbstractCommand(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
+		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
+		// Minecraft versions change in the future.
+		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	/**
@@ -53,10 +59,12 @@ public abstract class AbstractCommand {
 	 */
 	protected void playFireworkSound(Player player) {
 
-		// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in newer
-		// versions.
-		Sound sound = Sound.valueOf("FIREWORK_BLAST");
-		if (sound == null) {
+		Sound sound;
+		if (version < 9) {
+			// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in newer
+			// versions.
+			sound = Sound.valueOf("FIREWORK_BLAST");
+		} else {
 			// Play sound with enum for newer versions.
 			sound = Sound.ENTITY_FIREWORK_LARGE_BLAST;
 		}

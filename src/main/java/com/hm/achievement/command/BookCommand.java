@@ -67,10 +67,12 @@ public class BookCommand extends AbstractCommand {
 
 			// Play special sound when receiving the book.
 			if (sounds) {
-				// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in
-				// newer versions.
-				Sound sound = Sound.valueOf("LEVEL_UP");
-				if (sound == null) {
+				Sound sound;
+				if (version < 9) {
+					// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in
+					// newer versions.
+					sound = Sound.valueOf("LEVEL_UP");
+				} else {
 					// Play sound with enum for newer versions.
 					sound = Sound.ENTITY_PLAYER_LEVELUP;
 				}
