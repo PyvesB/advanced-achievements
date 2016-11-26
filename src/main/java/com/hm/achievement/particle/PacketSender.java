@@ -8,12 +8,15 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.particle.ReflectionUtils.PackageType;
 
 /**
- * Class used to send packets to the player; can be titles or json messages.
+ * Class used to send packets to the player; can be titles, json chat messages or action bar messages.
  * 
  * @author Pyves
  *
  */
 public final class PacketSender {
+
+	public static final byte CHAT_MESSAGE_BYTE = 1;
+	public static final byte ACTION_BAR_BYTE = 2;
 
 	private static final String CLASS_CHAT_BASE_COMPONENT = "IChatBaseComponent";
 	private static final String CLASS_CRAFT_PLAYER = "CraftPlayer";
@@ -34,10 +37,11 @@ public final class PacketSender {
 	}
 
 	/**
-	 * Sends the chat packet (hover and clickable messages).
+	 * Sends the chat packet (hover and clickable messages, or action bar message).
 	 * 
 	 * @param player
 	 * @param json
+	 * @param type
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException
@@ -45,7 +49,7 @@ public final class PacketSender {
 	 * @throws InstantiationException
 	 * @throws NoSuchFieldException
 	 */
-	public static void sendChatPacket(Player player, String json)
+	public static void sendChatPacket(Player player, String json, byte type)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException,
 			InstantiationException, NoSuchFieldException {
 
@@ -70,9 +74,10 @@ public final class PacketSender {
 			parsedMessage = PackageType.MINECRAFT_SERVER.getClass(NESTED_CHAT_SERIALIZER).getMethod("a", String.class)
 					.invoke(null, ChatColor.translateAlternateColorCodes("&".charAt(0), json));
 		}
+
 		Object packetPlayOutChat = PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET_PLAY_OUT_CHAT)
-				.getConstructor(PackageType.MINECRAFT_SERVER.getClass(CLASS_CHAT_BASE_COMPONENT))
-				.newInstance(parsedMessage);
+				.getConstructor(PackageType.MINECRAFT_SERVER.getClass(CLASS_CHAT_BASE_COMPONENT), byte.class)
+				.newInstance(parsedMessage, type);
 
 		// Send the message packet through the PlayerConnection.
 		PackageType.MINECRAFT_SERVER.getClass(CLASS_PLAYER_CONNECTION)
