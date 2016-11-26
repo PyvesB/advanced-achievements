@@ -65,7 +65,8 @@ public class ListGUIListener extends AbstractListener implements Listener {
 		if (event.getCurrentItem().getType() == Material.STONE
 				|| event.getCurrentItem().getType() == Material.SMOOTH_BRICK
 				|| event.getCurrentItem().getType() == Material.BONE
-				|| event.getCurrentItem().getType() == Material.WORKBENCH) {
+				|| event.getCurrentItem().getType() == Material.WORKBENCH
+				|| event.getCurrentItem().getType() == Material.PAPER) {
 			plugin.getAchievementListCommand().createCategoryGUIMultiple(event.getCurrentItem().getType(),
 					(Player) event.getWhoClicked());
 		} else {
