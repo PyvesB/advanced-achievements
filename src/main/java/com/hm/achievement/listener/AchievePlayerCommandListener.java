@@ -32,13 +32,12 @@ public class AchievePlayerCommandListener extends AbstractListener implements Li
 
 		for (String commandPrefix : plugin.getPluginConfig().getConfigurationSection(category.toString())
 				.getKeys(false)) {
-			if (!command.startsWith(commandPrefix)) {
-				continue;
+			if (command.startsWith(commandPrefix)) {
+				if (player.hasPermission(category.toPermName() + '.' + commandPrefix)) {
+					updateStatisticAndAwardAchievementsIfAvailable(player, category, commandPrefix, 1);
+				}
+				break;
 			}
-			if (player.hasPermission(category.toPermName() + '.' + commandPrefix)) {
-				updateStatisticAndAwardAchievementsIfAvailable(player, category, commandPrefix, 1);
-			}
-			break;
 		}
 	}
 }

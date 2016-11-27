@@ -25,7 +25,6 @@ import com.google.common.primitives.Ints;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.particle.ReflectionUtils.PackageType;
 import com.hm.achievement.utils.YamlManager;
 
 /**
@@ -49,7 +48,6 @@ public class ListCommand extends AbstractCommand {
 	private final boolean hideRewardDisplay;
 	private final boolean enrichedProgressBars;
 	private final int listCooldownTime;
-	private final int version;
 
 	// Corresponds to times at which players have entered list commands. Cooldown structure.
 	private final HashMap<String, Long> playersListTime;
@@ -70,10 +68,6 @@ public class ListCommand extends AbstractCommand {
 		hideRewardDisplay = plugin.getPluginConfig().getBoolean("HideRewardDisplayInList", false);
 		listCooldownTime = plugin.getPluginConfig().getInt("TimeList", 0) * 1000;
 		enrichedProgressBars = plugin.getPluginConfig().getBoolean("EnrichedListProgressBars", true);
-
-		// Simple and fast check to retrieve Minecraft version. Might need to be updated depending on how the Minecraft
-		// versions change in the future.
-		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 
 		// Get list of item stacks for items displayed in the GUI, for multiple achievements.
 		multipleAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.STONE, 1, (short) 6),

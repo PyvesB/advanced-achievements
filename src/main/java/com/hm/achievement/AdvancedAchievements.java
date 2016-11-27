@@ -97,7 +97,6 @@ import net.milkbowl.vault.economy.Economy;
  */
 public class AdvancedAchievements extends JavaPlugin {
 
-
 	// Used for Vault plugin integration.
 	private Economy economy;
 
@@ -147,6 +146,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private ReloadCommand reloadCommand;
 	private UpdateChecker updateChecker;
 
+	// Language and configuration related.
 	private YamlManager config;
 	private YamlManager lang;
 	private final FileManager fileManager;
@@ -181,9 +181,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private BukkitTask playedTimeTask;
 	private BukkitTask distanceTask;
 
-	/**
-	 * Constructor.
-	 */
 	public AdvancedAchievements() {
 
 		successfulLoad = true;
