@@ -126,7 +126,7 @@ public class FileUpdater {
 		}
 
 		if (!configFile.getKeys(false).contains("StatisticCooldown")) {
-			configFile.set("StatisticCooldown", false,
+			configFile.set("StatisticCooldown", 10,
 					new String[] { "Time in seconds between each statistic count for the following categories.",
 							"LavaBuckets, WaterBuckets, Beds, Brewing, MusicDiscs." });
 			updateDone = true;
@@ -292,7 +292,7 @@ public class FileUpdater {
 
 		if (!langFile.getKeys(false).contains("statistic-cooldown")) {
 			langFile.set("statistic-cooldown",
-					"Achievements cooldown: wait TIME seconds before this action counts again.");
+					"Achievements cooldown, wait TIME seconds before this action counts again.");
 			updateDone = true;
 		}
 

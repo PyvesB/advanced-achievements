@@ -106,7 +106,7 @@ public abstract class AbstractListener {
 			if (cooldownActionBar) {
 				String actionBarJsonMessage = "{\"text\":\"&o" + plugin.getPluginLang()
 						.getString("statistic-cooldown",
-								"Achievements cooldown: wait TIME seconds before this action counts again.")
+								"Achievements cooldown, wait TIME seconds before this action counts again.")
 						.replace("TIME", String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
 				try {
 					PacketSender.sendChatPacket(player, actionBarJsonMessage, PacketSender.ACTION_BAR_BYTE);
