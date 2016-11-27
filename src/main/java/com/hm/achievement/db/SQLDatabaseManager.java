@@ -423,8 +423,13 @@ public class SQLDatabaseManager {
 	 */
 	private Connection createRemoteSQLConnection() throws SQLException {
 
-		return DriverManager.getConnection(
-				databaseAddress + "?autoReconnect=true&user=" + databaseUser + "&password=" + databasePassword);
+		if (databaseType == MYSQL) {
+			return DriverManager.getConnection(databaseAddress + "?useSSL=false&autoReconnect=true&user=" + databaseUser
+					+ "&password=" + databasePassword);
+		} else {
+			return DriverManager.getConnection(
+					databaseAddress + "?autoReconnect=true&user=" + databaseUser + "&password=" + databasePassword);
+		}
 	}
 
 	/**
@@ -794,8 +799,8 @@ public class SQLDatabaseManager {
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix + dbName + " WHERE playername = '"
-					+ player.getUniqueId() + "'");
+			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix + dbName
+					+ " WHERE playername = '" + player.getUniqueId() + "'");
 			while (rs.next()) {
 				amount = rs.getInt(dbName);
 			}
@@ -819,9 +824,9 @@ public class SQLDatabaseManager {
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix
-					+ dbName + " WHERE playername = '" + player.getUniqueId() + "' AND "
-					+ category.toSubcategoryDBName() + " = '" + subcategory + "'");
+			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix + dbName
+					+ " WHERE playername = '" + player.getUniqueId() + "' AND " + category.toSubcategoryDBName()
+					+ " = '" + subcategory + "'");
 			while (rs.next()) {
 				amount = rs.getInt(dbName);
 			}
