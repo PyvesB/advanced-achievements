@@ -27,8 +27,8 @@ public class AchievePlayerCommandListener extends AbstractListener implements Li
 
 		MultipleAchievements category = MultipleAchievements.PLAYERCOMMANDS;
 
-		// Strip down the command to a lowercase spaceless version without initial slash.
-		String command = event.getMessage().substring(1).toLowerCase().replaceAll(" ", "");
+		// Strip down the command to a lowercase version without initial slash.
+		String command = event.getMessage().substring(1).toLowerCase();
 
 		for (String commandPrefix : plugin.getPluginConfig().getConfigurationSection(category.toString())
 				.getKeys(false)) {
