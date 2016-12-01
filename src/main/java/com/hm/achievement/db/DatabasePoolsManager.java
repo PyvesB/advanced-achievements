@@ -343,7 +343,12 @@ public class DatabasePoolsManager {
 		String uuid = player.getUniqueId().toString();
 		Integer oldAmount = categoryHashMap.get(uuid + subcategory);
 		if (oldAmount == null) {
-			oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategory);
+			if (category == MultipleAchievements.PLAYERCOMMANDS) {
+				oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category,
+						subcategory.replaceAll(" ", ""));
+			} else {
+				oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategory);
+			}
 		}
 		Integer newValue = oldAmount + value;
 
@@ -365,7 +370,12 @@ public class DatabasePoolsManager {
 		String uuid = player.getUniqueId().toString();
 		Integer oldAmount = categoryHashMap.get(uuid);
 		if (oldAmount == null) {
-			oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategory);
+			if (category == MultipleAchievements.PLAYERCOMMANDS) {
+				oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category,
+						subcategory.replaceAll(" ", ""));
+			} else {
+				oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategory);
+			}
 		}
 		return oldAmount;
 	}

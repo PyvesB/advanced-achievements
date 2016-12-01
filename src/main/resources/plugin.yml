@@ -157,5 +157,6 @@ permissions:
   achievement.count.distancegliding:
     description: Allows gliding distance statistics in database to increase.
     default: true
-# Additional permissions are available for the breaks, places, crafts and kills categories.
+# Additional permissions are available for the Breaks, Places, Crafts, Kills and PlayerCommands categories.
 # They depend on the sub-categories defined; for instance for stone breaks: achievement.count.breaks.stone
+# For PlayerCommands, use lower case without spaces nor the initial slash: achievement.count.playercommands.aachbook
