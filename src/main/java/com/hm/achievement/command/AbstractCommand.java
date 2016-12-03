@@ -56,16 +56,16 @@ public abstract class AbstractCommand {
 
 		// Player bypasses cooldown if he has full plugin permissions.
 		if (player.hasPermission("achievement.*") || cooldownTime == 0) {
-			return true;
+			return false;
 		}
 		long currentTime = System.currentTimeMillis();
 		String uuid = player.getUniqueId().toString();
-		long lastListTime = lastCommandTimes.getOrDefault(uuid, Long.MAX_VALUE);
-		if (currentTime - lastListTime < cooldownTime) {
-			return true;
+		Long lastListTime = lastCommandTimes.get(uuid);
+		if (lastListTime == null || currentTime - lastListTime > cooldownTime) {
+			lastCommandTimes.put(uuid, currentTime);
+			return false;
 		}
-		lastCommandTimes.put(uuid, currentTime);
-		return false;
+		return true;
 	}
 
 	/**
