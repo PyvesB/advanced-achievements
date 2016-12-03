@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |     Advanced Achievements 4.0 configuration - Readme    | #
+# |    Advanced Achievements 4.0.1 configuration - Readme   | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -501,14 +501,14 @@ EnderPearls:
     Name: enderpearls_10
     DisplayName: Teleport Man
     
-# When a player gives a pet to another player (requires PetMaster plugin version 1.3 or above).
+# When a player gives a pet to another player (requires Pet Master plugin version 1.3 or above).
 PetMasterGive:
   '3':
     Message: 3 pets given to friends!
     Name: petmastergive_3
     DisplayName: Donator
 
-# When a player receives a pet from another player (requires PetMaster plugin version 1.3 or above).
+# When a player receives a pet from another player (requires Pet Master plugin version 1.3 or above).
 PetMasterReceive:
   '10':
     Message: 10 pets received from friends!
@@ -525,11 +525,11 @@ Smelting:
 # When a player enters a specific command (specify command prefixes in lower case without initial slash).
 # For instance a command /awf add world from the AntiWorldFly plugin matches with subcategory 'awf add'.
 PlayerCommands:
-  'aach book':
+  'aach stats':
     '10':
-      Message: Obtain 10 achievement books!
-      Name: playercommand_aachbook_10
-      DisplayName: Reader
+      Message: Run the stats command 10 times!
+      Name: playercommand_aachstats_10
+      DisplayName: Statistician
     
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
