@@ -1,5 +1,7 @@
 package com.hm.achievement.command;
 
+import java.util.Map;
+
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -42,6 +44,28 @@ public abstract class AbstractCommand {
 		}
 
 		executeCommand(sender, args);
+	}
+	
+	/**
+	 * Checks if player hasn't done a command too recently (with "too recently" being defined in configuration file).
+	 * 
+	 * @param player
+	 * @return whether a player is authorised to perform the list command
+	 */
+	protected static boolean isInCooldownPeriod(Player player, int cooldownTime, Map<String, Long> lastCommandTimes) {
+
+		// Player bypasses cooldown if he has full plugin permissions.
+		if (player.hasPermission("achievement.*") || cooldownTime == 0) {
+			return true;
+		}
+		long currentTime = System.currentTimeMillis();
+		String uuid = player.getUniqueId().toString();
+		long lastListTime = lastCommandTimes.getOrDefault(uuid, Long.MAX_VALUE);
+		if (currentTime - lastListTime < cooldownTime) {
+			return true;
+		}
+		lastCommandTimes.put(uuid, currentTime);
+		return false;
 	}
 
 	/**

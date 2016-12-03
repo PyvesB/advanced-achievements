@@ -134,7 +134,7 @@ public class ListCommand extends AbstractCommand {
 			return;
 		}
 
-		if (!timeAuthorisedList(player)) {
+		if (AbstractCommand.isInCooldownPeriod(player, listCooldownTime, playersListTime)) {
 			// The player has already done a list command recently.
 			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
 					.getString("list-delay", "You must wait TIME seconds between each list command!")
@@ -754,32 +754,6 @@ public class ListCommand extends AbstractCommand {
 		categoryItem.setItemMeta(categoryMeta);
 
 		return categoryItem;
-	}
-
-	/**
-	 * Checks if player hasn't done a list command too recently (with "too recently" being defined in configuration
-	 * file).
-	 * 
-	 * @param player
-	 * @return whether a player is authorised to perform the list command
-	 */
-	private boolean timeAuthorisedList(Player player) {
-
-		// Player bypasses cooldown if he has full plugin permissions.
-		if (player.hasPermission("achievement.*") || listCooldownTime == 0) {
-			return true;
-		}
-		long currentTime = System.currentTimeMillis();
-		long lastListTime = 0;
-		String uuid = player.getUniqueId().toString();
-		if (playersListTime.containsKey(uuid)) {
-			lastListTime = playersListTime.get(uuid);
-		}
-		if (currentTime - lastListTime < listCooldownTime) {
-			return false;
-		}
-		playersListTime.put(uuid, currentTime);
-		return true;
 	}
 
 	/**

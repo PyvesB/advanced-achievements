@@ -27,7 +27,7 @@ import com.hm.achievement.particle.ParticleEffect;
  */
 public class BookCommand extends AbstractCommand {
 
-	private final int bookTime;
+	private final int bookCooldownTime;
 	private final String bookSeparator;
 	private final boolean additionalEffects;
 	private final boolean sounds;
@@ -40,7 +40,7 @@ public class BookCommand extends AbstractCommand {
 		super(plugin);
 		playersBookTime = new HashMap<>();
 		// Load configuration parameters.
-		bookTime = plugin.getPluginConfig().getInt("TimeBook", 0) * 1000;
+		bookCooldownTime = plugin.getPluginConfig().getInt("TimeBook", 0) * 1000;
 		bookSeparator = plugin.getPluginConfig().getString("BookSeparator", "");
 		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		sounds = plugin.getPluginConfig().getBoolean("Sound", true);
@@ -55,7 +55,7 @@ public class BookCommand extends AbstractCommand {
 
 		Player player = (Player) sender;
 
-		if (timeAuthorisedBook(player)) {
+		if (!AbstractCommand.isInCooldownPeriod(player, bookCooldownTime, playersBookTime)) {
 			// Play special particle effect when receiving the book.
 			if (additionalEffects) {
 				try {
@@ -89,33 +89,8 @@ public class BookCommand extends AbstractCommand {
 			// The player has already received a book recently.
 			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
 					.getString("book-delay", "You must wait TIME seconds between each book reception!")
-					.replace("TIME", Integer.toString(bookTime / 1000)));
+					.replace("TIME", Integer.toString(bookCooldownTime / 1000)));
 		}
-	}
-
-	/**
-	 * Checks if player hasn't received a book too recently (with "too recently" being defined in configuration file).
-	 * 
-	 * @param player
-	 * @return whether a player is authorised to receive a book
-	 */
-	private boolean timeAuthorisedBook(Player player) {
-
-		// Player bypasses cooldown if he has full plugin permissions.
-		if (player.hasPermission("achievement.*")) {
-			return true;
-		}
-		long currentTime = System.currentTimeMillis();
-		long lastBookTime = 0;
-		String uuid = player.getUniqueId().toString();
-		if (playersBookTime.containsKey(uuid)) {
-			lastBookTime = playersBookTime.get(uuid);
-		}
-		if (currentTime - lastBookTime < bookTime) {
-			return false;
-		}
-		playersBookTime.put(uuid, currentTime);
-		return true;
 	}
 
 	/**
