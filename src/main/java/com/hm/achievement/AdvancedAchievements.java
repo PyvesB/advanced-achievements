@@ -391,8 +391,21 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString())) {
-			petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
-			pm.registerEvents(petMasterGiveReceiveListener, this);
+			// Need PetMaster with a minimum version of 1.3.
+			if (Bukkit.getPluginManager().isPluginEnabled("PetMaster") && Integer.parseInt(Character.toString(
+					Bukkit.getPluginManager().getPlugin("PetMaster").getDescription().getVersion().charAt(2))) >= 3) {
+				petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
+				pm.registerEvents(petMasterGiveReceiveListener, this);
+			} else  {
+				disabledCategorySet.add(NormalAchievements.PETMASTERGIVE.toString());
+				disabledCategorySet.add(NormalAchievements.PETMASTERRECEIVE.toString());
+				this.getLogger().warning(
+						"Failed to pair with PetMaster plugin; disabling PetMasterGive and PetMasterReceive categories.");
+				this.getLogger().warning(
+						"Ensure you have placed PetMaster with a minimum version of 1.3 in your plugins folder.");
+				this.getLogger().warning(
+						"To permanently disable these categories, you should add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
+			}
 		}
 
 		listGUIListener = new ListGUIListener(this);
