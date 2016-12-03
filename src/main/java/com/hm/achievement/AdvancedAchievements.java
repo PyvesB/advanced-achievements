@@ -397,14 +397,12 @@ public class AdvancedAchievements extends JavaPlugin {
 				petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
 				pm.registerEvents(petMasterGiveReceiveListener, this);
 			} else  {
-				disabledCategorySet.add(NormalAchievements.PETMASTERGIVE.toString());
-				disabledCategorySet.add(NormalAchievements.PETMASTERRECEIVE.toString());
 				this.getLogger().warning(
-						"Failed to pair with PetMaster plugin; disabling PetMasterGive and PetMasterReceive categories.");
+						"Failed to pair with Pet Master plugin; disabling PetMasterGive and PetMasterReceive categories.");
 				this.getLogger().warning(
-						"Ensure you have placed PetMaster with a minimum version of 1.3 in your plugins folder.");
+						"Ensure you have placed Pet Master with a minimum version of 1.3 in your plugins folder.");
 				this.getLogger().warning(
-						"To permanently disable these categories, you should add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
+						"If you do not wish to use these categories, you must add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
 			}
 		}
 
