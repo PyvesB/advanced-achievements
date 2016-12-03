@@ -1047,6 +1047,11 @@ public class AdvancedAchievements extends JavaPlugin {
 		return hoeFertiliseFireworkMusicListener;
 	}
 
+	public AchievePetMasterGiveReceiveListener getPetMasterGiveReceiveListener() {
+
+		return petMasterGiveReceiveListener;
+	}
+
 	public String getIcon() {
 
 		return icon;

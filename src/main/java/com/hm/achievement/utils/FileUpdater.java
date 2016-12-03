@@ -296,6 +296,11 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!langFile.getKeys(false).contains("version-command-petmaster")) {
+			langFile.set("version-command-petmaster", "Pet Master integration:");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the language file: save and do a fresh load.
 			try {

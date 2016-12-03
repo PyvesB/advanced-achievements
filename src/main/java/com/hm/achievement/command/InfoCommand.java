@@ -38,15 +38,26 @@ public class InfoCommand extends AbstractCommand {
 						"Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"));
 
 		// Display whether Advanced Achievements is linked to Vault.
-		String state;
+		String vaultState;
 		if (plugin.setUpEconomy(false)) {
-			state = "ON";
+			vaultState = "ON";
 		} else {
-			state = "OFF";
+			vaultState = "OFF";
 		}
 		sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
 				+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " " + ChatColor.GRAY
-				+ state);
+				+ vaultState);
+
+		// Display whether Advanced Achievements is linked to Pet Master.
+		String petMasterState;
+		if (plugin.getPetMasterGiveReceiveListener() != null) {
+			petMasterState = "ON";
+		} else {
+			petMasterState = "OFF";
+		}
+		sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
+				+ plugin.getPluginLang().getString("version-command-petmaster", "Pet Master integration:") + " "
+				+ ChatColor.GRAY + petMasterState);
 
 		// Display database type.
 		String databaseType;
