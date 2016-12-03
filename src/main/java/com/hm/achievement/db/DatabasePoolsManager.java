@@ -341,18 +341,19 @@ public class DatabasePoolsManager {
 
 		Map<String, Integer> categoryHashMap = getHashMap(category);
 		String uuid = player.getUniqueId().toString();
-		Integer oldAmount = categoryHashMap.get(uuid + subcategory);
+		String subcategoryDBName;
+		if (category == MultipleAchievements.PLAYERCOMMANDS) {
+			subcategoryDBName = subcategory.replaceAll(" ", "");
+		} else {
+			subcategoryDBName = subcategory;
+		}
+		Integer oldAmount = categoryHashMap.get(uuid + subcategoryDBName);
 		if (oldAmount == null) {
-			if (category == MultipleAchievements.PLAYERCOMMANDS) {
-				oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category,
-						subcategory.replaceAll(" ", ""));
-			} else {
-				oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategory);
-			}
+			oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategoryDBName);
 		}
 		Integer newValue = oldAmount + value;
 
-		categoryHashMap.put(uuid + subcategory, newValue);
+		categoryHashMap.put(uuid + subcategoryDBName, newValue);
 		return newValue;
 	}
 
