@@ -12,7 +12,7 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 
 /**
- * Listener class to deal with Fish achievements.
+ * Listener class to deal with Fish and Treasure achievements.
  * 
  * @author Pyves
  *
@@ -27,8 +27,7 @@ public class AchieveFishListener extends AbstractListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerFish(PlayerFishEvent event) {
 
-		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH
-				&& event.getState() != PlayerFishEvent.State.CAUGHT_ENTITY) {
+		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) {
 			return;
 		}
 
