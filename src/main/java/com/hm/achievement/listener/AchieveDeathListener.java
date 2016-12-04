@@ -31,7 +31,7 @@ public class AchieveDeathListener extends AbstractListener implements Listener {
 		}
 
 		NormalAchievements category = NormalAchievements.DEATHS;
-		if (!shouldEventBeTakenIntoAccountNoCreative(player, category)) {
+		if (!shouldEventBeTakenIntoAccount(player, category)) {
 			return;
 		}
 

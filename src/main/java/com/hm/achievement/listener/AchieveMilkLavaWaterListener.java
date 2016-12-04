@@ -11,7 +11,7 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 
 /**
- * Listener class to deal with Milk achievements.
+ * Listener class to deal with Milk, WaterBuckets and LavaBuckets achievements.
  * 
  * @author Pyves
  *
@@ -42,7 +42,7 @@ public class AchieveMilkLavaWaterListener extends AbstractListener implements Li
 			return;
 		}
 
-		if (!shouldEventBeTakenIntoAccountNoCreative(player, category)
+		if (!shouldEventBeTakenIntoAccount(player, category)
 				|| category != NormalAchievements.MILKS && isInCooldownPeriod(player)) {
 			return;
 		}

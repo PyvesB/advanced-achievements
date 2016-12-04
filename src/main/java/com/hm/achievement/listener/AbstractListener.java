@@ -61,21 +61,6 @@ public abstract class AbstractListener {
 	}
 
 	/**
-	 * Determines whether the listened event should be taken into account. Ignore creative mode check.
-	 * 
-	 * @param player
-	 * @param category
-	 * @return
-	 */
-	protected boolean shouldEventBeTakenIntoAccountNoCreative(Player player, NormalAchievements category) {
-
-		boolean permission = player.hasPermission(category.toPermName());
-		boolean excludedWorld = plugin.isInExludedWorld(player);
-
-		return permission && !excludedWorld;
-	}
-
-	/**
 	 * Determines whether the listened event should be taken into account. Ignore permission check.
 	 * 
 	 * @param player
