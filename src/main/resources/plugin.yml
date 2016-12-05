@@ -169,9 +169,6 @@ permissions:
   achievement.count.itempickups:
     description: Allows itempickups statistics in database to increase.
     default: true
-  achievement.count.distancegliding:
-    description: Allows gliding distance statistics in database to increase.
-    default: true
   achievement.count.petmastergive:
     description: Allows petmastergive statistics in database to increase.
     default: true
