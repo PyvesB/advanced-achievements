@@ -156,33 +156,30 @@ permissions:
     default: true
   achievement.count.distancegliding:
     description: Allows gliding distance statistics in database to increase.
-    default: true    
+    default: true
+  achievement.count.distancellama:
+    description: Allows distance llama statistics in database to increase.
+    default: true
   achievement.count.treasures:
-    description: Allows treasures statistics in database to increase.
+    description: Allows treasure statistics in database to increase.
     default: true
   achievement.count.lavabuckets:
-    description: Allows lavabuckets statistics in database to increase.
+    description: Allows lava bucket statistics in database to increase.
     default: true
   achievement.count.waterbuckets:
-    description: Allows waterbuckets statistics in database to increase.
+    description: Allows water bucket statistics in database to increase.
     default: true
   achievement.count.itempickups:
-    description: Allows itempickups statistics in database to increase.
+    description: Allows item pickup statistics in database to increase.
     default: true
   achievement.count.petmastergive:
-    description: Allows petmastergive statistics in database to increase.
+    description: Allows Pet Master give statistics in database to increase.
     default: true
   achievement.count.petmasterreceive:
-    description: Allows petmasterreceive statistics in database to increase.
+    description: Allows Pet Master receive statistics in database to increase.
     default: true
   achievement.count.smelting:
     description: Allows smelting statistics in database to increase.
-    default: true
-  achievement.count.distancellama:
-    description: Allows distancellama statistics in database to increase.
-    default: true
-  achievement.count.playercommands:
-    description: Allows playercommands statistics in database to increase.
     default: true
 # Additional permissions are available for the Breaks, Places, Crafts, Kills and PlayerCommands categories.
 # They depend on the sub-categories defined; for instance for stone breaks: achievement.count.breaks.stone
