@@ -500,18 +500,30 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Gets the total number of achievements received by a player.
+	 * Gets the total number of achievements received by a player, using a Player object.
 	 * 
 	 * @param player
 	 * @return number of achievements
 	 */
 	public int getPlayerAchievementsAmount(Player player) {
 
+		return getPlayerAchievementsAmount(player.getUniqueId().toString());
+	}
+
+	/**
+	 * Gets the total number of achievements received by a player, using an UUID; this method is provided as a
+	 * convenience for other plugins.
+	 * 
+	 * @param uuid
+	 * @return number of achievements
+	 */
+	public int getPlayerAchievementsAmount(String uuid) {
+
 		int achievementsAmount = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM " + tablePrefix + "achievements WHERE playername = '"
-					+ player.getUniqueId() + "'");
+			ResultSet rs = st.executeQuery(
+					"SELECT COUNT(*) FROM " + tablePrefix + "achievements WHERE playername = '" + uuid + "'");
 			if (rs.next()) {
 				achievementsAmount = rs.getInt(1);
 			}
