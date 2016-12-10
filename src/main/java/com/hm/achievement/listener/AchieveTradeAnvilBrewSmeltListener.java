@@ -45,7 +45,7 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener impleme
 			category = NormalAchievements.ANVILS;
 		} else if (inventoryType == InventoryType.BREWING) {
 			category = NormalAchievements.BREWING;
-		} else if (inventoryType == InventoryType.FURNACE) {
+		} else if (event.getRawSlot() == 2 && inventoryType == InventoryType.FURNACE) {
 			category = NormalAchievements.SMELTING;
 		} else {
 			return;
