@@ -11,10 +11,11 @@ import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.utils.YamlManager;
 
+import net.milkbowl.vault.item.ItemInfo;
 import net.milkbowl.vault.item.Items;
 
 /**
- * Class in charge of distributing the rewards when receiving an achievement.
+ * Class in charge of handling the rewards for achievements.
  * 
  * @author Pyves
  */
@@ -32,72 +33,62 @@ public class AchievementRewards {
 	}
 
 	/**
-	 * Returns the type(s) of an achievement reward with strings coming from language file.
+	 * Constructs the listing of an achievement's rewards with strings coming from language file.
 	 * 
 	 * @param configAchievement
 	 * @return type(s) of the achievement reward as an array of strings
 	 */
-	public List<String> getRewardType(String configAchievement) {
+	public List<String> getRewardListing(String configAchievement) {
 
 		ArrayList<String> rewardType = new ArrayList<>();
 		Set<String> keyNames = plugin.getPluginConfig().getKeys(true);
 
 		YamlManager pluginLang = plugin.getPluginLang();
-		if (keyNames.contains(configAchievement + ".Reward.Money")) {
-			rewardType.add(pluginLang.getString("list-reward-money", "money"));
+		if (plugin.setUpEconomy(false) && keyNames.contains(configAchievement + ".Reward.Money")) {
+			int amount = getMoneyAmount(configAchievement);
+			rewardType.add(pluginLang.getString("list-reward-money", "receive AMOUNT").replace("AMOUNT",
+					amount + " " + getCurrencyName(amount)));
 		}
 		if (keyNames.contains(configAchievement + ".Reward.Item")) {
-			rewardType.add(pluginLang.getString("list-reward-item", "item"));
+			int amount = getItemAmount(configAchievement);
+			String name = getItemName(getItemReward(configAchievement, amount));
+			rewardType.add(pluginLang.getString("list-reward-item", "receive AMOUNT ITEM")
+					.replace("AMOUNT", Integer.toString(amount)).replace("ITEM", name));
 		}
 		if (keyNames.contains(configAchievement + ".Reward.Command")) {
 			rewardType.add(pluginLang.getString("list-reward-command", "other"));
 		}
-
 		return rewardType;
 	}
 
 	/**
-	 * Main reward manager (deals with configuration).
+	 * Main reward manager; parses the configuration and gives rewards accordingly.
 	 * 
 	 * @param player
 	 * @param configAchievement
 	 */
 	public void checkConfig(Player player, String configAchievement) {
 
-		YamlManager config = plugin.getPluginConfig();
+		int moneyAmount = getMoneyAmount(configAchievement);
+		int itemAmount = getItemAmount(configAchievement);
 
-		// Supports both old and new plugin syntax (Amount used to be a separate sub-category).
-		int money = Math.max(config.getInt(configAchievement + ".Reward.Money", 0),
-				config.getInt(configAchievement + ".Reward.Money.Amount", 0));
-
-		int itemAmount = 0;
-
-		// Old config syntax.
-		if (config.getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
-			itemAmount = config.getInt(configAchievement + ".Reward.Item.Amount", 0);
-		} else if (config.getKeys(true).contains(configAchievement + ".Reward.Item")) {
-			// New config syntax. Name of item and quantity are on the same line, separated by a space.
-			String materialAndQty = config.getString(configAchievement + ".Reward.Item", "");
-			int indexOfAmount = materialAndQty.indexOf(' ');
-			if (indexOfAmount != -1) {
-				itemAmount = Integer.parseInt(materialAndQty.substring(indexOfAmount + 1));
-			}
-		}
-
-		String commandReward = config.getString(configAchievement + ".Reward.Command", "");
+		String commandReward = plugin.getPluginConfig().getString(configAchievement + ".Reward.Command", "");
 
 		// Parsing of config finished; we now dispatch the rewards accordingly.
-		if (money > 0) {
-			rewardMoney(player, money);
+		if (moneyAmount > 0) {
+			rewardMoney(player, moneyAmount);
 		}
 
 		if (itemAmount > 0) {
-			ItemStack item = this.getItemReward(player, configAchievement, itemAmount);
+			ItemStack item = getItemReward(configAchievement, itemAmount);
 			if (player.getInventory().firstEmpty() != -1 && item != null) {
 				player.getInventory().addItem(item);
 			} else if (item != null) {
 				player.getWorld().dropItem(player.getLocation(), item);
 			}
+			player.sendMessage(plugin.getChatHeader()
+					+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " "
+					+ getItemName(item));
 		}
 
 		if (commandReward.length() > 0) {
@@ -112,13 +103,12 @@ public class AchievementRewards {
 			if (!rewardCommandNotif || rewardMsg.length() == 0) {
 				return;
 			}
-
 			player.sendMessage(plugin.getChatHeader() + rewardMsg);
 		}
 	}
 
 	/**
-	 * Gives a money reward to a player (specified in configuration file).
+	 * Gives a money reward to a player.
 	 * 
 	 * @param player
 	 * @param amount
@@ -134,16 +124,10 @@ public class AchievementRewards {
 				plugin.getEconomy().depositPlayer(player.getName(), amount);
 			}
 
-			// If player has set different currency names depending on amount, adapt message accordingly.
-			String currencyName;
-			if (amount > 1) {
-				currencyName = plugin.getEconomy().currencyNamePlural();
-			} else {
-				currencyName = plugin.getEconomy().currencyNameSingular();
-			}
+			String currencyName = getCurrencyName(amount);
 
 			player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&',
-					plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT !")
+					plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!")
 							.replace("AMOUNT", amount + " " + currencyName)));
 		}
 	}
@@ -156,7 +140,7 @@ public class AchievementRewards {
 	 * @param amount
 	 * @return ItemStack object corresponding to the reward
 	 */
-	private ItemStack getItemReward(Player player, String ach, int amount) {
+	private ItemStack getItemReward(String ach, int amount) {
 
 		ItemStack item = null;
 		YamlManager config = plugin.getPluginConfig();
@@ -186,29 +170,85 @@ public class AchievementRewards {
 				item = new ItemStack(rewardMaterial, amount);
 			}
 		}
-
 		if (item == null) {
 			plugin.getLogger().warning("Invalid item reward for achievement \"" + config.getString(ach + ".Name")
 					+ "\". Please specify a valid Material name.");
-			return null;
 		}
+		return item;
+	}
 
-		// Display Vault name of object if available.
-		if (plugin.setUpEconomy(false)) {
-			try {
-				player.sendMessage(plugin.getChatHeader()
-						+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " "
-						+ Items.itemByStack(item).getName());
-				return item;
-			} catch (Exception e) {
-				// Do nothing, another message will be displayed just below.
+	/**
+	 * Extracts the money reward amount from the configuration.
+	 * 
+	 * @param configAchievement
+	 * @return
+	 */
+	private int getMoneyAmount(String configAchievement) {
+
+		// Supports both old and new plugin syntax (Amount used to be a separate sub-category).
+		int money = Math.max(plugin.getPluginConfig().getInt(configAchievement + ".Reward.Money", 0),
+				plugin.getPluginConfig().getInt(configAchievement + ".Reward.Money.Amount", 0));
+		return money;
+	}
+
+	/**
+	 * Extracts the item reward amount from the configuration.
+	 * 
+	 * @param configAchievement
+	 * @return
+	 */
+	private int getItemAmount(String configAchievement) {
+
+		YamlManager config = plugin.getPluginConfig();
+
+		int itemAmount = 0;
+		// Old config syntax.
+		if (config.getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
+			itemAmount = config.getInt(configAchievement + ".Reward.Item.Amount", 0);
+		} else if (config.getKeys(true).contains(configAchievement + ".Reward.Item")) {
+			// New config syntax. Name of item and quantity are on the same line, separated by a space.
+			String materialAndQty = config.getString(configAchievement + ".Reward.Item", "");
+			int indexOfAmount = materialAndQty.indexOf(' ');
+			if (indexOfAmount != -1) {
+				itemAmount = Integer.parseInt(materialAndQty.substring(indexOfAmount + 1));
 			}
 		}
+		return itemAmount;
+	}
 
+	/**
+	 * Returns name of currency depending on amount.
+	 * 
+	 * @param amount
+	 * @return
+	 */
+	private String getCurrencyName(int amount) {
+
+		String currencyName;
+		if (amount > 1) {
+			currencyName = plugin.getEconomy().currencyNamePlural();
+		} else {
+			currencyName = plugin.getEconomy().currencyNameSingular();
+		}
+		return currencyName;
+	}
+
+	/**
+	 * Returns the name of an item reward.
+	 * 
+	 * @param item
+	 * @return
+	 */
+	private String getItemName(ItemStack item) {
+
+		// Return Vault name of object if available.
+		if (plugin.setUpEconomy(false)) {
+			ItemInfo itemInfo = Items.itemByStack(item);
+			if (itemInfo != null) {
+				return itemInfo.getName();
+			}
+		}
 		// Vault name of object not available.
-		player.sendMessage(plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " "
-				+ item.getType().toString().replace("_", " ").toLowerCase());
-		return item;
+		return item.getType().toString().replace("_", " ").toLowerCase();
 	}
 }

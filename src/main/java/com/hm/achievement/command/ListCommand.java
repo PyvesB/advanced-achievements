@@ -238,7 +238,7 @@ public class ListCommand extends AbstractCommand {
 				String nameToShowUser = getAchievementNameToDisplay(categoryName, '.' + section, achName, level);
 				String achMessage = getAchievementMessageToDisplay(categoryName, '.' + section, level);
 
-				List<String> rewards = plugin.getReward().getRewardType(categoryName + '.' + section + '.' + level);
+				List<String> rewards = plugin.getReward().getRewardListing(categoryName + '.' + section + '.' + level);
 				String date = plugin.getDb().getPlayerAchievementDate(player, achName);
 
 				boolean inelligibleSeriesItem;
@@ -470,7 +470,7 @@ public class ListCommand extends AbstractCommand {
 			String nameToShowUser = getAchievementNameToDisplay(categoryName, "", achName, level);
 			String achMessage = getAchievementMessageToDisplay(categoryName, "", level);
 
-			List<String> rewards = plugin.getReward().getRewardType(categoryName + '.' + level);
+			List<String> rewards = plugin.getReward().getRewardListing(categoryName + '.' + level);
 			String date = plugin.getDb().getPlayerAchievementDate(player, achName);
 
 			boolean inelligibleSeriesItem;
@@ -862,13 +862,13 @@ public class ListCommand extends AbstractCommand {
 		if (!rewards.isEmpty() && !hideRewardDisplay) {
 			if (date != null) {
 				lore.add(ChatColor.translateAlternateColorCodes('&',
-						"&r" + plugin.getPluginLang().getString("list-reward", "Reward: ")));
+						"&r" + plugin.getPluginLang().getString("list-reward", "Reward(s): ")));
 				for (String reward : rewards) {
 					lore.add(ChatColor.translateAlternateColorCodes('&', "&r- " + reward));
 				}
 			} else {
 				lore.add(ChatColor.translateAlternateColorCodes('&',
-						"&o&8" + plugin.getPluginLang().getString("list-reward", "Reward: ")));
+						"&o&8" + plugin.getPluginLang().getString("list-reward", "Reward(s): ")));
 				for (String reward : rewards) {
 					lore.add(ChatColor.translateAlternateColorCodes('&', "&o&8- " + reward));
 				}

@@ -48,7 +48,7 @@ delete-achievements: "The achievement ACH was deleted from PLAYER."
 
 # Related to achievement rewards.
 item-reward-received: "You received an item reward:"
-money-reward-received: "You received: AMOUNT !"
+money-reward-received: "You received: AMOUNT!"
 command-reward: "Reward command carried out!"
 
 # Related to /aach help.
@@ -90,9 +90,9 @@ version-command-database: "Database type:"
 # Related to /aach list.
 list-gui-title: "&5&lAchievements List"
 list-delay: "You must wait TIME seconds between each list command!"
-list-reward: "Reward: "
-list-reward-money: "money"
-list-reward-item: "item"
+list-reward: "Reward(s): "
+list-reward-money: "receive AMOUNT"
+list-reward-item: "receive AMOUNT ITEM"
 list-reward-command: "other"
 list-amount: "Lvl: "
 list-achievement-received: "&5\u2713&f "
