@@ -521,9 +521,10 @@ public class SQLDatabaseManager {
 
 		int achievementsAmount = 0;
 		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery(
-					"SELECT COUNT(*) FROM " + tablePrefix + "achievements WHERE playername = '" + uuid + "'");
+		try (PreparedStatement prep = conn
+				.prepareStatement("SELECT COUNT(*) FROM " + tablePrefix + "achievements WHERE playername = ?")) {
+			prep.setString(1, uuid);
+			ResultSet rs = prep.executeQuery();
 			if (rs.next()) {
 				achievementsAmount = rs.getInt(1);
 			}
