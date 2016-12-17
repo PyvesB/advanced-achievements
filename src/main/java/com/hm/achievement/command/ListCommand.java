@@ -856,7 +856,7 @@ public class ListCommand extends AbstractCommand {
 		// Display date if the achievement was received, or progress bar otherwise; achievements with statistic -1
 		// correspond to Commands achievements, ignore if they weren't yet received.
 		if (date != null) {
-			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + date.replaceAll(REGEX_PATTERN.pattern(), "")));
+			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + date));
 			lore.add("");
 		} else if (!obfuscateNotReceived && statistic >= 0) {
 			lore.add(ChatColor.translateAlternateColorCodes('&',

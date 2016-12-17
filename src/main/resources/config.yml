@@ -129,6 +129,14 @@ StatisticCooldown: 10
 # Display action bar message when player does an action while in the cooldown period.
 CooldownActionBar: true
 
+# Locale used to format dates in /aach book and /aach list. You must select an ISO 639 language code.
+# The list of possible language codes can be found here at www.loc.gov/standards/iso639-2/php/code_list.php
+DateLocale: 'en'
+
+# Display time of reception of achievements in /aach book and /aach list in addition to the date. For achievements
+# received in plugin versions prior to 3.0, the precise time information is not available and will be displayed as midnight.
+DateDisplayTime: true
+
 #=============================OOO=============================#
 # III-----------------------------------------------------III #
 # |                    Database settings                    | #

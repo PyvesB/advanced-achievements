@@ -8,10 +8,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,6 +47,7 @@ public class SQLDatabaseManager {
 	private String tablePrefix;
 	private boolean achievementsChronologicalOrder;
 	private byte databaseType;
+	private DateFormat dateFormat;
 
 	// Connection to the database; remains opened and shared except when plugin disabled.
 	private Connection sqlConnection;
@@ -168,6 +171,14 @@ public class SQLDatabaseManager {
 
 		achievementsChronologicalOrder = plugin.getPluginConfig().getBoolean("BookChronologicalOrder", true);
 		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
+		String localeString = plugin.getPluginConfig().getString("DateLocale", "fr");
+		boolean dateDisplayTime = plugin.getPluginConfig().getBoolean("DateDisplayTime", false);
+		Locale locale = new Locale(localeString);
+		if (dateDisplayTime) {
+			dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
+		} else {
+			dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+		}
 
 		String dataHandler = plugin.getPluginConfig().getString("DatabaseType", "sqlite");
 		if ("mysql".equalsIgnoreCase(dataHandler)) {
@@ -466,7 +477,7 @@ public class SQLDatabaseManager {
 					achievementsList.add(displayName);
 				}
 				achievementsList.add(rs.getString(3));
-				achievementsList.add(rs.getDate(4).toString());
+				achievementsList.add(dateFormat.format(rs.getDate(4)));
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving achievements: ", e);
@@ -491,7 +502,7 @@ public class SQLDatabaseManager {
 			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + "achievements WHERE playername = '"
 					+ player.getUniqueId() + "' AND achievement = '" + dbName + "'");
 			if (rs.next()) {
-				achievementDate = rs.getDate(1).toString();
+				achievementDate = dateFormat.format(rs.getDate(1));
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving achievement date: ", e);

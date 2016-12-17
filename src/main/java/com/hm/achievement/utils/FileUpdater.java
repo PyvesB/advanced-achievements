@@ -138,10 +138,25 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 4.1:
 		if (!configFile.getKeys(false).contains("NumberedItemsInList")) {
 			configFile.set("NumberedItemsInList", true, new String[] {
 					"Annotate each achievement displayed in a /aach list category with a number. Due to a Minecraft limitation,",
 					"if you have more than 64 achievements for a category, the counting will start back at 1 after number 64." });
+			updateDone = true;
+		}
+
+		if (!configFile.getKeys(false).contains("DateLocale")) {
+			configFile.set("DateLocale", "en", new String[] {
+					"Locale used to format dates in /aach book and /aach list. You must select an ISO 639 language code.",
+					"The list of possible language codes can be found here at www.loc.gov/standards/iso639-2/php/code_list.php" });
+			updateDone = true;
+		}
+
+		if (!configFile.getKeys(false).contains("DateDisplayTime")) {
+			configFile.set("DateDisplayTime", false, new String[] {
+					"Display time of reception of achievements in /aach book and /aach list in addition to the date. For achievements",
+					"received in plugin versions prior to 3.0, the precise time information is not available and will be displayed as midnight." });
 			updateDone = true;
 		}
 
