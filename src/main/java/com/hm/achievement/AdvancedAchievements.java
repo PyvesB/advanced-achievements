@@ -17,6 +17,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -1070,6 +1071,13 @@ public class AdvancedAchievements extends JavaPlugin {
 	public YamlManager getPluginConfig() {
 
 		return config;
+	}
+
+	@Override
+	@Deprecated
+	public FileConfiguration getConfig() {
+
+		return config.getFileConfiguration();
 	}
 
 	public YamlManager getPluginLang() {

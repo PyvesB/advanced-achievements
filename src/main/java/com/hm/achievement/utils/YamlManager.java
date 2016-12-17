@@ -128,4 +128,9 @@ public class YamlManager {
 
 		return this.config.getKeys(deep);
 	}
+
+	public FileConfiguration getFileConfiguration() {
+
+		return config;
+	}
 }

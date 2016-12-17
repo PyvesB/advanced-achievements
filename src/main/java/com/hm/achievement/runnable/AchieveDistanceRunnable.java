@@ -66,7 +66,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	 */
 	public void extractAchievementsFromConfig() {
 
-		ignoreVerticalDistance = plugin.getConfig().getBoolean("IgnoreVerticalDistance", false);
+		ignoreVerticalDistance = plugin.getPluginConfig().getBoolean("IgnoreVerticalDistance", false);
 
 		footAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEFOOT);
 		horseAchievementsCache = extractDistanceAchievementFromConfig(NormalAchievements.DISTANCEHORSE);
@@ -246,7 +246,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	 */
 	private HashMultimap<Integer, String> extractDistanceAchievementFromConfig(NormalAchievements category) {
 
-		Set<String> configKeys = plugin.getConfig().getConfigurationSection(category.toString()).getKeys(false);
+		Set<String> configKeys = plugin.getPluginConfig().getConfigurationSection(category.toString()).getKeys(false);
 
 		HashMultimap<Integer, String> achievementsCache = HashMultimap.create(configKeys.size(), 1);
 

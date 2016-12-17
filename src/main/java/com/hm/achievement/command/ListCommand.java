@@ -526,7 +526,8 @@ public class ListCommand extends AbstractCommand {
 	private String getAchievementNameToDisplay(String categoryName, String subcategory, String achName, String level) {
 
 		String nameToShowUser;
-		String displayName = plugin.getConfig().getString(categoryName + subcategory + '.' + level + ".DisplayName",
+		String displayName = plugin.getPluginConfig().getString(
+				categoryName + subcategory + '.' + level + ".DisplayName",
 				"");
 		if (Strings.isNullOrEmpty(displayName)) {
 			// Use the achievement key name (this name is used in the achievements table in the database).
@@ -549,10 +550,10 @@ public class ListCommand extends AbstractCommand {
 	private String getAchievementMessageToDisplay(String categoryName, String subcategory, String level) {
 
 		String achMessage;
-		String goal = plugin.getConfig().getString(categoryName + subcategory + '.' + level + ".Goal", "");
+		String goal = plugin.getPluginConfig().getString(categoryName + subcategory + '.' + level + ".Goal", "");
 		if (Strings.isNullOrEmpty(goal)) {
 			// Show the achievement message below the achievement name.
-			achMessage = plugin.getConfig().getString(categoryName + subcategory + '.' + level + ".Message", "");
+			achMessage = plugin.getPluginConfig().getString(categoryName + subcategory + '.' + level + ".Message", "");
 		} else {
 			// Show the goal below the achievement name.
 			achMessage = goal;

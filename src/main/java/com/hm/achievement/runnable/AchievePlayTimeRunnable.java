@@ -42,7 +42,8 @@ public class AchievePlayTimeRunnable implements Runnable {
 	 */
 	public void extractAchievementsFromConfig() {
 
-		Set<String> configKeys = plugin.getConfig().getConfigurationSection(NormalAchievements.PLAYEDTIME.toString())
+		Set<String> configKeys = plugin.getPluginConfig()
+				.getConfigurationSection(NormalAchievements.PLAYEDTIME.toString())
 				.getKeys(false);
 
 		achievementsCache = HashMultimap.create(configKeys.size(), 1);
