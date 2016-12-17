@@ -138,6 +138,13 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!configFile.getKeys(false).contains("NumberedItemsInList")) {
+			configFile.set("NumberedItemsInList", true, new String[] {
+					"Annotate each achievement displayed in a /aach list category with a number. Due to a Minecraft limitation,",
+					"if you have more than 64 achievements for a category, the counting will start back at 1 after number 64." });
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {

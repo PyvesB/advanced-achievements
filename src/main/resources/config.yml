@@ -102,6 +102,10 @@ HideRewardDisplayInList: false
 # Display precise statistic information in the /aach list progress bars.
 EnrichedListProgressBars: true
 
+# Annotate each achievement displayed in a /aach list category with a number. Due to a Minecraft limitation,
+# if you have more than 64 achievements for a category, the counting will start back at 1 after number 64.
+NumberedItemsInList: false
+
 # Display achievement name and description as screen titles.
 TitleScreen: true
 

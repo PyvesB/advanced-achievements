@@ -47,6 +47,7 @@ public class ListCommand extends AbstractCommand {
 	private final boolean obfuscateProgressiveAchievements;
 	private final boolean hideRewardDisplay;
 	private final boolean enrichedProgressBars;
+	private final boolean numberedItemsInList;
 	private final int listCooldownTime;
 
 	// Corresponds to times at which players have entered list commands. Cooldown structure.
@@ -68,6 +69,7 @@ public class ListCommand extends AbstractCommand {
 		hideRewardDisplay = plugin.getPluginConfig().getBoolean("HideRewardDisplayInList", false);
 		listCooldownTime = plugin.getPluginConfig().getInt("TimeList", 0) * 1000;
 		enrichedProgressBars = plugin.getPluginConfig().getBoolean("EnrichedListProgressBars", true);
+		numberedItemsInList = plugin.getPluginConfig().getBoolean("NumberedItemsInList", false);
 
 		// Get list of item stacks for items displayed in the GUI, for multiple achievements.
 		multipleAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.STONE, 1, (short) 6),
@@ -814,6 +816,9 @@ public class ListCommand extends AbstractCommand {
 
 		connectionsMeta.setLore(lore);
 		achItem.setItemMeta(connectionsMeta);
+		if (numberedItemsInList) {
+			achItem.setAmount(positionInGUI % 64 + 1);
+		}
 		inventory.setItem(positionInGUI, achItem);
 	}
 
