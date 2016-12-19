@@ -171,7 +171,7 @@ public class SQLDatabaseManager {
 
 		achievementsChronologicalOrder = plugin.getPluginConfig().getBoolean("BookChronologicalOrder", true);
 		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
-		String localeString = plugin.getPluginConfig().getString("DateLocale", "fr");
+		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
 		boolean dateDisplayTime = plugin.getPluginConfig().getBoolean("DateDisplayTime", false);
 		Locale locale = new Locale(localeString);
 		if (dateDisplayTime) {
