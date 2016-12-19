@@ -23,9 +23,9 @@ public class HelpCommand extends AbstractCommand {
 	protected void executeCommand(CommandSender sender, String[] args) {
 
 		// Header.
-		sender.sendMessage(plugin.getColor() + "------------ " + ChatColor.GRAY + plugin.getColor() + plugin.getIcon()
+		sender.sendMessage(plugin.getColor() + "------------ " + plugin.getColor() + plugin.getIcon()
 				+ ChatColor.translateAlternateColorCodes('&', " &lAdvanced Achievements ") + plugin.getColor()
-				+ plugin.getIcon() + ChatColor.GRAY + plugin.getColor() + " ------------");
+				+ plugin.getIcon() + plugin.getColor() + " ------------");
 
 		if (sender.hasPermission("achievement.list")) {
 			sendJsonClickableHoverableMessage(sender,

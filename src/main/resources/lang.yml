@@ -77,7 +77,6 @@ aach-command-month-hover: "Best achievement hunters since the start of the month
 aach-tip: "&lHINT&r &8You can &7&n&ohover&r &8or &7&n&oclick&r &8on the commands!"
 
 # Related to /aach info.
-version-command-name: "Name:"
 version-command-version: "Version:"
 version-command-website: "Website:"
 version-command-author: "Author:"
