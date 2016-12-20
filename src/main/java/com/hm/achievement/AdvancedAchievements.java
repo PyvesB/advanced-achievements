@@ -532,7 +532,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private void extractParameters() {
 
 		icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
-		color = ChatColor.getByChar(config.getString("Color", "5").toCharArray()[0]);
+		color = ChatColor.getByChar(config.getString("Color", "5").charAt(0));
 		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
 		restrictCreative = config.getBoolean("RestrictCreative", false);
 		databaseBackup = config.getBoolean("DatabaseBackup", true);

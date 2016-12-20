@@ -32,7 +32,7 @@ CheckForUpdate: true
 # Set to true to activate firework effects when a player receives an achievement.
 Firework: true
 
-# Choose BALL_LARGE, BALL, BURST, CREEPER or STAR.
+# Choose BALL_LARGE, BALL, BURST, CREEPER, STAR or RANDOM.
 FireworkStyle: BALL_LARGE
 
 # Number of players displayed in /aach top, week and month commands.

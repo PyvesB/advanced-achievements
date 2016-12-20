@@ -1,5 +1,6 @@
 package com.hm.achievement;
 
+import java.util.Random;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
@@ -30,6 +31,8 @@ public class AchievementDisplay {
 	private final boolean fireworks;
 	private final boolean chatNotify;
 	private final boolean titleScreen;
+
+	private static final Random RANDOM = new Random();
 
 	public AchievementDisplay(AdvancedAchievements achievement) {
 
@@ -131,14 +134,17 @@ public class AchievementDisplay {
 			FireworkMeta fireworkMeta = firework.getFireworkMeta();
 			Builder effectBuilder = FireworkEffect.builder().flicker(false).trail(false)
 					.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).withFade(Color.PURPLE);
-			// Firework style must be one of the following: BALL_LARGE, BALL, BURST, CREEPER or STAR.
-			Type fireworkType = Type.valueOf(fireworkStyle.toUpperCase());
-			if (fireworkType != null) {
-				effectBuilder.with(fireworkType);
+			if ("RANDOM".equalsIgnoreCase(fireworkStyle)) {
+				effectBuilder.with(getRandomFireworkType());
 			} else {
-				effectBuilder.with(Type.BALL_LARGE);
-				plugin.getLogger()
-						.warning("Error while loading FireworkStyle. Please check your config. Loading default style.");
+				try {
+					// Firework style must be one of the following: BALL_LARGE, BALL, BURST, CREEPER or STAR.
+					effectBuilder.with(Type.valueOf(fireworkStyle.toUpperCase()));
+				} catch (Exception e) {
+					effectBuilder.with(Type.BALL_LARGE);
+					plugin.getLogger().warning(
+							"Error while loading FireworkStyle. Please check your config. Loading default style.");
+				}
 			}
 			fireworkMeta.addEffects(effectBuilder.build());
 			firework.setVelocity(player.getLocation().getDirection().multiply(0));
@@ -153,4 +159,14 @@ public class AchievementDisplay {
 		}
 	}
 
+	/**
+	 * Returns a random firework type.
+	 * 
+	 * @return
+	 */
+	private Type getRandomFireworkType() {
+
+		Type[] fireworkTypes = Type.values();
+		return fireworkTypes[RANDOM.nextInt(fireworkTypes.length)];
+	}
 }
