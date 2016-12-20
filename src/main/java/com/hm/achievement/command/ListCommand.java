@@ -733,7 +733,7 @@ public class ListCommand extends AbstractCommand {
 			categoryMeta = categoryItem.getItemMeta();
 			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 					"&8" + plugin.getPluginConfig().getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
-							.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%", displayName)));
+							.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%", "&l" + displayName + "&8")));
 		} else {
 			// The player has not unlocked any achievements in the category: display barrier item with message.
 			categoryItem = new ItemStack(Material.BARRIER);
@@ -797,17 +797,17 @@ public class ListCommand extends AbstractCommand {
 			connectionsMeta
 					.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 							StringEscapeUtils.unescapeJava(
-									plugin.getPluginLang().getString("list-achievement-received", "&a\u2713&f "))
+									plugin.getPluginLang().getString("list-achievement-received", "&a\u2714&f "))
 									+ achName));
 		} else if (obfuscateNotReceived || (obfuscateProgressiveAchievements && inelligibleSeriesItem)) {
 			connectionsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 					StringEscapeUtils.unescapeJava(
-							plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2717&8 ")) + "&k"
+							plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2718&8 ")) + "&k"
 							+ achName.replaceAll(REGEX_PATTERN.pattern(), "")));
 		} else {
 			connectionsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 					StringEscapeUtils.unescapeJava(
-							plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2717&8 ") + "&o"
+							plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2718&8 ") + "&o"
 									+ achName.replaceAll(REGEX_PATTERN.pattern(), ""))));
 		}
 
@@ -839,26 +839,38 @@ public class ListCommand extends AbstractCommand {
 			long statistic, boolean inelligibleSeriesItem, boolean playedTime) {
 
 		ArrayList<String> lore = new ArrayList<>();
+		lore.add("");
 
 		// Set description of the achievement. The style depends whether it was received or not and whether the user has
 		// set obfuscateNotReceived in the config.
 		if (date != null) {
-			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + achMessage));
-		} else if (obfuscateNotReceived || (obfuscateProgressiveAchievements && inelligibleSeriesItem)) {
 			lore.add(ChatColor.translateAlternateColorCodes('&',
-					"&8&k" + achMessage.replaceAll(REGEX_PATTERN.pattern(), "")));
+					"&7&l" + plugin.getPluginLang().getString("list-description", "Description:")));
+			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + achMessage));
 		} else {
 			lore.add(ChatColor.translateAlternateColorCodes('&',
-					"&8&o" + achMessage.replaceAll(REGEX_PATTERN.pattern(), "")));
+					"&7&l" + plugin.getPluginLang().getString("list-goal", "Goal:")));
+			if (obfuscateNotReceived || (obfuscateProgressiveAchievements && inelligibleSeriesItem)) {
+
+				lore.add(ChatColor.translateAlternateColorCodes('&',
+						"&8&k" + achMessage.replaceAll(REGEX_PATTERN.pattern(), "")));
+			} else {
+				lore.add(ChatColor.translateAlternateColorCodes('&',
+						"&8&o" + achMessage.replaceAll(REGEX_PATTERN.pattern(), "")));
+			}
 		}
 		lore.add("");
 
 		// Display date if the achievement was received, or progress bar otherwise; achievements with statistic -1
 		// correspond to Commands achievements, ignore if they weren't yet received.
 		if (date != null) {
+			lore.add(ChatColor.translateAlternateColorCodes('&',
+					"&7&l" + plugin.getPluginLang().getString("list-reception", "Reception date:")));
 			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + date));
 			lore.add("");
 		} else if (!obfuscateNotReceived && statistic >= 0) {
+			lore.add(ChatColor.translateAlternateColorCodes('&',
+					"&7&l" + plugin.getPluginLang().getString("list-progress", "Progress:")));
 			lore.add(ChatColor.translateAlternateColorCodes('&',
 					constructProgressBar(achMessage, level, statistic, playedTime)));
 			lore.add("");
@@ -866,17 +878,17 @@ public class ListCommand extends AbstractCommand {
 
 		// Add the rewards information.
 		if (!rewards.isEmpty() && !hideRewardDisplay) {
+			lore.add(ChatColor.translateAlternateColorCodes('&',
+					"&7&l" + plugin.getPluginLang().getString("list-reward", "Reward(s):")));
 			if (date != null) {
-				lore.add(ChatColor.translateAlternateColorCodes('&',
-						"&r" + plugin.getPluginLang().getString("list-reward", "Reward(s): ")));
 				for (String reward : rewards) {
-					lore.add(ChatColor.translateAlternateColorCodes('&', "&r- " + reward));
+					lore.add(ChatColor.translateAlternateColorCodes('&',
+							StringEscapeUtils.unescapeJava("&r\u25CF ") + reward));
 				}
 			} else {
-				lore.add(ChatColor.translateAlternateColorCodes('&',
-						"&o&8" + plugin.getPluginLang().getString("list-reward", "Reward(s): ")));
 				for (String reward : rewards) {
-					lore.add(ChatColor.translateAlternateColorCodes('&', "&o&8- " + reward));
+					lore.add(ChatColor.translateAlternateColorCodes('&',
+							StringEscapeUtils.unescapeJava("&8\u25CF &o") + reward));
 				}
 			}
 		}
@@ -894,7 +906,7 @@ public class ListCommand extends AbstractCommand {
 	 */
 	private String constructProgressBar(String achMessage, String level, long statistic, boolean playedTime) {
 
-		StringBuilder barDisplay = new StringBuilder("&7[");
+		StringBuilder barDisplay = new StringBuilder("&8[");
 		// Length of the progress bar; we make it the same size as Goal/Message.
 		int textSize;
 		// MinecraftFont essentially supports latin alphabet characters. If invalid characters are found just use
@@ -912,9 +924,9 @@ public class ListCommand extends AbstractCommand {
 			// Convert from millis to hours.
 			statisticDouble = statistic / 3600000.0;
 			// Display one floating digit in the progress bar.
-			middleText = "&7 " + String.format("%.1f", statisticDouble) + "/" + levelInt + " ";
+			middleText = "&8&o " + String.format("%.1f", statisticDouble) + "/" + levelInt + " ";
 		} else {
-			middleText = "&7 " + statistic + "/" + levelInt + " ";
+			middleText = "&8&o " + statistic + "/" + levelInt + " ";
 			// Cast to double.
 			statisticDouble = statistic;
 		}
@@ -943,7 +955,7 @@ public class ListCommand extends AbstractCommand {
 			}
 		}
 
-		barDisplay.append("&7]");
+		barDisplay.append("&8]");
 		return barDisplay.toString();
 	}
 

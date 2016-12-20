@@ -72,7 +72,7 @@ aach-command-week: Показать ежедневный ранг достиже
 aach-command-week-hover: Лучшие охотники достижений с начала недели!
 aach-command-month: Показать месячный ранг достижений.
 aach-command-month-hover: Лучшие охотники достижений с начала месяца!
-aach-tip: '&8Ты можешь &7&n&oнавести&r &8или &7&n&oкликнуть&r &8на команды!'
+aach-tip: '&8Ты можешь &7&n&oнавести &8или &7&n&oкликнуть &8на команды!'
 
 # Related to /aach info.
 version-command-name: 'Имя:'
@@ -92,8 +92,8 @@ list-reward-money: деньги
 list-reward-item: предмет
 list-reward-command: другое
 list-amount: 'уровень: '
-list-achievement-received: "&5\u2713&f "
-list-achievement-not-received: "&4\u2717&8 "
+list-achievement-received: "&5\u2714&f "
+list-achievement-not-received: "&4\u2718&8 "
 list-back-message: '&7Назад'
 
 # Related to category names in /aach list.

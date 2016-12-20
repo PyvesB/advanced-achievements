@@ -96,30 +96,30 @@ public class HelpCommand extends AbstractCommand {
 
 		if (sender.hasPermission("achievement.give")) {
 			sendJsonClickableHoverableMessage(sender, plugin.getChatHeader() + plugin.getColor()
-					+ "/aach give &oach player&r" + ChatColor.GRAY + " > "
+					+ "/aach give &oach player" + ChatColor.GRAY + " > "
 					+ ChatColor.translateAlternateColorCodes('&',
 							plugin.getPluginLang().getString("aach-command-give", "Give achievement ACH to &7NAME.")
-									.replace("ACH", "&oach&r&7").replace("NAME", "&oplayer&r&7")),
+									.replace("ACH", "&oach&7").replace("NAME", "&oplayer&7")),
 					"/aach give ach name", plugin.getPluginLang().getString("aach-command-give-hover",
 							"Player must be online; only Commands achievements can be used."));
 		}
 
 		if (sender.hasPermission("achievement.check")) {
 			sendJsonClickableHoverableMessage(sender,
-					plugin.getChatHeader() + plugin.getColor() + "/aach check &oach player&r" + ChatColor.GRAY + " > "
+					plugin.getChatHeader() + plugin.getColor() + "/aach check &oach player" + ChatColor.GRAY + " > "
 							+ ChatColor.translateAlternateColorCodes('&',
 									plugin.getPluginLang().getString("aach-command-check", "Check if NAME has ACH.")
-											.replace("ACH", "&oach&r&7").replace("NAME", "&oplayer&r&7")),
+											.replace("ACH", "&oach&7").replace("NAME", "&oplayer&7")),
 					"/aach check ach name", plugin.getPluginLang().getString("aach-command-check-hover",
 							"Use the Name parameter specified in the config."));
 		}
 
 		if (sender.hasPermission("achievement.delete")) {
 			sendJsonClickableHoverableMessage(sender,
-					plugin.getChatHeader() + plugin.getColor() + "/aach delete &oach player&r" + ChatColor.GRAY + " > "
+					plugin.getChatHeader() + plugin.getColor() + "/aach delete &oach player" + ChatColor.GRAY + " > "
 							+ ChatColor.translateAlternateColorCodes('&',
 									plugin.getPluginLang().getString("aach-command-delete", "Delete ACH from NAME.")
-											.replace("ACH", "&oach&r&7").replace("NAME", "&oplayer&r&7")),
+											.replace("ACH", "&oach&7").replace("NAME", "&oplayer&7")),
 					"/aach delete ach name", plugin.getPluginLang().getString("aach-command-delete-hover",
 							"Player must be online; does not reset any associated statistics."));
 		}
@@ -129,7 +129,7 @@ public class HelpCommand extends AbstractCommand {
 
 		// Tip message.
 		sender.sendMessage(ChatColor.GRAY + ChatColor.translateAlternateColorCodes('&', plugin.getPluginLang()
-				.getString("aach-tip", "&lHINT&r &8You can &7&n&ohover&r &8or &7&n&oclick&r &8on the commands!")));
+				.getString("aach-tip", "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!")));
 	}
 
 	/**

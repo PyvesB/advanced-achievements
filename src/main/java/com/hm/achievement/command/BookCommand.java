@@ -124,7 +124,7 @@ public class BookCommand extends AbstractCommand {
 		bm.setAuthor(player.getName());
 		bm.setTitle(plugin.getPluginLang().getString("book-name", "Achievements Book"));
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		bm.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&r&o" + plugin.getPluginLang()
+		bm.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&o" + plugin.getPluginLang()
 				.getString("book-date", "Book created on DATE.").replace("DATE", format.format(new Date())))));
 
 		book.setItemMeta(bm);

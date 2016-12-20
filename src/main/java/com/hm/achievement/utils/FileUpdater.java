@@ -291,7 +291,7 @@ public class FileUpdater {
 		}
 
 		if (!langFile.getKeys(false).contains("aach-tip")) {
-			langFile.set("aach-tip", "&lHINT&r &8You can &7&n&ohover&r &8or &7&n&oclick&r &8on the commands!");
+			langFile.set("aach-tip", "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!");
 			updateDone = true;
 		}
 
@@ -320,6 +320,26 @@ public class FileUpdater {
 
 		if (!langFile.getKeys(false).contains("version-command-petmaster")) {
 			langFile.set("version-command-petmaster", "Pet Master integration:");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("list-description")) {
+			langFile.set("list-description", "Description:");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("list-goal")) {
+			langFile.set("list-goal", "Goal:");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("list-reception")) {
+			langFile.set("list-reception", "Reception date:");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("list-progress")) {
+			langFile.set("list-progress", "Progress:");
 			updateDone = true;
 		}
 
