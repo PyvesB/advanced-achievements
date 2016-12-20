@@ -28,6 +28,7 @@ book-received: "You received your achievements book!"
 book-delay: "You must wait TIME seconds between each book reception!"
 book-name: "Achievements Book"
 book-date: "Book created on DATE."
+book-not-received: "You have not yet received any achievements."
 
 # Related to /aach give.
 player-offline: "The player PLAYER is offline!"

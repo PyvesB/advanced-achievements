@@ -343,6 +343,11 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!langFile.getKeys(false).contains("book-not-received")) {
+			langFile.set("book-not-received", "You have not yet received any achievements.");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the language file: save and do a fresh load.
 			try {

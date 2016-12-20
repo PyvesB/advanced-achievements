@@ -82,9 +82,6 @@ public class BookCommand extends AbstractCommand {
 			List<String> achievements = plugin.getDb().getPlayerAchievementsList(player);
 
 			fillBook(achievements, player);
-
-			player.sendMessage(plugin.getChatHeader()
-					+ plugin.getPluginLang().getString("book-received", "You received your achievements book!"));
 		} else {
 			// The player has already received a book recently.
 			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
@@ -116,7 +113,13 @@ public class BookCommand extends AbstractCommand {
 		} catch (Exception e) {
 			// Catch runtime exception (for instance ArrayIndexOutOfBoundsException); this should not happen unless
 			// something went wrong in the database.
-			plugin.getLogger().severe("Error while creating book pages of book.");
+			plugin.getLogger().severe("Error while creating pages of book.");
+		}
+
+		if (pages.isEmpty()) {
+			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang().getString("book-not-received",
+					"You have not yet received any achievements."));
+			return;
 		}
 
 		// Set the pages and other elements of the book (author, title and date of reception).
@@ -135,6 +138,8 @@ public class BookCommand extends AbstractCommand {
 		} else {
 			player.getWorld().dropItem(player.getLocation(), book);
 		}
+		player.sendMessage(plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("book-received", "You received your achievements book!"));
 	}
 
 	public Map<String, Long> getPlayersBookTime() {
