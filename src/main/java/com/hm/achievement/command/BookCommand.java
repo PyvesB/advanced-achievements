@@ -1,11 +1,12 @@
 package com.hm.achievement.command;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
@@ -31,6 +32,7 @@ public class BookCommand extends AbstractCommand {
 	private final String bookSeparator;
 	private final boolean additionalEffects;
 	private final boolean sounds;
+	private final DateFormat dateFormat;
 
 	// Corresponds to times at which players have received their books. Cooldown structure.
 	private final HashMap<String, Long> playersBookTime;
@@ -44,6 +46,9 @@ public class BookCommand extends AbstractCommand {
 		bookSeparator = plugin.getPluginConfig().getString("BookSeparator", "");
 		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		sounds = plugin.getPluginConfig().getBoolean("Sound", true);
+		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
+		Locale locale = new Locale(localeString);
+		dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 	}
 
 	@Override
@@ -126,9 +131,8 @@ public class BookCommand extends AbstractCommand {
 		bm.setPages(pages);
 		bm.setAuthor(player.getName());
 		bm.setTitle(plugin.getPluginLang().getString("book-name", "Achievements Book"));
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		bm.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&o" + plugin.getPluginLang()
-				.getString("book-date", "Book created on DATE.").replace("DATE", format.format(new Date())))));
+		bm.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + plugin.getPluginLang()
+				.getString("book-date", "Book created on DATE.").replace("DATE", dateFormat.format(new Date())))));
 
 		book.setItemMeta(bm);
 
