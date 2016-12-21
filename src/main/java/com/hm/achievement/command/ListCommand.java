@@ -1,9 +1,7 @@
 package com.hm.achievement.command;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -48,10 +46,6 @@ public class ListCommand extends AbstractCommand {
 	private final boolean hideRewardDisplay;
 	private final boolean enrichedProgressBars;
 	private final boolean numberedItemsInList;
-	private final int listCooldownTime;
-
-	// Corresponds to times at which players have entered list commands. Cooldown structure.
-	private final HashMap<String, Long> playersListTime;
 
 	// Array of item stacks for items displayed in the GUI.
 	private final ItemStack[] multipleAchievementCategoryItems;
@@ -60,14 +54,12 @@ public class ListCommand extends AbstractCommand {
 	public ListCommand(AdvancedAchievements plugin) {
 
 		super(plugin);
-		playersListTime = new HashMap<>();
 		// Load configuration parameters.
 		hideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
 		obfuscateNotReceived = plugin.getPluginConfig().getBoolean("ObfuscateNotReceived", true);
 		obfuscateProgressiveAchievements = plugin.getPluginConfig().getBoolean("ObfuscateProgressiveAchievements",
 				false);
 		hideRewardDisplay = plugin.getPluginConfig().getBoolean("HideRewardDisplayInList", false);
-		listCooldownTime = plugin.getPluginConfig().getInt("TimeList", 0) * 1000;
 		enrichedProgressBars = plugin.getPluginConfig().getBoolean("EnrichedListProgressBars", true);
 		numberedItemsInList = plugin.getPluginConfig().getBoolean("NumberedItemsInList", false);
 
@@ -133,14 +125,6 @@ public class ListCommand extends AbstractCommand {
 		if (!player.hasPermission("achievement.list")) {
 			player.sendMessage(plugin.getChatHeader()
 					+ plugin.getPluginLang().getString("no-permissions", "You do not have the permission to do this."));
-			return;
-		}
-
-		if (AbstractCommand.isInCooldownPeriod(player, listCooldownTime, playersListTime)) {
-			// The player has already done a list command recently.
-			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
-					.getString("list-delay", "You must wait TIME seconds between each list command!")
-					.replace("TIME", Integer.toString(listCooldownTime / 1000)));
 			return;
 		}
 
@@ -973,10 +957,5 @@ public class ListCommand extends AbstractCommand {
 			multipleOfNine += 9;
 		}
 		return multipleOfNine;
-	}
-
-	public Map<String, Long> getPlayersListTime() {
-
-		return playersListTime;
 	}
 }

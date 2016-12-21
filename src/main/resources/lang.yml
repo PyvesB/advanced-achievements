@@ -89,7 +89,6 @@ version-command-database: "Database type:"
 
 # Related to /aach list.
 list-gui-title: "&5&lAchievements List"
-list-delay: "You must wait TIME seconds between each list command!"
 list-description: "Description:"
 list-goal: "Goal:"
 list-reception: "Reception date:"

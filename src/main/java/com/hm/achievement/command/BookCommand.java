@@ -60,7 +60,7 @@ public class BookCommand extends AbstractCommand {
 
 		Player player = (Player) sender;
 
-		if (!AbstractCommand.isInCooldownPeriod(player, bookCooldownTime, playersBookTime)) {
+		if (!isInCooldownPeriod(player)) {
 			// Play special particle effect when receiving the book.
 			if (additionalEffects) {
 				try {
@@ -144,6 +144,28 @@ public class BookCommand extends AbstractCommand {
 		}
 		player.sendMessage(plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("book-received", "You received your achievements book!"));
+	}
+
+	/**
+	 * Checks if player hasn't done a command too recently (with "too recently" being defined in configuration file).
+	 * 
+	 * @param player
+	 * @return whether a player is authorised to perform the list command
+	 */
+	private boolean isInCooldownPeriod(Player player) {
+
+		// Player bypasses cooldown if he has full plugin permissions.
+		if (player.hasPermission("achievement.*") || bookCooldownTime == 0) {
+			return false;
+		}
+		long currentTime = System.currentTimeMillis();
+		String uuid = player.getUniqueId().toString();
+		Long lastListTime = playersBookTime.get(uuid);
+		if (lastListTime == null || currentTime - lastListTime > bookCooldownTime) {
+			playersBookTime.put(uuid, currentTime);
+			return false;
+		}
+		return true;
 	}
 
 	public Map<String, Long> getPlayersBookTime() {

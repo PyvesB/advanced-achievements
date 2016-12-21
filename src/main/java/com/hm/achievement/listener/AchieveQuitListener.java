@@ -29,9 +29,8 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 
 		final String playerUUID = event.getPlayer().getUniqueId().toString();
 
-		// Clean cooldown HashMaps for book and list commands.
+		// Clean cooldown HashMap for book command.
 		plugin.getAchievementBookCommand().getPlayersBookTime().remove(playerUUID);
-		plugin.getAchievementListCommand().getPlayersListTime().remove(playerUUID);
 
 		// Clear achievements caches.
 		plugin.getPoolsManager().getReceivedAchievementsCache().removeAll(playerUUID);
