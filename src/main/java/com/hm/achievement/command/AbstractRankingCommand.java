@@ -3,6 +3,7 @@ package com.hm.achievement.command;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -33,6 +34,10 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private long lastCommandTime;
 
 	private static final int VALUES_EXPIRATION_DELAY = 60000;
+	private static final int DECIMAL_CIRCLED_ONE = Integer.parseInt("2780", 16);
+	private static final int DECIMAL_CIRCLED_ELEVEN = Integer.parseInt("246A", 16);
+	private static final int DECIMAL_CIRCLED_TWENTY_ONE = Integer.parseInt("3251", 16);
+	private static final int DECIMAL_CIRCLED_THIRTY_SIX = Integer.parseInt("32B1", 16);
 
 	protected AbstractRankingCommand(AdvancedAchievements plugin) {
 
@@ -64,17 +69,16 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 				plugin.getChatHeader() + plugin.getPluginLang().getString(languageHeaderKey, defaultHeaderMessage));
 
 		for (int i = 0; i < playersRanking.size(); i += 2) {
-			try {
-				String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(playersRanking.get(i)))
-						.getName();
+			String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(playersRanking.get(i))).getName();
+			if (playerName != null) {
 				// Color the name of the player if he is in the top list.
 				String color = "";
 				if (sender instanceof Player && playerName.equals(((Player) sender).getName())) {
 					color = plugin.getColor().toString();
 				}
-				sender.sendMessage(ChatColor.GRAY + "[" + plugin.getColor() + ((i + 2) >> 1) + ChatColor.GRAY + "] "
-						+ color + playerName + " - " + playersRanking.get(i + 1));
-			} catch (Exception e) {
+				sender.sendMessage(ChatColor.GRAY + " " + getRankingSymbol((i + 2) >> 1) + ' ' + color + playerName
+						+ " - " + playersRanking.get(i + 1));
+			} else {
 				plugin.getLogger().warning("Ranking command: name corresponding to UUID not found.");
 			}
 		}
@@ -98,6 +102,27 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 			sender.sendMessage(plugin.getChatHeader()
 					+ plugin.getPluginLang().getString("not-ranked", "You are currently not ranked for this period."));
 		}
+	}
+
+	/**
+	 * Returns an UTF-8 circled number based on the player's rank.
+	 * 
+	 * @param rank
+	 * @return
+	 */
+	private String getRankingSymbol(int rank) {
+
+		int decimalRankSymbol;
+		if (rank <= 10) {
+			decimalRankSymbol = DECIMAL_CIRCLED_ONE + rank - 1;
+		} else if (rank <= 20) {
+			decimalRankSymbol = DECIMAL_CIRCLED_ELEVEN + rank - 11;
+		} else if (rank <= 35) {
+			decimalRankSymbol = DECIMAL_CIRCLED_TWENTY_ONE + rank - 21;
+		} else {
+			decimalRankSymbol = DECIMAL_CIRCLED_THIRTY_SIX + rank - 36;
+		}
+		return StringEscapeUtils.unescapeJava("\\u" + Integer.toHexString(decimalRankSymbol));
 	}
 
 	/**
