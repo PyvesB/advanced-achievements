@@ -729,13 +729,13 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Checks whether player has received a specific achievement.
+	 * Checks whether player has received a specific achievement. Access through PoolsManager.
 	 * 
 	 * @param player
 	 * @param name
 	 * @return true if achievement found in database, false otherwise
 	 */
-	public boolean hasPlayerAchievement(Player player, String name) {
+	protected boolean hasPlayerAchievement(Player player, String name) {
 
 		boolean result = false;
 		String query;

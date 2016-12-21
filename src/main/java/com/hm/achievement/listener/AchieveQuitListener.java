@@ -33,6 +33,10 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 		plugin.getAchievementBookCommand().getPlayersBookTime().remove(playerUUID);
 		plugin.getAchievementListCommand().getPlayersListTime().remove(playerUUID);
 
+		// Clear achievements caches.
+		plugin.getPoolsManager().getReceivedAchievementsCache().removeAll(playerUUID);
+		plugin.getPoolsManager().getNotReceivedAchievementsCache().removeAll(playerUUID);
+
 		processAndCleanDistances(playerUUID);
 
 		processAndCleanPlayedTime(playerUUID);
@@ -69,38 +73,6 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 		// Remove player from Multimap caches for distance achievements.
 		if (plugin.getAchieveDistanceRunnable() != null
 				&& plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(playerUUID) != null) {
-			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getFootAchievementsCache()
-					.keySet()) {
-				plugin.getAchieveDistanceRunnable().getFootAchievementsCache().remove(achievementThreshold, playerUUID);
-			}
-			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getHorseAchievementsCache()
-					.keySet()) {
-				plugin.getAchieveDistanceRunnable().getHorseAchievementsCache().remove(achievementThreshold,
-						playerUUID);
-			}
-			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getPigAchievementsCache()
-					.keySet()) {
-				plugin.getAchieveDistanceRunnable().getPigAchievementsCache().remove(achievementThreshold, playerUUID);
-			}
-			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getBoatAchievementsCache()
-					.keySet()) {
-				plugin.getAchieveDistanceRunnable().getBoatAchievementsCache().remove(achievementThreshold, playerUUID);
-			}
-			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getMinecartAchievementsCache()
-					.keySet()) {
-				plugin.getAchieveDistanceRunnable().getMinecartAchievementsCache().remove(achievementThreshold,
-						playerUUID);
-			}
-			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getGlidingAchievementsCache()
-					.keySet()) {
-				plugin.getAchieveDistanceRunnable().getGlidingAchievementsCache().remove(achievementThreshold,
-						playerUUID);
-			}
-			for (Integer achievementThreshold : plugin.getAchieveDistanceRunnable().getLlamaAchievementsCache()
-					.keySet()) {
-				plugin.getAchieveDistanceRunnable().getLlamaAchievementsCache().remove(achievementThreshold,
-						playerUUID);
-			}
 
 			// Update database statistics for distances and clean HashMaps.
 			if (plugin.isAsyncPooledRequestsSender()) {
@@ -207,10 +179,6 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 				if (playTime != null) {
 					plugin.getDb().updatePlaytime(playerUUID, playTime);
 				}
-			}
-			// Remove player from Multimap cache for PlayedTime achievements.
-			for (Integer achievementThreshold : plugin.getAchievePlayTimeRunnable().getAchievementsCache().keySet()) {
-				plugin.getAchievePlayTimeRunnable().getAchievementsCache().remove(achievementThreshold, playerUUID);
 			}
 		}
 	}

@@ -28,8 +28,8 @@ public class GiveCommand extends AbstractParsableCommand {
 
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 			// Check whether player has already received achievement and cannot receive it again.
-			if (!multiCommand && plugin.getDb().hasPlayerAchievement(player,
-					plugin.getPluginConfig().getString(configAchievement + ".Name"))) {
+			String achievementName = plugin.getPluginConfig().getString(configAchievement + ".Name");
+			if (!multiCommand && plugin.getPoolsManager().hasPlayerAchievement(player, achievementName)) {
 				sender.sendMessage(
 						plugin.getChatHeader() + plugin.getPluginLang()
 								.getString("achievement-already-received",
@@ -40,8 +40,11 @@ public class GiveCommand extends AbstractParsableCommand {
 
 			// Display, register and give rewards of achievement.
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, plugin.getPluginConfig().getString(configAchievement + ".Name"),
+			plugin.getDb().registerAchievement(player, achievementName,
 					plugin.getPluginConfig().getString(configAchievement + ".Message"));
+			String uuid = player.getUniqueId().toString();
+			plugin.getPoolsManager().getReceivedAchievementsCache().put(uuid, achievementName);
+			plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, achievementName);
 			plugin.getReward().checkConfig(player, configAchievement);
 
 			sender.sendMessage(plugin.getChatHeader()

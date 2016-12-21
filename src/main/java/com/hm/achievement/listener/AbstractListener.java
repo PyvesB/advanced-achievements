@@ -168,10 +168,13 @@ public abstract class AbstractListener {
 		YamlManager pluginConfig = plugin.getPluginConfig();
 		if (pluginConfig.getString(configAchievement + ".Message", null) != null) {
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, pluginConfig.getString(configAchievement + ".Name"),
+			String achievementName = pluginConfig.getString(configAchievement + ".Name");
+			plugin.getDb().registerAchievement(player, achievementName,
 					pluginConfig.getString(configAchievement + ".Message"));
+			String uuid = player.getUniqueId().toString();
+			plugin.getPoolsManager().getReceivedAchievementsCache().put(uuid, achievementName);
+			plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, achievementName);
 			plugin.getReward().checkConfig(player, configAchievement);
-
 		}
 	}
 }

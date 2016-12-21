@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.HashMultimap;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -69,12 +70,19 @@ public class DatabasePoolsManager {
 	private Map<String, Integer> craftHashMap;
 	private Map<String, Integer> playerCommandHashMap;
 
+	// Multimaps corresponding to the different achievements received by the players.
+	private HashMultimap<String, String> receivedAchievementsCache;
+	private HashMultimap<String, String> notReceivedAchievementsCache;
+
 	public DatabasePoolsManager(AdvancedAchievements plugin) {
 
 		this.plugin = plugin;
 	}
 
 	public void databasePoolsInit(boolean isAsync) {
+
+		receivedAchievementsCache = HashMultimap.create();
+		notReceivedAchievementsCache = HashMultimap.create();
 
 		// If asynchronous task is used, ConcurrentHashMaps are necessary to
 		// guarantee thread safety. Otherwise normal HashMaps are enough.
@@ -402,5 +410,40 @@ public class DatabasePoolsManager {
 		} else {
 			return amount;
 		}
+	}
+
+	/**
+	 * Returns whether player has received a specific achievement.
+	 * 
+	 * @param player
+	 * @param name
+	 * @return true if achievement received by player, false otherwise
+	 */
+	public boolean hasPlayerAchievement(Player player, String name) {
+
+		if (receivedAchievementsCache.containsEntry(player.getUniqueId().toString(), name)) {
+			return true;
+		}
+		if (notReceivedAchievementsCache.containsEntry(player.getUniqueId().toString(), name)) {
+			return false;
+		}
+
+		boolean received = plugin.getDb().hasPlayerAchievement(player, name);
+		if (received) {
+			receivedAchievementsCache.put(player.getUniqueId().toString(), name);
+		} else {
+			notReceivedAchievementsCache.put(player.getUniqueId().toString(), name);
+		}
+		return received;
+	}
+
+	public HashMultimap<String, String> getReceivedAchievementsCache() {
+
+		return receivedAchievementsCache;
+	}
+
+	public HashMultimap<String, String> getNotReceivedAchievementsCache() {
+
+		return notReceivedAchievementsCache;
 	}
 }

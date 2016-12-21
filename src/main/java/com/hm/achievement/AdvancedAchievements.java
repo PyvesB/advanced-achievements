@@ -397,7 +397,7 @@ public class AdvancedAchievements extends JavaPlugin {
 					Bukkit.getPluginManager().getPlugin("PetMaster").getDescription().getVersion().charAt(2))) >= 3) {
 				petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
 				pm.registerEvents(petMasterGiveReceiveListener, this);
-			} else  {
+			} else {
 				this.getLogger().warning(
 						"Failed to pair with Pet Master plugin; disabling PetMasterGive and PetMasterReceive categories.");
 				this.getLogger().warning(
@@ -481,9 +481,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Reload achievements in distance, max level and play time runnables on plugin reload (when objects are null).
 		if (achieveDistanceRunnable != null) {
 			achieveDistanceRunnable.extractAchievementsFromConfig();
-		}
-		if (achievePlayTimeRunnable != null) {
-			achievePlayTimeRunnable.extractAchievementsFromConfig();
 		}
 
 		// Set to null in case user changed the option and did an /aach reload. We do not recheck for update on /aach

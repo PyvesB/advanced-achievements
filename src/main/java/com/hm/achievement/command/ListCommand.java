@@ -526,9 +526,8 @@ public class ListCommand extends AbstractCommand {
 	private String getAchievementNameToDisplay(String categoryName, String subcategory, String achName, String level) {
 
 		String nameToShowUser;
-		String displayName = plugin.getPluginConfig().getString(
-				categoryName + subcategory + '.' + level + ".DisplayName",
-				"");
+		String displayName = plugin.getPluginConfig()
+				.getString(categoryName + subcategory + '.' + level + ".DisplayName", "");
 		if (Strings.isNullOrEmpty(displayName)) {
 			// Use the achievement key name (this name is used in the achievements table in the database).
 			nameToShowUser = achName;
@@ -601,7 +600,7 @@ public class ListCommand extends AbstractCommand {
 				// in the category. Iterate through all achievements in sub-category.
 				for (String level : configSubcategory) {
 					// Check whether player has received achievement.
-					if (plugin.getDb().hasPlayerAchievement(player, plugin.getPluginConfig()
+					if (plugin.getPoolsManager().hasPlayerAchievement(player, plugin.getPluginConfig()
 							.getString(categoryName + '.' + section + '.' + level + ".Name", ""))) {
 						// At least one achievement was received in the current category; it is unlocked, can
 						// continue processing.
@@ -653,7 +652,7 @@ public class ListCommand extends AbstractCommand {
 
 				for (String level : configCategory) {
 					/// Check whether player has received achievement.
-					if (plugin.getDb().hasPlayerAchievement(player,
+					if (plugin.getPoolsManager().hasPlayerAchievement(player,
 							plugin.getPluginConfig().getString(categoryName + '.' + level + ".Name", ""))) {
 						// At least one achievement was received in the current category; it is unlocked, can continue
 						// processing.
@@ -698,7 +697,7 @@ public class ListCommand extends AbstractCommand {
 			// Iterate through all achievements in category.
 			for (String ach : configCategory) {
 				/// Check whether player has received achievement.
-				if (plugin.getDb().hasPlayerAchievement(player,
+				if (plugin.getPoolsManager().hasPlayerAchievement(player,
 						plugin.getPluginConfig().getString("Commands." + ach + ".Name", ""))) {
 					// At least one achievement was received in the current category; it is unlocked, can continue
 					// processing.
