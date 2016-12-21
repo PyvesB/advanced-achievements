@@ -3,6 +3,7 @@ package com.hm.achievement.command;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.map.MinecraftFont;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
@@ -21,6 +22,9 @@ public class StatsCommand extends AbstractCommand {
 	private final boolean sound;
 
 	private int totalAchievements;
+
+	// Minecraft font, used to get size information in the progress bar.
+	private static final MinecraftFont FONT = MinecraftFont.Font;
 
 	public StatsCommand(AdvancedAchievements plugin) {
 
@@ -73,26 +77,38 @@ public class StatsCommand extends AbstractCommand {
 		// Retrieve total number of achievements received by the player.
 		int achievements = plugin.getDb().getPlayerAchievementsAmount(player);
 
-		// Display number of achievements received and total achievements.
+		// Display percentage of achievements received.
 		player.sendMessage(plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("number-achievements", "Achievements received:") + " "
-				+ plugin.getColor() + achievements + ChatColor.GRAY + "/" + plugin.getColor() + totalAchievements);
+				+ plugin.getColor() + String.format("%.1f", 100 * (double) achievements / totalAchievements) + "%");
 
-		// Display progress bar.
-		if (totalAchievements > 0) {
-			// Size initialised to 150; might require more or slightly less depending on the filling of the progress
-			// bar.
-			StringBuilder barDisplay = new StringBuilder(150);
-			for (int i = 1; i <= 146 - plugin.getIcon().length(); i++) {
-				if (i < ((146 - plugin.getIcon().length()) * achievements) / totalAchievements) {
-					barDisplay.append(plugin.getColor()).append('|');
-				} else {
-					barDisplay.append("&8|");
-				}
+		String middleText = " " + achievements + "/" + totalAchievements + " ";
+		int verticalBarsToDisplay = 150 - plugin.getIcon().length() - FONT.getWidth(middleText);
+		boolean hasDisplayedMiddleText = false;
+		StringBuilder barDisplay = new StringBuilder();
+		int i = 1;
+		while (i < verticalBarsToDisplay) {
+			if (!hasDisplayedMiddleText && i >= verticalBarsToDisplay / 2) {
+				// Middle reached: append number of achievements information.
+				barDisplay.append(ChatColor.GRAY + middleText);
+				// Do not display middleText again.
+				hasDisplayedMiddleText = true;
+				// Iterate a number of times equal to the number of iterations so far to have the same number of
+				// vertical bars left and right from the middle text.
+				i = verticalBarsToDisplay - i;
+			} else if (i < ((verticalBarsToDisplay - 1) * achievements) / totalAchievements) {
+				// Color: progress by user.
+				barDisplay.append(plugin.getColor()).append('|');
+				i++;
+			} else {
+				// Grey: amount not yet reached by user.
+				barDisplay.append("&8|");
+				i++;
 			}
-			player.sendMessage(plugin.getChatHeader() + "["
-					+ ChatColor.translateAlternateColorCodes('&', barDisplay.toString()) + ChatColor.GRAY + "]");
 		}
+		// Display enriched progress bar.
+		player.sendMessage(plugin.getChatHeader() + "["
+				+ ChatColor.translateAlternateColorCodes('&', barDisplay.toString()) + ChatColor.GRAY + "]");
 
 		// Player has received all achievement; play special effect and sound.
 		if (achievements >= totalAchievements) {
