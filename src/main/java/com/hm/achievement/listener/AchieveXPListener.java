@@ -32,7 +32,7 @@ public class AchieveXPListener extends AbstractListener implements Listener {
 			return;
 		}
 
-		int previousMaxLevel = plugin.getPoolsManager().getStatisticAmount(category, player);
+		int previousMaxLevel = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player, 0);
 
 		if (event.getNewLevel() <= previousMaxLevel) {
 			return;

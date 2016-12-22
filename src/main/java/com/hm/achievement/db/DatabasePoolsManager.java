@@ -317,24 +317,6 @@ public class DatabasePoolsManager {
 	}
 
 	/**
-	 * Returns the statistic for a NormalAchievement. Calls the database if not found in the pools.
-	 * 
-	 * @param category
-	 * @param player
-	 * @return
-	 */
-	public int getStatisticAmount(NormalAchievements category, Player player) {
-
-		Map<String, Integer> categoryHashMap = getHashMap(category);
-		String uuid = player.getUniqueId().toString();
-		Integer amount = categoryHashMap.get(uuid);
-		if (amount == null) {
-			return plugin.getDb().getNormalAchievementAmount(player, category);
-		}
-		return amount;
-	}
-
-	/**
 	 * Increases the statistic for a MultipleAchievement by the given value and returns the updated statistic. Calls the
 	 * database if not found in the pools.
 	 * 
@@ -363,30 +345,6 @@ public class DatabasePoolsManager {
 
 		categoryHashMap.put(uuid + subcategoryDBName, newValue);
 		return newValue;
-	}
-
-	/**
-	 * Returns the statistic for a MultipleAchievement. Calls the database if not found in the pools.
-	 * 
-	 * @param category
-	 * @param subcategory
-	 * @param player
-	 * @return
-	 */
-	public int getStatisticAmount(MultipleAchievements category, String subcategory, Player player) {
-
-		Map<String, Integer> categoryHashMap = getHashMap(category);
-		String uuid = player.getUniqueId().toString();
-		Integer oldAmount = categoryHashMap.get(uuid);
-		if (oldAmount == null) {
-			if (category == MultipleAchievements.PLAYERCOMMANDS) {
-				oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category,
-						subcategory.replaceAll(" ", ""));
-			} else {
-				oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategory);
-			}
-		}
-		return oldAmount;
 	}
 
 	public Map<String, Long> getPlayedTimeHashMap() {

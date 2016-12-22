@@ -76,7 +76,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 				if (sender instanceof Player && playerName.equals(((Player) sender).getName())) {
 					color = plugin.getColor().toString();
 				}
-				sender.sendMessage(ChatColor.GRAY + " " + getRankingSymbol((i + 2) >> 1) + ' ' + color + playerName
+				sender.sendMessage(ChatColor.GRAY + " " + color + getRankingSymbol((i + 2) >> 1) + ' ' + playerName
 						+ " - " + playersRanking.get(i + 1));
 			} else {
 				plugin.getLogger().warning("Ranking command: name corresponding to UUID not found.");

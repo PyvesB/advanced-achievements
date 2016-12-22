@@ -110,8 +110,8 @@ public class BookCommand extends AbstractCommand {
 		try {
 			// Elements in the array go by groups of 3: name, description and date.
 			for (int i = 0; i < achievements.size(); i += 3) {
-				String currentAchievement = "&0" + achievements.get(i) + "\n" + bookSeparator + "\n"
-						+ achievements.get(i + 1) + "\n" + bookSeparator + "\n&r" + achievements.get(i + 2);
+				String currentAchievement = "&0" + achievements.get(i) + "\n&r" + bookSeparator + "\n&r"
+						+ achievements.get(i + 1) + "\n&r" + bookSeparator + "\n&r" + achievements.get(i + 2);
 				currentAchievement = ChatColor.translateAlternateColorCodes('&', currentAchievement);
 				pages.add(currentAchievement);
 			}

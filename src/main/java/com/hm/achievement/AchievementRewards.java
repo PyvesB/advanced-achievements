@@ -186,9 +186,8 @@ public class AchievementRewards {
 	private int getMoneyAmount(String configAchievement) {
 
 		// Supports both old and new plugin syntax (Amount used to be a separate sub-category).
-		int money = Math.max(plugin.getPluginConfig().getInt(configAchievement + ".Reward.Money", 0),
+		return Math.max(plugin.getPluginConfig().getInt(configAchievement + ".Reward.Money", 0),
 				plugin.getPluginConfig().getInt(configAchievement + ".Reward.Money.Amount", 0));
-		return money;
 	}
 
 	/**

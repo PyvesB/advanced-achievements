@@ -210,7 +210,7 @@ public class ListCommand extends AbstractCommand {
 		// Match the item the player clicked on with its database statistic.
 		for (String section : categoryConfig.getKeys(false)) {
 			// Retrieve statistic from category and subcategory.
-			int statistic = plugin.getPoolsManager().getStatisticAmount(category, section, player);
+			int statistic = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, section, player, 0);
 
 			String previousItemDate = null;
 			int previousItemGoal = 0;
@@ -429,7 +429,7 @@ public class ListCommand extends AbstractCommand {
 		} else if (category == NormalAchievements.CONNECTIONS) {
 			statistic = plugin.getDb().getConnectionsAmount(player);
 		} else if (category != null) {
-			statistic = plugin.getPoolsManager().getStatisticAmount(category, player);
+			statistic = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player, 0);
 		}
 
 		// Used to make the GUI as small as possible while still containing all achievements.
@@ -859,9 +859,9 @@ public class ListCommand extends AbstractCommand {
 					"&7&l" + plugin.getPluginLang().getString("list-reward", "Reward(s):")));
 			String dot;
 			if (date != null) {
-				dot = StringEscapeUtils.unescapeJava("&8\u25CF &o");
-			} else {
 				dot = StringEscapeUtils.unescapeJava("&r\u25CF ");
+			} else {
+				dot = StringEscapeUtils.unescapeJava("&8\u25CF &o");
 			}
 			for (String reward : rewards) {
 				lore.add(ChatColor.translateAlternateColorCodes('&', dot + reward));
