@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |    Advanced Achievements 4.0.3 configuration - Readme   | #
+# |     Advanced Achievements 4.1 configuration - Readme    | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -371,7 +371,7 @@ Beds:
   '5':
     Message: You entered a bed 5 times!
     Name: bed_5
-    DisplayName: Sleepy guy 
+    DisplayName: Sleepy Guy 
     
 # Maximum level reached.    
 MaxLevel:  

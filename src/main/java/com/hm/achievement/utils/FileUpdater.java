@@ -323,6 +323,7 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 4.1:
 		if (!langFile.getKeys(false).contains("list-description")) {
 			langFile.set("list-description", "Description:");
 			updateDone = true;
