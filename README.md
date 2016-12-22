@@ -33,7 +33,7 @@ The following steps are for the [Eclipse](https://eclipse.org/) development envi
 * In Eclipse, go to *File* -> *Import...* -> *Maven* -> *Existing Maven Projects*.
 * In the *Root Directory* field, select the location where you downloaded the Advanced Achievements repository.
 * Tick the *pom.xml* box that appears in the *Projects* field and click *Finish*.
-* To compile the plugin, in the *Package Explorer* window, right click on the imported project, then *Run As* -> *Maven Install*.
+* To compile the plugin, in the *Package Explorer* window, right click on the imported project, and first select *Run As* -> *Maven Clean*. Then select *Run As* -> *Maven Install*.
 * The plugin will be generated in the *target* folder of the project.
  
 Please let me know if you encounter any problems by opening an Issue, I am happy to help.
