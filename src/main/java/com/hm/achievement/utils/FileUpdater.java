@@ -7,9 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.bukkit.configuration.InvalidConfigurationException;
+
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of updating the language and configuration files when a new version of the plugin is released.
@@ -31,7 +34,7 @@ public class FileUpdater {
 	 * 
 	 * @param configFile
 	 */
-	public void updateOldConfiguration(YamlManager configFile) {
+	public void updateOldConfiguration(CommentedYamlConfiguration configFile) {
 
 		boolean updateDone = false;
 
@@ -163,9 +166,9 @@ public class FileUpdater {
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {
-				configFile.saveConfig();
-				configFile.reloadConfig();
-			} catch (IOException e) {
+				configFile.saveConfiguration();
+				configFile.loadConfiguration();
+			} catch (IOException | InvalidConfigurationException e) {
 				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the configuration file: ", e);
 				plugin.setSuccessfulLoad(false);
 			}
@@ -178,7 +181,7 @@ public class FileUpdater {
 	 * 
 	 * @param langFile
 	 */
-	public void updateOldLanguage(YamlManager langFile) {
+	public void updateOldLanguage(CommentedYamlConfiguration langFile) {
 
 		boolean updateDone = false;
 
@@ -352,9 +355,9 @@ public class FileUpdater {
 		if (updateDone) {
 			// Changes in the language file: save and do a fresh load.
 			try {
-				langFile.saveConfig();
-				langFile.reloadConfig();
-			} catch (IOException e) {
+				langFile.saveConfiguration();
+				langFile.loadConfiguration();
+			} catch (IOException | InvalidConfigurationException e) {
 				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the language file: ", e);
 				plugin.setSuccessfulLoad(false);
 			}

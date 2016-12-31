@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.particle.PacketSender;
-import com.hm.achievement.particle.ReflectionUtils.PackageType;
-import com.hm.achievement.utils.YamlManager;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.mcshared.particle.PacketSender;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Abstract class in charge of factoring out common functionality for the listener classes.
@@ -94,7 +94,7 @@ public abstract class AbstractListener {
 								"Achievements cooldown, wait TIME seconds before this action counts again.")
 						.replace("TIME", String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
 				try {
-					PacketSender.sendChatPacket(player, actionBarJsonMessage, PacketSender.ACTION_BAR_BYTE);
+					PacketSender.sendActionBarPacket(player, actionBarJsonMessage);
 				} catch (Exception e) {
 					plugin.getLogger().warning("Errors while trying to display action bar message for cooldown.");
 				}
@@ -165,7 +165,7 @@ public abstract class AbstractListener {
 	 */
 	protected void awardAchievementIfAvailable(Player player, String configAchievement) {
 
-		YamlManager pluginConfig = plugin.getPluginConfig();
+		CommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
 		if (pluginConfig.getString(configAchievement + ".Message", null) != null) {
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			String achievementName = pluginConfig.getString(configAchievement + ".Name");

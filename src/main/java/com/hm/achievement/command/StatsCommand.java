@@ -8,7 +8,7 @@ import org.bukkit.map.MinecraftFont;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.particle.ParticleEffect;
+import com.hm.mcshared.particle.ParticleEffect;
 
 /**
  * Class in charge of handling the /aach stats command, which creates and displays a progress bar of the player's

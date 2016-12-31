@@ -19,6 +19,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
@@ -72,10 +73,10 @@ import com.hm.achievement.listener.AchieveXPListener;
 import com.hm.achievement.listener.ListGUIListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
-import com.hm.achievement.utils.FileManager;
 import com.hm.achievement.utils.FileUpdater;
-import com.hm.achievement.utils.UpdateChecker;
-import com.hm.achievement.utils.YamlManager;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.mcshared.file.FileManager;
+import com.hm.mcshared.update.UpdateChecker;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -148,9 +149,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	private UpdateChecker updateChecker;
 
 	// Language and configuration related.
-	private YamlManager config;
-	private YamlManager lang;
-	private final FileManager fileManager;
+	private CommentedYamlConfiguration config;
+	private CommentedYamlConfiguration lang;
 	private final FileUpdater fileUpdater;
 
 	// Database related.
@@ -186,7 +186,6 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		successfulLoad = true;
 		overrideDisable = false;
-		fileManager = new FileManager(this);
 		db = new SQLDatabaseManager(this);
 		poolsManager = new DatabasePoolsManager(this);
 		fileUpdater = new FileUpdater(this);
@@ -201,8 +200,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Start enabling plugin.
 		long startTime = System.currentTimeMillis();
 
-		YamlManager configFile = loadAndBackupFile("config.yml");
-		YamlManager langFile = loadAndBackupFile(configFile.getString("LanguageFileName", "lang.yml"));
+		CommentedYamlConfiguration configFile = loadAndBackupFile("config.yml");
+		CommentedYamlConfiguration langFile = loadAndBackupFile(configFile.getString("LanguageFileName", "lang.yml"));
 
 		// Error while loading .yml files; do not do any further work.
 		if (overrideDisable) {
@@ -232,7 +231,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
 				this.getLogger().info("Backing up database file...");
 				try {
-					fileManager.backupFile("achievements.db");
+					FileManager fileManager = new FileManager("achievements.db", this);
+					fileManager.backupFile();
 				} catch (IOException e) {
 					this.getLogger().log(Level.SEVERE, "Error while backing up database file: ", e);
 					successfulLoad = false;
@@ -240,16 +240,22 @@ public class AdvancedAchievements extends JavaPlugin {
 			}
 		}
 
+		PluginManager pm = getServer().getPluginManager();
+		this.getLogger().info("Registering listeners...");
+
 		// Check for available plugin update.
 		if (config.getBoolean("CheckForUpdate", true)) {
-			updateChecker = new UpdateChecker(this);
+			updateChecker = new UpdateChecker(this,
+					"https://raw.githubusercontent.com/PyvesB/AdvancedAchievements/master/pom.xml",
+					new String[] { "dev.bukkit.org/bukkit-plugins/advanced-achievements/files",
+							"spigotmc.org/resources/advanced-achievements.6239" },
+					"achievement.update", chatHeader);
+			pm.registerEvents(updateChecker, this);
+			updateChecker.launchUpdateCheckerTask();
 		}
-
-		this.getLogger().info("Registering listeners...");
 
 		// Register listeners so they can monitor server events; if there are no config related achievements, listeners
 		// aren't registered.
-		PluginManager pm = getServer().getPluginManager();
 		if (!disabledCategorySet.contains(MultipleAchievements.PLACES.toString())) {
 			blockPlaceListener = new AchieveBlockPlaceListener(this);
 			pm.registerEvents(blockPlaceListener, this);
@@ -320,8 +326,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			pm.registerEvents(milkLavaWaterListener, this);
 		}
 
-		if (config.getBoolean("CheckForUpdate", true)
-				|| !disabledCategorySet.contains(NormalAchievements.CONNECTIONS.toString())) {
+		if (!disabledCategorySet.contains(NormalAchievements.CONNECTIONS.toString())) {
 			connectionListener = new AchieveConnectionListener(this);
 			pm.registerEvents(connectionListener, this);
 		}
@@ -465,7 +470,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * @param config
 	 * @param lang
 	 */
-	public void configurationLoad(YamlManager config, YamlManager lang) {
+	public void configurationLoad(CommentedYamlConfiguration config, CommentedYamlConfiguration lang) {
 
 		this.config = config;
 		this.lang = lang;
@@ -483,10 +488,10 @@ public class AdvancedAchievements extends JavaPlugin {
 			achieveDistanceRunnable.extractAchievementsFromConfig();
 		}
 
-		// Set to null in case user changed the option and did an /aach reload. We do not recheck for update on /aach
+		// Unregister events if user changed the option and did an /aach reload. We do not recheck for update on /aach
 		// reload.
 		if (!config.getBoolean("CheckForUpdate", true)) {
-			updateChecker = null;
+			PlayerJoinEvent.getHandlerList().unregister(updateChecker);
 		}
 
 		logAchievementStats();
@@ -498,12 +503,12 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * @param fileName
 	 * @return the loaded file YamlManager
 	 */
-	public YamlManager loadAndBackupFile(String fileName) {
+	public CommentedYamlConfiguration loadAndBackupFile(String fileName) {
 
-		YamlManager configFile = null;
+		CommentedYamlConfiguration configFile = null;
 		this.getLogger().info("Loading and backing up " + fileName + " file...");
 		try {
-			configFile = fileManager.getNewConfig(fileName);
+			configFile = new CommentedYamlConfiguration(fileName, this);
 		} catch (IOException | InvalidConfigurationException e) {
 			this.getLogger().severe("Error while loading " + fileName + " file, disabling plugin.");
 			this.getLogger().log(Level.SEVERE,
@@ -515,7 +520,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		try {
-			fileManager.backupFile(fileName);
+			configFile.backupConfiguration();
 		} catch (IOException e) {
 			this.getLogger().log(Level.SEVERE, "Error while backing up " + fileName + " file: ", e);
 			successfulLoad = false;
@@ -965,11 +970,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		return achievementDisplay;
 	}
 
-	public UpdateChecker getUpdateChecker() {
-
-		return updateChecker;
-	}
-
 	public String getChatHeader() {
 
 		return chatHeader;
@@ -1065,7 +1065,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		return asyncPooledRequestsSender;
 	}
 
-	public YamlManager getPluginConfig() {
+	public CommentedYamlConfiguration getPluginConfig() {
 
 		return config;
 	}
@@ -1074,10 +1074,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	@Deprecated
 	public FileConfiguration getConfig() {
 
-		return config.getFileConfiguration();
+		return null;
 	}
 
-	public YamlManager getPluginLang() {
+	public CommentedYamlConfiguration getPluginLang() {
 
 		return lang;
 	}

@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.particle.ParticleEffect;
+import com.hm.mcshared.particle.ParticleEffect;
 
 /**
  * Class in charge of handling the /aach book command, which creates and gives a book containing the player's

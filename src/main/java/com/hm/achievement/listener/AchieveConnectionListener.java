@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +16,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.runnable.AchieveConnectionRunnable;
-import com.hm.achievement.utils.UpdateChecker;
 
 /**
  * Listener class to deal with Connections achievements, as well as update checker.
@@ -39,18 +37,7 @@ public class AchieveConnectionListener extends AbstractListener implements Liste
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 
-		Player player = event.getPlayer();
-
-		// Check if OP to display new version message if needed.
-		if (plugin.getUpdateChecker() != null && plugin.getUpdateChecker().isUpdateNeeded()
-				&& player.hasPermission("achievement.update")) {
-			player.sendMessage(plugin.getChatHeader() + "Update available: v" + plugin.getUpdateChecker().getVersion()
-					+ ". Download at one of the following:");
-			player.sendMessage(ChatColor.GRAY + UpdateChecker.BUKKIT_DONWLOAD_URL);
-			player.sendMessage(ChatColor.GRAY + UpdateChecker.SPIGOT_DONWLOAD_URL);
-		}
-
-		scheduleTaskIfAllowed(player);
+		scheduleTaskIfAllowed(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

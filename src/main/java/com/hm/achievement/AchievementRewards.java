@@ -9,7 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.hm.achievement.utils.YamlManager;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 import net.milkbowl.vault.item.ItemInfo;
 import net.milkbowl.vault.item.Items;
@@ -43,7 +43,7 @@ public class AchievementRewards {
 		ArrayList<String> rewardType = new ArrayList<>();
 		Set<String> keyNames = plugin.getPluginConfig().getKeys(true);
 
-		YamlManager pluginLang = plugin.getPluginLang();
+		CommentedYamlConfiguration pluginLang = plugin.getPluginLang();
 		if (plugin.setUpEconomy(false) && keyNames.contains(configAchievement + ".Reward.Money")) {
 			int amount = getMoneyAmount(configAchievement);
 			rewardType.add(pluginLang.getString("list-reward-money", "receive AMOUNT").replace("AMOUNT",
@@ -143,7 +143,7 @@ public class AchievementRewards {
 	private ItemStack getItemReward(String ach, int amount) {
 
 		ItemStack item = null;
-		YamlManager config = plugin.getPluginConfig();
+		CommentedYamlConfiguration config = plugin.getPluginConfig();
 
 		if (config.getKeys(true).contains(ach + ".Reward.Item.Type")) {
 			// Old config syntax (type of item separated in a additional subcategory).
@@ -198,7 +198,7 @@ public class AchievementRewards {
 	 */
 	private int getItemAmount(String configAchievement) {
 
-		YamlManager config = plugin.getPluginConfig();
+		CommentedYamlConfiguration config = plugin.getPluginConfig();
 
 		int itemAmount = 0;
 		// Old config syntax.

@@ -34,12 +34,17 @@
 					<artifactSet>
 						<includes>
 							<include>org.mcstats.*:*</include>
+							<include>com.hm.mcshared:*</include>
 						</includes>
 					</artifactSet>
 					<relocations>
 						<relocation>
 							<pattern>org.mcstats</pattern>
 							<shadedPattern>com.hm.achievement.metrics</shadedPattern>
+						</relocation>
+						<relocation>
+							<pattern>com.hm.mcshared</pattern>
+							<shadedPattern>com.hm.achievement.mcshared</shadedPattern>
 						</relocation>
 					</relocations>
 				</configuration>
@@ -88,7 +93,7 @@
 			</resource>
 		</resources>
 	</build>
-	
+
 	<repositories>
 		<repository>
 			<id>bukkit-repo</id>
@@ -102,8 +107,12 @@
 			<id>Plugin Metrics</id>
 			<url>http://repo.mcstats.org/content/repositories/public/</url>
 		</repository>
+		<repository>
+			<id>MCShared-mvn-repo</id>
+			<url>https://raw.github.com/PyvesB/MCShared/mvn-repo/</url>
+		</repository>
 	</repositories>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.bukkit</groupId>
@@ -127,8 +136,14 @@
 		<dependency>
 			<groupId>com.hm.petmaster</groupId>
 			<artifactId>PetMaster</artifactId>
-			<version>1.3</version>
+			<version>1.4</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.hm.mcshared</groupId>
+			<artifactId>MCShared</artifactId>
+			<version>1.0</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

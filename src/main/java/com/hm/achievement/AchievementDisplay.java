@@ -15,9 +15,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 import com.google.common.base.Strings;
-import com.hm.achievement.particle.PacketSender;
-import com.hm.achievement.particle.ParticleEffect;
-import com.hm.achievement.utils.YamlManager;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.mcshared.particle.PacketSender;
+import com.hm.mcshared.particle.ParticleEffect;
 
 /**
  * Class in charge of displaying of achievements (title, firework, chat messages).
@@ -38,7 +38,7 @@ public class AchievementDisplay {
 
 		this.plugin = achievement;
 		// Load configuration parameters.
-		YamlManager config = plugin.getPluginConfig();
+		CommentedYamlConfiguration config = plugin.getPluginConfig();
 		fireworkStyle = config.getString("FireworkStyle", "BALL_LARGE");
 		fireworks = config.getBoolean("Firework", true);
 		chatNotify = config.getBoolean("ChatNotify", false);
@@ -53,7 +53,7 @@ public class AchievementDisplay {
 	 */
 	public void displayAchievement(Player player, String configAchievement) {
 
-		YamlManager config = plugin.getPluginConfig();
+		CommentedYamlConfiguration config = plugin.getPluginConfig();
 
 		String achievementName = config.getString(configAchievement + ".Name");
 		String displayName = config.getString(configAchievement + ".DisplayName", "");
