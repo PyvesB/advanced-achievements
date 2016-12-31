@@ -1,5 +1,6 @@
 package com.hm.achievement.command;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -24,13 +25,15 @@ public class CheckCommand extends AbstractParsableCommand {
 
 		// Check if achievement exists in database and display message accordingly.
 		if (plugin.getPoolsManager().hasPlayerAchievement(player, achievementName)) {
-			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
-					.getString("check-achievement-true", "PLAYER has received the achievement ACH!")
-					.replace("PLAYER", args[args.length - 1]).replace("ACH", achievementName));
+			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceEach(
+					plugin.getPluginLang().getString("check-achievement-true",
+							"PLAYER has received the achievement ACH!"),
+					new String[] { "PLAYER", "ACH" }, new String[] { args[args.length - 1], achievementName }));
 		} else {
-			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
-					.getString("check-achievements-false", "PLAYER has not received the achievement ACH!")
-					.replace("PLAYER", args[args.length - 1]).replace("ACH", achievementName));
+			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceEach(
+					plugin.getPluginLang().getString("check-achievements-false",
+							"PLAYER has not received the achievement ACH!"),
+					new String[] { "PLAYER", "ACH" }, new String[] { args[args.length - 1], achievementName }));
 		}
 	}
 }

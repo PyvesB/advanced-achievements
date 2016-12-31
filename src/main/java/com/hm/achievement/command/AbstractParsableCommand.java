@@ -1,5 +1,6 @@
 package com.hm.achievement.command;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -42,9 +43,9 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 
 		// If player not found or is offline.
 		if (player == null) {
-			sender.sendMessage(plugin.getChatHeader()
-					+ plugin.getPluginLang().getString("player-offline", "The player PLAYER is offline!")
-							.replace("PLAYER", args[args.length - 1]));
+			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceOnce(
+					plugin.getPluginLang().getString("player-offline", "The player PLAYER is offline!"), "PLAYER",
+					args[args.length - 1]));
 			return;
 		}
 

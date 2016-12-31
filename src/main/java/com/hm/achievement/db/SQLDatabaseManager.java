@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -495,7 +496,7 @@ public class SQLDatabaseManager {
 	public String getPlayerAchievementDate(Player player, String name) {
 
 		// We double apostrophes to avoid breaking the query.
-		String dbName = name.replace("'", "''");
+		String dbName = StringUtils.replace(name, "'", "''");
 		String achievementDate = null;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
@@ -754,7 +755,7 @@ public class SQLDatabaseManager {
 		try (PreparedStatement prep = conn.prepareStatement(query)) {
 			if (name.contains("'")) {
 				prep.setString(1, name);
-				prep.setString(2, name.replace("'", "''"));
+				prep.setString(2, StringUtils.replace(name, "'", "''"));
 			} else {
 				prep.setString(1, name);
 			}

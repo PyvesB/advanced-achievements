@@ -1,5 +1,6 @@
 package com.hm.achievement.command;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,10 +32,11 @@ public class GiveCommand extends AbstractParsableCommand {
 			String achievementName = plugin.getPluginConfig().getString(configAchievement + ".Name");
 			if (!multiCommand && plugin.getPoolsManager().hasPlayerAchievement(player, achievementName)) {
 				sender.sendMessage(
-						plugin.getChatHeader() + plugin.getPluginLang()
-								.getString("achievement-already-received",
-										"The player PLAYER has already received this achievement!")
-								.replace("PLAYER", args[2]));
+						StringUtils.replaceOnce(
+								plugin.getChatHeader()
+										+ plugin.getPluginLang().getString("achievement-already-received",
+												"The player PLAYER has already received this achievement!"),
+								"PLAYER", args[2]));
 				return;
 			}
 
@@ -51,9 +53,11 @@ public class GiveCommand extends AbstractParsableCommand {
 					+ plugin.getPluginLang().getString("achievement-given", "Achievement given!"));
 		} else {
 			// Achievement not found in the Commands category.
-			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
-					.getString("achievement-not-found", "The specified achievement was not found in Commands category.")
-					.replace("PLAYER", args[2]));
+			sender.sendMessage(
+					plugin.getChatHeader() + StringUtils.replaceOnce(
+							plugin.getPluginLang().getString("achievement-not-found",
+									"The specified achievement was not found in Commands category."),
+							"PLAYER", args[2]));
 		}
 	}
 }

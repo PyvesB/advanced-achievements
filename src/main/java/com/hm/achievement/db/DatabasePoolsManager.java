@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.HashMultimap;
@@ -333,7 +334,7 @@ public class DatabasePoolsManager {
 		String uuid = player.getUniqueId().toString();
 		String subcategoryDBName;
 		if (category == MultipleAchievements.PLAYERCOMMANDS) {
-			subcategoryDBName = subcategory.replace(" ", "");
+			subcategoryDBName = StringUtils.replace(subcategory, " ", "");
 		} else {
 			subcategoryDBName = subcategory;
 		}

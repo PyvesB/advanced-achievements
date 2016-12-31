@@ -1,5 +1,6 @@
 package com.hm.achievement.command;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -95,31 +96,35 @@ public class HelpCommand extends AbstractCommand {
 		}
 
 		if (sender.hasPermission("achievement.give")) {
-			sendJsonClickableHoverableMessage(sender, plugin.getChatHeader() + plugin.getColor()
-					+ "/aach give &oach player" + ChatColor.GRAY + " > "
-					+ ChatColor.translateAlternateColorCodes('&',
-							plugin.getPluginLang().getString("aach-command-give", "Give achievement ACH to &7NAME.")
-									.replace("ACH", "&oach&7").replace("NAME", "&oplayer&7")),
+			sendJsonClickableHoverableMessage(sender,
+					plugin.getChatHeader() + plugin.getColor() + "/aach give &oach player" + ChatColor.GRAY + " > "
+							+ ChatColor.translateAlternateColorCodes('&',
+									StringUtils.replaceEach(
+											plugin.getPluginLang().getString("aach-command-give",
+													"Give achievement ACH to &7NAME."),
+											new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" })),
 					"/aach give ach name", plugin.getPluginLang().getString("aach-command-give-hover",
 							"Player must be online; only Commands achievements can be used."));
 		}
 
 		if (sender.hasPermission("achievement.check")) {
-			sendJsonClickableHoverableMessage(sender,
-					plugin.getChatHeader() + plugin.getColor() + "/aach check &oach player" + ChatColor.GRAY + " > "
-							+ ChatColor.translateAlternateColorCodes('&',
-									plugin.getPluginLang().getString("aach-command-check", "Check if NAME has ACH.")
-											.replace("ACH", "&oach&7").replace("NAME", "&oplayer&7")),
+			sendJsonClickableHoverableMessage(sender, plugin.getChatHeader() + plugin.getColor()
+					+ "/aach check &oach player" + ChatColor.GRAY + " > "
+					+ ChatColor.translateAlternateColorCodes('&',
+							StringUtils.replaceEach(
+									plugin.getPluginLang().getString("aach-command-check", "Check if NAME has ACH."),
+									new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" })),
 					"/aach check ach name", plugin.getPluginLang().getString("aach-command-check-hover",
 							"Use the Name parameter specified in the config."));
 		}
 
 		if (sender.hasPermission("achievement.delete")) {
-			sendJsonClickableHoverableMessage(sender,
-					plugin.getChatHeader() + plugin.getColor() + "/aach delete &oach player" + ChatColor.GRAY + " > "
-							+ ChatColor.translateAlternateColorCodes('&',
-									plugin.getPluginLang().getString("aach-command-delete", "Delete ACH from NAME.")
-											.replace("ACH", "&oach&7").replace("NAME", "&oplayer&7")),
+			sendJsonClickableHoverableMessage(sender, plugin.getChatHeader() + plugin.getColor()
+					+ "/aach delete &oach player" + ChatColor.GRAY + " > "
+					+ ChatColor.translateAlternateColorCodes('&',
+							StringUtils.replaceEach(
+									plugin.getPluginLang().getString("aach-command-delete", "Delete ACH from NAME."),
+									new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" })),
 					"/aach delete ach name", plugin.getPluginLang().getString("aach-command-delete-hover",
 							"Player must be online; does not reset any associated statistics."));
 		}

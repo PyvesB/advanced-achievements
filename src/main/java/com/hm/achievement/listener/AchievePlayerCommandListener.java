@@ -1,5 +1,6 @@
 package com.hm.achievement.listener;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,7 +34,7 @@ public class AchievePlayerCommandListener extends AbstractListener implements Li
 		for (String commandPrefix : plugin.getPluginConfig().getConfigurationSection(category.toString())
 				.getKeys(false)) {
 			if (command.startsWith(commandPrefix)) {
-				if (player.hasPermission(category.toPermName() + '.' + commandPrefix.replace(" ", ""))) {
+				if (player.hasPermission(category.toPermName() + '.' + StringUtils.replace(commandPrefix, " ", ""))) {
 					updateStatisticAndAwardAchievementsIfAvailable(player, category, commandPrefix, 1);
 				}
 				break;

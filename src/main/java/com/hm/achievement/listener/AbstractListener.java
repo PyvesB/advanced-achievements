@@ -3,6 +3,7 @@ package com.hm.achievement.listener;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
@@ -89,10 +90,10 @@ public abstract class AbstractListener {
 		long timeToWait = lastEventTime + cooldownTime - System.currentTimeMillis();
 		if (timeToWait > 0) {
 			if (cooldownActionBar) {
-				String actionBarJsonMessage = "{\"text\":\"&o" + plugin.getPluginLang()
-						.getString("statistic-cooldown",
-								"Achievements cooldown, wait TIME seconds before this action counts again.")
-						.replace("TIME", String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
+				String actionBarJsonMessage = "{\"text\":\"&o" + StringUtils.replaceOnce(
+						plugin.getPluginLang().getString("statistic-cooldown",
+								"Achievements cooldown, wait TIME seconds before this action counts again."),
+						"TIME", String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
 				try {
 					PacketSender.sendActionBarPacket(player, actionBarJsonMessage);
 				} catch (Exception e) {

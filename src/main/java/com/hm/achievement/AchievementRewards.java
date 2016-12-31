@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -46,14 +47,15 @@ public class AchievementRewards {
 		AchievementCommentedYamlConfiguration pluginLang = plugin.getPluginLang();
 		if (plugin.setUpEconomy(false) && keyNames.contains(configAchievement + ".Reward.Money")) {
 			int amount = getMoneyAmount(configAchievement);
-			rewardType.add(pluginLang.getString("list-reward-money", "receive AMOUNT").replace("AMOUNT",
+			rewardType.add(StringUtils.replaceOnce(pluginLang.getString("list-reward-money", "receive AMOUNT"),
+					"AMOUNT",
 					amount + " " + getCurrencyName(amount)));
 		}
 		if (keyNames.contains(configAchievement + ".Reward.Item")) {
 			int amount = getItemAmount(configAchievement);
 			String name = getItemName(getItemReward(configAchievement, amount));
-			rewardType.add(pluginLang.getString("list-reward-item", "receive AMOUNT ITEM")
-					.replace("AMOUNT", Integer.toString(amount)).replace("ITEM", name));
+			rewardType.add(StringUtils.replaceEach(pluginLang.getString("list-reward-item", "receive AMOUNT ITEM"),
+					new String[] { "AMOUNT", "ITEM" }, new String[] { Integer.toString(amount), name }));
 		}
 		if (keyNames.contains(configAchievement + ".Reward.Command")) {
 			rewardType.add(pluginLang.getString("list-reward-command", "other"));
@@ -92,7 +94,7 @@ public class AchievementRewards {
 		}
 
 		if (commandReward.length() > 0) {
-			commandReward = commandReward.replace("PLAYER", player.getName());
+			commandReward = StringUtils.replaceOnce(commandReward, "PLAYER", player.getName());
 			// Multiple reward commands can be set, separated by a semicolon and space. Extra parsing needed.
 			String[] commands = commandReward.split("; ");
 			for (String command : commands) {
@@ -127,8 +129,9 @@ public class AchievementRewards {
 			String currencyName = getCurrencyName(amount);
 
 			player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&',
-					plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!")
-							.replace("AMOUNT", amount + " " + currencyName)));
+					StringUtils.replaceOnce(
+							plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!"),
+							"AMOUNT", amount + " " + currencyName)));
 		}
 	}
 
@@ -248,6 +251,6 @@ public class AchievementRewards {
 			}
 		}
 		// Vault name of object not available.
-		return item.getType().toString().replace("_", " ").toLowerCase();
+		return StringUtils.replace(item.getType().toString(), "_", " ").toLowerCase();
 	}
 }

@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -711,9 +712,14 @@ public class ListCommand extends AbstractCommand {
 			// Create item stack that will be displayed in the GUI, with its category name.
 			categoryItem = itemStacks[indexInItemStacksArray];
 			categoryMeta = categoryItem.getItemMeta();
-			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-					"&8" + plugin.getPluginConfig().getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
-							.replace("%ICON%", plugin.getIcon()).replace("%NAME%", "&l" + displayName + "&8")));
+			categoryMeta
+					.setDisplayName(
+							ChatColor.translateAlternateColorCodes('&',
+									"&8" + StringUtils.replaceEach(
+											plugin.getPluginConfig().getString("ListAchievementFormat",
+													"%ICON% %NAME% %ICON%"),
+											new String[] { "%ICON%", "%NAME%" },
+											new String[] { plugin.getIcon(), "&l" + displayName + "&8" })));
 		} else {
 			// The player has not unlocked any achievements in the category: display barrier item with message.
 			categoryItem = new ItemStack(Material.BARRIER);
@@ -731,8 +737,9 @@ public class ListCommand extends AbstractCommand {
 					"AMOUNT achievement");
 		}
 		// Set item lore.
-		categoryMeta.setLore(ImmutableList.of(ChatColor.translateAlternateColorCodes('&',
-				"&8" + loreAmountMessage.replace("AMOUNT", Integer.toString(totalAchievementsInCategory)))));
+		categoryMeta.setLore(ImmutableList.of(ChatColor.translateAlternateColorCodes('&', "&8"
+				+ StringUtils.replaceOnce(loreAmountMessage, "AMOUNT",
+						Integer.toString(totalAchievementsInCategory)))));
 		// Set item meta.
 		categoryItem.setItemMeta(categoryMeta);
 
@@ -774,7 +781,8 @@ public class ListCommand extends AbstractCommand {
 		// obfuscateNotReceived and/or obfuscateProgressiveAchievements in the config.
 		ItemMeta itemMeta = achItem.getItemMeta();
 		if (date != null) {
-			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+			itemMeta.setDisplayName(
+					ChatColor.translateAlternateColorCodes('&',
 							StringEscapeUtils.unescapeJava(
 									plugin.getPluginLang().getString("list-achievement-received", "&a\u2714&f "))
 									+ achName));

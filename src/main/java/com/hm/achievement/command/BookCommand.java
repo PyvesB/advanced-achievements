@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -89,9 +90,10 @@ public class BookCommand extends AbstractCommand {
 			fillBook(achievements, player);
 		} else {
 			// The player has already received a book recently.
-			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
-					.getString("book-delay", "You must wait TIME seconds between each book reception!")
-					.replace("TIME", Integer.toString(bookCooldownTime / 1000)));
+			player.sendMessage(plugin.getChatHeader() + StringUtils.replaceOnce(
+					plugin.getPluginLang().getString("book-delay",
+							"You must wait TIME seconds between each book reception!"),
+					"TIME", Integer.toString(bookCooldownTime / 1000)));
 		}
 	}
 
@@ -131,8 +133,9 @@ public class BookCommand extends AbstractCommand {
 		bm.setPages(pages);
 		bm.setAuthor(player.getName());
 		bm.setTitle(plugin.getPluginLang().getString("book-name", "Achievements Book"));
-		bm.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + plugin.getPluginLang()
-				.getString("book-date", "Book created on DATE.").replace("DATE", dateFormat.format(new Date())))));
+		bm.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&',
+				"&8" + StringUtils.replaceOnce(plugin.getPluginLang().getString("book-date", "Book created on DATE."),
+						"DATE", dateFormat.format(new Date())))));
 
 		book.setItemMeta(bm);
 

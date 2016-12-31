@@ -3,6 +3,7 @@ package com.hm.achievement;
 import java.util.Random;
 import java.util.logging.Level;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -81,12 +82,10 @@ public class AchievementDisplay {
 		if (chatNotify) {
 			for (Player p : plugin.getServer().getOnlinePlayers()) {
 				if (!p.getName().equals(player.getName())) {
-					p.sendMessage(
-							plugin.getChatHeader()
-									+ plugin.getPluginLang()
-											.getString("achievement-received", "PLAYER received the achievement:")
-											.replace("PLAYER", player.getName())
-									+ " " + ChatColor.WHITE + nameToShowUser);
+					p.sendMessage(plugin.getChatHeader()
+							+ StringUtils.replaceOnce(plugin.getPluginLang().getString("achievement-received",
+									"PLAYER received the achievement:"), "PLAYER", player.getName())
+							+ " " + ChatColor.WHITE + nameToShowUser);
 				}
 			}
 		}
