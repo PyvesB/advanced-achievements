@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.mcshared.particle.PacketSender;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
@@ -165,7 +165,7 @@ public abstract class AbstractListener {
 	 */
 	protected void awardAchievementIfAvailable(Player player, String configAchievement) {
 
-		CommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
+		AchievementCommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
 		if (pluginConfig.getString(configAchievement + ".Message", null) != null) {
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 			String achievementName = pluginConfig.getString(configAchievement + ".Name");

@@ -12,7 +12,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of updating the language and configuration files when a new version of the plugin is released.
@@ -34,7 +33,7 @@ public class FileUpdater {
 	 * 
 	 * @param configFile
 	 */
-	public void updateOldConfiguration(CommentedYamlConfiguration configFile) {
+	public void updateOldConfiguration(AchievementCommentedYamlConfiguration configFile) {
 
 		boolean updateDone = false;
 
@@ -181,7 +180,7 @@ public class FileUpdater {
 	 * 
 	 * @param langFile
 	 */
-	public void updateOldLanguage(CommentedYamlConfiguration langFile) {
+	public void updateOldLanguage(AchievementCommentedYamlConfiguration langFile) {
 
 		boolean updateDone = false;
 

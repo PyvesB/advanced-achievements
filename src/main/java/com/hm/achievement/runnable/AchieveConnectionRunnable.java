@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 
 /**
  * Runnable task to check for Connection achievements after a player has connected.
@@ -60,7 +60,7 @@ public class AchieveConnectionRunnable implements Runnable {
 
 			int connections = plugin.getDb().updateAndGetConnection(player, format.format(now));
 			String configAchievement = category + "." + connections;
-			CommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
+			AchievementCommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
 			if (pluginConfig.getString(configAchievement + ".Message", null) != null) {
 				plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
 				String achievementName = pluginConfig.getString(configAchievement + ".Name");

@@ -23,7 +23,7 @@ import com.google.common.primitives.Ints;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach list command, which displays interactive GUIs. The command displays the main
@@ -187,7 +187,7 @@ public class ListCommand extends AbstractCommand {
 
 		String categoryName = category.toString();
 
-		CommentedYamlConfiguration config = plugin.getPluginConfig();
+		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
 		ConfigurationSection categoryConfig = config.getConfigurationSection(categoryName);
 
 		int totalAchievementsInCategory = 0;

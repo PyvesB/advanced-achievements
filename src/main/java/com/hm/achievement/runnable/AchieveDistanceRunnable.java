@@ -16,7 +16,7 @@ import org.bukkit.util.NumberConversions;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
@@ -203,7 +203,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	 */
 	private void awardDistanceAchievement(Player player, int achievementDistance, String type) {
 
-		CommentedYamlConfiguration config = plugin.getPluginConfig();
+		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
 		plugin.getAchievementDisplay().displayAchievement(player, type + achievementDistance);
 		String achievementName = config.getString(type + achievementDistance + ".Name");
 		plugin.getDb().registerAchievement(player, achievementName,

@@ -73,8 +73,8 @@ import com.hm.achievement.listener.AchieveXPListener;
 import com.hm.achievement.listener.ListGUIListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
+import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.achievement.utils.FileUpdater;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.file.FileManager;
 import com.hm.mcshared.update.UpdateChecker;
 
@@ -149,8 +149,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	private UpdateChecker updateChecker;
 
 	// Language and configuration related.
-	private CommentedYamlConfiguration config;
-	private CommentedYamlConfiguration lang;
+	private AchievementCommentedYamlConfiguration config;
+	private AchievementCommentedYamlConfiguration lang;
 	private final FileUpdater fileUpdater;
 
 	// Database related.
@@ -200,8 +200,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Start enabling plugin.
 		long startTime = System.currentTimeMillis();
 
-		CommentedYamlConfiguration configFile = loadAndBackupFile("config.yml");
-		CommentedYamlConfiguration langFile = loadAndBackupFile(configFile.getString("LanguageFileName", "lang.yml"));
+		AchievementCommentedYamlConfiguration configFile = loadAndBackupFile("config.yml");
+		AchievementCommentedYamlConfiguration langFile = loadAndBackupFile(
+				configFile.getString("LanguageFileName", "lang.yml"));
 
 		// Error while loading .yml files; do not do any further work.
 		if (overrideDisable) {
@@ -470,7 +471,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * @param config
 	 * @param lang
 	 */
-	public void configurationLoad(CommentedYamlConfiguration config, CommentedYamlConfiguration lang) {
+	public void configurationLoad(AchievementCommentedYamlConfiguration config,
+			AchievementCommentedYamlConfiguration lang) {
 
 		this.config = config;
 		this.lang = lang;
@@ -503,12 +505,12 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * @param fileName
 	 * @return the loaded file YamlManager
 	 */
-	public CommentedYamlConfiguration loadAndBackupFile(String fileName) {
+	public AchievementCommentedYamlConfiguration loadAndBackupFile(String fileName) {
 
-		CommentedYamlConfiguration configFile = null;
+		AchievementCommentedYamlConfiguration configFile = null;
 		this.getLogger().info("Loading and backing up " + fileName + " file...");
 		try {
-			configFile = new CommentedYamlConfiguration(fileName, this);
+			configFile = new AchievementCommentedYamlConfiguration(fileName, this);
 		} catch (IOException | InvalidConfigurationException e) {
 			this.getLogger().severe("Error while loading " + fileName + " file, disabling plugin.");
 			this.getLogger().log(Level.SEVERE,
@@ -1065,7 +1067,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		return asyncPooledRequestsSender;
 	}
 
-	public CommentedYamlConfiguration getPluginConfig() {
+	public AchievementCommentedYamlConfiguration getPluginConfig() {
 
 		return config;
 	}
@@ -1077,7 +1079,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		return null;
 	}
 
-	public CommentedYamlConfiguration getPluginLang() {
+	public AchievementCommentedYamlConfiguration getPluginLang() {
 
 		return lang;
 	}
