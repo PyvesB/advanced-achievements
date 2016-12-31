@@ -42,9 +42,9 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 
 		// If player not found or is offline.
 		if (player == null) {
-			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
-					.getString("player-offline", "The player PLAYER is offline!")
-					.replace("PLAYER", args[args.length - 1]));
+			sender.sendMessage(plugin.getChatHeader()
+					+ plugin.getPluginLang().getString("player-offline", "The player PLAYER is offline!")
+							.replace("PLAYER", args[args.length - 1]));
 			return;
 		}
 

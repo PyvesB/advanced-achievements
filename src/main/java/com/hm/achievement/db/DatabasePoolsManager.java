@@ -333,7 +333,7 @@ public class DatabasePoolsManager {
 		String uuid = player.getUniqueId().toString();
 		String subcategoryDBName;
 		if (category == MultipleAchievements.PLAYERCOMMANDS) {
-			subcategoryDBName = subcategory.replaceAll(" ", "");
+			subcategoryDBName = subcategory.replace(" ", "");
 		} else {
 			subcategoryDBName = subcategory;
 		}

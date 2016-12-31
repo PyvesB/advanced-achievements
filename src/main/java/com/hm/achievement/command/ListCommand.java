@@ -713,7 +713,7 @@ public class ListCommand extends AbstractCommand {
 			categoryMeta = categoryItem.getItemMeta();
 			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 					"&8" + plugin.getPluginConfig().getString("ListAchievementFormat", "%ICON% %NAME% %ICON%")
-							.replaceAll("%ICON%", plugin.getIcon()).replaceAll("%NAME%", "&l" + displayName + "&8")));
+							.replace("%ICON%", plugin.getIcon()).replace("%NAME%", "&l" + displayName + "&8")));
 		} else {
 			// The player has not unlocked any achievements in the category: display barrier item with message.
 			categoryItem = new ItemStack(Material.BARRIER);
@@ -782,12 +782,12 @@ public class ListCommand extends AbstractCommand {
 			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 					StringEscapeUtils.unescapeJava(
 							plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2718&8 ")) + "&k"
-							+ achName.replaceAll(REGEX_PATTERN.pattern(), "")));
+							+ REGEX_PATTERN.matcher(achName).replaceAll("")));
 		} else {
 			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 					StringEscapeUtils.unescapeJava(
 							plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2718&8 ") + "&o"
-									+ achName.replaceAll(REGEX_PATTERN.pattern(), ""))));
+									+ REGEX_PATTERN.matcher(achName).replaceAll(""))));
 		}
 
 		// Build the lore of the item.
@@ -836,7 +836,7 @@ public class ListCommand extends AbstractCommand {
 			// obfuscateNotReceived in the config.
 			lore.add(ChatColor.translateAlternateColorCodes('&',
 					"&7&l" + plugin.getPluginLang().getString("list-goal", "Goal:")));
-			String strippedAchMessage = achMessage.replaceAll(REGEX_PATTERN.pattern(), "");
+			String strippedAchMessage = REGEX_PATTERN.matcher(achMessage).replaceAll("");
 			if (obfuscateNotReceived || (obfuscateProgressiveAchievements && inelligibleSeriesItem)) {
 				lore.add(ChatColor.translateAlternateColorCodes('&', "&8&k" + strippedAchMessage));
 			} else {
@@ -887,7 +887,7 @@ public class ListCommand extends AbstractCommand {
 		// MinecraftFont essentially supports latin alphabet characters. If invalid characters are found just use
 		// number of chars.
 		if (FONT.isValid(achMessage)) {
-			textSize = FONT.getWidth(achMessage.replaceAll(REGEX_PATTERN.pattern(), ""));
+			textSize = FONT.getWidth(REGEX_PATTERN.matcher(achMessage).replaceAll(""));
 		} else {
 			textSize = achMessage.length() * 3;
 		}

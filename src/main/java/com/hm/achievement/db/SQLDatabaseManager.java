@@ -351,7 +351,7 @@ public class SQLDatabaseManager {
 				for (String date : oldDates) {
 					// Convert to SQL date format.
 					newDates.add(
-							new java.sql.Date(oldFormat.parse(date.replaceAll(regexPattern.pattern(), "")).getTime()));
+							new java.sql.Date(oldFormat.parse(regexPattern.matcher(date).replaceAll("")).getTime()));
 				}
 			} catch (ParseException e) {
 				plugin.getLogger().log(Level.SEVERE, "Error while parsing dates: ", e);
