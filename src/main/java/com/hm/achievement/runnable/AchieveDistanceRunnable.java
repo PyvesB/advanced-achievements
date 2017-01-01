@@ -74,15 +74,16 @@ public class AchieveDistanceRunnable implements Runnable {
 		String uuid = player.getUniqueId().toString();
 		Location previousLocation = playerLocations.get(uuid);
 
-		// If player location not found, add it in table. If player has changed world, ignore previous location.
+		// Update new location.
+		playerLocations.put(uuid, player.getLocation());
+
+		// If player location not found or if player has changed world, ignore previous location.
 		// Evaluating distance would give an exception.
 		if (previousLocation == null || !previousLocation.getWorld().getName().equals(player.getWorld().getName())) {
-			playerLocations.put(uuid, player.getLocation());
 			return;
 		}
 
-		// If player is in restricted creative mode or is in a blocked world,
-		// don't update distances.
+		// If player is in restricted creative mode or is in a blocked world, don't update distances.
 		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
 				|| plugin.isInExludedWorld(player)) {
 			return;
@@ -94,40 +95,20 @@ public class AchieveDistanceRunnable implements Runnable {
 			return;
 		}
 
-		// Should be the player's location be updated in the map?
-		boolean updateLocation = true;
-
-		if (player.isInsideVehicle()) {
-			if (player.getVehicle() instanceof Horse
-					&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEHORSE.toString())) {
-				updateLocation = updateDistanceAndCheckAchievements(difference, player,
-						NormalAchievements.DISTANCEHORSE);
-			} else if (player.getVehicle() instanceof Pig
-					&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEPIG.toString())) {
-				updateLocation = updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEPIG);
-			} else if (player.getVehicle() instanceof Minecart
-					&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEMINECART.toString())) {
-				updateLocation = updateDistanceAndCheckAchievements(difference, player,
-						NormalAchievements.DISTANCEMINECART);
-			} else if (player.getVehicle() instanceof Boat
-					&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEBOAT.toString())) {
-				updateLocation = updateDistanceAndCheckAchievements(difference, player,
-						NormalAchievements.DISTANCEBOAT);
-			} else if (version >= 11 && player.getVehicle() instanceof Llama
-					&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCELLAMA.toString())) {
-				updateLocation = updateDistanceAndCheckAchievements(difference, player,
-						NormalAchievements.DISTANCELLAMA);
-			}
-		} else if (!player.isFlying() && (version < 9 || !player.isGliding())
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEFOOT.toString())) {
-			updateLocation = updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEFOOT);
-		} else if (version >= 9 && player.isGliding()
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.DISTANCEGLIDING.toString())) {
-			updateLocation = updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEGLIDING);
-		}
-
-		if (updateLocation) {
-			playerLocations.put(uuid, player.getLocation());
+		if (player.getVehicle() instanceof Horse) {
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEHORSE);
+		} else if (player.getVehicle() instanceof Pig) {
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEPIG);
+		} else if (player.getVehicle() instanceof Minecart) {
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEMINECART);
+		} else if (player.getVehicle() instanceof Boat) {
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEBOAT);
+		} else if (version >= 11 && player.getVehicle() instanceof Llama) {
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCELLAMA);
+		} else if (!player.isFlying() && (version < 9 || !player.isGliding())) {
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEFOOT);
+		} else if (version >= 9 && player.isGliding()) {
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEGLIDING);
 		}
 	}
 
@@ -141,15 +122,14 @@ public class AchieveDistanceRunnable implements Runnable {
 	private int getDistanceDifference(Player player, Location previousLocation) {
 
 		// Distance difference since last runnable; ignore the vertical axis or not.
-		int difference;
+		double difference;
 		if (ignoreVerticalDistance) {
-			difference = (int) Math.sqrt(NumberConversions.square(previousLocation.getX() - player.getLocation().getX())
+			difference = Math.sqrt(NumberConversions.square(previousLocation.getX() - player.getLocation().getX())
 					+ NumberConversions.square(previousLocation.getZ() - player.getLocation().getZ()));
 		} else {
-			difference = (int) previousLocation.distance(player.getLocation());
+			difference = previousLocation.distance(player.getLocation());
 		}
-
-		return difference;
+		return (int) difference;
 	}
 
 	/**
@@ -159,24 +139,18 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * @param difference
 	 * @param player
 	 * @param category
-	 * @param achievementsCache
-	 * @return True if the player location should be updated; false if the distances Map does not contain the uuid
 	 */
-	private boolean updateDistanceAndCheckAchievements(int difference, Player player, NormalAchievements category) {
+	private void updateDistanceAndCheckAchievements(int difference, Player player, NormalAchievements category) {
 
-		if (!player.hasPermission(category.toPermName())) {
-			return true;
+		if (!player.hasPermission(category.toPermName())
+				|| plugin.getDisabledCategorySet().contains(category.toString())) {
+			return;
 		}
 
-		Map<String, Integer> map = plugin.getPoolsManager().getHashMap(category);
 		String uuid = player.getUniqueId().toString();
-
-		Integer distance = map.get(uuid);
-		// Distance didn't previously exist in the cache; retrieve it from the database and return.
-		if (distance == null) {
-			map.put(uuid, plugin.getDb().getNormalAchievementAmount(player, category));
-			return false;
-		}
+		Map<String, Integer> map = plugin.getPoolsManager().getHashMap(category);
+		// If distance didn't previously exist in the cache; retrieve it from the database.
+		int distance = map.getOrDefault(uuid, plugin.getDb().getNormalAchievementAmount(player, category));
 
 		distance += difference;
 		map.put(uuid, distance);
@@ -191,7 +165,6 @@ public class AchieveDistanceRunnable implements Runnable {
 				awardDistanceAchievement(player, threshold, category + ".");
 			}
 		}
-		return true;
 	}
 
 	/**
