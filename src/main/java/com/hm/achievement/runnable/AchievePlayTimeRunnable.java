@@ -56,9 +56,10 @@ public class AchievePlayTimeRunnable implements Runnable {
 			return;
 
 		String uuid = player.getUniqueId().toString();
-
-		Long playedTime = plugin.getPoolsManager().getPlayedTimeHashMap().getOrDefault(uuid,
-				plugin.getDb().getPlaytimeAmount(player));
+		Long playedTime = plugin.getPoolsManager().getPlayedTimeHashMap().get(uuid);
+		if (playedTime == null) {
+			playedTime = plugin.getDb().getPlaytimeAmount(player);
+		}
 
 		playedTime += System.currentTimeMillis() - previousRunMillis;
 

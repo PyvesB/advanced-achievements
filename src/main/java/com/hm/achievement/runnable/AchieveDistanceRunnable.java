@@ -150,7 +150,10 @@ public class AchieveDistanceRunnable implements Runnable {
 		String uuid = player.getUniqueId().toString();
 		Map<String, Integer> map = plugin.getPoolsManager().getHashMap(category);
 		// If distance didn't previously exist in the cache; retrieve it from the database.
-		int distance = map.getOrDefault(uuid, plugin.getDb().getNormalAchievementAmount(player, category));
+		Integer distance = map.get(uuid);
+		if (distance == null) {
+			distance = plugin.getDb().getNormalAchievementAmount(player, category);
+		}
 
 		distance += difference;
 		map.put(uuid, distance);
