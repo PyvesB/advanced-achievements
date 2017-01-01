@@ -163,8 +163,8 @@ public class BookCommand extends AbstractCommand {
 		}
 		long currentTime = System.currentTimeMillis();
 		String uuid = player.getUniqueId().toString();
-		Long lastListTime = playersBookTime.get(uuid);
-		if (lastListTime == null || currentTime - lastListTime > bookCooldownTime) {
+		Long lastListTime = playersBookTime.getOrDefault(uuid, currentTime);
+		if (currentTime - lastListTime > bookCooldownTime) {
 			playersBookTime.put(uuid, currentTime);
 			return false;
 		}
