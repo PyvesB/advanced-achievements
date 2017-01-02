@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.petmaster.event.PlayerChangeAnimalOwnershipEvent;
+import com.hm.mcshared.event.PlayerChangeAnimalOwnershipEvent;
 
 /**
  * Listener class to deal with PetMasterGive and PetMasterReceive achievements.
