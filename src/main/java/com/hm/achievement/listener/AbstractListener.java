@@ -86,7 +86,7 @@ public abstract class AbstractListener {
 	protected boolean isInCooldownPeriod(Player player) {
 
 		String uuid = player.getUniqueId().toString();
-		Long lastEventTime = cooldownMap.getOrDefault(uuid, 0L);
+		long lastEventTime = cooldownMap.getOrDefault(uuid, 0L);
 		long timeToWait = lastEventTime + cooldownTime - System.currentTimeMillis();
 		if (timeToWait > 0) {
 			if (cooldownActionBar) {

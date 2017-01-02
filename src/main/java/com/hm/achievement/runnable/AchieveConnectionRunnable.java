@@ -40,10 +40,12 @@ public class AchieveConnectionRunnable implements Runnable {
 				|| plugin.isInExludedWorld(player)) {
 			return;
 		}
+		
+		String uuid = player.getUniqueId().toString();
 
 		// Check whether another runnable has already done the work (even though this method is intended to run once
 		// per player per connection instance, this might happen in some server configurations).
-		if (plugin.getConnectionListener().getPlayersAchieveConnectionRan().contains(player.getUniqueId().toString())) {
+		if (plugin.getConnectionListener().getPlayersAchieveConnectionRan().contains(uuid)) {
 			return;
 		}
 
@@ -66,7 +68,6 @@ public class AchieveConnectionRunnable implements Runnable {
 				String achievementName = pluginConfig.getString(configAchievement + ".Name");
 				plugin.getDb().registerAchievement(player, achievementName,
 						pluginConfig.getString(configAchievement + ".Message"));
-				String uuid = player.getUniqueId().toString();
 				plugin.getPoolsManager().getReceivedAchievementsCache().put(uuid, achievementName);
 				plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, achievementName);
 				plugin.getReward().checkConfig(player, configAchievement);
@@ -74,6 +75,6 @@ public class AchieveConnectionRunnable implements Runnable {
 		}
 
 		// Ran successfully to completion: no need to re-run while player is connected.
-		plugin.getConnectionListener().getPlayersAchieveConnectionRan().add(player.getUniqueId().toString());
+		plugin.getConnectionListener().getPlayersAchieveConnectionRan().add(uuid);
 	}
 }

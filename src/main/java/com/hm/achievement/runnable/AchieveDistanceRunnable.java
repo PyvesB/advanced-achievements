@@ -96,19 +96,19 @@ public class AchieveDistanceRunnable implements Runnable {
 		}
 
 		if (player.getVehicle() instanceof Horse) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEHORSE);
+			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEHORSE);
 		} else if (player.getVehicle() instanceof Pig) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEPIG);
+			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEPIG);
 		} else if (player.getVehicle() instanceof Minecart) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEMINECART);
+			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEMINECART);
 		} else if (player.getVehicle() instanceof Boat) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEBOAT);
+			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEBOAT);
 		} else if (version >= 11 && player.getVehicle() instanceof Llama) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCELLAMA);
+			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCELLAMA);
 		} else if (!player.isFlying() && (version < 9 || !player.isGliding())) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEFOOT);
+			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEFOOT);
 		} else if (version >= 9 && player.isGliding()) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEGLIDING);
+			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEGLIDING);
 		}
 	}
 
@@ -140,14 +140,14 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * @param player
 	 * @param category
 	 */
-	private void updateDistanceAndCheckAchievements(int difference, Player player, NormalAchievements category) {
+	private void updateDistanceAndCheckAchievements(int difference, Player player, String uuid,
+			NormalAchievements category) {
 
 		if (!player.hasPermission(category.toPermName())
 				|| plugin.getDisabledCategorySet().contains(category.toString())) {
 			return;
 		}
 
-		String uuid = player.getUniqueId().toString();
 		Map<String, Integer> map = plugin.getPoolsManager().getHashMap(category);
 		// If distance didn't previously exist in the cache; retrieve it from the database.
 		Integer distance = map.get(uuid);
