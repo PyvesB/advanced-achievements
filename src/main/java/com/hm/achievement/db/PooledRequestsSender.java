@@ -5,8 +5,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
@@ -36,18 +42,24 @@ public class PooledRequestsSender implements Runnable {
 
 	/**
 	 * Sends requests to the database to deal with regular events and prevent plugin from hitting server performance.
-	 * Non event related categories (distances and play times) are not handled by pools. --- In async mode, queries must
-	 * not be batched because of race conditions; a database entry must first be updated, and if cached value in HashMap
-	 * has not changed (by a listener running on main thread), it can be removed from the HashMap. Any thread doing a
-	 * subsequent read in the database will retrieve the correct up-to-date value.
-	 * 
+	 * Non event related categories (distances and play times) are not handled by pools.
+	 * <p>
+	 * In async mode, queries must not be batched because of race conditions. Once the database entry has been updated,
+	 * if the in-memory HashMap value has not changed (by a listener running on main thread) and if player has
+	 * disconnected, it can be removed from the HashMap. Any thread doing a subsequent read in the database will
+	 * retrieve the correct up-to-date value.
+	 * <p>
 	 * Enumerations return elements reflecting the state of the hash table at some point at or since the creation of the
 	 * enumeration, and therefore the (atomic) remove method can be used within them.
-	 * 
+	 * <p>
 	 * The cast operations are necessary to ensure compatibility with Java versions prior to Java 8 (Map interface did
-	 * not support remove(key, value) before then). --- In sync mode, queries are batched for optimisation and HashMaps
-	 * are cleared to prevent same writes during next task if statistics did not change. --- PostgreSQL has no REPLACE
-	 * operator. We have to use the INSERT ... ON CONFLICT construct, which is available for PostgreSQL 9.5+.
+	 * not support remove(key, value) before then).
+	 * <p>
+	 * In sync mode, queries are batched for optimisation and HashMaps are cleared to prevent same writes during next
+	 * task if statistics did not change.
+	 * <p>
+	 * PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available for
+	 * PostgreSQL 9.5+.
 	 */
 	public void sendRequests() {
 
@@ -57,7 +69,7 @@ public class PooledRequestsSender implements Runnable {
 				// Distance and PlayedTIme achievements are handled by scheduled runnables and corresponding statistics
 				// are only written to the database when player disconnects.
 				if (category != NormalAchievements.PLAYEDTIME && category != NormalAchievements.CONNECTIONS
-						&& !"DISTANCE".contains(category.name())) {
+						&& !category.name().contains("DISTANCE")) {
 					performRequestsForNormalCategory(st, category);
 				}
 			}
@@ -84,17 +96,20 @@ public class PooledRequestsSender implements Runnable {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
+				String playerUUID = entry.getKey().substring(0, 36);
 				if (plugin.getDb().isPostgres()) {
 					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ playerUUID + "', '" + entry.getKey().substring(36) + "', "
 							+ entry.getValue() + ")" + " ON CONFLICT (playername," + category.toSubcategoryDBName()
 							+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue() + ")");
 				} else {
 					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ playerUUID + "', '" + entry.getKey().substring(36) + "', "
 							+ entry.getValue() + ")");
 				}
-				((ConcurrentHashMap<String, Integer>) categoryMap).remove(entry.getKey(), entry.getValue());
+				if (!isPlayerOnline(playerUUID)) {
+					((ConcurrentHashMap<String, Integer>) categoryMap).remove(entry.getKey(), entry.getValue());
+				}
 			}
 		}
 	}
@@ -148,7 +163,9 @@ public class PooledRequestsSender implements Runnable {
 					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")");
 				}
-				((ConcurrentHashMap<String, Integer>) categoryMap).remove(entry.getKey(), entry.getValue());
+				if (!isPlayerOnline(entry.getKey())) {
+					((ConcurrentHashMap<String, Integer>) categoryMap).remove(entry.getKey(), entry.getValue());
+				}
 			}
 		} else {
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
@@ -164,5 +181,35 @@ public class PooledRequestsSender implements Runnable {
 			}
 			categoryMap.clear();
 		}
+	}
+
+	/**
+	 * Checks whether the player is online by making a call on the server's main thread of execution.
+	 * 
+	 * @param uuidString
+	 * @return
+	 */
+	private boolean isPlayerOnline(String uuidString) {
+		
+		final UUID uuid = UUID.fromString(uuidString);
+
+		// Called asynchronously, to ensure thread safety we must issue a call on the server's main thread of execution.
+		Future<Boolean> onlineCheckFuture = Bukkit.getScheduler().callSyncMethod(plugin, new Callable<Boolean>() {
+
+			@Override
+			public Boolean call() {
+
+				return Bukkit.getPlayer(uuid) != null;
+			}
+		});
+		
+		boolean playerOnline = true;
+		try {
+			playerOnline = onlineCheckFuture.get();
+		} catch (InterruptedException | ExecutionException e) {
+			plugin.getLogger().warning("Error while checking whether player is online.");
+
+		}
+		return playerOnline;
 	}
 }

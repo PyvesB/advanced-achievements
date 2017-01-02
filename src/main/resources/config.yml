@@ -178,7 +178,7 @@ PlaytimeTaskInterval: 60
 DistanceTaskInterval: 5
 
 # Frequency of some statistics writes to the database.
-PooledRequestsTaskInterval: 60
+PooledRequestsTaskInterval: 120
 
 # Enable multithreading for database write operations.
 AsyncPooledRequestsSender: true
