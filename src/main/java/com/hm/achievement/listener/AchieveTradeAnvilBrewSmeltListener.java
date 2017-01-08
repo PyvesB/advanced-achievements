@@ -55,8 +55,8 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener impleme
 			return;
 		}
 
-		if (!shouldEventBeTakenIntoAccount(player, category)
-				|| category == NormalAchievements.BREWING && isInCooldownPeriod(player)) {
+		if (!shouldEventBeTakenIntoAccount(player, category) || category == NormalAchievements.BREWING
+				&& isInCooldownPeriod(player, Integer.toString(event.getRawSlot()))) {
 			return;
 		}
 
@@ -84,5 +84,19 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener impleme
 		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, eventAmount);
+	}
+
+	/**
+	 * Removes a given player UUID from the cooldown map. The cooldown for this class only handles Brewing achievements,
+	 * but each slot in the brewing stand must be handled independently, hence the prefix in the cooldown map.
+	 * 
+	 * @param playerUUID
+	 */
+	@Override
+	public void removePlayerFromCooldownMap(String playerUUID) {
+
+		super.removePlayerFromCooldownMap("0" + playerUUID);
+		super.removePlayerFromCooldownMap("1" + playerUUID);
+		super.removePlayerFromCooldownMap("2" + playerUUID);
 	}
 }

@@ -40,11 +40,6 @@ public abstract class AbstractListener {
 
 	}
 
-	public Map<String, Long> getCooldownMap() {
-
-		return cooldownMap;
-	}
-
 	/**
 	 * Determines whether the listened event should be taken into account.
 	 * 
@@ -85,8 +80,20 @@ public abstract class AbstractListener {
 	 */
 	protected boolean isInCooldownPeriod(Player player) {
 
+		return isInCooldownPeriod(player, "");
+	}
+
+	/**
+	 * Determines whether a similar event was taken into account too recently and the player is still in the cooldown
+	 * period. Stores elements in the map with prefixes to enable several distinct entries for the same player.
+	 * 
+	 * @param player
+	 * @return
+	 */
+	protected boolean isInCooldownPeriod(Player player, String prefixInMap) {
+
 		String uuid = player.getUniqueId().toString();
-		long lastEventTime = cooldownMap.getOrDefault(uuid, 0L);
+		long lastEventTime = cooldownMap.getOrDefault(prefixInMap + uuid, 0L);
 		long timeToWait = lastEventTime + cooldownTime - System.currentTimeMillis();
 		if (timeToWait > 0) {
 			if (cooldownActionBar) {
@@ -102,7 +109,7 @@ public abstract class AbstractListener {
 			}
 			return true;
 		}
-		cooldownMap.put(uuid, System.currentTimeMillis());
+		cooldownMap.put(prefixInMap + uuid, System.currentTimeMillis());
 		return false;
 	}
 
@@ -177,5 +184,15 @@ public abstract class AbstractListener {
 			plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, achievementName);
 			plugin.getReward().checkConfig(player, configAchievement);
 		}
+	}
+
+	/**
+	 * Removes a given player UUID from the cooldown map.
+	 * 
+	 * @param playerUUID
+	 */
+	public void removePlayerFromCooldownMap(String playerUUID) {
+
+		cooldownMap.remove(playerUUID);
 	}
 }

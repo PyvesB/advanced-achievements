@@ -47,16 +47,16 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 
 		// Remove player from cooldown structures.
 		if (plugin.getBedListener() != null) {
-			plugin.getBedListener().getCooldownMap().remove(playerUUID);
+			plugin.getBedListener().removePlayerFromCooldownMap(playerUUID);
 		}
 		if (plugin.getInventoryClickListener() != null) {
-			plugin.getInventoryClickListener().getCooldownMap().remove(playerUUID);
+			plugin.getInventoryClickListener().removePlayerFromCooldownMap(playerUUID);
 		}
 		if (plugin.getMilkLavaWaterListener() != null) {
-			plugin.getMilkLavaWaterListener().getCooldownMap().remove(playerUUID);
+			plugin.getMilkLavaWaterListener().removePlayerFromCooldownMap(playerUUID);
 		}
 		if (plugin.getHoeFertiliseFireworkMusicListener() != null) {
-			plugin.getHoeFertiliseFireworkMusicListener().getCooldownMap().remove(playerUUID);
+			plugin.getHoeFertiliseFireworkMusicListener().removePlayerFromCooldownMap(playerUUID);
 		}
 	}
 
