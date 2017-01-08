@@ -683,9 +683,6 @@ public class AdvancedAchievements extends JavaPlugin {
 			distanceTask.cancel();
 		}
 
-		// Send remaining stats for pooled events to the database.
-		pooledRequestsSender.sendRequests();
-
 		// Send played time stats to the database, forcing synchronous writes.
 		if (achievePlayTimeRunnable != null) {
 			for (Entry<String, Long> entry : poolsManager.getPlayedTimeHashMap().entrySet()) {
@@ -719,6 +716,10 @@ public class AdvancedAchievements extends JavaPlugin {
 				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCELLAMA.toDBName());
 			}
 		}
+
+		// Send remaining stats for pooled events to the database; send via main thread with synchronous mode.
+		asyncPooledRequestsSender = false;
+		pooledRequestsSender.sendRequests();
 
 		try {
 			if (db.getSQLConnection() != null) {
