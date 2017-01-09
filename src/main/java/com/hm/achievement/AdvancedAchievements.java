@@ -94,7 +94,7 @@ import net.milkbowl.vault.economy.Economy;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 4.1.1
+ * @version 4.1.2
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin {
@@ -398,16 +398,16 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString())) {
-			// Need PetMaster with a minimum version of 1.3.
+			// Need PetMaster with a minimum version of 1.4.
 			if (Bukkit.getPluginManager().isPluginEnabled("PetMaster") && Integer.parseInt(Character.toString(
-					Bukkit.getPluginManager().getPlugin("PetMaster").getDescription().getVersion().charAt(2))) >= 3) {
+					Bukkit.getPluginManager().getPlugin("PetMaster").getDescription().getVersion().charAt(2))) >= 4) {
 				petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
 				pm.registerEvents(petMasterGiveReceiveListener, this);
 			} else {
 				this.getLogger().warning(
 						"Failed to pair with Pet Master plugin; disabling PetMasterGive and PetMasterReceive categories.");
 				this.getLogger().warning(
-						"Ensure you have placed Pet Master with a minimum version of 1.3 in your plugins folder.");
+						"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder.");
 				this.getLogger().warning(
 						"If you do not wish to use these categories, you must add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
 			}

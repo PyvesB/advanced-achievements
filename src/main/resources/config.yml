@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |    Advanced Achievements 4.1.1 configuration - Readme   | #
+# |    Advanced Achievements 4.1.2 configuration - Readme   | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -510,14 +510,14 @@ EnderPearls:
     Name: enderpearls_10
     DisplayName: Teleport Man
     
-# When a player gives a pet to another player (requires Pet Master plugin version 1.3 or above).
+# When a player gives a pet to another player (requires Pet Master plugin version 1.4 or above).
 PetMasterGive:
   '3':
     Message: 3 pets given to friends!
     Name: petmastergive_3
     DisplayName: Donator
 
-# When a player receives a pet from another player (requires Pet Master plugin version 1.3 or above).
+# When a player receives a pet from another player (requires Pet Master plugin version 1.4 or above).
 PetMasterReceive:
   '10':
     Message: 10 pets received from friends!
