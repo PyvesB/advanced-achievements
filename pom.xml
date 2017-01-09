@@ -44,7 +44,7 @@
 						</relocation>
 						<relocation>
 							<pattern>com.hm.mcshared</pattern>
-							<shadedPattern>com.hm.achievement.mcshared</shadedPattern>
+							<shadedPattern>com.hm.mcshared</shadedPattern>
 						</relocation>
 					</relocations>
 				</configuration>
