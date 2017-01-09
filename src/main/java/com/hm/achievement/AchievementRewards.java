@@ -94,7 +94,7 @@ public class AchievementRewards {
 		}
 
 		if (commandReward.length() > 0) {
-			commandReward = StringUtils.replaceOnce(commandReward, "PLAYER", player.getName());
+			commandReward = StringUtils.replace(commandReward, "PLAYER", player.getName());
 			// Multiple reward commands can be set, separated by a semicolon and space. Extra parsing needed.
 			String[] commands = commandReward.split("; ");
 			for (String command : commands) {
