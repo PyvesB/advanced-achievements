@@ -1,6 +1,7 @@
 package com.hm.achievement.listener;
 
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,7 +38,8 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener i
 
 		Material clickedMaterial = event.getClickedBlock().getType();
 		if (event.getItem().getType().name().contains("HOE")
-				&& (clickedMaterial == Material.GRASS || clickedMaterial == Material.DIRT)) {
+				&& (clickedMaterial == Material.GRASS || clickedMaterial == Material.DIRT)
+				&& event.getClickedBlock().getRelative(BlockFace.UP).getType() == Material.AIR) {
 			category = NormalAchievements.HOEPLOWING;
 		} else if (event.getItem().isSimilar(new ItemStack(Material.INK_SACK, 1, (short) 15))
 				&& canBeFertilised(clickedMaterial)) {
