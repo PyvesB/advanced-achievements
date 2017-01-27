@@ -1,8 +1,10 @@
 package com.hm.achievement.listener;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.event.EventHandler;
@@ -25,7 +27,7 @@ public class FireworkListener extends AbstractListener implements Listener {
 	public FireworkListener(AdvancedAchievements plugin) {
 
 		super(plugin);
-		fireworksLaunchedByPlugin = new HashSet<>();
+		fireworksLaunchedByPlugin = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -39,6 +41,16 @@ public class FireworkListener extends AbstractListener implements Listener {
 
 	public void addFirework(Firework firework) {
 
-		fireworksLaunchedByPlugin.add(firework.getUniqueId().toString());
+		final String uuid = firework.getUniqueId().toString();
+		fireworksLaunchedByPlugin.add(uuid);
+		
+		// Schedule for removal to avoid creating memory leaks if firework does not damage player.
+		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+			@Override
+			public void run() {
+
+				fireworksLaunchedByPlugin.remove(uuid);
+			}
+		}, 100);
 	}
 }
