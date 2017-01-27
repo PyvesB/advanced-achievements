@@ -95,7 +95,7 @@ import net.milkbowl.vault.economy.Economy;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 4.1.3
+ * @version 4.1.4
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin {
@@ -435,15 +435,13 @@ public class AdvancedAchievements extends JavaPlugin {
 		pooledRequestsSender = new PooledRequestsSender(this);
 		// Schedule a repeating task to group database queries for some frequent
 		// events.
-		pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(
-				Bukkit.getPluginManager().getPlugin(this.getDescription().getName()), pooledRequestsSender,
-				pooledRequestsTaskInterval * 40L, pooledRequestsTaskInterval * 20L);
+		pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this,
+				pooledRequestsSender, pooledRequestsTaskInterval * 40L, pooledRequestsTaskInterval * 20L);
 
 		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
 		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
 			achievePlayTimeRunnable = new AchievePlayTimeRunnable(this);
-			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(
-					Bukkit.getPluginManager().getPlugin(this.getDescription().getName()), achievePlayTimeRunnable,
+			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(this, achievePlayTimeRunnable,
 					playtimeTaskInterval * 10L, playtimeTaskInterval * 20L);
 		}
 
@@ -456,8 +454,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
 			achieveDistanceRunnable = new AchieveDistanceRunnable(this);
-			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(
-					Bukkit.getPluginManager().getPlugin(this.getDescription().getName()), achieveDistanceRunnable,
+			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(this, achieveDistanceRunnable,
 					distanceTaskInterval * 40L, distanceTaskInterval * 20L);
 		}
 
