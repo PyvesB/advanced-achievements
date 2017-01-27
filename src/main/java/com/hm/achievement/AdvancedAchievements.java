@@ -70,6 +70,7 @@ import com.hm.achievement.listener.AchieveTameListener;
 import com.hm.achievement.listener.AchieveTeleportRespawnListener;
 import com.hm.achievement.listener.AchieveTradeAnvilBrewSmeltListener;
 import com.hm.achievement.listener.AchieveXPListener;
+import com.hm.achievement.listener.FireworkListener;
 import com.hm.achievement.listener.ListGUIListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
@@ -130,6 +131,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchievePetMasterGiveReceiveListener petMasterGiveReceiveListener;
 
 	private ListGUIListener listGUIListener;
+	private FireworkListener fireworkListener;
 
 	// Additional classes related to plugin modules and commands.
 	private AchievementRewards reward;
@@ -415,6 +417,9 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		listGUIListener = new ListGUIListener(this);
 		pm.registerEvents(listGUIListener, this);
+
+		fireworkListener = new FireworkListener(this);
+		pm.registerEvents(fireworkListener, this);
 
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
 
@@ -1051,6 +1056,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AchievePetMasterGiveReceiveListener getPetMasterGiveReceiveListener() {
 
 		return petMasterGiveReceiveListener;
+	}
+
+	public FireworkListener getFireworkListener() {
+
+		return fireworkListener;
 	}
 
 	public String getIcon() {

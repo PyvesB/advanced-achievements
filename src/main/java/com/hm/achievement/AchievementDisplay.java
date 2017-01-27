@@ -151,6 +151,8 @@ public class AchievementDisplay {
 			fireworkMeta.addEffects(effectBuilder.build());
 			firework.setVelocity(player.getLocation().getDirection().multiply(0));
 			firework.setFireworkMeta(fireworkMeta);
+			// Firework launched by plugin: damage will later be cancelled out.
+			plugin.getFireworkListener().addFirework(firework);
 		} catch (Exception e) {
 			// Particle effect workaround to handle bug in early Spigot 1.9 and 1.11 releases. We try to simulate a
 			// firework.
