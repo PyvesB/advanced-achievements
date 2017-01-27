@@ -110,7 +110,10 @@ public class AchievementDisplay {
 	private void displayTitle(Player player, String nameToShowUser, String msg) {
 
 		try {
-			PacketSender.sendTitlePacket(player, "{\"text\":\"" + nameToShowUser + "\"}", "{\"text\":\"" + msg + "\"}");
+			// Escape quotations in case quotations are used in config.yml.
+			PacketSender.sendTitlePacket(player,
+					"{\"text\":\"" + StringUtils.replace(nameToShowUser, "\"", "\\\"") + "\"}",
+					"{\"text\":\"" + StringUtils.replace(msg, "\"", "\\\"") + "\"}");
 		} catch (Exception e) {
 			plugin.getLogger().log(Level.SEVERE,
 					"Errors while trying to display achievement screen title. Is your server up-to-date? ", e);
