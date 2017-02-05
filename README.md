@@ -28,7 +28,7 @@
 
 [![Issues](http://images.jupload.fr/1469708806.png)](https://github.com/PyvesB/AdvancedAchievements/issues) [Feature requests, support and issues](https://github.com/PyvesB/AdvancedAchievements/issues), _please open an issue if you need any help!_
 
-[![Translations](http://images.jupload.fr/1470315586.png)](https://github.com/PyvesB/AdvancedAchievements/tree/master/src/main/resources) [Plugin translations ](https://github.com/PyvesB/AdvancedAchievements/tree/master/src/main/resources), _11 languages available, feel free to improve the translations!_
+[![Translations](http://images.jupload.fr/1470315586.png)](https://github.com/PyvesB/AdvancedAchievements/tree/master/src/main/resources) [Plugin translations ](https://github.com/PyvesB/AdvancedAchievements/tree/master/src/main/resources), _12 languages available, feel free to improve the translations!_
 
 [![HelloMinecraft](http://images.jupload.fr/1469708948.png)](http://hellominecraft.fr/) [HelloMinecraft, the plugin's official server](http://hellominecraft.fr/), _amongst the best French servers out there!_
 
