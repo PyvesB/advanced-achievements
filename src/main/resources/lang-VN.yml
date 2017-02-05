@@ -1,10 +1,12 @@
-﻿#============================================================#
-# +--------------------------------------------------------+ #
-# |    Advanced Achievements 3.0 Vietnamese language file  | #
-# |                      By Anh Craft                      | #
-# |                  http://ecraftvn.tk/                   | #
-# +--------------------------------------------------------+ #
-#============================================================#
+﻿#===============================================================#
+# +-----------------------------------------------------------+ #
+# | Advanced Achievements Vietnamese translation by Anh Craft | #
+# |                ~ Valid as of version 3.0 ~                | #
+# |    Newer plugin versions will automatically append new    | #
+# |      untranslated parameters to the end of the file.      | #
+# |                    http://ecraftvn.tk/                    | #
+# +-----------------------------------------------------------+ #
+#===============================================================#
 
 no-permissions: "Bạn không có quyền để dùng lệnh này."
 

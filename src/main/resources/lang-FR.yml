@@ -1,9 +1,11 @@
-#============================================================#
-# +--------------------------------------------------------+ #
-# |    Advanced Achievements 4.0.3 French language file    | #
-# |                        By Niasio                       | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#=============================================================#
+# +---------------------------------------------------------+ #
+# |  Advanced Achievements French translation by DarkPyves  | #
+# |             ~ Valid as of version 4.1.4 ~               | #
+# |   Newer plugin versions will automatically append new   | #
+# |     untranslated parameters to the end of the file.     | #
+# +---------------------------------------------------------+ #
+#=============================================================#
 
 no-permissions: "Vous n'avez pas la permission de faire cela."
 statistic-cooldown: "Archivement cooldown: attendre TIME secondes avant que cette action ne compte à nouveau."
@@ -28,6 +30,7 @@ book-received: "Vous avez reçu votre livre de succès!"
 book-delay: "Vous devez attendre TIME secondes entre chaque obtention de livre !"
 book-name: "Livre de Succès"
 book-date: "Créé le DATE."
+book-not-received: "Vous n'avez pas encore reçu de succès."
 
 # Related to /aach give.
 player-offline: "Le joueur PLAYER n'est pas en ligne !"
@@ -90,11 +93,14 @@ version-command-database: "Type de la BDD :"
 # Related to /aach list.
 list-gui-title: "&5&lListe de Succès"
 list-delay: "Vous devez attendre TIME secondes entre chaque /aach list !"
-list-reward: " Récompense :"
+list-description: "Description :"
+list-goal: "Objectif :"
+list-reception: "Date de réception :"
+list-progress: "Progression :"
+list-reward: " Récompense(s) :"
 list-reward-money: "POs"
 list-reward-item: "objet"
 list-reward-command: "objet spécial"
-list-amount: " Niv. :"
 list-achievement-received: "&a\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "
 list-category-not-unlocked: "Vous n'avez pas encore déverrouillé cette catégorie."

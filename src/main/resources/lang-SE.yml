@@ -1,9 +1,11 @@
-#============================================================#
-# +--------------------------------------------------------+ #
-# |    Advanced Achievements 3.0 Swedish language file     | #
-# |                      By Sketaful                       | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#=============================================================#
+# +---------------------------------------------------------+ #
+# |  Advanced Achievements Swedish translation by Sketaful  | #
+# |               ~ Valid as of version 3.0 ~               | #
+# |   Newer plugin versions will automatically append new   | #
+# |     untranslated parameters to the end of the file.     | #
+# +---------------------------------------------------------+ #
+#=============================================================#
 
 no-permissions: "Du har inte rättigheterna för att göra detta"
 

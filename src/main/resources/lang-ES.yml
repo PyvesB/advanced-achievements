@@ -1,9 +1,11 @@
-#============================================================#
-# +--------------------------------------------------------+ #
-# |   Advanced Achievements 2.5.2 Spanish language file    | #
-# |                     By Segysmundo                      | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#=============================================================#
+# +---------------------------------------------------------+ #
+# | Advanced Achievements Spanish translation by Segysmundo | #
+# |             ~ Valid as of version 2.5.2 ~               | #
+# |   Newer plugin versions will automatically append new   | #
+# |     untranslated parameters to the end of the file.     | #
+# +---------------------------------------------------------+ #
+#=============================================================#
 
 no-permissions: No tienes permiso para hacer eso.
 

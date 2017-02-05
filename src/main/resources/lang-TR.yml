@@ -1,9 +1,11 @@
-#============================================================#
-# +--------------------------------------------------------+ #
-# |   Advanced Achievements 4.1.4 Turkish language file    | #
-# |                      By DarkJoya                       | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#=============================================================#
+# +---------------------------------------------------------+ #
+# |  Advanced Achievements Turkish translation by DarkJoya  | #
+# |              ~ Valid as of version 4.1.4 ~              | #
+# |   Newer plugin versions will automatically append new   | #
+# |     untranslated parameters to the end of the file.     | #
+# +---------------------------------------------------------+ #
+#=============================================================#
 
 no-permissions: "Buna Yetkin Yok."
 statistic-cooldown: "Başarım Bekleme Süresi: Lütfen TIME saniye bekleyin ve sonra yeniden deneyin."

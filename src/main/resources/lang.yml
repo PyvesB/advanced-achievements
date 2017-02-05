@@ -1,9 +1,11 @@
-#============================================================#
-# +--------------------------------------------------------+ #
-# |   Advanced Achievements 4.1.4 English language file    | #
-# |                      By DarkPyves                      | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#=============================================================#
+# +---------------------------------------------------------+ #
+# | Advanced Achievements English translation by DarkPyves  | #
+# |             ~ Valid as of version 4.1.4 ~               | #
+# |   Newer plugin versions will automatically append new   | #
+# |     untranslated parameters to the end of the file.     | #
+# +---------------------------------------------------------+ #
+#=============================================================#
 
 no-permissions: "You do not have the permission to do this."
 statistic-cooldown: "Achievements cooldown: wait TIME seconds before this action counts again."
@@ -89,6 +91,7 @@ version-command-database: "Database type:"
 
 # Related to /aach list.
 list-gui-title: "&5&lAchievements List"
+list-delay: "You must wait TIME seconds between each list command!"
 list-description: "Description:"
 list-goal: "Goal:"
 list-reception: "Reception date:"
