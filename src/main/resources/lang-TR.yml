@@ -1,0 +1,159 @@
+#============================================================#
+# +--------------------------------------------------------+ #
+# |   Advanced Achievements 4.1.4 Turkish language file    | #
+# |                      By DarkJoya                       | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+no-permissions: "Buna Yetkin Yok."
+statistic-cooldown: "Başarım Bekleme Süresi: Lütfen TIME saniye bekleyin ve sonra yeniden deneyin."
+
+# Related to /aach reload.
+configuration-successfully-reloaded: "Eklenti Başarıyla Yeniden Yüklendi."
+configuration-reload-failed: "Yenilemede Sorun Oluştu. Lütfen Kayıt Geçmişinden Kontrol Edin."
+server-restart-reload: "DisabledCategories istesi değiştirildi. Değişikliklerin Geçerli Olması İçin Sunucuyu Yeniden Başlatmanız Gerekli."
+
+# Related to /aach top week and month.
+top-achievement: "En İyi Başarı Sahipleri:"
+player-rank: "Şuanki Sıran:"
+week-achievement: "Haftalık Başarım Sıralaması:"
+month-achievement: "Aylık Başarım Sıralaması:"
+not-ranked: "Henüz Sıralamaya Girmedin."
+
+# Related to /aach stats.
+number-achievements: "Kazanılan Başarımlar:"
+
+# Related to /aach book.
+book-received: "Başarım Kitabını Aldın!"
+book-delay: "Yenisini almak için lütfen TIME saniye bekleyin!"
+book-name: "Başarım Kitabı"
+book-date: "Kitabın Oluşturulma Zamanı: DATE."
+book-not-received: "Herhangi bir başarıya ulaşamadın."
+
+# Related to /aach give.
+player-offline: "Oyuncu PLAYER oyunda değil!"
+achievement-already-received: "Oyuncu PLAYER zaten bu başarımı almış!"
+achievement-not-found: "Böyle bir başarım yok."
+achievement-given: "Başarım verildi!"
+
+# Related to achievement reception.
+achievement-received: "PLAYER yeni başarımına ulaştı:"
+achievement-new: "Yeni Başarım:"
+
+# Related to /aach check.
+check-achievement-true: "PLAYER adlı oyuncu ACH adlı başarıma ulaştı!"
+check-achievements-false: "PLAYER adlı oyuncu ACH adlı başarıma ulaşmadı!"
+
+# Related to /aach delete.
+delete-achievements: "ACH adlı başarım PLAYER oyuncusundan silindi."
+
+# Related to achievement rewards.
+item-reward-received: "Aldığınız Eşya Ödülü:"
+money-reward-received: "Aldığınız Para Ödülü: AMOUNT!"
+command-reward: "Ödülünüz Komut İle Verildi!"
+
+# Related to /aach help.
+aach-command-book: "Başarım Kitabınızı Alırsınız."
+aach-command-book-hover: "Tüm Başarımlarınızın Bulunduğu Kitap! Yeni Başarımlar Eklenmez! Sadece O Ankiler Kitapta Görünür!"
+aach-command-stats: "Başarım İstatistiklerinizi Görürsünüz."
+aach-command-stats-hover: "İlerleme Çubuğunuzu Görebilirsiniz. Hepsini Yap!"
+aach-command-list: "Yaptığınız ve Yapmadığınız Tüm Başarımlar &7Burada!"
+aach-command-list-hover: "Güzel Bir Arayüzde Tüm Başarımları Görebilirsiniz!"
+aach-command-top: "Kişisel ve Sunucu Sıralamasını Görün."
+aach-command-top-hover: "Sunucuda Kim Lider? Sen Kaçıncı Sıradasın? Hepsi Burada!"
+aach-command-give: "NAME Adlı Oyuncuya ACH Adlı &7Başarımı Ver."
+aach-command-give-hover: "Oyuncu Oyunda Olmalı; sadece Komut Başarımları Kullanılabilir."
+aach-command-reload: "Eklentiyi Yenden Yükle."
+aach-command-reload-hover: "Tüm Dosyaları Yeniden Yükler!"
+aach-command-info: "Eklenti Hakkında Bilgi Al."
+aach-command-info-hover: "Eklenti Hakkında Bilgi!"
+aach-command-check: "NAME Adı Oyuncunun ACH &7Başarımını Kontrol Et."
+aach-command-check-hover: "Dosyalarda Özel Bölüme Eklenmiş Başarımların Olup Olmadığını Kontrol Eder."
+aach-command-delete: "NAME Adlı Oyuncudan ACH &7Başarımını Sil."
+aach-command-delete-hover: "Oyuncu Oyunda Olmalı; Sadece ACH lar silinebilir."
+aach-command-week: "Haftalık Sıralamayı Gör."
+aach-command-week-hover: "En İyi Başarım Avcılarının Haftalık Sıralaması!"
+aach-command-month: "Aylık Sıralamayı Gör."
+aach-command-month-hover: "En İyi Başarım Avcılarının Aylık Sıralaması!"
+aach-tip: "&c&lBİLGİ &2Fare ile &bÜstüne Gelerek&2 Açıklamalarına Bakabilir, &bTıklayarak&2 Komutu Direkt Sohbete Bakabilirsin!"
+
+# Related to /aach info.
+version-command-version: "Sürüm:"
+version-command-website: "Website:"
+version-command-author: "Yapımcı:"
+version-command-description: "Açıklama:"
+version-command-description-details: "Kolay, Yapımı Eğlenceli ve Çok Yetenekli Başarım Eklentisi :)"
+version-command-vault: "Vault Entegrasyonu:"
+version-command-petmaster: "Pet Master Entegrasyonu:"
+version-command-database: "DB türü:"
+
+# Related to /aach list.
+list-gui-title: "Başarım Listesi"
+list-description: "Açıklama:"
+list-goal: "Hedef:"
+list-reception: "Kazanılma Tarihi:"
+list-progress: "İlerleme:"
+list-reward: "Ödüller:"
+list-reward-money: "Kazanılan Para: AMOUNT T"
+list-reward-item: "Kazanılan Eşyalar AMOUNT ITEM"
+list-reward-command: "Süpriz Ödüller"
+list-achievement-received: "&5\u2714&f "
+list-achievement-not-received: "&4\u2718&8 "
+list-category-not-unlocked: "Bu Kategoriyi Henüz Açamadın."
+list-back-message: "Geri"
+list-achievements-in-category-singular: "AMOUNT Başarım Var"
+list-achievements-in-category-plural: "AMOUNT Başarım Var"
+
+# Related to category names in /aach list.
+list-connections: "Oyuna Girme Başarımları"
+list-places: "Koyulan Blok Başarımları"
+list-breaks: "Kırılan Blok Başarımları"
+list-kills: "Öldürülen Varlık Başarımları"
+list-crafts: "Oluşturulan Eşya Başarımları"
+list-playercommands: "Yazılan Komut Başarımları"
+list-deaths: "Ölme Başarımları"
+list-arrows: "Ok Tutturma Başarımları"
+list-snowballs: "Atılan Kartopu Başarımları"
+list-eggs: "Atılan Yumurta Başarımları"
+list-fish: "Yakalanan Balık Başarımları"
+list-treasure: "Yakalanan Hazineler"
+list-itembreaks: "Kırılan Eşyalar"
+list-eatenitems: "Yenen Yemekler"
+list-shear: "Koyun Kırpma Başarımları"
+list-milk: "İnekten Süt Toplama Başarımları"
+list-lavabuckets: "Lav Toplama Başarımları"
+list-waterbuckets: "Su Toplama Başarımları"
+list-trades: "Köylü Takası Başarımı"
+list-anvils: "Örs Kullanım Başarımları"
+list-enchantments: "Eşyalara Büyü Basımları"
+list-beds: "Yatağa Girme Başarımları"
+list-maxlevel: "Seviye Başarımları"
+list-potions: "Kullanılan Büyü Başarımları"
+list-playedtime: "Oyunda Kalma Süresi Başarımları"
+list-distance-foot: "Yürüme Başarımları"
+list-distance-pig: "Domuz ile Yürüme Başarımları"
+list-distance-horse: "At ile Yürüme Başarımları"
+list-distance-minecart: "Vagon ile İlermele Başarımları"
+list-distance-boat: "Bot ile İlerleme Başarımları"
+list-distance-gliding: "Elitra ile Uçma Başarımları"
+list-distance-llama: "Lama ile Yürüme Başarımları"
+list-itemdrops: "Yere Eşya Atma Başarımları"
+list-itempickups: "Yerden Eşya Toplama Başarımları"
+list-hoeplowings: "Yapılan Tarla Başarımları"
+list-fertilising: "Bitki Gübreleme Başarımları"
+list-taming: "Evcilleştirilen Hayvan Başarımları"
+list-brewing: "Yapılan İksir Başarımları"
+list-fireworks: "Havaifişek Fırlatma Başarımları"
+list-musicdiscs: "Müzik Diski Kullanma Başarımları"
+list-enderpearls: "Ender İncisi İle Işınlanma Başarımları"
+list-petmastergive: "Oyunculara Hayvan Verme Başarımları"
+list-petmasterreceive: "Oyunculardan Hayvan Alma Başarımları"
+list-smelting: "Eşya Eritme Başarımları"
+
+list-commands: "Diğer Başarımlar"
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# | Parameters in future plugin versions will  appear here | #
+# +--------------------------------------------------------+ #
+#============================================================#
