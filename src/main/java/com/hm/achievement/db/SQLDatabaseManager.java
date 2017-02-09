@@ -24,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import com.google.common.base.Strings;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -470,9 +469,9 @@ public class SQLDatabaseManager {
 			Map<String, String> achievementsAndDisplayNames = plugin.getAchievementsAndDisplayNames();
 			while (rs.next()) {
 				String achName = rs.getString(2);
-				String displayName = achievementsAndDisplayNames.getOrDefault(achName, "");
+				String displayName = achievementsAndDisplayNames.get(achName);
 
-				if (Strings.isNullOrEmpty(displayName)) {
+				if (displayName == null) {
 					achievementsList.add(achName);
 				} else {
 					achievementsList.add(displayName);
