@@ -37,7 +37,6 @@ public abstract class AbstractListener {
 		cooldownTime = plugin.getPluginConfig().getInt("StatisticCooldown", 10) * 1000;
 		cooldownMap = new HashMap<>();
 		cooldownActionBar = plugin.getPluginConfig().getBoolean("CooldownActionBar", true);
-
 	}
 
 	/**
@@ -49,11 +48,12 @@ public abstract class AbstractListener {
 	 */
 	protected boolean shouldEventBeTakenIntoAccount(Player player, NormalAchievements category) {
 
+		boolean isNPC = player.hasMetadata("NPC");
 		boolean permission = player.hasPermission(category.toPermName());
 		boolean restrictedCreative = plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
 		boolean excludedWorld = plugin.isInExludedWorld(player);
 
-		return permission && !restrictedCreative && !excludedWorld;
+		return !isNPC && permission && !restrictedCreative && !excludedWorld;
 	}
 
 	/**
@@ -65,10 +65,11 @@ public abstract class AbstractListener {
 	 */
 	protected boolean shouldEventBeTakenIntoAccountNoPermission(Player player) {
 
+		boolean isNPC = player.hasMetadata("NPC");
 		boolean restrictedCreative = plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
 		boolean excludedWorld = plugin.isInExludedWorld(player);
 
-		return !restrictedCreative && !excludedWorld;
+		return !isNPC && !restrictedCreative && !excludedWorld;
 	}
 
 	/**

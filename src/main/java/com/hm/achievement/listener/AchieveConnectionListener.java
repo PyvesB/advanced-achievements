@@ -69,7 +69,7 @@ public class AchieveConnectionListener extends AbstractListener implements Liste
 	private void scheduleTaskIfAllowed(Player player) {
 
 		// Do not schedule task as player is in restricted creative mode or is in a blocked world.
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+		if (player.hasMetadata("NPC") || plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
 				|| plugin.isInExludedWorld(player)) {
 			return;
 		}

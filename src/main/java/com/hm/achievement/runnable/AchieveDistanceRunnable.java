@@ -84,7 +84,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		}
 
 		// If player is in restricted creative mode or is in a blocked world, don't update distances.
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+		if (player.hasMetadata("NPC") || plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
 				|| plugin.isInExludedWorld(player)) {
 			return;
 		}

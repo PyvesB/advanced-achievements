@@ -36,7 +36,7 @@ public class AchieveConnectionRunnable implements Runnable {
 		}
 
 		// Check again in case player has changed world or game mode by the time this runnable was scheduled.
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
+		if (player.hasMetadata("NPC") || plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
 				|| plugin.isInExludedWorld(player)) {
 			return;
 		}
