@@ -130,12 +130,6 @@ public class ListCommand extends AbstractCommand {
 
 		Player player = (Player) sender;
 
-		if (!player.hasPermission("achievement.list")) {
-			player.sendMessage(plugin.getChatHeader()
-					+ plugin.getPluginLang().getString("no-permissions", "You do not have the permission to do this."));
-			return;
-		}
-
 		// Create a new chest-like inventory; make it as small as possible while still containing all elements.
 		Inventory guiInv = Bukkit.createInventory(null,
 				getClosestGreaterMultipleOf9(MultipleAchievements.values().length + NormalAchievements.values().length

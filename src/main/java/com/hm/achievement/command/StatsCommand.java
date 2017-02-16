@@ -68,12 +68,6 @@ public class StatsCommand extends AbstractCommand {
 
 		Player player = (Player) sender;
 
-		if (!player.hasPermission("achievement.stats")) {
-			player.sendMessage(plugin.getChatHeader()
-					+ plugin.getPluginLang().getString("no-permissions", "You do not have the permission to do this."));
-			return;
-		}
-
 		// Retrieve total number of achievements received by the player.
 		int achievements = plugin.getDb().getPlayerAchievementsAmount(player);
 

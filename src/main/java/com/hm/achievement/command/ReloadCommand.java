@@ -24,12 +24,6 @@ public class ReloadCommand extends AbstractCommand {
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
 
-		if (!sender.hasPermission("achievement.reload")) {
-			sender.sendMessage(plugin.getChatHeader()
-					+ plugin.getPluginLang().getString("no-permissions", "You do not have the permission to do this."));
-			return;
-		}
-
 		plugin.reloadConfig();
 		plugin.setSuccessfulLoad(true);
 
