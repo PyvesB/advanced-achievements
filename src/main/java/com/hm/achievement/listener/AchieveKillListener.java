@@ -59,11 +59,19 @@ public class AchieveKillListener extends AbstractListener implements Listener {
 
 		MultipleAchievements category = MultipleAchievements.KILLS;
 
-		if (!plugin.getPluginConfig().isConfigurationSection(category + "." + mobName)
-				|| !player.hasPermission(category.toPermName() + '.' + mobName)) {
-			return;
+		if (plugin.getPluginConfig().isConfigurationSection(category + "." + mobName)
+				&& player.hasPermission(category.toPermName() + '.' + mobName)) {
+			updateStatisticAndAwardAchievementsIfAvailable(player, category, mobName, 1);
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, mobName, 1);
+		if (entity instanceof Player) {
+			String specificPlayer = "specificplayer-" + ((Player) entity).getUniqueId().toString().toLowerCase();
+			if (!plugin.getPluginConfig().isConfigurationSection(category + "." + specificPlayer)
+					|| !player.hasPermission(category.toPermName() + '.' + specificPlayer)) {
+				return;
+			}
+
+			updateStatisticAndAwardAchievementsIfAvailable(player, category, specificPlayer, 1);
+		}
 	}
 }
