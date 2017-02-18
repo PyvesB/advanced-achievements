@@ -351,6 +351,27 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!langFile.getKeys(false).contains("aach-command-toggle")) {
+			langFile.set("aach-command-toggle",
+					"Toggle achievements of other players.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("aach-command-toggle-hover")) {
+			langFile.set("aach-command-toggle-hover", "Your choice is saved until next server restart!");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("toggle-displayed")) {
+			langFile.set("toggle-displayed", "You will now be notified when other players get achievements.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("toggle-hidden")) {
+			langFile.set("toggle-hidden", "You will no longer be notified when other players get achievements.");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the language file: save and do a fresh load.
 			try {

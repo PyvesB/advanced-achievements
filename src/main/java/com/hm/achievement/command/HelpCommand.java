@@ -86,6 +86,15 @@ public class HelpCommand extends AbstractCommand {
 							"Best achievement hunters since the start of the month!"));
 		}
 
+		if (sender.hasPermission("achievement.toggle")) {
+			sendJsonClickableHoverableMessage(sender,
+					plugin.getChatHeader() + plugin.getColor() + "/aach toggle" + ChatColor.GRAY + " > "
+							+ plugin.getPluginLang().getString("aach-command-toggle",
+									"Toggle achievements of other players."),
+					"/aach toggle", plugin.getPluginLang().getString("aach-command-toggle-hover",
+							"Your choice is saved until next server restart!"));
+		}
+
 		if (sender.hasPermission("achievement.reload")) {
 			sendJsonClickableHoverableMessage(sender,
 					plugin.getChatHeader() + plugin.getColor() + "/aach reload" + ChatColor.GRAY + " > "

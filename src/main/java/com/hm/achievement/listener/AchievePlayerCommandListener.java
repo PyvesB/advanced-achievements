@@ -67,7 +67,7 @@ public class AchievePlayerCommandListener extends AbstractListener implements Li
 		}
 		PluginCommand pluginCommand = plugin.getServer().getPluginCommand(commandName);
 		List<String> equivalentCommands = new ArrayList<>(pluginCommand.getAliases().size() + 1);
-		// Aliases don't contain the main pljugin command, add it to the returned list.
+		// Aliases don't contain the main plugin command, add it to the returned list.
 		equivalentCommands.add(pluginCommand.getName().toLowerCase() + commandParameters);
 		for (String alias : pluginCommand.getAliases()) {
 			equivalentCommands.add(alias.toLowerCase() + commandParameters);

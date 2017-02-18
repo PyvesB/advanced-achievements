@@ -77,6 +77,8 @@ aach-command-week: "Display weekly rankings."
 aach-command-week-hover: "Best achievement hunters since the start of the week!"
 aach-command-month: "Display monthly rankings."
 aach-command-month-hover: "Best achievement hunters since the start of the month!"
+aach-command-toggle: "Toggle achievements of other players."
+aach-command-toggle-hover: "Your choice is saved until next server restart!"
 aach-tip: "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!"
 
 # Related to /aach info.
@@ -154,6 +156,10 @@ list-petmasterreceive: "Pets Received from Another Player"
 list-smelting: "Items Smelt"
 
 list-commands: "Other Achievements"
+
+# Related to /aach toggle.
+toggle-displayed: "You will now be notified when other players get achievements."
+toggle-hidden: "You will no longer be notified when other players get achievements."
 
 #============================================================#
 # +--------------------------------------------------------+ #

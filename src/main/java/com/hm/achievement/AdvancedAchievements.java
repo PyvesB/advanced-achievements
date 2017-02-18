@@ -40,6 +40,7 @@ import com.hm.achievement.command.ListCommand;
 import com.hm.achievement.command.MonthCommand;
 import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.command.StatsCommand;
+import com.hm.achievement.command.ToggleCommand;
 import com.hm.achievement.command.TopCommand;
 import com.hm.achievement.command.WeekCommand;
 import com.hm.achievement.db.DatabasePoolsManager;
@@ -148,6 +149,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private CheckCommand checkCommand;
 	private DeleteCommand deleteCommand;
 	private ReloadCommand reloadCommand;
+	private ToggleCommand toggleCommand;
 	private UpdateChecker updateChecker;
 
 	// Language and configuration related.
@@ -168,6 +170,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private ChatColor color;
 	private String chatHeader;
 	private boolean restrictCreative;
+	private boolean chatNotify;
 	private Set<String> excludedWorldSet;
 	private Set<String> disabledCategorySet;
 	private boolean successfulLoad;
@@ -541,6 +544,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		color = ChatColor.getByChar(config.getString("Color", "5").charAt(0));
 		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
 		restrictCreative = config.getBoolean("RestrictCreative", false);
+		chatNotify = config.getBoolean("ChatNotify", false);
 		databaseBackup = config.getBoolean("DatabaseBackup", true);
 		excludedWorldSet = new HashSet<>(config.getList("ExcludedWorlds"));
 		disabledCategorySet = new HashSet<>(config.getList("DisabledCategories"));
@@ -569,6 +573,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		checkCommand = new CheckCommand(this);
 		deleteCommand = new DeleteCommand(this);
 		reloadCommand = new ReloadCommand(this);
+		toggleCommand = new ToggleCommand(this);
 	}
 
 	/**
@@ -764,6 +769,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				monthCommand.executeCommand(sender, null, "month");
 			} else if ("info".equalsIgnoreCase(args[0])) {
 				infoCommand.executeCommand(sender, null, null);
+			} else if ("toggle".equalsIgnoreCase(args[0])) {
+				toggleCommand.executeCommand(sender, null, "toggle");
 			} else {
 				helpCommand.executeCommand(sender, args, null);
 			}
@@ -985,6 +992,11 @@ public class AdvancedAchievements extends JavaPlugin {
 		return restrictCreative;
 	}
 
+	public boolean isChatNotify() {
+
+		return chatNotify;
+	}
+
 	public boolean isSuccessfulLoad() {
 
 		return successfulLoad;
@@ -1013,6 +1025,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	public ListCommand getAchievementListCommand() {
 
 		return listCommand;
+	}
+
+	public ToggleCommand getToggleCommand() {
+
+		return toggleCommand;
 	}
 
 	public AchieveDistanceRunnable getAchieveDistanceRunnable() {

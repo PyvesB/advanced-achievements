@@ -30,7 +30,6 @@ public class AchievementDisplay {
 	private final AdvancedAchievements plugin;
 	private final String fireworkStyle;
 	private final boolean fireworks;
-	private final boolean chatNotify;
 	private final boolean titleScreen;
 
 	private static final Random RANDOM = new Random();
@@ -42,7 +41,6 @@ public class AchievementDisplay {
 		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
 		fireworkStyle = config.getString("FireworkStyle", "BALL_LARGE");
 		fireworks = config.getBoolean("Firework", true);
-		chatNotify = config.getBoolean("ChatNotify", false);
 		titleScreen = config.getBoolean("TitleScreen", true);
 	}
 
@@ -79,14 +77,15 @@ public class AchievementDisplay {
 						+ ChatColor.WHITE + nameToShowUser);
 
 		// Notify other online players that the player has received an achievement.
-		if (chatNotify) {
-			for (Player p : plugin.getServer().getOnlinePlayers()) {
-				if (!p.getName().equals(player.getName())) {
-					p.sendMessage(plugin.getChatHeader()
-							+ StringUtils.replaceOnce(plugin.getPluginLang().getString("achievement-received",
-									"PLAYER received the achievement:"), "PLAYER", player.getName())
-							+ " " + ChatColor.WHITE + nameToShowUser);
-				}
+		for (Player p : plugin.getServer().getOnlinePlayers()) {
+			// Notify other players only if chatNotify is enabled and player has not used /aach toggle, or if
+			// chatNotify is disabled and player has used /aach toggle.
+			if ((plugin.isChatNotify() ^ plugin.getToggleCommand().isPlayerToggled(p))
+					&& !p.getName().equals(player.getName())) {
+				p.sendMessage(plugin.getChatHeader()
+						+ StringUtils.replaceOnce(plugin.getPluginLang().getString("achievement-received",
+								"PLAYER received the achievement:"), "PLAYER", player.getName())
+						+ " " + ChatColor.WHITE + nameToShowUser);
 			}
 		}
 		player.sendMessage(plugin.getChatHeader() + ChatColor.WHITE + msg);

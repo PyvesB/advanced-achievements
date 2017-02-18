@@ -48,6 +48,7 @@ Icon: '\u2618'
 Color: '5'
 
 # Notify other connected players when an achievement is received.
+# Default behaviour, a player can override what he sees by using /aach toggle.
 ChatNotify: false
 
 # Separator between name, description and date on a book page.
@@ -533,6 +534,7 @@ Smelting:
     
 # When a player enters a specific command (specify command prefixes in lower case without initial slash).
 # For instance a command /awf add world from the AntiWorldFly plugin matches with subcategory 'awf add'.
+# Aliases of a given command will also be taken into account.
 PlayerCommands:
   'aach stats':
     '10':
