@@ -162,6 +162,13 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!configFile.getKeys(false).contains("RestrictSpectator")) {
+			configFile.set("RestrictSpectator", true, new String[] {
+					"Stop all stats from increasing when player in spectator mode, including PlayedTime.",
+					"Connection achievements will only be handled once a player switches to a non-spectator mode." });
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {

@@ -51,9 +51,10 @@ public abstract class AbstractListener {
 		boolean isNPC = player.hasMetadata("NPC");
 		boolean permission = player.hasPermission(category.toPermName());
 		boolean restrictedCreative = plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
+		boolean restrictedSpectator = plugin.isRestrictSpectator() && player.getGameMode() == GameMode.SPECTATOR;
 		boolean excludedWorld = plugin.isInExludedWorld(player);
 
-		return !isNPC && permission && !restrictedCreative && !excludedWorld;
+		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !excludedWorld;
 	}
 
 	/**
@@ -67,9 +68,10 @@ public abstract class AbstractListener {
 
 		boolean isNPC = player.hasMetadata("NPC");
 		boolean restrictedCreative = plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
+		boolean restrictedSpectator = plugin.isRestrictSpectator() && player.getGameMode() == GameMode.SPECTATOR;
 		boolean excludedWorld = plugin.isInExludedWorld(player);
 
-		return !isNPC && !restrictedCreative && !excludedWorld;
+		return !isNPC && !restrictedCreative && !restrictedSpectator && !excludedWorld;
 	}
 
 	/**

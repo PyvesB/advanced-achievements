@@ -170,6 +170,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private ChatColor color;
 	private String chatHeader;
 	private boolean restrictCreative;
+	private boolean restrictSpectator;
 	private boolean chatNotify;
 	private Set<String> excludedWorldSet;
 	private Set<String> disabledCategorySet;
@@ -544,6 +545,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		color = ChatColor.getByChar(config.getString("Color", "5").charAt(0));
 		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
 		restrictCreative = config.getBoolean("RestrictCreative", false);
+		restrictSpectator = config.getBoolean("RestrictSpectator", true);
 		chatNotify = config.getBoolean("ChatNotify", false);
 		databaseBackup = config.getBoolean("DatabaseBackup", true);
 		excludedWorldSet = new HashSet<>(config.getList("ExcludedWorlds"));
@@ -990,6 +992,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	public boolean isRestrictCreative() {
 
 		return restrictCreative;
+	}
+
+	public boolean isRestrictSpectator() {
+
+		return restrictSpectator;
 	}
 
 	public boolean isChatNotify() {

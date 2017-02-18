@@ -61,6 +61,10 @@ ListAchievementFormat: '%ICON% %NAME% %ICON%'
 # Connection achievements will only be handled once a player switches to a non-creative mode.
 RestrictCreative: false
 
+# Stop all stats from increasing when player in spectator mode, including PlayedTime.
+# Connection achievements will only be handled once a player switches to a non-spectator mode.
+RestrictSpectator: true
+
 # Stop all stats from increasing when player in a specific world, including PlayedTime (delete the [] before using).
 # Connection achievements will only be handled once a player enters a non-excluded world.
 ExcludedWorlds: []
