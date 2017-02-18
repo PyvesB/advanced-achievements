@@ -1,6 +1,7 @@
 package com.hm.achievement.listener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -66,6 +67,9 @@ public class AchievePlayerCommandListener extends AbstractListener implements Li
 			commandParameters = "";
 		}
 		PluginCommand pluginCommand = plugin.getServer().getPluginCommand(commandName);
+		if (pluginCommand == null || pluginCommand.getAliases() == null) {
+			return Arrays.asList(commandName.toLowerCase() + commandParameters);
+		}
 		List<String> equivalentCommands = new ArrayList<>(pluginCommand.getAliases().size() + 1);
 		// Aliases don't contain the main plugin command, add it to the returned list.
 		equivalentCommands.add(pluginCommand.getName().toLowerCase() + commandParameters);
