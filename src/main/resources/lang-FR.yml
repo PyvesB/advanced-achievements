@@ -66,6 +66,7 @@ aach-command-check: "Vérifier si NAME a reçu le &7succès ACH."
 aach-command-delete: "Supprimer le succès ACH du &7joueur NAME."
 aach-command-week: "Classement hebdomadaire."
 aach-command-month: "Classement mensuel."
+aach-command-toggle: "Voir succès d'autres joueurs."
 aach-command-book-hover: "Des livres RP, que vous pouvez échanger et collectionner !"
 aach-command-stats-hover: "Attrappez-les tous !"
 aach-command-list-hover: "Interface graphique pour visualiser vos succès !"
@@ -77,6 +78,7 @@ aach-command-check-hover: "Il faut utiliser le nom spécifié dans le fichier de
 aach-command-delete-hover: "Lisez la documentation avant d'utiliser cette commande !"
 aach-command-week-hover: "Les meilleurs joueurs de la semaine !"
 aach-command-month-hover: "Les meilleurs joueurs du mois !"
+aach-command-toggle-hover: "Choix sauvegardé jusqu'au prochain redémarrage !"
 aach-tip: "&lASTUCE &7&n&oCliquez &8ou &7&n&opassez votre curseur &8sur les commandes !"
 
 # Related to /aach info.
@@ -155,6 +157,10 @@ list-petmasterreceive: "Animaux reçus d'un autre Joueur"
 list-smelting: "Objets Fondus"
 
 list-commands: "Autres Succès"
+
+# Related to /aach toggle.
+toggle-displayed: "Vous serez notifié quand d'autres joueurs recevront des succès."
+toggle-hidden: "Vous ne serez plus notifié quand d'autres joueurs recevront des succès."
 
 #============================================================#
 # +--------------------------------------------------------+ #
