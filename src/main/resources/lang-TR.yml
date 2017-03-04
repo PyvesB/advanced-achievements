@@ -1,7 +1,7 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
 # |  Advanced Achievements Turkish translation by DarkJoya  | #
-# |              ~ Valid as of version 4.1.5 ~              | #
+# |              ~ Valid as of version 4.2 ~                | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
@@ -77,6 +77,8 @@ aach-command-week: "Haftalık Sıralamayı Gör."
 aach-command-week-hover: "En İyi Başarım Avcılarının Haftalık Sıralaması!"
 aach-command-month: "Aylık Sıralamayı Gör."
 aach-command-month-hover: "En İyi Başarım Avcılarının Aylık Sıralaması!"
+aach-command-toggle: "Diğer oyuncuların başarımlarının sohbet bildirimini kapat."
+aach-command-toggle-hover: "Seçimin sunucu yeniden başlatıldıktan sonra çalışmaya başlyacak!"
 aach-tip: "&c&lBİLGİ &2Fare ile &bÜstüne Gelerek&2 Açıklamalarına Bakabilir, &bTıklayarak&2 Komutu Direkt Sohbete Bakabilirsin!"
 
 # Related to /aach info.
@@ -91,6 +93,7 @@ version-command-database: "DB türü:"
 
 # Related to /aach list.
 list-gui-title: "Başarım Listesi"
+list-delay: "Bir sonraki komudu kullanmak için TIME saniye beklemelisin!"
 list-description: "Açıklama:"
 list-goal: "Hedef:"
 list-reception: "Kazanılma Tarihi:"
@@ -153,6 +156,10 @@ list-petmasterreceive: "Oyunculardan Hayvan Alma Başarımları"
 list-smelting: "Eşya Eritme Başarımları"
 
 list-commands: "Diğer Başarımlar"
+
+# Related to /aach toggle.
+toggle-displayed: "Diğer oyuncuların başarım bildirimlerini alıyorsun."
+toggle-hidden: "Artık diğer oyuncuların başarım bildirimlerini almıyorsun."
 
 #============================================================#
 # +--------------------------------------------------------+ #
