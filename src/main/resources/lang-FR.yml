@@ -111,6 +111,7 @@ list-achievements-in-category-singular: "AMOUNT succès"
 list-achievements-in-category-plural: "AMOUNT succès"
 
 # Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: "Connexions"
 list-places: "Blocs Placés"
 list-breaks: "Blocs Cassés"

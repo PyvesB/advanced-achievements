@@ -99,6 +99,7 @@ list-achievement-not-received: "&4\u2718&8 "
 list-back-message: '&7Назад'
 
 # Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: Присоеденения
 list-places: Размещенные блоки
 list-breaks: Сломанные блоки

@@ -103,6 +103,7 @@ list-achievements-in-category-singular: "AMOUNT achievement"
 list-achievements-in-category-plural: "AMOUNT achievements"
 
 # Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: "Kết nối"
 list-places: "Khối được đặt"
 list-breaks: "Khối được phá"

@@ -100,6 +100,7 @@ list-category-not-unlocked: "Du har ännu inte låst upp den här kategorin."
 list-back-message: "&7Tillbaka"
 
 # Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: "Anslutningar"
 list-places: "Block Placerade"
 list-breaks: "Block Förstörda"

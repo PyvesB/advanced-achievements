@@ -83,6 +83,7 @@ list-achievement-received: "&a\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "
 
 # Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: Conexiones
 list-places: Bloques Colocados
 list-breaks: Bloques Rotos

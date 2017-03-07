@@ -80,6 +80,7 @@ list-achievement-received: "&a√&f "
 list-achievement-not-received: "&4X&8 "
 
 # Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: "链接服务器"
 list-places: "放置方块"
 list-breaks: "破坏方块"

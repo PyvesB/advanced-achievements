@@ -110,6 +110,7 @@ list-achievements-in-category-singular: "AMOUNT achievement"
 list-achievements-in-category-plural: "AMOUNT achievements"
 
 # Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: "Connections"
 list-places: "Blocks Placed"
 list-breaks: "Blocks Broken"
@@ -154,7 +155,6 @@ list-enderpearls: "Teleportations with Ender Pearls"
 list-petmastergive: "Pets Given to Another Player"
 list-petmasterreceive: "Pets Received from Another Player"
 list-smelting: "Items Smelt"
-
 list-commands: "Other Achievements"
 
 # Related to /aach toggle.

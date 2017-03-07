@@ -100,6 +100,7 @@ list-category-not-unlocked: "Você ainda não desbloqueou esta categoria."
 list-back-message: "&7Voltar"
 
 # Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: "Conexões"
 list-places: "Blocos colocados"
 list-breaks: "Blocos quebrados"

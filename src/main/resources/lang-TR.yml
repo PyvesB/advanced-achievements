@@ -110,6 +110,7 @@ list-achievements-in-category-singular: "AMOUNT Başarım Var"
 list-achievements-in-category-plural: "AMOUNT Başarım Var"
 
 # Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: "Oyuna Girme Başarımları"
 list-places: "Koyulan Blok Başarımları"
 list-breaks: "Kırılan Blok Başarımları"
