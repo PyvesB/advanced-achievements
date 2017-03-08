@@ -157,10 +157,26 @@ public class SQLDatabaseManager {
 		}
 		// Old column type for versions prior to 3.0 was text for SQLite, char for MySQL and varchar for PostgreSQL
 		// (even though PostgreSQL was not supported on versions prior to 3.0, we still support the upgrade for it in
-		// case a user imports anither database into PostgreSQL without doing the table upgrade beforehand).
+		// case a user imports another database into PostgreSQL without doing the table upgrade beforehand).
 		if ("text".equalsIgnoreCase(type) || "char".equalsIgnoreCase(type) || "varchar".equalsIgnoreCase(type)) {
 			plugin.getLogger().warning("Updating database tables, please wait...");
 			updateOldDBToDates();
+		}
+
+		if (databaseType != SQLITE) {
+			int size = 51;
+			// Check if using old kills table prior to version 4.2.1.
+			try (Statement st = conn.createStatement()) {
+				ResultSet rs = st.executeQuery("SELECT mobname FROM " + tablePrefix + "kills LIMIT 1");
+				size = rs.getMetaData().getPrecision(1);
+			} catch (SQLException e) {
+				plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old kills table: ", e);
+			}
+			// Old kills table contained a capacity of only 32 chars.
+			if (size == 32) {
+				plugin.getLogger().warning("Updating database tables, please wait...");
+				increaseKillsSize();
+			}
 		}
 	}
 
@@ -214,7 +230,7 @@ public class SQLDatabaseManager {
 					+ "achievements (playername char(36),achievement varchar(64),description varchar(128),date DATE,PRIMARY KEY (playername, achievement))");
 			for (MultipleAchievements category : MultipleAchievements.values()) {
 				st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix + category.toDBName() + " (playername char(36),"
-						+ category.toSubcategoryDBName() + " varchar(32)," + category.toDBName()
+						+ category.toSubcategoryDBName() + " varchar(51)," + category.toDBName()
 						+ " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 			}
 			for (NormalAchievements category : NormalAchievements.values()) {
@@ -382,6 +398,26 @@ public class SQLDatabaseManager {
 			conn.setAutoCommit(true);
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while updating old DB (strings to dates): ", e);
+		}
+	}
+
+	/**
+	 * Increases size of the mobname column of the kills table to accommodate new parameters such as
+	 * specificplayer-56c79b19-4500-466c-94ea-514a755fdd09.
+	 */
+	private void increaseKillsSize() {
+
+		Connection conn = getSQLConnection();
+		try (Statement st = conn.createStatement()) {
+			// Increase size of table.
+			if (databaseType == POSTGRESQL) {
+				st.execute(
+						"ALTER TABLE " + tablePrefix + "kills ALTER COLUMN mobname TYPE varchar(51)");
+			} else {
+				st.execute("ALTER TABLE " + tablePrefix + "kills MODIFY mobname varchar(51)");
+			}
+		} catch (SQLException e) {
+			plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old kills table: ", e);
 		}
 	}
 
