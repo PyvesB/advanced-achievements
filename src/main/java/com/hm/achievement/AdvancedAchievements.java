@@ -231,8 +231,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			successfulLoad = false;
 		}
 
-		if (databaseBackup && (!"mysql".equalsIgnoreCase(config.getString("DatabaseType", "sqlite"))
-				|| !"postgresql".equalsIgnoreCase(config.getString("DatabaseType", "sqlite")))) {
+		if (databaseBackup && !"mysql".equalsIgnoreCase(config.getString("DatabaseType", "sqlite"))
+				&& !"postgresql".equalsIgnoreCase(config.getString("DatabaseType", "sqlite"))) {
 			File backup = new File(this.getDataFolder(), "achievements.db.bak");
 			// Only do a daily backup for the .db file.
 			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
