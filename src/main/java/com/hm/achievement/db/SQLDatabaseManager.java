@@ -97,87 +97,32 @@ public class SQLDatabaseManager {
 			return;
 		}
 
-		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
-		if (!"".equals(tablePrefix)) {
-			try (Statement st = conn.createStatement()) {
-				ResultSet rs;
-				if (databaseType == SQLITE) {
-					rs = st.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='achievements'");
-				} else if (databaseType == MYSQL) {
-					rs = st.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='"
-							+ databaseAddress.substring(databaseAddress.lastIndexOf('/') + 1)
-							+ "' AND table_name ='achievements'");
-				} else {
-					rs = st.executeQuery(
-							"SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'achievements' AND c.relkind = 'r'");
-				}
-				// Table achievements still has its default name (ie. no prefix), but a prefix is set in the
-				// configuration; do a renaming of all tables.
-				if (rs.next()) {
-					renameTables();
-				}
-			} catch (SQLException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while attempting to set prefix of database tables: ", e);
-				plugin.setSuccessfulLoad(false);
-			}
-		}
+		renameExistingTables();
+		initialiseTables();
+		updateOldDBToMaterial();
+		updateOldDBToDates();
+		updateOldDBMobnameSize();
+	}
 
-		// Initialise database tables (ie. create if they don't exist).
+	/**
+	 * Retrieves SQL connection to MySQL, PostgreSQL or SQLite database.
+	 */
+	public Connection getSQLConnection() {
+
+		// Check if Connection was not previously closed.
 		try {
-			initialiseTables();
+			if (sqlConnection == null || sqlConnection.isClosed()) {
+				if (databaseType == MYSQL || databaseType == POSTGRESQL) {
+					sqlConnection = createRemoteSQLConnection();
+				} else {
+					sqlConnection = createSQLiteConnection();
+				}
+			}
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while initialising database tables: ", e);
+			plugin.getLogger().log(Level.SEVERE, "Error while attempting to retrieve connection to database: ", e);
 			plugin.setSuccessfulLoad(false);
 		}
-
-		// Check if using old database prior to version 2.4.1.
-		String type = "";
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery(
-					"SELECT blockid FROM " + tablePrefix + MultipleAchievements.BREAKS.toDBName() + " LIMIT 1");
-			type = rs.getMetaData().getColumnTypeName(1);
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old DB: ", e);
-		}
-
-		// Old column type for versions prior to 2.4.1 was integer for SQLite and smallint unsigned for MySQL.
-		if ("integer".equalsIgnoreCase(type) || "smallint unsigned".equalsIgnoreCase(type)) {
-			plugin.getLogger().warning("Updating database tables, please wait...");
-			updateOldDBToMaterial(MultipleAchievements.BREAKS);
-			updateOldDBToMaterial(MultipleAchievements.CRAFTS);
-			updateOldDBToMaterial(MultipleAchievements.PLACES);
-		}
-
-		// Check if using old database prior to version 3.0.
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + "achievements LIMIT 1");
-			type = rs.getMetaData().getColumnTypeName(1);
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old DB: ", e);
-		}
-		// Old column type for versions prior to 3.0 was text for SQLite, char for MySQL and varchar for PostgreSQL
-		// (even though PostgreSQL was not supported on versions prior to 3.0, we still support the upgrade for it in
-		// case a user imports another database into PostgreSQL without doing the table upgrade beforehand).
-		if ("text".equalsIgnoreCase(type) || "char".equalsIgnoreCase(type) || "varchar".equalsIgnoreCase(type)) {
-			plugin.getLogger().warning("Updating database tables, please wait...");
-			updateOldDBToDates();
-		}
-
-		if (databaseType != SQLITE) {
-			int size = 51;
-			// Check if using old kills table prior to version 4.2.1.
-			try (Statement st = conn.createStatement()) {
-				ResultSet rs = st.executeQuery("SELECT mobname FROM " + tablePrefix + "kills LIMIT 1");
-				size = rs.getMetaData().getPrecision(1);
-			} catch (SQLException e) {
-				plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old kills table: ", e);
-			}
-			// Old kills table contained a capacity of only 32 chars.
-			if (size == 32) {
-				plugin.getLogger().warning("Updating database tables, please wait...");
-				increaseKillsSize();
-			}
-		}
+		return sqlConnection;
 	}
 
 	/**
@@ -218,12 +163,56 @@ public class SQLDatabaseManager {
 	}
 
 	/**
+	 * Renames the database tables with the prefix given in the configuration file. This method is only used and only
+	 * works if the tables had the default name. It does not support multiple successive table renamings.
+	 * 
+	 * @throws SQLException
+	 */
+	private void renameExistingTables() {
+
+		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
+		if (!"".equals(tablePrefix)) {
+			Connection conn = getSQLConnection();
+			try (Statement st = conn.createStatement()) {
+				ResultSet rs;
+				if (databaseType == SQLITE) {
+					rs = st.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='achievements'");
+				} else if (databaseType == MYSQL) {
+					rs = st.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='"
+							+ databaseAddress.substring(databaseAddress.lastIndexOf('/') + 1)
+							+ "' AND table_name ='achievements'");
+				} else {
+					rs = st.executeQuery(
+							"SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'achievements' AND c.relkind = 'r'");
+				}
+				// Table achievements still has its default name (ie. no prefix), but a prefix is set in the
+				// configuration; do a renaming of all tables.
+				if (rs.next()) {
+					st.addBatch("ALTER TABLE achievements RENAME TO " + tablePrefix + "achievements");
+					for (NormalAchievements category : NormalAchievements.values()) {
+						st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + tablePrefix
+								+ category.toDBName());
+					}
+					for (MultipleAchievements category : MultipleAchievements.values()) {
+						st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + tablePrefix
+								+ category.toDBName());
+					}
+					st.executeBatch();
+				}
+			} catch (SQLException e) {
+				plugin.getLogger().log(Level.SEVERE, "Error while attempting to set prefix of database tables: ", e);
+				plugin.setSuccessfulLoad(false);
+			}
+		}
+	}
+
+	/**
 	 * Initialises database tables by creating non existing ones. We batch the requests to send a unique batch to the
 	 * database.
 	 * 
 	 * @throws SQLException
 	 */
-	private void initialiseTables() throws SQLException {
+	private void initialiseTables() {
 
 		try (Statement st = sqlConnection.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + tablePrefix
@@ -247,35 +236,42 @@ public class SQLDatabaseManager {
 				}
 			}
 			st.executeBatch();
+		} catch (SQLException e) {
+			plugin.getLogger().log(Level.SEVERE, "Error while initialising database tables: ", e);
+			plugin.setSuccessfulLoad(false);
 		}
 	}
 
 	/**
-	 * Renames the database tables with the prefix given in the configuration file. This method is only used and only
-	 * works if the tables had the default name. It does not support multiple successive table renamings.
-	 * 
-	 * @throws SQLException
-	 */
-	private void renameTables() throws SQLException {
-
-		try (Statement st = sqlConnection.createStatement()) {
-			st.addBatch("ALTER TABLE achievements RENAME TO " + tablePrefix + "achievements");
-			for (NormalAchievements category : NormalAchievements.values()) {
-				st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + tablePrefix + category.toDBName());
-			}
-			for (MultipleAchievements category : MultipleAchievements.values()) {
-				st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + tablePrefix + category.toDBName());
-			}
-			st.executeBatch();
-		}
-	}
-
-	/**
-	 * Update the database tables for break, craft and place achievements (from int to varchar for identification
+	 * Update the database tables for Breaks, Crafts and Places achievements (from int to varchar for identification
 	 * column). The tables are now using material names and no longer item IDs, which are deprecated; this also allows
 	 * to store extra data information, extending the number of items available for the user.
+	 */
+	private void updateOldDBToMaterial() {
+
+		Connection conn = getSQLConnection();
+		String type = "";
+		try (Statement st = conn.createStatement()) {
+			ResultSet rs = st.executeQuery(
+					"SELECT blockid FROM " + tablePrefix + MultipleAchievements.BREAKS.toDBName() + " LIMIT 1");
+			type = rs.getMetaData().getColumnTypeName(1);
+		} catch (SQLException e) {
+			plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old DB: ", e);
+		}
+
+		// Old column type for versions prior to 2.4.1 was integer for SQLite and smallint unsigned for MySQL.
+		if ("integer".equalsIgnoreCase(type) || "smallint unsigned".equalsIgnoreCase(type)) {
+			plugin.getLogger().warning("Updating database tables with Material names, please wait...");
+			updateOldDBToMaterial(MultipleAchievements.BREAKS);
+			updateOldDBToMaterial(MultipleAchievements.CRAFTS);
+			updateOldDBToMaterial(MultipleAchievements.PLACES);
+		}
+	}
+
+	/**
+	 * Update the database tables for a MultipleAchievements category.
 	 * 
-	 * @param tableName
+	 * @param category
 	 */
 	@SuppressWarnings("deprecation")
 	private void updateOldDBToMaterial(MultipleAchievements category) {
@@ -331,71 +327,80 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Updates the database tables achievements. The table is now using a date type for the date column (previously was
-	 * char type). We also increase the number of chars allowed for the achievement names and descriptions.
+	 * Updates the database achievements table. The table is now using a date type for the date column. We also increase
+	 * the number of chars allowed for the achievement names and descriptions.
 	 */
 	private void updateOldDBToDates() {
 
-		// Early versions of the plugin added colors to the date. We have to get rid of them by using a regex pattern,
-		// else parsing will fail.
-		final Pattern regexPattern = Pattern.compile("&([a-f]|[0-9]){1}");
-		// Old date format, which was stored as a string.
-		final SimpleDateFormat oldFormat = new SimpleDateFormat("dd/MM/yyyy");
-
 		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement();
-				PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?,?);")) {
-			// Load entire achievements table into memory.
-			ResultSet rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements");
-			ArrayList<String> uuids = new ArrayList<>();
-			ArrayList<String> achs = new ArrayList<>();
-			ArrayList<String> descs = new ArrayList<>();
-			ArrayList<String> oldDates = new ArrayList<>();
+		try (Statement st = conn.createStatement()) {
+			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + "achievements LIMIT 1");
+			String type = rs.getMetaData().getColumnTypeName(1);
+			// Old column type for versions prior to 3.0 was text for SQLite, char for MySQL and varchar for PostgreSQL
+			// (even though PostgreSQL was not supported on versions prior to 3.0, we still support the upgrade for it
+			// in case a user imports another database into PostgreSQL without doing the table upgrade beforehand).
+			if ("text".equalsIgnoreCase(type) || "char".equalsIgnoreCase(type) || "varchar".equalsIgnoreCase(type)) {
+				plugin.getLogger()
+						.warning("Updating database table with date datatype for achievements, please wait...");
+				try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?,?);")) {
+					// Early versions of the plugin added colors to the date. We have to get rid of them by using a
+					// regex pattern, else parsing will fail.
+					final Pattern regexPattern = Pattern.compile("&([a-f]|[0-9]){1}");
+					// Old date format, which was stored as a string.
+					final SimpleDateFormat oldFormat = new SimpleDateFormat("dd/MM/yyyy");
+					// Load entire achievements table into memory.
+					rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements");
+					ArrayList<String> uuids = new ArrayList<>();
+					ArrayList<String> achs = new ArrayList<>();
+					ArrayList<String> descs = new ArrayList<>();
+					ArrayList<String> oldDates = new ArrayList<>();
 
-			// Parse entire table into arrays.
-			while (rs.next()) {
-				uuids.add(rs.getString(1));
-				achs.add(rs.getString(2));
-				descs.add(rs.getString(3));
-				oldDates.add(rs.getString(4));
-			}
+					// Parse entire table into arrays.
+					while (rs.next()) {
+						uuids.add(rs.getString(1));
+						achs.add(rs.getString(2));
+						descs.add(rs.getString(3));
+						oldDates.add(rs.getString(4));
+					}
 
-			// Preallocate space in array containing the values in the new format.
-			ArrayList<java.sql.Date> newDates = new ArrayList<>(oldDates.size());
+					// Preallocate space in array containing the values in the new format.
+					ArrayList<java.sql.Date> newDates = new ArrayList<>(oldDates.size());
 
-			try {
-				for (String date : oldDates) {
-					// Convert to SQL date format.
-					newDates.add(
-							new java.sql.Date(oldFormat.parse(regexPattern.matcher(date).replaceAll("")).getTime()));
+					try {
+						for (String date : oldDates) {
+							// Convert to SQL date format.
+							newDates.add(new java.sql.Date(
+									oldFormat.parse(regexPattern.matcher(date).replaceAll("")).getTime()));
+						}
+					} catch (ParseException e) {
+						plugin.getLogger().log(Level.SEVERE, "Error while parsing dates: ", e);
+					}
+					// Prevent from doing any commits before entire transaction is ready.
+					conn.setAutoCommit(false);
+
+					// Create new table.
+					st.execute(
+							"CREATE TABLE tempTable (playername char(36),achievement varchar(64),description varchar(128),date DATE,PRIMARY KEY (playername, achievement))");
+
+					// Populate new table with contents of the old one and date values.
+					for (int i = 0; i < uuids.size(); ++i) {
+						prep.setString(1, uuids.get(i));
+						prep.setString(2, achs.get(i));
+						prep.setString(3, descs.get(i));
+						prep.setDate(4, newDates.get(i));
+						prep.addBatch();
+					}
+					prep.executeBatch();
+
+					// Delete old table.
+					st.execute("DROP TABLE " + tablePrefix + "achievements");
+					// Rename new table to old one.
+					st.execute("ALTER TABLE tempTable RENAME TO " + tablePrefix + "achievements");
+					// Commit entire transaction.
+					conn.commit();
+					conn.setAutoCommit(true);
 				}
-			} catch (ParseException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while parsing dates: ", e);
 			}
-			// Prevent from doing any commits before entire transaction is ready.
-			conn.setAutoCommit(false);
-
-			// Create new table.
-			st.execute(
-					"CREATE TABLE tempTable (playername char(36),achievement varchar(64),description varchar(128),date DATE,PRIMARY KEY (playername, achievement))");
-
-			// Populate new table with contents of the old one and date values.
-			for (int i = 0; i < uuids.size(); ++i) {
-				prep.setString(1, uuids.get(i));
-				prep.setString(2, achs.get(i));
-				prep.setString(3, descs.get(i));
-				prep.setDate(4, newDates.get(i));
-				prep.addBatch();
-			}
-			prep.executeBatch();
-
-			// Delete old table.
-			st.execute("DROP TABLE " + tablePrefix + "achievements");
-			// Rename new table to old one.
-			st.execute("ALTER TABLE tempTable RENAME TO " + tablePrefix + "achievements");
-			// Commit entire transaction.
-			conn.commit();
-			conn.setAutoCommit(true);
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while updating old DB (strings to dates): ", e);
 		}
@@ -405,41 +410,29 @@ public class SQLDatabaseManager {
 	 * Increases size of the mobname column of the kills table to accommodate new parameters such as
 	 * specificplayer-56c79b19-4500-466c-94ea-514a755fdd09.
 	 */
-	private void increaseKillsSize() {
+	private void updateOldDBMobnameSize() {
 
 		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			// Increase size of table.
-			if (databaseType == POSTGRESQL) {
-				st.execute(
-						"ALTER TABLE " + tablePrefix + "kills ALTER COLUMN mobname TYPE varchar(51)");
-			} else {
-				st.execute("ALTER TABLE " + tablePrefix + "kills MODIFY mobname varchar(51)");
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old kills table: ", e);
-		}
-	}
-
-	/**
-	 * Retrieves SQL connection to MySQL, PostgreSQL or SQLite database.
-	 */
-	public Connection getSQLConnection() {
-
-		// Check if Connection was not previously closed.
-		try {
-			if (sqlConnection == null || sqlConnection.isClosed()) {
-				if (databaseType == MYSQL || databaseType == POSTGRESQL) {
-					sqlConnection = createRemoteSQLConnection();
-				} else {
-					sqlConnection = createSQLiteConnection();
+		// SQLite ignores size for varchar datatype.
+		if (databaseType != SQLITE) {
+			int size = 51;
+			try (Statement st = conn.createStatement()) {
+				ResultSet rs = st.executeQuery("SELECT mobname FROM " + tablePrefix + "kills LIMIT 1");
+				size = rs.getMetaData().getPrecision(1);
+				// Old kills table prior to version 4.2.1 contained a capacity of only 32 chars.
+				if (size == 32) {
+					plugin.getLogger().warning("Updating database table with extended mobname column, please wait...");
+					// Increase size of table.
+					if (databaseType == POSTGRESQL) {
+						st.execute("ALTER TABLE " + tablePrefix + "kills ALTER COLUMN mobname TYPE varchar(51)");
+					} else {
+						st.execute("ALTER TABLE " + tablePrefix + "kills MODIFY mobname varchar(51)");
+					}
 				}
+			} catch (SQLException e) {
+				plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old kills table: ", e);
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while attempting to retrieve connection to database: ", e);
-			plugin.setSuccessfulLoad(false);
 		}
-		return sqlConnection;
 	}
 
 	/**
