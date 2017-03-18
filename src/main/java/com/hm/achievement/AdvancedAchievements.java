@@ -26,7 +26,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.mcstats.MetricsLite;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -221,15 +220,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		fileUpdater.updateOldLanguage(langFile);
 
 		configurationLoad(configFile, langFile);
-
-		// Load Metrics Lite.
-		try {
-			MetricsLite metrics = new MetricsLite(this);
-			metrics.start();
-		} catch (IOException e) {
-			this.getLogger().severe("Error while sending Metrics statistics.");
-			successfulLoad = false;
-		}
 
 		if (databaseBackup && !"mysql".equalsIgnoreCase(config.getString("DatabaseType", "sqlite"))
 				&& !"postgresql".equalsIgnoreCase(config.getString("DatabaseType", "sqlite"))) {

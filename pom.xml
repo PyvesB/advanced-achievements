@@ -33,15 +33,10 @@
 				<configuration>
 					<artifactSet>
 						<includes>
-							<include>org.mcstats.*:*</include>
 							<include>com.hm.mcshared:*</include>
 						</includes>
 					</artifactSet>
 					<relocations>
-						<relocation>
-							<pattern>org.mcstats</pattern>
-							<shadedPattern>com.hm.achievement.metrics</shadedPattern>
-						</relocation>
 						<relocation>
 							<pattern>com.hm.mcshared</pattern>
 							<shadedPattern>com.hm.mcshared</shadedPattern>
@@ -81,10 +76,6 @@
 			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
 		</repository>
 		<repository>
-			<id>Plugin Metrics</id>
-			<url>http://repo.mcstats.org/content/repositories/public/</url>
-		</repository>
-		<repository>
 			<id>MCShared-mvn-repo</id>
 			<url>https://raw.github.com/PyvesB/MCShared/mvn-repo/</url>
 		</repository>
@@ -103,12 +94,6 @@
 			<artifactId>VaultAPI</artifactId>
 			<version>1.6</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mcstats.bukkit</groupId>
-			<artifactId>metrics-lite</artifactId>
-			<version>R8-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.hm.mcshared</groupId>
