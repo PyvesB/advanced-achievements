@@ -42,16 +42,13 @@ public class AchieveCraftListener extends AbstractListener implements Listener {
 
 		ItemStack item = event.getRecipe().getResult();
 		String craftName = item.getType().name().toLowerCase();
-		if (player.hasPermission(category.toPermName() + '.' + craftName + "." + item.getDurability()) && plugin
-				.getPluginConfig().isConfigurationSection(category + "." + craftName + ':' + item.getDurability())) {
+		if (!player.hasPermission(category.toPermName() + '.' + craftName)) {
+			return;
+		}
+		if (plugin.getPluginConfig().isConfigurationSection(category + "." + craftName + ':' + item.getDurability())) {
 			craftName += ":" + item.getDurability();
-		} else {
-			if (!player.hasPermission(category.toPermName() + '.' + craftName)) {
-				return;
-			}
-			if (!plugin.getPluginConfig().isConfigurationSection(category + "." + craftName)) {
-				return;
-			}
+		} else if (!plugin.getPluginConfig().isConfigurationSection(category + "." + craftName)) {
+			return;
 		}
 
 		// Some items appear as having amount equal to 0, regardless of the amount crafted (for instance fireworks).
