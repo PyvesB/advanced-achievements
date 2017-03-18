@@ -404,19 +404,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		if (!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString())) {
-			// Need PetMaster with a minimum version of 1.4.
-			if (Bukkit.getPluginManager().isPluginEnabled("PetMaster") && Integer.parseInt(Character.toString(
-					Bukkit.getPluginManager().getPlugin("PetMaster").getDescription().getVersion().charAt(2))) >= 4) {
-				petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
-				pm.registerEvents(petMasterGiveReceiveListener, this);
-			} else {
-				this.getLogger().warning(
-						"Failed to pair with Pet Master plugin; disabling PetMasterGive and PetMasterReceive categories.");
-				this.getLogger().warning(
-						"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder.");
-				this.getLogger().warning(
-						"If you do not wish to use these categories, you must add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
-			}
+			petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
+			pm.registerEvents(petMasterGiveReceiveListener, this);
 		}
 
 		listGUIListener = new ListGUIListener(this);
@@ -550,10 +539,26 @@ public class AdvancedAchievements extends JavaPlugin {
 		databaseBackup = config.getBoolean("DatabaseBackup", true);
 		excludedWorldSet = new HashSet<>(config.getList("ExcludedWorlds"));
 		disabledCategorySet = new HashSet<>(config.getList("DisabledCategories"));
+		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
+		if ((!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString()))
+				&& (!Bukkit.getPluginManager().isPluginEnabled("PetMaster")
+						|| Integer.parseInt(Character.toString(Bukkit.getPluginManager().getPlugin("PetMaster")
+								.getDescription().getVersion().charAt(2))) < 4)) {
+			disabledCategorySet.add(NormalAchievements.PETMASTERGIVE.toString());
+			disabledCategorySet.add(NormalAchievements.PETMASTERRECEIVE.toString());
+			this.getLogger().warning(
+					"Failed to pair with Pet Master plugin; disabling PetMasterGive and PetMasterReceive categories.");
+			this.getLogger()
+					.warning("Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder.");
+			this.getLogger().warning(
+					"If you do not wish to use these categories, you must add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
+		}
 		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 60);
 		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 60);
 		asyncPooledRequestsSender = config.getBoolean("AsyncPooledRequestsSender", true);
+
 	}
 
 	/**
