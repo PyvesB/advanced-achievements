@@ -97,15 +97,14 @@ public class PooledRequestsSender implements Runnable {
 			Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
 				String playerUUID = entry.getKey().substring(0, 36);
-				if (plugin.getDb().isPostgres()) {
+				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
 					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ playerUUID + "', '" + entry.getKey().substring(36) + "', "
-							+ entry.getValue() + ")" + " ON CONFLICT (playername," + category.toSubcategoryDBName()
-							+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue() + ")");
+							+ playerUUID + "', '" + entry.getKey().substring(36) + "', " + entry.getValue() + ")"
+							+ " ON CONFLICT (playername," + category.toSubcategoryDBName() + ") DO UPDATE SET ("
+							+ category.toDBName() + ")=(" + entry.getValue() + ")");
 				} else {
 					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ playerUUID + "', '" + entry.getKey().substring(36) + "', "
-							+ entry.getValue() + ")");
+							+ playerUUID + "', '" + entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 				}
 				if (!isPlayerOnline(playerUUID)) {
 					((ConcurrentHashMap<String, Integer>) categoryMap).remove(entry.getKey(), entry.getValue());
@@ -125,7 +124,7 @@ public class PooledRequestsSender implements Runnable {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
-				if (plugin.getDb().isPostgres()) {
+				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
 					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
 							+ entry.getValue() + ")" + " ON CONFLICT (playername," + category.toSubcategoryDBName()
@@ -154,7 +153,7 @@ public class PooledRequestsSender implements Runnable {
 
 		if (plugin.isAsyncPooledRequestsSender()) {
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
-				if (plugin.getDb().isPostgres()) {
+				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
 					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")"
 							+ " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
@@ -169,7 +168,7 @@ public class PooledRequestsSender implements Runnable {
 			}
 		} else {
 			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
-				if (plugin.getDb().isPostgres()) {
+				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
 					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")"
 							+ " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
@@ -190,7 +189,7 @@ public class PooledRequestsSender implements Runnable {
 	 * @return
 	 */
 	private boolean isPlayerOnline(String uuidString) {
-		
+
 		final UUID uuid = UUID.fromString(uuidString);
 
 		// Called asynchronously, to ensure thread safety we must issue a call on the server's main thread of execution.
@@ -202,7 +201,7 @@ public class PooledRequestsSender implements Runnable {
 				return Bukkit.getPlayer(uuid) != null;
 			}
 		});
-		
+
 		boolean playerOnline = true;
 		try {
 			playerOnline = onlineCheckFuture.get();

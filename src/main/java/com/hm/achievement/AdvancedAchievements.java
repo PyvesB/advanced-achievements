@@ -43,6 +43,7 @@ import com.hm.achievement.command.ToggleCommand;
 import com.hm.achievement.command.TopCommand;
 import com.hm.achievement.command.WeekCommand;
 import com.hm.achievement.db.DatabasePoolsManager;
+import com.hm.achievement.db.DatabaseType;
 import com.hm.achievement.db.PooledRequestsSender;
 import com.hm.achievement.db.SQLDatabaseManager;
 import com.hm.achievement.listener.AchieveArrowListener;
@@ -221,24 +222,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		configurationLoad(configFile, langFile);
 
-		if (databaseBackup && !"mysql".equalsIgnoreCase(config.getString("DatabaseType", "sqlite"))
-				&& !"postgresql".equalsIgnoreCase(config.getString("DatabaseType", "sqlite"))) {
-			File backup = new File(this.getDataFolder(), "achievements.db.bak");
-			// Only do a daily backup for the .db file.
-			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
-				this.getLogger().info("Backing up database file...");
-				try {
-					FileManager fileManager = new FileManager("achievements.db", this);
-					fileManager.backupFile();
-				} catch (IOException e) {
-					this.getLogger().log(Level.SEVERE, "Error while backing up database file: ", e);
-					successfulLoad = false;
-				}
-			}
-		}
-
-		PluginManager pm = getServer().getPluginManager();
 		this.getLogger().info("Registering listeners...");
+		PluginManager pm = getServer().getPluginManager();
 
 		// Check for available plugin update.
 		if (config.getBoolean("CheckForUpdate", true)) {
@@ -408,6 +393,21 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Initialise the SQLite/MySQL/PostgreSQL database.
 		db.initialise();
+
+		if (databaseBackup && db.getDatabaseType() == DatabaseType.SQLITE) {
+			File backup = new File(this.getDataFolder(), "achievements.db.bak");
+			// Only do a daily backup for the .db file.
+			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
+				this.getLogger().info("Backing up database file...");
+				try {
+					FileManager fileManager = new FileManager("achievements.db", this);
+					fileManager.backupFile();
+				} catch (IOException e) {
+					this.getLogger().log(Level.SEVERE, "Error while backing up database file: ", e);
+					successfulLoad = false;
+				}
+			}
+		}
 
 		// Error while loading database do not do any further work.
 		if (overrideDisable) {

@@ -46,15 +46,11 @@ public class SQLDatabaseManager {
 	private String databasePassword;
 	private String tablePrefix;
 	private boolean achievementsChronologicalOrder;
-	private byte databaseType;
+	private DatabaseType databaseType;
 	private DateFormat dateFormat;
 
 	// Connection to the database; remains opened and shared except when plugin disabled.
 	private Connection sqlConnection;
-
-	private static final byte SQLITE = 0;
-	private static final byte MYSQL = 1;
-	private static final byte POSTGRESQL = 2;
 
 	public SQLDatabaseManager(AdvancedAchievements plugin) {
 
@@ -73,9 +69,9 @@ public class SQLDatabaseManager {
 
 		// Check if JDBC library for the specified database system is available.
 		try {
-			if (databaseType == SQLITE) {
+			if (databaseType == DatabaseType.SQLITE) {
 				Class.forName("org.sqlite.JDBC");
-			} else if (databaseType == MYSQL) {
+			} else if (databaseType == DatabaseType.MYSQL) {
 				Class.forName("com.mysql.jdbc.Driver");
 			} else {
 				Class.forName("org.postgresql.Driver");
@@ -112,7 +108,7 @@ public class SQLDatabaseManager {
 		// Check if Connection was not previously closed.
 		try {
 			if (sqlConnection == null || sqlConnection.isClosed()) {
-				if (databaseType == MYSQL || databaseType == POSTGRESQL) {
+				if (databaseType == DatabaseType.MYSQL || databaseType == DatabaseType.POSTGRESQL) {
 					sqlConnection = createRemoteSQLConnection();
 				} else {
 					sqlConnection = createSQLiteConnection();
@@ -144,21 +140,21 @@ public class SQLDatabaseManager {
 		String dataHandler = plugin.getPluginConfig().getString("DatabaseType", "sqlite");
 		if ("mysql".equalsIgnoreCase(dataHandler)) {
 			// Get parameters from the MySQL config category.
-			databaseType = MYSQL;
+			databaseType = DatabaseType.MYSQL;
 			databaseAddress = plugin.getPluginConfig().getString("MYSQL.Database",
 					"jdbc:mysql://localhost:3306/minecraft");
 			databaseUser = plugin.getPluginConfig().getString("MYSQL.User", "root");
 			databasePassword = plugin.getPluginConfig().getString("MYSQL.Password", "root");
 		} else if ("postgresql".equalsIgnoreCase(dataHandler)) {
 			// Get parameters from the PostgreSQL config category.
-			databaseType = POSTGRESQL;
+			databaseType = DatabaseType.POSTGRESQL;
 			databaseAddress = plugin.getPluginConfig().getString("POSTGRESQL.Database",
 					"jdbc:postgresql://localhost:5432/minecraft");
 			databaseUser = plugin.getPluginConfig().getString("POSTGRESQL.User", "root");
 			databasePassword = plugin.getPluginConfig().getString("POSTGRESQL.Password", "root");
 		} else {
 			// No extra parameters to retrieve!
-			databaseType = SQLITE;
+			databaseType = DatabaseType.SQLITE;
 		}
 	}
 
@@ -175,9 +171,9 @@ public class SQLDatabaseManager {
 			Connection conn = getSQLConnection();
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs;
-				if (databaseType == SQLITE) {
+				if (databaseType == DatabaseType.SQLITE) {
 					rs = st.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='achievements'");
-				} else if (databaseType == MYSQL) {
+				} else if (databaseType == DatabaseType.MYSQL) {
 					rs = st.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='"
 							+ databaseAddress.substring(databaseAddress.lastIndexOf('/') + 1)
 							+ "' AND table_name ='achievements'");
@@ -414,7 +410,7 @@ public class SQLDatabaseManager {
 
 		Connection conn = getSQLConnection();
 		// SQLite ignores size for varchar datatype.
-		if (databaseType != SQLITE) {
+		if (databaseType != DatabaseType.SQLITE) {
 			int size = 51;
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs = st.executeQuery("SELECT mobname FROM " + tablePrefix + "kills LIMIT 1");
@@ -423,7 +419,7 @@ public class SQLDatabaseManager {
 				if (size == 32) {
 					plugin.getLogger().warning("Updating database table with extended mobname column, please wait...");
 					// Increase size of table.
-					if (databaseType == POSTGRESQL) {
+					if (databaseType == DatabaseType.POSTGRESQL) {
 						st.execute("ALTER TABLE " + tablePrefix + "kills ALTER COLUMN mobname TYPE varchar(51)");
 					} else {
 						st.execute("ALTER TABLE " + tablePrefix + "kills MODIFY mobname varchar(51)");
@@ -463,7 +459,7 @@ public class SQLDatabaseManager {
 	 */
 	private Connection createRemoteSQLConnection() throws SQLException {
 
-		if (databaseType == MYSQL) {
+		if (databaseType == DatabaseType.MYSQL) {
 			return DriverManager.getConnection(databaseAddress + "?useSSL=false&autoReconnect=true&user=" + databaseUser
 					+ "&password=" + databasePassword);
 		} else {
@@ -733,7 +729,7 @@ public class SQLDatabaseManager {
 	private void registerAchievementToDB(String achievement, String desc, String name) {
 
 		String query;
-		if (databaseType == POSTGRESQL) {
+		if (databaseType == DatabaseType.POSTGRESQL) {
 			// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
 			// available for PostgreSQL 9.5+.
 			query = "INSERT INTO " + tablePrefix
@@ -747,7 +743,7 @@ public class SQLDatabaseManager {
 			prep.setString(2, achievement);
 			prep.setString(3, desc);
 			prep.setDate(4, new java.sql.Date(new java.util.Date().getTime()));
-			if (databaseType == POSTGRESQL) {
+			if (databaseType == DatabaseType.POSTGRESQL) {
 				prep.setString(5, desc);
 				prep.setDate(6, new java.sql.Date(new java.util.Date().getTime()));
 			}
@@ -1009,7 +1005,7 @@ public class SQLDatabaseManager {
 
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			if (databaseType == POSTGRESQL) {
+			if (databaseType == DatabaseType.POSTGRESQL) {
 				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
 				// construct, which is available for PostgreSQL 9.5+.
 				st.execute("INSERT INTO " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName() + " VALUES ('"
@@ -1036,7 +1032,7 @@ public class SQLDatabaseManager {
 
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			if (databaseType == POSTGRESQL) {
+			if (databaseType == DatabaseType.POSTGRESQL) {
 				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
 				// construct, which is available for PostgreSQL 9.5+.
 				st.execute("INSERT INTO " + tablePrefix + NormalAchievements.PLAYEDTIME.toDBName() + " VALUES ('" + name
@@ -1064,7 +1060,7 @@ public class SQLDatabaseManager {
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			// Update statistic.
-			if (databaseType == POSTGRESQL) {
+			if (databaseType == DatabaseType.POSTGRESQL) {
 				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
 				// construct, which is available for PostgreSQL 9.5+.
 				st.execute("INSERT INTO " + tablePrefix + type + " VALUES ('" + name + "', " + distance + ")"
@@ -1082,8 +1078,8 @@ public class SQLDatabaseManager {
 		return tablePrefix;
 	}
 
-	public boolean isPostgres() {
+	public DatabaseType getDatabaseType() {
 
-		return databaseType == POSTGRESQL;
+		return databaseType;
 	}
 }
