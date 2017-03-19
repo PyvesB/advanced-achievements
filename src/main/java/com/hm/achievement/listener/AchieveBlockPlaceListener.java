@@ -37,14 +37,13 @@ public class AchieveBlockPlaceListener extends AbstractListener implements Liste
 		MultipleAchievements category = MultipleAchievements.PLACES;
 
 		String blockName = block.getType().name().toLowerCase();
-		if (player.hasPermission(category.toPermName() + '.' + blockName + '.' + block.getData()) && plugin
-				.getPluginConfig().isConfigurationSection(category + "." + blockName + ':' + block.getData())) {
+		if (!player.hasPermission(category.toPermName() + '.' + blockName)) {
+			return;
+		}
+		if (plugin.getPluginConfig().isConfigurationSection(category + "." + blockName + ':' + block.getData())) {
 			blockName += ":" + block.getData();
-		} else {
-			if (!player.hasPermission(category.toPermName() + '.' + blockName))
-				return;
-			if (!plugin.getPluginConfig().isConfigurationSection(category + "." + blockName))
-				return;
+		} else if (!plugin.getPluginConfig().isConfigurationSection(category + "." + blockName)) {
+			return;
 		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, blockName, 1);

@@ -655,6 +655,11 @@ public class AdvancedAchievements extends JavaPlugin {
 		PluginManager pluginManager = this.getServer().getPluginManager();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
+				int startOfMetadata = section.indexOf(':');
+				if (startOfMetadata > -1) {
+					// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories.
+					section = section.substring(0, startOfMetadata);
+				}
 				// Bukkit only allows permissions to be set once, so must do additional check to make sure they are not
 				// being set again during an /aach reload.
 				if (pluginManager.getPermission(category.toPermName() + "." + section) == null) {
