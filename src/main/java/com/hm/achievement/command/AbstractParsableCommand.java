@@ -16,7 +16,6 @@ import com.hm.achievement.AdvancedAchievements;
 public abstract class AbstractParsableCommand extends AbstractCommand {
 
 	protected AbstractParsableCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
@@ -31,7 +30,6 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
-
 		Player player = null;
 		// Retrieve player instance with his name.
 		for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
@@ -59,7 +57,6 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	 * @return
 	 */
 	protected String parseAchievementName(String[] args) {
-
 		StringBuilder achievementName = new StringBuilder();
 		// Rebuild name of achievement by concatenating elements in the string array. The name of the player is last.
 		for (int i = 1; i < args.length - 1; i++) {

@@ -26,7 +26,6 @@ public class AchievementRewards {
 	private final boolean rewardCommandNotif;
 
 	protected AchievementRewards(AdvancedAchievements achievement) {
-
 		this.plugin = achievement;
 		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
 		// a player is notified in case of a command reward.
@@ -40,7 +39,6 @@ public class AchievementRewards {
 	 * @return type(s) of the achievement reward as an array of strings
 	 */
 	public List<String> getRewardListing(String configAchievement) {
-
 		ArrayList<String> rewardType = new ArrayList<>();
 		Set<String> keyNames = plugin.getPluginConfig().getKeys(true);
 
@@ -48,8 +46,7 @@ public class AchievementRewards {
 		if (plugin.setUpEconomy(false) && keyNames.contains(configAchievement + ".Reward.Money")) {
 			int amount = getMoneyAmount(configAchievement);
 			rewardType.add(StringUtils.replaceOnce(pluginLang.getString("list-reward-money", "receive AMOUNT"),
-					"AMOUNT",
-					amount + " " + getCurrencyName(amount)));
+					"AMOUNT", amount + " " + getCurrencyName(amount)));
 		}
 		if (keyNames.contains(configAchievement + ".Reward.Item")) {
 			int amount = getItemAmount(configAchievement);
@@ -70,7 +67,6 @@ public class AchievementRewards {
 	 * @param configAchievement
 	 */
 	public void checkConfig(Player player, String configAchievement) {
-
 		int moneyAmount = getMoneyAmount(configAchievement);
 		int itemAmount = getItemAmount(configAchievement);
 
@@ -117,7 +113,6 @@ public class AchievementRewards {
 	 */
 	@SuppressWarnings("deprecation")
 	private void rewardMoney(Player player, int amount) {
-
 		if (plugin.setUpEconomy(true)) {
 			try {
 				plugin.getEconomy().depositPlayer(player, amount);
@@ -144,7 +139,6 @@ public class AchievementRewards {
 	 * @return ItemStack object corresponding to the reward
 	 */
 	private ItemStack getItemReward(String ach, int amount) {
-
 		ItemStack item = null;
 		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
 
@@ -187,7 +181,6 @@ public class AchievementRewards {
 	 * @return
 	 */
 	private int getMoneyAmount(String configAchievement) {
-
 		// Supports both old and new plugin syntax (Amount used to be a separate sub-category).
 		return Math.max(plugin.getPluginConfig().getInt(configAchievement + ".Reward.Money", 0),
 				plugin.getPluginConfig().getInt(configAchievement + ".Reward.Money.Amount", 0));
@@ -200,7 +193,6 @@ public class AchievementRewards {
 	 * @return
 	 */
 	private int getItemAmount(String configAchievement) {
-
 		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
 
 		int itemAmount = 0;
@@ -225,7 +217,6 @@ public class AchievementRewards {
 	 * @return
 	 */
 	private String getCurrencyName(int amount) {
-
 		String currencyName;
 		if (amount > 1) {
 			currencyName = plugin.getEconomy().currencyNamePlural();
@@ -242,7 +233,6 @@ public class AchievementRewards {
 	 * @return
 	 */
 	private String getItemName(ItemStack item) {
-
 		// Return Vault name of object if available.
 		if (plugin.setUpEconomy(false)) {
 			ItemInfo itemInfo = Items.itemByStack(item);

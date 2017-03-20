@@ -29,7 +29,6 @@ public abstract class AbstractListener {
 	private final boolean cooldownActionBar;
 
 	protected AbstractListener(AdvancedAchievements plugin) {
-
 		this.plugin = plugin;
 		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
 		// Minecraft versions change in the future.
@@ -47,7 +46,6 @@ public abstract class AbstractListener {
 	 * @return
 	 */
 	protected boolean shouldEventBeTakenIntoAccount(Player player, NormalAchievements category) {
-
 		boolean isNPC = player.hasMetadata("NPC");
 		boolean permission = player.hasPermission(category.toPermName());
 		boolean restrictedCreative = plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
@@ -65,7 +63,6 @@ public abstract class AbstractListener {
 	 * @return
 	 */
 	protected boolean shouldEventBeTakenIntoAccountNoPermission(Player player) {
-
 		boolean isNPC = player.hasMetadata("NPC");
 		boolean restrictedCreative = plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
 		boolean restrictedSpectator = plugin.isRestrictSpectator() && player.getGameMode() == GameMode.SPECTATOR;
@@ -82,7 +79,6 @@ public abstract class AbstractListener {
 	 * @return
 	 */
 	protected boolean isInCooldownPeriod(Player player) {
-
 		return isInCooldownPeriod(player, "");
 	}
 
@@ -94,7 +90,6 @@ public abstract class AbstractListener {
 	 * @return
 	 */
 	protected boolean isInCooldownPeriod(Player player, String prefixInMap) {
-
 		String uuid = player.getUniqueId().toString();
 		Long lastEventTime = cooldownMap.get(prefixInMap + uuid);
 		if (lastEventTime == null) {
@@ -129,7 +124,6 @@ public abstract class AbstractListener {
 	 */
 	protected void updateStatisticAndAwardAchievementsIfAvailable(Player player, NormalAchievements category,
 			int incrementValue) {
-
 		int amount = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player, incrementValue);
 
 		if (incrementValue > 1) {
@@ -155,7 +149,6 @@ public abstract class AbstractListener {
 	 */
 	protected void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category,
 			String subcategory, int incrementValue) {
-
 		int amount = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, subcategory, player,
 				incrementValue);
 
@@ -178,7 +171,6 @@ public abstract class AbstractListener {
 	 * @param configAchievement
 	 */
 	protected void awardAchievementIfAvailable(Player player, String configAchievement) {
-
 		AchievementCommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
 		if (pluginConfig.getString(configAchievement + ".Message", null) != null) {
 			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
@@ -198,7 +190,6 @@ public abstract class AbstractListener {
 	 * @param playerUUID
 	 */
 	protected void removePlayerFromCooldownMap(String playerUUID) {
-
 		cooldownMap.remove(playerUUID);
 	}
 }

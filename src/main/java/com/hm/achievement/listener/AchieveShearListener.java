@@ -18,13 +18,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveShearListener extends AbstractListener implements Listener {
 
 	public AchieveShearListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerShearEntity(PlayerShearEntityEvent event) {
-
 		if (event.getEntity() != null && !"sheep".equalsIgnoreCase(event.getEntity().getName())) {
 			return;
 		}

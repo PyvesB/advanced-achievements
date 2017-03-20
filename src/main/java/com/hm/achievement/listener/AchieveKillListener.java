@@ -21,13 +21,11 @@ import com.hm.achievement.category.MultipleAchievements;
 public class AchieveKillListener extends AbstractListener implements Listener {
 
 	public AchieveKillListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityDeath(EntityDeathEvent event) {
-
 		Player player = event.getEntity().getKiller();
 
 		if (player == null) {

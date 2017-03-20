@@ -12,7 +12,6 @@ import com.hm.achievement.AdvancedAchievements;
 public class MonthCommand extends AbstractRankingCommand {
 
 	public MonthCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 		languageHeaderKey = "month-achievement";
 		defaultHeaderMessage = "Monthly achievement rankings:";
@@ -20,7 +19,6 @@ public class MonthCommand extends AbstractRankingCommand {
 
 	@Override
 	protected long getRankingStartTime() {
-
 		Calendar c = Calendar.getInstance();
 		// Set calendar to the first day of the month.
 		c.set(Calendar.DAY_OF_MONTH, 1);

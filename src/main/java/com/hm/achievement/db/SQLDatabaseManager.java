@@ -49,7 +49,6 @@ public class SQLDatabaseManager {
 	private Connection sqlConnection;
 
 	public SQLDatabaseManager(AdvancedAchievements plugin) {
-
 		this.plugin = plugin;
 		// We expect to execute many short writes to the database. The pool can grow dynamically under high load.
 		pool = Executors.newCachedThreadPool();
@@ -59,7 +58,6 @@ public class SQLDatabaseManager {
 	 * Initialises database system and plugin settings.
 	 */
 	public void initialise() {
-
 		// Load plugin settings.
 		configurationLoad();
 
@@ -101,7 +99,6 @@ public class SQLDatabaseManager {
 	 * Retrieves SQL connection to MySQL, PostgreSQL or SQLite database.
 	 */
 	public Connection getSQLConnection() {
-
 		// Check if Connection was not previously closed.
 		try {
 			if (sqlConnection == null || sqlConnection.isClosed()) {
@@ -122,7 +119,6 @@ public class SQLDatabaseManager {
 	 * Loads plugin configuration and sets parameters relevant to the database system.
 	 */
 	private void configurationLoad() {
-
 		achievementsChronologicalOrder = plugin.getPluginConfig().getBoolean("BookChronologicalOrder", true);
 		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
 		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
@@ -199,7 +195,6 @@ public class SQLDatabaseManager {
 	 * @return array list with groups of 3 strings: achievement name, description and date
 	 */
 	public List<String> getPlayerAchievementsList(Player player) {
-
 		ArrayList<String> achievementsList = new ArrayList<>();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
@@ -242,7 +237,6 @@ public class SQLDatabaseManager {
 	 * @return date represented as a string
 	 */
 	public String getPlayerAchievementDate(Player player, String name) {
-
 		// We double apostrophes to avoid breaking the query.
 		String dbName = StringUtils.replace(name, "'", "''");
 		String achievementDate = null;
@@ -266,7 +260,6 @@ public class SQLDatabaseManager {
 	 * @return number of achievements
 	 */
 	public int getPlayerAchievementsAmount(Player player) {
-
 		return getPlayerAchievementsAmount(player.getUniqueId().toString());
 	}
 
@@ -278,7 +271,6 @@ public class SQLDatabaseManager {
 	 * @return number of achievements
 	 */
 	public int getPlayerAchievementsAmount(String uuid) {
-
 		int achievementsAmount = 0;
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn
@@ -302,7 +294,6 @@ public class SQLDatabaseManager {
 	 * @return list with player UUIDs
 	 */
 	public List<String> getTopList(int listLength, long start) {
-
 		ArrayList<String> topList = new ArrayList<>(listLength);
 		String query;
 		if (start == 0L) {
@@ -342,7 +333,6 @@ public class SQLDatabaseManager {
 	 * @return list with player UUIDs
 	 */
 	public int getTotalPlayers(long start) {
-
 		int players = 0;
 		String query;
 		if (start == 0L) {
@@ -379,7 +369,6 @@ public class SQLDatabaseManager {
 	 * @return player's rank
 	 */
 	public int getPlayerRank(Player player, long start) {
-
 		int rank = 0;
 		String query;
 		if (start == 0L) {
@@ -424,7 +413,6 @@ public class SQLDatabaseManager {
 	 * @param desc
 	 */
 	public void registerAchievement(Player player, final String achievement, final String desc) {
-
 		final String name = player.getUniqueId().toString();
 
 		if (plugin.isAsyncPooledRequestsSender()) {
@@ -434,7 +422,6 @@ public class SQLDatabaseManager {
 
 				@Override
 				public void run() {
-
 					registerAchievementToDB(achievement, desc, name);
 				}
 			});
@@ -451,7 +438,6 @@ public class SQLDatabaseManager {
 	 * @param name
 	 */
 	private void registerAchievementToDB(String achievement, String desc, String name) {
-
 		String query;
 		if (databaseType == DatabaseType.POSTGRESQL) {
 			// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
@@ -485,7 +471,6 @@ public class SQLDatabaseManager {
 	 * @return true if achievement found in database, false otherwise
 	 */
 	protected boolean hasPlayerAchievement(Player player, String name) {
-
 		boolean result = false;
 		String query;
 		if (name.contains("'")) {
@@ -522,7 +507,6 @@ public class SQLDatabaseManager {
 	 * @param ach
 	 */
 	public void deletePlayerAchievement(Player player, final String ach) {
-
 		final String name = player.getUniqueId().toString();
 		if (plugin.isAsyncPooledRequestsSender()) {
 			// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to
@@ -531,7 +515,6 @@ public class SQLDatabaseManager {
 
 				@Override
 				public void run() {
-
 					deletePlayerAchievementFromDB(ach, name);
 				}
 			});
@@ -547,7 +530,6 @@ public class SQLDatabaseManager {
 	 * @param name
 	 */
 	private void deletePlayerAchievementFromDB(final String ach, final String name) {
-
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn.prepareStatement(
 				"DELETE FROM " + tablePrefix + "achievements WHERE playername = ? AND achievement = ?")) {
@@ -567,7 +549,6 @@ public class SQLDatabaseManager {
 	 * @return statistic
 	 */
 	public int getNormalAchievementAmount(Player player, NormalAchievements category) {
-
 		int amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
@@ -592,7 +573,6 @@ public class SQLDatabaseManager {
 	 * @return statistic
 	 */
 	public int getMultipleAchievementAmount(Player player, MultipleAchievements category, String subcategory) {
-
 		int amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
@@ -617,7 +597,6 @@ public class SQLDatabaseManager {
 	 * @return statistic
 	 */
 	public long getPlaytimeAmount(Player player) {
-
 		long amount = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
@@ -639,7 +618,6 @@ public class SQLDatabaseManager {
 	 * @return connections statistic
 	 */
 	public int getConnectionsAmount(Player player) {
-
 		final String name = player.getUniqueId().toString();
 		int connections = 0;
 		Connection conn = getSQLConnection();
@@ -662,7 +640,6 @@ public class SQLDatabaseManager {
 	 * @return String with date
 	 */
 	public String getPlayerConnectionDate(Player player) {
-
 		String date = null;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
@@ -686,7 +663,6 @@ public class SQLDatabaseManager {
 	 * @return connections statistic
 	 */
 	public int updateAndGetConnection(Player player, final String date) {
-
 		final String name = player.getUniqueId().toString();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
@@ -704,7 +680,6 @@ public class SQLDatabaseManager {
 
 					@Override
 					public void run() {
-
 						updateConnection(date, name, newConnections);
 					}
 				});
@@ -726,7 +701,6 @@ public class SQLDatabaseManager {
 	 * @param newConnections
 	 */
 	private void updateConnection(final String date, final String name, final int newConnections) {
-
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			if (databaseType == DatabaseType.POSTGRESQL) {
@@ -753,7 +727,6 @@ public class SQLDatabaseManager {
 	 * @return play time statistic
 	 */
 	public void updatePlaytime(String name, long time) {
-
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			if (databaseType == DatabaseType.POSTGRESQL) {
@@ -780,7 +753,6 @@ public class SQLDatabaseManager {
 	 * @return distance statistic
 	 */
 	public void updateDistance(String name, int distance, String type) {
-
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			// Update statistic.
@@ -798,12 +770,10 @@ public class SQLDatabaseManager {
 	}
 
 	public DatabaseType getDatabaseType() {
-
 		return databaseType;
 	}
 
 	protected String getTablePrefix() {
-
 		return tablePrefix;
 	}
 }

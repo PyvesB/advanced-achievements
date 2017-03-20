@@ -19,7 +19,6 @@ public class ToggleCommand extends AbstractCommand {
 	private final Set<String> toggledPlayers;
 
 	public ToggleCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 		toggledPlayers = new HashSet<>();
 	}
@@ -30,13 +29,11 @@ public class ToggleCommand extends AbstractCommand {
 	 * @param player
 	 */
 	public boolean isPlayerToggled(Player player) {
-
 		return toggledPlayers.contains(player.getUniqueId().toString());
 	}
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
-
 		if (!(sender instanceof Player)) {
 			return;
 		}
@@ -53,7 +50,6 @@ public class ToggleCommand extends AbstractCommand {
 	}
 
 	private void displayChatMessage(Player player, boolean notifications) {
-
 		if (notifications) {
 			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang().getString("toggle-displayed",
 					"You will now be notified when other players get achievements."));

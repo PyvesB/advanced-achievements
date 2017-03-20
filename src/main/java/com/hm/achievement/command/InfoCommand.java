@@ -14,13 +14,11 @@ import com.hm.achievement.AdvancedAchievements;
 public class InfoCommand extends AbstractCommand {
 
 	public InfoCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
-
 		sender.sendMessage(plugin.getColor() + "------------ " + plugin.getColor() + plugin.getIcon()
 				+ ChatColor.translateAlternateColorCodes('&', " &lAdvanced Achievements ") + plugin.getColor()
 				+ plugin.getIcon() + plugin.getColor() + " ------------");

@@ -18,13 +18,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveDeathListener extends AbstractListener implements Listener {
 
 	public AchieveDeathListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDeath(PlayerDeathEvent event) {
-
 		Player player = event.getEntity();
 		if (player == null) {
 			return;

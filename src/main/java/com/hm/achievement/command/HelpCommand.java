@@ -16,13 +16,11 @@ import com.hm.mcshared.particle.PacketSender;
 public class HelpCommand extends AbstractCommand {
 
 	public HelpCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
-
 		// Header.
 		sender.sendMessage(plugin.getColor() + "------------ " + plugin.getColor() + plugin.getIcon()
 				+ ChatColor.translateAlternateColorCodes('&', " &lAdvanced Achievements ") + plugin.getColor()
@@ -156,7 +154,6 @@ public class HelpCommand extends AbstractCommand {
 	 * @param hover
 	 */
 	private void sendJsonClickableHoverableMessage(CommandSender sender, String message, String command, String hover) {
-
 		// Build the json format string.
 		String json = "{\"text\":\"" + message + "\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\""
 				+ command + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[{\"text\":\"" + hover

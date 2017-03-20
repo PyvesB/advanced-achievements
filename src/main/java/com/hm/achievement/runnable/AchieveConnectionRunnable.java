@@ -22,14 +22,12 @@ public class AchieveConnectionRunnable implements Runnable {
 	private final AdvancedAchievements plugin;
 
 	public AchieveConnectionRunnable(Player player, AdvancedAchievements plugin) {
-
 		this.player = player;
 		this.plugin = plugin;
 	}
 
 	@Override
 	public void run() {
-
 		// Check if player is still online.
 		if (!player.isOnline()) {
 			return;
@@ -41,7 +39,7 @@ public class AchieveConnectionRunnable implements Runnable {
 				|| plugin.isInExludedWorld(player)) {
 			return;
 		}
-		
+
 		String uuid = player.getUniqueId().toString();
 
 		// Check whether another runnable has already done the work (even though this method is intended to run once
@@ -60,7 +58,6 @@ public class AchieveConnectionRunnable implements Runnable {
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
 		if (!format.format(now).equals(plugin.getDb().getPlayerConnectionDate(player))) {
-
 			int connections = plugin.getDb().updateAndGetConnection(player, format.format(now));
 			String configAchievement = category + "." + connections;
 			AchievementCommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();

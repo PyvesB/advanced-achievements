@@ -18,13 +18,11 @@ import com.hm.mcshared.event.PlayerChangeAnimalOwnershipEvent;
 public class AchievePetMasterGiveReceiveListener extends AbstractListener implements Listener {
 
 	public AchievePetMasterGiveReceiveListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onChangeOwnership(PlayerChangeAnimalOwnershipEvent event) {
-
 		Player giverPlayer = (Player) event.getOldOwner();
 		NormalAchievements categoryGive = NormalAchievements.PETMASTERGIVE;
 		if (!shouldEventBeTakenIntoAccount(giverPlayer, categoryGive)) {

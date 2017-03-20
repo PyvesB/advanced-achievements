@@ -22,13 +22,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener implements Listener {
 
 	public AchieveHoeFertiliseFireworkMusicListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
-
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getItem() == null) {
 			return;
 		}
@@ -71,7 +69,6 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener i
 	 * @return
 	 */
 	private boolean canBeFertilised(Material clickedMaterial) {
-
 		return clickedMaterial == Material.GRASS || clickedMaterial == Material.SAPLING
 				|| clickedMaterial == Material.DOUBLE_PLANT || clickedMaterial == Material.POTATO
 				|| clickedMaterial == Material.CARROT || clickedMaterial == Material.CROPS

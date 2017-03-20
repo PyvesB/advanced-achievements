@@ -29,20 +29,17 @@ public class AchieveConnectionListener extends AbstractListener implements Liste
 	private final Set<String> playersAchieveConnectionRan;
 
 	public AchieveConnectionListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 		playersAchieveConnectionRan = new HashSet<>();
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
-
 		scheduleTaskIfAllowed(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onWorldChanged(PlayerChangedWorldEvent event) {
-
 		if (playersAchieveConnectionRan.contains(event.getPlayer().getUniqueId().toString())) {
 			return;
 		}
@@ -52,7 +49,6 @@ public class AchieveConnectionListener extends AbstractListener implements Liste
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameModeChange(PlayerGameModeChangeEvent event) {
-
 		if (playersAchieveConnectionRan.contains(event.getPlayer().getUniqueId().toString())) {
 			return;
 		}
@@ -67,7 +63,6 @@ public class AchieveConnectionListener extends AbstractListener implements Liste
 	 * @param player
 	 */
 	private void scheduleTaskIfAllowed(Player player) {
-
 		// Do not schedule task as player is in restricted creative mode or is in a blocked world.
 		if (player.hasMetadata("NPC") || plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
 				|| plugin.isRestrictSpectator() && player.getGameMode() == GameMode.SPECTATOR
@@ -84,7 +79,6 @@ public class AchieveConnectionListener extends AbstractListener implements Liste
 	}
 
 	public Set<String> getPlayersAchieveConnectionRan() {
-
 		return playersAchieveConnectionRan;
 	}
 }

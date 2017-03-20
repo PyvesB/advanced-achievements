@@ -21,13 +21,11 @@ import com.hm.achievement.category.MultipleAchievements;
 public class AchieveCraftListener extends AbstractListener implements Listener {
 
 	public AchieveCraftListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(CraftItemEvent event) {
-
 		if (!(event.getWhoClicked() instanceof Player) || event.getAction() == InventoryAction.NOTHING) {
 			return;
 		}

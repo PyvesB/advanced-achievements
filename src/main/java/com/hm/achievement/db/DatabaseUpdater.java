@@ -41,7 +41,6 @@ public class DatabaseUpdater {
 	 * @throws SQLException
 	 */
 	protected void renameExistingTables(String databaseAddress) {
-
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
 		if (!"".equals(sqlDatabaseManager.getTablePrefix())) {
 			Connection conn = sqlDatabaseManager.getSQLConnection();
@@ -86,7 +85,6 @@ public class DatabaseUpdater {
 	 * @throws SQLException
 	 */
 	protected void initialiseTables() {
-
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getTablePrefix()
@@ -125,7 +123,6 @@ public class DatabaseUpdater {
 	 * to store extra data information, extending the number of items available for the user.
 	 */
 	protected void updateOldDBToMaterial() {
-
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		String type = "";
 		try (Statement st = conn.createStatement()) {
@@ -152,7 +149,6 @@ public class DatabaseUpdater {
 	 */
 	@SuppressWarnings("deprecation")
 	protected void updateOldDBToMaterial(MultipleAchievements category) {
-
 		String tableName = sqlDatabaseManager.getTablePrefix() + category.toDBName();
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement();
@@ -208,7 +204,6 @@ public class DatabaseUpdater {
 	 * the number of chars allowed for the achievement names and descriptions.
 	 */
 	protected void updateOldDBToDates() {
-
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st
@@ -290,7 +285,6 @@ public class DatabaseUpdater {
 	 * specificplayer-56c79b19-4500-466c-94ea-514a755fdd09.
 	 */
 	protected void updateOldDBMobnameSize() {
-
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		// SQLite ignores size for varchar datatype.
 		if (sqlDatabaseManager.getDatabaseType() != DatabaseType.SQLITE) {

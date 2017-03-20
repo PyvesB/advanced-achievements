@@ -18,13 +18,11 @@ import com.hm.achievement.category.MultipleAchievements;
 public class AchievePlayerCommandListener extends AbstractListener implements Listener {
 
 	public AchievePlayerCommandListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-
 		Player player = event.getPlayer();
 
 		if (!shouldEventBeTakenIntoAccountNoPermission(player)) {
@@ -54,7 +52,6 @@ public class AchievePlayerCommandListener extends AbstractListener implements Li
 	 * @return
 	 */
 	private List<String> getEquivalentCommands(String command) {
-
 		int firstSpaceIndex = command.indexOf(' ');
 		String commandName;
 		String commandParameters;

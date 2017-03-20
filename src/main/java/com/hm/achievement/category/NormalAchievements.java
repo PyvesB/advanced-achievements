@@ -54,7 +54,6 @@ public enum NormalAchievements {
 	private final String configComment;
 
 	private NormalAchievements(String categoryName, String langName, String langDefault, String configComment) {
-
 		this.categoryName = categoryName;
 		this.langName = langName;
 		this.langDefault = langDefault;
@@ -63,7 +62,6 @@ public enum NormalAchievements {
 
 	@Override
 	public String toString() {
-
 		return categoryName;
 	}
 
@@ -74,7 +72,6 @@ public enum NormalAchievements {
 	 * @return
 	 */
 	public String toDBName() {
-
 		return name().toLowerCase();
 	}
 
@@ -85,7 +82,6 @@ public enum NormalAchievements {
 	 * @return
 	 */
 	public String toPermName() {
-
 		return "achievement.count." + categoryName.toLowerCase();
 	}
 
@@ -96,7 +92,6 @@ public enum NormalAchievements {
 	 * @return
 	 */
 	public String toLangName() {
-
 		return langName;
 	}
 
@@ -107,7 +102,6 @@ public enum NormalAchievements {
 	 * @return
 	 */
 	public String toLangDefault() {
-
 		return langDefault;
 	}
 
@@ -118,7 +112,6 @@ public enum NormalAchievements {
 	 * @return
 	 */
 	public String toConfigComment() {
-
 		return configComment;
 	}
 }

@@ -21,8 +21,10 @@ public class AchievementCommentedYamlConfiguration extends CommentedYamlConfigur
 	/**
 	 * Creates a new AchievementCommentedYamlConfiguration object representing one of the plugin's configuration files.
 	 * 
-	 * @param fileName Name of the configuration file situated in the resource folder of the plugin.
-	 * @param plugin Reference to AdvancedAchievements main class.
+	 * @param fileName
+	 *            Name of the configuration file situated in the resource folder of the plugin.
+	 * @param plugin
+	 *            Reference to AdvancedAchievements main class.
 	 * @throws IOException
 	 * @throws InvalidConfigurationException
 	 */
@@ -37,12 +39,12 @@ public class AchievementCommentedYamlConfiguration extends CommentedYamlConfigur
 	 * Gets the requested ConfigurationSection by path. Returns an empty ConfigurationSection if it does not exist.
 	 * Warns user if he has deleted an achievement category but has not added it to the DisabledCategories list.
 	 * 
-	 * @param path Path of the ConfigurationSection to get.
+	 * @param path
+	 *            Path of the ConfigurationSection to get.
 	 * @return Requested ConfigurationSection or empty one.
 	 */
 	@Override
 	public ConfigurationSection getConfigurationSection(String path) {
-
 		if (!this.contains(path) && !plugin.getDisabledCategorySet().contains(path)) {
 			plugin.getLogger().warning("You have deleted a category (" + path
 					+ ") from the configuration without adding it into DisabledCategories.");

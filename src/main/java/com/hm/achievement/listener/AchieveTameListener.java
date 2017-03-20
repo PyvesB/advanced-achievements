@@ -18,13 +18,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveTameListener extends AbstractListener implements Listener {
 
 	public AchieveTameListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerTame(EntityTameEvent event) {
-
 		if (!(event.getOwner() instanceof Player)) {
 			return;
 		}

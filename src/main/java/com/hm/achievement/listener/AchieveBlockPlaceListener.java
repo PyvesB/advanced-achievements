@@ -19,14 +19,12 @@ import com.hm.achievement.category.MultipleAchievements;
 public class AchieveBlockPlaceListener extends AbstractListener implements Listener {
 
 	public AchieveBlockPlaceListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
-
 		Player player = event.getPlayer();
 		if (!shouldEventBeTakenIntoAccountNoPermission(player)) {
 			return;

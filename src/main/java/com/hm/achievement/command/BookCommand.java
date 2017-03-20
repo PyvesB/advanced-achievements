@@ -39,7 +39,6 @@ public class BookCommand extends AbstractCommand {
 	private final HashMap<String, Long> playersBookTime;
 
 	public BookCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 		playersBookTime = new HashMap<>();
 		// Load configuration parameters.
@@ -54,7 +53,6 @@ public class BookCommand extends AbstractCommand {
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
-
 		if (!(sender instanceof Player)) {
 			return;
 		}
@@ -104,7 +102,6 @@ public class BookCommand extends AbstractCommand {
 	 * @param player
 	 */
 	private void fillBook(List<String> achievements, Player player) {
-
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 		ArrayList<String> pages = new ArrayList<>(achievements.size() / 3);
 		BookMeta bm = (BookMeta) book.getItemMeta();
@@ -156,7 +153,6 @@ public class BookCommand extends AbstractCommand {
 	 * @return whether a player is authorised to perform the list command
 	 */
 	private boolean isInCooldownPeriod(Player player) {
-
 		// Player bypasses cooldown if he has full plugin permissions.
 		if (player.hasPermission("achievement.*") || bookCooldownTime == 0) {
 			return false;
@@ -172,7 +168,6 @@ public class BookCommand extends AbstractCommand {
 	}
 
 	public Map<String, Long> getPlayersBookTime() {
-
 		return playersBookTime;
 	}
 }

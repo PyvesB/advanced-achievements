@@ -76,12 +76,10 @@ public class DatabasePoolsManager {
 	private HashMultimap<String, String> notReceivedAchievementsCache;
 
 	public DatabasePoolsManager(AdvancedAchievements plugin) {
-
 		this.plugin = plugin;
 	}
 
 	public void databasePoolsInit(boolean isAsync) {
-
 		receivedAchievementsCache = HashMultimap.create();
 		notReceivedAchievementsCache = HashMultimap.create();
 
@@ -185,7 +183,6 @@ public class DatabasePoolsManager {
 	 * @return
 	 */
 	public Map<String, Integer> getHashMap(NormalAchievements category) {
-
 		switch (category) {
 			case ANVILS:
 				return anvilHashMap;
@@ -277,7 +274,6 @@ public class DatabasePoolsManager {
 	 * @return
 	 */
 	protected Map<String, Integer> getHashMap(MultipleAchievements category) {
-
 		switch (category) {
 			case BREAKS:
 				return blockBreakHashMap;
@@ -304,7 +300,6 @@ public class DatabasePoolsManager {
 	 * @return
 	 */
 	public int getAndIncrementStatisticAmount(NormalAchievements category, Player player, int value) {
-
 		Map<String, Integer> categoryHashMap = getHashMap(category);
 		String uuid = player.getUniqueId().toString();
 		Integer oldAmount = categoryHashMap.get(uuid);
@@ -329,7 +324,6 @@ public class DatabasePoolsManager {
 	 */
 	public int getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, Player player,
 			int value) {
-
 		Map<String, Integer> categoryHashMap = getHashMap(category);
 		String uuid = player.getUniqueId().toString();
 		String subcategoryDBName;
@@ -349,7 +343,6 @@ public class DatabasePoolsManager {
 	}
 
 	public Map<String, Long> getPlayedTimeHashMap() {
-
 		return playTimeHashMap;
 	}
 
@@ -362,7 +355,6 @@ public class DatabasePoolsManager {
 	 * @return
 	 */
 	public long getPlayerPlayTimeAmount(Player player) {
-
 		Long amount = playTimeHashMap.get(player.getUniqueId().toString());
 		if (amount == null) {
 			return plugin.getDb().getPlaytimeAmount(player);
@@ -379,7 +371,6 @@ public class DatabasePoolsManager {
 	 * @return true if achievement received by player, false otherwise
 	 */
 	public boolean hasPlayerAchievement(Player player, String name) {
-
 		if (receivedAchievementsCache.containsEntry(player.getUniqueId().toString(), name)) {
 			return true;
 		}
@@ -397,12 +388,10 @@ public class DatabasePoolsManager {
 	}
 
 	public HashMultimap<String, String> getReceivedAchievementsCache() {
-
 		return receivedAchievementsCache;
 	}
 
 	public HashMultimap<String, String> getNotReceivedAchievementsCache() {
-
 		return notReceivedAchievementsCache;
 	}
 }

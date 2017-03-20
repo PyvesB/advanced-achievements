@@ -20,13 +20,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveSnowballEggListener extends AbstractListener implements Listener {
 
 	public AchieveSnowballEggListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onProjectileLaunch(ProjectileLaunchEvent event) {
-
 		if (!(event.getEntity().getShooter() instanceof Player)) {
 			return;
 		}

@@ -18,13 +18,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchievePickupListener extends AbstractListener implements Listener {
 
 	public AchievePickupListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
-
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.PICKUPS;
 		if (!shouldEventBeTakenIntoAccount(player, category)) {

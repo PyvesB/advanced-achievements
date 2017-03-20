@@ -24,13 +24,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener implements Listener {
 
 	public AchieveTradeAnvilBrewSmeltListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
-
 		if (event.getRawSlot() < 0 || event.getRawSlot() > 2 || event.getCurrentItem() == null
 				|| event.getCurrentItem().getType() == Material.AIR || event.getAction() == InventoryAction.NOTHING) {
 			return;
@@ -94,7 +92,6 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener impleme
 	 */
 	@Override
 	public void removePlayerFromCooldownMap(String playerUUID) {
-
 		super.removePlayerFromCooldownMap("0" + playerUUID);
 		super.removePlayerFromCooldownMap("1" + playerUUID);
 		super.removePlayerFromCooldownMap("2" + playerUUID);

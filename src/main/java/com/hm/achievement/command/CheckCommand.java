@@ -14,13 +14,11 @@ import com.hm.achievement.AdvancedAchievements;
 public class CheckCommand extends AbstractParsableCommand {
 
 	public CheckCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@Override
 	protected void executeSpecificActions(CommandSender sender, String[] args, Player player) {
-
 		String achievementName = parseAchievementName(args);
 
 		// Check if achievement exists in database and display message accordingly.

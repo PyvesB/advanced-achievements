@@ -10,7 +10,6 @@ import com.hm.achievement.AdvancedAchievements;
 public class TopCommand extends AbstractRankingCommand {
 
 	public TopCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 		languageHeaderKey = "top-achievement";
 		defaultHeaderMessage = "Top achievement owners:";
@@ -18,7 +17,6 @@ public class TopCommand extends AbstractRankingCommand {
 
 	@Override
 	protected long getRankingStartTime() {
-
 		// All time ranking, no time start.
 		return 0L;
 	}

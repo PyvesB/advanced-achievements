@@ -19,13 +19,11 @@ import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 public class ReloadCommand extends AbstractCommand {
 
 	public ReloadCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
-
 		plugin.reloadConfig();
 		plugin.setSuccessfulLoad(true);
 

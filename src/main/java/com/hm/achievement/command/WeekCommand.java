@@ -12,7 +12,6 @@ import com.hm.achievement.AdvancedAchievements;
 public class WeekCommand extends AbstractRankingCommand {
 
 	public WeekCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 		languageHeaderKey = "week-achievement";
 		defaultHeaderMessage = "Weekly achievement rankings:";
@@ -20,7 +19,6 @@ public class WeekCommand extends AbstractRankingCommand {
 
 	@Override
 	protected long getRankingStartTime() {
-
 		Calendar c = Calendar.getInstance();
 		// Set calendar to the first day of the week.
 		c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());

@@ -29,14 +29,12 @@ public class PooledRequestsSender implements Runnable {
 	private final AdvancedAchievements plugin;
 
 	public PooledRequestsSender(AdvancedAchievements plugin) {
-
 		plugin.getPoolsManager().databasePoolsInit(plugin.isAsyncPooledRequestsSender());
 		this.plugin = plugin;
 	}
 
 	@Override
 	public void run() {
-
 		sendRequests();
 	}
 
@@ -62,7 +60,6 @@ public class PooledRequestsSender implements Runnable {
 	 * PostgreSQL 9.5+.
 	 */
 	public void sendRequests() {
-
 		Connection conn = plugin.getDb().getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			for (NormalAchievements category : NormalAchievements.values()) {
@@ -189,7 +186,6 @@ public class PooledRequestsSender implements Runnable {
 	 * @return
 	 */
 	private boolean isPlayerOnline(String uuidString) {
-
 		final UUID uuid = UUID.fromString(uuidString);
 
 		// Called asynchronously, to ensure thread safety we must issue a call on the server's main thread of execution.
@@ -197,7 +193,6 @@ public class PooledRequestsSender implements Runnable {
 
 			@Override
 			public Boolean call() {
-
 				return Bukkit.getPlayer(uuid) != null;
 			}
 		});

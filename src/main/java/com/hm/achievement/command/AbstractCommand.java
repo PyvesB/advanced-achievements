@@ -15,11 +15,9 @@ import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 public abstract class AbstractCommand {
 
 	protected final AdvancedAchievements plugin;
-
 	protected final int version;
 
 	protected AbstractCommand(AdvancedAchievements plugin) {
-
 		this.plugin = plugin;
 		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
 		// Minecraft versions change in the future.
@@ -34,7 +32,6 @@ public abstract class AbstractCommand {
 	 * @param permission
 	 */
 	public void executeCommand(CommandSender sender, String[] args, String permission) {
-
 		if (permission != null && !sender.hasPermission("achievement." + permission)) {
 			sender.sendMessage(plugin.getChatHeader()
 					+ plugin.getPluginLang().getString("no-permissions", "You do not have the permission to do this."));
@@ -43,7 +40,7 @@ public abstract class AbstractCommand {
 
 		executeCommand(sender, args);
 	}
-	
+
 	/**
 	 * Executes the command issued by the sender.
 	 * 
@@ -58,7 +55,6 @@ public abstract class AbstractCommand {
 	 * @param player
 	 */
 	protected void playFireworkSound(Player player) {
-
 		Sound sound;
 		if (version < 9) {
 			// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in newer

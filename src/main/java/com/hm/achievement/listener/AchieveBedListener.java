@@ -18,13 +18,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveBedListener extends AbstractListener implements Listener {
 
 	public AchieveBedListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerBedEnter(PlayerBedEnterEvent event) {
-
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.BEDS;
 		if (!shouldEventBeTakenIntoAccount(player, category) || isInCooldownPeriod(player)) {

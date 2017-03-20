@@ -189,7 +189,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private BukkitTask distanceTask;
 
 	public AdvancedAchievements() {
-
 		successfulLoad = true;
 		overrideDisable = false;
 		db = new SQLDatabaseManager(this);
@@ -202,7 +201,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
-
 		// Start enabling plugin.
 		long startTime = System.currentTimeMillis();
 
@@ -458,16 +456,12 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	public void configurationLoad(AchievementCommentedYamlConfiguration config,
 			AchievementCommentedYamlConfiguration lang) {
-
 		this.config = config;
 		this.lang = lang;
 
 		this.getLogger().info("Loading parameters, registering permissions and initialising command modules...");
-
 		extractParameters();
-
 		registerPermissions();
-
 		initialiseCommands();
 
 		// Reload achievements in distance, max level and play time runnables on plugin reload (when objects are null).
@@ -491,7 +485,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * @return the loaded file YamlManager
 	 */
 	public AchievementCommentedYamlConfiguration loadAndBackupFile(String fileName) {
-
 		AchievementCommentedYamlConfiguration configFile = null;
 		this.getLogger().info("Loading and backing up " + fileName + " file...");
 		try {
@@ -519,7 +512,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Extracts plugin parameters from the configuration file.
 	 */
 	private void extractParameters() {
-
 		icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
 		color = ChatColor.getByChar(config.getString("Color", "5").charAt(0));
 		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
@@ -555,7 +547,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Initialises the command modules.
 	 */
 	private void initialiseCommands() {
-
 		reward = new AchievementRewards(this);
 		achievementDisplay = new AchievementDisplay(this);
 		giveCommand = new GiveCommand(this);
@@ -577,7 +568,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Logs number of achievements and disabled categories.
 	 */
 	private void logAchievementStats() {
-
 		int totalAchievements = 0;
 		int categoriesInUse = 0;
 
@@ -651,7 +641,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * stone breaks, achievement.count.breaks.stone will be registered).
 	 */
 	private void registerPermissions() {
-
 		PluginManager pluginManager = this.getServer().getPluginManager();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
@@ -675,7 +664,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
-
 		// Error while loading .yml files or database; do not do any further work.
 		if (overrideDisable) {
 			return;
@@ -747,7 +735,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-
 		if (!"aach".equalsIgnoreCase(cmd.getName())) {
 			return false;
 		}
@@ -794,7 +781,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * @param sender
 	 */
 	private void displayEasterEgg(CommandSender sender) {
-
 		sender.sendMessage(StringEscapeUtils.unescapeJava(
 				"§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
 		sender.sendMessage(StringEscapeUtils.unescapeJava(
@@ -868,7 +854,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * @return true if player is in excluded world, false otherwise
 	 */
 	public boolean isInExludedWorld(Player player) {
-
 		if (excludedWorldSet.isEmpty()) {
 			return false;
 		}
@@ -883,7 +868,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * @return true if Vault available, false otherwise
 	 */
 	public boolean setUpEconomy(boolean log) {
-
 		if (economy != null) {
 			return true;
 		}
@@ -911,12 +895,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * @return Map from achievement name to user-friendly display name
 	 */
 	public Map<String, String> getAchievementsAndDisplayNames() {
-
 		Map<String, String> achievementsAndDisplayNames = new HashMap<>();
 
 		// Enumerate Commands achievements
 		for (String ach : config.getConfigurationSection("Commands").getKeys(false)) {
-
 			String achName = config.getString("Commands." + ach + ".Name", "");
 			String displayName = config.getString("Commands." + ach + ".DisplayName", "");
 
@@ -929,7 +911,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
 			for (String ach : categoryConfig.getKeys(false)) {
-
 				String achName = config.getString(category + "." + ach + ".Name", "");
 				String displayName = config.getString(category + "." + ach + ".DisplayName", "");
 
@@ -945,7 +926,6 @@ public class AdvancedAchievements extends JavaPlugin {
 			for (String section : categoryConfig.getKeys(false)) {
 				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
 				for (String level : subcategoryConfig.getKeys(false)) {
-
 					String achName = config.getString(category + "." + section + '.' + level + ".Name", "");
 					String displayName = config.getString(category + "." + section + '.' + level + ".DisplayName", "");
 
@@ -960,159 +940,128 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	public SQLDatabaseManager getDb() {
-
 		return db;
 	}
 
 	public DatabasePoolsManager getPoolsManager() {
-
 		return poolsManager;
 	}
 
 	public AchievementRewards getReward() {
-
 		return reward;
 	}
 
 	public AchievementDisplay getAchievementDisplay() {
-
 		return achievementDisplay;
 	}
 
 	public String getChatHeader() {
-
 		return chatHeader;
 	}
 
 	public boolean isRestrictCreative() {
-
 		return restrictCreative;
 	}
 
 	public boolean isRestrictSpectator() {
-
 		return restrictSpectator;
 	}
 
 	public boolean isChatNotify() {
-
 		return chatNotify;
 	}
 
 	public boolean isSuccessfulLoad() {
-
 		return successfulLoad;
 	}
 
 	public Set<String> getDisabledCategorySet() {
-
 		return disabledCategorySet;
 	}
 
 	public void setOverrideDisable(boolean overrideDisable) {
-
 		this.overrideDisable = overrideDisable;
 	}
 
 	public void setSuccessfulLoad(boolean successfulLoad) {
-
 		this.successfulLoad = successfulLoad;
 	}
 
 	public BookCommand getAchievementBookCommand() {
-
 		return bookCommand;
 	}
 
 	public ListCommand getAchievementListCommand() {
-
 		return listCommand;
 	}
 
 	public AchieveDistanceRunnable getAchieveDistanceRunnable() {
-
 		return achieveDistanceRunnable;
 	}
 
 	public AchievePlayTimeRunnable getAchievePlayTimeRunnable() {
-
 		return achievePlayTimeRunnable;
 	}
 
 	public AchieveConnectionListener getConnectionListener() {
-
 		return connectionListener;
 	}
 
 	public AchieveMilkLavaWaterListener getMilkLavaWaterListener() {
-
 		return milkLavaWaterListener;
 	}
 
 	public AchieveTradeAnvilBrewSmeltListener getInventoryClickListener() {
-
 		return inventoryClickListener;
 	}
 
 	public AchieveBedListener getBedListener() {
-
 		return bedListener;
 	}
 
 	public AchieveHoeFertiliseFireworkMusicListener getHoeFertiliseFireworkMusicListener() {
-
 		return hoeFertiliseFireworkMusicListener;
 	}
 
 	public AchievePetMasterGiveReceiveListener getPetMasterGiveReceiveListener() {
-
 		return petMasterGiveReceiveListener;
 	}
 
 	public String getIcon() {
-
 		return icon;
 	}
 
 	public ChatColor getColor() {
-
 		return color;
 	}
 
 	public boolean isAsyncPooledRequestsSender() {
-
 		return asyncPooledRequestsSender;
 	}
 
 	public AchievementCommentedYamlConfiguration getPluginConfig() {
-
 		return config;
 	}
 
 	@Override
 	@Deprecated
 	public FileConfiguration getConfig() {
-
 		return null;
 	}
 
 	public AchievementCommentedYamlConfiguration getPluginLang() {
-
 		return lang;
 	}
 
 	protected Economy getEconomy() {
-
 		return economy;
 	}
 
 	protected ToggleCommand getToggleCommand() {
-
 		return toggleCommand;
 	}
 
 	protected FireworkListener getFireworkListener() {
-
 		return fireworkListener;
 	}
 }

@@ -18,13 +18,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveItemBreakListener extends AbstractListener implements Listener {
 
 	public AchieveItemBreakListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerItemBreak(PlayerItemBreakEvent event) {
-
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.ITEMBREAKS;
 		if (!shouldEventBeTakenIntoAccount(player, category)) {

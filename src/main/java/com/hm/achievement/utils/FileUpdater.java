@@ -23,7 +23,6 @@ public class FileUpdater {
 	private AdvancedAchievements plugin;
 
 	public FileUpdater(AdvancedAchievements plugin) {
-
 		this.plugin = plugin;
 	}
 
@@ -34,7 +33,6 @@ public class FileUpdater {
 	 * @param configFile
 	 */
 	public void updateOldConfiguration(AchievementCommentedYamlConfiguration configFile) {
-
 		boolean updateDone = false;
 
 		// Make sure DisabledCategories exists so elements can then be added to it:
@@ -188,7 +186,6 @@ public class FileUpdater {
 	 * @param langFile
 	 */
 	public void updateOldLanguage(AchievementCommentedYamlConfiguration langFile) {
-
 		boolean updateDone = false;
 
 		// Iterate through all categories to add missing ones.
@@ -359,8 +356,7 @@ public class FileUpdater {
 		}
 
 		if (!langFile.getKeys(false).contains("aach-command-toggle")) {
-			langFile.set("aach-command-toggle",
-					"Toggle achievements of other players.");
+			langFile.set("aach-command-toggle", "Toggle achievements of other players.");
 			updateDone = true;
 		}
 

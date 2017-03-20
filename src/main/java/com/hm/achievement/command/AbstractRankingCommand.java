@@ -22,6 +22,12 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	protected String languageHeaderKey;
 	protected String defaultHeaderMessage;
 
+	private static final int VALUES_EXPIRATION_DELAY = 60000;
+	private static final int DECIMAL_CIRCLED_ONE = Integer.parseInt("2780", 16);
+	private static final int DECIMAL_CIRCLED_ELEVEN = Integer.parseInt("246A", 16);
+	private static final int DECIMAL_CIRCLED_TWENTY_ONE = Integer.parseInt("3251", 16);
+	private static final int DECIMAL_CIRCLED_THIRTY_SIX = Integer.parseInt("32B1", 16);
+
 	private final int topListLength;
 	private final boolean additionalEffects;
 	private final boolean sound;
@@ -29,18 +35,10 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	// Used for caching.
 	private int totalPlayersInRanking;
 	private List<String> playersRanking;
-
 	// Caching cooldown.
 	private long lastCommandTime;
 
-	private static final int VALUES_EXPIRATION_DELAY = 60000;
-	private static final int DECIMAL_CIRCLED_ONE = Integer.parseInt("2780", 16);
-	private static final int DECIMAL_CIRCLED_ELEVEN = Integer.parseInt("246A", 16);
-	private static final int DECIMAL_CIRCLED_TWENTY_ONE = Integer.parseInt("3251", 16);
-	private static final int DECIMAL_CIRCLED_THIRTY_SIX = Integer.parseInt("32B1", 16);
-
 	protected AbstractRankingCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 		lastCommandTime = 0L;
 		// Load configuration parameters.
@@ -51,7 +49,6 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 	@Override
 	public void executeCommand(CommandSender sender, String[] args) {
-
 		long currentTime = System.currentTimeMillis();
 		int rank = Integer.MAX_VALUE;
 
@@ -111,7 +108,6 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	 * @return
 	 */
 	private String getRankingSymbol(int rank) {
-
 		int decimalRankSymbol;
 		if (rank <= 10) {
 			decimalRankSymbol = DECIMAL_CIRCLED_ONE + rank - 1;
@@ -138,7 +134,6 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	 * @param sender
 	 */
 	private void launchEffects(Player player) {
-
 		try {
 			// Play special effect when in top list.
 			if (additionalEffects) {

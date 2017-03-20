@@ -35,7 +35,6 @@ public class AchievementDisplay {
 	private static final Random RANDOM = new Random();
 
 	protected AchievementDisplay(AdvancedAchievements achievement) {
-
 		this.plugin = achievement;
 		// Load configuration parameters.
 		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
@@ -51,7 +50,6 @@ public class AchievementDisplay {
 	 * @param configAchievement
 	 */
 	public void displayAchievement(Player player, String configAchievement) {
-
 		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
 
 		String achievementName = config.getString(configAchievement + ".Name");
@@ -107,7 +105,6 @@ public class AchievementDisplay {
 	 * @param msg
 	 */
 	private void displayTitle(Player player, String nameToShowUser, String msg) {
-
 		try {
 			// Escape quotations in case quotations are used in config.yml.
 			PacketSender.sendTitlePacket(player,
@@ -125,7 +122,6 @@ public class AchievementDisplay {
 	 * @param player
 	 */
 	private void displayFirework(Player player) {
-
 		Location location = player.getLocation();
 		try {
 			// Set firework to launch beneath user.
@@ -168,7 +164,6 @@ public class AchievementDisplay {
 	 * @return
 	 */
 	private Type getRandomFireworkType() {
-
 		Type[] fireworkTypes = Type.values();
 		return fireworkTypes[RANDOM.nextInt(fireworkTypes.length)];
 	}

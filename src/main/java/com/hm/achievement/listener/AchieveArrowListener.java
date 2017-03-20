@@ -18,13 +18,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveArrowListener extends AbstractListener implements Listener {
 
 	public AchieveArrowListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityShootBow(EntityShootBowEvent event) {
-
 		if (!(event.getEntity() instanceof Player)) {
 			return;
 		}

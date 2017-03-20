@@ -19,13 +19,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveTeleportRespawnListener extends AbstractListener implements Listener {
 
 	public AchieveTeleportRespawnListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
-
 		// Update location of player if he respawns after dying.
 		if (plugin.getAchieveDistanceRunnable() != null) {
 			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer().getUniqueId().toString(),
@@ -35,7 +33,6 @@ public class AchieveTeleportRespawnListener extends AbstractListener implements 
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
-
 		Player player = event.getPlayer();
 
 		// Event fired twice when teleporting with a nether portal: first time to go to nether with the cause

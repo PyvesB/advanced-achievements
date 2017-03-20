@@ -20,7 +20,6 @@ public class AchievePlayTimeRunnable implements Runnable {
 	private long previousRunMillis;
 
 	public AchievePlayTimeRunnable(AdvancedAchievements plugin) {
-
 		this.plugin = plugin;
 
 		previousRunMillis = System.currentTimeMillis();
@@ -28,7 +27,6 @@ public class AchievePlayTimeRunnable implements Runnable {
 
 	@Override
 	public void run() {
-
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			registerTimes(player);
 		}
@@ -42,7 +40,6 @@ public class AchievePlayTimeRunnable implements Runnable {
 	 * @param player
 	 */
 	private void registerTimes(Player player) {
-
 		// If player is in restricted creative mode or is in a blocked world, don't update played time.
 		if (player.hasMetadata("NPC") || plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
 				|| plugin.isRestrictSpectator() && player.getGameMode() == GameMode.SPECTATOR

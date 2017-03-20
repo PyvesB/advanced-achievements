@@ -27,7 +27,6 @@ public class StatsCommand extends AbstractCommand {
 	private static final MinecraftFont FONT = MinecraftFont.Font;
 
 	public StatsCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 		// Calculate the total number of achievements in the config file.
 		for (NormalAchievements category : NormalAchievements.values()) {
@@ -61,7 +60,6 @@ public class StatsCommand extends AbstractCommand {
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
-
 		if (!(sender instanceof Player)) {
 			return;
 		}

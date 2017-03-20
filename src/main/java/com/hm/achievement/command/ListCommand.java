@@ -55,7 +55,6 @@ public class ListCommand extends AbstractCommand {
 	private final ItemStack backButton = new ItemStack(Material.PAPER);
 
 	public ListCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 		// Load configuration parameters.
 		hideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
@@ -123,7 +122,6 @@ public class ListCommand extends AbstractCommand {
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
-
 		if (!(sender instanceof Player)) {
 			return;
 		}
@@ -155,7 +153,6 @@ public class ListCommand extends AbstractCommand {
 	 * @param player
 	 */
 	public void createCategoryGUIMultiple(Material clickedItem, Player player) {
-
 		MultipleAchievements category;
 
 		// Match the item the player clicked on with a category.
@@ -268,7 +265,6 @@ public class ListCommand extends AbstractCommand {
 	 * @param player
 	 */
 	public void createCategoryGUINormal(Material clickedItem, Player player) {
-
 		NormalAchievements category = null;
 		long statistic = 0L;
 
@@ -500,7 +496,6 @@ public class ListCommand extends AbstractCommand {
 	 * @return
 	 */
 	private String getAchievementNameToDisplay(String categoryName, String subcategory, String achName, String level) {
-
 		String nameToShowUser;
 		String displayName = plugin.getPluginConfig()
 				.getString(categoryName + subcategory + '.' + level + ".DisplayName", "");
@@ -523,7 +518,6 @@ public class ListCommand extends AbstractCommand {
 	 * @return
 	 */
 	private String getAchievementMessageToDisplay(String categoryName, String subcategory, String level) {
-
 		String achMessage;
 		String goal = plugin.getPluginConfig().getString(categoryName + subcategory + '.' + level + ".Goal", "");
 		if (Strings.isNullOrEmpty(goal)) {
@@ -544,7 +538,6 @@ public class ListCommand extends AbstractCommand {
 	 * @return
 	 */
 	private int populateMainGUIWithMultipleAchievements(Player player, Inventory guiInv) {
-
 		int categoriesProcessed = 0;
 
 		// Display categories with multiple sub-categories in GUI.
@@ -602,7 +595,6 @@ public class ListCommand extends AbstractCommand {
 	 */
 	private int populateMainGUIWithNormalAchievements(Player player, Inventory guiInv,
 			int categoriesPreviouslyProcessed) {
-
 		int categoriesProcessed = 0;
 
 		// Display categories with normal achievements in GUI.
@@ -654,7 +646,6 @@ public class ListCommand extends AbstractCommand {
 	 */
 	private void populateMainGUIWithCommandsAchievements(Player player, Inventory guiInv,
 			int categoriesPreviouslyProcessed) {
-
 		String commandsDisplayName = plugin.getPluginLang().getString("list-commands", "Other Achievements");
 		// Hide Commands category if the user has defined an empty name for it or if it was disabled.
 		if (commandsDisplayName.length() == 0 || plugin.getDisabledCategorySet().contains("Commands")) {
@@ -699,7 +690,6 @@ public class ListCommand extends AbstractCommand {
 	 */
 	private ItemStack getItemStack(ItemStack[] itemStacks, String displayName, int indexInItemStacksArray,
 			boolean hasReceivedInCategory, int totalAchievementsInCategory) {
-
 		ItemStack categoryItem;
 		ItemMeta categoryMeta;
 		if (hasReceivedInCategory) {
@@ -731,9 +721,8 @@ public class ListCommand extends AbstractCommand {
 					"AMOUNT achievement");
 		}
 		// Set item lore.
-		categoryMeta.setLore(ImmutableList.of(ChatColor.translateAlternateColorCodes('&', "&8"
-				+ StringUtils.replaceOnce(loreAmountMessage, "AMOUNT",
-						Integer.toString(totalAchievementsInCategory)))));
+		categoryMeta.setLore(ImmutableList.of(ChatColor.translateAlternateColorCodes('&', "&8" + StringUtils
+				.replaceOnce(loreAmountMessage, "AMOUNT", Integer.toString(totalAchievementsInCategory)))));
 		// Set item meta.
 		categoryItem.setItemMeta(categoryMeta);
 
@@ -756,7 +745,6 @@ public class ListCommand extends AbstractCommand {
 	private void createCategoryGUIItem(Inventory inventory, int positionInGUI, String level, long statistic,
 			String achName, String achMessage, List<String> rewards, String date, boolean inelligibleSeriesItem,
 			boolean playedTime) {
-
 		// Display a clay block in the GUI, with a color depending on whether it was received or not, or whether
 		// progress was started.
 		ItemStack achItem;
@@ -818,7 +806,6 @@ public class ListCommand extends AbstractCommand {
 	 */
 	private ArrayList<String> buildLoreString(String achMessage, String level, List<String> rewards, String date,
 			long statistic, boolean inelligibleSeriesItem, boolean playedTime) {
-
 		ArrayList<String> lore = new ArrayList<>();
 		lore.add("");
 
@@ -882,7 +869,6 @@ public class ListCommand extends AbstractCommand {
 	 * @return progress bar
 	 */
 	private String constructProgressBar(String achMessage, String level, long statistic, boolean playedTime) {
-
 		StringBuilder barDisplay = new StringBuilder("&8[");
 		// Length of the progress bar; we make it the same size as Goal/Message.
 		int textSize;
@@ -945,7 +931,6 @@ public class ListCommand extends AbstractCommand {
 	 * @return closest multiple of 9 greater than value
 	 */
 	private int getClosestGreaterMultipleOf9(int value) {
-
 		int multipleOfNine = 9;
 		while (multipleOfNine < value && multipleOfNine <= 99) {
 			multipleOfNine += 9;

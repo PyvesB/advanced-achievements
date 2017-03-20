@@ -18,13 +18,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveXPListener extends AbstractListener implements Listener {
 
 	public AchieveXPListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerExpChange(PlayerLevelChangeEvent event) {
-
 		Player player = event.getPlayer();
 
 		NormalAchievements category = NormalAchievements.LEVELS;

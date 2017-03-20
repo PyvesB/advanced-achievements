@@ -19,13 +19,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveMilkLavaWaterListener extends AbstractListener implements Listener {
 
 	public AchieveMilkLavaWaterListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerBucketFill(PlayerBucketFillEvent event) {
-
 		Player player = event.getPlayer();
 
 		NormalAchievements category;

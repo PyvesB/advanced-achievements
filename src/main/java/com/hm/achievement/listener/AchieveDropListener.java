@@ -18,13 +18,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveDropListener extends AbstractListener implements Listener {
 
 	public AchieveDropListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
-
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.DROPS;
 		if (!shouldEventBeTakenIntoAccount(player, category)) {

@@ -14,13 +14,11 @@ import com.hm.achievement.AdvancedAchievements;
 public class DeleteCommand extends AbstractParsableCommand {
 
 	public DeleteCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@Override
 	protected void executeSpecificActions(CommandSender sender, String[] args, Player player) {
-
 		String achievementName = parseAchievementName(args);
 
 		// Check if achievement exists in database and display message accordingly; if received, delete it.

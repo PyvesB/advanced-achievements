@@ -21,13 +21,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveConsumeListener extends AbstractListener implements Listener {
 
 	public AchieveConsumeListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
-
 		Player player = event.getPlayer();
 		NormalAchievements category;
 

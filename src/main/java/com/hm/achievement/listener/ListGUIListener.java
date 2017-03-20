@@ -21,13 +21,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class ListGUIListener extends AbstractListener implements Listener {
 
 	public ListGUIListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
-
 		// Inventory not related to the plugin: do nothing.
 		if (!event.getInventory().getName()
 				.startsWith(ChatColor.translateAlternateColorCodes('&',

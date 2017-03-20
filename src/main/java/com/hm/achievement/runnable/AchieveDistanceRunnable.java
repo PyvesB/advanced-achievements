@@ -35,7 +35,6 @@ public class AchieveDistanceRunnable implements Runnable {
 	private boolean ignoreVerticalDistance;
 
 	public AchieveDistanceRunnable(AdvancedAchievements plugin) {
-
 		this.plugin = plugin;
 
 		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
@@ -52,13 +51,11 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * 
 	 */
 	public void extractAchievementsFromConfig() {
-
 		ignoreVerticalDistance = plugin.getPluginConfig().getBoolean("IgnoreVerticalDistance", false);
 	}
 
 	@Override
 	public void run() {
-
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			refreshDistance(player);
 		}
@@ -70,7 +67,6 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * @param player
 	 */
 	private void refreshDistance(Player player) {
-
 		String uuid = player.getUniqueId().toString();
 		Location previousLocation = playerLocations.get(uuid);
 
@@ -121,7 +117,6 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * @return difference
 	 */
 	private int getDistanceDifference(Player player, Location previousLocation) {
-
 		// Distance difference since last runnable; ignore the vertical axis or not.
 		double difference;
 		if (ignoreVerticalDistance) {
@@ -143,7 +138,6 @@ public class AchieveDistanceRunnable implements Runnable {
 	 */
 	private void updateDistanceAndCheckAchievements(int difference, Player player, String uuid,
 			NormalAchievements category) {
-
 		if (!player.hasPermission(category.toPermName())
 				|| plugin.getDisabledCategorySet().contains(category.toString())) {
 			return;
@@ -179,7 +173,6 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * @param type
 	 */
 	private void awardDistanceAchievement(Player player, int achievementDistance, String type) {
-
 		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
 		plugin.getAchievementDisplay().displayAchievement(player, type + achievementDistance);
 		String achievementName = config.getString(type + achievementDistance + ".Name");
@@ -192,7 +185,6 @@ public class AchieveDistanceRunnable implements Runnable {
 	}
 
 	public Map<String, Location> getPlayerLocations() {
-
 		return playerLocations;
 	}
 }

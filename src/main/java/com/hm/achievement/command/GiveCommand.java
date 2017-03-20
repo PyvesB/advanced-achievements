@@ -16,7 +16,6 @@ public class GiveCommand extends AbstractParsableCommand {
 	private final boolean multiCommand;
 
 	public GiveCommand(AdvancedAchievements plugin) {
-
 		super(plugin);
 		// Load configuration parameter.
 		multiCommand = plugin.getPluginConfig().getBoolean("MultiCommand", true);
@@ -24,7 +23,6 @@ public class GiveCommand extends AbstractParsableCommand {
 
 	@Override
 	protected void executeSpecificActions(CommandSender sender, String[] args, Player player) {
-
 		String configAchievement = "Commands." + args[1];
 
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {

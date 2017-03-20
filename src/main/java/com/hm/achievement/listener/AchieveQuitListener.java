@@ -20,13 +20,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveQuitListener extends AbstractListener implements Listener {
 
 	public AchieveQuitListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerQuit(PlayerQuitEvent event) {
-
 		final String playerUUID = event.getPlayer().getUniqueId().toString();
 
 		// Clean cooldown HashMap for book command.
@@ -68,18 +66,15 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 	 * @param playerUUID
 	 */
 	private void processAndCleanDistances(final String playerUUID) {
-
 		// Remove player from Multimap caches for distance achievements.
 		if (plugin.getAchieveDistanceRunnable() != null
 				&& plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(playerUUID) != null) {
-
 			// Update database statistics for distances and clean HashMaps.
 			if (plugin.isAsyncPooledRequestsSender()) {
 				Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
 					@Override
 					public void run() {
-
 						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEFOOT);
 						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEPIG);
 						updateAndRemoveDistance(playerUUID, NormalAchievements.DISTANCEHORSE);
@@ -90,7 +85,6 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 					}
 
 					private void updateAndRemoveDistance(final String playerUUID, NormalAchievements category) {
-
 						// Items must be removed from HashMaps AFTER write to DB has finished. As this is an async task,
 						// we could end up in a scenario where the player reconnects and data is not yet updated in the
 						// database; in this case, the cached variables will still be valid.
@@ -150,16 +144,13 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 	 * @param playerUUID
 	 */
 	private void processAndCleanPlayedTime(final String playerUUID) {
-
 		if (plugin.getAchievePlayTimeRunnable() != null) {
 			// Update database statistics for played time and clean HashMaps.
 			if (plugin.isAsyncPooledRequestsSender()) {
-
 				Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
 					@Override
 					public void run() {
-
 						// Items must be removed from HashMap AFTER write to DB has finished. As this is an async task,
 						// we could end up in a scenario where the player reconnects and data is not yet updated in the
 						// database; in this case, the cached variables will still be valid.

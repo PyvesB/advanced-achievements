@@ -20,13 +20,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveFishListener extends AbstractListener implements Listener {
 
 	public AchieveFishListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerFish(PlayerFishEvent event) {
-
 		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) {
 			return;
 		}

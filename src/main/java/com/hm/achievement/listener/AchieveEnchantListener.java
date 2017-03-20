@@ -18,13 +18,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class AchieveEnchantListener extends AbstractListener implements Listener {
 
 	public AchieveEnchantListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEnchantItem(EnchantItemEvent event) {
-
 		Player player = event.getEnchanter();
 		NormalAchievements category = NormalAchievements.ENCHANTMENTS;
 		if (!shouldEventBeTakenIntoAccount(player, category)) {

@@ -23,7 +23,6 @@ public class AchieveBlockBreakListener extends AbstractListener implements Liste
 	private final boolean disableSilkTouchOreBreaks;
 
 	public AchieveBlockBreakListener(AdvancedAchievements plugin) {
-
 		super(plugin);
 		// Load configuration parameter.
 		disableSilkTouchBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchBreaks", false);
@@ -33,7 +32,6 @@ public class AchieveBlockBreakListener extends AbstractListener implements Liste
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
-
 		Player player = event.getPlayer();
 		boolean silkTouchBreak = (version >= 9
 				&& player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))

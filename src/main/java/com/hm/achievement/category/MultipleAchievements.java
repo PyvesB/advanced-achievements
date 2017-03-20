@@ -21,7 +21,6 @@ public enum MultipleAchievements {
 
 	private MultipleAchievements(String categoryName, String langDefault, String configComment,
 			String subcategoryName) {
-
 		this.categoryName = categoryName;
 		this.langDefault = langDefault;
 		this.configComment = configComment;
@@ -30,7 +29,6 @@ public enum MultipleAchievements {
 
 	@Override
 	public String toString() {
-
 		return categoryName;
 	}
 
@@ -41,7 +39,6 @@ public enum MultipleAchievements {
 	 * @return
 	 */
 	public String toDBName() {
-
 		return name().toLowerCase();
 	}
 
@@ -52,7 +49,6 @@ public enum MultipleAchievements {
 	 * @return
 	 */
 	public String toPermName() {
-
 		return "achievement.count." + categoryName.toLowerCase();
 	}
 
@@ -63,7 +59,6 @@ public enum MultipleAchievements {
 	 * @return
 	 */
 	public String toLangName() {
-
 		return "list-" + name().toLowerCase();
 	}
 
@@ -74,7 +69,6 @@ public enum MultipleAchievements {
 	 * @return
 	 */
 	public String toLangDefault() {
-
 		return langDefault;
 	}
 
@@ -85,7 +79,6 @@ public enum MultipleAchievements {
 	 * @return
 	 */
 	public String toConfigComment() {
-
 		return configComment;
 	}
 
@@ -96,7 +89,6 @@ public enum MultipleAchievements {
 	 * @return
 	 */
 	public String toSubcategoryDBName() {
-
 		return subcategoryDBName;
 	}
 }
