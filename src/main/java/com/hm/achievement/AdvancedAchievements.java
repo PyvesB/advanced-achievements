@@ -959,11 +959,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		return achievementsAndDisplayNames;
 	}
 
-	public Economy getEconomy() {
-
-		return economy;
-	}
-
 	public SQLDatabaseManager getDb() {
 
 		return db;
@@ -1034,11 +1029,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		return listCommand;
 	}
 
-	public ToggleCommand getToggleCommand() {
-
-		return toggleCommand;
-	}
-
 	public AchieveDistanceRunnable getAchieveDistanceRunnable() {
 
 		return achieveDistanceRunnable;
@@ -1079,11 +1069,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		return petMasterGiveReceiveListener;
 	}
 
-	public FireworkListener getFireworkListener() {
-
-		return fireworkListener;
-	}
-
 	public String getIcon() {
 
 		return icon;
@@ -1114,5 +1099,20 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AchievementCommentedYamlConfiguration getPluginLang() {
 
 		return lang;
+	}
+
+	protected Economy getEconomy() {
+
+		return economy;
+	}
+
+	protected ToggleCommand getToggleCommand() {
+
+		return toggleCommand;
+	}
+
+	protected FireworkListener getFireworkListener() {
+
+		return fireworkListener;
 	}
 }

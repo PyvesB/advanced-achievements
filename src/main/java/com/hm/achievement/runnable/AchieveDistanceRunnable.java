@@ -69,7 +69,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * 
 	 * @param player
 	 */
-	public void refreshDistance(Player player) {
+	private void refreshDistance(Player player) {
 
 		String uuid = player.getUniqueId().toString();
 		Location previousLocation = playerLocations.get(uuid);

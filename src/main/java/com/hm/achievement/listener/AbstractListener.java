@@ -197,7 +197,7 @@ public abstract class AbstractListener {
 	 * 
 	 * @param playerUUID
 	 */
-	public void removePlayerFromCooldownMap(String playerUUID) {
+	protected void removePlayerFromCooldownMap(String playerUUID) {
 
 		cooldownMap.remove(playerUUID);
 	}

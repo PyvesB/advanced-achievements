@@ -797,13 +797,13 @@ public class SQLDatabaseManager {
 		}
 	}
 
-	public String getTablePrefix() {
-
-		return tablePrefix;
-	}
-
 	public DatabaseType getDatabaseType() {
 
 		return databaseType;
+	}
+
+	protected String getTablePrefix() {
+
+		return tablePrefix;
 	}
 }

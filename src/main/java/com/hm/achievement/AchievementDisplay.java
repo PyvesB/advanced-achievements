@@ -34,7 +34,7 @@ public class AchievementDisplay {
 
 	private static final Random RANDOM = new Random();
 
-	public AchievementDisplay(AdvancedAchievements achievement) {
+	protected AchievementDisplay(AdvancedAchievements achievement) {
 
 		this.plugin = achievement;
 		// Load configuration parameters.

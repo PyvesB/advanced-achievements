@@ -29,7 +29,7 @@ public class DatabaseUpdater {
 	private final AdvancedAchievements plugin;
 	private final SQLDatabaseManager sqlDatabaseManager;
 
-	public DatabaseUpdater(AdvancedAchievements plugin, SQLDatabaseManager sqlDatabaseManager) {
+	protected DatabaseUpdater(AdvancedAchievements plugin, SQLDatabaseManager sqlDatabaseManager) {
 		this.plugin = plugin;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 	}

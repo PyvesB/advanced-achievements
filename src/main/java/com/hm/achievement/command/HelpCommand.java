@@ -155,7 +155,7 @@ public class HelpCommand extends AbstractCommand {
 	 * @param command
 	 * @param hover
 	 */
-	public void sendJsonClickableHoverableMessage(CommandSender sender, String message, String command, String hover) {
+	private void sendJsonClickableHoverableMessage(CommandSender sender, String message, String command, String hover) {
 
 		// Build the json format string.
 		String json = "{\"text\":\"" + message + "\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\""

@@ -276,7 +276,7 @@ public class DatabasePoolsManager {
 	 * @param category
 	 * @return
 	 */
-	public Map<String, Integer> getHashMap(MultipleAchievements category) {
+	protected Map<String, Integer> getHashMap(MultipleAchievements category) {
 
 		switch (category) {
 			case BREAKS:

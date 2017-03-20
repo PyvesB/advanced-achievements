@@ -41,7 +41,7 @@ public class AchievePlayTimeRunnable implements Runnable {
 	 * 
 	 * @param player
 	 */
-	public void registerTimes(Player player) {
+	private void registerTimes(Player player) {
 
 		// If player is in restricted creative mode or is in a blocked world, don't update played time.
 		if (player.hasMetadata("NPC") || plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE

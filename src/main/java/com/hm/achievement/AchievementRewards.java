@@ -25,7 +25,7 @@ public class AchievementRewards {
 	private final AdvancedAchievements plugin;
 	private final boolean rewardCommandNotif;
 
-	public AchievementRewards(AdvancedAchievements achievement) {
+	protected AchievementRewards(AdvancedAchievements achievement) {
 
 		this.plugin = achievement;
 		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
