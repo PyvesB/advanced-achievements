@@ -18,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.libs.joptsimple.internal.Strings;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
@@ -517,7 +518,11 @@ public class AdvancedAchievements extends JavaPlugin {
 	private void extractParameters() {
 		icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
 		color = ChatColor.getByChar(config.getString("Color", "5").charAt(0));
-		chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
+		if (Strings.isNullOrEmpty(icon)) {
+			chatHeader = "";
+		} else {
+			chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
+		}
 		restrictCreative = config.getBoolean("RestrictCreative", false);
 		restrictSpectator = config.getBoolean("RestrictSpectator", true);
 		chatNotify = config.getBoolean("ChatNotify", false);
