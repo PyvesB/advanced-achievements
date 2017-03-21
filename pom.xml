@@ -60,6 +60,7 @@
 					<include>lang.yml</include>
 					<include>plugin.yml</include>
 					<include>config.yml</include>
+					<include>gui.yml</include>
 				</includes>
 				<filtering>true</filtering>
 			</resource>

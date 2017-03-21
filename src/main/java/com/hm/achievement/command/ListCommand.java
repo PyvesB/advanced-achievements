@@ -1,7 +1,9 @@
 package com.hm.achievement.command;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -49,8 +51,9 @@ public class ListCommand extends AbstractCommand {
 	private final boolean numberedItemsInList;
 
 	// Array of item stacks for items displayed in the GUI.
-	private final ItemStack[] multipleAchievementCategoryItems;
-	private final ItemStack[] normalAchievementCategoryItems;
+	private final Map<MultipleAchievements, ItemStack> multipleAchievementCategoryItems;
+	private final Map<NormalAchievements, ItemStack> normalAchievementCategoryItems;
+	private final ItemStack commandsCategoryItem;
 
 	private final ItemStack backButton = new ItemStack(Material.PAPER);
 
@@ -65,54 +68,37 @@ public class ListCommand extends AbstractCommand {
 		enrichedProgressBars = plugin.getPluginConfig().getBoolean("EnrichedListProgressBars", true);
 		numberedItemsInList = plugin.getPluginConfig().getBoolean("NumberedItemsInList", false);
 
+		multipleAchievementCategoryItems = new EnumMap<>(MultipleAchievements.class);
 		// Get list of item stacks for items displayed in the GUI, for multiple achievements.
-		multipleAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.STONE, 1, (short) 6),
-				new ItemStack(Material.SMOOTH_BRICK, 1, (short) 2), new ItemStack(Material.BONE),
-				new ItemStack(Material.WORKBENCH), new ItemStack(Material.PAPER) };
-
-		// Get list of item stacks for items displayed in the GUI, for multiple achievements.
-		// Elytra and Grass paths only available in Minecraft 1.9+, we construct the list depending on the game version.
-		if (version >= 9) {
-			normalAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
-					new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW),
-					new ItemStack(Material.SNOW_BALL), new ItemStack(Material.EGG),
-					new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FISHING_ROD),
-					new ItemStack(Material.FLINT), new ItemStack(Material.MELON), new ItemStack(Material.SHEARS),
-					new ItemStack(Material.MILK_BUCKET), new ItemStack(Material.LAVA_BUCKET),
-					new ItemStack(Material.WATER_BUCKET), new ItemStack(Material.EMERALD),
-					new ItemStack(Material.ANVIL), new ItemStack(Material.ENCHANTMENT_TABLE),
-					new ItemStack(Material.BED), new ItemStack(Material.EXP_BOTTLE),
-					new ItemStack(Material.GLASS_BOTTLE), new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER),
-					new ItemStack(Material.CHEST), new ItemStack(Material.GRASS_PATH),
-					new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.LEASH),
-					new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
-					new ItemStack(Material.JUKEBOX), new ItemStack(Material.ENDER_PEARL),
-					new ItemStack(Material.GOLD_BARDING), new ItemStack(Material.IRON_BARDING),
-					new ItemStack(Material.FURNACE), new ItemStack(Material.LEATHER_BOOTS),
-					new ItemStack(Material.CARROT_STICK), new ItemStack(Material.SADDLE),
-					new ItemStack(Material.MINECART), new ItemStack(Material.BOAT), new ItemStack(Material.ELYTRA),
-					new ItemStack(Material.CARPET, 1, (short) 9), new ItemStack(Material.BOOKSHELF) };
-		} else {
-			normalAchievementCategoryItems = new ItemStack[] { new ItemStack(Material.BOOK_AND_QUILL),
-					new ItemStack(Material.SKULL_ITEM), new ItemStack(Material.ARROW),
-					new ItemStack(Material.SNOW_BALL), new ItemStack(Material.EGG),
-					new ItemStack(Material.RAW_FISH, 1, (short) 2), new ItemStack(Material.FISHING_ROD),
-					new ItemStack(Material.FLINT), new ItemStack(Material.MELON), new ItemStack(Material.SHEARS),
-					new ItemStack(Material.MILK_BUCKET), new ItemStack(Material.LAVA_BUCKET),
-					new ItemStack(Material.WATER_BUCKET), new ItemStack(Material.EMERALD),
-					new ItemStack(Material.ANVIL), new ItemStack(Material.ENCHANTMENT_TABLE),
-					new ItemStack(Material.BED), new ItemStack(Material.EXP_BOTTLE),
-					new ItemStack(Material.GLASS_BOTTLE), new ItemStack(Material.WATCH), new ItemStack(Material.HOPPER),
-					new ItemStack(Material.CHEST), new ItemStack(Material.GRASS),
-					new ItemStack(Material.INK_SACK, 1, (short) 15), new ItemStack(Material.LEASH),
-					new ItemStack(Material.BREWING_STAND_ITEM), new ItemStack(Material.FIREWORK),
-					new ItemStack(Material.JUKEBOX), new ItemStack(Material.ENDER_PEARL),
-					new ItemStack(Material.GOLD_BARDING), new ItemStack(Material.IRON_BARDING),
-					new ItemStack(Material.FURNACE), new ItemStack(Material.LEATHER_BOOTS),
-					new ItemStack(Material.CARROT_STICK), new ItemStack(Material.SADDLE),
-					new ItemStack(Material.MINECART), new ItemStack(Material.BOAT), new ItemStack(Material.BEDROCK),
-					new ItemStack(Material.CARPET, 1, (short) 9), new ItemStack(Material.BOOKSHELF) };
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			Material material = Material.getMaterial(
+					plugin.getPluginGui().getString(category.toString() + ".Material", "bedrock").toUpperCase());
+			short metadata = (short) plugin.getPluginGui().getInt(category.toString() + ".Metadata", 0);
+			if (material == null) {
+				material = Material.BEDROCK;
+			}
+			multipleAchievementCategoryItems.put(category, new ItemStack(material, 1, metadata));
 		}
+
+		normalAchievementCategoryItems = new EnumMap<>(NormalAchievements.class);
+		// Get list of item stacks for items displayed in the GUI, for normal achievements.
+		for (NormalAchievements category : NormalAchievements.values()) {
+			Material material = Material.getMaterial(
+					plugin.getPluginGui().getString(category.toString() + ".Material", "bedrock").toUpperCase());
+			short metadata = (short) plugin.getPluginGui().getInt(category.toString() + ".Metadata", 0);
+			if (material == null) {
+				material = Material.BEDROCK;
+			}
+			normalAchievementCategoryItems.put(category, new ItemStack(material, 1, metadata));
+		}
+
+		Material material = Material
+				.getMaterial(plugin.getPluginGui().getString("Commands.Material", "bedrock").toUpperCase());
+		short metadata = (short) plugin.getPluginGui().getInt("Commands.Metadata", 0);
+		if (material == null) {
+			material = Material.BEDROCK;
+		}
+		commandsCategoryItem = new ItemStack(material, 1, metadata);
 
 		ItemMeta backMeta = backButton.getItemMeta();
 		backMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
@@ -576,7 +562,7 @@ public class ListCommand extends AbstractCommand {
 					}
 				}
 			}
-			ItemStack categoryItem = getItemStack(multipleAchievementCategoryItems, displayName, category.ordinal(),
+			ItemStack categoryItem = enrichItemStack(multipleAchievementCategoryItems.get(category), displayName,
 					hasReceivedInCategory, totalAchievementsInCategory);
 			guiInv.setItem(categoriesProcessed, categoryItem);
 			categoriesProcessed++;
@@ -627,7 +613,7 @@ public class ListCommand extends AbstractCommand {
 					}
 				}
 			}
-			ItemStack itemInMainGui = getItemStack(normalAchievementCategoryItems, displayName, category.ordinal(),
+			ItemStack itemInMainGui = enrichItemStack(normalAchievementCategoryItems.get(category), displayName,
 					hasReceivedInCategory, configCategory.size());
 			guiInv.setItem(categoriesPreviouslyProcessed + categoriesProcessed, itemInMainGui);
 			categoriesProcessed++;
@@ -671,13 +657,13 @@ public class ListCommand extends AbstractCommand {
 				}
 			}
 		}
-		ItemStack itemInMainGui = getItemStack(normalAchievementCategoryItems, commandsDisplayName,
-				NormalAchievements.values().length, hasReceivedInCategory, configCategory.size());
+		ItemStack itemInMainGui = enrichItemStack(commandsCategoryItem, commandsDisplayName, hasReceivedInCategory,
+				configCategory.size());
 		guiInv.setItem(categoriesPreviouslyProcessed, itemInMainGui);
 	}
 
 	/**
-	 * Retrieves correct item in the ItemStack lists and set its metadata.
+	 * Set metadata of an ItemStack.
 	 * 
 	 * @param itemStacks
 	 * @param displayName
@@ -686,13 +672,11 @@ public class ListCommand extends AbstractCommand {
 	 * @param i
 	 * @return
 	 */
-	private ItemStack getItemStack(ItemStack[] itemStacks, String displayName, int indexInItemStacksArray,
-			boolean hasReceivedInCategory, int totalAchievementsInCategory) {
-		ItemStack categoryItem;
+	private ItemStack enrichItemStack(ItemStack categoryItem, String displayName, boolean hasReceivedInCategory,
+			int totalAchievementsInCategory) {
 		ItemMeta categoryMeta;
 		if (hasReceivedInCategory) {
 			// Create item stack that will be displayed in the GUI, with its category name.
-			categoryItem = itemStacks[indexInItemStacksArray];
 			categoryMeta = categoryItem.getItemMeta();
 			categoryMeta
 					.setDisplayName(

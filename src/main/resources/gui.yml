@@ -1,0 +1,147 @@
+#==============================O===============================#
+# I----------------------------------------------------------I #
+# | Advanced Achievements 4.2.1 /aach list GUI configuration | #
+# 1----------------------------------------------------------1 #
+#==============================o===============================#
+
+Connections:
+  Material: book_and_quill
+  Metadata: 0
+Places:
+  Material: stone
+  Metadata: 6
+Breaks:
+  Material: smooth_brick
+  Metadata: 2
+Kills:
+  Material: bone
+  Metadata: 0
+Crafts:
+  Material: workbench
+  Metadata: 0
+Deaths:
+  Material: skull_item
+  Metadata: 0
+Arrows:
+  Material: arrow
+  Metadata: 0
+Snowballs:
+  Material: snow_ball
+  Metadata: 0
+Eggs:
+  Material: egg
+  Metadata: 0
+Fish:
+  Material: raw_fish
+  Metadata: 2
+Treasures:
+  Material: fishing_rod
+  Metadata: 0
+ItemBreaks:
+  Material: flint
+  Metadata: 0
+EatenItems:
+  Material: melon
+  Metadata: 0
+Shear:
+  Material: shears
+  Metadata: 0
+Milk:
+  Material: milk_bucket
+  Metadata: 0
+LavaBuckets:
+  Material: lava_bucket
+  Metadata: 0
+WaterBuckets:
+  Material: water_bucket
+  Metadata: 0
+Trades:
+  Material: emerald
+  Metadata: 0
+AnvilsUsed:
+  Material: anvil
+  Metadata: 0
+Enchantments:
+  Material: enchantment_table
+  Metadata: 0
+Beds:
+  Material: bed
+  Metadata: 0
+MaxLevel:
+  Material: exp_bottle
+  Metadata: 0  
+ConsumedPotions:
+  Material: glass_bottle
+  Metadata: 0
+PlayedTime:
+  Material: watch
+  Metadata: 0
+DistanceFoot:
+  Material: leather_boots
+  Metadata: 0
+DistancePig:
+  Material: carrot_stick
+  Metadata: 0
+DistanceHorse:
+  Material: saddle
+  Metadata: 0
+DistanceMinecart:
+  Material: minecart
+  Metadata: 0
+DistanceBoat:
+  Material: boat
+  Metadata: 0
+DistanceGliding:
+  Material: elytra
+  Metadata: 0
+DistanceLlama:
+  Material: carpet
+  Metadata: 9
+ItemDrops:
+  Material: hopper
+  Metadata: 0
+ItemPickups:
+  Material: chest
+  Metadata: 0
+HoePlowings:
+  Material: grass_path
+  Metadata: 0
+Fertilising:
+  Material: ink_sack
+  Metadata: 15
+Taming:
+  Material: leash
+  Metadata: 0
+Brewing:
+  Material: brewing_stand_item
+  Metadata: 0
+Fireworks:
+  Material: firework
+  Metadata: 0
+MusicDiscs:
+  Material: jukebox
+  Metadata: 0
+EnderPearls:
+  Material: ender_pearl
+  Metadata: 0
+PetMasterGive:
+  Material: gold_barding
+  Metadata: 0
+PetMasterReceive:
+  Material: iron_barding
+  Metadata: 0
+Smelting:
+  Material: furnace
+  Metadata: 0
+PlayerCommands:
+  Material: paper
+  Metadata: 0
+Commands:
+  Material: bookshelf
+  Metadata: 0
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# | Parameters in future plugin versions will  appear here | #
+# +--------------------------------------------------------+ #
+#============================================================#

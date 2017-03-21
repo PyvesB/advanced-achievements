@@ -152,9 +152,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	private ToggleCommand toggleCommand;
 	private UpdateChecker updateChecker;
 
-	// Language and configuration related.
+	// Language, configuration and GUI related.
 	private AchievementCommentedYamlConfiguration config;
 	private AchievementCommentedYamlConfiguration lang;
+	private AchievementCommentedYamlConfiguration gui;
 	private final FileUpdater fileUpdater;
 
 	// Database related.
@@ -207,6 +208,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		AchievementCommentedYamlConfiguration configFile = loadAndBackupFile("config.yml");
 		AchievementCommentedYamlConfiguration langFile = loadAndBackupFile(
 				configFile.getString("LanguageFileName", "lang.yml"));
+		AchievementCommentedYamlConfiguration guiFile = loadAndBackupFile("gui.yml");
 
 		// Error while loading .yml files; do not do any further work.
 		if (overrideDisable) {
@@ -218,7 +220,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		fileUpdater.updateOldConfiguration(configFile);
 		fileUpdater.updateOldLanguage(langFile);
 
-		configurationLoad(configFile, langFile);
+		configurationLoad(configFile, langFile, guiFile);
 
 		this.getLogger().info("Registering listeners...");
 		PluginManager pm = getServer().getPluginManager();
@@ -455,9 +457,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * @param lang
 	 */
 	public void configurationLoad(AchievementCommentedYamlConfiguration config,
-			AchievementCommentedYamlConfiguration lang) {
+			AchievementCommentedYamlConfiguration lang, AchievementCommentedYamlConfiguration gui) {
 		this.config = config;
 		this.lang = lang;
+		this.gui = gui;
 
 		this.getLogger().info("Loading parameters, registering permissions and initialising command modules...");
 		extractParameters();
@@ -1049,6 +1052,10 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	public AchievementCommentedYamlConfiguration getPluginLang() {
 		return lang;
+	}
+
+	public AchievementCommentedYamlConfiguration getPluginGui() {
+		return gui;
 	}
 
 	protected Economy getEconomy() {

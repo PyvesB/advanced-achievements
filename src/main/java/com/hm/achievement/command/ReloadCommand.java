@@ -49,8 +49,9 @@ public class ReloadCommand extends AbstractCommand {
 
 		AchievementCommentedYamlConfiguration langFile = plugin
 				.loadAndBackupFile(configFile.getString("LanguageFileName", "lang.yml"));
+		AchievementCommentedYamlConfiguration guiFile = plugin.loadAndBackupFile("gui.yml");
 
-		plugin.configurationLoad(configFile, langFile);
+		plugin.configurationLoad(configFile, langFile, guiFile);
 
 		if (plugin.isSuccessfulLoad()) {
 			if (sender instanceof Player) {
