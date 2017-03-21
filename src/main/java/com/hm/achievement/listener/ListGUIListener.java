@@ -58,18 +58,7 @@ public class ListGUIListener extends AbstractListener implements Listener {
 			return;
 		}
 
-		// Create GUI according to whether the player clicked on a normal achievements category or a multiple
-		// achievement category.
-		if (event.getCurrentItem().getType() == Material.STONE
-				|| event.getCurrentItem().getType() == Material.SMOOTH_BRICK
-				|| event.getCurrentItem().getType() == Material.BONE
-				|| event.getCurrentItem().getType() == Material.WORKBENCH
-				|| event.getCurrentItem().getType() == Material.PAPER) {
-			plugin.getAchievementListCommand().createCategoryGUIMultiple(event.getCurrentItem().getType(),
-					(Player) event.getWhoClicked());
-		} else {
-			plugin.getAchievementListCommand().createCategoryGUINormal(event.getCurrentItem().getType(),
-					(Player) event.getWhoClicked());
-		}
+		plugin.getAchievementListCommand().createCategoryGUI(event.getCurrentItem().getType(),
+				(Player) event.getWhoClicked());
 	}
 }

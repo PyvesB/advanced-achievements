@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -131,6 +132,23 @@ public class ListCommand extends AbstractCommand {
 		player.openInventory(guiInv);
 	}
 
+	public void createCategoryGUI(Material type, Player player) {
+		for (Entry<MultipleAchievements, ItemStack> entry : multipleAchievementCategoryItems.entrySet()) {
+			if (entry.getValue().getType() == type) {
+				createCategoryGUIMultiple(entry.getKey(), player);
+				return;
+			}
+		}
+		for (Entry<NormalAchievements, ItemStack> entry : normalAchievementCategoryItems.entrySet()) {
+			if (entry.getValue().getType() == type) {
+				createCategoryGUINormal(entry.getKey(), player);
+				return;
+			}
+		}
+		// Commands achievements
+		createCategoryGUINormal(null, player);
+	}
+
 	/**
 	 * Displays the a category GUI, containing all the achievements from a given category. This method is used for
 	 * multiple achievements, in other words those based on sub-categories.
@@ -138,31 +156,7 @@ public class ListCommand extends AbstractCommand {
 	 * @param clickedItem
 	 * @param player
 	 */
-	public void createCategoryGUIMultiple(Material clickedItem, Player player) {
-		MultipleAchievements category;
-
-		// Match the item the player clicked on with a category.
-		switch (clickedItem) {
-			case STONE:
-				category = MultipleAchievements.PLACES;
-				break;
-			case SMOOTH_BRICK:
-				category = MultipleAchievements.BREAKS;
-				break;
-			case BONE:
-				category = MultipleAchievements.KILLS;
-				break;
-			case WORKBENCH:
-				category = MultipleAchievements.CRAFTS;
-				break;
-			case PAPER:
-				category = MultipleAchievements.PLAYERCOMMANDS;
-				break;
-			// Default case cannot happen.
-			default:
-				return;
-		}
-
+	public void createCategoryGUIMultiple(MultipleAchievements category, Player player) {
 		String categoryName = category.toString();
 
 		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
@@ -250,149 +244,8 @@ public class ListCommand extends AbstractCommand {
 	 * @param clickedItem
 	 * @param player
 	 */
-	public void createCategoryGUINormal(Material clickedItem, Player player) {
-		NormalAchievements category = null;
+	private void createCategoryGUINormal(NormalAchievements category, Player player) {
 		long statistic = 0L;
-
-		// Match the item the player clicked on with a category and its database statistic.
-		switch (clickedItem) {
-			case BOOK_AND_QUILL:
-				category = NormalAchievements.CONNECTIONS;
-				break;
-			case SKULL_ITEM:
-				category = NormalAchievements.DEATHS;
-				break;
-			case ARROW:
-				category = NormalAchievements.ARROWS;
-				break;
-			case SNOW_BALL:
-				category = NormalAchievements.SNOWBALLS;
-				break;
-			case EGG:
-				category = NormalAchievements.EGGS;
-				break;
-			case RAW_FISH:
-				category = NormalAchievements.FISH;
-				break;
-			case FLINT:
-				category = NormalAchievements.ITEMBREAKS;
-				break;
-			case MELON:
-				category = NormalAchievements.EATENITEMS;
-				break;
-			case SHEARS:
-				category = NormalAchievements.SHEARS;
-				break;
-			case MILK_BUCKET:
-				category = NormalAchievements.MILKS;
-				break;
-			case LAVA_BUCKET:
-				category = NormalAchievements.LAVABUCKETS;
-				break;
-			case WATER_BUCKET:
-				category = NormalAchievements.WATERBUCKETS;
-				break;
-			case EMERALD:
-				category = NormalAchievements.TRADES;
-				break;
-			case ANVIL:
-				category = NormalAchievements.ANVILS;
-				break;
-			case ENCHANTMENT_TABLE:
-				category = NormalAchievements.ENCHANTMENTS;
-				break;
-			case BED:
-				category = NormalAchievements.BEDS;
-				break;
-			case EXP_BOTTLE:
-				category = NormalAchievements.LEVELS;
-				break;
-			case GLASS_BOTTLE:
-				category = NormalAchievements.CONSUMEDPOTIONS;
-				break;
-			case WATCH:
-				category = NormalAchievements.PLAYEDTIME;
-				break;
-			case HOPPER:
-				category = NormalAchievements.DROPS;
-				break;
-			case CHEST:
-				category = NormalAchievements.PICKUPS;
-				break;
-			case GRASS:
-				category = NormalAchievements.HOEPLOWING;
-				break;
-			case INK_SACK:
-				category = NormalAchievements.FERTILISING;
-				break;
-			case LEASH:
-				category = NormalAchievements.TAMES;
-				break;
-			case BREWING_STAND_ITEM:
-				category = NormalAchievements.BREWING;
-				break;
-			case FIREWORK:
-				category = NormalAchievements.FIREWORKS;
-				break;
-			case JUKEBOX:
-				category = NormalAchievements.MUSICDISCS;
-				break;
-			case ENDER_PEARL:
-				category = NormalAchievements.ENDERPEARLS;
-				break;
-			case LEATHER_BOOTS:
-				category = NormalAchievements.DISTANCEFOOT;
-				break;
-			case CARROT_STICK:
-				category = NormalAchievements.DISTANCEPIG;
-				break;
-			case SADDLE:
-				category = NormalAchievements.DISTANCEHORSE;
-				break;
-			case MINECART:
-				category = NormalAchievements.DISTANCEMINECART;
-				break;
-			case BOAT:
-				category = NormalAchievements.DISTANCEBOAT;
-				break;
-			case BEDROCK:
-				category = NormalAchievements.DISTANCEGLIDING;
-				break;
-			case IRON_BARDING:
-				category = NormalAchievements.PETMASTERRECEIVE;
-				break;
-			case GOLD_BARDING:
-				category = NormalAchievements.PETMASTERGIVE;
-				break;
-			case CARPET:
-				category = NormalAchievements.DISTANCELLAMA;
-				break;
-			case FURNACE:
-				category = NormalAchievements.SMELTING;
-				break;
-			case FISHING_ROD:
-				category = NormalAchievements.TREASURES;
-				break;
-			// Objects exclusive to Minecraft 1.9+ or Commands achievements.
-			default:
-				statistic = -1L;
-				break;
-		}
-
-		// Items used for 1.9+ version of Minecraft. This corresponds to the default case of the above switch.
-		if (category == null && version >= 9) {
-			switch (clickedItem) {
-				case ELYTRA:
-					category = NormalAchievements.DISTANCEGLIDING;
-					break;
-				case GRASS_PATH:
-					category = NormalAchievements.HOEPLOWING;
-					break;
-				// Default case: Commands achievements.
-				default:
-					break;
-			}
-		}
 
 		String categoryName;
 		if (category == null) {
@@ -451,7 +304,7 @@ public class ListCommand extends AbstractCommand {
 			}
 
 			boolean playedTime = false;
-			if (clickedItem == Material.WATCH) {
+			if (category == NormalAchievements.PLAYEDTIME) {
 				playedTime = true;
 			}
 
