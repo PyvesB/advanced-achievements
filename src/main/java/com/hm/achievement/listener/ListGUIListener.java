@@ -49,16 +49,12 @@ public class ListGUIListener extends AbstractListener implements Listener {
 
 		// Main GUI displaying all the categories. Do not let players interact with locked categories or slots not
 		// corresponding to a category item.
-		if (event.getInventory().getItem(0).getType() != Material.STAINED_CLAY
-				&& (event.getCurrentItem().getType() == Material.BARRIER
-						|| event.getCurrentItem().getType() == Material.BEDROCK
-						|| version < 11 && event.getCurrentItem().getType() == Material.CARPET
-						|| event.getRawSlot() > NormalAchievements.values().length
-								+ MultipleAchievements.values().length - plugin.getDisabledCategorySet().size())) {
+		if (event.getCurrentItem().getType() == Material.BARRIER || event.getCurrentItem().getType() == Material.BEDROCK
+				|| event.getRawSlot() > NormalAchievements.values().length + MultipleAchievements.values().length
+						- plugin.getDisabledCategorySet().size()) {
 			return;
 		}
 
-		plugin.getAchievementListCommand().createCategoryGUI(event.getCurrentItem().getType(),
-				(Player) event.getWhoClicked());
+		plugin.getAchievementListCommand().createCategoryGUI(event.getCurrentItem(), (Player) event.getWhoClicked());
 	}
 }

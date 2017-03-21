@@ -73,7 +73,7 @@ public class ListCommand extends AbstractCommand {
 		// Get list of item stacks for items displayed in the GUI, for multiple achievements.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Material material = Material.getMaterial(
-					plugin.getPluginGui().getString(category.toString() + ".Material", "bedrock").toUpperCase());
+					plugin.getPluginGui().getString(category.toString() + ".Item", "bedrock").toUpperCase());
 			short metadata = (short) plugin.getPluginGui().getInt(category.toString() + ".Metadata", 0);
 			if (material == null) {
 				material = Material.BEDROCK;
@@ -85,7 +85,7 @@ public class ListCommand extends AbstractCommand {
 		// Get list of item stacks for items displayed in the GUI, for normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			Material material = Material.getMaterial(
-					plugin.getPluginGui().getString(category.toString() + ".Material", "bedrock").toUpperCase());
+					plugin.getPluginGui().getString(category.toString() + ".Item", "bedrock").toUpperCase());
 			short metadata = (short) plugin.getPluginGui().getInt(category.toString() + ".Metadata", 0);
 			if (material == null) {
 				material = Material.BEDROCK;
@@ -94,7 +94,7 @@ public class ListCommand extends AbstractCommand {
 		}
 
 		Material material = Material
-				.getMaterial(plugin.getPluginGui().getString("Commands.Material", "bedrock").toUpperCase());
+				.getMaterial(plugin.getPluginGui().getString("Commands.Item", "bedrock").toUpperCase());
 		short metadata = (short) plugin.getPluginGui().getInt("Commands.Metadata", 0);
 		if (material == null) {
 			material = Material.BEDROCK;
@@ -132,15 +132,17 @@ public class ListCommand extends AbstractCommand {
 		player.openInventory(guiInv);
 	}
 
-	public void createCategoryGUI(Material type, Player player) {
+	public void createCategoryGUI(ItemStack item, Player player) {
 		for (Entry<MultipleAchievements, ItemStack> entry : multipleAchievementCategoryItems.entrySet()) {
-			if (entry.getValue().getType() == type) {
+			if (entry.getValue().getType() == item.getType()
+					&& entry.getValue().getDurability() == item.getDurability()) {
 				createCategoryGUIMultiple(entry.getKey(), player);
 				return;
 			}
 		}
 		for (Entry<NormalAchievements, ItemStack> entry : normalAchievementCategoryItems.entrySet()) {
-			if (entry.getValue().getType() == type) {
+			if (entry.getValue().getType() == item.getType()
+					&& entry.getValue().getDurability() == item.getDurability()) {
 				createCategoryGUINormal(entry.getKey(), player);
 				return;
 			}
@@ -250,6 +252,7 @@ public class ListCommand extends AbstractCommand {
 		String categoryName;
 		if (category == null) {
 			categoryName = "Commands";
+			statistic = -1L;
 		} else {
 			categoryName = category.toString();
 		}

@@ -1,143 +1,147 @@
-#==============================O===============================#
-# I----------------------------------------------------------I #
+#==============================================================#
+# +----------------------------------------------------------+ #
 # | Advanced Achievements 4.2.1 /aach list GUI configuration | #
-# 1----------------------------------------------------------1 #
-#==============================o===============================#
+# +----------------------------------------------------------+ #
+#==============================================================#
+# Possible items: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+# Material names are not case sensitive in this configuration file.
+# Do not use bedrock, barrier, stained_clay or paper.
+# Do not use the same Item and Metadata pair twice.
 
 Connections:
-  Material: book_and_quill
+  Item: book_and_quill
   Metadata: 0
 Places:
-  Material: stone
+  Item: stone
   Metadata: 6
 Breaks:
-  Material: smooth_brick
+  Item: smooth_brick
   Metadata: 2
 Kills:
-  Material: bone
+  Item: bone
   Metadata: 0
 Crafts:
-  Material: workbench
+  Item: workbench
   Metadata: 0
 Deaths:
-  Material: skull_item
+  Item: skull_item
   Metadata: 0
 Arrows:
-  Material: arrow
+  Item: arrow
   Metadata: 0
 Snowballs:
-  Material: snow_ball
+  Item: snow_ball
   Metadata: 0
 Eggs:
-  Material: egg
+  Item: egg
   Metadata: 0
 Fish:
-  Material: raw_fish
+  Item: raw_fish
   Metadata: 2
 Treasures:
-  Material: fishing_rod
+  Item: fishing_rod
   Metadata: 0
 ItemBreaks:
-  Material: flint
+  Item: flint
   Metadata: 0
 EatenItems:
-  Material: melon
+  Item: melon
   Metadata: 0
 Shear:
-  Material: shears
+  Item: shears
   Metadata: 0
 Milk:
-  Material: milk_bucket
+  Item: milk_bucket
   Metadata: 0
 LavaBuckets:
-  Material: lava_bucket
+  Item: lava_bucket
   Metadata: 0
 WaterBuckets:
-  Material: water_bucket
+  Item: water_bucket
   Metadata: 0
 Trades:
-  Material: emerald
+  Item: emerald
   Metadata: 0
 AnvilsUsed:
-  Material: anvil
+  Item: anvil
   Metadata: 0
 Enchantments:
-  Material: enchantment_table
+  Item: enchantment_table
   Metadata: 0
 Beds:
-  Material: bed
+  Item: bed
   Metadata: 0
 MaxLevel:
-  Material: exp_bottle
+  Item: exp_bottle
   Metadata: 0  
 ConsumedPotions:
-  Material: glass_bottle
+  Item: glass_bottle
   Metadata: 0
 PlayedTime:
-  Material: watch
+  Item: watch
   Metadata: 0
 DistanceFoot:
-  Material: leather_boots
+  Item: leather_boots
   Metadata: 0
 DistancePig:
-  Material: carrot_stick
+  Item: carrot_stick
   Metadata: 0
 DistanceHorse:
-  Material: saddle
+  Item: saddle
   Metadata: 0
 DistanceMinecart:
-  Material: minecart
+  Item: minecart
   Metadata: 0
 DistanceBoat:
-  Material: boat
+  Item: boat
   Metadata: 0
 DistanceGliding:
-  Material: elytra
+  Item: elytra
   Metadata: 0
 DistanceLlama:
-  Material: carpet
+  Item: carpet
   Metadata: 9
 ItemDrops:
-  Material: hopper
+  Item: hopper
   Metadata: 0
 ItemPickups:
-  Material: chest
+  Item: chest
   Metadata: 0
 HoePlowings:
-  Material: grass_path
+  Item: grass_path
   Metadata: 0
 Fertilising:
-  Material: ink_sack
+  Item: ink_sack
   Metadata: 15
 Taming:
-  Material: leash
+  Item: leash
   Metadata: 0
 Brewing:
-  Material: brewing_stand_item
+  Item: brewing_stand_item
   Metadata: 0
 Fireworks:
-  Material: firework
+  Item: firework
   Metadata: 0
 MusicDiscs:
-  Material: jukebox
+  Item: jukebox
   Metadata: 0
 EnderPearls:
-  Material: ender_pearl
+  Item: ender_pearl
   Metadata: 0
 PetMasterGive:
-  Material: gold_barding
+  Item: gold_barding
   Metadata: 0
 PetMasterReceive:
-  Material: iron_barding
+  Item: iron_barding
   Metadata: 0
 Smelting:
-  Material: furnace
+  Item: furnace
   Metadata: 0
 PlayerCommands:
-  Material: paper
+  Item: paper
   Metadata: 0
 Commands:
-  Material: bookshelf
+  Item: bookshelf
   Metadata: 0
 
 #============================================================#
