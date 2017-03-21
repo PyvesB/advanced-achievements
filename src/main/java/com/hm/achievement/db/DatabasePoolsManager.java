@@ -1,5 +1,6 @@
 package com.hm.achievement.db;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,54 +23,11 @@ import com.hm.achievement.category.NormalAchievements;
 public class DatabasePoolsManager {
 
 	private final AdvancedAchievements plugin;
-
-	// Statistics of the different players for normal achievements; keys correspond to UUIDs.
-	private Map<String, Integer> deathHashMap;
-	private Map<String, Integer> arrowHashMap;
-	private Map<String, Integer> snowballHashMap;
-	private Map<String, Integer> eggHashMap;
-	private Map<String, Integer> fishHashMap;
-	private Map<String, Integer> treasureHashMap;
-	private Map<String, Integer> itemBreakHashMap;
-	private Map<String, Integer> eatenItemHashMap;
-	private Map<String, Integer> shearHashMap;
-	private Map<String, Integer> milkHashMap;
-	private Map<String, Integer> tradeHashMap;
-	private Map<String, Integer> anvilHashMap;
-	private Map<String, Integer> enchantmentHashMap;
-	private Map<String, Integer> bedHashMap;
-	private Map<String, Integer> xpHashMap;
-	private Map<String, Integer> consumedPotionHashMap;
-	private Map<String, Integer> dropHashMap;
-	private Map<String, Integer> pickupHashMap;
-	private Map<String, Integer> hoePlowingHashMap;
-	private Map<String, Integer> fertiliseHashMap;
-	private Map<String, Integer> tameHashMap;
-	private Map<String, Integer> brewingHashMap;
-	private Map<String, Integer> fireworkHashMap;
-	private Map<String, Integer> musicDiscHashMap;
-	private Map<String, Integer> enderPearlHashMap;
-	private Map<String, Integer> petMasterGiveHashMap;
-	private Map<String, Integer> petMasterReceiveHashMap;
-	private Map<String, Integer> smeltingHashMap;
-	private Map<String, Integer> lavaBucketHashMap;
-	private Map<String, Integer> waterBucketHashMap;
-	private Map<String, Integer> distanceFootHashMap;
-	private Map<String, Integer> distanceHorseHashMap;
-	private Map<String, Integer> distancePigHashMap;
-	private Map<String, Integer> distanceBoatHashMap;
-	private Map<String, Integer> distanceMinecartHashMap;
-	private Map<String, Integer> distanceGlidingHashMap;
-	private Map<String, Integer> distanceLlamaHashMap;
-	private Map<String, Long> playTimeHashMap;
-
-	// Statistics of the different players for multiple achievements; keys correspond to concatenated UUIDs and
-	// block/entity/command identifiers.
-	private Map<String, Integer> blockPlaceHashMap;
-	private Map<String, Integer> blockBreakHashMap;
-	private Map<String, Integer> killHashMap;
-	private Map<String, Integer> craftHashMap;
-	private Map<String, Integer> playerCommandHashMap;
+	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
+	private final Map<NormalAchievements, Map<String, Long>> normalAchievementsToPlayerStatistics;
+	// Statistics of the different players for multiple achievements; keys in the inner maps correspond to concatenated
+	// UUIDs and block/entity/command identifiers.
+	private final Map<MultipleAchievements, Map<String, Long>> multipleAchievementsToPlayerStatistics;
 
 	// Multimaps corresponding to the different achievements received by the players.
 	private HashMultimap<String, String> receivedAchievementsCache;
@@ -77,6 +35,8 @@ public class DatabasePoolsManager {
 
 	public DatabasePoolsManager(AdvancedAchievements plugin) {
 		this.plugin = plugin;
+		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
+		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
 	}
 
 	public void databasePoolsInit(boolean isAsync) {
@@ -86,93 +46,19 @@ public class DatabasePoolsManager {
 		// If asynchronous task is used, ConcurrentHashMaps are necessary to
 		// guarantee thread safety. Otherwise normal HashMaps are enough.
 		if (isAsync) {
-			deathHashMap = new ConcurrentHashMap<>();
-			arrowHashMap = new ConcurrentHashMap<>();
-			snowballHashMap = new ConcurrentHashMap<>();
-			eggHashMap = new ConcurrentHashMap<>();
-			fishHashMap = new ConcurrentHashMap<>();
-			treasureHashMap = new ConcurrentHashMap<>();
-			itemBreakHashMap = new ConcurrentHashMap<>();
-			eatenItemHashMap = new ConcurrentHashMap<>();
-			shearHashMap = new ConcurrentHashMap<>();
-			milkHashMap = new ConcurrentHashMap<>();
-			tradeHashMap = new ConcurrentHashMap<>();
-			anvilHashMap = new ConcurrentHashMap<>();
-			enchantmentHashMap = new ConcurrentHashMap<>();
-			bedHashMap = new ConcurrentHashMap<>();
-			xpHashMap = new ConcurrentHashMap<>();
-			consumedPotionHashMap = new ConcurrentHashMap<>();
-			dropHashMap = new ConcurrentHashMap<>();
-			pickupHashMap = new ConcurrentHashMap<>();
-			hoePlowingHashMap = new ConcurrentHashMap<>();
-			fertiliseHashMap = new ConcurrentHashMap<>();
-			tameHashMap = new ConcurrentHashMap<>();
-			brewingHashMap = new ConcurrentHashMap<>();
-			fireworkHashMap = new ConcurrentHashMap<>();
-			musicDiscHashMap = new ConcurrentHashMap<>();
-			enderPearlHashMap = new ConcurrentHashMap<>();
-			petMasterGiveHashMap = new ConcurrentHashMap<>();
-			petMasterReceiveHashMap = new ConcurrentHashMap<>();
-			smeltingHashMap = new ConcurrentHashMap<>();
-			lavaBucketHashMap = new ConcurrentHashMap<>();
-			waterBucketHashMap = new ConcurrentHashMap<>();
-			blockPlaceHashMap = new ConcurrentHashMap<>();
-			blockBreakHashMap = new ConcurrentHashMap<>();
-			killHashMap = new ConcurrentHashMap<>();
-			craftHashMap = new ConcurrentHashMap<>();
-			playerCommandHashMap = new ConcurrentHashMap<>();
-			distanceFootHashMap = new ConcurrentHashMap<>();
-			distanceHorseHashMap = new ConcurrentHashMap<>();
-			distancePigHashMap = new ConcurrentHashMap<>();
-			distanceBoatHashMap = new ConcurrentHashMap<>();
-			distanceMinecartHashMap = new ConcurrentHashMap<>();
-			distanceGlidingHashMap = new ConcurrentHashMap<>();
-			distanceLlamaHashMap = new ConcurrentHashMap<>();
-			playTimeHashMap = new ConcurrentHashMap<>();
+			for (NormalAchievements normalAchievement : NormalAchievements.values()) {
+				normalAchievementsToPlayerStatistics.put(normalAchievement, new ConcurrentHashMap<String, Long>());
+			}
+			for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
+				multipleAchievementsToPlayerStatistics.put(multipleAchievement, new ConcurrentHashMap<String, Long>());
+			}
 		} else {
-			deathHashMap = new HashMap<>();
-			arrowHashMap = new HashMap<>();
-			snowballHashMap = new HashMap<>();
-			eggHashMap = new HashMap<>();
-			fishHashMap = new HashMap<>();
-			treasureHashMap = new HashMap<>();
-			itemBreakHashMap = new HashMap<>();
-			eatenItemHashMap = new HashMap<>();
-			shearHashMap = new HashMap<>();
-			milkHashMap = new HashMap<>();
-			tradeHashMap = new HashMap<>();
-			anvilHashMap = new HashMap<>();
-			enchantmentHashMap = new HashMap<>();
-			bedHashMap = new HashMap<>();
-			xpHashMap = new HashMap<>();
-			consumedPotionHashMap = new HashMap<>();
-			dropHashMap = new HashMap<>();
-			pickupHashMap = new HashMap<>();
-			hoePlowingHashMap = new HashMap<>();
-			fertiliseHashMap = new HashMap<>();
-			tameHashMap = new HashMap<>();
-			brewingHashMap = new HashMap<>();
-			fireworkHashMap = new HashMap<>();
-			musicDiscHashMap = new HashMap<>();
-			enderPearlHashMap = new HashMap<>();
-			petMasterGiveHashMap = new HashMap<>();
-			petMasterReceiveHashMap = new HashMap<>();
-			smeltingHashMap = new HashMap<>();
-			lavaBucketHashMap = new HashMap<>();
-			waterBucketHashMap = new HashMap<>();
-			blockPlaceHashMap = new HashMap<>();
-			blockBreakHashMap = new HashMap<>();
-			killHashMap = new HashMap<>();
-			craftHashMap = new HashMap<>();
-			playerCommandHashMap = new HashMap<>();
-			distanceFootHashMap = new HashMap<>();
-			distanceHorseHashMap = new HashMap<>();
-			distancePigHashMap = new HashMap<>();
-			distanceBoatHashMap = new HashMap<>();
-			distanceMinecartHashMap = new HashMap<>();
-			distanceGlidingHashMap = new HashMap<>();
-			distanceLlamaHashMap = new HashMap<>();
-			playTimeHashMap = new HashMap<>();
+			for (NormalAchievements normalAchievement : NormalAchievements.values()) {
+				normalAchievementsToPlayerStatistics.put(normalAchievement, new HashMap<String, Long>());
+			}
+			for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
+				multipleAchievementsToPlayerStatistics.put(multipleAchievement, new HashMap<String, Long>());
+			}
 		}
 	}
 
@@ -182,88 +68,11 @@ public class DatabasePoolsManager {
 	 * @param category
 	 * @return
 	 */
-	public Map<String, Integer> getHashMap(NormalAchievements category) {
-		switch (category) {
-			case ANVILS:
-				return anvilHashMap;
-			case ARROWS:
-				return arrowHashMap;
-			case BEDS:
-				return bedHashMap;
-			case BREWING:
-				return brewingHashMap;
-			case CONNECTIONS:
-				throw new IllegalArgumentException("Connections does not have a corresponding HashMap.");
-			case CONSUMEDPOTIONS:
-				return consumedPotionHashMap;
-			case DEATHS:
-				return deathHashMap;
-			case DISTANCEBOAT:
-				return distanceBoatHashMap;
-			case DISTANCEFOOT:
-				return distanceFootHashMap;
-			case DISTANCEGLIDING:
-				return distanceGlidingHashMap;
-			case DISTANCEHORSE:
-				return distanceHorseHashMap;
-			case DISTANCELLAMA:
-				return distanceLlamaHashMap;
-			case DISTANCEMINECART:
-				return distanceMinecartHashMap;
-			case DISTANCEPIG:
-				return distancePigHashMap;
-			case DROPS:
-				return dropHashMap;
-			case EATENITEMS:
-				return eatenItemHashMap;
-			case EGGS:
-				return eggHashMap;
-			case ENCHANTMENTS:
-				return enchantmentHashMap;
-			case ENDERPEARLS:
-				return enderPearlHashMap;
-			case FERTILISING:
-				return fertiliseHashMap;
-			case FIREWORKS:
-				return fireworkHashMap;
-			case FISH:
-				return fishHashMap;
-			case HOEPLOWING:
-				return hoePlowingHashMap;
-			case ITEMBREAKS:
-				return itemBreakHashMap;
-			case LAVABUCKETS:
-				return lavaBucketHashMap;
-			case LEVELS:
-				return xpHashMap;
-			case MILKS:
-				return milkHashMap;
-			case MUSICDISCS:
-				return musicDiscHashMap;
-			case PETMASTERGIVE:
-				return petMasterGiveHashMap;
-			case PETMASTERRECEIVE:
-				return petMasterReceiveHashMap;
-			case PICKUPS:
-				return pickupHashMap;
-			case PLAYEDTIME:
-				throw new IllegalArgumentException("PlayedTime is handled by a separate function.");
-			case SHEARS:
-				return shearHashMap;
-			case SMELTING:
-				return smeltingHashMap;
-			case SNOWBALLS:
-				return snowballHashMap;
-			case TAMES:
-				return tameHashMap;
-			case TRADES:
-				return tradeHashMap;
-			case TREASURES:
-				return treasureHashMap;
-			case WATERBUCKETS:
-				return waterBucketHashMap;
-			default:
-				return null;
+	public Map<String, Long> getHashMap(NormalAchievements category) {
+		if (category == NormalAchievements.CONNECTIONS) {
+			throw new IllegalArgumentException("Connections does not have a corresponding HashMap.");
+		} else {
+			return normalAchievementsToPlayerStatistics.get(category);
 		}
 	}
 
@@ -273,21 +82,8 @@ public class DatabasePoolsManager {
 	 * @param category
 	 * @return
 	 */
-	protected Map<String, Integer> getHashMap(MultipleAchievements category) {
-		switch (category) {
-			case BREAKS:
-				return blockBreakHashMap;
-			case CRAFTS:
-				return craftHashMap;
-			case KILLS:
-				return killHashMap;
-			case PLACES:
-				return blockPlaceHashMap;
-			case PLAYERCOMMANDS:
-				return playerCommandHashMap;
-			default:
-				return null;
-		}
+	protected Map<String, Long> getHashMap(MultipleAchievements category) {
+		return multipleAchievementsToPlayerStatistics.get(category);
 	}
 
 	/**
@@ -299,14 +95,14 @@ public class DatabasePoolsManager {
 	 * @param value
 	 * @return
 	 */
-	public int getAndIncrementStatisticAmount(NormalAchievements category, Player player, int value) {
-		Map<String, Integer> categoryHashMap = getHashMap(category);
+	public long getAndIncrementStatisticAmount(NormalAchievements category, Player player, int value) {
+		Map<String, Long> categoryHashMap = getHashMap(category);
 		String uuid = player.getUniqueId().toString();
-		Integer oldAmount = categoryHashMap.get(uuid);
+		Long oldAmount = categoryHashMap.get(uuid);
 		if (oldAmount == null) {
 			oldAmount = plugin.getDb().getNormalAchievementAmount(player, category);
 		}
-		Integer newValue = oldAmount + value;
+		Long newValue = oldAmount + value;
 
 		categoryHashMap.put(uuid, newValue);
 		return newValue;
@@ -322,9 +118,9 @@ public class DatabasePoolsManager {
 	 * @param value
 	 * @return
 	 */
-	public int getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, Player player,
+	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, Player player,
 			int value) {
-		Map<String, Integer> categoryHashMap = getHashMap(category);
+		Map<String, Long> categoryHashMap = getHashMap(category);
 		String uuid = player.getUniqueId().toString();
 		String subcategoryDBName;
 		if (category == MultipleAchievements.PLAYERCOMMANDS) {
@@ -332,35 +128,14 @@ public class DatabasePoolsManager {
 		} else {
 			subcategoryDBName = subcategory;
 		}
-		Integer oldAmount = categoryHashMap.get(uuid + subcategoryDBName);
+		Long oldAmount = categoryHashMap.get(uuid + subcategoryDBName);
 		if (oldAmount == null) {
 			oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategoryDBName);
 		}
-		Integer newValue = oldAmount + value;
+		Long newValue = oldAmount + value;
 
 		categoryHashMap.put(uuid + subcategoryDBName, newValue);
 		return newValue;
-	}
-
-	public Map<String, Long> getPlayedTimeHashMap() {
-		return playTimeHashMap;
-	}
-
-	/**
-	 * Returns the PlayedTime statistic.
-	 * 
-	 * @param category
-	 * @param subcategory
-	 * @param player
-	 * @return
-	 */
-	public long getPlayerPlayTimeAmount(Player player) {
-		Long amount = playTimeHashMap.get(player.getUniqueId().toString());
-		if (amount == null) {
-			return plugin.getDb().getPlaytimeAmount(player);
-		} else {
-			return amount;
-		}
 	}
 
 	/**

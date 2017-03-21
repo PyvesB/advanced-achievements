@@ -88,24 +88,24 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		int difference = getDistanceDifference(player, previousLocation);
 		// Player has not moved.
-		if (difference == 0) {
+		if (difference == 0L) {
 			return;
 		}
 
 		if (player.getVehicle() instanceof Horse) {
-			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEHORSE);
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEHORSE);
 		} else if (player.getVehicle() instanceof Pig) {
-			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEPIG);
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEPIG);
 		} else if (player.getVehicle() instanceof Minecart) {
-			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEMINECART);
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEMINECART);
 		} else if (player.getVehicle() instanceof Boat) {
-			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEBOAT);
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEBOAT);
 		} else if (version >= 11 && player.getVehicle() instanceof Llama) {
-			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCELLAMA);
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCELLAMA);
 		} else if (!player.isFlying() && (version < 9 || !player.isGliding())) {
-			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEFOOT);
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEFOOT);
 		} else if (version >= 9 && player.isGliding()) {
-			updateDistanceAndCheckAchievements(difference, player, uuid, NormalAchievements.DISTANCEGLIDING);
+			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEGLIDING);
 		}
 	}
 
@@ -136,26 +136,18 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * @param player
 	 * @param category
 	 */
-	private void updateDistanceAndCheckAchievements(int difference, Player player, String uuid,
-			NormalAchievements category) {
+	private void updateDistanceAndCheckAchievements(int difference, Player player, NormalAchievements category) {
 		if (!player.hasPermission(category.toPermName())
 				|| plugin.getDisabledCategorySet().contains(category.toString())) {
 			return;
 		}
 
-		Map<String, Integer> map = plugin.getPoolsManager().getHashMap(category);
-		// If distance didn't previously exist in the cache; retrieve it from the database.
-		Integer distance = map.get(uuid);
-		if (distance == null) {
-			distance = plugin.getDb().getNormalAchievementAmount(player, category);
-		}
+		long distance = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player, difference);
 
-		distance += difference;
-		map.put(uuid, distance);
 		// Iterate through all the different achievements.
 		for (String achievementThreshold : plugin.getPluginConfig().getConfigurationSection(category.toString())
 				.getKeys(false)) {
-			int threshold = Integer.parseInt(achievementThreshold);
+			long threshold = Long.parseLong(achievementThreshold);
 			String achievementName = plugin.getPluginConfig()
 					.getString(category + "." + achievementThreshold + ".Name");
 			// Check whether player has met the threshold and whether we he has not yet received the achievement.
@@ -169,19 +161,18 @@ public class AchieveDistanceRunnable implements Runnable {
 	 * Gives a distance achievement to the player.
 	 * 
 	 * @param player
-	 * @param achievementDistance
+	 * @param threshold
 	 * @param type
 	 */
-	private void awardDistanceAchievement(Player player, int achievementDistance, String type) {
+	private void awardDistanceAchievement(Player player, long threshold, String type) {
 		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
-		plugin.getAchievementDisplay().displayAchievement(player, type + achievementDistance);
-		String achievementName = config.getString(type + achievementDistance + ".Name");
-		plugin.getDb().registerAchievement(player, achievementName,
-				config.getString(type + achievementDistance + ".Message"));
+		plugin.getAchievementDisplay().displayAchievement(player, type + threshold);
+		String achievementName = config.getString(type + threshold + ".Name");
+		plugin.getDb().registerAchievement(player, achievementName, config.getString(type + threshold + ".Message"));
 		String uuid = player.getUniqueId().toString();
 		plugin.getPoolsManager().getReceivedAchievementsCache().put(uuid, achievementName);
 		plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, achievementName);
-		plugin.getReward().checkConfig(player, type + achievementDistance);
+		plugin.getReward().checkConfig(player, type + threshold);
 	}
 
 	public Map<String, Location> getPlayerLocations() {

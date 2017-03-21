@@ -96,18 +96,14 @@ public class DatabaseUpdater {
 						+ "))");
 			}
 			for (NormalAchievements category : NormalAchievements.values()) {
-				if (category == NormalAchievements.PLAYEDTIME) {
-					st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getTablePrefix()
-							+ category.toDBName() + " (playername char(36)," + category.toDBName()
-							+ " BIGINT,PRIMARY KEY (playername))");
-				} else if (category == NormalAchievements.CONNECTIONS) {
+				if (category == NormalAchievements.CONNECTIONS) {
 					st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getTablePrefix()
 							+ category.toDBName() + " (playername char(36)," + category.toDBName()
 							+ " INT,date varchar(10),PRIMARY KEY (playername))");
 				} else {
 					st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getTablePrefix()
 							+ category.toDBName() + " (playername char(36)," + category.toDBName()
-							+ " INT,PRIMARY KEY (playername))");
+							+ " BIGINT,PRIMARY KEY (playername))");
 				}
 			}
 			st.executeBatch();
@@ -148,7 +144,7 @@ public class DatabaseUpdater {
 	 * @param category
 	 */
 	@SuppressWarnings("deprecation")
-	protected void updateOldDBToMaterial(MultipleAchievements category) {
+	private void updateOldDBToMaterial(MultipleAchievements category) {
 		String tableName = sqlDatabaseManager.getTablePrefix() + category.toDBName();
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement();

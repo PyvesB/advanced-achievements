@@ -91,8 +91,8 @@ public class PooledRequestsSender implements Runnable {
 	private void performRequestsForMultipleCategoriesAsync(Statement st) throws SQLException {
 
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
-			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
+			Map<String, Long> categoryMap = plugin.getPoolsManager().getHashMap(category);
+			for (Entry<String, Long> entry : categoryMap.entrySet()) {
 				String playerUUID = entry.getKey().substring(0, 36);
 				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
 					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
@@ -104,7 +104,7 @@ public class PooledRequestsSender implements Runnable {
 							+ playerUUID + "', '" + entry.getKey().substring(36) + "', " + entry.getValue() + ")");
 				}
 				if (!isPlayerOnline(playerUUID)) {
-					((ConcurrentHashMap<String, Integer>) categoryMap).remove(entry.getKey(), entry.getValue());
+					((ConcurrentHashMap<String, Long>) categoryMap).remove(entry.getKey(), entry.getValue());
 				}
 			}
 		}
@@ -119,8 +119,8 @@ public class PooledRequestsSender implements Runnable {
 	private void performRequestsForMultipleCategoriesSync(Statement st) throws SQLException {
 
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
-			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
+			Map<String, Long> categoryMap = plugin.getPoolsManager().getHashMap(category);
+			for (Entry<String, Long> entry : categoryMap.entrySet()) {
 				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
 					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
@@ -146,10 +146,10 @@ public class PooledRequestsSender implements Runnable {
 	 */
 	private void performRequestsForNormalCategory(Statement st, NormalAchievements category) throws SQLException {
 
-		Map<String, Integer> categoryMap = plugin.getPoolsManager().getHashMap(category);
+		Map<String, Long> categoryMap = plugin.getPoolsManager().getHashMap(category);
 
 		if (plugin.isAsyncPooledRequestsSender()) {
-			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
+			for (Entry<String, Long> entry : categoryMap.entrySet()) {
 				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
 					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")"
@@ -160,11 +160,11 @@ public class PooledRequestsSender implements Runnable {
 							+ entry.getKey() + "', " + entry.getValue() + ")");
 				}
 				if (!isPlayerOnline(entry.getKey())) {
-					((ConcurrentHashMap<String, Integer>) categoryMap).remove(entry.getKey(), entry.getValue());
+					((ConcurrentHashMap<String, Long>) categoryMap).remove(entry.getKey(), entry.getValue());
 				}
 			}
 		} else {
-			for (Entry<String, Integer> entry : categoryMap.entrySet()) {
+			for (Entry<String, Long> entry : categoryMap.entrySet()) {
 				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
 					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue() + ")"

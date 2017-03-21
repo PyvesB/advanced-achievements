@@ -20,7 +20,7 @@ import org.bukkit.map.MinecraftFont;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -202,10 +202,10 @@ public class ListCommand extends AbstractCommand {
 		// Match the item the player clicked on with its database statistic.
 		for (String section : categoryConfig.getKeys(false)) {
 			// Retrieve statistic from category and subcategory.
-			int statistic = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, section, player, 0);
+			long statistic = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, section, player, 0);
 
 			String previousItemDate = null;
-			int previousItemGoal = 0;
+			long previousItemGoal = 0;
 			int subcategoryIndex = 0;
 
 			// Populate GUI with all the achievements for the current sub-category.
@@ -217,7 +217,7 @@ public class ListCommand extends AbstractCommand {
 				}
 
 				// Convert threshold to an integer.
-				int currentItemGoal = Integer.parseInt(level);
+				long currentItemGoal = Long.parseLong(level);
 
 				String achName = config.getString(categoryName + '.' + section + '.' + level + ".Name", "");
 				String nameToShowUser = getAchievementNameToDisplay(categoryName, '.' + section, achName, level);
@@ -415,9 +415,7 @@ public class ListCommand extends AbstractCommand {
 			categoryName = category.toString();
 		}
 
-		if (category == NormalAchievements.PLAYEDTIME) {
-			statistic = plugin.getPoolsManager().getPlayerPlayTimeAmount(player);
-		} else if (category == NormalAchievements.CONNECTIONS) {
+		if (category == NormalAchievements.CONNECTIONS) {
 			statistic = plugin.getDb().getConnectionsAmount(player);
 		} else if (category != null) {
 			statistic = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player, 0);
@@ -434,7 +432,7 @@ public class ListCommand extends AbstractCommand {
 		int positionInGUI = 0;
 
 		String previousItemDate = null;
-		Integer previousItemGoal = 0;
+		Long previousItemGoal = 0L;
 		// Populate the GUI with all of the achievements for the category.
 		for (String level : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
 			// If the user specifies more than 98 achievements in the category they will not be displayed.
@@ -443,7 +441,7 @@ public class ListCommand extends AbstractCommand {
 			}
 
 			// Convert threshold to an integer.
-			Integer currentItemGoal = Ints.tryParse(level);
+			Long currentItemGoal = Longs.tryParse(level);
 
 			String achName = plugin.getPluginConfig().getString(categoryName + '.' + level + ".Name", "");
 			String nameToShowUser = getAchievementNameToDisplay(categoryName, "", achName, level);
@@ -880,7 +878,7 @@ public class ListCommand extends AbstractCommand {
 			textSize = achMessage.length() * 3;
 		}
 
-		int levelInt = Integer.parseInt(level);
+		long levelInt = Long.parseLong(level);
 		String middleText;
 		double statisticDouble;
 		if (playedTime) {

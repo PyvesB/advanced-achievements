@@ -548,15 +548,15 @@ public class SQLDatabaseManager {
 	 * @param table
 	 * @return statistic
 	 */
-	public int getNormalAchievementAmount(Player player, NormalAchievements category) {
-		int amount = 0;
+	public Long getNormalAchievementAmount(Player player, NormalAchievements category) {
+		long amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix + dbName
 					+ " WHERE playername = '" + player.getUniqueId() + "'");
 			while (rs.next()) {
-				amount = rs.getInt(dbName);
+				amount = rs.getLong(dbName);
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving " + dbName + " stats: ", e);
@@ -572,8 +572,8 @@ public class SQLDatabaseManager {
 	 * @param subcategory
 	 * @return statistic
 	 */
-	public int getMultipleAchievementAmount(Player player, MultipleAchievements category, String subcategory) {
-		int amount = 0;
+	public Long getMultipleAchievementAmount(Player player, MultipleAchievements category, String subcategory) {
+		long amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
@@ -581,32 +581,10 @@ public class SQLDatabaseManager {
 					+ " WHERE playername = '" + player.getUniqueId() + "' AND " + category.toSubcategoryDBName()
 					+ " = '" + subcategory + "'");
 			while (rs.next()) {
-				amount = rs.getInt(dbName);
+				amount = rs.getLong(dbName);
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving " + dbName + " stats: ", e);
-		}
-		return amount;
-	}
-
-	/**
-	 * Gets the time played by a player in millis.
-	 * 
-	 * @param player
-	 * @param table
-	 * @return statistic
-	 */
-	public long getPlaytimeAmount(Player player) {
-		long amount = 0;
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT " + NormalAchievements.PLAYEDTIME.toDBName() + " FROM " + tablePrefix
-					+ NormalAchievements.PLAYEDTIME.toDBName() + " WHERE playername = '" + player.getUniqueId() + "'");
-			while (rs.next()) {
-				amount = rs.getLong(NormalAchievements.PLAYEDTIME.toDBName());
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving playedtime stats: ", e);
 		}
 		return amount;
 	}
@@ -752,7 +730,7 @@ public class SQLDatabaseManager {
 	 * @param type
 	 * @return distance statistic
 	 */
-	public void updateDistance(String name, int distance, String type) {
+	public void updateDistance(String name, long distance, String type) {
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			// Update statistic.

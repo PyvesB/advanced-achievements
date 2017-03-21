@@ -88,8 +88,8 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 						// Items must be removed from HashMaps AFTER write to DB has finished. As this is an async task,
 						// we could end up in a scenario where the player reconnects and data is not yet updated in the
 						// database; in this case, the cached variables will still be valid.
-						Map<String, Integer> map = plugin.getPoolsManager().getHashMap(category);
-						Integer distance = map.get(playerUUID);
+						Map<String, Long> map = plugin.getPoolsManager().getHashMap(category);
+						Long distance = map.get(playerUUID);
 						if (distance != null) {
 							plugin.getDb().updateDistance(playerUUID, distance, category.toDBName());
 							map.remove(playerUUID);
@@ -98,8 +98,7 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 				});
 			} else {
 				// Items can be removed from HashMaps directly, as this is done in the main thread of execution.
-				Integer distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEFOOT)
-						.remove(playerUUID);
+				Long distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEFOOT).remove(playerUUID);
 				if (distance != null) {
 					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEFOOT.toDBName());
 				}
@@ -154,17 +153,18 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 						// Items must be removed from HashMap AFTER write to DB has finished. As this is an async task,
 						// we could end up in a scenario where the player reconnects and data is not yet updated in the
 						// database; in this case, the cached variables will still be valid.
-						Long playTime = plugin.getPoolsManager().getPlayedTimeHashMap().get(playerUUID);
+						Long playTime = plugin.getPoolsManager().getHashMap(NormalAchievements.PLAYEDTIME)
+								.get(playerUUID);
 
 						if (playTime != null) {
 							plugin.getDb().updatePlaytime(playerUUID, playTime);
-							plugin.getPoolsManager().getPlayedTimeHashMap().remove(playerUUID);
+							plugin.getPoolsManager().getHashMap(NormalAchievements.PLAYEDTIME).remove(playerUUID);
 						}
 					}
 				});
 			} else {
 				// Items can be removed from HashMaps directly, as this is done in the main thread of execution.
-				Long playTime = plugin.getPoolsManager().getPlayedTimeHashMap().remove(playerUUID);
+				Long playTime = plugin.getPoolsManager().getHashMap(NormalAchievements.PLAYEDTIME).remove(playerUUID);
 
 				if (playTime != null) {
 					plugin.getDb().updatePlaytime(playerUUID, playTime);

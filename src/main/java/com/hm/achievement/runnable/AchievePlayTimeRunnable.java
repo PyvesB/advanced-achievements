@@ -53,23 +53,17 @@ public class AchievePlayTimeRunnable implements Runnable {
 		if (!player.hasPermission(category.toPermName()))
 			return;
 
+		long playedTime = plugin.getPoolsManager().getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME, player,
+				(int) (System.currentTimeMillis() - previousRunMillis));
+
 		String uuid = player.getUniqueId().toString();
-		Long playedTime = plugin.getPoolsManager().getPlayedTimeHashMap().get(uuid);
-		if (playedTime == null) {
-			playedTime = plugin.getDb().getPlaytimeAmount(player);
-		}
-
-		playedTime += System.currentTimeMillis() - previousRunMillis;
-
-		plugin.getPoolsManager().getPlayedTimeHashMap().put(uuid, playedTime);
-
 		// Iterate through all the different achievements.
 		for (String achievementThreshold : plugin.getPluginConfig()
 				.getConfigurationSection(NormalAchievements.PLAYEDTIME.toString()).getKeys(false)) {
 			String achievementName = plugin.getPluginConfig()
 					.getString(category + "." + achievementThreshold + ".Name");
 			// Check whether player has met the threshold and whether we he has not yet received the achievement.
-			if (playedTime > Integer.parseInt(achievementThreshold) * 3600000L
+			if (playedTime > Long.parseLong(achievementThreshold) * 3600000L
 					&& !plugin.getPoolsManager().hasPlayerAchievement(player, achievementName)) {
 				plugin.getAchievementDisplay().displayAchievement(player, category + "." + achievementThreshold);
 				plugin.getDb().registerAchievement(player, achievementName,

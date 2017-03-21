@@ -124,11 +124,11 @@ public abstract class AbstractListener {
 	 */
 	protected void updateStatisticAndAwardAchievementsIfAvailable(Player player, NormalAchievements category,
 			int incrementValue) {
-		int amount = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player, incrementValue);
+		long amount = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player, incrementValue);
 
 		if (incrementValue > 1) {
 			// Every value must be checked to see whether it corresponds to an achievement's threshold.
-			for (int threshold = amount - incrementValue + 1; threshold <= amount; ++threshold) {
+			for (long threshold = amount - incrementValue + 1; threshold <= amount; ++threshold) {
 				String configAchievement = category + "." + threshold;
 				awardAchievementIfAvailable(player, configAchievement);
 			}
@@ -149,12 +149,12 @@ public abstract class AbstractListener {
 	 */
 	protected void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category,
 			String subcategory, int incrementValue) {
-		int amount = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, subcategory, player,
+		long amount = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, subcategory, player,
 				incrementValue);
 
 		if (incrementValue > 1) {
 			// Every value must be checked to see whether it corresponds to an achievement's threshold.
-			for (int threshold = amount - incrementValue + 1; threshold <= amount; ++threshold) {
+			for (long threshold = amount - incrementValue + 1; threshold <= amount; ++threshold) {
 				String configAchievement = category + "." + subcategory + '.' + threshold;
 				awardAchievementIfAvailable(player, configAchievement);
 			}
