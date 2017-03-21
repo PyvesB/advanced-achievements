@@ -32,13 +32,19 @@ Firework: true
 # Choose BALL_LARGE, BALL, BURST, CREEPER, STAR or RANDOM.
 FireworkStyle: BALL_LARGE
 
+# Set to true to activate simpler effects and a calm sound when a player receives an achievement.
+# Ignored if Firework parameter is set to true.
+SimplifiedReception: false
+
 # Number of players displayed in /aach top, week and month commands.
 TopList: 5
 
-# Set to true to activate particle effects when receiving book and for players in top list.
+# Set to true to activate particle effects when performing /aach book, /aach stats with all achievements and
+# /aach top, week or month when ranked in the top list.
 AdditionalEffects: true
 
-# Set to true to activate sound effects when receiving book and for players in top list.
+# Set to true to activate particle effects when performing /aach book, /aach stats with all achievements and
+# /aach top, week or month when ranked in the top list.
 Sound: true
 
 # Set the icon of the plugin (default: shamrock, '\u2618').

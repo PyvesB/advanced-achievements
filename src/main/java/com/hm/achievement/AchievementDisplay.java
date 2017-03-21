@@ -30,6 +30,7 @@ public class AchievementDisplay {
 	private final AdvancedAchievements plugin;
 	private final String fireworkStyle;
 	private final boolean fireworks;
+	private final boolean simplifiedReception;
 	private final boolean titleScreen;
 
 	private static final Random RANDOM = new Random();
@@ -40,6 +41,7 @@ public class AchievementDisplay {
 		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
 		fireworkStyle = config.getString("FireworkStyle", "BALL_LARGE");
 		fireworks = config.getBoolean("Firework", true);
+		simplifiedReception = config.getBoolean("SimplifiedReception", false);
 		titleScreen = config.getBoolean("TitleScreen", true);
 	}
 
@@ -90,6 +92,8 @@ public class AchievementDisplay {
 
 		if (fireworks) {
 			displayFirework(player);
+		} else if (simplifiedReception) {
+			displaySimplifiedReception(player);
 		}
 
 		if (titleScreen) {
@@ -166,5 +170,17 @@ public class AchievementDisplay {
 	private Type getRandomFireworkType() {
 		Type[] fireworkTypes = Type.values();
 		return fireworkTypes[RANDOM.nextInt(fireworkTypes.length)];
+	}
+
+	/**
+	 * Displays a simplified particle effect and calm sound when receiving an achievement. Is used instead of
+	 * displayFirework.
+	 * 
+	 * @param player
+	 */
+	private void displaySimplifiedReception(Player player) {
+		Location location = player.getLocation();
+		player.getWorld().playSound(location, Sound.ENTITY_PLAYER_LEVELUP, 1, 0.9f);
+		ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, location, 1);
 	}
 }

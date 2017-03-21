@@ -160,10 +160,19 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 4.2:
 		if (!configFile.getKeys(false).contains("RestrictSpectator")) {
 			configFile.set("RestrictSpectator", true, new String[] {
 					"Stop all stats from increasing when player in spectator mode, including PlayedTime.",
 					"Connection achievements will only be handled once a player switches to a non-spectator mode." });
+			updateDone = true;
+		}
+
+		if (!configFile.getKeys(false).contains("SimplifiedReception")) {
+			configFile.set("SimplifiedReception", false,
+					new String[] {
+							"Set to true to activate simpler effects and a calm sound when a player receives an achievement.",
+							"Ignored if Firework parameter is set to true." });
 			updateDone = true;
 		}
 
@@ -355,6 +364,7 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 4.2:
 		if (!langFile.getKeys(false).contains("aach-command-toggle")) {
 			langFile.set("aach-command-toggle", "Toggle achievements of other players.");
 			updateDone = true;
