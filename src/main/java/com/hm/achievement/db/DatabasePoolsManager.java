@@ -82,7 +82,7 @@ public class DatabasePoolsManager {
 	 * @param category
 	 * @return
 	 */
-	protected Map<String, Long> getHashMap(MultipleAchievements category) {
+	public Map<String, Long> getHashMap(MultipleAchievements category) {
 		return multipleAchievementsToPlayerStatistics.get(category);
 	}
 

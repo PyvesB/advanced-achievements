@@ -39,6 +39,7 @@ import com.hm.achievement.command.InfoCommand;
 import com.hm.achievement.command.ListCommand;
 import com.hm.achievement.command.MonthCommand;
 import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.command.ResetCommand;
 import com.hm.achievement.command.StatsCommand;
 import com.hm.achievement.command.ToggleCommand;
 import com.hm.achievement.command.TopCommand;
@@ -152,6 +153,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private DeleteCommand deleteCommand;
 	private ReloadCommand reloadCommand;
 	private ToggleCommand toggleCommand;
+	private ResetCommand resetCommand;
 	private UpdateChecker updateChecker;
 
 	// Language, configuration and GUI related.
@@ -577,6 +579,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		deleteCommand = new DeleteCommand(this);
 		reloadCommand = new ReloadCommand(this);
 		toggleCommand = new ToggleCommand(this);
+		resetCommand = new ResetCommand(this);
 	}
 
 	/**
@@ -776,6 +779,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			} else {
 				helpCommand.executeCommand(sender, args, null);
 			}
+		} else if ((args.length == 3) && "reset".equalsIgnoreCase(args[0])) {
+			resetCommand.executeCommand(sender, args, "reset");
 		} else if ((args.length == 3) && "give".equalsIgnoreCase(args[0])) {
 			giveCommand.executeCommand(sender, args, "give");
 		} else if ((args.length >= 3) && "check".equalsIgnoreCase(args[0])) {

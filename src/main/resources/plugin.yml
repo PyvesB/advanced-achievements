@@ -48,6 +48,9 @@ permissions:
   achievement.delete:
     description: Allows to delete achievements by command.
     default: op
+  achievement.reset:
+    description: Allows to reset category statistics for a player.
+    default: op
   achievement.update:
     description: Allows to be notified when a plugin update is available and CheckForUpdate is set to true in config.
     default: op
@@ -61,11 +64,13 @@ permissions:
       achievement.week: true
       achievement.month: true
       achievement.stats: true
+      achievement.toggle: true
       achievement.easteregg: true
       achievement.reload: true
       achievement.give: true
       achievement.check: true
       achievement.delete: true
+      achievement.reset: true
       achievement.update: true  
   achievement.count.connections:
     description: Allows connection statistics in database to increase.

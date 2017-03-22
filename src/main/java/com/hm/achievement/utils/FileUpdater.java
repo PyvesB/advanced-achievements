@@ -385,6 +385,27 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!langFile.getKeys(false).contains("aach-command-reset")) {
+			langFile.set("aach-command-reset", "Reset statistic for category CAT.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("aach-command-reset-hover")) {
+			langFile.set("aach-command-reset-hover",
+					"Player must be online; for categories with subcategories, they are all reset!");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("reset-successful")) {
+			langFile.set("reset-successful", " statistics were cleared for PLAYER.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("category-does-not-exist")) {
+			langFile.set("category-does-not-exist", "The specified category does not exist.");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the language file: save and do a fresh load.
 			try {

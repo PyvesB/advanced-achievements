@@ -698,6 +698,22 @@ public class SQLDatabaseManager {
 	}
 
 	/**
+	 * Clear Connection statistics for a given player.
+	 * 
+	 * @param player
+	 */
+	public void clearConnection(Player player) {
+		Connection conn = getSQLConnection();
+		try (PreparedStatement prep = conn
+				.prepareStatement("DELETE FROM " + tablePrefix + "connections WHERE playername = ?")) {
+			prep.setString(1, player.getUniqueId().toString());
+			prep.execute();
+		} catch (SQLException e) {
+			plugin.getLogger().log(Level.SEVERE, "SQL error while deleting connections: ", e);
+		}
+	}
+
+	/**
 	 * Updates player's playtime.
 	 * 
 	 * @param name

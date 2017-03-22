@@ -114,6 +114,15 @@ public class HelpCommand extends AbstractCommand {
 							"Player must be online; only Commands achievements can be used."));
 		}
 
+		if (sender.hasPermission("achievement.reset")) {
+			sendJsonClickableHoverableMessage(sender,
+					plugin.getChatHeader() + plugin.getColor() + "/aach reset &ocat player" + ChatColor.GRAY + " > "
+							+ StringUtils.replaceOnce(plugin.getPluginLang().getString("aach-command-reset",
+									"Reset statistic for category CAT."), "CAT", "&ocat&7"),
+					"/aach reset cat name", plugin.getPluginLang().getString("aach-command-reset-hover",
+							"Player must be online; for categories with subcategories, they are all reset!"));
+		}
+
 		if (sender.hasPermission("achievement.check")) {
 			sendJsonClickableHoverableMessage(sender, plugin.getChatHeader() + plugin.getColor()
 					+ "/aach check &oach player" + ChatColor.GRAY + " > "
