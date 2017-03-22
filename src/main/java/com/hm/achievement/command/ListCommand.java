@@ -132,6 +132,12 @@ public class ListCommand extends AbstractCommand {
 		player.openInventory(guiInv);
 	}
 
+	/**
+	 * Displays the a category GUI, containing all the achievements from a given category.
+	 * 
+	 * @param item
+	 * @param player
+	 */
 	public void createCategoryGUI(ItemStack item, Player player) {
 		for (Entry<MultipleAchievements, ItemStack> entry : multipleAchievementCategoryItems.entrySet()) {
 			if (entry.getValue().getType() == item.getType()
@@ -155,7 +161,7 @@ public class ListCommand extends AbstractCommand {
 	 * Displays the a category GUI, containing all the achievements from a given category. This method is used for
 	 * multiple achievements, in other words those based on sub-categories.
 	 * 
-	 * @param clickedItem
+	 * @param category
 	 * @param player
 	 */
 	public void createCategoryGUIMultiple(MultipleAchievements category, Player player) {
@@ -243,7 +249,7 @@ public class ListCommand extends AbstractCommand {
 	 * Displays a category GUI, containing all the achievements from a given category. This method is used for normal
 	 * achievements.
 	 * 
-	 * @param clickedItem
+	 * @param category
 	 * @param player
 	 */
 	private void createCategoryGUINormal(NormalAchievements category, Player player) {

@@ -74,6 +74,7 @@ import com.hm.achievement.listener.AchieveTradeAnvilBrewSmeltListener;
 import com.hm.achievement.listener.AchieveXPListener;
 import com.hm.achievement.listener.FireworkListener;
 import com.hm.achievement.listener.ListGUIListener;
+import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
@@ -134,10 +135,10 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	private ListGUIListener listGUIListener;
 	private FireworkListener fireworkListener;
+	private PlayerAdvancedAchievementListener playerAdvancedAchievementListener;
 
 	// Additional classes related to plugin modules and commands.
 	private AchievementRewards reward;
-	private AchievementDisplay achievementDisplay;
 	private GiveCommand giveCommand;
 	private BookCommand bookCommand;
 	private TopCommand topCommand;
@@ -390,6 +391,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		fireworkListener = new FireworkListener(this);
 		pm.registerEvents(fireworkListener, this);
 
+		playerAdvancedAchievementListener = new PlayerAdvancedAchievementListener(this);
+		pm.registerEvents(playerAdvancedAchievementListener, this);
+
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
 
 		// Initialise the SQLite/MySQL/PostgreSQL database.
@@ -468,9 +472,13 @@ public class AdvancedAchievements extends JavaPlugin {
 		registerPermissions();
 		initialiseCommands();
 
+		if (playerAdvancedAchievementListener != null) {
+			playerAdvancedAchievementListener.extractParameters();
+		}
+
 		// Reload achievements in distance, max level and play time runnables on plugin reload (when objects are null).
 		if (achieveDistanceRunnable != null) {
-			achieveDistanceRunnable.extractAchievementsFromConfig();
+			achieveDistanceRunnable.extractParameter();
 		}
 
 		// Unregister events if user changed the option and did an /aach reload. We do not recheck for update on /aach
@@ -556,7 +564,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	 */
 	private void initialiseCommands() {
 		reward = new AchievementRewards(this);
-		achievementDisplay = new AchievementDisplay(this);
 		giveCommand = new GiveCommand(this);
 		bookCommand = new BookCommand(this);
 		topCommand = new TopCommand(this);
@@ -957,10 +964,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		return reward;
 	}
 
-	public AchievementDisplay getAchievementDisplay() {
-		return achievementDisplay;
-	}
-
 	public String getChatHeader() {
 		return chatHeader;
 	}
@@ -1001,6 +1004,10 @@ public class AdvancedAchievements extends JavaPlugin {
 		return listCommand;
 	}
 
+	public ToggleCommand getToggleCommand() {
+		return toggleCommand;
+	}
+
 	public AchieveDistanceRunnable getAchieveDistanceRunnable() {
 		return achieveDistanceRunnable;
 	}
@@ -1033,6 +1040,10 @@ public class AdvancedAchievements extends JavaPlugin {
 		return petMasterGiveReceiveListener;
 	}
 
+	public FireworkListener getFireworkListener() {
+		return fireworkListener;
+	}
+
 	public String getIcon() {
 		return icon;
 	}
@@ -1063,15 +1074,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		return gui;
 	}
 
-	protected Economy getEconomy() {
+	public Economy getEconomy() {
 		return economy;
-	}
-
-	protected ToggleCommand getToggleCommand() {
-		return toggleCommand;
-	}
-
-	protected FireworkListener getFireworkListener() {
-		return fireworkListener;
 	}
 }

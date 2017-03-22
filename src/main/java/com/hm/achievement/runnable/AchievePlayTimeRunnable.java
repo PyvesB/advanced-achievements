@@ -5,6 +5,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.category.NormalAchievements;
 
 /**
@@ -56,7 +57,6 @@ public class AchievePlayTimeRunnable implements Runnable {
 		long playedTime = plugin.getPoolsManager().getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME, player,
 				(int) (System.currentTimeMillis() - previousRunMillis));
 
-		String uuid = player.getUniqueId().toString();
 		// Iterate through all the different achievements.
 		for (String achievementThreshold : plugin.getPluginConfig()
 				.getConfigurationSection(NormalAchievements.PLAYEDTIME.toString()).getKeys(false)) {
@@ -65,12 +65,17 @@ public class AchievePlayTimeRunnable implements Runnable {
 			// Check whether player has met the threshold and whether we he has not yet received the achievement.
 			if (playedTime > Long.parseLong(achievementThreshold) * 3600000L
 					&& !plugin.getPoolsManager().hasPlayerAchievement(player, achievementName)) {
-				plugin.getAchievementDisplay().displayAchievement(player, category + "." + achievementThreshold);
-				plugin.getDb().registerAchievement(player, achievementName,
-						plugin.getPluginConfig().getString(category + "." + achievementThreshold + ".Message"));
-				plugin.getPoolsManager().getReceivedAchievementsCache().put(uuid, achievementName);
-				plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, achievementName);
-				plugin.getReward().checkConfig(player, category + "." + achievementThreshold);
+				String configAchievement = category.toString() + achievementThreshold;
+				// Fire achievement event.
+				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
+						.player(player).name(plugin.getPluginConfig().getString(achievementName))
+						.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
+						.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
+						.commandRewards(plugin.getReward().getCommandRewards(configAchievement, player))
+						.itemReward(plugin.getReward().getItemReward(configAchievement))
+						.moneyReward(plugin.getReward().getMoneyAmount(configAchievement));
+
+				Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 			}
 		}
 	}

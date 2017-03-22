@@ -1,4 +1,4 @@
-package com.hm.achievement;
+package com.hm.achievement.listener;
 
 import java.util.Random;
 import java.util.logging.Level;
@@ -13,36 +13,126 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 import com.google.common.base.Strings;
-import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.PlayerAdvancedAchievementEvent;
 import com.hm.mcshared.particle.PacketSender;
 import com.hm.mcshared.particle.ParticleEffect;
 
 /**
- * Class in charge of displaying of achievements (title, firework, chat messages).
+ * Listener class to deal with achievement receptions: rewards, display and database operations.
  * 
  * @author Pyves
+ *
  */
-public class AchievementDisplay {
-
-	private final AdvancedAchievements plugin;
-	private final String fireworkStyle;
-	private final boolean fireworks;
-	private final boolean simplifiedReception;
-	private final boolean titleScreen;
+public class PlayerAdvancedAchievementListener extends AbstractListener implements Listener {
 
 	private static final Random RANDOM = new Random();
 
-	protected AchievementDisplay(AdvancedAchievements achievement) {
-		this.plugin = achievement;
-		// Load configuration parameters.
-		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
-		fireworkStyle = config.getString("FireworkStyle", "BALL_LARGE");
-		fireworks = config.getBoolean("Firework", true);
-		simplifiedReception = config.getBoolean("SimplifiedReception", false);
-		titleScreen = config.getBoolean("TitleScreen", true);
+	private boolean rewardCommandNotif;
+	private String fireworkStyle;
+	private boolean fireworks;
+	private boolean simplifiedReception;
+	private boolean titleScreen;
+
+	public PlayerAdvancedAchievementListener(AdvancedAchievements plugin) {
+		super(plugin);
+		extractParameters();
+	}
+
+	public void extractParameters() {
+		fireworkStyle = plugin.getPluginConfig().getString("FireworkStyle", "BALL_LARGE");
+		fireworks = plugin.getPluginConfig().getBoolean("Firework", true);
+		simplifiedReception = plugin.getPluginConfig().getBoolean("SimplifiedReception", false);
+		titleScreen = plugin.getPluginConfig().getBoolean("TitleScreen", true);
+		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
+		// a player is notified in case of a command reward.
+		rewardCommandNotif = plugin.getPluginConfig().getBoolean("RewardCommandNotif", true);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerAdvancedAchievementReception(PlayerAdvancedAchievementEvent event) {
+		Player player = event.getPlayer();
+		plugin.getDb().registerAchievement(player, event.getName(), event.getMessage());
+		String uuid = player.getUniqueId().toString();
+		plugin.getPoolsManager().getReceivedAchievementsCache().put(uuid, event.getName());
+		plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, event.getName());
+		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage());
+		if (event.getMoneyReward() > 0) {
+			rewardMoney(player, event.getMoneyReward());
+		}
+		if (event.getItemReward() != null) {
+			rewardItem(player, event.getItemReward());
+		}
+		if (event.getCommandRewards() != null && event.getCommandRewards().length > 0) {
+			rewardCommands(player, event.getCommandRewards());
+		}
+
+	}
+
+	/**
+	 * Executes player command rewards.
+	 * 
+	 * @param player
+	 * @param commands
+	 */
+	private void rewardCommands(Player player, String[] commands) {
+		for (String command : commands) {
+			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
+		}
+		String rewardMsg = plugin.getPluginLang().getString("command-reward", "Reward command carried out!");
+		if (!rewardCommandNotif || rewardMsg.length() == 0) {
+			return;
+		}
+		player.sendMessage(plugin.getChatHeader() + rewardMsg);
+	}
+
+	/**
+	 * Gives an item reward to a player.
+	 * 
+	 * @param player
+	 * @param item
+	 */
+	private void rewardItem(Player player, ItemStack item) {
+		if (player.getInventory().firstEmpty() != -1) {
+			player.getInventory().addItem(item);
+		} else {
+			player.getWorld().dropItem(player.getLocation(), item);
+		}
+		player.sendMessage(plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " "
+				+ plugin.getReward().getItemName(item));
+	}
+
+	/**
+	 * Gives a money reward to a player.
+	 * 
+	 * @param player
+	 * @param amount
+	 */
+	@SuppressWarnings("deprecation")
+	private void rewardMoney(Player player, int amount) {
+		if (plugin.setUpEconomy(true)) {
+			try {
+				plugin.getEconomy().depositPlayer(player, amount);
+			} catch (NoSuchMethodError e) {
+				// Deprecated method, but was the only one existing prior to Vault 1.4.
+				plugin.getEconomy().depositPlayer(player.getName(), amount);
+			}
+
+			String currencyName = plugin.getReward().getCurrencyName(amount);
+
+			player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&',
+					StringUtils.replaceOnce(
+							plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!"),
+							"AMOUNT", amount + " " + currencyName)));
+		}
 	}
 
 	/**
@@ -51,26 +141,20 @@ public class AchievementDisplay {
 	 * @param player
 	 * @param configAchievement
 	 */
-	public void displayAchievement(Player player, String configAchievement) {
-		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
-
-		String achievementName = config.getString(configAchievement + ".Name");
-		String displayName = config.getString(configAchievement + ".DisplayName", "");
-		String message = config.getString(configAchievement + ".Message", "");
+	private void displayAchievement(Player player, String name, String displayName, String description) {
 		String nameToShowUser;
-
 		if (Strings.isNullOrEmpty(displayName)) {
 			// Use the achievement key name (this name is used in the achievements table in the database).
-			nameToShowUser = ChatColor.translateAlternateColorCodes('&', achievementName);
-			plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + achievementName);
+			nameToShowUser = ChatColor.translateAlternateColorCodes('&', name);
+			plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + name);
 		} else {
 			// Display name is defined; use it.
 			nameToShowUser = ChatColor.translateAlternateColorCodes('&', displayName);
-			plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + achievementName
-					+ " (" + displayName + ")");
+			plugin.getLogger().info(
+					"Player " + player.getName() + " received the achievement: " + name + " (" + displayName + ")");
 		}
 
-		String msg = ChatColor.translateAlternateColorCodes('&', message);
+		String msg = ChatColor.translateAlternateColorCodes('&', description);
 
 		player.sendMessage(
 				plugin.getChatHeader() + plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " "

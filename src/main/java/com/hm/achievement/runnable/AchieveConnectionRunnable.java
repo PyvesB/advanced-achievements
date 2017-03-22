@@ -3,10 +3,12 @@ package com.hm.achievement.runnable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 
@@ -62,13 +64,16 @@ public class AchieveConnectionRunnable implements Runnable {
 			String configAchievement = category + "." + connections;
 			AchievementCommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
 			if (pluginConfig.getString(configAchievement + ".Message", null) != null) {
-				plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-				String achievementName = pluginConfig.getString(configAchievement + ".Name");
-				plugin.getDb().registerAchievement(player, achievementName,
-						pluginConfig.getString(configAchievement + ".Message"));
-				plugin.getPoolsManager().getReceivedAchievementsCache().put(uuid, achievementName);
-				plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, achievementName);
-				plugin.getReward().checkConfig(player, configAchievement);
+				// Fire achievement event.
+				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
+						.player(player).name(plugin.getPluginConfig().getString(configAchievement + ".Name"))
+						.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
+						.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
+						.commandRewards(plugin.getReward().getCommandRewards(configAchievement, player))
+						.itemReward(plugin.getReward().getItemReward(configAchievement))
+						.moneyReward(plugin.getReward().getMoneyAmount(configAchievement));
+
+				Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 			}
 		}
 

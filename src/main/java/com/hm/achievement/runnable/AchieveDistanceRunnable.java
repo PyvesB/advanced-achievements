@@ -15,8 +15,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
@@ -43,14 +43,14 @@ public class AchieveDistanceRunnable implements Runnable {
 
 		playerLocations = new HashMap<>();
 
-		extractAchievementsFromConfig();
+		extractParameter();
 	}
 
 	/**
-	 * Loads list of achievements from configuration.
+	 * Loads configuration parameter.
 	 * 
 	 */
-	public void extractAchievementsFromConfig() {
+	public void extractParameter() {
 		ignoreVerticalDistance = plugin.getPluginConfig().getBoolean("IgnoreVerticalDistance", false);
 	}
 
@@ -152,27 +152,19 @@ public class AchieveDistanceRunnable implements Runnable {
 					.getString(category + "." + achievementThreshold + ".Name");
 			// Check whether player has met the threshold and whether we he has not yet received the achievement.
 			if (distance > threshold && !plugin.getPoolsManager().hasPlayerAchievement(player, achievementName)) {
-				awardDistanceAchievement(player, threshold, category + ".");
+				String configAchievement = category.toString() + achievementThreshold;
+				// Fire achievement event.
+				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
+						.player(player).name(plugin.getPluginConfig().getString(configAchievement + ".Name"))
+						.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
+						.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
+						.commandRewards(plugin.getReward().getCommandRewards(configAchievement, player))
+						.itemReward(plugin.getReward().getItemReward(configAchievement))
+						.moneyReward(plugin.getReward().getMoneyAmount(configAchievement));
+
+				Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 			}
 		}
-	}
-
-	/**
-	 * Gives a distance achievement to the player.
-	 * 
-	 * @param player
-	 * @param threshold
-	 * @param type
-	 */
-	private void awardDistanceAchievement(Player player, long threshold, String type) {
-		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
-		plugin.getAchievementDisplay().displayAchievement(player, type + threshold);
-		String achievementName = config.getString(type + threshold + ".Name");
-		plugin.getDb().registerAchievement(player, achievementName, config.getString(type + threshold + ".Message"));
-		String uuid = player.getUniqueId().toString();
-		plugin.getPoolsManager().getReceivedAchievementsCache().put(uuid, achievementName);
-		plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, achievementName);
-		plugin.getReward().checkConfig(player, type + threshold);
 	}
 
 	public Map<String, Location> getPlayerLocations() {

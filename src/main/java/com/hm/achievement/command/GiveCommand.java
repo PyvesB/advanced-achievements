@@ -1,10 +1,12 @@
 package com.hm.achievement.command;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 
 /**
  * Class in charge of handling the /aach give command, which gives an achievement from the Commands category.
@@ -38,14 +40,16 @@ public class GiveCommand extends AbstractParsableCommand {
 				return;
 			}
 
-			// Display, register and give rewards of achievement.
-			plugin.getAchievementDisplay().displayAchievement(player, configAchievement);
-			plugin.getDb().registerAchievement(player, achievementName,
-					plugin.getPluginConfig().getString(configAchievement + ".Message"));
-			String uuid = player.getUniqueId().toString();
-			plugin.getPoolsManager().getReceivedAchievementsCache().put(uuid, achievementName);
-			plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, achievementName);
-			plugin.getReward().checkConfig(player, configAchievement);
+			// Fire achievement event.
+			PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
+					.player(player).name(achievementName)
+					.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
+					.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
+					.commandRewards(plugin.getReward().getCommandRewards(configAchievement, player))
+					.itemReward(plugin.getReward().getItemReward(configAchievement))
+					.moneyReward(plugin.getReward().getMoneyAmount(configAchievement));
+
+			Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 
 			sender.sendMessage(plugin.getChatHeader()
 					+ plugin.getPluginLang().getString("achievement-given", "Achievement given!"));
