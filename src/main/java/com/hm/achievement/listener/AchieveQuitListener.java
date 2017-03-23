@@ -91,7 +91,7 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 						Map<String, Long> map = plugin.getPoolsManager().getHashMap(category);
 						Long distance = map.get(playerUUID);
 						if (distance != null) {
-							plugin.getDb().updateDistance(playerUUID, distance, category.toDBName());
+							plugin.getDb().updateStatistic(playerUUID, distance, category.toDBName());
 							map.remove(playerUUID);
 						}
 					}
@@ -100,37 +100,37 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 				// Items can be removed from HashMaps directly, as this is done in the main thread of execution.
 				Long distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEFOOT).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEFOOT.toDBName());
+					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEFOOT.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEPIG).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEPIG.toDBName());
+					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEPIG.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEHORSE).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEHORSE.toDBName());
+					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEHORSE.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEBOAT).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEBOAT.toDBName());
+					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEBOAT.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEMINECART).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEMINECART.toDBName());
+					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEMINECART.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEGLIDING).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCEGLIDING.toDBName());
+					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEGLIDING.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCELLAMA).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateDistance(playerUUID, distance, NormalAchievements.DISTANCELLAMA.toDBName());
+					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCELLAMA.toDBName());
 				}
 			}
 		}
@@ -157,7 +157,8 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 								.get(playerUUID);
 
 						if (playTime != null) {
-							plugin.getDb().updatePlaytime(playerUUID, playTime);
+							plugin.getDb().updateStatistic(playerUUID, playTime,
+									NormalAchievements.PLAYEDTIME.toDBName());
 							plugin.getPoolsManager().getHashMap(NormalAchievements.PLAYEDTIME).remove(playerUUID);
 						}
 					}
@@ -167,7 +168,7 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 				Long playTime = plugin.getPoolsManager().getHashMap(NormalAchievements.PLAYEDTIME).remove(playerUUID);
 
 				if (playTime != null) {
-					plugin.getDb().updatePlaytime(playerUUID, playTime);
+					plugin.getDb().updateStatistic(playerUUID, playTime, NormalAchievements.PLAYEDTIME.toDBName());
 				}
 			}
 		}

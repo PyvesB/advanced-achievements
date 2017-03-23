@@ -701,32 +701,32 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Send played time stats to the database, forcing synchronous writes.
 		if (achievePlayTimeRunnable != null) {
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.PLAYEDTIME).entrySet()) {
-				db.updatePlaytime(entry.getKey(), entry.getValue());
+				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.PLAYEDTIME.toDBName());
 			}
 		}
 
 		// Send traveled distance stats to the database, synchronous writes.
 		if (achieveDistanceRunnable != null) {
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEFOOT).entrySet()) {
-				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEFOOT.toDBName());
+				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEFOOT.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEPIG).entrySet()) {
-				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEPIG.toDBName());
+				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEPIG.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEHORSE).entrySet()) {
-				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEHORSE.toDBName());
+				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEHORSE.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEBOAT).entrySet()) {
-				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEBOAT.toDBName());
+				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEBOAT.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEMINECART).entrySet()) {
-				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEMINECART.toDBName());
+				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEMINECART.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEGLIDING).entrySet()) {
-				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEGLIDING.toDBName());
+				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEGLIDING.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCELLAMA).entrySet()) {
-				db.updateDistance(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCELLAMA.toDBName());
+				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCELLAMA.toDBName());
 			}
 		}
 

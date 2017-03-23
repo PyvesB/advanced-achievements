@@ -50,7 +50,9 @@ public class SQLDatabaseManager {
 
 	public SQLDatabaseManager(AdvancedAchievements plugin) {
 		this.plugin = plugin;
-		// We expect to execute many short writes to the database. The pool can grow dynamically under high load.
+		// We expect to execute many short writes to the database. The pool can grow dynamically under high load. We do
+		// not use Bukkit API scheduler, as a reload/restart could kill the async task before write to
+		// database has occurred; pools also allow to reuse threads.
 		pool = Executors.newCachedThreadPool();
 	}
 
@@ -96,26 +98,6 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Retrieves SQL connection to MySQL, PostgreSQL or SQLite database.
-	 */
-	public Connection getSQLConnection() {
-		// Check if Connection was not previously closed.
-		try {
-			if (sqlConnection == null || sqlConnection.isClosed()) {
-				if (databaseType == DatabaseType.MYSQL || databaseType == DatabaseType.POSTGRESQL) {
-					sqlConnection = createRemoteSQLConnection();
-				} else {
-					sqlConnection = createSQLiteConnection();
-				}
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while attempting to retrieve connection to database: ", e);
-			plugin.setSuccessfulLoad(false);
-		}
-		return sqlConnection;
-	}
-
-	/**
 	 * Loads plugin configuration and sets parameters relevant to the database system.
 	 */
 	private void configurationLoad() {
@@ -152,34 +134,40 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Creates a new Connection object to SQLite database.
-	 * 
-	 * @return connection object to database
-	 * @throws SQLException
+	 * Retrieves SQL connection to MySQL, PostgreSQL or SQLite database.
 	 */
-	private Connection createSQLiteConnection() throws SQLException {
-
-		File dbfile = new File(plugin.getDataFolder(), "achievements.db");
+	public Connection getSQLConnection() {
+		// Check if Connection was not previously closed.
 		try {
-			if (dbfile.createNewFile()) {
-				plugin.getLogger().info("Successfully created database file.");
+			if (sqlConnection == null || sqlConnection.isClosed()) {
+				sqlConnection = createSQLConnection();
 			}
-		} catch (IOException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while creating database file: ", e);
+		} catch (SQLException e) {
+			plugin.getLogger().log(Level.SEVERE, "Error while attempting to retrieve connection to database: ", e);
 			plugin.setSuccessfulLoad(false);
 		}
-		return DriverManager.getConnection("jdbc:sqlite:" + dbfile);
+		return sqlConnection;
 	}
 
 	/**
-	 * Creates a new Connection object to MySQL or PostgreSQL database.
+	 * Creates a new Connection object tothe database.
 	 * 
 	 * @return connection object to database
 	 * @throws SQLException
 	 */
-	private Connection createRemoteSQLConnection() throws SQLException {
-
-		if (databaseType == DatabaseType.MYSQL) {
+	private Connection createSQLConnection() throws SQLException {
+		if (databaseType == DatabaseType.SQLITE) {
+			File dbfile = new File(plugin.getDataFolder(), "achievements.db");
+			try {
+				if (dbfile.createNewFile()) {
+					plugin.getLogger().info("Successfully created database file.");
+				}
+			} catch (IOException e) {
+				plugin.getLogger().log(Level.SEVERE, "Error while creating database file: ", e);
+				plugin.setSuccessfulLoad(false);
+			}
+			return DriverManager.getConnection("jdbc:sqlite:" + dbfile);
+		} else if (databaseType == DatabaseType.MYSQL) {
 			return DriverManager.getConnection(databaseAddress + "?useSSL=false&autoReconnect=true&user=" + databaseUser
 					+ "&password=" + databasePassword);
 		} else {
@@ -199,14 +187,8 @@ public class SQLDatabaseManager {
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs;
-			String chronology;
-			if (achievementsChronologicalOrder) {
-				// Oldest date to newest one.
-				chronology = "ASC";
-			} else {
-				// Newest date to oldest one.
-				chronology = "DESC";
-			}
+			// Either oldest date to newest one or newest date to oldest one.
+			String chronology = achievementsChronologicalOrder ? "ASC" : "DESC";
 			rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements WHERE playername = '"
 					+ player.getUniqueId() + "' ORDER BY date " + chronology);
 
@@ -214,7 +196,6 @@ public class SQLDatabaseManager {
 			while (rs.next()) {
 				String achName = rs.getString(2);
 				String displayName = achievementsAndDisplayNames.get(achName);
-
 				if (displayName == null) {
 					achievementsList.add(achName);
 				} else {
@@ -305,7 +286,6 @@ public class SQLDatabaseManager {
 			query = "SELECT playername, COUNT(*) FROM " + tablePrefix
 					+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC LIMIT ?";
 		}
-
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn.prepareStatement(query)) {
 			if (start == 0L) {
@@ -344,7 +324,6 @@ public class SQLDatabaseManager {
 			query = "SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + tablePrefix
 					+ "achievements WHERE date > ?) AS distinctPlayers";
 		}
-
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn.prepareStatement(query)) {
 			if (start > 0L) {
@@ -382,7 +361,6 @@ public class SQLDatabaseManager {
 					+ "achievements WHERE date > ? GROUP BY playername) AS achGroupedByPlayer WHERE number > (SELECT COUNT(*) FROM "
 					+ tablePrefix + "achievements WHERE playername = ? AND date > ?)";
 		}
-
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn.prepareStatement(query)) {
 			if (start == 0L) {
@@ -414,52 +392,39 @@ public class SQLDatabaseManager {
 	 */
 	public void registerAchievement(Player player, final String achievement, final String desc) {
 		final String name = player.getUniqueId().toString();
+		Runnable runnable = new Runnable() {
 
-		if (plugin.isAsyncPooledRequestsSender()) {
-			// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to database
-			// has occurred; pools also allow to reuse threads.
-			pool.execute(new Runnable() {
-
-				@Override
-				public void run() {
-					registerAchievementToDB(achievement, desc, name);
+			@Override
+			public void run() {
+				String query;
+				if (databaseType == DatabaseType.POSTGRESQL) {
+					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
+					// available for PostgreSQL 9.5+.
+					query = "INSERT INTO " + tablePrefix
+							+ "achievements VALUES (?,?,?,?) ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)";
+				} else {
+					query = "REPLACE INTO " + tablePrefix + "achievements VALUES (?,?,?,?)";
 				}
-			});
-		} else {
-			registerAchievementToDB(achievement, desc, name);
-		}
-	}
-
-	/**
-	 * Writes to DB to register new achievement for a player. Method executed on main server thread or in parallel.
-	 * 
-	 * @param achievement
-	 * @param desc
-	 * @param name
-	 */
-	private void registerAchievementToDB(String achievement, String desc, String name) {
-		String query;
-		if (databaseType == DatabaseType.POSTGRESQL) {
-			// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
-			// available for PostgreSQL 9.5+.
-			query = "INSERT INTO " + tablePrefix
-					+ "achievements VALUES (?,?,?,?) ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)";
-		} else {
-			query = "REPLACE INTO " + tablePrefix + "achievements VALUES (?,?,?,?)";
-		}
-		Connection conn = getSQLConnection();
-		try (PreparedStatement prep = conn.prepareStatement(query)) {
-			prep.setString(1, name);
-			prep.setString(2, achievement);
-			prep.setString(3, desc);
-			prep.setDate(4, new java.sql.Date(new java.util.Date().getTime()));
-			if (databaseType == DatabaseType.POSTGRESQL) {
-				prep.setString(5, desc);
-				prep.setDate(6, new java.sql.Date(new java.util.Date().getTime()));
+				Connection conn = getSQLConnection();
+				try (PreparedStatement prep = conn.prepareStatement(query)) {
+					prep.setString(1, name);
+					prep.setString(2, achievement);
+					prep.setString(3, desc);
+					prep.setDate(4, new java.sql.Date(new java.util.Date().getTime()));
+					if (databaseType == DatabaseType.POSTGRESQL) {
+						prep.setString(5, desc);
+						prep.setDate(6, new java.sql.Date(new java.util.Date().getTime()));
+					}
+					prep.execute();
+				} catch (SQLException e) {
+					plugin.getLogger().log(Level.SEVERE, "SQL error while registering achievement: ", e);
+				}
 			}
-			prep.execute();
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while registering achievement: ", e);
+		};
+		if (plugin.isAsyncPooledRequestsSender()) {
+			pool.execute(runnable);
+		} else {
+			runnable.run();
 		}
 	}
 
@@ -470,20 +435,18 @@ public class SQLDatabaseManager {
 	 * @param name
 	 * @return true if achievement found in database, false otherwise
 	 */
-	protected boolean hasPlayerAchievement(Player player, String name) {
+	public boolean hasPlayerAchievement(Player player, String name) {
 		boolean result = false;
 		String query;
 		if (name.contains("'")) {
-			// We check for names with single quotes, but also two single quotes. This is due to a bug in versions
-			// 3.0 to 3.0.2 where names containing single quotes were inserted with two single quotes in the
-			// database.
+			// We check for names with single quotes, but also two single quotes. This is due to a bug in versions 3.0
+			// to 3.0.2 where names containing single quotes were inserted with two single quotes in the database.
 			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
 					+ player.getUniqueId() + "' AND (achievement = ? OR achievement = ?)";
 		} else {
 			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
 					+ player.getUniqueId() + "' AND achievement = ?";
 		}
-
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn.prepareStatement(query)) {
 			if (name.contains("'")) {
@@ -508,36 +471,25 @@ public class SQLDatabaseManager {
 	 */
 	public void deletePlayerAchievement(Player player, final String ach) {
 		final String name = player.getUniqueId().toString();
-		if (plugin.isAsyncPooledRequestsSender()) {
-			// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to
-			// database has occurred; pools also allow to reuse threads.
-			pool.execute(new Runnable() {
+		Runnable runnable = new Runnable() {
 
-				@Override
-				public void run() {
-					deletePlayerAchievementFromDB(ach, name);
+			@Override
+			public void run() {
+				Connection conn = getSQLConnection();
+				try (PreparedStatement prep = conn.prepareStatement(
+						"DELETE FROM " + tablePrefix + "achievements WHERE playername = ? AND achievement = ?")) {
+					prep.setString(1, name);
+					prep.setString(2, ach);
+					prep.execute();
+				} catch (SQLException e) {
+					plugin.getLogger().log(Level.SEVERE, "SQL error while deleting achievement: ", e);
 				}
-			});
+			}
+		};
+		if (plugin.isAsyncPooledRequestsSender()) {
+			pool.execute(runnable);
 		} else {
-			deletePlayerAchievementFromDB(ach, name);
-		}
-	}
-
-	/**
-	 * Deletes an achievement from a player in the DB. Method executed on main server thread or in parallel.
-	 * 
-	 * @param player
-	 * @param name
-	 */
-	private void deletePlayerAchievementFromDB(final String ach, final String name) {
-		Connection conn = getSQLConnection();
-		try (PreparedStatement prep = conn.prepareStatement(
-				"DELETE FROM " + tablePrefix + "achievements WHERE playername = ? AND achievement = ?")) {
-			prep.setString(1, name);
-			prep.setString(2, ach);
-			prep.execute();
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while deleting achievement: ", e);
+			runnable.run();
 		}
 	}
 
@@ -651,18 +603,33 @@ public class SQLDatabaseManager {
 				prev = rs.getInt(NormalAchievements.CONNECTIONS.toDBName());
 			}
 			final int newConnections = prev + 1;
-			if (plugin.isAsyncPooledRequestsSender()) {
-				// Avoid using Bukkit API scheduler, as a reload/restart could kill the async task before write to
-				// database has occurred; pools also allow to reuse threads.
-				pool.execute(new Runnable() {
+			Runnable runnable = new Runnable() {
 
-					@Override
-					public void run() {
-						updateConnection(date, name, newConnections);
+				@Override
+				public void run() {
+					Connection conn = getSQLConnection();
+					try (Statement st = conn.createStatement()) {
+						if (databaseType == DatabaseType.POSTGRESQL) {
+							// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct,
+							// which is available for PostgreSQL 9.5+.
+							st.execute("INSERT INTO " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName()
+									+ " VALUES ('" + name + "', " + newConnections + ", '" + date + "')"
+									+ " ON CONFLICT (playername) DO UPDATE SET ("
+									+ NormalAchievements.CONNECTIONS.toDBName() + ",date)=('" + newConnections + "','"
+									+ date + "')");
+						} else {
+							st.execute("REPLACE INTO " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName()
+									+ " VALUES ('" + name + "', " + newConnections + ", '" + date + "')");
+						}
+					} catch (SQLException e) {
+						plugin.getLogger().log(Level.SEVERE, "SQL error while updating connection: ", e);
 					}
-				});
+				}
+			};
+			if (plugin.isAsyncPooledRequestsSender()) {
+				pool.execute(runnable);
 			} else {
-				updateConnection(date, name, newConnections);
+				runnable.run();
 			}
 			return newConnections;
 		} catch (SQLException e) {
@@ -672,94 +639,55 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Updates player's number of connections and last connection date.
-	 * 
-	 * @param date
-	 * @param name
-	 * @param newConnections
-	 */
-	private void updateConnection(final String date, final String name, final int newConnections) {
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			if (databaseType == DatabaseType.POSTGRESQL) {
-				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
-				// construct, which is available for PostgreSQL 9.5+.
-				st.execute("INSERT INTO " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName() + " VALUES ('"
-						+ name + "', " + newConnections + ", '" + date + "')"
-						+ " ON CONFLICT (playername) DO UPDATE SET (" + NormalAchievements.CONNECTIONS.toDBName()
-						+ ",date)=('" + newConnections + "','" + date + "')");
-			} else {
-				st.execute("REPLACE INTO " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName() + " VALUES ('"
-						+ name + "', " + newConnections + ", '" + date + "')");
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while updating connection: ", e);
-		}
-	}
-
-	/**
 	 * Clear Connection statistics for a given player.
 	 * 
 	 * @param player
 	 */
 	public void clearConnection(Player player) {
-		Connection conn = getSQLConnection();
-		try (PreparedStatement prep = conn
-				.prepareStatement("DELETE FROM " + tablePrefix + "connections WHERE playername = ?")) {
-			prep.setString(1, player.getUniqueId().toString());
-			prep.execute();
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while deleting connections: ", e);
-		}
-	}
+		final String name = player.getUniqueId().toString();
+		Runnable runnable = new Runnable() {
 
-	/**
-	 * Updates player's playtime.
-	 * 
-	 * @param name
-	 * @param time
-	 * @return play time statistic
-	 */
-	public void updatePlaytime(String name, long time) {
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			if (databaseType == DatabaseType.POSTGRESQL) {
-				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
-				// construct, which is available for PostgreSQL 9.5+.
-				st.execute("INSERT INTO " + tablePrefix + NormalAchievements.PLAYEDTIME.toDBName() + " VALUES ('" + name
-						+ "', " + time + ")" + " ON CONFLICT (playername) DO UPDATE SET ("
-						+ NormalAchievements.PLAYEDTIME.toDBName() + ")=('" + time + "')");
-			} else {
-				st.execute("REPLACE INTO " + tablePrefix + NormalAchievements.PLAYEDTIME.toDBName() + " VALUES ('"
-						+ name + "', " + time + ")");
+			@Override
+			public void run() {
+				Connection conn = getSQLConnection();
+				try (PreparedStatement prep = conn
+						.prepareStatement("DELETE FROM " + tablePrefix + "connections WHERE playername = ?")) {
+					prep.setString(1, name);
+					prep.execute();
+				} catch (SQLException e) {
+					plugin.getLogger().log(Level.SEVERE, "SQL error while deleting connections: ", e);
+				}
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while handling play time update: ", e);
+		};
+		if (plugin.isAsyncPooledRequestsSender()) {
+			pool.execute(runnable);
+		} else {
+			runnable.run();
 		}
 	}
 
 	/**
-	 * Updates player's distance for a specific distance type.
+	 * Updates player's distance or played time.
 	 * 
 	 * @param name
-	 * @param distance
-	 * @param type
-	 * @return distance statistic
+	 * @param statistic
+	 * @param dbName
+	 * @return statistic
 	 */
-	public void updateDistance(String name, long distance, String type) {
+	public void updateStatistic(String name, long statistic, String dbName) {
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			// Update statistic.
 			if (databaseType == DatabaseType.POSTGRESQL) {
-				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
-				// construct, which is available for PostgreSQL 9.5+.
-				st.execute("INSERT INTO " + tablePrefix + type + " VALUES ('" + name + "', " + distance + ")"
-						+ " ON CONFLICT (playername) DO UPDATE SET (" + type + ")=('" + distance + "')");
+				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
+				// available for PostgreSQL 9.5+.
+				st.execute("INSERT INTO " + tablePrefix + dbName + " VALUES ('" + name + "', " + statistic + ")"
+						+ " ON CONFLICT (playername) DO UPDATE SET (" + dbName + ")=('" + statistic + "')");
 			} else {
-				st.execute("REPLACE INTO " + tablePrefix + type + " VALUES ('" + name + "', " + distance + ")");
+				st.execute("REPLACE INTO " + tablePrefix + dbName + " VALUES ('" + name + "', " + statistic + ")");
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while handling " + type + " update: ", e);
+			plugin.getLogger().log(Level.SEVERE, "SQL error while handling " + dbName + " update: ", e);
 		}
 	}
 
