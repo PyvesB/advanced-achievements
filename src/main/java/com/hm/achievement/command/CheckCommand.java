@@ -22,7 +22,7 @@ public class CheckCommand extends AbstractParsableCommand {
 		String achievementName = parseAchievementName(args);
 
 		// Check if achievement exists in database and display message accordingly.
-		if (plugin.getPoolsManager().hasPlayerAchievement(player, achievementName)) {
+		if (plugin.getPoolsManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceEach(
 					plugin.getPluginLang().getString("check-achievement-true",
 							"PLAYER has received the achievement ACH!"),

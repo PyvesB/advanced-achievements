@@ -3,10 +3,10 @@ package com.hm.achievement.db;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.entity.Player;
 
 import com.google.common.collect.HashMultimap;
 import com.hm.achievement.AdvancedAchievements;
@@ -33,6 +33,9 @@ public class DatabasePoolsManager {
 	private HashMultimap<String, String> receivedAchievementsCache;
 	private HashMultimap<String, String> notReceivedAchievementsCache;
 
+	// Map corresponding to the total amount of achievements received by each player.
+	private Map<String, Integer> totalPlayerAchievementsCache;
+
 	public DatabasePoolsManager(AdvancedAchievements plugin) {
 		this.plugin = plugin;
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
@@ -52,6 +55,7 @@ public class DatabasePoolsManager {
 			for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
 				multipleAchievementsToPlayerStatistics.put(multipleAchievement, new ConcurrentHashMap<String, Long>());
 			}
+			totalPlayerAchievementsCache = new ConcurrentHashMap<String, Integer>();
 		} else {
 			for (NormalAchievements normalAchievement : NormalAchievements.values()) {
 				normalAchievementsToPlayerStatistics.put(normalAchievement, new HashMap<String, Long>());
@@ -59,6 +63,7 @@ public class DatabasePoolsManager {
 			for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
 				multipleAchievementsToPlayerStatistics.put(multipleAchievement, new HashMap<String, Long>());
 			}
+			totalPlayerAchievementsCache = new HashMap<String, Integer>();
 		}
 	}
 
@@ -95,9 +100,9 @@ public class DatabasePoolsManager {
 	 * @param value
 	 * @return
 	 */
-	public long getAndIncrementStatisticAmount(NormalAchievements category, Player player, int value) {
+	public long getAndIncrementStatisticAmount(NormalAchievements category, UUID player, int value) {
 		Map<String, Long> categoryHashMap = getHashMap(category);
-		String uuid = player.getUniqueId().toString();
+		String uuid = player.toString();
 		Long oldAmount = categoryHashMap.get(uuid);
 		if (oldAmount == null) {
 			oldAmount = plugin.getDb().getNormalAchievementAmount(player, category);
@@ -118,10 +123,10 @@ public class DatabasePoolsManager {
 	 * @param value
 	 * @return
 	 */
-	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, Player player,
+	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player,
 			int value) {
 		Map<String, Long> categoryHashMap = getHashMap(category);
-		String uuid = player.getUniqueId().toString();
+		String uuid = player.toString();
 		String subcategoryDBName;
 		if (category == MultipleAchievements.PLAYERCOMMANDS) {
 			subcategoryDBName = StringUtils.replace(subcategory, " ", "");
@@ -145,21 +150,36 @@ public class DatabasePoolsManager {
 	 * @param name
 	 * @return true if achievement received by player, false otherwise
 	 */
-	public boolean hasPlayerAchievement(Player player, String name) {
-		if (receivedAchievementsCache.containsEntry(player.getUniqueId().toString(), name)) {
+	public boolean hasPlayerAchievement(UUID player, String name) {
+		if (receivedAchievementsCache.containsEntry(player.toString(), name)) {
 			return true;
 		}
-		if (notReceivedAchievementsCache.containsEntry(player.getUniqueId().toString(), name)) {
+		if (notReceivedAchievementsCache.containsEntry(player.toString(), name)) {
 			return false;
 		}
 
 		boolean received = plugin.getDb().hasPlayerAchievement(player, name);
 		if (received) {
-			receivedAchievementsCache.put(player.getUniqueId().toString(), name);
+			receivedAchievementsCache.put(player.toString(), name);
 		} else {
-			notReceivedAchievementsCache.put(player.getUniqueId().toString(), name);
+			notReceivedAchievementsCache.put(player.toString(), name);
 		}
 		return received;
+	}
+
+	/**
+	 * Returns the total number of achievements received by a player.
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public int getPlayerTotalAchievements(UUID player) {
+		Integer totalAchievements = totalPlayerAchievementsCache.get(player.toString());
+		if (totalAchievements == null) {
+			totalAchievements = plugin.getDb().getPlayerAchievementsAmount(player);
+			totalPlayerAchievementsCache.put(player.toString(), totalAchievements);
+		}
+		return totalAchievements;
 	}
 
 	public HashMultimap<String, String> getReceivedAchievementsCache() {
@@ -168,5 +188,9 @@ public class DatabasePoolsManager {
 
 	public HashMultimap<String, String> getNotReceivedAchievementsCache() {
 		return notReceivedAchievementsCache;
+	}
+
+	public Map<String, Integer> getTotalPlayerAchievementsCache() {
+		return totalPlayerAchievementsCache;
 	}
 }

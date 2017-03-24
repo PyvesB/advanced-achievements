@@ -22,16 +22,18 @@ public class DeleteCommand extends AbstractParsableCommand {
 		String achievementName = parseAchievementName(args);
 
 		// Check if achievement exists in database and display message accordingly; if received, delete it.
-		if (!plugin.getPoolsManager().hasPlayerAchievement(player, achievementName)) {
+		if (!plugin.getPoolsManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceEach(
 					plugin.getPluginLang().getString("check-achievements-false",
 							"PLAYER has not received the achievement ACH!"),
 					new String[] { "PLAYER", "ACH" }, new String[] { args[args.length - 1], achievementName }));
 		} else {
-			plugin.getDb().deletePlayerAchievement(player, achievementName);
+			plugin.getDb().deletePlayerAchievement(player.getUniqueId(), achievementName);
 			String uuid = player.getUniqueId().toString();
 			plugin.getPoolsManager().getReceivedAchievementsCache().remove(uuid, achievementName);
 			plugin.getPoolsManager().getNotReceivedAchievementsCache().put(uuid, achievementName);
+			plugin.getPoolsManager().getTotalPlayerAchievementsCache().put(uuid,
+					plugin.getPoolsManager().getPlayerTotalAchievements(player.getUniqueId()) - 1);
 			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceEach(
 					plugin.getPluginLang().getString("delete-achievements",
 							"The achievement ACH was deleted from PLAYER."),

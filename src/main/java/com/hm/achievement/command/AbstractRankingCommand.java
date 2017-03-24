@@ -55,7 +55,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		long rankingStartTime = getRankingStartTime();
 
 		if (sender instanceof Player) {
-			rank = plugin.getDb().getPlayerRank((Player) sender, rankingStartTime);
+			rank = plugin.getDb().getPlayerRank(((Player) sender).getUniqueId(), rankingStartTime);
 		}
 		// Update top list on given period if too old.
 		if (currentTime - lastCommandTime >= VALUES_EXPIRATION_DELAY) {

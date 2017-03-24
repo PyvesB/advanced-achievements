@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
@@ -182,7 +182,7 @@ public class SQLDatabaseManager {
 	 * @param player
 	 * @return array list with groups of 3 strings: achievement name, description and date
 	 */
-	public List<String> getPlayerAchievementsList(Player player) {
+	public List<String> getPlayerAchievementsList(UUID player) {
 		ArrayList<String> achievementsList = new ArrayList<>();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
@@ -190,7 +190,7 @@ public class SQLDatabaseManager {
 			// Either oldest date to newest one or newest date to oldest one.
 			String chronology = achievementsChronologicalOrder ? "ASC" : "DESC";
 			rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements WHERE playername = '"
-					+ player.getUniqueId() + "' ORDER BY date " + chronology);
+					+ player.toString() + "' ORDER BY date " + chronology);
 
 			Map<String, String> achievementsAndDisplayNames = plugin.getAchievementsAndDisplayNames();
 			while (rs.next()) {
@@ -217,14 +217,14 @@ public class SQLDatabaseManager {
 	 * @param name
 	 * @return date represented as a string
 	 */
-	public String getPlayerAchievementDate(Player player, String name) {
+	public String getPlayerAchievementDate(UUID player, String name) {
 		// We double apostrophes to avoid breaking the query.
 		String dbName = StringUtils.replace(name, "'", "''");
 		String achievementDate = null;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + "achievements WHERE playername = '"
-					+ player.getUniqueId() + "' AND achievement = '" + dbName + "'");
+					+ player.toString() + "' AND achievement = '" + dbName + "'");
 			if (rs.next()) {
 				achievementDate = dateFormat.format(rs.getDate(1));
 			}
@@ -235,28 +235,18 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Gets the total number of achievements received by a player, using a Player object.
-	 * 
-	 * @param player
-	 * @return number of achievements
-	 */
-	public int getPlayerAchievementsAmount(Player player) {
-		return getPlayerAchievementsAmount(player.getUniqueId().toString());
-	}
-
-	/**
 	 * Gets the total number of achievements received by a player, using an UUID; this method is provided as a
 	 * convenience for other plugins.
 	 * 
 	 * @param uuid
 	 * @return number of achievements
 	 */
-	public int getPlayerAchievementsAmount(String uuid) {
+	public int getPlayerAchievementsAmount(UUID player) {
 		int achievementsAmount = 0;
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn
 				.prepareStatement("SELECT COUNT(*) FROM " + tablePrefix + "achievements WHERE playername = ?")) {
-			prep.setString(1, uuid);
+			prep.setString(1, player.toString());
 			ResultSet rs = prep.executeQuery();
 			if (rs.next()) {
 				achievementsAmount = rs.getInt(1);
@@ -275,7 +265,7 @@ public class SQLDatabaseManager {
 	 * @return list with player UUIDs
 	 */
 	public List<String> getTopList(int listLength, long start) {
-		ArrayList<String> topList = new ArrayList<>(listLength);
+		ArrayList<String> topList = new ArrayList<>(2 * listLength);
 		String query;
 		if (start == 0L) {
 			// We consider all the achievements; no date comparison.
@@ -347,7 +337,7 @@ public class SQLDatabaseManager {
 	 * @param start
 	 * @return player's rank
 	 */
-	public int getPlayerRank(Player player, long start) {
+	public int getPlayerRank(UUID player, long start) {
 		int rank = 0;
 		String query;
 		if (start == 0L) {
@@ -364,10 +354,10 @@ public class SQLDatabaseManager {
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn.prepareStatement(query)) {
 			if (start == 0L) {
-				prep.setString(1, player.getUniqueId().toString());
+				prep.setString(1, player.toString());
 			} else {
 				prep.setDate(1, new java.sql.Date(start));
-				prep.setString(2, player.getUniqueId().toString());
+				prep.setString(2, player.toString());
 				prep.setDate(3, new java.sql.Date(start));
 			}
 			prep.execute();
@@ -390,8 +380,8 @@ public class SQLDatabaseManager {
 	 * @param achievement
 	 * @param desc
 	 */
-	public void registerAchievement(Player player, final String achievement, final String desc) {
-		final String name = player.getUniqueId().toString();
+	public void registerAchievement(UUID player, final String achievement, final String desc) {
+		final String name = player.toString();
 		Runnable runnable = new Runnable() {
 
 			@Override
@@ -435,17 +425,17 @@ public class SQLDatabaseManager {
 	 * @param name
 	 * @return true if achievement found in database, false otherwise
 	 */
-	public boolean hasPlayerAchievement(Player player, String name) {
+	public boolean hasPlayerAchievement(UUID player, String name) {
 		boolean result = false;
 		String query;
 		if (name.contains("'")) {
 			// We check for names with single quotes, but also two single quotes. This is due to a bug in versions 3.0
 			// to 3.0.2 where names containing single quotes were inserted with two single quotes in the database.
 			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
-					+ player.getUniqueId() + "' AND (achievement = ? OR achievement = ?)";
+					+ player.toString() + "' AND (achievement = ? OR achievement = ?)";
 		} else {
 			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
-					+ player.getUniqueId() + "' AND achievement = ?";
+					+ player.toString() + "' AND achievement = ?";
 		}
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn.prepareStatement(query)) {
@@ -469,8 +459,8 @@ public class SQLDatabaseManager {
 	 * @param player
 	 * @param ach
 	 */
-	public void deletePlayerAchievement(Player player, final String ach) {
-		final String name = player.getUniqueId().toString();
+	public void deletePlayerAchievement(UUID player, final String ach) {
+		final String name = player.toString();
 		Runnable runnable = new Runnable() {
 
 			@Override
@@ -500,13 +490,13 @@ public class SQLDatabaseManager {
 	 * @param table
 	 * @return statistic
 	 */
-	public Long getNormalAchievementAmount(Player player, NormalAchievements category) {
+	public Long getNormalAchievementAmount(UUID player, NormalAchievements category) {
 		long amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix + dbName
-					+ " WHERE playername = '" + player.getUniqueId() + "'");
+					+ " WHERE playername = '" + player.toString() + "'");
 			while (rs.next()) {
 				amount = rs.getLong(dbName);
 			}
@@ -524,13 +514,13 @@ public class SQLDatabaseManager {
 	 * @param subcategory
 	 * @return statistic
 	 */
-	public Long getMultipleAchievementAmount(Player player, MultipleAchievements category, String subcategory) {
+	public Long getMultipleAchievementAmount(UUID player, MultipleAchievements category, String subcategory) {
 		long amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix + dbName
-					+ " WHERE playername = '" + player.getUniqueId() + "' AND " + category.toSubcategoryDBName()
+					+ " WHERE playername = '" + player.toString() + "' AND " + category.toSubcategoryDBName()
 					+ " = '" + subcategory + "'");
 			while (rs.next()) {
 				amount = rs.getLong(dbName);
@@ -547,8 +537,8 @@ public class SQLDatabaseManager {
 	 * @param player
 	 * @return connections statistic
 	 */
-	public int getConnectionsAmount(Player player) {
-		final String name = player.getUniqueId().toString();
+	public int getConnectionsAmount(UUID player) {
+		final String name = player.toString();
 		int connections = 0;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
@@ -569,12 +559,12 @@ public class SQLDatabaseManager {
 	 * @param player
 	 * @return String with date
 	 */
-	public String getPlayerConnectionDate(Player player) {
+	public String getPlayerConnectionDate(UUID player) {
 		String date = null;
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName()
-					+ " WHERE playername = '" + player.getUniqueId() + "'");
+					+ " WHERE playername = '" + player.toString() + "'");
 			while (rs.next()) {
 				date = rs.getString("date");
 			}
@@ -592,8 +582,8 @@ public class SQLDatabaseManager {
 	 * @param date
 	 * @return connections statistic
 	 */
-	public int updateAndGetConnection(Player player, final String date) {
-		final String name = player.getUniqueId().toString();
+	public int updateAndGetConnection(UUID player, final String date) {
+		final String name = player.toString();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT " + NormalAchievements.CONNECTIONS.toDBName() + " FROM "
@@ -643,8 +633,8 @@ public class SQLDatabaseManager {
 	 * 
 	 * @param player
 	 */
-	public void clearConnection(Player player) {
-		final String name = player.getUniqueId().toString();
+	public void clearConnection(UUID player) {
+		final String name = player.toString();
 		Runnable runnable = new Runnable() {
 
 			@Override

@@ -30,7 +30,7 @@ public class GiveCommand extends AbstractParsableCommand {
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 			// Check whether player has already received achievement and cannot receive it again.
 			String achievementName = plugin.getPluginConfig().getString(configAchievement + ".Name");
-			if (!multiCommand && plugin.getPoolsManager().hasPlayerAchievement(player, achievementName)) {
+			if (!multiCommand && plugin.getPoolsManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 				sender.sendMessage(
 						StringUtils.replaceOnce(
 								plugin.getChatHeader()

@@ -59,8 +59,8 @@ public class AchieveConnectionRunnable implements Runnable {
 		Date now = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
-		if (!format.format(now).equals(plugin.getDb().getPlayerConnectionDate(player))) {
-			int connections = plugin.getDb().updateAndGetConnection(player, format.format(now));
+		if (!format.format(now).equals(plugin.getDb().getPlayerConnectionDate(player.getUniqueId()))) {
+			int connections = plugin.getDb().updateAndGetConnection(player.getUniqueId(), format.format(now));
 			String configAchievement = category + "." + connections;
 			AchievementCommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
 			if (pluginConfig.getString(configAchievement + ".Message", null) != null) {

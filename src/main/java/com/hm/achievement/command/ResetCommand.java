@@ -26,7 +26,7 @@ public class ResetCommand extends AbstractParsableCommand {
 			if (category.toString().equalsIgnoreCase(args[1])) {
 				if (category == NormalAchievements.CONNECTIONS) {
 					// Not handled by a database pool.
-					plugin.getDb().clearConnection(player);
+					plugin.getDb().clearConnection(player.getUniqueId());
 				} else {
 					plugin.getPoolsManager().getHashMap(category).put(player.getUniqueId().toString(), 0L);
 				}

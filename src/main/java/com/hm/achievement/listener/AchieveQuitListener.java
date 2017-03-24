@@ -33,6 +33,7 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 		// Clear achievements caches.
 		plugin.getPoolsManager().getReceivedAchievementsCache().removeAll(playerUUID);
 		plugin.getPoolsManager().getNotReceivedAchievementsCache().removeAll(playerUUID);
+		plugin.getPoolsManager().getTotalPlayerAchievementsCache().remove(playerUUID);
 
 		processAndCleanDistances(playerUUID);
 

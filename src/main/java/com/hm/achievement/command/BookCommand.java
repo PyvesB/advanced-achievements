@@ -83,7 +83,7 @@ public class BookCommand extends AbstractCommand {
 				player.getWorld().playSound(player.getLocation(), sound, 1.0f, 0.0f);
 			}
 
-			List<String> achievements = plugin.getDb().getPlayerAchievementsList(player);
+			List<String> achievements = plugin.getDb().getPlayerAchievementsList(player.getUniqueId());
 
 			fillBook(achievements, player);
 		} else {

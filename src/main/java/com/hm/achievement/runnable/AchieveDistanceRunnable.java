@@ -142,7 +142,8 @@ public class AchieveDistanceRunnable implements Runnable {
 			return;
 		}
 
-		long distance = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player, difference);
+		long distance = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player.getUniqueId(),
+				difference);
 
 		// Iterate through all the different achievements.
 		for (String achievementThreshold : plugin.getPluginConfig().getConfigurationSection(category.toString())
@@ -151,7 +152,8 @@ public class AchieveDistanceRunnable implements Runnable {
 			String achievementName = plugin.getPluginConfig()
 					.getString(category + "." + achievementThreshold + ".Name");
 			// Check whether player has met the threshold and whether we he has not yet received the achievement.
-			if (distance > threshold && !plugin.getPoolsManager().hasPlayerAchievement(player, achievementName)) {
+			if (distance > threshold
+					&& !plugin.getPoolsManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 				String configAchievement = category.toString() + achievementThreshold;
 				// Fire achievement event.
 				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()

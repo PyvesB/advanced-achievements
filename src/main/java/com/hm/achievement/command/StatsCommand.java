@@ -67,7 +67,7 @@ public class StatsCommand extends AbstractCommand {
 		Player player = (Player) sender;
 
 		// Retrieve total number of achievements received by the player.
-		int achievements = plugin.getDb().getPlayerAchievementsAmount(player);
+		int achievements = plugin.getPoolsManager().getPlayerTotalAchievements(player.getUniqueId());
 
 		// Display percentage of achievements received.
 		player.sendMessage(plugin.getChatHeader()
