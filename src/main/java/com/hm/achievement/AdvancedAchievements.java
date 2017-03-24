@@ -82,6 +82,7 @@ import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.achievement.utils.AchievementCountBungeeTabListPlusVariable;
 import com.hm.achievement.utils.FileUpdater;
 import com.hm.mcshared.file.FileManager;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import com.hm.mcshared.update.UpdateChecker;
 
 import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
@@ -532,6 +533,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Extracts plugin parameters from the configuration file.
 	 */
 	private void extractParameters() {
+		int minecraftVersion = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 		icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
 		color = ChatColor.getByChar(config.getString("Color", "5").charAt(0));
 		if (Strings.isNullOrEmpty(icon)) {
@@ -541,6 +543,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 		restrictCreative = config.getBoolean("RestrictCreative", false);
 		restrictSpectator = config.getBoolean("RestrictSpectator", true);
+		if (restrictSpectator && minecraftVersion < 8) {
+			// Spectator introduced in Minecraft 1.8.
+			restrictSpectator = false;
+			this.getLogger().warning(
+					"Overriding configuration: disabling RestrictSpectator. Please set it to false in your config.");
+		}
 		chatNotify = config.getBoolean("ChatNotify", false);
 		databaseBackup = config.getBoolean("DatabaseBackup", true);
 		excludedWorldSet = new HashSet<>(config.getList("ExcludedWorlds"));
@@ -553,12 +561,22 @@ public class AdvancedAchievements extends JavaPlugin {
 								.getDescription().getVersion().charAt(2))) < 4)) {
 			disabledCategorySet.add(NormalAchievements.PETMASTERGIVE.toString());
 			disabledCategorySet.add(NormalAchievements.PETMASTERRECEIVE.toString());
-			this.getLogger().warning(
-					"Failed to pair with Pet Master plugin; disabling PetMasterGive and PetMasterReceive categories.");
 			this.getLogger()
-					.warning("Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder.");
+					.warning("Overriding configuration: disabling PetMasterGive and PetMasterReceive categories.");
 			this.getLogger().warning(
-					"If you do not wish to use these categories, you must add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
+					"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
+		}
+		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString()) && minecraftVersion < 9) {
+			disabledCategorySet.add(NormalAchievements.DISTANCEGLIDING.toString());
+			this.getLogger().warning("Overriding configuration: disabling DistanceGliding category.");
+			this.getLogger().warning(
+					"Elytra are not available in your Minecraft version, please add DistanceGliding to the DisabledCategories list in your config.");
+		}
+		if (!disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString()) && minecraftVersion < 11) {
+			disabledCategorySet.add(NormalAchievements.DISTANCELLAMA.toString());
+			this.getLogger().warning("Overriding configuration: disabling DistanceLlama category.");
+			this.getLogger().warning(
+					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in your config.");
 		}
 		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 60);
 		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);

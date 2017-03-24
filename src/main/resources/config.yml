@@ -69,9 +69,10 @@ RestrictCreative: false
 
 # Stop all stats from increasing when player in spectator mode, including PlayedTime.
 # Connection achievements will only be handled once a player switches to a non-spectator mode.
+# Set to false if using Minecraft 1.7.9 or 1.7.10.
 RestrictSpectator: true
 
-# Stop all stats from increasing when player in a specific world, including PlayedTime (delete the [] before using).
+# Stop all stats from increasing when player in a specific world, including PlayedTime (delete the [] before adding values).
 # Connection achievements will only be handled once a player enters a non-excluded world.
 ExcludedWorlds: []
 #  - yourWorld1
@@ -80,13 +81,14 @@ ExcludedWorlds: []
 # Ignore vertical dimension (Y axis) when calculating distance statistics.
 IgnoreVerticalDistance: false
 
-# Don't show these categories in the achievement GUI or in the stats output (delete the [] before using).
+# Don't show these categories in the achievement GUI or in the stats output (delete the [] before adding values).
 # Also prevent obtaining achievements for these categories and prevent stats from increasing.
 # If changed, do a full server reload, and not just /aach reload.
 DisabledCategories: []
-#  - Beds
-#  - ItemBreaks
-#  - Crafts
+#  - PetMasterGive
+#  - PetMasterReceive
+#  - DistanceLlama
+#  - DistanceGliding
 
 # Obfuscate achievements that have not yet been received in /aach list.
 ObfuscateNotReceived: false
@@ -114,7 +116,7 @@ EnrichedListProgressBars: true
 # if you have more than 64 achievements for a category, the counting will start back at 1 after number 64.
 NumberedItemsInList: false
 
-# Display achievement name and description as screen titles.
+# Display achievement name and description as screen titles. Set to false if using Minecraft 1.7.9 or 1.7.10.
 TitleScreen: true
 
 # Sort pages of the book in chronological order (false for reverse chronological order).
@@ -449,7 +451,7 @@ DistanceBoat:
     DisplayName: Great Sailor
 
 # When a distance is traveled with elytra.
-# (ignored on Minecraft versions prior to 1.9, should be added to DisabledCategories)
+# Ignored on Minecraft versions prior to 1.9, add it to DisabledCategories list.
 DistanceGliding:
   '100':
     Message: You traveled 100 blocks with elytra!
@@ -457,7 +459,7 @@ DistanceGliding:
     DisplayName: Angel
     
 # When a distance is traveled on a llama.
-# (ignored on Minecraft versions prior to 1.11, should be added to DisabledCategories)
+# Ignored on Minecraft versions prior to 1.11, add it to DisabledCategories list.
 DistanceLlama:
   '50':
     Message: You traveled 50 blocks on a llama!

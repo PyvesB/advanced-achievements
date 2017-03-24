@@ -77,6 +77,8 @@ public class ListCommand extends AbstractCommand {
 			short metadata = (short) plugin.getPluginGui().getInt(category.toString() + ".Metadata", 0);
 			if (material == null) {
 				material = Material.BEDROCK;
+				plugin.getLogger().warning("GUI material for category " + category.toString()
+						+ " was not found. Have you spelt the name correctly or is it available for your Minecraft version?");
 			}
 			multipleAchievementCategoryItems.put(category, new ItemStack(material, 1, metadata));
 		}

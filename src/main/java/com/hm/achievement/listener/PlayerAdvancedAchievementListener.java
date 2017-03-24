@@ -24,6 +24,7 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.PlayerAdvancedAchievementEvent;
 import com.hm.mcshared.particle.PacketSender;
 import com.hm.mcshared.particle.ParticleEffect;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Listener class to deal with achievement receptions: rewards, display and database operations.
@@ -51,6 +52,11 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 		fireworks = plugin.getPluginConfig().getBoolean("Firework", true);
 		simplifiedReception = plugin.getPluginConfig().getBoolean("SimplifiedReception", false);
 		titleScreen = plugin.getPluginConfig().getBoolean("TitleScreen", true);
+		if (titleScreen && Integer.parseInt(PackageType.getServerVersion().split("_")[1]) < 8) {
+			titleScreen = false;
+			plugin.getLogger()
+					.warning("Overriding configuration: disabling TitleScreen. Please set it to false in your config.");
+		}
 		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
 		// a player is notified in case of a command reward.
 		rewardCommandNotif = plugin.getPluginConfig().getBoolean("RewardCommandNotif", true);
@@ -75,7 +81,6 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 		if (event.getCommandRewards() != null && event.getCommandRewards().length > 0) {
 			rewardCommands(player, event.getCommandRewards());
 		}
-
 	}
 
 	/**
@@ -225,12 +230,11 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 				effectBuilder.with(getRandomFireworkType());
 			} else {
 				try {
-					// Firework style must be one of the following: BALL_LARGE, BALL, BURST, CREEPER or STAR.
 					effectBuilder.with(Type.valueOf(fireworkStyle.toUpperCase()));
 				} catch (Exception e) {
 					effectBuilder.with(Type.BALL_LARGE);
 					plugin.getLogger().warning(
-							"Error while loading FireworkStyle. Please check your config. Loading default style.");
+							"Error while loading FireworkStyle. Please use one of the following: BALL_LARGE, BALL, BURST, CREEPER or STAR.");
 				}
 			}
 			fireworkMeta.addEffects(effectBuilder.build());
