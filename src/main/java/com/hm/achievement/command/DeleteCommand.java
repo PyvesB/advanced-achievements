@@ -28,7 +28,7 @@ public class DeleteCommand extends AbstractParsableCommand {
 							"PLAYER has not received the achievement ACH!"),
 					new String[] { "PLAYER", "ACH" }, new String[] { args[args.length - 1], achievementName }));
 		} else {
-			plugin.getDb().deletePlayerAchievement(player.getUniqueId(), achievementName);
+			plugin.getDatabaseManager().deletePlayerAchievement(player.getUniqueId(), achievementName);
 			String uuid = player.getUniqueId().toString();
 			plugin.getPoolsManager().getReceivedAchievementsCache().remove(uuid, achievementName);
 			plugin.getPoolsManager().getNotReceivedAchievementsCache().put(uuid, achievementName);

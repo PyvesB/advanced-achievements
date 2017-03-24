@@ -1,4 +1,4 @@
-package com.hm.achievement;
+package com.hm.achievement.utils;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -25,6 +25,18 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private final int moneyReward;
 
 	private boolean cancelled;
+
+	private PlayerAdvancedAchievementEvent(Player receiver, String name, String displayName, String message,
+			String[] commandRewards, ItemStack itemReward, int moneyReward) {
+		this.player = receiver;
+		this.name = name;
+		this.displayName = displayName;
+		this.message = message;
+		this.commandRewards = commandRewards;
+		this.itemReward = itemReward;
+		this.moneyReward = moneyReward;
+		this.cancelled = false;
+	}
 
 	@Override
 	public HandlerList getHandlers() {
@@ -75,18 +87,6 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 
 	public int getMoneyReward() {
 		return moneyReward;
-	}
-
-	private PlayerAdvancedAchievementEvent(Player receiver, String name, String displayName, String message,
-			String[] commandRewards, ItemStack itemReward, int moneyReward) {
-		this.player = receiver;
-		this.name = name;
-		this.displayName = displayName;
-		this.message = message;
-		this.commandRewards = commandRewards;
-		this.itemReward = itemReward;
-		this.moneyReward = moneyReward;
-		this.cancelled = false;
 	}
 
 	public static class PlayerAdvancedAchievementEventBuilder {

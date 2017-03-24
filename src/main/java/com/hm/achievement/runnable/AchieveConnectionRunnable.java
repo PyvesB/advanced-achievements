@@ -8,9 +8,9 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
+import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 
 /**
  * Runnable task to check for Connection achievements after a player has connected.
@@ -59,8 +59,9 @@ public class AchieveConnectionRunnable implements Runnable {
 		Date now = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
-		if (!format.format(now).equals(plugin.getDb().getPlayerConnectionDate(player.getUniqueId()))) {
-			int connections = plugin.getDb().updateAndGetConnection(player.getUniqueId(), format.format(now));
+		if (!format.format(now).equals(plugin.getDatabaseManager().getPlayerConnectionDate(player.getUniqueId()))) {
+			int connections = plugin.getDatabaseManager().updateAndGetConnection(player.getUniqueId(),
+					format.format(now));
 			String configAchievement = category + "." + connections;
 			AchievementCommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
 			if (pluginConfig.getString(configAchievement + ".Message", null) != null) {
@@ -69,9 +70,9 @@ public class AchieveConnectionRunnable implements Runnable {
 						.player(player).name(plugin.getPluginConfig().getString(configAchievement + ".Name"))
 						.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
 						.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
-						.commandRewards(plugin.getReward().getCommandRewards(configAchievement, player))
-						.itemReward(plugin.getReward().getItemReward(configAchievement))
-						.moneyReward(plugin.getReward().getMoneyAmount(configAchievement));
+						.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
+						.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
+						.moneyReward(plugin.getRewardParser().getMoneyAmount(configAchievement));
 
 				Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 			}

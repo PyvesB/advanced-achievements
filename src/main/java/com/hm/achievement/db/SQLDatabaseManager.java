@@ -431,11 +431,11 @@ public class SQLDatabaseManager {
 		if (name.contains("'")) {
 			// We check for names with single quotes, but also two single quotes. This is due to a bug in versions 3.0
 			// to 3.0.2 where names containing single quotes were inserted with two single quotes in the database.
-			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
-					+ player.toString() + "' AND (achievement = ? OR achievement = ?)";
+			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
+					+ "' AND (achievement = ? OR achievement = ?)";
 		} else {
-			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
-					+ player.toString() + "' AND achievement = ?";
+			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
+					+ "' AND achievement = ?";
 		}
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn.prepareStatement(query)) {
@@ -519,9 +519,9 @@ public class SQLDatabaseManager {
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix + dbName
-					+ " WHERE playername = '" + player.toString() + "' AND " + category.toSubcategoryDBName()
-					+ " = '" + subcategory + "'");
+			ResultSet rs = st.executeQuery(
+					"SELECT " + dbName + " FROM " + tablePrefix + dbName + " WHERE playername = '" + player.toString()
+							+ "' AND " + category.toSubcategoryDBName() + " = '" + subcategory + "'");
 			while (rs.next()) {
 				amount = rs.getLong(dbName);
 			}

@@ -17,9 +17,9 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveQuitListener extends AbstractListener implements Listener {
+public class QuitListener extends AbstractListener implements Listener {
 
-	public AchieveQuitListener(AdvancedAchievements plugin) {
+	public QuitListener(AdvancedAchievements plugin) {
 		super(plugin);
 	}
 
@@ -48,8 +48,8 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 		if (plugin.getBedListener() != null) {
 			plugin.getBedListener().removePlayerFromCooldownMap(playerUUID);
 		}
-		if (plugin.getInventoryClickListener() != null) {
-			plugin.getInventoryClickListener().removePlayerFromCooldownMap(playerUUID);
+		if (plugin.getTradeAnvilBrewSmeltListener() != null) {
+			plugin.getTradeAnvilBrewSmeltListener().removePlayerFromCooldownMap(playerUUID);
 		}
 		if (plugin.getMilkLavaWaterListener() != null) {
 			plugin.getMilkLavaWaterListener().removePlayerFromCooldownMap(playerUUID);
@@ -68,8 +68,8 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 	 */
 	private void processAndCleanDistances(final String playerUUID) {
 		// Remove player from Multimap caches for distance achievements.
-		if (plugin.getAchieveDistanceRunnable() != null
-				&& plugin.getAchieveDistanceRunnable().getPlayerLocations().remove(playerUUID) != null) {
+		if (plugin.getDistanceRunnable() != null
+				&& plugin.getDistanceRunnable().getPlayerLocations().remove(playerUUID) != null) {
 			// Update database statistics for distances and clean HashMaps.
 			if (plugin.isAsyncPooledRequestsSender()) {
 				Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
@@ -92,7 +92,7 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 						Map<String, Long> map = plugin.getPoolsManager().getHashMap(category);
 						Long distance = map.get(playerUUID);
 						if (distance != null) {
-							plugin.getDb().updateStatistic(playerUUID, distance, category.toDBName());
+							plugin.getDatabaseManager().updateStatistic(playerUUID, distance, category.toDBName());
 							map.remove(playerUUID);
 						}
 					}
@@ -101,37 +101,44 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 				// Items can be removed from HashMaps directly, as this is done in the main thread of execution.
 				Long distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEFOOT).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEFOOT.toDBName());
+					plugin.getDatabaseManager().updateStatistic(playerUUID, distance,
+							NormalAchievements.DISTANCEFOOT.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEPIG).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEPIG.toDBName());
+					plugin.getDatabaseManager().updateStatistic(playerUUID, distance,
+							NormalAchievements.DISTANCEPIG.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEHORSE).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEHORSE.toDBName());
+					plugin.getDatabaseManager().updateStatistic(playerUUID, distance,
+							NormalAchievements.DISTANCEHORSE.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEBOAT).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEBOAT.toDBName());
+					plugin.getDatabaseManager().updateStatistic(playerUUID, distance,
+							NormalAchievements.DISTANCEBOAT.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEMINECART).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEMINECART.toDBName());
+					plugin.getDatabaseManager().updateStatistic(playerUUID, distance,
+							NormalAchievements.DISTANCEMINECART.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCEGLIDING).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCEGLIDING.toDBName());
+					plugin.getDatabaseManager().updateStatistic(playerUUID, distance,
+							NormalAchievements.DISTANCEGLIDING.toDBName());
 				}
 
 				distance = plugin.getPoolsManager().getHashMap(NormalAchievements.DISTANCELLAMA).remove(playerUUID);
 				if (distance != null) {
-					plugin.getDb().updateStatistic(playerUUID, distance, NormalAchievements.DISTANCELLAMA.toDBName());
+					plugin.getDatabaseManager().updateStatistic(playerUUID, distance,
+							NormalAchievements.DISTANCELLAMA.toDBName());
 				}
 			}
 		}
@@ -144,7 +151,7 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 	 * @param playerUUID
 	 */
 	private void processAndCleanPlayedTime(final String playerUUID) {
-		if (plugin.getAchievePlayTimeRunnable() != null) {
+		if (plugin.getPlayTimeRunnable() != null) {
 			// Update database statistics for played time and clean HashMaps.
 			if (plugin.isAsyncPooledRequestsSender()) {
 				Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
@@ -158,7 +165,7 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 								.get(playerUUID);
 
 						if (playTime != null) {
-							plugin.getDb().updateStatistic(playerUUID, playTime,
+							plugin.getDatabaseManager().updateStatistic(playerUUID, playTime,
 									NormalAchievements.PLAYEDTIME.toDBName());
 							plugin.getPoolsManager().getHashMap(NormalAchievements.PLAYEDTIME).remove(playerUUID);
 						}
@@ -169,7 +176,8 @@ public class AchieveQuitListener extends AbstractListener implements Listener {
 				Long playTime = plugin.getPoolsManager().getHashMap(NormalAchievements.PLAYEDTIME).remove(playerUUID);
 
 				if (playTime != null) {
-					plugin.getDb().updateStatistic(playerUUID, playTime, NormalAchievements.PLAYEDTIME.toDBName());
+					plugin.getDatabaseManager().updateStatistic(playerUUID, playTime,
+							NormalAchievements.PLAYEDTIME.toDBName());
 				}
 			}
 		}

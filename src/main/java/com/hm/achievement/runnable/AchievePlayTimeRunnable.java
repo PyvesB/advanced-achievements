@@ -5,8 +5,8 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 
 /**
  * Class used to monitor players' played times.
@@ -71,9 +71,9 @@ public class AchievePlayTimeRunnable implements Runnable {
 						.player(player).name(plugin.getPluginConfig().getString(achievementName))
 						.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
 						.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
-						.commandRewards(plugin.getReward().getCommandRewards(configAchievement, player))
-						.itemReward(plugin.getReward().getItemReward(configAchievement))
-						.moneyReward(plugin.getReward().getMoneyAmount(configAchievement));
+						.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
+						.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
+						.moneyReward(plugin.getRewardParser().getMoneyAmount(configAchievement));
 
 				Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 			}

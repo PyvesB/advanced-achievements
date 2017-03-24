@@ -214,8 +214,9 @@ public class ListCommand extends AbstractCommand {
 				String nameToShowUser = getAchievementNameToDisplay(categoryName, '.' + section, achName, level);
 				String achMessage = getAchievementMessageToDisplay(categoryName, '.' + section, level);
 
-				List<String> rewards = plugin.getReward().getRewardListing(categoryName + '.' + section + '.' + level);
-				String date = plugin.getDb().getPlayerAchievementDate(player.getUniqueId(), achName);
+				List<String> rewards = plugin.getRewardParser()
+						.getRewardListing(categoryName + '.' + section + '.' + level);
+				String date = plugin.getDatabaseManager().getPlayerAchievementDate(player.getUniqueId(), achName);
 
 				boolean inelligibleSeriesItem;
 				if (subcategoryIndex == 0 || date != null || previousItemDate != null) {
@@ -267,7 +268,7 @@ public class ListCommand extends AbstractCommand {
 		}
 
 		if (category == NormalAchievements.CONNECTIONS) {
-			statistic = plugin.getDb().getConnectionsAmount(player.getUniqueId());
+			statistic = plugin.getDatabaseManager().getConnectionsAmount(player.getUniqueId());
 		} else if (category != null) {
 			statistic = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
 		}
@@ -298,8 +299,8 @@ public class ListCommand extends AbstractCommand {
 			String nameToShowUser = getAchievementNameToDisplay(categoryName, "", achName, level);
 			String achMessage = getAchievementMessageToDisplay(categoryName, "", level);
 
-			List<String> rewards = plugin.getReward().getRewardListing(categoryName + '.' + level);
-			String date = plugin.getDb().getPlayerAchievementDate(player.getUniqueId(), achName);
+			List<String> rewards = plugin.getRewardParser().getRewardListing(categoryName + '.' + level);
+			String date = plugin.getDatabaseManager().getPlayerAchievementDate(player.getUniqueId(), achName);
 
 			boolean inelligibleSeriesItem;
 			if (statistic == -1L || positionInGUI == 0 || date != null || previousItemDate != null) {

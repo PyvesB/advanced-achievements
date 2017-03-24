@@ -21,7 +21,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 
 import com.google.common.base.Strings;
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.PlayerAdvancedAchievementEvent;
+import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.mcshared.particle.PacketSender;
 import com.hm.mcshared.particle.ParticleEffect;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
@@ -65,7 +65,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerAdvancedAchievementReception(PlayerAdvancedAchievementEvent event) {
 		Player player = event.getPlayer();
-		plugin.getDb().registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
+		plugin.getDatabaseManager().registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 		String uuid = player.getUniqueId().toString();
 		plugin.getPoolsManager().getReceivedAchievementsCache().put(uuid, event.getName());
 		plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, event.getName());
@@ -114,7 +114,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 		}
 		player.sendMessage(plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " "
-				+ plugin.getReward().getItemName(item));
+				+ plugin.getRewardParser().getItemName(item));
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 				plugin.getEconomy().depositPlayer(player.getName(), amount);
 			}
 
-			String currencyName = plugin.getReward().getCurrencyName(amount);
+			String currencyName = plugin.getRewardParser().getCurrencyName(amount);
 
 			player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&',
 					StringUtils.replaceOnce(

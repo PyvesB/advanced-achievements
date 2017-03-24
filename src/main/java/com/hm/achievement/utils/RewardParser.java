@@ -1,4 +1,4 @@
-package com.hm.achievement;
+package com.hm.achievement.utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
+import com.hm.achievement.AdvancedAchievements;
 
 import net.milkbowl.vault.item.ItemInfo;
 import net.milkbowl.vault.item.Items;
@@ -19,11 +19,11 @@ import net.milkbowl.vault.item.Items;
  * 
  * @author Pyves
  */
-public class AchievementRewards {
+public class RewardParser {
 
 	private final AdvancedAchievements plugin;
 
-	protected AchievementRewards(AdvancedAchievements achievement) {
+	public RewardParser(AdvancedAchievements achievement) {
 		this.plugin = achievement;
 	}
 

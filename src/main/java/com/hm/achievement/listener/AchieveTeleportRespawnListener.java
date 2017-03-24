@@ -25,8 +25,8 @@ public class AchieveTeleportRespawnListener extends AbstractListener implements 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		// Update location of player if he respawns after dying.
-		if (plugin.getAchieveDistanceRunnable() != null) {
-			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(event.getPlayer().getUniqueId().toString(),
+		if (plugin.getDistanceRunnable() != null) {
+			plugin.getDistanceRunnable().getPlayerLocations().put(event.getPlayer().getUniqueId().toString(),
 					event.getRespawnLocation());
 		}
 	}
@@ -44,8 +44,8 @@ public class AchieveTeleportRespawnListener extends AbstractListener implements 
 		}
 
 		// Update location of player if he teleports somewhere else.
-		if (plugin.getAchieveDistanceRunnable() != null) {
-			plugin.getAchieveDistanceRunnable().getPlayerLocations().put(player.getUniqueId().toString(),
+		if (plugin.getDistanceRunnable() != null) {
+			plugin.getDistanceRunnable().getPlayerLocations().put(player.getUniqueId().toString(),
 					event.getTo());
 		}
 
@@ -61,6 +61,5 @@ public class AchieveTeleportRespawnListener extends AbstractListener implements 
 		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
-
 	}
 }

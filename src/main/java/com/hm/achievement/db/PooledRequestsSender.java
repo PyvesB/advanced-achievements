@@ -60,7 +60,7 @@ public class PooledRequestsSender implements Runnable {
 	 * PostgreSQL 9.5+.
 	 */
 	public void sendRequests() {
-		Connection conn = plugin.getDb().getSQLConnection();
+		Connection conn = plugin.getDatabaseManager().getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			for (NormalAchievements category : NormalAchievements.values()) {
 				// Distance and PlayedTIme achievements are handled by scheduled runnables and corresponding statistics
@@ -94,14 +94,15 @@ public class PooledRequestsSender implements Runnable {
 			Map<String, Long> categoryMap = plugin.getPoolsManager().getHashMap(category);
 			for (Entry<String, Long> entry : categoryMap.entrySet()) {
 				String playerUUID = entry.getKey().substring(0, 36);
-				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
-					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ playerUUID + "', '" + entry.getKey().substring(36) + "', " + entry.getValue() + ")"
-							+ " ON CONFLICT (playername," + category.toSubcategoryDBName() + ") DO UPDATE SET ("
-							+ category.toDBName() + ")=(" + entry.getValue() + ")");
+				if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
+					st.execute("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+							+ " VALUES ('" + playerUUID + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")" + " ON CONFLICT (playername," + category.toSubcategoryDBName()
+							+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue() + ")");
 				} else {
-					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ playerUUID + "', '" + entry.getKey().substring(36) + "', " + entry.getValue() + ")");
+					st.execute("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+							+ " VALUES ('" + playerUUID + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue() + ")");
 				}
 				if (!isPlayerOnline(playerUUID)) {
 					((ConcurrentHashMap<String, Long>) categoryMap).remove(entry.getKey(), entry.getValue());
@@ -121,15 +122,16 @@ public class PooledRequestsSender implements Runnable {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Map<String, Long> categoryMap = plugin.getPoolsManager().getHashMap(category);
 			for (Entry<String, Long> entry : categoryMap.entrySet()) {
-				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
-					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-							+ entry.getValue() + ")" + " ON CONFLICT (playername," + category.toSubcategoryDBName()
-							+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue() + ")");
-				} else {
-					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+				if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
+					st.addBatch("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+							+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36)
+							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername,"
+							+ category.toSubcategoryDBName() + ") DO UPDATE SET (" + category.toDBName() + ")=("
 							+ entry.getValue() + ")");
+				} else {
+					st.addBatch("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+							+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36)
+							+ "', " + entry.getValue() + ")");
 				}
 			}
 			categoryMap.clear();
@@ -150,14 +152,14 @@ public class PooledRequestsSender implements Runnable {
 
 		if (plugin.isAsyncPooledRequestsSender()) {
 			for (Entry<String, Long> entry : categoryMap.entrySet()) {
-				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
-					st.execute("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey() + "', " + entry.getValue() + ")"
+				if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
+					st.execute("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")"
 							+ " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
 							+ entry.getValue() + ")");
 				} else {
-					st.execute("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey() + "', " + entry.getValue() + ")");
+					st.execute("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 				}
 				if (!isPlayerOnline(entry.getKey())) {
 					((ConcurrentHashMap<String, Long>) categoryMap).remove(entry.getKey(), entry.getValue());
@@ -165,14 +167,14 @@ public class PooledRequestsSender implements Runnable {
 			}
 		} else {
 			for (Entry<String, Long> entry : categoryMap.entrySet()) {
-				if (plugin.getDb().getDatabaseType() == DatabaseType.POSTGRESQL) {
-					st.addBatch("INSERT INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey() + "', " + entry.getValue() + ")"
+				if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
+					st.addBatch("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")"
 							+ " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
 							+ entry.getValue() + ")");
 				} else {
-					st.addBatch("REPLACE INTO " + plugin.getDb().getTablePrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey() + "', " + entry.getValue() + ")");
+					st.addBatch("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 				}
 			}
 			categoryMap.clear();

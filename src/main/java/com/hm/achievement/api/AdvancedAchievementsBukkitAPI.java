@@ -61,7 +61,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public List<Achievement> getPlayerAchievementsList(UUID player) {
-		List<String> rawList = pluginInstance.getDb().getPlayerAchievementsList(player);
+		List<String> rawList = pluginInstance.getDatabaseManager().getPlayerAchievementsList(player);
 		List<Achievement> playerAchievements = new ArrayList<>(rawList.size() / 3);
 		for (int i = 0; i < rawList.size(); i += 3) {
 			playerAchievements.add(new Achievement(rawList.get(i), rawList.get(i + 1), rawList.get(i + 2)));
@@ -76,14 +76,15 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public Rank getPlayerRank(UUID player, long rankingPeriodStart) {
-		int playerRank = pluginInstance.getDb().getPlayerRank(player, rankingPeriodStart);
-		int totalPlayers = pluginInstance.getDb().getTotalPlayers(rankingPeriodStart);
+		int playerRank = pluginInstance.getDatabaseManager().getPlayerRank(player, rankingPeriodStart);
+		int totalPlayers = pluginInstance.getDatabaseManager().getTotalPlayers(rankingPeriodStart);
 		return new Rank(playerRank, totalPlayers);
 	}
 
 	@Override
 	public List<UUID> getTopPlayers(int numOfPlayers, long rankingPeriodStart) {
-		List<String> playersWithCounts = pluginInstance.getDb().getTopList(numOfPlayers, rankingPeriodStart);
+		List<String> playersWithCounts = pluginInstance.getDatabaseManager().getTopList(numOfPlayers,
+				rankingPeriodStart);
 		List<UUID> topPlayers = new ArrayList<>(numOfPlayers);
 		for (int i = 0; i < playersWithCounts.size(); i += 2) {
 			topPlayers.add(UUID.fromString(playersWithCounts.get(i)));

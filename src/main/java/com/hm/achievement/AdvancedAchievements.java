@@ -66,7 +66,6 @@ import com.hm.achievement.listener.AchieveMilkLavaWaterListener;
 import com.hm.achievement.listener.AchievePetMasterGiveReceiveListener;
 import com.hm.achievement.listener.AchievePickupListener;
 import com.hm.achievement.listener.AchievePlayerCommandListener;
-import com.hm.achievement.listener.AchieveQuitListener;
 import com.hm.achievement.listener.AchieveShearListener;
 import com.hm.achievement.listener.AchieveSnowballEggListener;
 import com.hm.achievement.listener.AchieveTameListener;
@@ -76,11 +75,13 @@ import com.hm.achievement.listener.AchieveXPListener;
 import com.hm.achievement.listener.FireworkListener;
 import com.hm.achievement.listener.ListGUIListener;
 import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
+import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.achievement.utils.AchievementCountBungeeTabListPlusVariable;
 import com.hm.achievement.utils.FileUpdater;
+import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.FileManager;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import com.hm.mcshared.update.UpdateChecker;
@@ -120,7 +121,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveConsumeListener consumeListener;
 	private AchieveShearListener shearListener;
 	private AchieveMilkLavaWaterListener milkLavaWaterListener;
-	private AchieveTradeAnvilBrewSmeltListener inventoryClickListener;
+	private AchieveTradeAnvilBrewSmeltListener tradeAnvilBrewSmeltListener;
 	private AchieveEnchantListener enchantmentListener;
 	private AchieveBedListener bedListener;
 	private AchieveXPListener xpListener;
@@ -133,7 +134,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchieveKillListener killListener;
 	private AchieveCraftListener craftListener;
 	private AchievePlayerCommandListener playerCommandListener;
-	private AchieveQuitListener quitListener;
+	private QuitListener quitListener;
 	private AchieveTeleportRespawnListener teleportRespawnListener;
 	private AchievePetMasterGiveReceiveListener petMasterGiveReceiveListener;
 
@@ -142,7 +143,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private PlayerAdvancedAchievementListener playerAdvancedAchievementListener;
 
 	// Additional classes related to plugin modules and commands.
-	private AchievementRewards reward;
+	private RewardParser rewardParser;
 	private GiveCommand giveCommand;
 	private BookCommand bookCommand;
 	private TopCommand topCommand;
@@ -166,7 +167,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private final FileUpdater fileUpdater;
 
 	// Database related.
-	private final SQLDatabaseManager db;
+	private final SQLDatabaseManager databaseManager;
 	private final DatabasePoolsManager poolsManager;
 	private PooledRequestsSender pooledRequestsSender;
 	private int pooledRequestsTaskInterval;
@@ -188,8 +189,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	private int distanceTaskInterval;
 
 	// Plugin runnable classes.
-	private AchieveDistanceRunnable achieveDistanceRunnable;
-	private AchievePlayTimeRunnable achievePlayTimeRunnable;
+	private AchieveDistanceRunnable distanceRunnable;
+	private AchievePlayTimeRunnable playTimeRunnable;
 
 	// Bukkit scheduler tasks.
 	private BukkitTask pooledRequestsSenderTask;
@@ -199,7 +200,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	public AdvancedAchievements() {
 		successfulLoad = true;
 		overrideDisable = false;
-		db = new SQLDatabaseManager(this);
+		databaseManager = new SQLDatabaseManager(this);
 		poolsManager = new DatabasePoolsManager(this);
 		fileUpdater = new FileUpdater(this);
 	}
@@ -324,8 +325,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| !disabledCategorySet.contains(NormalAchievements.ANVILS.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.BREWING.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.SMELTING.toString())) {
-			inventoryClickListener = new AchieveTradeAnvilBrewSmeltListener(this);
-			pm.registerEvents(inventoryClickListener, this);
+			tradeAnvilBrewSmeltListener = new AchieveTradeAnvilBrewSmeltListener(this);
+			pm.registerEvents(tradeAnvilBrewSmeltListener, this);
 		}
 
 		if (!disabledCategorySet.contains(NormalAchievements.ENCHANTMENTS.toString())) {
@@ -375,7 +376,7 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
 			if (!disabledCategorySet.contains(NormalAchievements.LEVELS.toString())
 					|| !disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
-				quitListener = new AchieveQuitListener(this);
+				quitListener = new QuitListener(this);
 				pm.registerEvents(quitListener, this);
 			}
 			if (!disabledCategorySet.contains(NormalAchievements.ENDERPEARLS.toString())) {
@@ -406,9 +407,9 @@ public class AdvancedAchievements extends JavaPlugin {
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
 
 		// Initialise the SQLite/MySQL/PostgreSQL database.
-		db.initialise();
+		databaseManager.initialise();
 
-		if (databaseBackup && db.getDatabaseType() == DatabaseType.SQLITE) {
+		if (databaseBackup && databaseManager.getDatabaseType() == DatabaseType.SQLITE) {
 			File backup = new File(this.getDataFolder(), "achievements.db.bak");
 			// Only do a daily backup for the .db file.
 			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
@@ -437,8 +438,8 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
 		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
-			achievePlayTimeRunnable = new AchievePlayTimeRunnable(this);
-			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(this, achievePlayTimeRunnable,
+			playTimeRunnable = new AchievePlayTimeRunnable(this);
+			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(this, playTimeRunnable,
 					playtimeTaskInterval * 10L, playtimeTaskInterval * 20L);
 		}
 
@@ -450,8 +451,8 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
-			achieveDistanceRunnable = new AchieveDistanceRunnable(this);
-			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(this, achieveDistanceRunnable,
+			distanceRunnable = new AchieveDistanceRunnable(this);
+			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(this, distanceRunnable,
 					distanceTaskInterval * 40L, distanceTaskInterval * 20L);
 		}
 
@@ -486,8 +487,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		// Reload achievements in distance, max level and play time runnables on plugin reload (when objects are null).
-		if (achieveDistanceRunnable != null) {
-			achieveDistanceRunnable.extractParameter();
+		if (distanceRunnable != null) {
+			distanceRunnable.extractParameter();
 		}
 
 		// Unregister events if user changed the option and did an /aach reload. We do not recheck for update on /aach
@@ -589,7 +590,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Initialises the command modules.
 	 */
 	private void initialiseCommands() {
-		reward = new AchievementRewards(this);
+		rewardParser = new RewardParser(this);
 		giveCommand = new GiveCommand(this);
 		bookCommand = new BookCommand(this);
 		topCommand = new TopCommand(this);
@@ -723,34 +724,42 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		// Send played time stats to the database, forcing synchronous writes.
-		if (achievePlayTimeRunnable != null) {
+		if (playTimeRunnable != null) {
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.PLAYEDTIME).entrySet()) {
-				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.PLAYEDTIME.toDBName());
+				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
+						NormalAchievements.PLAYEDTIME.toDBName());
 			}
 		}
 
 		// Send traveled distance stats to the database, synchronous writes.
-		if (achieveDistanceRunnable != null) {
+		if (distanceRunnable != null) {
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEFOOT).entrySet()) {
-				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEFOOT.toDBName());
+				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEFOOT.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEPIG).entrySet()) {
-				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEPIG.toDBName());
+				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEPIG.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEHORSE).entrySet()) {
-				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEHORSE.toDBName());
+				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEHORSE.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEBOAT).entrySet()) {
-				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEBOAT.toDBName());
+				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEBOAT.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEMINECART).entrySet()) {
-				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEMINECART.toDBName());
+				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEMINECART.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEGLIDING).entrySet()) {
-				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCEGLIDING.toDBName());
+				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCEGLIDING.toDBName());
 			}
 			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCELLAMA).entrySet()) {
-				db.updateStatistic(entry.getKey(), entry.getValue(), NormalAchievements.DISTANCELLAMA.toDBName());
+				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
+						NormalAchievements.DISTANCELLAMA.toDBName());
 			}
 		}
 
@@ -759,8 +768,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		pooledRequestsSender.sendRequests();
 
 		try {
-			if (db.getSQLConnection() != null) {
-				db.getSQLConnection().close();
+			if (databaseManager.getSQLConnection() != null) {
+				databaseManager.getSQLConnection().close();
 			}
 		} catch (SQLException e) {
 			this.getLogger().log(Level.SEVERE, "Error while closing connection to database: ", e);
@@ -923,7 +932,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			return economy != null;
 		} catch (NoClassDefFoundError e) {
 			if (log) {
-				this.getLogger().warning("Attempt to hook up with Vault failed. Money reward ignored.");
+				this.getLogger().warning("Attempt to hook up with Vault failed. Money rewardParser ignored.");
 			}
 			return false;
 		}
@@ -981,16 +990,16 @@ public class AdvancedAchievements extends JavaPlugin {
 		return achievementsAndDisplayNames;
 	}
 
-	public SQLDatabaseManager getDb() {
-		return db;
+	public SQLDatabaseManager getDatabaseManager() {
+		return databaseManager;
 	}
 
 	public DatabasePoolsManager getPoolsManager() {
 		return poolsManager;
 	}
 
-	public AchievementRewards getReward() {
-		return reward;
+	public RewardParser getRewardParser() {
+		return rewardParser;
 	}
 
 	public String getChatHeader() {
@@ -1037,12 +1046,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		return toggleCommand;
 	}
 
-	public AchieveDistanceRunnable getAchieveDistanceRunnable() {
-		return achieveDistanceRunnable;
+	public AchieveDistanceRunnable getDistanceRunnable() {
+		return distanceRunnable;
 	}
 
-	public AchievePlayTimeRunnable getAchievePlayTimeRunnable() {
-		return achievePlayTimeRunnable;
+	public AchievePlayTimeRunnable getPlayTimeRunnable() {
+		return playTimeRunnable;
 	}
 
 	public AchieveConnectionListener getConnectionListener() {
@@ -1053,8 +1062,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		return milkLavaWaterListener;
 	}
 
-	public AchieveTradeAnvilBrewSmeltListener getInventoryClickListener() {
-		return inventoryClickListener;
+	public AchieveTradeAnvilBrewSmeltListener getTradeAnvilBrewSmeltListener() {
+		return tradeAnvilBrewSmeltListener;
 	}
 
 	public AchieveBedListener getBedListener() {

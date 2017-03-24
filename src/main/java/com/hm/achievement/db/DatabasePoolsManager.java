@@ -105,7 +105,7 @@ public class DatabasePoolsManager {
 		String uuid = player.toString();
 		Long oldAmount = categoryHashMap.get(uuid);
 		if (oldAmount == null) {
-			oldAmount = plugin.getDb().getNormalAchievementAmount(player, category);
+			oldAmount = plugin.getDatabaseManager().getNormalAchievementAmount(player, category);
 		}
 		Long newValue = oldAmount + value;
 
@@ -135,7 +135,7 @@ public class DatabasePoolsManager {
 		}
 		Long oldAmount = categoryHashMap.get(uuid + subcategoryDBName);
 		if (oldAmount == null) {
-			oldAmount = plugin.getDb().getMultipleAchievementAmount(player, category, subcategoryDBName);
+			oldAmount = plugin.getDatabaseManager().getMultipleAchievementAmount(player, category, subcategoryDBName);
 		}
 		Long newValue = oldAmount + value;
 
@@ -158,7 +158,7 @@ public class DatabasePoolsManager {
 			return false;
 		}
 
-		boolean received = plugin.getDb().hasPlayerAchievement(player, name);
+		boolean received = plugin.getDatabaseManager().hasPlayerAchievement(player, name);
 		if (received) {
 			receivedAchievementsCache.put(player.toString(), name);
 		} else {
@@ -176,7 +176,7 @@ public class DatabasePoolsManager {
 	public int getPlayerTotalAchievements(UUID player) {
 		Integer totalAchievements = totalPlayerAchievementsCache.get(player.toString());
 		if (totalAchievements == null) {
-			totalAchievements = plugin.getDb().getPlayerAchievementsAmount(player);
+			totalAchievements = plugin.getDatabaseManager().getPlayerAchievementsAmount(player);
 			totalPlayerAchievementsCache.put(player.toString(), totalAchievements);
 		}
 		return totalAchievements;
