@@ -34,12 +34,17 @@
 					<artifactSet>
 						<includes>
 							<include>com.hm.mcshared:*</include>
+							<include>codecrafter47.bungeetablistplus</include>
 						</includes>
 					</artifactSet>
 					<relocations>
 						<relocation>
 							<pattern>com.hm.mcshared</pattern>
 							<shadedPattern>com.hm.mcshared</shadedPattern>
+						</relocation>
+						<relocation>
+							<pattern>codecrafter47.bungeetablistplus</pattern>
+							<shadedPattern>codecrafter47.bungeetablistplus</shadedPattern>
 						</relocation>
 					</relocations>
 				</configuration>
@@ -80,6 +85,10 @@
 			<id>MCShared-mvn-repo</id>
 			<url>https://raw.github.com/PyvesB/MCShared/mvn-repo/</url>
 		</repository>
+		<repository>
+			<id>codecrafter47-repo</id>
+			<url>http://nexus.codecrafter47.de/content/repositories/public/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -100,6 +109,12 @@
 			<groupId>com.hm.mcshared</groupId>
 			<artifactId>MCShared</artifactId>
 			<version>1.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>codecrafter47.bungeetablistplus</groupId>
+			<artifactId>bungeetablistplus-api-bukkit</artifactId>
+			<version>2.7.3</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

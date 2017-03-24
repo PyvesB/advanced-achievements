@@ -79,10 +79,12 @@ import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
+import com.hm.achievement.utils.AchievementCountBungeeTabListPlusVariable;
 import com.hm.achievement.utils.FileUpdater;
 import com.hm.mcshared.file.FileManager;
 import com.hm.mcshared.update.UpdateChecker;
 
+import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
 import net.milkbowl.vault.economy.Economy;
 
 /**
@@ -395,6 +397,10 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		playerAdvancedAchievementListener = new PlayerAdvancedAchievementListener(this);
 		pm.registerEvents(playerAdvancedAchievementListener, this);
+
+		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
+			BungeeTabListPlusBukkitAPI.registerVariable(this, new AchievementCountBungeeTabListPlusVariable(this));
+		}
 
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
 
