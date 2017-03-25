@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
@@ -36,17 +37,16 @@ public class SQLDatabaseManager {
 	private final AdvancedAchievements plugin;
 	// Used to do some write operations to the database asynchronously.
 	private final ExecutorService pool;
+	// Connection to the database; remains opened and shared.
+	private final AtomicReference<Connection> sqlConnection;
 
-	private String databaseAddress;
-	private String databaseUser;
-	private String databasePassword;
-	private String tablePrefix;
+	private volatile String databaseAddress;
+	private volatile String databaseUser;
+	private volatile String databasePassword;
+	private volatile String tablePrefix;
+	private volatile DatabaseType databaseType;
 	private boolean achievementsChronologicalOrder;
-	private DatabaseType databaseType;
 	private DateFormat dateFormat;
-
-	// Connection to the database; remains opened and shared except when plugin disabled.
-	private Connection sqlConnection;
 
 	public SQLDatabaseManager(AdvancedAchievements plugin) {
 		this.plugin = plugin;
@@ -54,6 +54,7 @@ public class SQLDatabaseManager {
 		// not use Bukkit API scheduler, as a reload/restart could kill the async task before write to
 		// database has occurred; pools also allow to reuse threads.
 		pool = Executors.newCachedThreadPool();
+		sqlConnection = new AtomicReference<>();
 	}
 
 	/**
@@ -138,15 +139,19 @@ public class SQLDatabaseManager {
 	 */
 	public Connection getSQLConnection() {
 		// Check if Connection was not previously closed.
+		Connection oldConnection = sqlConnection.get();
 		try {
-			if (sqlConnection == null || sqlConnection.isClosed()) {
-				sqlConnection = createSQLConnection();
+			if (oldConnection == null || oldConnection.isClosed()) {
+				Connection newConnection = createSQLConnection();
+				if (!sqlConnection.compareAndSet(oldConnection, newConnection)) {
+					newConnection.close();
+				}
 			}
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "Error while attempting to retrieve connection to database: ", e);
 			plugin.setSuccessfulLoad(false);
 		}
-		return sqlConnection;
+		return sqlConnection.get();
 	}
 
 	/**

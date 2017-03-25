@@ -169,7 +169,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private PooledRequestsSender pooledRequestsSender;
 	private int pooledRequestsTaskInterval;
 	private boolean databaseBackup;
-	private boolean asyncPooledRequestsSender;
+	private volatile boolean asyncPooledRequestsSender;
 
 	// Plugin options and various parameters.
 	private String icon;
