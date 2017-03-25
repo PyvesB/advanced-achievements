@@ -1,6 +1,7 @@
 package com.hm.achievement.command;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -58,6 +59,18 @@ public class InfoCommand extends AbstractCommand {
 				+ plugin.getPluginLang().getString("version-command-petmaster", "Pet Master integration:") + " "
 				+ ChatColor.GRAY
 				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(petMasterState)));
+
+		// Display whether BungeeTabListPlus is linked to Pet Master.
+		String btlpState;
+		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
+			btlpState = "&a\u2714";
+		} else {
+			btlpState = "&4\u2718";
+		}
+		sender.sendMessage(plugin.getChatHeader() + plugin.getColor()
+				+ plugin.getPluginLang().getString("version-command-btlp", "BungeeTabListPlus integration:") + " "
+				+ ChatColor.GRAY
+				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(btlpState)));
 
 		// Display database type.
 		String databaseType;
