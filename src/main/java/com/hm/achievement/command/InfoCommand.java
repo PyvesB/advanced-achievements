@@ -38,7 +38,7 @@ public class InfoCommand extends AbstractCommand {
 
 		// Display whether Advanced Achievements is linked to Vault.
 		String vaultState;
-		if (plugin.setUpEconomy(false)) {
+		if (plugin.getRewardParser().isEconomySet(false)) {
 			vaultState = "&a\u2714";
 		} else {
 			vaultState = "&4\u2718";

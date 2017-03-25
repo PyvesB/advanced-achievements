@@ -23,7 +23,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -88,7 +87,6 @@ import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import com.hm.mcshared.update.UpdateChecker;
 
 import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
-import net.milkbowl.vault.economy.Economy;
 
 /**
  * Advanced Achievements enables unique and challenging achievements on your server. Try to collect as many as you can,
@@ -108,9 +106,6 @@ import net.milkbowl.vault.economy.Economy;
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin {
-
-	// Used for Vault plugin integration.
-	private Economy economy;
 
 	// Listeners, to monitor events and manage stats.
 	private AchieveConnectionListener connectionListener;
@@ -844,32 +839,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Tries to hook up with Vault, and log if this is called on plugin initialisation.
-	 * 
-	 * @param log
-	 * @return true if Vault available, false otherwise
-	 */
-	public boolean setUpEconomy(boolean log) {
-		if (economy != null) {
-			return true;
-		}
-
-		try {
-			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
-					.getRegistration(net.milkbowl.vault.economy.Economy.class);
-			if (economyProvider != null) {
-				economy = economyProvider.getProvider();
-			}
-			return economy != null;
-		} catch (NoClassDefFoundError e) {
-			if (log) {
-				this.getLogger().warning("Attempt to hook up with Vault failed. Money rewardParser ignored.");
-			}
-			return false;
-		}
-	}
-
-	/**
 	 * Returns a map from achievement name (as stored in the database) to DisplayName. If multiple achievements have the
 	 * same achievement name, only the first DisplayName will be tracked. If DisplayName for an achievement is empty or
 	 * undefined, the value in the returned map will be an empty string.
@@ -1041,9 +1010,5 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	public AchievementCommentedYamlConfiguration getPluginGui() {
 		return gui;
-	}
-
-	public Economy getEconomy() {
-		return economy;
 	}
 }

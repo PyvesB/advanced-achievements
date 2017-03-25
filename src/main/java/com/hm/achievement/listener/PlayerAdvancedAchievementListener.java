@@ -125,12 +125,12 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 	 */
 	@SuppressWarnings("deprecation")
 	private void rewardMoney(Player player, int amount) {
-		if (plugin.setUpEconomy(true)) {
+		if (plugin.getRewardParser().isEconomySet(true)) {
 			try {
-				plugin.getEconomy().depositPlayer(player, amount);
+				plugin.getRewardParser().getEconomy().depositPlayer(player, amount);
 			} catch (NoSuchMethodError e) {
 				// Deprecated method, but was the only one existing prior to Vault 1.4.
-				plugin.getEconomy().depositPlayer(player.getName(), amount);
+				plugin.getRewardParser().getEconomy().depositPlayer(player.getName(), amount);
 			}
 
 			String currencyName = plugin.getRewardParser().getCurrencyName(amount);

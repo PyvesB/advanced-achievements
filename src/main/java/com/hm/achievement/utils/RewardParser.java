@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.hm.achievement.AdvancedAchievements;
 
+import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.item.ItemInfo;
 import net.milkbowl.vault.item.Items;
 
@@ -23,8 +26,40 @@ public class RewardParser {
 
 	private final AdvancedAchievements plugin;
 
+	// Used for Vault plugin integration.
+	private Economy economy;
+
 	public RewardParser(AdvancedAchievements achievement) {
 		this.plugin = achievement;
+	}
+
+	public Economy getEconomy() {
+		return economy;
+	}
+
+	/**
+	 * Tries to hook up with Vault, and log if this is called on plugin initialisation.
+	 * 
+	 * @param log
+	 * @return true if Vault available, false otherwise
+	 */
+	public boolean isEconomySet(boolean log) {
+		if (economy != null) {
+			return true;
+		}
+		try {
+			RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager()
+					.getRegistration(net.milkbowl.vault.economy.Economy.class);
+			if (economyProvider != null) {
+				economy = economyProvider.getProvider();
+			}
+			return economy != null;
+		} catch (NoClassDefFoundError e) {
+			if (log) {
+				plugin.getLogger().warning("Attempt to hook up with Vault failed. Money rewardParser ignored.");
+			}
+			return false;
+		}
 	}
 
 	/**
@@ -38,7 +73,7 @@ public class RewardParser {
 		Set<String> keyNames = plugin.getPluginConfig().getKeys(true);
 
 		AchievementCommentedYamlConfiguration pluginLang = plugin.getPluginLang();
-		if (plugin.setUpEconomy(false) && keyNames.contains(configAchievement + ".Reward.Money")) {
+		if (isEconomySet(false) && keyNames.contains(configAchievement + ".Reward.Money")) {
 			int amount = getMoneyAmount(configAchievement);
 			rewardType.add(StringUtils.replaceOnce(pluginLang.getString("list-reward-money", "receive AMOUNT"),
 					"AMOUNT", amount + " " + getCurrencyName(amount)));
@@ -64,9 +99,9 @@ public class RewardParser {
 	public String getCurrencyName(int amount) {
 		String currencyName;
 		if (amount > 1) {
-			currencyName = plugin.getEconomy().currencyNamePlural();
+			currencyName = economy.currencyNamePlural();
 		} else {
-			currencyName = plugin.getEconomy().currencyNameSingular();
+			currencyName = economy.currencyNameSingular();
 		}
 		return currencyName;
 	}
@@ -79,7 +114,7 @@ public class RewardParser {
 	 */
 	public String getItemName(ItemStack item) {
 		// Return Vault name of object if available.
-		if (plugin.setUpEconomy(false)) {
+		if (isEconomySet(false)) {
 			ItemInfo itemInfo = Items.itemByStack(item);
 			if (itemInfo != null) {
 				return itemInfo.getName();
