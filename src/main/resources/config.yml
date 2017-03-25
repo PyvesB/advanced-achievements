@@ -4,11 +4,10 @@
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
-# You can use Minecraft chat colors in Message|DisplayName|Goal, but include '' around the whole text: '&4Color'.
-# When using colours, you must also double apostrophes: '&2I''ve doubled apostrophes!'.
-# Only spaces, no tabs. Don't forget the indents, plugin won't work otherwise!
-# To check your file, use: yaml-online-parser.appspot.com
-# Do NOT delete any main achievement sections in the configuration file.
+# You can use Minecraft chat colors in Message|DisplayName|Goal, but include double quotes around the whole text: "&4Color".
+# Only spaces, NO tabs. Don't forget the indents (2 spaces per indentation level), plugin won't work otherwise!
+# To check syntax errors in your file, use: yaml-online-parser.appspot.com
+# Do NOT delete any top level (= not indentented) sections in the configuration file.
 # Possible items for rewards/Crafts/Places/Breaks: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
 # Possible mobs for the Kills section: 	  hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
 # Default config.yml file:  github.com/PyvesB/AdvancedAchievements/blob/master/src/main/resources/config.yml
@@ -47,21 +46,21 @@ AdditionalEffects: true
 # /aach top, week or month when ranked in the top list.
 Sound: true
 
-# Set the icon of the plugin (default: shamrock, '\u2618').
-Icon: '\u2618'
+# Set the icon of the plugin (default: shamrock, \u2618).
+Icon: \u2618
 
 # Set the color of the plugin (default: 5, dark purple).
-Color: '5'
+Color: 5
 
 # Notify other connected players when an achievement is received.
 # Default behaviour, a player can override what he sees by using /aach toggle.
 ChatNotify: false
 
 # Separator between name, description and date on a book page.
-BookSeparator: ''
+BookSeparator: ""
 
-# Set the format of the achievement name in /aach list (default: '%ICON% %NAME% %ICON%').
-ListAchievementFormat: '%ICON% %NAME% %ICON%'
+# Set the format of the achievement name in /aach list (default: "%ICON% %NAME% %ICON%").
+ListAchievementFormat: "%ICON% %NAME% %ICON%"
 
 # Stop all stats from increasing when player in creative mode, including PlayedTime.
 # Connection achievements will only be handled once a player switches to a non-creative mode.
@@ -83,7 +82,7 @@ IgnoreVerticalDistance: false
 
 # Don't show these categories in the achievement GUI or in the stats output (delete the [] before adding values).
 # Also prevent obtaining achievements for these categories and prevent stats from increasing.
-# If changed, do a full server reload, and not just /aach reload.
+# If changed, do a full server restart, and not just /aach reload.
 DisabledCategories: []
 #  - PetMasterGive
 #  - PetMasterReceive
@@ -116,7 +115,7 @@ EnrichedListProgressBars: true
 # if you have more than 64 achievements for a category, the counting will start back at 1 after number 64.
 NumberedItemsInList: false
 
-# Display achievement name and description as screen titles. Set to false if using Minecraft 1.7.9 or 1.7.10.
+# Display achievement Name and Message as screen titles. Set to false if using Minecraft 1.7.9 or 1.7.10.
 TitleScreen: true
 
 # Sort pages of the book in chronological order (false for reverse chronological order).
@@ -130,18 +129,18 @@ DisableSilkTouchBreaks: false
 DisableSilkTouchOreBreaks: false
 
 # Name of the language file.
-LanguageFileName: 'lang.yml'
+LanguageFileName: lang.yml
 
 # Time in seconds between each statistic count for the following categories. 
 # LavaBuckets, WaterBuckets, Beds, Brewing, MusicDiscs.
 StatisticCooldown: 10
 
-# Display action bar message when player does an action while in the cooldown period.
+# Display action bar message when player performs an action while in the cooldown period.
 CooldownActionBar: true
 
 # Locale used to format dates in /aach book and /aach list. You must select an ISO 639 language code.
-# The list of possible language codes can be found here at www.loc.gov/standards/iso639-2/php/code_list.php
-DateLocale: 'en'
+# The list of possible language codes can be found at www.loc.gov/standards/iso639-2/php/code_list.php
+DateLocale: en
 
 # Display time of reception of achievements in /aach book and /aach list in addition to the date. For achievements
 # received in plugin versions prior to 3.0, the precise time information is not available and will be displayed as midnight.
@@ -156,23 +155,23 @@ DateDisplayTime: true
 # Make a daily backup of your local database (if sqlite).
 DatabaseBackup: true
 
-# Database type, sqlite, postgresql or mysql. Do a full server reload or restart to make this effective.
+# Database type, sqlite, postgresql or mysql. Do a full server restart for this to take effect.
 DatabaseType: sqlite
 
 # Prefix added to the tables in the database. If you switch from the default tables names (no prefix),
 # the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.
-# Do a full server reload or restart to make this effective.
-TablePrefix: ''
+# Do a full server restart for this to take effect.
+TablePrefix: ""
 
-# Settings to link with MySQL database (ignore if sqlite or postgresql).
+# Settings to link with MySQL database (ignored if sqlite or postgresql).
 MYSQL:
-  Database: 'jdbc:mysql://localhost:3306/minecraft'
+  Database: "jdbc:mysql://localhost:3306/minecraft"
   User: root
   Password: root
   
-# Settings to link with PostgresSQL database (ignore if sqlite or mysql).
+# Settings to link with PostgresSQL database (ignored if sqlite or mysql).
 POSTGRESQL:
-  Database: 'jdbc:postgresql://localhost:5432/minecraft'
+  Database: "jdbc:postgresql://localhost:5432/minecraft"
   User: root
   Password: root
   
@@ -183,7 +182,7 @@ POSTGRESQL:
 #============================oo=oo============================#
 
 # DO NOT CHANGE THE FOLLOWING UNLESS YOU ARE AN EXPERIENCED USER. The intervals are in seconds. 
-# If any of the performance settings are changed, do a full server reload, and not just /aach reload.
+# If any of the performance settings are changed, do a full server restart, and not just /aach reload.
 # Frequency of play time checks for players. Smaller values give more precision but more CPU usage.
 PlaytimeTaskInterval: 60
 
@@ -204,7 +203,7 @@ AsyncPooledRequestsSender: true
 
 # When a player connects during the day; statistic increases at most once per day.
 Connections:
-  '1':
+  1:
     Message: You connected to our server for the first time!
     Name: connect_1
     DisplayName: Good Choice
@@ -212,27 +211,27 @@ Connections:
 # When a specific block is placed (specify material name, lower case).
 Places:  
   smooth_brick:
-    '500':
+    500:
       # Used in /aach list when achievement not yet received.
-      Goal: 'Place 500 stone bricks.'
+      Goal: Place 500 stone bricks.
       # Description; displayed when receiving achievement, and in /aach book and /aach list.
-      Message: '&4You have placed 500 stone bricks!'
+      Message: "&4You have placed 500 stone bricks!"
       # Database name, must also be used in /aach delete and /aach check.
       Name: place_500_smooth_brick
       # Name; displayed when receiving achievement, and in /aach book and /aach list.
-      DisplayName: 'Stone Brick Layer'
-    '2500':
-      Goal: 'Place 2500 stone bricks.'
-      Message: '&4You have placed 2500 stone bricks!'
+      DisplayName: Stone Brick Layer
+    2500:
+      Goal: "Place 2500 stone bricks."
+      Message: "&4You have placed 2500 stone bricks!"
       Name: place_2500_smooth_brick
-      DisplayName: 'Stone Brick Architect'
+      DisplayName: Stone Brick Architect
   stone:
-    '100':
-      Message: '&4One hundred placed stones!'
+    100:
+      Message: "&4One hundred placed stones!"
       Name: place_100_stone
       DisplayName: Stone Addict
-    '1000':
-      Message: '&4One thousand placed stones!'
+    1000:
+      Message: "&4One thousand placed stones!"
       Name: place_1000_stone
       DisplayName: Stone God
 
@@ -240,16 +239,16 @@ Places:
 # Below, the notation sand:1 means sand item with metadata 1 (red sand).
 Breaks: 
   sand:1:
-    '10':
-      Message: '&cYou have collected 10 red sand blocks!'
+    10:
+      Message: "&cYou have collected 10 red sand blocks!"
       Name: break_10_sand1
       DisplayName: Red Sand Fan
   stone:
-    '1':
-      Message: '&1The first time you went mining!'
+    1:
+      Message: "&1The first time you went mining!"
       Name: break_1_stone
       DisplayName: Cobble!
-      # Use semicolons for multiple command rewards. PLAYER will be replaced by player's name.
+      # Use semicolons for multiple command rewards. PLAYER will be replaced by players name.
       Reward:
         Command: give PLAYER 158 10; give PLAYER 126 5
               
@@ -259,15 +258,15 @@ Breaks:
 # Use specificplayer- followed by player UUID to track how many times a specific player has been killed.
 Kills:
   zombie:
-    '1':
-      Message: '&8The first time you killed a zombie!'
+    1:
+      Message: "&8The first time you killed a zombie!"
       DisplayName: The Walking Dead
       Name: kills_1_zombie
       Reward:
         Money: 1         
         Item: diamond 1
   specificplayer-56c79b19-4500-466c-94ea-514a755fdd09:
-    '1':
+    1:
       Message: You killed the author of the plugin!
       DisplayName: No More DarkPyves
       Name: kills_1_darkpyves
@@ -275,7 +274,7 @@ Kills:
 # When a specific item is crafted (specify material name, lower case).
 Crafts:
   diamond_sword:
-    '1':
+    1:
       Message: The first time you crafted a blade!
       Name: craft_1_blade
       DisplayName: Blacksmith Apprentice
@@ -284,168 +283,168 @@ Crafts:
       
 # When the player dies.
 Deaths:
-  '1':
+  1:
     Message: The first time you died!
     Name: deaths_1
     DisplayName: Rest in Peace
     
 # When an arrow is shot.
 Arrows:
-  '50':
-    Message: '50 arrows shot!'
+  50:
+    Message: 50 arrows shot!
     Name: arrows_50
     DisplayName: Arrows Around the Place
     
 # When a snowball is thrown.  
 Snowballs:
-  '1000':
-    Message: '1000 snowballs thrown. That''s the spirit!'
+  1000:
+    Message: 1000 snowballs thrown. That's the spirit!
     Name: snowballs_1000
     DisplayName: Winter Addict 
     
 # When an egg is thrown.  
 Eggs:
-  '1000':
-    Message: '1000 eggs thrown!'
+  1000:
+    Message: 1000 eggs thrown!
     Name: eggs_1000
     DisplayName: Omelet Addict 
     
 # When a fish is caught. 
 Fish:
-  '1':
+  1:
     Message: The first time you caught a fish!
     Name: fish_1
     DisplayName: Time for Fish and Chips
     
 # When a treasure is caught with a fishing rod.
 Treasures:
-  '1':
+  1:
     Message: Your first treasure from the sea!
     Name: treasure_1
     DisplayName: Treasure Hunter
 
 # When a tool/armor/weapon is broken.  
 ItemBreaks:
-  '1':
+  1:
     Message: You broke your favorite tool!
     Name: itembreaks_1
-    DisplayName: '&4Clumsy Guy'
+    DisplayName: "&4Clumsy Guy"
 
 # When an item is eaten (excludes potions and milk).
 EatenItems:
-  '1':
+  1:
     Message: Just had a snack!
     Name: eatenitems_1
     DisplayName: First Snack  
     
 # When a sheep is sheared.
 Shear:
-  '100':
+  100:
     Message: 100 sheep sheared!
     Name: shear_100
-    DisplayName: '&1Wool Addict'
+    DisplayName: "&1Wool Addict"
     
 # When a cow is milked.
 Milk:
-  '1':
+  1:
     Message: Just milked a cow!
     Name: milk_1
     DisplayName: First Milk    
     
 # When a bucket is filled with lava.
 LavaBuckets:
-  '10':
+  10:
     Message: 10 buckets filled with lava!
     Name: lavabuckets_10
     DisplayName: Pyroman
     
 # When a bucket is filled with water.
 WaterBuckets:
-  '15':
+  15:
     Message: 15 buckets filled with water!
     Name: waterbuckets_15
     DisplayName: Fireman    
     
 # When a trade with a villager is made.
 Trades:
-  '1':
+  1:
     Message: Doing business with your first villager!
     Name: trades_1
     DisplayName: First Trade    
     
 # When an anvil is used.
 AnvilsUsed:
-  '1':
+  1:
     Message: You just repaired your first item!
     Name: anvilsused_1
     DisplayName: First Repair 
     
 # When an enchantment is performed.
 Enchantments:
-  '5':
+  5:
     Message: 5 objects enchanted!
     Name: enchantments_5
-    DisplayName: '&5Wizard'
+    DisplayName: "&5Wizard"
     
 # When a bed is entered. 
 Beds:  
-  '5':
+  5:
     Message: You entered a bed 5 times!
     Name: bed_5
     DisplayName: Sleepy Guy 
     
 # Maximum level reached.    
 MaxLevel:  
-  '10':
+  10:
     Message: Level 10 reached!
     Name: maxlevel_10
-    DisplayName: '&4Rookie'  
+    DisplayName: "&4Rookie"
     
 # When a potion is consumed.
 ConsumedPotions:
-  '100':
+  100:
     Message: Drinking weird beverages all the time...
     Name: consumedpotions_100
     DisplayName: Alcoholic 
     
 # Amount of time played on the server (in hours, use integers).
 PlayedTime:
-  '1':
+  1:
     Message: You played during one hour on the server!
     Name: playedtime_1
     DisplayName: First Hour
     
 # When a distance is traveled by foot.
 DistanceFoot:
-  '1000':
+  1000:
     Message: You traveled 1000 blocks by foot!
     Name: distancefoot_1000
     DisplayName: Big Walker 
     
 # When a distance is traveled on a pig.
 DistancePig:
-  '100':
+  100:
     Message: You traveled 100 blocks on a pig!
     Name: distancepig_100
     DisplayName: Carrot on a Stick Master
     
 # When a distance is traveled on a horse.
 DistanceHorse:
-  '500':
+  500:
     Message: You traveled 500 blocks on a horse!
     Name: distancehorse_500
     DisplayName: The Avener
     
 # When a distance is traveled in a minecart.
 DistanceMinecart:
-  '100':
+  100:
     Message: You traveled 100 blocks in a minecart!
     Name: distanceminecart_100
     DisplayName: Carting Fan
 
 # When a distance is traveled in a boat.
 DistanceBoat:
-  '200':
+  200:
     Message: You traveled 200 blocks in a boat!
     Name: distanceboat_200
     DisplayName: Great Sailor
@@ -453,7 +452,7 @@ DistanceBoat:
 # When a distance is traveled with elytra.
 # Ignored on Minecraft versions prior to 1.9, add it to DisabledCategories list.
 DistanceGliding:
-  '100':
+  100:
     Message: You traveled 100 blocks with elytra!
     Name: distancegliding_100
     DisplayName: Angel
@@ -461,28 +460,28 @@ DistanceGliding:
 # When a distance is traveled on a llama.
 # Ignored on Minecraft versions prior to 1.11, add it to DisabledCategories list.
 DistanceLlama:
-  '50':
+  50:
     Message: You traveled 50 blocks on a llama!
     Name: distancellama_50
     DisplayName: Llama Rider
 
 # When an item is dropped on the ground.
 ItemDrops:
-  '15':
+  15:
     Message: You're killing the planet!
     Name: itemdrops_15
     DisplayName: Polluter
     
 # When an item is picked up from the ground.
 ItemPickups:
-  '40':
+  40:
     Message: You're saving the planet!
     Name: itempickups_40
     DisplayName: Environmentalist
     
 # When soil is plowed with a hoe.
 HoePlowings:
-  '10':
+  10:
     Message: You plowed the ground 10 times!
     Name: hoeplowings_10
     DisplayName: Farmer
@@ -491,63 +490,63 @@ HoePlowings:
     
 # When bone meal is used to fertilise plants.
 Fertilising:
-  '15':
+  15:
     Message: You used bone meal on plants 15 times!
     Name: fertilising_15
     DisplayName: Gardener
     
 # When an animal is tamed.
 Taming:
-  '1':
+  1:
     Message: You tamed your first animal!
     Name: taming_1
     DisplayName: Tamer
     
 # When a potion is brewed.
 Brewing:
-  '1':
+  1:
     Message: You brewed your first potion!
     Name: brewing_1
     DisplayName: Alchemist
     
 # When a firework is launched.
 Fireworks:
-  '10':
+  10:
     Message: You launched 10 fireworks!
     Name: fireworks_10
     DisplayName: Pyrotechnist
 
 # When a music disc is played.
 MusicDiscs:
-  '1':
+  1:
     Message: One jukebox used!
     Name: musicdiscs_1
     DisplayName: DJ
 
 # When a player teleports with an enderpearl.
 EnderPearls:
-  '10':
+  10:
     Message: 10 teleportations with ender pearls!
     Name: enderpearls_10
     DisplayName: Teleport Man
     
 # When a player gives a pet to another player (requires Pet Master plugin version 1.4 or above).
 PetMasterGive:
-  '3':
+  3:
     Message: 3 pets given to friends!
     Name: petmastergive_3
     DisplayName: Donator
 
 # When a player receives a pet from another player (requires Pet Master plugin version 1.4 or above).
 PetMasterReceive:
-  '10':
+  10:
     Message: 10 pets received from friends!
     Name: petmasterreceive_10
     DisplayName: Receiver
     
 # When an item is smelt in a furnace.
 Smelting:
-  '250':
+  250':
     Message: 250 items smelt in a furnace!
     Name: smeltitems_250
     DisplayName: The Smelter
@@ -556,8 +555,8 @@ Smelting:
 # For instance a command /awf add world from the AntiWorldFly plugin matches with subcategory 'awf add'.
 # Aliases of a given command will also be taken into account.
 PlayerCommands:
-  'aach stats':
-    '10':
+  aach stats:
+    10:
       Message: Run the stats command 10 times!
       Name: playercommand_aachstats_10
       DisplayName: Statistician
