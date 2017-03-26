@@ -2,7 +2,6 @@ package com.hm.achievement;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -720,13 +719,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		// Send remaining stats for pooled events to the database.
 		pooledRequestsSender.sendBatchedRequests();
 
-		try {
-			if (databaseManager.getSQLConnection() != null) {
-				databaseManager.getSQLConnection().close();
-			}
-		} catch (SQLException e) {
-			this.getLogger().log(Level.SEVERE, "Error while closing connection to database: ", e);
-		}
+		databaseManager.shutdown();
 
 		this.getLogger().info("Remaining requests sent to database, plugin disabled.");
 	}

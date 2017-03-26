@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
@@ -135,9 +136,30 @@ public class SQLDatabaseManager {
 	}
 
 	/**
+	 * Shuts the thread pool down and closes connection to database.
+	 */
+	public void shutdown() {
+		pool.shutdown();
+		try {
+			// Wait a few seconds for remaining tasks to execute.
+			pool.awaitTermination(5, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			plugin.getLogger().log(Level.SEVERE, "Error awaiting for pool to terminate its tasks.", e);
+		}
+		try {
+			Connection connection = sqlConnection.get();
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (SQLException e) {
+			plugin.getLogger().log(Level.SEVERE, "Error while closing connection to database.", e);
+		}
+	}
+
+	/**
 	 * Retrieves SQL connection to MySQL, PostgreSQL or SQLite database.
 	 */
-	public Connection getSQLConnection() {
+	protected Connection getSQLConnection() {
 		// Check if Connection was not previously closed.
 		Connection oldConnection = sqlConnection.get();
 		try {
@@ -246,7 +268,7 @@ public class SQLDatabaseManager {
 	 * @param uuid
 	 * @return number of achievements
 	 */
-	public int getPlayerAchievementsAmount(UUID player) {
+	protected int getPlayerAchievementsAmount(UUID player) {
 		int achievementsAmount = 0;
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn
@@ -423,7 +445,7 @@ public class SQLDatabaseManager {
 	 * @param name
 	 * @return true if achievement found in database, false otherwise
 	 */
-	public boolean hasPlayerAchievement(UUID player, String name) {
+	protected boolean hasPlayerAchievement(UUID player, String name) {
 		boolean result = false;
 		String query;
 		if (name.contains("'")) {
@@ -458,7 +480,7 @@ public class SQLDatabaseManager {
 	 * @param table
 	 * @return statistic
 	 */
-	public Long getNormalAchievementAmount(UUID player, NormalAchievements category) {
+	protected Long getNormalAchievementAmount(UUID player, NormalAchievements category) {
 		long amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
@@ -482,7 +504,7 @@ public class SQLDatabaseManager {
 	 * @param subcategory
 	 * @return statistic
 	 */
-	public Long getMultipleAchievementAmount(UUID player, MultipleAchievements category, String subcategory) {
+	protected Long getMultipleAchievementAmount(UUID player, MultipleAchievements category, String subcategory) {
 		long amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
@@ -597,7 +619,7 @@ public class SQLDatabaseManager {
 	 * @param dbName
 	 * @return statistic
 	 */
-	public void updateNormalStatistic(final UUID player, final long statistic, final NormalAchievements category) {
+	protected void updateNormalStatistic(final UUID player, final long statistic, final NormalAchievements category) {
 		new SQLWriteOperation() {
 
 			@Override
@@ -629,7 +651,7 @@ public class SQLDatabaseManager {
 	 * @param dbName
 	 * @return statistic
 	 */
-	public void updateMultipleStatistic(final UUID player, final long statistic, final MultipleAchievements category,
+	protected void updateMultipleStatistic(final UUID player, final long statistic, final MultipleAchievements category,
 			final String subcategory) {
 		new SQLWriteOperation() {
 
