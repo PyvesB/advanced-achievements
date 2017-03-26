@@ -1,7 +1,6 @@
 package com.hm.achievement.db;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,29 +41,18 @@ public class DatabasePoolsManager {
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
 	}
 
-	public void databasePoolsInit(boolean isAsync) {
+	public void databasePoolsInit() {
 		receivedAchievementsCache = HashMultimap.create();
 		notReceivedAchievementsCache = HashMultimap.create();
 
-		// If asynchronous task is used, ConcurrentHashMaps are necessary to
-		// guarantee thread safety. Otherwise normal HashMaps are enough.
-		if (isAsync) {
-			for (NormalAchievements normalAchievement : NormalAchievements.values()) {
-				normalAchievementsToPlayerStatistics.put(normalAchievement, new ConcurrentHashMap<String, Long>());
-			}
-			for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
-				multipleAchievementsToPlayerStatistics.put(multipleAchievement, new ConcurrentHashMap<String, Long>());
-			}
-			totalPlayerAchievementsCache = new ConcurrentHashMap<String, Integer>();
-		} else {
-			for (NormalAchievements normalAchievement : NormalAchievements.values()) {
-				normalAchievementsToPlayerStatistics.put(normalAchievement, new HashMap<String, Long>());
-			}
-			for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
-				multipleAchievementsToPlayerStatistics.put(multipleAchievement, new HashMap<String, Long>());
-			}
-			totalPlayerAchievementsCache = new HashMap<String, Integer>();
+		// ConcurrentHashMaps are necessary to guarantee thread safety.
+		for (NormalAchievements normalAchievement : NormalAchievements.values()) {
+			normalAchievementsToPlayerStatistics.put(normalAchievement, new ConcurrentHashMap<String, Long>());
 		}
+		for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
+			multipleAchievementsToPlayerStatistics.put(multipleAchievement, new ConcurrentHashMap<String, Long>());
+		}
+		totalPlayerAchievementsCache = new ConcurrentHashMap<String, Integer>();
 	}
 
 	/**

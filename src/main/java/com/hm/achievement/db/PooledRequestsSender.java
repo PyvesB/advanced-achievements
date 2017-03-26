@@ -10,7 +10,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 
@@ -19,7 +18,7 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 
 /**
- * Class used to send the cached statistics to the database in an asynchronous manner.
+ * Class used to send the cached statistics to the database.
  * 
  * @author Pyves
  *
@@ -29,155 +28,148 @@ public class PooledRequestsSender implements Runnable {
 	private final AdvancedAchievements plugin;
 
 	public PooledRequestsSender(AdvancedAchievements plugin) {
-		plugin.getPoolsManager().databasePoolsInit(plugin.isAsyncPooledRequestsSender());
+		plugin.getPoolsManager().databasePoolsInit();
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Write cached statistics to the database, assuming asynchronous writes.
+	 * 
+	 * Queries must not be batched because of race conditions. Once the database entry has been updated, if the
+	 * in-memory HashMap value has not changed (by a listener running on main thread) and if player has disconnected, it
+	 * can be removed from the HashMap. Any thread doing a subsequent read in the database will retrieve the correct
+	 * up-to-date value.
+	 * 
+	 * The ConcurrentHashMap cast operations are necessary to ensure compatibility with Java versions prior to Java 8
+	 * (Map interface did not support remove(key, value) before then).
+	 */
 	@Override
 	public void run() {
-		sendRequests();
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			performRequestsForMultipleCategory(category);
+		}
+		for (NormalAchievements category : NormalAchievements.values()) {
+			if (category != NormalAchievements.CONNECTIONS) {
+				// Connections category not handled by pools.
+				performRequestsForNormalCategory(category);
+			}
+		}
 	}
 
 	/**
-	 * Sends requests to the database to deal with regular events and prevent plugin from hitting server performance.
-	 * Non event related categories (distances and play times) are not handled by pools.
-	 * <p>
-	 * In async mode, queries must not be batched because of race conditions. Once the database entry has been updated,
-	 * if the in-memory HashMap value has not changed (by a listener running on main thread) and if player has
-	 * disconnected, it can be removed from the HashMap. Any thread doing a subsequent read in the database will
-	 * retrieve the correct up-to-date value.
-	 * <p>
-	 * Enumerations return elements reflecting the state of the hash table at some point at or since the creation of the
-	 * enumeration, and therefore the (atomic) remove method can be used within them.
-	 * <p>
-	 * The cast operations are necessary to ensure compatibility with Java versions prior to Java 8 (Map interface did
-	 * not support remove(key, value) before then).
-	 * <p>
-	 * In sync mode, queries are batched for optimisation and HashMaps are cleared to prevent same writes during next
-	 * task if statistics did not change.
-	 * <p>
+	 * Write cached statistics to the database, with batched synchronous writes.
+	 */
+	public void sendBatchedRequests() {
+		new SQLWriteOperation() {
+
+			@Override
+			protected void performWrite() throws SQLException {
+				Connection conn = plugin.getDatabaseManager().getSQLConnection();
+				try (Statement st = conn.createStatement()) {
+					for (MultipleAchievements category : MultipleAchievements.values()) {
+						batchRequestsForMultipleCategory(st, category);
+					}
+					for (NormalAchievements category : NormalAchievements.values()) {
+						// Connections category not handled by pools.
+						if (category != NormalAchievements.CONNECTIONS) {
+							batchRequestsForNormalCategory(st, category);
+						}
+					}
+					st.executeBatch();
+				}
+			}
+		}.attemptWrites(plugin.getLogger(), "SQL error while batching statistic updates.");
+	}
+
+	/**
+	 * Hands over the Multiple category statistic update to the DatabaseManager and clears cache if player is offline.
+	 * 
+	 * @param dbName
+	 * @param categoryMap
+	 */
+	private void performRequestsForMultipleCategory(MultipleAchievements category) {
+		Map<String, Long> categoryMap = plugin.getPoolsManager().getHashMap(category);
+		for (Entry<String, Long> entry : categoryMap.entrySet()) {
+			UUID player = UUID.fromString(entry.getKey().substring(0, 36));
+			plugin.getDatabaseManager().updateMultipleStatistic(player, entry.getValue(), category,
+					entry.getKey().substring(36));
+			if (!isPlayerOnline(player)) {
+				// Value will only be removed if it has not changed in the meantime (for instance player has
+				// reconnected).
+				((ConcurrentHashMap<String, Long>) categoryMap).remove(entry.getKey(), entry.getValue());
+			}
+		}
+	}
+
+	/**
+	 * Hands over the Normal category statistic update to the DatabaseManager and clears cache if player is offline.
+	 * 
+	 * @param dbName
+	 * @param categoryMap
+	 */
+	private void performRequestsForNormalCategory(NormalAchievements category) {
+		Map<String, Long> categoryMap = plugin.getPoolsManager().getHashMap(category);
+		for (Entry<String, Long> entry : categoryMap.entrySet()) {
+			UUID player = UUID.fromString(entry.getKey());
+			plugin.getDatabaseManager().updateNormalStatistic(player, entry.getValue(), category);
+			if (!isPlayerOnline(player)) {
+				// Value will only be removed if it has not changed in the meantime (for instance player has
+				// reconnected).
+				((ConcurrentHashMap<String, Long>) categoryMap).remove(entry.getKey(), entry.getValue());
+			}
+		}
+	}
+
+	/**
+	 * Batches all database writes for a given Multiple category defined by the database table name and its
+	 * corresponding pool map.
+	 * 
 	 * PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available for
 	 * PostgreSQL 9.5+.
-	 */
-	public void sendRequests() {
-		Connection conn = plugin.getDatabaseManager().getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			for (NormalAchievements category : NormalAchievements.values()) {
-				// Distance and PlayedTIme achievements are handled by scheduled runnables and corresponding statistics
-				// are only written to the database when player disconnects.
-				if (category != NormalAchievements.PLAYEDTIME && category != NormalAchievements.CONNECTIONS
-						&& !category.name().contains("DISTANCE")) {
-					performRequestsForNormalCategory(st, category);
-				}
-			}
-
-			if (plugin.isAsyncPooledRequestsSender()) {
-				performRequestsForMultipleCategoriesAsync(st);
-			} else {
-				performRequestsForMultipleCategoriesSync(st);
-				st.executeBatch();
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while sending async pooled requests to database: ", e);
-		}
-	}
-
-	/**
-	 * Deals with multiple achievement categories in async mode.
 	 * 
 	 * @param st
-	 * @throws SQLException
+	 * @param dbName
+	 * @param categoryMap
 	 */
-	private void performRequestsForMultipleCategoriesAsync(Statement st) throws SQLException {
-
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			Map<String, Long> categoryMap = plugin.getPoolsManager().getHashMap(category);
-			for (Entry<String, Long> entry : categoryMap.entrySet()) {
-				String playerUUID = entry.getKey().substring(0, 36);
-				if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
-					st.execute("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
-							+ " VALUES ('" + playerUUID + "', '" + entry.getKey().substring(36) + "', "
-							+ entry.getValue() + ")" + " ON CONFLICT (playername," + category.toSubcategoryDBName()
-							+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue() + ")");
-				} else {
-					st.execute("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
-							+ " VALUES ('" + playerUUID + "', '" + entry.getKey().substring(36) + "', "
-							+ entry.getValue() + ")");
-				}
-				if (!isPlayerOnline(playerUUID)) {
-					((ConcurrentHashMap<String, Long>) categoryMap).remove(entry.getKey(), entry.getValue());
-				}
-			}
-		}
-	}
-
-	/**
-	 * Deals with multiple achievement categories in sync mode.
-	 * 
-	 * @param st
-	 * @throws SQLException
-	 */
-	private void performRequestsForMultipleCategoriesSync(Statement st) throws SQLException {
-
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			Map<String, Long> categoryMap = plugin.getPoolsManager().getHashMap(category);
-			for (Entry<String, Long> entry : categoryMap.entrySet()) {
-				if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
-					st.addBatch("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36)
-							+ "', " + entry.getValue() + ")" + " ON CONFLICT (playername,"
-							+ category.toSubcategoryDBName() + ") DO UPDATE SET (" + category.toDBName() + ")=("
-							+ entry.getValue() + ")");
-				} else {
-					st.addBatch("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36)
-							+ "', " + entry.getValue() + ")");
-				}
-			}
-			categoryMap.clear();
-		}
-	}
-
-	/**
-	 * Deals with normal achievement categories.
-	 * 
-	 * @param st
-	 * @param map
-	 * @param categoryName
-	 * @throws SQLException
-	 */
-	private void performRequestsForNormalCategory(Statement st, NormalAchievements category) throws SQLException {
-
+	private void batchRequestsForMultipleCategory(Statement st, MultipleAchievements category) throws SQLException {
 		Map<String, Long> categoryMap = plugin.getPoolsManager().getHashMap(category);
+		for (Entry<String, Long> entry : categoryMap.entrySet()) {
+			if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
+				st.addBatch("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+						+ entry.getValue() + ")" + " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName()
+						+ ")=(" + entry.getValue() + ")");
+			} else {
+				st.addBatch("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+						+ entry.getValue() + ")");
+			}
+		}
+	}
 
-		if (plugin.isAsyncPooledRequestsSender()) {
-			for (Entry<String, Long> entry : categoryMap.entrySet()) {
-				if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
-					st.execute("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")"
-							+ " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
-							+ entry.getValue() + ")");
-				} else {
-					st.execute("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				}
-				if (!isPlayerOnline(entry.getKey())) {
-					((ConcurrentHashMap<String, Long>) categoryMap).remove(entry.getKey(), entry.getValue());
-				}
+	/**
+	 * Batches all database writes for a given Normal category defined by the database table name and its corresponding
+	 * pool map.
+	 * 
+	 * PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available for
+	 * PostgreSQL 9.5+.
+	 * 
+	 * @param st
+	 * @param dbName
+	 * @param categoryMap
+	 */
+	private void batchRequestsForNormalCategory(Statement st, NormalAchievements category) throws SQLException {
+		Map<String, Long> categoryMap = plugin.getPoolsManager().getHashMap(category);
+		for (Entry<String, Long> entry : categoryMap.entrySet()) {
+			if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
+				st.addBatch("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+						+ " VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")"
+						+ " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue()
+						+ ")");
+			} else {
+				st.addBatch("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
+						+ " VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
 			}
-		} else {
-			for (Entry<String, Long> entry : categoryMap.entrySet()) {
-				if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
-					st.addBatch("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")"
-							+ " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
-							+ entry.getValue() + ")");
-				} else {
-					st.addBatch("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue() + ")");
-				}
-			}
-			categoryMap.clear();
 		}
 	}
 
@@ -187,15 +179,14 @@ public class PooledRequestsSender implements Runnable {
 	 * @param uuidString
 	 * @return
 	 */
-	private boolean isPlayerOnline(String uuidString) {
-		final UUID uuid = UUID.fromString(uuidString);
+	private boolean isPlayerOnline(final UUID player) {
 
 		// Called asynchronously, to ensure thread safety we must issue a call on the server's main thread of execution.
 		Future<Boolean> onlineCheckFuture = Bukkit.getScheduler().callSyncMethod(plugin, new Callable<Boolean>() {
 
 			@Override
 			public Boolean call() {
-				return Bukkit.getPlayer(uuid) != null;
+				return Bukkit.getPlayer(player) != null;
 			}
 		});
 

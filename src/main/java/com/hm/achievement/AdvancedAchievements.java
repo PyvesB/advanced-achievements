@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -169,7 +168,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private PooledRequestsSender pooledRequestsSender;
 	private int pooledRequestsTaskInterval;
 	private boolean databaseBackup;
-	private volatile boolean asyncPooledRequestsSender;
 
 	// Plugin options and various parameters.
 	private String icon;
@@ -579,8 +577,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 60);
 		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 60);
-		asyncPooledRequestsSender = config.getBoolean("AsyncPooledRequestsSender", true);
-
 	}
 
 	/**
@@ -721,49 +717,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			distanceTask.cancel();
 		}
 
-		// Send played time stats to the database, forcing synchronous writes.
-		if (playTimeRunnable != null) {
-			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.PLAYEDTIME).entrySet()) {
-				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
-						NormalAchievements.PLAYEDTIME.toDBName());
-			}
-		}
-
-		// Send traveled distance stats to the database, synchronous writes.
-		if (distanceRunnable != null) {
-			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEFOOT).entrySet()) {
-				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEFOOT.toDBName());
-			}
-			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEPIG).entrySet()) {
-				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEPIG.toDBName());
-			}
-			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEHORSE).entrySet()) {
-				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEHORSE.toDBName());
-			}
-			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEBOAT).entrySet()) {
-				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEBOAT.toDBName());
-			}
-			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEMINECART).entrySet()) {
-				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEMINECART.toDBName());
-			}
-			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCEGLIDING).entrySet()) {
-				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCEGLIDING.toDBName());
-			}
-			for (Entry<String, Long> entry : poolsManager.getHashMap(NormalAchievements.DISTANCELLAMA).entrySet()) {
-				databaseManager.updateStatistic(entry.getKey(), entry.getValue(),
-						NormalAchievements.DISTANCELLAMA.toDBName());
-			}
-		}
-
-		// Send remaining stats for pooled events to the database; send via main thread with synchronous mode.
-		asyncPooledRequestsSender = false;
-		pooledRequestsSender.sendRequests();
+		// Send remaining stats for pooled events to the database.
+		pooledRequestsSender.sendBatchedRequests();
 
 		try {
 			if (databaseManager.getSQLConnection() != null) {
@@ -988,10 +943,6 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	public ChatColor getColor() {
 		return color;
-	}
-
-	public boolean isAsyncPooledRequestsSender() {
-		return asyncPooledRequestsSender;
 	}
 
 	public AchievementCommentedYamlConfiguration getPluginConfig() {

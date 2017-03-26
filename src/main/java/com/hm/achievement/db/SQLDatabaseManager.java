@@ -387,10 +387,10 @@ public class SQLDatabaseManager {
 	 */
 	public void registerAchievement(UUID player, final String achievement, final String desc) {
 		final String name = player.toString();
-		Runnable runnable = new Runnable() {
+		new SQLWriteOperation() {
 
 			@Override
-			public void run() {
+			protected void performWrite() throws SQLException {
 				String query;
 				if (databaseType == DatabaseType.POSTGRESQL) {
 					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
@@ -411,16 +411,9 @@ public class SQLDatabaseManager {
 						prep.setDate(6, new java.sql.Date(new java.util.Date().getTime()));
 					}
 					prep.execute();
-				} catch (SQLException e) {
-					plugin.getLogger().log(Level.SEVERE, "SQL error while registering achievement: ", e);
 				}
 			}
-		};
-		if (plugin.isAsyncPooledRequestsSender()) {
-			pool.execute(runnable);
-		} else {
-			runnable.run();
-		}
+		}.executeOperation(pool, plugin.getLogger(), "SQL error while registering achievement.");
 	}
 
 	/**
@@ -456,36 +449,6 @@ public class SQLDatabaseManager {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while checking achievement: ", e);
 		}
 		return result;
-	}
-
-	/**
-	 * Deletes an achievement from a player.
-	 * 
-	 * @param player
-	 * @param ach
-	 */
-	public void deletePlayerAchievement(UUID player, final String ach) {
-		final String name = player.toString();
-		Runnable runnable = new Runnable() {
-
-			@Override
-			public void run() {
-				Connection conn = getSQLConnection();
-				try (PreparedStatement prep = conn.prepareStatement(
-						"DELETE FROM " + tablePrefix + "achievements WHERE playername = ? AND achievement = ?")) {
-					prep.setString(1, name);
-					prep.setString(2, ach);
-					prep.execute();
-				} catch (SQLException e) {
-					plugin.getLogger().log(Level.SEVERE, "SQL error while deleting achievement: ", e);
-				}
-			}
-		};
-		if (plugin.isAsyncPooledRequestsSender()) {
-			pool.execute(runnable);
-		} else {
-			runnable.run();
-		}
 	}
 
 	/**
@@ -598,10 +561,10 @@ public class SQLDatabaseManager {
 				prev = rs.getInt(NormalAchievements.CONNECTIONS.toDBName());
 			}
 			final int newConnections = prev + 1;
-			Runnable runnable = new Runnable() {
+			new SQLWriteOperation() {
 
 				@Override
-				public void run() {
+				protected void performWrite() throws SQLException {
 					Connection conn = getSQLConnection();
 					try (Statement st = conn.createStatement()) {
 						if (databaseType == DatabaseType.POSTGRESQL) {
@@ -616,21 +579,102 @@ public class SQLDatabaseManager {
 							st.execute("REPLACE INTO " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName()
 									+ " VALUES ('" + name + "', " + newConnections + ", '" + date + "')");
 						}
-					} catch (SQLException e) {
-						plugin.getLogger().log(Level.SEVERE, "SQL error while updating connection: ", e);
 					}
 				}
-			};
-			if (plugin.isAsyncPooledRequestsSender()) {
-				pool.execute(runnable);
-			} else {
-				runnable.run();
-			}
+			}.executeOperation(pool, plugin.getLogger(), "SQL error while updating connection.");
 			return newConnections;
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while handling connection event: ", e);
 		}
 		return 0;
+	}
+
+	/**
+	 * Updates statistic for a Normal category.
+	 * 
+	 * @param player
+	 * @param statistic
+	 * @param dbName
+	 * @return statistic
+	 */
+	public void updateNormalStatistic(final UUID player, final long statistic, final NormalAchievements category) {
+		new SQLWriteOperation() {
+
+			@Override
+			protected void performWrite() throws SQLException {
+				Connection conn = getSQLConnection();
+				try (Statement st = conn.createStatement()) {
+					// Update statistic.
+					if (databaseType == DatabaseType.POSTGRESQL) {
+						// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct,
+						// which is
+						// available for PostgreSQL 9.5+.
+						st.execute("INSERT INTO " + tablePrefix + category.toDBName() + " VALUES ('" + player + "', "
+								+ statistic + ")" + " ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName()
+								+ ")=('" + statistic + "')");
+					} else {
+						st.execute("REPLACE INTO " + tablePrefix + category.toDBName() + " VALUES ('" + player + "', "
+								+ statistic + ")");
+					}
+				}
+			}
+		}.executeOperation(pool, plugin.getLogger(), "SQL error while handling " + category.toDBName() + " update.");
+	}
+
+	/**
+	 * Updates statistic for a Multiple category.
+	 * 
+	 * @param player
+	 * @param statistic
+	 * @param dbName
+	 * @return statistic
+	 */
+	public void updateMultipleStatistic(final UUID player, final long statistic, final MultipleAchievements category,
+			final String subcategory) {
+		new SQLWriteOperation() {
+
+			@Override
+			protected void performWrite() throws SQLException {
+				Connection conn = getSQLConnection();
+				try (Statement st = conn.createStatement()) {
+					// Update statistic.
+					if (databaseType == DatabaseType.POSTGRESQL) {
+						// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct,
+						// which is
+						// available for PostgreSQL 9.5+.
+						st.execute("INSERT INTO " + tablePrefix + category.toDBName() + " VALUES ('" + player + "', '"
+								+ subcategory + "', " + statistic + ")" + " ON CONFLICT (playername) DO UPDATE SET ("
+								+ category.toDBName() + ")=('" + statistic + "')");
+					} else {
+						st.execute("REPLACE INTO " + tablePrefix + category.toDBName() + " VALUES ('" + player + "', '"
+								+ subcategory + "', " + statistic + ")");
+					}
+				}
+			}
+		}.executeOperation(pool, plugin.getLogger(), "SQL error while handling " + category.toDBName() + " update.");
+	}
+
+	/**
+	 * Deletes an achievement from a player.
+	 * 
+	 * @param player
+	 * @param ach
+	 */
+	public void deletePlayerAchievement(UUID player, final String ach) {
+		final String name = player.toString();
+		new SQLWriteOperation() {
+
+			@Override
+			protected void performWrite() throws SQLException {
+				Connection conn = getSQLConnection();
+				try (PreparedStatement prep = conn.prepareStatement(
+						"DELETE FROM " + tablePrefix + "achievements WHERE playername = ? AND achievement = ?")) {
+					prep.setString(1, name);
+					prep.setString(2, ach);
+					prep.execute();
+				}
+			}
+		}.executeOperation(pool, plugin.getLogger(), "SQL error while deleting achievement.");
 	}
 
 	/**
@@ -640,50 +684,18 @@ public class SQLDatabaseManager {
 	 */
 	public void clearConnection(UUID player) {
 		final String name = player.toString();
-		Runnable runnable = new Runnable() {
+		new SQLWriteOperation() {
 
 			@Override
-			public void run() {
+			protected void performWrite() throws SQLException {
 				Connection conn = getSQLConnection();
 				try (PreparedStatement prep = conn
 						.prepareStatement("DELETE FROM " + tablePrefix + "connections WHERE playername = ?")) {
 					prep.setString(1, name);
 					prep.execute();
-				} catch (SQLException e) {
-					plugin.getLogger().log(Level.SEVERE, "SQL error while deleting connections: ", e);
 				}
 			}
-		};
-		if (plugin.isAsyncPooledRequestsSender()) {
-			pool.execute(runnable);
-		} else {
-			runnable.run();
-		}
-	}
-
-	/**
-	 * Updates player's distance or played time.
-	 * 
-	 * @param name
-	 * @param statistic
-	 * @param dbName
-	 * @return statistic
-	 */
-	public void updateStatistic(String name, long statistic, String dbName) {
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			// Update statistic.
-			if (databaseType == DatabaseType.POSTGRESQL) {
-				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
-				// available for PostgreSQL 9.5+.
-				st.execute("INSERT INTO " + tablePrefix + dbName + " VALUES ('" + name + "', " + statistic + ")"
-						+ " ON CONFLICT (playername) DO UPDATE SET (" + dbName + ")=('" + statistic + "')");
-			} else {
-				st.execute("REPLACE INTO " + tablePrefix + dbName + " VALUES ('" + name + "', " + statistic + ")");
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while handling " + dbName + " update: ", e);
-		}
+		}.executeOperation(pool, plugin.getLogger(), "SQL error while deleting connections.");
 	}
 
 	public DatabaseType getDatabaseType() {
