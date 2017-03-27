@@ -1,5 +1,8 @@
 package com.hm.achievement.listener;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,38 +23,53 @@ public class QuitListener extends AbstractListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		final String playerUUID = event.getPlayer().getUniqueId().toString();
+	public void onPlayerQuit(final PlayerQuitEvent event) {
+		
+		final UUID uuid = event.getPlayer().getUniqueId();
+		final String uuidString = uuid.toString();
 
-		// Clean cooldown HashMap for book command.
-		plugin.getAchievementBookCommand().getPlayersBookTime().remove(playerUUID);
+		// Delay cleaning up to avoid invalidating data immediately: players frequently disconnect and reconnect just
+		// after. This also avoids players taking advantage of the reset of cooldowns.
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
+				Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()), new Runnable() {
 
-		// Clear achievements caches.
-		plugin.getPoolsManager().getReceivedAchievementsCache().removeAll(playerUUID);
-		plugin.getPoolsManager().getNotReceivedAchievementsCache().removeAll(playerUUID);
-		plugin.getPoolsManager().getTotalPlayerAchievementsCache().remove(playerUUID);
+					@Override
+					public void run() {
+						if (Bukkit.getPlayer(uuid) != null) {
+							// Player reconnected.
+							return;
+						}
+						// Clean cooldown HashMap for book command.
+						plugin.getAchievementBookCommand().getPlayersBookTime().remove(uuidString);
 
-		if (plugin.getDistanceRunnable() != null) {
-			plugin.getDistanceRunnable().getPlayerLocations().remove(playerUUID);
-		}
+						// Clear achievements caches.
+						plugin.getPoolsManager().getReceivedAchievementsCache().removeAll(uuidString);
+						plugin.getPoolsManager().getNotReceivedAchievementsCache().removeAll(uuidString);
+						plugin.getPoolsManager().getTotalPlayerAchievementsCache().remove(uuidString);
 
-		// Remove player from HashSet for Connection achievements.
-		if (plugin.getConnectionListener() != null) {
-			plugin.getConnectionListener().getPlayersAchieveConnectionRan().remove(playerUUID);
-		}
+						if (plugin.getDistanceRunnable() != null) {
+							plugin.getDistanceRunnable().getPlayerLocations().remove(uuidString);
+						}
 
-		// Remove player from cooldown structures.
-		if (plugin.getBedListener() != null) {
-			plugin.getBedListener().removePlayerFromCooldownMap(playerUUID);
-		}
-		if (plugin.getTradeAnvilBrewSmeltListener() != null) {
-			plugin.getTradeAnvilBrewSmeltListener().removePlayerFromCooldownMap(playerUUID);
-		}
-		if (plugin.getMilkLavaWaterListener() != null) {
-			plugin.getMilkLavaWaterListener().removePlayerFromCooldownMap(playerUUID);
-		}
-		if (plugin.getHoeFertiliseFireworkMusicListener() != null) {
-			plugin.getHoeFertiliseFireworkMusicListener().removePlayerFromCooldownMap(playerUUID);
-		}
+						// Remove player from HashSet for Connection achievements.
+						if (plugin.getConnectionListener() != null) {
+							plugin.getConnectionListener().getPlayersAchieveConnectionRan().remove(uuidString);
+						}
+
+						// Remove player from cooldown structures.
+						if (plugin.getBedListener() != null) {
+							plugin.getBedListener().removePlayerFromCooldownMap(uuidString);
+						}
+						if (plugin.getTradeAnvilBrewSmeltListener() != null) {
+							plugin.getTradeAnvilBrewSmeltListener().removePlayerFromCooldownMap(uuidString);
+						}
+						if (plugin.getMilkLavaWaterListener() != null) {
+							plugin.getMilkLavaWaterListener().removePlayerFromCooldownMap(uuidString);
+						}
+						if (plugin.getHoeFertiliseFireworkMusicListener() != null) {
+							plugin.getHoeFertiliseFireworkMusicListener().removePlayerFromCooldownMap(uuidString);
+						}
+					}
+				}, 200);
 	}
 }

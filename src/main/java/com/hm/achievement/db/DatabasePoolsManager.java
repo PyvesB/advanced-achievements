@@ -156,12 +156,13 @@ public class DatabasePoolsManager {
 	}
 
 	/**
-	 * Returns the total number of achievements received by a player.
+	 * Returns the total number of achievements received by a player. Can be called asynchronously by BungeeTabListPlus,
+	 * method must therefore be synchronized to avoid race conditions if a player calls /aach stats at the same time.
 	 * 
 	 * @param player
 	 * @return
 	 */
-	public int getPlayerTotalAchievements(UUID player) {
+	public synchronized int getPlayerTotalAchievements(UUID player) {
 		Integer totalAchievements = totalPlayerAchievementsCache.get(player.toString());
 		if (totalAchievements == null) {
 			totalAchievements = plugin.getDatabaseManager().getPlayerAchievementsAmount(player);

@@ -3,6 +3,9 @@ package com.hm.achievement.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -56,7 +59,13 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public boolean hasPlayerReceivedAchievement(UUID player, String achievementName) {
-		return pluginInstance.getPoolsManager().hasPlayerAchievement(player, achievementName);
+		// Underlying structures do not support concurrent operations and are only used by the main server thread. Not
+		// thread-safe to modify or read them asynchronously. Do not use cache if player is offline.
+		if (Bukkit.getServer().isPrimaryThread() && Bukkit.getPlayer(player) != null) {
+			return pluginInstance.getPoolsManager().hasPlayerAchievement(player, achievementName);
+		} else {
+			return pluginInstance.getDatabaseManager().hasPlayerAchievement(player, achievementName);
+		}
 	}
 
 	@Override
@@ -70,8 +79,30 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	}
 
 	@Override
-	public int getPlayerTotalAchievements(UUID player) {
-		return pluginInstance.getPoolsManager().getPlayerTotalAchievements(player);
+	public int getPlayerTotalAchievements(final UUID player) {
+		if (Bukkit.getServer().isPrimaryThread() && Bukkit.getPlayer(player) != null) {
+			return pluginInstance.getPoolsManager().getPlayerTotalAchievements(player);
+		} else if (!Bukkit.getServer().isPrimaryThread()) {
+			Future<Boolean> onlineCheckFuture = Bukkit.getScheduler().callSyncMethod(pluginInstance,
+					new Callable<Boolean>() {
+
+						@Override
+						public Boolean call() {
+							return Bukkit.getPlayer(player) != null;
+						}
+					});
+			try {
+				if (onlineCheckFuture.get()) {
+					// This particular call to the PoolsManager is thread safe can be called even though async thread.
+					return pluginInstance.getPoolsManager().getPlayerTotalAchievements(player);
+				}
+			} catch (InterruptedException | ExecutionException e) {
+				pluginInstance.getLogger().warning("Error while checking whether player is online from API.");
+
+			}
+		}
+		// Do not use cache if player is offline.
+		return pluginInstance.getDatabaseManager().getPlayerAchievementsAmount(player);
 	}
 
 	@Override
@@ -94,11 +125,23 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public long getStatisticForNormalCategory(UUID player, NormalAchievements category) {
-		return pluginInstance.getPoolsManager().getAndIncrementStatisticAmount(category, player, 0);
+		// Underlying implementation of the pools is only thread-safe with concurrent removals. Not
+		// thread-safe to modify them asynchronously. Do not use cache if player is offline.
+		if (Bukkit.getServer().isPrimaryThread() && Bukkit.getPlayer(player) != null) {
+			return pluginInstance.getPoolsManager().getAndIncrementStatisticAmount(category, player, 0);
+		} else {
+			return pluginInstance.getDatabaseManager().getNormalAchievementAmount(player, category);
+		}
 	}
 
 	@Override
 	public long getStatisticForMultipleCategory(UUID player, MultipleAchievements category, String subcategory) {
-		return pluginInstance.getPoolsManager().getAndIncrementStatisticAmount(category, subcategory, player, 0);
+		// Underlying implementation of the pools is only thread-safe with concurrent removals. Not
+		// thread-safe to modify them asynchronously. Do not use cache if player is offline.
+		if (Bukkit.getServer().isPrimaryThread() && Bukkit.getPlayer(player) != null) {
+			return pluginInstance.getPoolsManager().getAndIncrementStatisticAmount(category, subcategory, player, 0);
+		} else {
+			return pluginInstance.getDatabaseManager().getMultipleAchievementAmount(player, category, subcategory);
+		}
 	}
 }

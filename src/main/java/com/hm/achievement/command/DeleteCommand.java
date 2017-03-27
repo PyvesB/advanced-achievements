@@ -28,12 +28,12 @@ public class DeleteCommand extends AbstractParsableCommand {
 							"PLAYER has not received the achievement ACH!"),
 					new String[] { "PLAYER", "ACH" }, new String[] { args[args.length - 1], achievementName }));
 		} else {
-			plugin.getDatabaseManager().deletePlayerAchievement(player.getUniqueId(), achievementName);
 			String uuid = player.getUniqueId().toString();
 			plugin.getPoolsManager().getReceivedAchievementsCache().remove(uuid, achievementName);
 			plugin.getPoolsManager().getNotReceivedAchievementsCache().put(uuid, achievementName);
 			plugin.getPoolsManager().getTotalPlayerAchievementsCache().put(uuid,
 					plugin.getPoolsManager().getPlayerTotalAchievements(player.getUniqueId()) - 1);
+			plugin.getDatabaseManager().deletePlayerAchievement(player.getUniqueId(), achievementName);
 			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceEach(
 					plugin.getPluginLang().getString("delete-achievements",
 							"The achievement ACH was deleted from PLAYER."),

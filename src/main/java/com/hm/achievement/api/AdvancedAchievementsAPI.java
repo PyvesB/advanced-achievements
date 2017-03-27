@@ -7,7 +7,7 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 
 /**
- * Advanced Achievements API.
+ * Advanced Achievements API. Unless explicitly stated otherwise, implementations are expected to be thread-safe.
  * 
  * @author Pyves
  *
@@ -25,7 +25,7 @@ public interface AdvancedAchievementsAPI {
 
 	/**
 	 * Checks whether player has received achievement {@code achievementName}. Implementation benefits from Advanced
-	 * Achievements caching when player is online.
+	 * Achievements caching when player is online and if method called from server thread.
 	 * 
 	 * @since 5.0
 	 * @param player
@@ -77,7 +77,7 @@ public interface AdvancedAchievementsAPI {
 
 	/**
 	 * Retrieves a statistic for a normal category. Implementation benefits from Advanced Achievements caching when
-	 * player is online.
+	 * player is online and if method called from server thread.
 	 * 
 	 * @since 5.0
 	 * @param player
@@ -88,7 +88,7 @@ public interface AdvancedAchievementsAPI {
 
 	/**
 	 * Retrieves a statistic for a multiple category. Implementation benefits from Advanced Achievements caching when
-	 * player is online.
+	 * player is online and if method called from server thread.
 	 * 
 	 * @since 5.0
 	 * @param player

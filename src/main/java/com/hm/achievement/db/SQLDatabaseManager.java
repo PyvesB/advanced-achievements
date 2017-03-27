@@ -268,7 +268,7 @@ public class SQLDatabaseManager {
 	 * @param uuid
 	 * @return number of achievements
 	 */
-	protected int getPlayerAchievementsAmount(UUID player) {
+	public int getPlayerAchievementsAmount(UUID player) {
 		int achievementsAmount = 0;
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn
@@ -445,7 +445,7 @@ public class SQLDatabaseManager {
 	 * @param name
 	 * @return true if achievement found in database, false otherwise
 	 */
-	protected boolean hasPlayerAchievement(UUID player, String name) {
+	public boolean hasPlayerAchievement(UUID player, String name) {
 		boolean result = false;
 		String query;
 		if (name.contains("'")) {
@@ -480,7 +480,7 @@ public class SQLDatabaseManager {
 	 * @param table
 	 * @return statistic
 	 */
-	protected Long getNormalAchievementAmount(UUID player, NormalAchievements category) {
+	public Long getNormalAchievementAmount(UUID player, NormalAchievements category) {
 		long amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
@@ -504,7 +504,7 @@ public class SQLDatabaseManager {
 	 * @param subcategory
 	 * @return statistic
 	 */
-	protected Long getMultipleAchievementAmount(UUID player, MultipleAchievements category, String subcategory) {
+	public Long getMultipleAchievementAmount(UUID player, MultipleAchievements category, String subcategory) {
 		long amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
