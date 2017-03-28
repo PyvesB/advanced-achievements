@@ -159,7 +159,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchievementCommentedYamlConfiguration config;
 	private AchievementCommentedYamlConfiguration lang;
 	private AchievementCommentedYamlConfiguration gui;
-	private final FileUpdater fileUpdater;
 
 	// Database related.
 	private final SQLDatabaseManager databaseManager;
@@ -196,7 +195,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		overrideDisable = false;
 		databaseManager = new SQLDatabaseManager(this);
 		poolsManager = new DatabasePoolsManager(this);
-		fileUpdater = new FileUpdater(this);
 	}
 
 	/**
@@ -219,6 +217,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		// Update configurations from previous versions of the plugin; only if server reload or restart.
+		FileUpdater fileUpdater = new FileUpdater(this);
 		fileUpdater.updateOldConfiguration(configFile);
 		fileUpdater.updateOldLanguage(langFile);
 
@@ -394,10 +393,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		playerAdvancedAchievementListener = new PlayerAdvancedAchievementListener(this);
 		pm.registerEvents(playerAdvancedAchievementListener, this);
 
-		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
-			BungeeTabListPlusBukkitAPI.registerVariable(this, new AchievementCountBungeeTabListPlusVariable(this));
-		}
-
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
 
 		// Initialise the SQLite/MySQL/PostgreSQL database.
@@ -406,13 +401,13 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (databaseBackup && databaseManager.getDatabaseType() == DatabaseType.SQLITE) {
 			File backup = new File(this.getDataFolder(), "achievements.db.bak");
 			// Only do a daily backup for the .db file.
-			if (System.currentTimeMillis() - backup.lastModified() > 86400000 || backup.length() == 0) {
+			if (System.currentTimeMillis() - backup.lastModified() > 86400000L || backup.length() == 0L) {
 				this.getLogger().info("Backing up database file...");
 				try {
 					FileManager fileManager = new FileManager("achievements.db", this);
 					fileManager.backupFile();
 				} catch (IOException e) {
-					this.getLogger().log(Level.SEVERE, "Error while backing up database file: ", e);
+					this.getLogger().log(Level.SEVERE, "Error while backing up database file:", e);
 					successfulLoad = false;
 				}
 			}
@@ -425,8 +420,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		pooledRequestsSender = new PooledRequestsSender(this);
-		// Schedule a repeating task to group database queries for some frequent
-		// events.
+		// Schedule a repeating task to group database queries for some frequent events.
 		pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this,
 				pooledRequestsSender, pooledRequestsTaskInterval * 40L, pooledRequestsTaskInterval * 20L);
 
@@ -450,6 +444,10 @@ public class AdvancedAchievements extends JavaPlugin {
 					distanceTaskInterval * 40L, distanceTaskInterval * 20L);
 		}
 
+		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
+			BungeeTabListPlusBukkitAPI.registerVariable(this, new AchievementCountBungeeTabListPlusVariable(this));
+		}
+
 		if (successfulLoad) {
 			this.getLogger().info("Plugin successfully enabled and ready to run! Took "
 					+ (System.currentTimeMillis() - startTime) + "ms.");
@@ -459,8 +457,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Loads the plugin configuration and sets values to different parameters; loads the language file and backs
-	 * configuration files up. Register permissions. Initialises command modules.
+	 * Loads the plugin configuration and sets values to different parameters; loads the language and GUI files and
+	 * backs configuration files up. Registers permissions. Initialises command modules.
 	 * 
 	 * @param config
 	 * @param lang
@@ -476,11 +474,10 @@ public class AdvancedAchievements extends JavaPlugin {
 		registerPermissions();
 		initialiseCommands();
 
+		// Reload some parameters.
 		if (playerAdvancedAchievementListener != null) {
 			playerAdvancedAchievementListener.extractParameters();
 		}
-
-		// Reload achievements in distance, max level and play time runnables on plugin reload (when objects are null).
 		if (distanceRunnable != null) {
 			distanceRunnable.extractParameter();
 		}
@@ -495,10 +492,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Loads and backs file with name fileName up.
+	 * Loads and backs up file fileName.
 	 * 
 	 * @param fileName
-	 * @return the loaded file YamlManager
+	 * @return the loaded file AchievementCommentedYamlConfiguration
 	 */
 	public AchievementCommentedYamlConfiguration loadAndBackupFile(String fileName) {
 		AchievementCommentedYamlConfiguration configFile = null;
@@ -508,7 +505,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		} catch (IOException | InvalidConfigurationException e) {
 			this.getLogger().severe("Error while loading " + fileName + " file, disabling plugin.");
 			this.getLogger().log(Level.SEVERE,
-					"Verify your syntax by visiting yaml-online-parser.appspot.com and using the following logs: ", e);
+					"Verify your syntax by visiting yaml-online-parser.appspot.com and using the following logs:", e);
 			successfulLoad = false;
 			overrideDisable = true;
 			Bukkit.getServer().getPluginManager().disablePlugin(this);
@@ -518,7 +515,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		try {
 			configFile.backupConfiguration();
 		} catch (IOException e) {
-			this.getLogger().log(Level.SEVERE, "Error while backing up " + fileName + " file: ", e);
+			this.getLogger().log(Level.SEVERE, "Error while backing up " + fileName + " file:", e);
 			successfulLoad = false;
 		}
 		return configFile;
@@ -528,7 +525,10 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * Extracts plugin parameters from the configuration file.
 	 */
 	private void extractParameters() {
+		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
+		// versions change in the future.
 		int minecraftVersion = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
+
 		icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
 		color = ChatColor.getByChar(config.getString("Color", "5").charAt(0));
 		if (Strings.isNullOrEmpty(icon)) {
@@ -536,17 +536,20 @@ public class AdvancedAchievements extends JavaPlugin {
 		} else {
 			chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
 		}
+		chatNotify = config.getBoolean("ChatNotify", false);
+
 		restrictCreative = config.getBoolean("RestrictCreative", false);
 		restrictSpectator = config.getBoolean("RestrictSpectator", true);
+		// Spectator mode introduced in Minecraft 1.8.
 		if (restrictSpectator && minecraftVersion < 8) {
-			// Spectator introduced in Minecraft 1.8.
 			restrictSpectator = false;
 			this.getLogger().warning(
 					"Overriding configuration: disabling RestrictSpectator. Please set it to false in your config.");
 		}
-		chatNotify = config.getBoolean("ChatNotify", false);
-		databaseBackup = config.getBoolean("DatabaseBackup", true);
 		excludedWorldSet = new HashSet<>(config.getList("ExcludedWorlds"));
+
+		databaseBackup = config.getBoolean("DatabaseBackup", true);
+
 		disabledCategorySet = new HashSet<>(config.getList("DisabledCategories"));
 		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
 		if ((!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
@@ -561,18 +564,21 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.getLogger().warning(
 					"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
 		}
+		// Elytras introduced in Minecraft 1.9.
 		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString()) && minecraftVersion < 9) {
 			disabledCategorySet.add(NormalAchievements.DISTANCEGLIDING.toString());
 			this.getLogger().warning("Overriding configuration: disabling DistanceGliding category.");
 			this.getLogger().warning(
 					"Elytra are not available in your Minecraft version, please add DistanceGliding to the DisabledCategories list in your config.");
 		}
+		// Llamas introduced in Minecraft 1.11.
 		if (!disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString()) && minecraftVersion < 11) {
 			disabledCategorySet.add(NormalAchievements.DISTANCELLAMA.toString());
 			this.getLogger().warning("Overriding configuration: disabling DistanceLlama category.");
 			this.getLogger().warning(
 					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in your config.");
 		}
+
 		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 60);
 		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
 		pooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 60);
@@ -646,7 +652,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 			categoriesInUse += 1;
 
-			// Enumerate the sub-categories
+			// Enumerate the subcategories.
 			for (String section : categorySections) {
 				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
 				int achievementCount = subcategoryConfig.getKeys(false).size();
@@ -685,8 +691,9 @@ public class AdvancedAchievements extends JavaPlugin {
 					// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories.
 					section = section.substring(0, startOfMetadata);
 				}
-				// Bukkit only allows permissions to be set once, so must do additional check to make sure they are not
-				// being set again during an /aach reload.
+
+				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when
+				// performing /aach reload.
 				if (pluginManager.getPermission(category.toPermName() + "." + section) == null) {
 					pluginManager.addPermission(
 							new Permission(category.toPermName() + "." + section, PermissionDefault.TRUE));
@@ -716,7 +723,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			distanceTask.cancel();
 		}
 
-		// Send remaining stats for pooled events to the database.
+		// Send remaining statistics to the database and close DatabaseManager.
 		pooledRequestsSender.sendBatchedRequests();
 
 		databaseManager.shutdown();
@@ -733,7 +740,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		if (!"aach".equalsIgnoreCase(cmd.getName())) {
 			return false;
 		}
-
+		// Map to an Advanced Achievements command.
 		if ((args.length == 1) && !"help".equalsIgnoreCase(args[0])) {
 			if ("book".equalsIgnoreCase(args[0])) {
 				bookCommand.executeCommand(sender, null, "book");
@@ -796,7 +803,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	public Map<String, String> getAchievementsAndDisplayNames() {
 		Map<String, String> achievementsAndDisplayNames = new HashMap<>();
 
-		// Enumerate Commands achievements
+		// Enumerate Commands achievements.
 		for (String ach : config.getConfigurationSection("Commands").getKeys(false)) {
 			String achName = config.getString("Commands." + ach + ".Name", "");
 			String displayName = config.getString("Commands." + ach + ".DisplayName", "");
@@ -806,7 +813,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			}
 		}
 
-		// Enumerate the normal achievements
+		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
 			for (String ach : categoryConfig.getKeys(false)) {
@@ -819,7 +826,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			}
 		}
 
-		// Enumerate the achievements with multiple categories
+		// Enumerate the achievements with multiple categories.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
 			for (String section : categoryConfig.getKeys(false)) {

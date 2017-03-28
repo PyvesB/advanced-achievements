@@ -71,6 +71,7 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener impleme
 			for (ItemStack itemStack : inventoryEventItemStackMap.values()) {
 				availableSpaces += (eventMaterial.getMaxStackSize() - itemStack.getAmount());
 			}
+
 			// Not enough space available to fit everything: the statistic will only increase by the number of items
 			// actually retrieved in the inventory during this action.
 			if (availableSpaces < eventAmount) {

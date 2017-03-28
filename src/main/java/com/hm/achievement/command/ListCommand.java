@@ -40,7 +40,6 @@ public class ListCommand extends AbstractCommand {
 
 	// Pattern to delete colors if achievement not yet received.
 	private static final Pattern REGEX_PATTERN = Pattern.compile("&([a-f]|[0-9]){1}");
-
 	// Minecraft font, used to get size information in the progress bar.
 	private static final MinecraftFont FONT = MinecraftFont.Font;
 
@@ -155,7 +154,7 @@ public class ListCommand extends AbstractCommand {
 				return;
 			}
 		}
-		// Commands achievements
+		// Commands achievements.
 		createCategoryGUINormal(null, player);
 	}
 
@@ -529,7 +528,7 @@ public class ListCommand extends AbstractCommand {
 	}
 
 	/**
-	 * Set metadata of an ItemStack.
+	 * Sets the metadata of an ItemStack or returns Barrier if category not yet discovered.
 	 * 
 	 * @param itemStacks
 	 * @param displayName
@@ -540,10 +539,12 @@ public class ListCommand extends AbstractCommand {
 	 */
 	private ItemStack enrichItemStack(ItemStack categoryItem, String displayName, boolean hasReceivedInCategory,
 			int totalAchievementsInCategory) {
+		ItemStack itemToDisplay;
 		ItemMeta categoryMeta;
 		if (hasReceivedInCategory) {
 			// Create item stack that will be displayed in the GUI, with its category name.
-			categoryMeta = categoryItem.getItemMeta();
+			itemToDisplay = categoryItem;
+			categoryMeta = itemToDisplay.getItemMeta();
 			categoryMeta
 					.setDisplayName(
 							ChatColor.translateAlternateColorCodes('&',
@@ -554,8 +555,8 @@ public class ListCommand extends AbstractCommand {
 											new String[] { plugin.getIcon(), "&l" + displayName + "&8" })));
 		} else {
 			// The player has not unlocked any achievements in the category: display barrier item with message.
-			categoryItem = new ItemStack(Material.BARRIER);
-			categoryMeta = categoryItem.getItemMeta();
+			itemToDisplay = new ItemStack(Material.BARRIER);
+			categoryMeta = itemToDisplay.getItemMeta();
 			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&8" + plugin.getPluginLang()
 					.getString("list-category-not-unlocked", "You have not yet unlocked this category.")));
 		}
@@ -572,9 +573,9 @@ public class ListCommand extends AbstractCommand {
 		categoryMeta.setLore(ImmutableList.of(ChatColor.translateAlternateColorCodes('&', "&8" + StringUtils
 				.replaceOnce(loreAmountMessage, "AMOUNT", Integer.toString(totalAchievementsInCategory)))));
 		// Set item meta.
-		categoryItem.setItemMeta(categoryMeta);
+		itemToDisplay.setItemMeta(categoryMeta);
 
-		return categoryItem;
+		return itemToDisplay;
 	}
 
 	/**
@@ -629,7 +630,7 @@ public class ListCommand extends AbstractCommand {
 		}
 
 		// Build the lore of the item.
-		ArrayList<String> lore = buildLoreString(achMessage, level, rewards, date, statistic, inelligibleSeriesItem,
+		List<String> lore = buildLoreString(achMessage, level, rewards, date, statistic, inelligibleSeriesItem,
 				playedTime);
 
 		itemMeta.setLore(lore);
@@ -652,9 +653,9 @@ public class ListCommand extends AbstractCommand {
 	 * @param inelligibleSeriesItem
 	 * @return
 	 */
-	private ArrayList<String> buildLoreString(String achMessage, String level, List<String> rewards, String date,
+	private List<String> buildLoreString(String achMessage, String level, List<String> rewards, String date,
 			long statistic, boolean inelligibleSeriesItem, boolean playedTime) {
-		ArrayList<String> lore = new ArrayList<>();
+		List<String> lore = new ArrayList<>();
 		lore.add("");
 
 		if (date != null) {

@@ -60,7 +60,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	@Override
 	public boolean hasPlayerReceivedAchievement(UUID player, String achievementName) {
 		// Underlying structures do not support concurrent operations and are only used by the main server thread. Not
-		// thread-safe to modify or read them asynchronously. Do not use cache if player is offline.
+		// thread-safe to modify or read them asynchronously. Do not use cached data if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && Bukkit.getPlayer(player) != null) {
 			return pluginInstance.getPoolsManager().hasPlayerAchievement(player, achievementName);
 		} else {
@@ -91,6 +91,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 							return Bukkit.getPlayer(player) != null;
 						}
 					});
+
 			try {
 				if (onlineCheckFuture.get()) {
 					// This particular call to the PoolsManager is thread safe can be called even though async thread.
@@ -101,7 +102,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 			}
 		}
-		// Do not use cache if player is offline.
+		// Do not use cached data if player is offline.
 		return pluginInstance.getDatabaseManager().getPlayerAchievementsAmount(player);
 	}
 

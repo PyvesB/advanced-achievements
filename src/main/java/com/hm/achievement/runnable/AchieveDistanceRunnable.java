@@ -37,8 +37,8 @@ public class AchieveDistanceRunnable implements Runnable {
 	public AchieveDistanceRunnable(AdvancedAchievements plugin) {
 		this.plugin = plugin;
 
-		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
-		// Minecraft versions change in the future.
+		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
+		// versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 
 		playerLocations = new HashMap<>();
@@ -151,6 +151,7 @@ public class AchieveDistanceRunnable implements Runnable {
 			long threshold = Long.parseLong(achievementThreshold);
 			String achievementName = plugin.getPluginConfig()
 					.getString(category + "." + achievementThreshold + ".Name");
+
 			// Check whether player has met the threshold and whether we he has not yet received the achievement.
 			if (distance > threshold
 					&& !plugin.getPoolsManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {

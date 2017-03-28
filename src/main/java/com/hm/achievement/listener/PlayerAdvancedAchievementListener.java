@@ -71,7 +71,9 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 		plugin.getPoolsManager().getTotalPlayerAchievementsCache().put(uuid,
 				plugin.getPoolsManager().getPlayerTotalAchievements(player.getUniqueId()) + 1);
 		plugin.getDatabaseManager().registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
+
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage());
+
 		if (event.getMoneyReward() > 0) {
 			rewardMoney(player, event.getMoneyReward());
 		}
@@ -240,11 +242,12 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 			fireworkMeta.addEffects(effectBuilder.build());
 			firework.setVelocity(player.getLocation().getDirection().multiply(0));
 			firework.setFireworkMeta(fireworkMeta);
+
 			// Firework launched by plugin: damage will later be cancelled out.
 			plugin.getFireworkListener().addFirework(firework);
 		} catch (Exception e) {
-			// Particle effect workaround to handle bug in early Spigot 1.9 and 1.11 releases. We try to simulate a
-			// firework.
+			// Particle effect workaround to handle various bugs in early Spigot 1.9 and 1.11 releases. We try to
+			// simulate a firework.
 			player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_LAUNCH, 1, 0.6f);
 			ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, location, 1);
 			player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_BLAST, 1, 0.6f);

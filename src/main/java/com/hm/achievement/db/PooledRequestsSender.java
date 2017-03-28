@@ -93,6 +93,7 @@ public class PooledRequestsSender implements Runnable {
 			UUID player = UUID.fromString(entry.getKey().substring(0, 36));
 			plugin.getDatabaseManager().updateMultipleStatistic(player, entry.getValue(), category,
 					entry.getKey().substring(36));
+
 			if (!isPlayerOnline(player)) {
 				// Value will only be removed if it has not changed in the meantime (for instance player has
 				// reconnected).
@@ -112,6 +113,7 @@ public class PooledRequestsSender implements Runnable {
 		for (Entry<String, Long> entry : categoryMap.entrySet()) {
 			UUID player = UUID.fromString(entry.getKey());
 			plugin.getDatabaseManager().updateNormalStatistic(player, entry.getValue(), category);
+
 			if (!isPlayerOnline(player)) {
 				// Value will only be removed if it has not changed in the meantime (for instance player has
 				// reconnected).

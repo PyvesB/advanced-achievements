@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -63,15 +62,10 @@ public class AchieveConnectionListener extends AbstractListener implements Liste
 	 * @param player
 	 */
 	private void scheduleTaskIfAllowed(Player player) {
-		// Do not schedule task as player is in restricted creative mode or is in a blocked world.
-		if (player.hasMetadata("NPC") || plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isRestrictSpectator() && player.getGameMode() == GameMode.SPECTATOR
-				|| plugin.isInExludedWorld(player)) {
-			return;
-		}
-
-		// Schedule delayed task to check if player should receive a Connections achievement.
-		if (!plugin.getDisabledCategorySet().contains(NormalAchievements.CONNECTIONS.toString())) {
+		if (shouldEventBeTakenIntoAccountNoPermission(player)
+				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.CONNECTIONS.toString())) {
+			// Schedule delayed task to check if player should receive a Connections achievement. This is done to avoid
+			// immediately awarding the achievement.
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 					Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()),
 					new AchieveConnectionRunnable(player, plugin), 100);

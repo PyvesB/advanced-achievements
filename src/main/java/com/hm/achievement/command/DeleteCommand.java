@@ -34,6 +34,7 @@ public class DeleteCommand extends AbstractParsableCommand {
 			plugin.getPoolsManager().getTotalPlayerAchievementsCache().put(uuid,
 					plugin.getPoolsManager().getPlayerTotalAchievements(player.getUniqueId()) - 1);
 			plugin.getDatabaseManager().deletePlayerAchievement(player.getUniqueId(), achievementName);
+
 			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceEach(
 					plugin.getPluginLang().getString("delete-achievements",
 							"The achievement ACH was deleted from PLAYER."),

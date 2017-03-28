@@ -104,6 +104,7 @@ public class SQLDatabaseManager {
 	private void configurationLoad() {
 		achievementsChronologicalOrder = plugin.getPluginConfig().getBoolean("BookChronologicalOrder", true);
 		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
+
 		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
 		boolean dateDisplayTime = plugin.getPluginConfig().getBoolean("DateDisplayTime", false);
 		Locale locale = new Locale(localeString);
@@ -141,17 +142,21 @@ public class SQLDatabaseManager {
 		pool.shutdown();
 		try {
 			// Wait a few seconds for remaining tasks to execute.
-			pool.awaitTermination(5, TimeUnit.SECONDS);
+			if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
+				plugin.getLogger().warning("Some write operations were not sent to the database.");
+			}
 		} catch (InterruptedException e) {
 			plugin.getLogger().log(Level.SEVERE, "Error awaiting for pool to terminate its tasks.", e);
-		}
-		try {
-			Connection connection = sqlConnection.get();
-			if (connection != null) {
-				connection.close();
+			Thread.currentThread().interrupt();
+		} finally {
+			try {
+				Connection connection = sqlConnection.get();
+				if (connection != null) {
+					connection.close();
+				}
+			} catch (SQLException e) {
+				plugin.getLogger().log(Level.SEVERE, "Error while closing connection to database.", e);
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while closing connection to database.", e);
 		}
 	}
 
@@ -209,7 +214,7 @@ public class SQLDatabaseManager {
 	 * @return array list with groups of 3 strings: achievement name, description and date
 	 */
 	public List<String> getPlayerAchievementsList(UUID player) {
-		ArrayList<String> achievementsList = new ArrayList<>();
+		List<String> achievementsList = new ArrayList<>();
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			// Either oldest date to newest one or newest date to oldest one.
@@ -289,7 +294,7 @@ public class SQLDatabaseManager {
 	 * @return list with player UUIDs
 	 */
 	public List<String> getTopList(int listLength, long start) {
-		ArrayList<String> topList = new ArrayList<>(2 * listLength);
+		List<String> topList = new ArrayList<>(2 * listLength);
 		String query;
 		if (start == 0L) {
 			// We consider all the achievements; no date comparison.
@@ -470,7 +475,7 @@ public class SQLDatabaseManager {
 	 * @param table
 	 * @return statistic
 	 */
-	public Long getNormalAchievementAmount(UUID player, NormalAchievements category) {
+	public long getNormalAchievementAmount(UUID player, NormalAchievements category) {
 		long amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();
@@ -494,7 +499,7 @@ public class SQLDatabaseManager {
 	 * @param subcategory
 	 * @return statistic
 	 */
-	public Long getMultipleAchievementAmount(UUID player, MultipleAchievements category, String subcategory) {
+	public long getMultipleAchievementAmount(UUID player, MultipleAchievements category, String subcategory) {
 		long amount = 0;
 		String dbName = category.toDBName();
 		Connection conn = getSQLConnection();

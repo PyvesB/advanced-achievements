@@ -74,7 +74,8 @@ public abstract class SQLWriteOperation {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			logger.log(Level.WARNING, "Thead interrupted while sleeping.");
+			logger.log(Level.SEVERE, "Thead interrupted while sleeping.", e);
+			Thread.currentThread().interrupt();
 		}
 	}
 }

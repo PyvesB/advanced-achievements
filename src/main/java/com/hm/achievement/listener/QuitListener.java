@@ -24,7 +24,7 @@ public class QuitListener extends AbstractListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerQuit(final PlayerQuitEvent event) {
-		
+
 		final UUID uuid = event.getPlayer().getUniqueId();
 		final String uuidString = uuid.toString();
 

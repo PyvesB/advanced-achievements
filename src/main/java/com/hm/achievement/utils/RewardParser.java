@@ -69,25 +69,27 @@ public class RewardParser {
 	 * @return type(s) of the achievement reward as an array of strings
 	 */
 	public List<String> getRewardListing(String configAchievement) {
-		ArrayList<String> rewardType = new ArrayList<>();
+		List<String> rewardTypes = new ArrayList<>();
 		Set<String> keyNames = plugin.getPluginConfig().getKeys(true);
 
 		AchievementCommentedYamlConfiguration pluginLang = plugin.getPluginLang();
 		if (isEconomySet(false) && keyNames.contains(configAchievement + ".Reward.Money")) {
 			int amount = getMoneyAmount(configAchievement);
-			rewardType.add(StringUtils.replaceOnce(pluginLang.getString("list-reward-money", "receive AMOUNT"),
+			rewardTypes.add(StringUtils.replaceOnce(pluginLang.getString("list-reward-money", "receive AMOUNT"),
 					"AMOUNT", amount + " " + getCurrencyName(amount)));
 		}
+
 		if (keyNames.contains(configAchievement + ".Reward.Item")) {
 			int amount = getItemAmount(configAchievement);
 			String name = getItemName(getItemReward(configAchievement));
-			rewardType.add(StringUtils.replaceEach(pluginLang.getString("list-reward-item", "receive AMOUNT ITEM"),
+			rewardTypes.add(StringUtils.replaceEach(pluginLang.getString("list-reward-item", "receive AMOUNT ITEM"),
 					new String[] { "AMOUNT", "ITEM" }, new String[] { Integer.toString(amount), name }));
 		}
+
 		if (keyNames.contains(configAchievement + ".Reward.Command")) {
-			rewardType.add(pluginLang.getString("list-reward-command", "other"));
+			rewardTypes.add(pluginLang.getString("list-reward-command", "other"));
 		}
-		return rewardType;
+		return rewardTypes;
 	}
 
 	/**
@@ -149,6 +151,7 @@ public class RewardParser {
 		if (amount <= 0) {
 			return null;
 		}
+
 		ItemStack item = null;
 		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
 		if (config.getKeys(true).contains(configAchievement + ".Reward.Item.Type")) {
@@ -209,8 +212,8 @@ public class RewardParser {
 	private int getItemAmount(String configAchievement) {
 		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
 		int itemAmount = 0;
-		// Old config syntax.
 		if (config.getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
+			// Old config syntax.
 			itemAmount = config.getInt(configAchievement + ".Reward.Item.Amount", 0);
 		} else if (config.getKeys(true).contains(configAchievement + ".Reward.Item")) {
 			// New config syntax. Name of item and quantity are on the same line, separated by a space.

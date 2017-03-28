@@ -52,7 +52,7 @@ public class DatabasePoolsManager {
 		for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
 			multipleAchievementsToPlayerStatistics.put(multipleAchievement, new ConcurrentHashMap<String, Long>());
 		}
-		totalPlayerAchievementsCache = new ConcurrentHashMap<String, Integer>();
+		totalPlayerAchievementsCache = new ConcurrentHashMap<>();
 	}
 
 	/**

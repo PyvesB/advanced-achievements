@@ -32,8 +32,8 @@ public abstract class AbstractListener {
 
 	protected AbstractListener(AdvancedAchievements plugin) {
 		this.plugin = plugin;
-		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
-		// Minecraft versions change in the future.
+		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
+		// versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 		cooldownTime = plugin.getPluginConfig().getInt("StatisticCooldown", 10) * 1000;
 		cooldownMap = new HashMap<>();

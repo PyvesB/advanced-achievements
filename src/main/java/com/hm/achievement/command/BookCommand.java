@@ -103,7 +103,7 @@ public class BookCommand extends AbstractCommand {
 	 */
 	private void fillBook(List<String> achievements, Player player) {
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-		ArrayList<String> pages = new ArrayList<>(achievements.size() / 3);
+		List<String> pages = new ArrayList<>(achievements.size() / 3);
 		BookMeta bm = (BookMeta) book.getItemMeta();
 
 		try {

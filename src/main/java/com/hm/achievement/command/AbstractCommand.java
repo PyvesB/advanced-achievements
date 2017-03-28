@@ -19,8 +19,8 @@ public abstract class AbstractCommand {
 
 	protected AbstractCommand(AdvancedAchievements plugin) {
 		this.plugin = plugin;
-		// Simple and fast check to compare versions. Might need to be updated in the future depending on how the
-		// Minecraft versions change in the future.
+		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
+		// versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 

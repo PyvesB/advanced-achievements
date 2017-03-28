@@ -19,7 +19,7 @@
 # 2---------------------------------------------------------2 #
 #=============================o=o=============================#
 
-# Time in seconds between each /aach book.
+# Time in seconds between each /aach book (unless user has permission achievement.*).
 TimeBook: 900
 
 # Check for update on plugin launch and notify when an OP joins the game.

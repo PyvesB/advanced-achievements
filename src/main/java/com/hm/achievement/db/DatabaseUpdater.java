@@ -56,6 +56,7 @@ public class DatabaseUpdater {
 					rs = st.executeQuery(
 							"SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'achievements' AND c.relkind = 'r'");
 				}
+
 				// Table achievements still has its default name (ie. no prefix), but a prefix is set in the
 				// configuration; do a renaming of all tables.
 				if (rs.next()) {
@@ -89,12 +90,14 @@ public class DatabaseUpdater {
 		try (Statement st = conn.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getTablePrefix()
 					+ "achievements (playername char(36),achievement varchar(64),description varchar(128),date DATE,PRIMARY KEY (playername, achievement))");
+
 			for (MultipleAchievements category : MultipleAchievements.values()) {
 				st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getTablePrefix() + category.toDBName()
 						+ " (playername char(36)," + category.toSubcategoryDBName() + " varchar(51),"
 						+ category.toDBName() + " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName()
 						+ "))");
 			}
+
 			for (NormalAchievements category : NormalAchievements.values()) {
 				if (category == NormalAchievements.CONNECTIONS) {
 					st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getTablePrefix()

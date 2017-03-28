@@ -45,8 +45,7 @@ public class AchieveTeleportRespawnListener extends AbstractListener implements 
 
 		// Update location of player if he teleports somewhere else.
 		if (plugin.getDistanceRunnable() != null) {
-			plugin.getDistanceRunnable().getPlayerLocations().put(player.getUniqueId().toString(),
-					event.getTo());
+			plugin.getDistanceRunnable().getPlayerLocations().put(player.getUniqueId().toString(), event.getTo());
 		}
 
 		NormalAchievements category = NormalAchievements.ENDERPEARLS;
