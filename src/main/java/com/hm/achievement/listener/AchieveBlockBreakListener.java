@@ -63,8 +63,9 @@ public class AchieveBlockBreakListener extends AbstractListener implements Liste
 		if (!player.hasPermission(category.toPermName() + '.' + blockName)) {
 			return;
 		}
-		if (plugin.getPluginConfig().isConfigurationSection(category + "." + blockName + ':' + block.getData())) {
-			blockName += ":" + block.getData();
+		if (plugin.getPluginConfig().isConfigurationSection(
+				category + "." + blockName + ':' + block.getState().getData().toItemStack().getDurability())) {
+			blockName += ":" + block.getState().getData().toItemStack().getDurability();
 		} else if (!plugin.getPluginConfig().isConfigurationSection(category + "." + blockName)) {
 			return;
 		}
