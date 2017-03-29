@@ -98,6 +98,17 @@ public interface AdvancedAchievementsAPI {
 	 */
 	public long getStatisticForMultipleCategory(UUID player, MultipleAchievements category, String subcategory);
 
+	/**
+	 * Returns the DisplayName parameter for a given achievement Name parameter. If no DisplayName was found for the
+	 * achievement {@code achievementName}, an empty String is returned. If the achievement {@code achievementName} was
+	 * not found in Advanced Achievements's configuration, null is returned.
+	 * 
+	 * @since 5.0
+	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml
+	 * @return the DisplayName parameter of an achievement or "" or null
+	 */
+	public String getDisplayNameForName(String achievementName);
+
 	public final class Rank {
 
 		public final int playerRank;

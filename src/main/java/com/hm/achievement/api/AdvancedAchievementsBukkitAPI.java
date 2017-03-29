@@ -38,11 +38,9 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	 * @return a ready-to-use object if Advanced Achievements 5.0+ was successfully linked, null otherwise
 	 */
 	public static AdvancedAchievementsAPI linkAdvancedAchievements() {
-		if (Bukkit.getPluginManager().isPluginEnabled(PLUGIN_NAME)) {
-			Plugin pluginInstance = Bukkit.getPluginManager().getPlugin(PLUGIN_NAME);
-			if (Integer.parseInt(Character.toString(pluginInstance.getDescription().getVersion().charAt(0))) >= 5) {
-				return new AdvancedAchievementsBukkitAPI((AdvancedAchievements) pluginInstance);
-			}
+		Plugin pluginInstance = Bukkit.getPluginManager().getPlugin(PLUGIN_NAME);
+		if (Integer.parseInt(Character.toString(pluginInstance.getDescription().getVersion().charAt(0))) >= 5) {
+			return new AdvancedAchievementsBukkitAPI((AdvancedAchievements) pluginInstance);
 		}
 		return null;
 	}
@@ -152,5 +150,10 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		} else {
 			return pluginInstance.getDatabaseManager().getMultipleAchievementAmount(player, category, subcategory);
 		}
+	}
+
+	@Override
+	public String getDisplayNameForName(String achievementName) {
+		return pluginInstance.getAchievementsAndDisplayNames().get(achievementName);
 	}
 }
