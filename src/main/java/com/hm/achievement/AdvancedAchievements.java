@@ -29,6 +29,7 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.BookCommand;
 import com.hm.achievement.command.CheckCommand;
+import com.hm.achievement.command.CommandTabCompleter;
 import com.hm.achievement.command.DeleteCommand;
 import com.hm.achievement.command.EasterEggCommand;
 import com.hm.achievement.command.GiveCommand;
@@ -392,6 +393,9 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		playerAdvancedAchievementListener = new PlayerAdvancedAchievementListener(this);
 		pm.registerEvents(playerAdvancedAchievementListener, this);
+
+		this.getLogger().info("Setting up custom tab completers...");
+		this.getCommand("aach").setTabCompleter(new CommandTabCompleter(this));
 
 		this.getLogger().info("Initialising database and launching scheduled tasks...");
 
