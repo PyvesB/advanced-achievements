@@ -7,9 +7,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 
@@ -195,9 +197,14 @@ public class PooledRequestsSender implements Runnable {
 		boolean playerOnline = true;
 		try {
 			playerOnline = onlineCheckFuture.get();
-		} catch (InterruptedException | ExecutionException e) {
-			plugin.getLogger().warning("Error while checking whether player is online.");
-
+		} catch (InterruptedException e) {
+			plugin.getLogger().log(Level.SEVERE, "Thead interrupted while checking whether player online.", e);
+			Thread.currentThread().interrupt();
+		} catch (ExecutionException e) {
+			plugin.getLogger().log(Level.SEVERE, "Unexpected execution exception while checking whether player online.",
+					e);
+		} catch (CancellationException ignored) {
+			// Task can be cancelled when plugin disabled.
 		}
 		return playerOnline;
 	}
