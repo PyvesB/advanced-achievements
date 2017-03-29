@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.mcshared.file.FileManager;
 
 /**
  * Class used to deal with the database and provide functions to evaluate common queries and retrieve the relevant
@@ -48,6 +49,7 @@ public class SQLDatabaseManager {
 	private volatile DatabaseType databaseType;
 	private boolean achievementsChronologicalOrder;
 	private DateFormat dateFormat;
+	private boolean databaseBackup;
 
 	public SQLDatabaseManager(AdvancedAchievements plugin) {
 		this.plugin = plugin;
@@ -79,6 +81,21 @@ public class SQLDatabaseManager {
 			plugin.setSuccessfulLoad(false);
 		}
 
+		if (databaseBackup && databaseType == DatabaseType.SQLITE) {
+			File backup = new File(plugin.getDataFolder(), "achievements.db.bak");
+			// Only do a daily backup for the .db file.
+			if (System.currentTimeMillis() - backup.lastModified() > 86400000L || backup.length() == 0L) {
+				plugin.getLogger().info("Backing up database file...");
+				try {
+					FileManager fileManager = new FileManager("achievements.db", plugin);
+					fileManager.backupFile();
+				} catch (IOException e) {
+					plugin.getLogger().log(Level.SEVERE, "Error while backing up database file:", e);
+					plugin.setSuccessfulLoad(false);
+				}
+			}
+		}
+
 		// Try to establish connection with database; stays opened until explicitely closed by the plugin..
 		Connection conn = getSQLConnection();
 
@@ -104,6 +121,7 @@ public class SQLDatabaseManager {
 	private void configurationLoad() {
 		achievementsChronologicalOrder = plugin.getPluginConfig().getBoolean("BookChronologicalOrder", true);
 		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
+		databaseBackup = plugin.getPluginConfig().getBoolean("DatabaseBackup", true);
 
 		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
 		boolean dateDisplayTime = plugin.getPluginConfig().getBoolean("DateDisplayTime", false);

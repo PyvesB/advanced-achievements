@@ -1,6 +1,5 @@
 package com.hm.achievement;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,7 +43,6 @@ import com.hm.achievement.command.ToggleCommand;
 import com.hm.achievement.command.TopCommand;
 import com.hm.achievement.command.WeekCommand;
 import com.hm.achievement.db.DatabasePoolsManager;
-import com.hm.achievement.db.DatabaseType;
 import com.hm.achievement.db.PooledRequestsSender;
 import com.hm.achievement.db.SQLDatabaseManager;
 import com.hm.achievement.listener.AchieveArrowListener;
@@ -81,7 +79,6 @@ import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.achievement.utils.AchievementCountBungeeTabListPlusVariable;
 import com.hm.achievement.utils.FileUpdater;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.FileManager;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import com.hm.mcshared.update.UpdateChecker;
 
@@ -166,7 +163,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private final DatabasePoolsManager poolsManager;
 	private PooledRequestsSender pooledRequestsSender;
 	private int pooledRequestsTaskInterval;
-	private boolean databaseBackup;
 
 	// Plugin options and various parameters.
 	private String icon;
@@ -225,6 +221,96 @@ public class AdvancedAchievements extends JavaPlugin {
 		configurationLoad(configFile, langFile, guiFile);
 
 		this.getLogger().info("Registering listeners...");
+		registerListeners();
+
+		this.getLogger().info("Setting up custom tab completers...");
+		this.getCommand("aach").setTabCompleter(new CommandTabCompleter(this));
+
+		this.getLogger().info("Initialising database and launching scheduled tasks...");
+		databaseManager.initialise();
+
+		// Error while loading database do not do any further work.
+		if (overrideDisable) {
+			overrideDisable = false;
+			return;
+		}
+
+		pooledRequestsSender = new PooledRequestsSender(this);
+		// Schedule a repeating task to group database queries for some frequent events.
+		pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this,
+				pooledRequestsSender, pooledRequestsTaskInterval * 40L, pooledRequestsTaskInterval * 20L);
+
+		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
+		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
+			playTimeRunnable = new AchievePlayTimeRunnable(this);
+			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(this, playTimeRunnable,
+					playtimeTaskInterval * 10L, playtimeTaskInterval * 20L);
+		}
+
+		// Schedule a repeating task to monitor distances travelled by each player (not directly related to an event).
+		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEFOOT.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEPIG.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
+			distanceRunnable = new AchieveDistanceRunnable(this);
+			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(this, distanceRunnable,
+					distanceTaskInterval * 40L, distanceTaskInterval * 20L);
+		}
+
+		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
+			BungeeTabListPlusBukkitAPI.registerVariable(this, new AchievementCountBungeeTabListPlusVariable(this));
+		}
+
+		if (successfulLoad) {
+			this.getLogger().info("Plugin successfully enabled and ready to run! Took "
+					+ (System.currentTimeMillis() - startTime) + "ms.");
+		} else {
+			this.getLogger().severe("Error(s) while loading plugin. Please view previous logs for more information.");
+		}
+	}
+
+	/**
+	 * Loads the plugin configuration and sets values to different parameters; loads the language and GUI files and
+	 * backs configuration files up. Registers permissions. Initialises command modules.
+	 * 
+	 * @param config
+	 * @param lang
+	 */
+	public void configurationLoad(AchievementCommentedYamlConfiguration config,
+			AchievementCommentedYamlConfiguration lang, AchievementCommentedYamlConfiguration gui) {
+		this.config = config;
+		this.lang = lang;
+		this.gui = gui;
+
+		this.getLogger().info("Loading parameters, registering permissions and initialising command modules...");
+		extractParameters();
+		registerPermissions();
+		initialiseCommands();
+
+		// Reload some parameters.
+		if (playerAdvancedAchievementListener != null) {
+			playerAdvancedAchievementListener.extractParameters();
+		}
+		if (distanceRunnable != null) {
+			distanceRunnable.extractParameter();
+		}
+
+		// Unregister events if user changed the option and did an /aach reload. We do not recheck for update on /aach
+		// reload.
+		if (!config.getBoolean("CheckForUpdate", true)) {
+			PlayerJoinEvent.getHandlerList().unregister(updateChecker);
+		}
+
+		logAchievementStats();
+	}
+
+	/**
+	 * Registers the different event listeners.
+	 */
+	private void registerListeners() {
 		PluginManager pm = getServer().getPluginManager();
 
 		// Check for available plugin update.
@@ -393,106 +479,6 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		playerAdvancedAchievementListener = new PlayerAdvancedAchievementListener(this);
 		pm.registerEvents(playerAdvancedAchievementListener, this);
-
-		this.getLogger().info("Setting up custom tab completers...");
-		this.getCommand("aach").setTabCompleter(new CommandTabCompleter(this));
-
-		this.getLogger().info("Initialising database and launching scheduled tasks...");
-
-		// Initialise the SQLite/MySQL/PostgreSQL database.
-		databaseManager.initialise();
-
-		if (databaseBackup && databaseManager.getDatabaseType() == DatabaseType.SQLITE) {
-			File backup = new File(this.getDataFolder(), "achievements.db.bak");
-			// Only do a daily backup for the .db file.
-			if (System.currentTimeMillis() - backup.lastModified() > 86400000L || backup.length() == 0L) {
-				this.getLogger().info("Backing up database file...");
-				try {
-					FileManager fileManager = new FileManager("achievements.db", this);
-					fileManager.backupFile();
-				} catch (IOException e) {
-					this.getLogger().log(Level.SEVERE, "Error while backing up database file:", e);
-					successfulLoad = false;
-				}
-			}
-		}
-
-		// Error while loading database do not do any further work.
-		if (overrideDisable) {
-			overrideDisable = false;
-			return;
-		}
-
-		pooledRequestsSender = new PooledRequestsSender(this);
-		// Schedule a repeating task to group database queries for some frequent events.
-		pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this,
-				pooledRequestsSender, pooledRequestsTaskInterval * 40L, pooledRequestsTaskInterval * 20L);
-
-		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
-		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
-			playTimeRunnable = new AchievePlayTimeRunnable(this);
-			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(this, playTimeRunnable,
-					playtimeTaskInterval * 10L, playtimeTaskInterval * 20L);
-		}
-
-		// Schedule a repeating task to monitor distances travelled by each player (not directly related to an event).
-		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEFOOT.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEPIG.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
-			distanceRunnable = new AchieveDistanceRunnable(this);
-			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(this, distanceRunnable,
-					distanceTaskInterval * 40L, distanceTaskInterval * 20L);
-		}
-
-		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
-			BungeeTabListPlusBukkitAPI.registerVariable(this, new AchievementCountBungeeTabListPlusVariable(this));
-		}
-
-		if (successfulLoad) {
-			this.getLogger().info("Plugin successfully enabled and ready to run! Took "
-					+ (System.currentTimeMillis() - startTime) + "ms.");
-		} else {
-			this.getLogger().severe("Error(s) while loading plugin. Please view previous logs for more information.");
-		}
-	}
-
-	/**
-	 * Loads the plugin configuration and sets values to different parameters; loads the language and GUI files and
-	 * backs configuration files up. Registers permissions. Initialises command modules.
-	 * 
-	 * @param config
-	 * @param lang
-	 */
-	public void configurationLoad(AchievementCommentedYamlConfiguration config,
-			AchievementCommentedYamlConfiguration lang, AchievementCommentedYamlConfiguration gui) {
-		this.config = config;
-		this.lang = lang;
-		this.gui = gui;
-
-		this.getLogger().info("Loading parameters, registering permissions and initialising command modules...");
-		extractParameters();
-		registerPermissions();
-		initialiseCommands();
-
-		// Reload some parameters.
-		if (playerAdvancedAchievementListener != null) {
-			playerAdvancedAchievementListener.extractParameters();
-		}
-		if (distanceRunnable != null) {
-			distanceRunnable.extractParameter();
-		}
-
-		// Unregister events if user changed the option and did an /aach reload. We do not recheck for update on /aach
-		// reload.
-		if (!config.getBoolean("CheckForUpdate", true)) {
-			PlayerJoinEvent.getHandlerList().unregister(updateChecker);
-		}
-
-		logAchievementStats();
 	}
 
 	/**
@@ -551,8 +537,6 @@ public class AdvancedAchievements extends JavaPlugin {
 					"Overriding configuration: disabling RestrictSpectator. Please set it to false in your config.");
 		}
 		excludedWorldSet = new HashSet<>(config.getList("ExcludedWorlds"));
-
-		databaseBackup = config.getBoolean("DatabaseBackup", true);
 
 		disabledCategorySet = new HashSet<>(config.getList("DisabledCategories"));
 		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
