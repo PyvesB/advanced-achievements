@@ -155,7 +155,7 @@ public class AchieveDistanceRunnable implements Runnable {
 			// Check whether player has met the threshold and whether we he has not yet received the achievement.
 			if (distance > threshold
 					&& !plugin.getPoolsManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
-				String configAchievement = category.toString() + achievementThreshold;
+				String configAchievement = category.toString() + "." + achievementThreshold;
 				// Fire achievement event.
 				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
 						.player(player).name(plugin.getPluginConfig().getString(configAchievement + ".Name"))
