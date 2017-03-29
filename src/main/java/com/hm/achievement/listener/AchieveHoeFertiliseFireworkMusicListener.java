@@ -1,6 +1,7 @@
 package com.hm.achievement.listener;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,7 +41,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener i
 				&& event.getClickedBlock().getRelative(BlockFace.UP).getType() == Material.AIR) {
 			category = NormalAchievements.HOEPLOWING;
 		} else if (event.getItem().isSimilar(new ItemStack(Material.INK_SACK, 1, (short) 15))
-				&& canBeFertilised(clickedMaterial)) {
+				&& canBeFertilised(clickedMaterial, event.getClickedBlock())) {
 			category = NormalAchievements.FERTILISING;
 		} else if (event.getItem().getType() == Material.FIREWORK) {
 			category = NormalAchievements.FIREWORKS;
@@ -66,15 +67,25 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener i
 	 * Determines whether clickedMaterial can be fertilised.
 	 * 
 	 * @param clickedMaterial
+	 * @param block
 	 * @return
 	 */
-	private boolean canBeFertilised(Material clickedMaterial) {
+	private boolean canBeFertilised(Material clickedMaterial, Block block) {
+		if (clickedMaterial == Material.DOUBLE_PLANT) {
+			short durability = block.getState().getData().toItemStack().getDurability();
+			if (durability == 10) {
+				// Upper part of double plant. We must look at the lower part to get the double plant type.
+				durability = block.getRelative(BlockFace.DOWN).getState().getData().toItemStack().getDurability();
+			}
+			// Fertilisation does not work on double tallgrass and large fern.
+			return durability != 2 && durability != 3;
+		}
 		return clickedMaterial == Material.GRASS || clickedMaterial == Material.SAPLING
-				|| clickedMaterial == Material.DOUBLE_PLANT || clickedMaterial == Material.POTATO
-				|| clickedMaterial == Material.CARROT || clickedMaterial == Material.CROPS
-				|| clickedMaterial == Material.PUMPKIN_STEM || clickedMaterial == Material.MELON_STEM
-				|| clickedMaterial == Material.BROWN_MUSHROOM || clickedMaterial == Material.RED_MUSHROOM
-				|| clickedMaterial == Material.COCOA || clickedMaterial == Material.LONG_GRASS
+				|| clickedMaterial == Material.POTATO || clickedMaterial == Material.CARROT
+				|| clickedMaterial == Material.CROPS || clickedMaterial == Material.PUMPKIN_STEM
+				|| clickedMaterial == Material.MELON_STEM || clickedMaterial == Material.BROWN_MUSHROOM
+				|| clickedMaterial == Material.RED_MUSHROOM || clickedMaterial == Material.COCOA
+				|| clickedMaterial == Material.LONG_GRASS
 				|| (version >= 9 && clickedMaterial == Material.BEETROOT_BLOCK);
 	}
 }
