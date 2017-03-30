@@ -1,10 +1,12 @@
 package com.hm.achievement.command;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -50,7 +52,7 @@ public class CommandTabCompleter implements TabCompleter {
 			return getPartialList(categories, args[1]);
 		} else if (args.length == 2 && "give".equalsIgnoreCase(args[0])) {
 			return getPartialList(plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false), args[1]);
-		} else if (args.length == 2 && "delete".equalsIgnoreCase(args[0]) || "check".equalsIgnoreCase(args[0])) {
+		} else if (args.length == 2 && ("delete".equalsIgnoreCase(args[0]) || "check".equalsIgnoreCase(args[0]))) {
 			return getPartialList(plugin.getAchievementsAndDisplayNames().keySet(), args[1]);
 		}
 		// No completion.
@@ -68,18 +70,21 @@ public class CommandTabCompleter implements TabCompleter {
 	 * @return
 	 */
 	private List<String> getPartialList(Set<String> fullSet, String prefix) {
-		List<String> list = new ArrayList<>(MAX_LIST_LENGTH);
+		List<String> fullList = new ArrayList<>(fullSet.size() + 1);
 		for (String string : fullSet) {
 			// Check whether string is a prefix of what the player has typed so far.
 			if (string.toLowerCase().startsWith(prefix.toLowerCase())) {
-				list.add(string);
-				if (list.size() == MAX_LIST_LENGTH - 1) {
-					// Max length almost reached: add final element to indicate how many elements are hidden.
-					list.add("and " + (fullSet.size() - list.size()) + " more...");
-					break;
-				}
+				fullList.add(StringUtils.replace(string, " ", "\u2423"));
 			}
 		}
-		return list;
+		// Sort list alphabetically.
+		Collections.sort(fullList);
+		if (fullList.size() > MAX_LIST_LENGTH) {
+			List<String> partialList = fullList.subList(0, MAX_LIST_LENGTH - 2);
+			// Suspension points to show that list was truncated.
+			partialList.add("\u2022\u2022\u2022");
+			return partialList;
+		}
+		return fullList;
 	}
 }

@@ -65,6 +65,6 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 				achievementName.append(' ');
 			}
 		}
-		return achievementName.toString();
+		return StringUtils.replace(achievementName.toString(), "\u2423", " ");
 	}
 }
