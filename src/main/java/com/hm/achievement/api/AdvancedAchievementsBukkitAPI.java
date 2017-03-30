@@ -10,7 +10,6 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
@@ -24,8 +23,6 @@ import com.hm.achievement.category.NormalAchievements;
  */
 public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
-	private static final String PLUGIN_NAME = "AdvancedAchievements";
-
 	private final AdvancedAchievements pluginInstance;
 
 	private AdvancedAchievementsBukkitAPI(AdvancedAchievements pluginInstance) {
@@ -38,11 +35,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	 * @return a ready-to-use object if Advanced Achievements 5.0+ was successfully linked, null otherwise
 	 */
 	public static AdvancedAchievementsAPI linkAdvancedAchievements() {
-		Plugin pluginInstance = Bukkit.getPluginManager().getPlugin(PLUGIN_NAME);
-		if (Integer.parseInt(Character.toString(pluginInstance.getDescription().getVersion().charAt(0))) >= 5) {
-			return new AdvancedAchievementsBukkitAPI((AdvancedAchievements) pluginInstance);
-		}
-		return null;
+		return new AdvancedAchievementsBukkitAPI(
+				(AdvancedAchievements) Bukkit.getPluginManager().getPlugin("AdvancedAchievements"));
 	}
 
 	@Override
