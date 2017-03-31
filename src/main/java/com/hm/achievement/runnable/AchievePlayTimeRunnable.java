@@ -70,7 +70,7 @@ public class AchievePlayTimeRunnable implements Runnable {
 				String configAchievement = category.toString() + "." + achievementThreshold;
 				// Fire achievement event.
 				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
-						.player(player).name(plugin.getPluginConfig().getString(achievementName))
+						.player(player).name(achievementName)
 						.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
 						.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
 						.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
