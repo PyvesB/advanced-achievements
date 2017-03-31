@@ -168,6 +168,7 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 5.0:
 		if (!configFile.getKeys(false).contains("SimplifiedReception")) {
 			configFile.set("SimplifiedReception", false,
 					new String[] {
@@ -385,6 +386,7 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 5.0:
 		if (!langFile.getKeys(false).contains("aach-command-reset")) {
 			langFile.set("aach-command-reset", "Reset statistic for category CAT.");
 			updateDone = true;

@@ -30,8 +30,7 @@ public class CommandTabCompleter implements TabCompleter {
 	private final AdvancedAchievements plugin;
 
 	public CommandTabCompleter(AdvancedAchievements plugin) {
-		Set<String> categories = new HashSet<>(
-				MultipleAchievements.values().length + NormalAchievements.values().length + 1);
+		categories = new HashSet<>(MultipleAchievements.values().length + NormalAchievements.values().length + 1);
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			categories.add(category.toString());
 		}
@@ -39,7 +38,6 @@ public class CommandTabCompleter implements TabCompleter {
 			categories.add(category.toString());
 		}
 		categories.add("Commands");
-		this.categories = categories;
 		this.plugin = plugin;
 	}
 

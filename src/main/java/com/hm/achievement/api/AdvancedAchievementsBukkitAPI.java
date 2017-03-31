@@ -30,9 +30,10 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	}
 
 	/**
-	 * Checks whether Advanced Achievements 5.0+ is running, and return a ready to use API instance if it is.
+	 * Returns a ready to use API instance. The caller must previously check whether the plugin is enabled and has a
+	 * minimum version of 5.0.
 	 * 
-	 * @return a ready-to-use object if Advanced Achievements 5.0+ was successfully linked, null otherwise
+	 * @return
 	 */
 	public static AdvancedAchievementsAPI linkAdvancedAchievements() {
 		return new AdvancedAchievementsBukkitAPI(
