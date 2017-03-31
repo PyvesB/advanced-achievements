@@ -16,7 +16,7 @@
 </a>
 </p>
 
-**Advanced Achievements enables unique and challenging achievements on Minecraft servers. Try to collect as many achievements as you can, earn rewards, climb the rankings and receive RP books! The plugin supports SQLite, MySQL and PostgreSQL, integrates an extensive statistics system, handles YAML configuration files and features fancy in-game GUIs!**
+**Advanced Achievements enables unique and challenging achievements on Minecraft servers. Try to collect as many achievements as you can, earn rewards, climb the rankings and receive RP books! The plugin supports SQLite, MySQL and PostgreSQL, manages an extensive statistics system, handles YAML configuration files and features fancy in-game GUIs and effects!**
 
 # Useful links
 
@@ -34,24 +34,8 @@
 
 # Contributing
 
-Contributions are happily accepted through **pull requests** on GitHub. Feel free to fork the project and share your code, or improve and update the available translations!
+If you want to support this open-source project without doing anything that is code-related, you can simply **star this repository** by clicking on the *Star* icon on the top right of the page!
 
-You can also **star this repository** to support the open-source project!
-
-
-# Setting your own working copy of the project
-
-Ensure you have a working version of the [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (Java Development Kit).
-
-The following steps are for the [Eclipse](https://eclipse.org/) development environment, but will be similar on other IDEs.
-
-* Download or clone the repository on your computer. You can also create your own fork by clicking on the *Fork* icon on the top right of the page.
-* In Eclipse, go to *File* -> *Import...* -> *Maven* -> *Existing Maven Projects*.
-* In the *Root Directory* field, select the location where you downloaded the Advanced Achievements repository.
-* Tick the *pom.xml* box that appears in the *Projects* field and click *Finish*.
-* To compile the plugin, in the *Package Explorer* window, right click on the imported project, then *Run As* -> *Maven Install*.
-* The plugin will be generated in the *target* folder of the project.
- 
-Please let me know if you encounter any problems by opening an Issue, I am happy to help!
+Code contributions are happily accepted through **pull requests** on GitHub. Feel free to fork the project and share your code, or improve and update the available translations! Developers can refer to [this page of the Wiki](https://github.com/PyvesB/AdvancedAchievements/wiki/Developers) to get their project up and running and interact with Advanced Achievements.
 
 
