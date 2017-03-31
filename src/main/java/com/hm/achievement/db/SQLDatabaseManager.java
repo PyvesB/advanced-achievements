@@ -682,8 +682,8 @@ public class SQLDatabaseManager {
 					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct,
 					// which is available for PostgreSQL 9.5+.
 					query = "INSERT INTO " + tablePrefix + category.toDBName() + " VALUES ('" + player.toString()
-							+ "', ?, " + statistic + ")" + " ON CONFLICT (playername, '" + subcategory
-							+ "') DO UPDATE SET (" + category.toDBName() + ")=('" + statistic + "')";
+							+ "', ?, " + statistic + ")" + " ON CONFLICT (playername, " + category.toSubcategoryDBName()
+							+ ") DO UPDATE SET (" + category.toDBName() + ")=('" + statistic + "')";
 				} else {
 					query = "REPLACE INTO " + tablePrefix + category.toDBName() + " VALUES ('" + player.toString()
 							+ "', ?, " + statistic + ")";

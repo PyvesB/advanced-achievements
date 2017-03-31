@@ -141,8 +141,8 @@ public class PooledRequestsSender implements Runnable {
 			if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
 				st.addBatch("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
 						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-						+ entry.getValue() + ") ON CONFLICT (playername, '" + category.toSubcategoryDBName()
-						+ "') DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue() + ")");
+						+ entry.getValue() + ") ON CONFLICT (playername, " + category.toSubcategoryDBName()
+						+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue() + ")");
 			} else {
 				st.addBatch("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
 						+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
