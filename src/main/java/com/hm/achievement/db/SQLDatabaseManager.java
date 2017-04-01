@@ -22,6 +22,7 @@ import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.base.Strings;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -241,9 +242,11 @@ public class SQLDatabaseManager {
 					+ player.toString() + "' ORDER BY date " + chronology);
 			Map<String, String> achievementsAndDisplayNames = plugin.getAchievementsAndDisplayNames();
 			while (rs.next()) {
-				String achName = rs.getString(2);
+				// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
+				// where names containing single quotes were inserted with two single quotes in the database.
+				String achName = StringUtils.replace(rs.getString(2), "''", "'");
 				String displayName = achievementsAndDisplayNames.get(achName);
-				if (displayName == null) {
+				if (Strings.isNullOrEmpty(displayName)) {
 					achievementsList.add(achName);
 				} else {
 					achievementsList.add(displayName);
@@ -265,13 +268,20 @@ public class SQLDatabaseManager {
 	 * @return date represented as a string
 	 */
 	public String getPlayerAchievementDate(UUID player, String achName) {
-		// We double apostrophes to avoid breaking the query.
-		String achDBName = StringUtils.replace(achName, "'", "''");
 		String achDate = null;
+		String query = "SELECT date FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
+				+ "' AND achievement = ?";
+		if (achName.contains("'")) {
+			// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
+			// where names containing single quotes were inserted with two single quotes in the database.
+			query = StringUtils.replaceOnce(query, "achievement = ?", "(achievement = ? OR achievement = ?)");
+		}
 		Connection conn = getSQLConnection();
-		try (PreparedStatement prep = conn.prepareStatement("SELECT date FROM " + tablePrefix
-				+ "achievements WHERE playername = '" + player.toString() + "' AND achievement = ?")) {
-			prep.setString(1, achDBName);
+		try (PreparedStatement prep = conn.prepareStatement(query)) {
+			prep.setString(1, achName);
+			if (achName.contains("'")) {
+				prep.setString(2, StringUtils.replace(achName, "'", "''"));
+			}
 			ResultSet rs = prep.executeQuery();
 			if (rs.next()) {
 				achDate = dateFormat.format(rs.getDate(1));
@@ -459,23 +469,18 @@ public class SQLDatabaseManager {
 	 */
 	public boolean hasPlayerAchievement(UUID player, String achName) {
 		boolean result = false;
-		String query;
+		String query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
+				+ player.toString() + "' AND achievement = ?";
 		if (achName.contains("'")) {
-			// We check for names with single quotes, but also two single quotes. This is due to a bug in versions 3.0
-			// to 3.0.2 where names containing single quotes were inserted with two single quotes in the database.
-			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
-					+ "' AND (achievement = ? OR achievement = ?)";
-		} else {
-			query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
-					+ "' AND achievement = ?";
+			// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
+			// where names containing single quotes were inserted with two single quotes in the database.
+			query = StringUtils.replaceOnce(query, "achievement = ?", "(achievement = ? OR achievement = ?)");
 		}
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn.prepareStatement(query)) {
+			prep.setString(1, achName);
 			if (achName.contains("'")) {
-				prep.setString(1, achName);
 				prep.setString(2, StringUtils.replace(achName, "'", "''"));
-			} else {
-				prep.setString(1, achName);
 			}
 			if (prep.executeQuery().next()) {
 				result = true;
@@ -709,9 +714,18 @@ public class SQLDatabaseManager {
 			@Override
 			protected void performWrite() throws SQLException {
 				Connection conn = getSQLConnection();
-				try (PreparedStatement prep = conn.prepareStatement("DELETE FROM " + tablePrefix
-						+ "achievements WHERE playername = '" + player.toString() + "' AND achievement = ?")) {
+				String query = "DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
+						+ "' AND achievement = ?";
+				if (achName.contains("'")) {
+					// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to
+					// 3.0.2 where names containing single quotes were inserted with two single quotes in the database.
+					query = StringUtils.replaceOnce(query, "achievement = ?", "(achievement = ? OR achievement = ?)");
+				}
+				try (PreparedStatement prep = conn.prepareStatement(query)) {
 					prep.setString(1, achName);
+					if (achName.contains("'")) {
+						prep.setString(2, StringUtils.replace(achName, "'", "''"));
+					}
 					prep.execute();
 				}
 			}
