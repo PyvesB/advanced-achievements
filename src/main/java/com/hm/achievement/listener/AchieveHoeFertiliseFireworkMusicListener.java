@@ -71,8 +71,8 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener i
 	 * @return
 	 */
 	private boolean canBeFertilised(Material clickedMaterial, Block block) {
+		short durability = block.getState().getData().toItemStack().getDurability();
 		if (clickedMaterial == Material.DOUBLE_PLANT) {
-			short durability = block.getState().getData().toItemStack().getDurability();
 			if (durability == 10) {
 				// Upper part of double plant. We must look at the lower part to get the double plant type.
 				durability = block.getRelative(BlockFace.DOWN).getState().getData().toItemStack().getDurability();
@@ -81,11 +81,13 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener i
 			return durability != 2 && durability != 3;
 		}
 		return clickedMaterial == Material.GRASS || clickedMaterial == Material.SAPLING
-				|| clickedMaterial == Material.POTATO || clickedMaterial == Material.CARROT
-				|| clickedMaterial == Material.CROPS || clickedMaterial == Material.PUMPKIN_STEM
-				|| clickedMaterial == Material.MELON_STEM || clickedMaterial == Material.BROWN_MUSHROOM
-				|| clickedMaterial == Material.RED_MUSHROOM || clickedMaterial == Material.COCOA
-				|| clickedMaterial == Material.LONG_GRASS
-				|| (version >= 9 && clickedMaterial == Material.BEETROOT_BLOCK);
+				|| clickedMaterial == Material.POTATO && durability < 7
+				|| clickedMaterial == Material.CARROT && durability < 7
+				|| clickedMaterial == Material.CROPS && durability < 7
+				|| clickedMaterial == Material.PUMPKIN_STEM && durability < 7
+				|| clickedMaterial == Material.MELON_STEM && durability < 7
+				|| clickedMaterial == Material.BROWN_MUSHROOM || clickedMaterial == Material.RED_MUSHROOM
+				|| clickedMaterial == Material.COCOA && durability < 9 || clickedMaterial == Material.LONG_GRASS
+				|| (version >= 9 && clickedMaterial == Material.BEETROOT_BLOCK && durability < 3);
 	}
 }
