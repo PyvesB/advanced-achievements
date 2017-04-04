@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -678,6 +679,10 @@ public class AdvancedAchievements extends JavaPlugin {
 				if (startOfMetadata > -1) {
 					// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories.
 					section = section.substring(0, startOfMetadata);
+				}
+				if (category == MultipleAchievements.PLAYERCOMMANDS) {
+					// Permissions don't take sapces into account for this category.
+					section = StringUtils.replace(section, " ", "");
 				}
 
 				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when
