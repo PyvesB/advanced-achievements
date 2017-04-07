@@ -455,11 +455,6 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
-			if (!disabledCategorySet.contains(NormalAchievements.LEVELS.toString())
-					|| !disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
-				quitListener = new QuitListener(this);
-				pm.registerEvents(quitListener, this);
-			}
 			if (!disabledCategorySet.contains(NormalAchievements.ENDERPEARLS.toString())) {
 				teleportRespawnListener = new AchieveTeleportRespawnListener(this);
 				pm.registerEvents(teleportRespawnListener, this);
@@ -471,6 +466,9 @@ public class AdvancedAchievements extends JavaPlugin {
 			petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
 			pm.registerEvents(petMasterGiveReceiveListener, this);
 		}
+
+		quitListener = new QuitListener(this);
+		pm.registerEvents(quitListener, this);
 
 		listGUIListener = new ListGUIListener(this);
 		pm.registerEvents(listGUIListener, this);
