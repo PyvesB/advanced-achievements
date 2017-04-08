@@ -39,13 +39,17 @@ public class QuitListener extends AbstractListener implements Listener {
 							// Player reconnected.
 							return;
 						}
+
+						// Prepare the removal of cached statistics from the different category caches.
+						plugin.getCacheManager().signalPlayerDisconnectionToCachedStatistics(uuid);
+
 						// Clean cooldown HashMap for book command.
 						plugin.getAchievementBookCommand().getPlayersBookTime().remove(uuidString);
 
 						// Clear achievements caches.
-						plugin.getPoolsManager().getReceivedAchievementsCache().removeAll(uuidString);
-						plugin.getPoolsManager().getNotReceivedAchievementsCache().removeAll(uuidString);
-						plugin.getPoolsManager().getTotalPlayerAchievementsCache().remove(uuidString);
+						plugin.getCacheManager().getReceivedAchievementsCache().removeAll(uuidString);
+						plugin.getCacheManager().getNotReceivedAchievementsCache().removeAll(uuidString);
+						plugin.getCacheManager().getTotalPlayerAchievementsCache().remove(uuidString);
 
 						if (plugin.getDistanceRunnable() != null) {
 							plugin.getDistanceRunnable().getPlayerLocations().remove(uuidString);

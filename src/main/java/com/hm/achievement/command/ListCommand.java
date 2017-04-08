@@ -191,7 +191,7 @@ public class ListCommand extends AbstractCommand {
 		// Match the item the player clicked on with its database statistic.
 		for (String section : categoryConfig.getKeys(false)) {
 			// Retrieve statistic from category and subcategory.
-			long statistic = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, section,
+			long statistic = plugin.getCacheManager().getAndIncrementStatisticAmount(category, section,
 					player.getUniqueId(), 0);
 
 			String previousItemDate = null;
@@ -269,7 +269,7 @@ public class ListCommand extends AbstractCommand {
 		if (category == NormalAchievements.CONNECTIONS) {
 			statistic = plugin.getDatabaseManager().getConnectionsAmount(player.getUniqueId());
 		} else if (category != null) {
-			statistic = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
+			statistic = plugin.getCacheManager().getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
 		}
 
 		// Used to make the GUI as small as possible while still containing all achievements.
@@ -418,7 +418,7 @@ public class ListCommand extends AbstractCommand {
 				// in the category. Iterate through all achievements in sub-category.
 				for (String level : configSubcategory) {
 					// Check whether player has received achievement.
-					if (plugin.getPoolsManager().hasPlayerAchievement(player.getUniqueId(), plugin.getPluginConfig()
+					if (plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), plugin.getPluginConfig()
 							.getString(categoryName + '.' + section + '.' + level + ".Name", ""))) {
 						// At least one achievement was received in the current category; it is unlocked, can
 						// continue processing.
@@ -469,7 +469,7 @@ public class ListCommand extends AbstractCommand {
 
 				for (String level : configCategory) {
 					/// Check whether player has received achievement.
-					if (plugin.getPoolsManager().hasPlayerAchievement(player.getUniqueId(),
+					if (plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(),
 							plugin.getPluginConfig().getString(categoryName + '.' + level + ".Name", ""))) {
 						// At least one achievement was received in the current category; it is unlocked, can continue
 						// processing.
@@ -513,7 +513,7 @@ public class ListCommand extends AbstractCommand {
 			// Iterate through all achievements in category.
 			for (String ach : configCategory) {
 				/// Check whether player has received achievement.
-				if (plugin.getPoolsManager().hasPlayerAchievement(player.getUniqueId(),
+				if (plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(),
 						plugin.getPluginConfig().getString("Commands." + ach + ".Name", ""))) {
 					// At least one achievement was received in the current category; it is unlocked, can continue
 					// processing.

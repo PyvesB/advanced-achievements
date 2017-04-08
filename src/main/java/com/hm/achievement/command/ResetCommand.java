@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.db.CachedStatistic;
 
 /**
  * Class in charge of handling the /aach reset command, which resets the statistics for a given player and achievement
@@ -22,13 +23,19 @@ public class ResetCommand extends AbstractParsableCommand {
 
 	@Override
 	protected void executeSpecificActions(CommandSender sender, String[] args, Player player) {
+		String uuid = player.getUniqueId().toString();
 		for (NormalAchievements category : NormalAchievements.values()) {
 			if (category.toString().equalsIgnoreCase(args[1])) {
 				if (category == NormalAchievements.CONNECTIONS) {
-					// Not handled by a database pool.
+					// Not handled by a database cache.
 					plugin.getDatabaseManager().clearConnection(player.getUniqueId());
 				} else {
-					plugin.getPoolsManager().getHashMap(category).put(player.getUniqueId().toString(), 0L);
+					CachedStatistic statistic = plugin.getCacheManager().getHashMap(category).get(uuid);
+					if (statistic == null) {
+						plugin.getCacheManager().getHashMap(category).put(uuid, new CachedStatistic(0L, false));
+					} else {
+						statistic.setValue(0L);
+					}
 				}
 				sender.sendMessage(plugin.getChatHeader() + args[1] + StringUtils.replaceOnce(
 						plugin.getPluginLang().getString("reset-successful", " statistics were cleared for PLAYER."),
@@ -39,16 +46,17 @@ public class ResetCommand extends AbstractParsableCommand {
 
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			if (category.toString().equalsIgnoreCase(args[1])) {
-				for (String section : plugin.getPluginConfig().getConfigurationSection(category.toString())
+				for (String subcategory : plugin.getPluginConfig().getConfigurationSection(category.toString())
 						.getKeys(false)) {
-					String subcategoryDBName;
-					if (category == MultipleAchievements.PLAYERCOMMANDS) {
-						subcategoryDBName = StringUtils.replace(section, " ", "");
+					CachedStatistic statistic = plugin.getCacheManager().getHashMap(category).get(plugin
+							.getCacheManager().getMultipleCategoryCacheKey(category, player.getUniqueId(), subcategory));
+					if (statistic == null) {
+						plugin.getCacheManager().getHashMap(category).put(plugin.getCacheManager()
+								.getMultipleCategoryCacheKey(category, player.getUniqueId(), subcategory),
+								new CachedStatistic(0L, false));
 					} else {
-						subcategoryDBName = section;
+						statistic.setValue(0L);
 					}
-					plugin.getPoolsManager().getHashMap(category)
-							.put(player.getUniqueId().toString() + subcategoryDBName, 0L);
 				}
 				sender.sendMessage(plugin.getChatHeader() + args[1] + StringUtils.replaceOnce(
 						plugin.getPluginLang().getString("reset-successful", " statistics were cleared for PLAYER."),

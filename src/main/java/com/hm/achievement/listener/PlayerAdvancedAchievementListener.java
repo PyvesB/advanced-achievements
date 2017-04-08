@@ -66,10 +66,10 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 	public void onPlayerAdvancedAchievementReception(PlayerAdvancedAchievementEvent event) {
 		Player player = event.getPlayer();
 		String uuid = player.getUniqueId().toString();
-		plugin.getPoolsManager().getReceivedAchievementsCache().put(uuid, event.getName());
-		plugin.getPoolsManager().getNotReceivedAchievementsCache().remove(uuid, event.getName());
-		plugin.getPoolsManager().getTotalPlayerAchievementsCache().put(uuid,
-				plugin.getPoolsManager().getPlayerTotalAchievements(player.getUniqueId()) + 1);
+		plugin.getCacheManager().getReceivedAchievementsCache().put(uuid, event.getName());
+		plugin.getCacheManager().getNotReceivedAchievementsCache().remove(uuid, event.getName());
+		plugin.getCacheManager().getTotalPlayerAchievementsCache().put(uuid,
+				plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId()) + 1);
 		plugin.getDatabaseManager().registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage());

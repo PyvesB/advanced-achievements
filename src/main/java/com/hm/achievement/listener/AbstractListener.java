@@ -126,7 +126,7 @@ public abstract class AbstractListener {
 	 */
 	protected void updateStatisticAndAwardAchievementsIfAvailable(Player player, NormalAchievements category,
 			int incrementValue) {
-		long amount = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, player.getUniqueId(),
+		long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, player.getUniqueId(),
 				incrementValue);
 
 		if (incrementValue > 1) {
@@ -152,7 +152,7 @@ public abstract class AbstractListener {
 	 */
 	protected void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category,
 			String subcategory, int incrementValue) {
-		long amount = plugin.getPoolsManager().getAndIncrementStatisticAmount(category, subcategory,
+		long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, subcategory,
 				player.getUniqueId(), incrementValue);
 
 		if (incrementValue > 1) {

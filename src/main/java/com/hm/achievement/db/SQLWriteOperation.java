@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 public abstract class SQLWriteOperation {
 
-	private static final int NUM_OF_ATTEMPTS = 3;
+	private static final int NUM_OF_ATTEMPTS = 5;
 
 	/**
 	 * Performs a single write operation to the database.
@@ -56,7 +56,6 @@ public abstract class SQLWriteOperation {
 				if (attempt == NUM_OF_ATTEMPTS) {
 					// Final attempt: log error.
 					logger.log(Level.SEVERE, exceptionMessage, e);
-
 				} else {
 					// Sleep before next attempt.
 					sleepOneSecond(logger);

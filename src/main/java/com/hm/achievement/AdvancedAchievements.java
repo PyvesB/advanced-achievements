@@ -43,8 +43,8 @@ import com.hm.achievement.command.StatsCommand;
 import com.hm.achievement.command.ToggleCommand;
 import com.hm.achievement.command.TopCommand;
 import com.hm.achievement.command.WeekCommand;
-import com.hm.achievement.db.DatabasePoolsManager;
-import com.hm.achievement.db.PooledRequestsSender;
+import com.hm.achievement.db.AsyncCachedRequestsSender;
+import com.hm.achievement.db.DatabaseCacheManager;
 import com.hm.achievement.db.SQLDatabaseManager;
 import com.hm.achievement.listener.AchieveArrowListener;
 import com.hm.achievement.listener.AchieveBedListener;
@@ -161,9 +161,9 @@ public class AdvancedAchievements extends JavaPlugin {
 
 	// Database related.
 	private final SQLDatabaseManager databaseManager;
-	private final DatabasePoolsManager poolsManager;
-	private PooledRequestsSender pooledRequestsSender;
-	private int pooledRequestsTaskInterval;
+	private final DatabaseCacheManager cacheManager;
+	private AsyncCachedRequestsSender asyncCachedRequestsSender;
+	private int asyncCachedRequestsSenderInterval;
 
 	// Plugin options and various parameters.
 	private String icon;
@@ -184,7 +184,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private AchievePlayTimeRunnable playTimeRunnable;
 
 	// Bukkit scheduler tasks.
-	private BukkitTask pooledRequestsSenderTask;
+	private BukkitTask asyncCachedRequestsSenderTask;
 	private BukkitTask playedTimeTask;
 	private BukkitTask distanceTask;
 
@@ -192,7 +192,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		successfulLoad = true;
 		overrideDisable = false;
 		databaseManager = new SQLDatabaseManager(this);
-		poolsManager = new DatabasePoolsManager(this);
+		cacheManager = new DatabaseCacheManager(this);
 	}
 
 	/**
@@ -236,10 +236,10 @@ public class AdvancedAchievements extends JavaPlugin {
 			return;
 		}
 
-		pooledRequestsSender = new PooledRequestsSender(this);
-		// Schedule a repeating task to group database queries for some frequent events.
-		pooledRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this,
-				pooledRequestsSender, pooledRequestsTaskInterval * 40L, pooledRequestsTaskInterval * 20L);
+		asyncCachedRequestsSender = new AsyncCachedRequestsSender(this);
+		// Schedule a repeating task to group database queries when statistics are modified.
+		asyncCachedRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this,
+				asyncCachedRequestsSender, asyncCachedRequestsSenderInterval * 40L, asyncCachedRequestsSenderInterval * 20L);
 
 		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
 		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
@@ -568,7 +568,7 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 60);
 		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
-		pooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 60);
+		asyncCachedRequestsSenderInterval = config.getInt("PooledRequestsTaskInterval", 10);
 	}
 
 	/**
@@ -704,8 +704,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		// Cancel scheduled tasks.
-		if (pooledRequestsSenderTask != null) {
-			pooledRequestsSenderTask.cancel();
+		if (asyncCachedRequestsSenderTask != null) {
+			asyncCachedRequestsSenderTask.cancel();
 		}
 		if (playedTimeTask != null) {
 			playedTimeTask.cancel();
@@ -715,7 +715,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 
 		// Send remaining statistics to the database and close DatabaseManager.
-		pooledRequestsSender.sendBatchedRequests();
+		asyncCachedRequestsSender.sendBatchedRequests();
 
 		databaseManager.shutdown();
 
@@ -840,8 +840,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		return databaseManager;
 	}
 
-	public DatabasePoolsManager getPoolsManager() {
-		return poolsManager;
+	public DatabaseCacheManager getCacheManager() {
+		return cacheManager;
 	}
 
 	public RewardParser getRewardParser() {

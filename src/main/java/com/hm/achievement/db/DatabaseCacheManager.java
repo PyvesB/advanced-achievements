@@ -13,20 +13,20 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 
 /**
- * Class used to provide a cache wrapper for the database statistics, in order to reduce load of database and enable
- * more modularity for the user.
+ * Class used to provide a cache wrapper for various database statistics, in order to reduce load of database and enable
+ * faster in-memory operations.
  * 
  * @author Pyves
  *
  */
-public class DatabasePoolsManager {
+public class DatabaseCacheManager {
 
 	private final AdvancedAchievements plugin;
 	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
-	private final Map<NormalAchievements, Map<String, Long>> normalAchievementsToPlayerStatistics;
+	private final Map<NormalAchievements, Map<String, CachedStatistic>> normalAchievementsToPlayerStatistics;
 	// Statistics of the different players for multiple achievements; keys in the inner maps correspond to concatenated
 	// UUIDs and block/entity/command identifiers.
-	private final Map<MultipleAchievements, Map<String, Long>> multipleAchievementsToPlayerStatistics;
+	private final Map<MultipleAchievements, Map<String, CachedStatistic>> multipleAchievementsToPlayerStatistics;
 
 	// Multimaps corresponding to the different achievements received by the players.
 	private HashMultimap<String, String> receivedAchievementsCache;
@@ -35,24 +35,50 @@ public class DatabasePoolsManager {
 	// Map corresponding to the total amount of achievements received by each player.
 	private Map<String, Integer> totalPlayerAchievementsCache;
 
-	public DatabasePoolsManager(AdvancedAchievements plugin) {
+	public DatabaseCacheManager(AdvancedAchievements plugin) {
 		this.plugin = plugin;
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
 	}
 
-	public void databasePoolsInit() {
+	public void databaseCachesInit() {
 		receivedAchievementsCache = HashMultimap.create();
 		notReceivedAchievementsCache = HashMultimap.create();
 
 		// ConcurrentHashMaps are necessary to guarantee thread safety.
 		for (NormalAchievements normalAchievement : NormalAchievements.values()) {
-			normalAchievementsToPlayerStatistics.put(normalAchievement, new ConcurrentHashMap<String, Long>());
+			normalAchievementsToPlayerStatistics.put(normalAchievement,
+					new ConcurrentHashMap<String, CachedStatistic>());
 		}
 		for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
-			multipleAchievementsToPlayerStatistics.put(multipleAchievement, new ConcurrentHashMap<String, Long>());
+			multipleAchievementsToPlayerStatistics.put(multipleAchievement,
+					new ConcurrentHashMap<String, CachedStatistic>());
 		}
 		totalPlayerAchievementsCache = new ConcurrentHashMap<>();
+	}
+
+	/**
+	 * Indicates to the relevant cached statistics that the player has disconnected.
+	 * 
+	 * @param player
+	 */
+	public void signalPlayerDisconnectionToCachedStatistics(UUID player) {
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			Map<String, CachedStatistic> categoryMap = getHashMap(category);
+			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(category.toString())
+					.getKeys(false)) {
+				CachedStatistic statistic = categoryMap.get(getMultipleCategoryCacheKey(category, player, subcategory));
+				if (statistic != null) {
+					statistic.signalPlayerDisconnection();
+				}
+			}
+		}
+		for (NormalAchievements category : NormalAchievements.values()) {
+			CachedStatistic statistic = getHashMap(category).get(player.toString());
+			if (statistic != null) {
+				statistic.signalPlayerDisconnection();
+			}
+		}
 	}
 
 	/**
@@ -61,12 +87,8 @@ public class DatabasePoolsManager {
 	 * @param category
 	 * @return
 	 */
-	public Map<String, Long> getHashMap(NormalAchievements category) {
-		if (category == NormalAchievements.CONNECTIONS) {
-			throw new IllegalArgumentException("Connections does not have a corresponding HashMap.");
-		} else {
-			return normalAchievementsToPlayerStatistics.get(category);
-		}
+	public Map<String, CachedStatistic> getHashMap(NormalAchievements category) {
+		return normalAchievementsToPlayerStatistics.get(category);
 	}
 
 	/**
@@ -75,13 +97,13 @@ public class DatabasePoolsManager {
 	 * @param category
 	 * @return
 	 */
-	public Map<String, Long> getHashMap(MultipleAchievements category) {
+	public Map<String, CachedStatistic> getHashMap(MultipleAchievements category) {
 		return multipleAchievementsToPlayerStatistics.get(category);
 	}
 
 	/**
-	 * Increases the statistic for a NormalAchievement by the given value and returns the updated statistic. Calls the
-	 * database if not found in the pools.
+	 * Increases the statistic for a NormalAchievement by the given value and returns the updated statistic value. Calls
+	 * the database if not found in the cache.
 	 * 
 	 * @param category
 	 * @param player
@@ -89,21 +111,23 @@ public class DatabasePoolsManager {
 	 * @return
 	 */
 	public long getAndIncrementStatisticAmount(NormalAchievements category, UUID player, int value) {
-		Map<String, Long> categoryHashMap = getHashMap(category);
-		String uuid = player.toString();
-		Long oldAmount = categoryHashMap.get(uuid);
-		if (oldAmount == null) {
-			oldAmount = plugin.getDatabaseManager().getNormalAchievementAmount(player, category);
+		CachedStatistic statistic = getHashMap(category).get(player.toString());
+		if (statistic == null) {
+			statistic = new CachedStatistic(plugin.getDatabaseManager().getNormalAchievementAmount(player, category),
+					true);
+			getHashMap(category).put(player.toString(), statistic);
 		}
-		Long newValue = oldAmount + value;
-
-		categoryHashMap.put(uuid, newValue);
-		return newValue;
+		if (value > 0) {
+			long newValue = statistic.getValue() + value;
+			statistic.setValue(newValue);
+			return newValue;
+		}
+		return statistic.getValue();
 	}
 
 	/**
-	 * Increases the statistic for a MultipleAchievement by the given value and returns the updated statistic. Calls the
-	 * database if not found in the pools.
+	 * Increases the statistic for a MultipleAchievement by the given value and returns the updated statistic value.
+	 * Calls the database if not found in the cache.
 	 * 
 	 * @param category
 	 * @param subcategory
@@ -113,22 +137,24 @@ public class DatabasePoolsManager {
 	 */
 	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player,
 			int value) {
-		Map<String, Long> categoryHashMap = getHashMap(category);
-		String uuid = player.toString();
-		String subcategoryDBName;
-		if (category == MultipleAchievements.PLAYERCOMMANDS) {
-			subcategoryDBName = StringUtils.replace(subcategory, " ", "");
-		} else {
-			subcategoryDBName = subcategory;
+		CachedStatistic statistic = getHashMap(category)
+				.get(getMultipleCategoryCacheKey(category, player, subcategory));
+		if (statistic == null) {
+			String subcategoryDBName = subcategory;
+			if (category == MultipleAchievements.PLAYERCOMMANDS) {
+				subcategoryDBName = StringUtils.replace(subcategory, " ", "");
+			}
+			statistic = new CachedStatistic(
+					plugin.getDatabaseManager().getMultipleAchievementAmount(player, category, subcategoryDBName),
+					true);
+			getHashMap(category).put(getMultipleCategoryCacheKey(category, player, subcategory), statistic);
 		}
-		Long oldAmount = categoryHashMap.get(uuid + subcategoryDBName);
-		if (oldAmount == null) {
-			oldAmount = plugin.getDatabaseManager().getMultipleAchievementAmount(player, category, subcategoryDBName);
+		if (value > 0) {
+			long newValue = statistic.getValue() + value;
+			statistic.setValue(newValue);
+			return newValue;
 		}
-		Long newValue = oldAmount + value;
-
-		categoryHashMap.put(uuid + subcategoryDBName, newValue);
-		return newValue;
+		return statistic.getValue();
 	}
 
 	/**
@@ -169,6 +195,22 @@ public class DatabasePoolsManager {
 			totalPlayerAchievementsCache.put(player.toString(), totalAchievements);
 		}
 		return totalAchievements;
+	}
+
+	/**
+	 * Returns a key for the multipleAchievementsToPlayerStatistics structure. Concatenation of player UUID and
+	 * subcategory name, with removed whitespaces for PlayerCommands.
+	 * 
+	 * @param category
+	 * @param player
+	 * @param subcategory
+	 * @return
+	 */
+	public String getMultipleCategoryCacheKey(MultipleAchievements category, UUID player, String subcategory) {
+		if (category == MultipleAchievements.PLAYERCOMMANDS) {
+			return player.toString() + StringUtils.replace(subcategory, " ", "");
+		}
+		return player.toString() + subcategory;
 	}
 
 	public HashMultimap<String, String> getReceivedAchievementsCache() {

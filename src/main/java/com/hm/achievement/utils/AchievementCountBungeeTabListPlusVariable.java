@@ -23,6 +23,6 @@ public class AchievementCountBungeeTabListPlusVariable extends Variable {
 
 	@Override
 	public String getReplacement(Player player) {
-		return Integer.toString(plugin.getPoolsManager().getPlayerTotalAchievements(player.getUniqueId()));
+		return Integer.toString(plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId()));
 	}
 }

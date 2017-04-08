@@ -56,8 +56,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	public boolean hasPlayerReceivedAchievement(UUID player, String achievementName) {
 		// Underlying structures do not support concurrent operations and are only used by the main server thread. Not
 		// thread-safe to modify or read them asynchronously. Do not use cached data if player is offline.
-		if (Bukkit.getServer().isPrimaryThread() && Bukkit.getPlayer(player) != null) {
-			return pluginInstance.getPoolsManager().hasPlayerAchievement(player, achievementName);
+		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
+			return pluginInstance.getCacheManager().hasPlayerAchievement(player, achievementName);
 		} else {
 			return pluginInstance.getDatabaseManager().hasPlayerAchievement(player, achievementName);
 		}
@@ -75,36 +75,12 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public int getPlayerTotalAchievements(final UUID player) {
-		if (Bukkit.getServer().isPrimaryThread() && Bukkit.getPlayer(player) != null) {
-			return pluginInstance.getPoolsManager().getPlayerTotalAchievements(player);
-		} else if (!Bukkit.getServer().isPrimaryThread()) {
-			Future<Boolean> onlineCheckFuture = Bukkit.getScheduler().callSyncMethod(pluginInstance,
-					new Callable<Boolean>() {
-
-						@Override
-						public Boolean call() {
-							return Bukkit.getPlayer(player) != null;
-						}
-					});
-
-			try {
-				if (onlineCheckFuture.get()) {
-					// This particular call to the PoolsManager is thread safe can be called even though async thread.
-					return pluginInstance.getPoolsManager().getPlayerTotalAchievements(player);
-				}
-			} catch (InterruptedException e) {
-				pluginInstance.getLogger().log(Level.SEVERE,
-						"Thead interrupted while checking whether player online (API).", e);
-				Thread.currentThread().interrupt();
-			} catch (ExecutionException e) {
-				pluginInstance.getLogger().log(Level.SEVERE,
-						"Unexpected execution exception while checking whether player online (API).", e);
-			} catch (CancellationException ignored) {
-				// Task can be cancelled when plugin disabled.
-			}
+		// Only use cached data if player is online.
+		if (isPlayerOnline(player)) {
+			return pluginInstance.getCacheManager().getPlayerTotalAchievements(player);
+		} else {
+			return pluginInstance.getDatabaseManager().getPlayerAchievementsAmount(player);
 		}
-		// Do not use cached data if player is offline.
-		return pluginInstance.getDatabaseManager().getPlayerAchievementsAmount(player);
 	}
 
 	@Override
@@ -127,10 +103,10 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public long getStatisticForNormalCategory(UUID player, NormalAchievements category) {
-		// Underlying implementation of the pools is only thread-safe with concurrent removals. Not
-		// thread-safe to modify them asynchronously. Do not use cache if player is offline.
-		if (Bukkit.getServer().isPrimaryThread() && Bukkit.getPlayer(player) != null) {
-			return pluginInstance.getPoolsManager().getAndIncrementStatisticAmount(category, player, 0);
+		// Underlying structures do not support concurrent write operations and are only modified by the main server
+		// thread. Do not use cache if player is offline.
+		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
+			return pluginInstance.getCacheManager().getAndIncrementStatisticAmount(category, player, 0);
 		} else {
 			return pluginInstance.getDatabaseManager().getNormalAchievementAmount(player, category);
 		}
@@ -138,10 +114,10 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public long getStatisticForMultipleCategory(UUID player, MultipleAchievements category, String subcategory) {
-		// Underlying implementation of the pools is only thread-safe with concurrent removals. Not
-		// thread-safe to modify them asynchronously. Do not use cache if player is offline.
-		if (Bukkit.getServer().isPrimaryThread() && Bukkit.getPlayer(player) != null) {
-			return pluginInstance.getPoolsManager().getAndIncrementStatisticAmount(category, subcategory, player, 0);
+		// Underlying structures do not support concurrent write operations and are only modified by the main server
+		// thread. Do not use cache if player is offline.
+		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
+			return pluginInstance.getCacheManager().getAndIncrementStatisticAmount(category, subcategory, player, 0);
 		} else {
 			return pluginInstance.getDatabaseManager().getMultipleAchievementAmount(player, category, subcategory);
 		}
@@ -150,5 +126,40 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	@Override
 	public String getDisplayNameForName(String achievementName) {
 		return pluginInstance.getAchievementsAndDisplayNames().get(achievementName);
+	}
+
+	/**
+	 * Checks whether the player is online by making a call on the server's main thread of execution.
+	 * 
+	 * @param uuidString
+	 * @return
+	 */
+	private boolean isPlayerOnline(final UUID player) {
+		if (Bukkit.getServer().isPrimaryThread()) {
+			return Bukkit.getPlayer(player) != null;
+		}
+		// Called asynchronously. To ensure thread safety we must issue a call on the server's main thread of execution.
+		Future<Boolean> onlineCheckFuture = Bukkit.getScheduler().callSyncMethod(pluginInstance,
+				new Callable<Boolean>() {
+
+					@Override
+					public Boolean call() {
+						return Bukkit.getPlayer(player) != null;
+					}
+				});
+
+		boolean playerOnline = true;
+		try {
+			playerOnline = onlineCheckFuture.get();
+		} catch (InterruptedException e) {
+			pluginInstance.getLogger().log(Level.SEVERE, "Thead interrupted while checking whether player online.", e);
+			Thread.currentThread().interrupt();
+		} catch (ExecutionException e) {
+			pluginInstance.getLogger().log(Level.SEVERE,
+					"Unexpected execution exception while checking whether player online.", e);
+		} catch (CancellationException ignored) {
+			// Task can be cancelled when plugin disabled.
+		}
+		return playerOnline;
 	}
 }

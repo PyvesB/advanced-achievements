@@ -191,7 +191,7 @@ PlaytimeTaskInterval: 60
 DistanceTaskInterval: 5
 
 # Frequency of some statistics writes to the database.
-PooledRequestsTaskInterval: 120
+PooledRequestsTaskInterval: 10
 
 #============================OOOOO============================#
 # V---------------------------------------------------------V #
