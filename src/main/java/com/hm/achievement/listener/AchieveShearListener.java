@@ -1,6 +1,7 @@
 package com.hm.achievement.listener;
 
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,7 +24,7 @@ public class AchieveShearListener extends AbstractListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerShearEntity(PlayerShearEntityEvent event) {
-		if (event.getEntity() != null && !"sheep".equalsIgnoreCase(event.getEntity().getName())) {
+		if (!(event.getEntity() instanceof Sheep)) {
 			return;
 		}
 
