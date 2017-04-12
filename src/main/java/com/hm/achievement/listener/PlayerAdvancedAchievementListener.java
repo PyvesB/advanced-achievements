@@ -273,7 +273,16 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 	 */
 	private void displaySimplifiedReception(Player player) {
 		Location location = player.getLocation();
-		player.getWorld().playSound(location, Sound.ENTITY_PLAYER_LEVELUP, 1, 0.9f);
+		Sound sound;
+		if (version < 9) {
+			// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in
+			// newer versions.
+			sound = Sound.valueOf("LEVEL_UP");
+		} else {
+			// Play sound with enum for newer versions.
+			sound = Sound.ENTITY_PLAYER_LEVELUP;
+		}
+		player.getWorld().playSound(location, sound, 1, 0.9f);
 		ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, location, 1);
 	}
 }

@@ -42,7 +42,7 @@ TopList: 5
 # /aach top, week or month when ranked in the top list.
 AdditionalEffects: true
 
-# Set to true to activate particle effects when performing /aach book, /aach stats with all achievements and
+# Set to true to activate sounds when performing /aach book, /aach stats with all achievements and
 # /aach top, week or month when ranked in the top list.
 Sound: true
 
