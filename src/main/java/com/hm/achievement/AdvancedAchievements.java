@@ -99,7 +99,7 @@ import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 5.0.2
+ * @version 5.0.3
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin {
@@ -239,7 +239,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		asyncCachedRequestsSender = new AsyncCachedRequestsSender(this);
 		// Schedule a repeating task to group database queries when statistics are modified.
 		asyncCachedRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this,
-				asyncCachedRequestsSender, asyncCachedRequestsSenderInterval * 40L, asyncCachedRequestsSenderInterval * 20L);
+				asyncCachedRequestsSender, asyncCachedRequestsSenderInterval * 40L,
+				asyncCachedRequestsSenderInterval * 20L);
 
 		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
 		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
@@ -454,15 +455,16 @@ public class AdvancedAchievements extends JavaPlugin {
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
-			if (!disabledCategorySet.contains(NormalAchievements.ENDERPEARLS.toString())) {
-				teleportRespawnListener = new AchieveTeleportRespawnListener(this);
-				pm.registerEvents(teleportRespawnListener, this);
-			}
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.ENDERPEARLS.toString())) {
+			teleportRespawnListener = new AchieveTeleportRespawnListener(this);
+			pm.registerEvents(teleportRespawnListener, this);
 		}
 
 		if (!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString())) {
+				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString()))
+
+		{
 			petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
 			pm.registerEvents(petMasterGiveReceiveListener, this);
 		}
