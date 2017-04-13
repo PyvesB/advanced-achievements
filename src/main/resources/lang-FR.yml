@@ -1,7 +1,7 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
-# |  Advanced Achievements French translation by DarkPyves  | #
-# |             ~ Valid as of version 4.2.1 ~               | #
+# |   Advanced Achievements French translation by Niasio    | #
+# |             ~ Valid as of version 5.0.1 ~               | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
@@ -15,7 +15,7 @@ configuration-successfully-reloaded: "Configuration rechargée avec succès."
 configuration-reload-failed: "Erreur(s) lors du rechargement des configurations. Merci de consulter les logs détaillés pour plus d'informations."
 server-restart-reload: "La liste DisabledCategories a été modifiée. Le serveur doit être reload ou redémarré pour que vos modifications prennent effet."
 
-# Related to /aach top.
+# Related to /aach top week and month.
 top-achievement: "Joueurs ayant obtenu le plus de succès :"
 player-rank: "Classement actuel :"
 week-achievement: "Joueurs ayant obtenu le plus de succès cette semaine :"
@@ -56,7 +56,9 @@ command-reward: "Commande de récompense exécutée !"
 
 # Related to /aach help.
 aach-command-book: "Obtenir votre livre de succès."
+aach-command-book-hover: "Items RP que vous pouvez collecter et échanger avec d'autres! Liste basée sur le temps."
 aach-command-stats: "Visualiser son nombre total de succès."
+aach-command-stats-hover: "Barre de progression. Attrapez-les tous!"
 aach-command-top: "Afficher le classement des succès."
 aach-command-reload: "Recharger la configuration du plugin."
 aach-command-give: "Donner le succès ACH à &7NAME."
@@ -156,12 +158,15 @@ list-enderpearls: "Téléportations avec Perles de l'Ender"
 list-petmastergive: "Animaux donnés à un autre Joueur"
 list-petmasterreceive: "Animaux reçus d'un autre Joueur"
 list-smelting: "Objets Fondus"
-
 list-commands: "Autres Succès"
 
 # Related to /aach toggle.
 toggle-displayed: "Vous serez notifié quand d'autres joueurs recevront des succès."
 toggle-hidden: "Vous ne serez plus notifié quand d'autres joueurs recevront des succès."
+
+# Related to /aach reset.
+reset-successful: " les statistiques ont été supprimées pour PLAYER."
+category-does-not-exist: "La catégorie spécifiée n'existe pas."
 
 #============================================================#
 # +--------------------------------------------------------+ #
