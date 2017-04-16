@@ -67,11 +67,12 @@ aach-command-delete: "Supprimer le succès ACH du &7joueur NAME."
 aach-command-week: "Classement hebdomadaire."
 aach-command-month: "Classement mensuel."
 aach-command-toggle: "Voir succès d'autres joueurs."
+aach-command-reset: "Réinitialiser la stat pour CAT."
 aach-command-book-hover: "Des livres RP, que vous pouvez échanger et collectionner !"
 aach-command-stats-hover: "Attrappez-les tous !"
 aach-command-list-hover: "Interface graphique pour visualiser vos succès !"
 aach-command-top-hover: "Qui sont les meilleurs joueurs du serveur ?"
-aach-command-give-hover: "Le joueur doit être en ligne."
+aach-command-give-hover: "Le joueur doit être en ligne. Supporte les succès de la catégorie Commands."
 aach-command-reload-hover: "Recharge la plupart des paramètres de lang.yml et config.yml."
 aach-command-info-hover: "Des infos supplémentaires sur le plugin !"
 aach-command-check-hover: "Il faut utiliser le nom spécifié dans le fichier de config."
@@ -79,6 +80,7 @@ aach-command-delete-hover: "Lisez la documentation avant d'utiliser cette comman
 aach-command-week-hover: "Les meilleurs joueurs de la semaine !"
 aach-command-month-hover: "Les meilleurs joueurs du mois !"
 aach-command-toggle-hover: "Choix sauvegardé jusqu'au prochain redémarrage !"
+aach-command-reset-hover: "Pour les catégories avec sous-catégories, elles sont toutes réinitialisées."
 aach-tip: "&lASTUCE &7&n&oCliquez &8ou &7&n&opassez votre curseur &8sur les commandes !"
 
 # Related to /aach info.
@@ -89,7 +91,8 @@ version-command-author: "Auteur :"
 version-command-description: "Description :"
 version-command-description-details: "Advanced Achievements ajoute des succès uniques au serveur. Essayez d'en obtenir le plus possible, récoltez des récompenses, montez dans le classement et collectionnez vos livres !"
 version-command-vault: "Intégration avec Vault :"
-version-command-petmaster: "Intégration avec Pet Master:"
+version-command-petmaster: "Intégration avec Pet Master :"
+version-command-btlp: "Intégration avec BungeeTabListPlus :"
 version-command-database: "Type de la BDD :"
 
 # Related to /aach list.
@@ -162,6 +165,10 @@ list-commands: "Autres Succès"
 # Related to /aach toggle.
 toggle-displayed: "Vous serez notifié quand d'autres joueurs recevront des succès."
 toggle-hidden: "Vous ne serez plus notifié quand d'autres joueurs recevront des succès."
+
+# Related to /aach reset.
+reset-successful: " statistique réinitialisée pour joueur PLAYER."
+category-does-not-exist: "Cette catégorie n'existe pas."
 
 #============================================================#
 # +--------------------------------------------------------+ #
