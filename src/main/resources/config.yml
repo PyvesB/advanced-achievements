@@ -136,6 +136,7 @@ LanguageFileName: lang.yml
 StatisticCooldown: 10
 
 # Display action bar message when player performs an action while in the cooldown period.
+# Set to false if using Minecraft 1.7.9 or 1.7.10.
 CooldownActionBar: true
 
 # Locale used to format dates in /aach book and /aach list. You must select an ISO 639 language code.

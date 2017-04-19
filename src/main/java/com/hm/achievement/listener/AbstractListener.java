@@ -27,8 +27,9 @@ public abstract class AbstractListener {
 	protected final AdvancedAchievements plugin;
 
 	private final Map<String, Long> cooldownMap;
-	private final int cooldownTime;
-	private final boolean cooldownActionBar;
+
+	private int cooldownTime;
+	private boolean cooldownActionBar;
 
 	protected AbstractListener(AdvancedAchievements plugin) {
 		this.plugin = plugin;
@@ -38,6 +39,11 @@ public abstract class AbstractListener {
 		cooldownTime = plugin.getPluginConfig().getInt("StatisticCooldown", 10) * 1000;
 		cooldownMap = new HashMap<>();
 		cooldownActionBar = plugin.getPluginConfig().getBoolean("CooldownActionBar", true);
+		if (cooldownActionBar && version < 8) {
+			cooldownActionBar = false;
+			plugin.getLogger().warning(
+					"Overriding configuration: disabling CooldownActionBar. Please set it to false in your config.");
+		}
 	}
 
 	/**
