@@ -1,9 +1,5 @@
 package com.hm.achievement.listener;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -13,7 +9,6 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
-import com.hm.mcshared.particle.PacketSender;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
@@ -26,24 +21,11 @@ public abstract class AbstractListener {
 	protected final int version;
 	protected final AdvancedAchievements plugin;
 
-	private final Map<String, Long> cooldownMap;
-
-	private int cooldownTime;
-	private boolean cooldownActionBar;
-
 	protected AbstractListener(AdvancedAchievements plugin) {
 		this.plugin = plugin;
 		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
 		// versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
-		cooldownTime = plugin.getPluginConfig().getInt("StatisticCooldown", 10) * 1000;
-		cooldownMap = new HashMap<>();
-		cooldownActionBar = plugin.getPluginConfig().getBoolean("CooldownActionBar", true);
-		if (cooldownActionBar && version < 8) {
-			cooldownActionBar = false;
-			plugin.getLogger().warning(
-					"Overriding configuration: disabling CooldownActionBar. Please set it to false in your config.");
-		}
 	}
 
 	/**
@@ -77,49 +59,6 @@ public abstract class AbstractListener {
 		boolean excludedWorld = plugin.isInExludedWorld(player);
 
 		return !isNPC && !restrictedCreative && !restrictedSpectator && !excludedWorld;
-	}
-
-	/**
-	 * Determines whether a similar event was taken into account too recently and the player is still in the cooldown
-	 * period.
-	 * 
-	 * @param player
-	 * @return
-	 */
-	protected boolean isInCooldownPeriod(Player player) {
-		return isInCooldownPeriod(player, "");
-	}
-
-	/**
-	 * Determines whether a similar event was taken into account too recently and the player is still in the cooldown
-	 * period. Stores elements in the map with prefixes to enable several distinct entries for the same player.
-	 * 
-	 * @param player
-	 * @return
-	 */
-	protected boolean isInCooldownPeriod(Player player, String prefixInMap) {
-		String uuid = player.getUniqueId().toString();
-		Long lastEventTime = cooldownMap.get(prefixInMap + uuid);
-		if (lastEventTime == null) {
-			lastEventTime = 0L;
-		}
-		long timeToWait = lastEventTime + cooldownTime - System.currentTimeMillis();
-		if (timeToWait > 0) {
-			if (cooldownActionBar) {
-				String actionBarJsonMessage = "{\"text\":\"&o" + StringUtils.replaceOnce(
-						plugin.getPluginLang().getString("statistic-cooldown",
-								"Achievements cooldown, wait TIME seconds before this action counts again."),
-						"TIME", String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
-				try {
-					PacketSender.sendActionBarPacket(player, actionBarJsonMessage);
-				} catch (Exception e) {
-					plugin.getLogger().warning("Errors while trying to display action bar message for cooldown.");
-				}
-			}
-			return true;
-		}
-		cooldownMap.put(prefixInMap + uuid, System.currentTimeMillis());
-		return false;
 	}
 
 	/**
@@ -193,14 +132,5 @@ public abstract class AbstractListener {
 
 			Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 		}
-	}
-
-	/**
-	 * Removes a given player UUID from the cooldown map.
-	 * 
-	 * @param playerUUID
-	 */
-	protected void removePlayerFromCooldownMap(String playerUUID) {
-		cooldownMap.remove(playerUUID);
 	}
 }

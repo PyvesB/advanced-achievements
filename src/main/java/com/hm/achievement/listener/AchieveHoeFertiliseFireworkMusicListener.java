@@ -20,7 +20,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveHoeFertiliseFireworkMusicListener extends AbstractListener implements Listener {
+public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimitedListener implements Listener {
 
 	public AchieveHoeFertiliseFireworkMusicListener(AdvancedAchievements plugin) {
 		super(plugin);

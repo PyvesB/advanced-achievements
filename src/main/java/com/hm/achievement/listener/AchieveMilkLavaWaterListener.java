@@ -16,7 +16,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveMilkLavaWaterListener extends AbstractListener implements Listener {
+public class AchieveMilkLavaWaterListener extends AbstractRateLimitedListener implements Listener {
 
 	public AchieveMilkLavaWaterListener(AdvancedAchievements plugin) {
 		super(plugin);

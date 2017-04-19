@@ -15,7 +15,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveBedListener extends AbstractListener implements Listener {
+public class AchieveBedListener extends AbstractRateLimitedListener implements Listener {
 
 	public AchieveBedListener(AdvancedAchievements plugin) {
 		super(plugin);

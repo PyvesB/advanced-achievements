@@ -21,7 +21,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveTradeAnvilBrewSmeltListener extends AbstractListener implements Listener {
+public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListener implements Listener {
 
 	public AchieveTradeAnvilBrewSmeltListener(AdvancedAchievements plugin) {
 		super(plugin);
