@@ -24,7 +24,6 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.mcshared.particle.PacketSender;
 import com.hm.mcshared.particle.ParticleEffect;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Listener class to deal with achievement receptions: rewards, display and database operations.
@@ -52,7 +51,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 		fireworks = plugin.getPluginConfig().getBoolean("Firework", true);
 		simplifiedReception = plugin.getPluginConfig().getBoolean("SimplifiedReception", false);
 		titleScreen = plugin.getPluginConfig().getBoolean("TitleScreen", true);
-		if (titleScreen && Integer.parseInt(PackageType.getServerVersion().split("_")[1]) < 8) {
+		if (titleScreen && version < 8) {
 			titleScreen = false;
 			plugin.getLogger()
 					.warning("Overriding configuration: disabling TitleScreen. Please set it to false in your config.");
