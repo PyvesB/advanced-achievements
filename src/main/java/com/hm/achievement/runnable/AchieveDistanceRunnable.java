@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Horse;
@@ -17,7 +16,6 @@ import org.bukkit.util.NumberConversions;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Class used to monitor distances travelled by players for the different available categories.
@@ -25,33 +23,23 @@ import com.hm.mcshared.particle.ReflectionUtils.PackageType;
  * @author Pyves
  *
  */
-public class AchieveDistanceRunnable implements Runnable {
+public class AchieveDistanceRunnable extends AbstractRunnable implements Runnable {
 
-	private final AdvancedAchievements plugin;
 	private final HashMap<String, Location> playerLocations;
-	// Minecraft version to deal with gliding.
-	private final int version;
 
-	private boolean ignoreVerticalDistance;
+	private boolean configIgnoreVerticalDistance;
 
 	public AchieveDistanceRunnable(AdvancedAchievements plugin) {
-		this.plugin = plugin;
-
-		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
-		// versions change in the future.
-		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
+		super(plugin);
 
 		playerLocations = new HashMap<>();
-
-		extractParameter();
 	}
 
-	/**
-	 * Loads configuration parameter.
-	 * 
-	 */
-	public void extractParameter() {
-		ignoreVerticalDistance = plugin.getPluginConfig().getBoolean("IgnoreVerticalDistance", false);
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		configIgnoreVerticalDistance = plugin.getPluginConfig().getBoolean("IgnoreVerticalDistance", false);
 	}
 
 	@Override
@@ -80,9 +68,7 @@ public class AchieveDistanceRunnable implements Runnable {
 		}
 
 		// If player is in restricted creative mode or is in a blocked world, don't update distances.
-		if (player.hasMetadata("NPC") || plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isRestrictSpectator() && player.getGameMode() == GameMode.SPECTATOR
-				|| plugin.isInExludedWorld(player)) {
+		if (!shouldRunBeTakenIntoAccount(player)) {
 			return;
 		}
 
@@ -119,7 +105,7 @@ public class AchieveDistanceRunnable implements Runnable {
 	private int getDistanceDifference(Player player, Location previousLocation) {
 		// Distance difference since last runnable; ignore the vertical axis or not.
 		double difference;
-		if (ignoreVerticalDistance) {
+		if (configIgnoreVerticalDistance) {
 			difference = Math.sqrt(NumberConversions.square(previousLocation.getX() - player.getLocation().getX())
 					+ NumberConversions.square(previousLocation.getZ() - player.getLocation().getZ()));
 		} else {

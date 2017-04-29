@@ -6,7 +6,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -18,7 +17,7 @@ import com.hm.achievement.category.MultipleAchievements;
  * @author Pyves
  *
  */
-public class AchieveKillListener extends AbstractListener implements Listener {
+public class AchieveKillListener extends AbstractListener {
 
 	public AchieveKillListener(AdvancedAchievements plugin) {
 		super(plugin);

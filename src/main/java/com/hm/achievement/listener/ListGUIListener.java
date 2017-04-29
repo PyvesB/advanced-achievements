@@ -5,7 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -18,19 +17,25 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class ListGUIListener extends AbstractListener implements Listener {
+public class ListGUIListener extends AbstractListener {
+
+	private String langListGUITitle;
 
 	public ListGUIListener(AdvancedAchievements plugin) {
 		super(plugin);
 	}
 
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		langListGUITitle = ChatColor.translateAlternateColorCodes('&',
+				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List"));
+	}
+
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
-		// Inventory not related to the plugin: do nothing.
-		if (!event.getInventory().getName()
-				.startsWith(ChatColor.translateAlternateColorCodes('&',
-						plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")))
-				|| event.getRawSlot() < 0) {
+		if (!event.getInventory().getName().startsWith(langListGUITitle) || event.getRawSlot() < 0) {
 			return;
 		}
 

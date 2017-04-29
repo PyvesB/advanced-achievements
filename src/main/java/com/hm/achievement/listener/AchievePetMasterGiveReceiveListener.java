@@ -3,7 +3,6 @@ package com.hm.achievement.listener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -15,7 +14,7 @@ import com.hm.mcshared.event.PlayerChangeAnimalOwnershipEvent;
  * @author Pyves
  *
  */
-public class AchievePetMasterGiveReceiveListener extends AbstractListener implements Listener {
+public class AchievePetMasterGiveReceiveListener extends AbstractListener {
 
 	public AchievePetMasterGiveReceiveListener(AdvancedAchievements plugin) {
 		super(plugin);

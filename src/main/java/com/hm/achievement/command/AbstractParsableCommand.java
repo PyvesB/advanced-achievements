@@ -15,8 +15,17 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public abstract class AbstractParsableCommand extends AbstractCommand {
 
+	private String langPlayerOffline;
+
 	protected AbstractParsableCommand(AdvancedAchievements plugin) {
 		super(plugin);
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		langPlayerOffline = plugin.getPluginLang().getString("player-offline", "The player PLAYER is offline!");
 	}
 
 	/**
@@ -41,9 +50,8 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 
 		// If player not found or is offline.
 		if (player == null) {
-			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceOnce(
-					plugin.getPluginLang().getString("player-offline", "The player PLAYER is offline!"), "PLAYER",
-					args[args.length - 1]));
+			sender.sendMessage(plugin.getChatHeader()
+					+ StringUtils.replaceOnce(langPlayerOffline, "PLAYER", args[args.length - 1]));
 			return;
 		}
 

@@ -26,6 +26,7 @@ import com.google.common.base.Strings;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.utils.Reloadable;
 import com.hm.mcshared.file.FileManager;
 
 /**
@@ -35,7 +36,7 @@ import com.hm.mcshared.file.FileManager;
  * @author Pyves
  *
  */
-public class SQLDatabaseManager {
+public class SQLDatabaseManager implements Reloadable {
 
 	private final AdvancedAchievements plugin;
 	// Used to do some write operations to the database asynchronously.
@@ -48,9 +49,9 @@ public class SQLDatabaseManager {
 	private volatile String databasePassword;
 	private volatile String tablePrefix;
 	private volatile DatabaseType databaseType;
-	private boolean achievementsChronologicalOrder;
+	private boolean configBookChronologicalOrder;
 	private DateFormat dateFormat;
-	private boolean databaseBackup;
+	private boolean configDatabaseBackup;
 
 	public SQLDatabaseManager(AdvancedAchievements plugin) {
 		this.plugin = plugin;
@@ -60,10 +61,26 @@ public class SQLDatabaseManager {
 		sqlConnection = new AtomicReference<>();
 	}
 
+	@Override
+	public void extractConfigurationParameters() {
+		configBookChronologicalOrder = plugin.getPluginConfig().getBoolean("BookChronologicalOrder", true);
+		configDatabaseBackup = plugin.getPluginConfig().getBoolean("DatabaseBackup", true);
+		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
+		boolean dateDisplayTime = plugin.getPluginConfig().getBoolean("DateDisplayTime", false);
+		Locale locale = new Locale(localeString);
+		if (dateDisplayTime) {
+			dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
+		} else {
+			dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+		}
+	}
+
 	/**
 	 * Initialises database system and plugin settings.
 	 */
 	public void initialise() {
+		plugin.getLogger().info("Initialising database... ");
+
 		// Load plugin settings.
 		configurationLoad();
 
@@ -82,7 +99,7 @@ public class SQLDatabaseManager {
 			plugin.setSuccessfulLoad(false);
 		}
 
-		if (databaseBackup && databaseType == DatabaseType.SQLITE) {
+		if (configDatabaseBackup && databaseType == DatabaseType.SQLITE) {
 			File backup = new File(plugin.getDataFolder(), "achievements.db.bak");
 			// Only do a daily backup for the .db file.
 			if (System.currentTimeMillis() - backup.lastModified() > 86400000L || backup.length() == 0L) {
@@ -117,21 +134,11 @@ public class SQLDatabaseManager {
 	}
 
 	/**
-	 * Loads plugin configuration and sets parameters relevant to the database system.
+	 * Loads plugin configuration and sets parameters relevant to the database system. These parameters are not reloaded
+	 * and require a full server restart to change.
 	 */
 	private void configurationLoad() {
-		achievementsChronologicalOrder = plugin.getPluginConfig().getBoolean("BookChronologicalOrder", true);
 		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
-		databaseBackup = plugin.getPluginConfig().getBoolean("DatabaseBackup", true);
-
-		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
-		boolean dateDisplayTime = plugin.getPluginConfig().getBoolean("DateDisplayTime", false);
-		Locale locale = new Locale(localeString);
-		if (dateDisplayTime) {
-			dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
-		} else {
-			dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-		}
 
 		String dataHandler = plugin.getPluginConfig().getString("DatabaseType", "sqlite");
 		if ("mysql".equalsIgnoreCase(dataHandler)) {
@@ -237,7 +244,7 @@ public class SQLDatabaseManager {
 		Connection conn = getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			// Either oldest date to newest one or newest date to oldest one.
-			String chronology = achievementsChronologicalOrder ? "ASC" : "DESC";
+			String chronology = configBookChronologicalOrder ? "ASC" : "DESC";
 			ResultSet rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements WHERE playername = '"
 					+ player.toString() + "' ORDER BY date " + chronology);
 			Map<String, String> achievementsAndDisplayNames = plugin.getAchievementsAndDisplayNames();

@@ -15,12 +15,27 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAch
  */
 public class GiveCommand extends AbstractParsableCommand {
 
-	private final boolean multiCommand;
+	private boolean configMultiCommand;
+	private String langAchievementAlreadyReceived;
+	private String langAchievementGiven;
+	private String langAchievementNotFound;
 
 	public GiveCommand(AdvancedAchievements plugin) {
 		super(plugin);
-		// Load configuration parameter.
-		multiCommand = plugin.getPluginConfig().getBoolean("MultiCommand", true);
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		configMultiCommand = plugin.getPluginConfig().getBoolean("MultiCommand", true);
+
+		langAchievementAlreadyReceived = plugin.getChatHeader() + plugin.getPluginLang()
+				.getString("achievement-already-received", "The player PLAYER has already received this achievement!");
+		langAchievementGiven = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("achievement-given", "Achievement given!");
+		langAchievementNotFound = plugin.getChatHeader() + plugin.getPluginLang().getString("achievement-not-found",
+				"The specified achievement was not found in Commands category.");
 	}
 
 	@Override
@@ -30,13 +45,9 @@ public class GiveCommand extends AbstractParsableCommand {
 		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
 			// Check whether player has already received achievement and cannot receive it again.
 			String achievementName = plugin.getPluginConfig().getString(configAchievement + ".Name");
-			if (!multiCommand && plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
-				sender.sendMessage(
-						StringUtils.replaceOnce(
-								plugin.getChatHeader()
-										+ plugin.getPluginLang().getString("achievement-already-received",
-												"The player PLAYER has already received this achievement!"),
-								"PLAYER", args[2]));
+			if (!configMultiCommand
+					&& plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
+				sender.sendMessage(StringUtils.replaceOnce(langAchievementAlreadyReceived, "PLAYER", args[2]));
 				return;
 			}
 
@@ -51,15 +62,9 @@ public class GiveCommand extends AbstractParsableCommand {
 
 			Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 
-			sender.sendMessage(plugin.getChatHeader()
-					+ plugin.getPluginLang().getString("achievement-given", "Achievement given!"));
+			sender.sendMessage(langAchievementGiven);
 		} else {
-			// Achievement not found in the Commands category.
-			sender.sendMessage(
-					plugin.getChatHeader() + StringUtils.replaceOnce(
-							plugin.getPluginLang().getString("achievement-not-found",
-									"The specified achievement was not found in Commands category."),
-							"PLAYER", args[2]));
+			sender.sendMessage(StringUtils.replaceOnce(langAchievementNotFound, "PLAYER", args[2]));
 		}
 	}
 }

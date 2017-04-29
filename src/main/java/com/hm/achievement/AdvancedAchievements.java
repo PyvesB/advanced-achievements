@@ -1,6 +1,7 @@
 package com.hm.achievement;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,7 +17,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -79,6 +79,7 @@ import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.achievement.utils.AchievementCountBungeeTabListPlusVariable;
 import com.hm.achievement.utils.FileUpdater;
+import com.hm.achievement.utils.Reloadable;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import com.hm.mcshared.update.UpdateChecker;
@@ -102,7 +103,7 @@ import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
  * @version 5.0.3
  * @author Pyves
  */
-public class AdvancedAchievements extends JavaPlugin {
+public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 	// Listeners, to monitor events and manage stats.
 	private AchieveConnectionListener connectionListener;
@@ -152,6 +153,7 @@ public class AdvancedAchievements extends JavaPlugin {
 	private ToggleCommand toggleCommand;
 	private ResetCommand resetCommand;
 	private EasterEggCommand easterEggCommand;
+	private CommandTabCompleter commandTabCompleter;
 	private UpdateChecker updateChecker;
 
 	// Language, configuration and GUI related.
@@ -163,21 +165,6 @@ public class AdvancedAchievements extends JavaPlugin {
 	private final SQLDatabaseManager databaseManager;
 	private final DatabaseCacheManager cacheManager;
 	private AsyncCachedRequestsSender asyncCachedRequestsSender;
-	private int asyncCachedRequestsSenderInterval;
-
-	// Plugin options and various parameters.
-	private String icon;
-	private ChatColor color;
-	private String chatHeader;
-	private boolean restrictCreative;
-	private boolean restrictSpectator;
-	private boolean chatNotify;
-	private Set<String> excludedWorldSet;
-	private Set<String> disabledCategorySet;
-	private boolean successfulLoad;
-	private boolean overrideDisable;
-	private int playtimeTaskInterval;
-	private int distanceTaskInterval;
 
 	// Plugin runnable classes.
 	private AchieveDistanceRunnable distanceRunnable;
@@ -188,6 +175,12 @@ public class AdvancedAchievements extends JavaPlugin {
 	private BukkitTask playedTimeTask;
 	private BukkitTask distanceTask;
 
+	// Various other fields and parameters.
+	private String chatHeader;
+	private Set<String> disabledCategorySet;
+	private boolean successfulLoad;
+	private boolean overrideDisable;
+
 	public AdvancedAchievements() {
 		successfulLoad = true;
 		overrideDisable = false;
@@ -195,18 +188,14 @@ public class AdvancedAchievements extends JavaPlugin {
 		cacheManager = new DatabaseCacheManager(this);
 	}
 
-	/**
-	 * Called when server is launched or reloaded.
-	 */
 	@Override
 	public void onEnable() {
 		// Start enabling plugin.
 		long startTime = System.currentTimeMillis();
 
-		AchievementCommentedYamlConfiguration configFile = loadAndBackupFile("config.yml");
-		AchievementCommentedYamlConfiguration langFile = loadAndBackupFile(
-				configFile.getString("LanguageFileName", "lang.yml"));
-		AchievementCommentedYamlConfiguration guiFile = loadAndBackupFile("gui.yml");
+		config = loadAndBackupFile("config.yml");
+		lang = loadAndBackupFile(config.getString("LanguageFileName", "lang.yml"));
+		gui = loadAndBackupFile("gui.yml");
 
 		// Error while loading .yml files; do not do any further work.
 		if (overrideDisable) {
@@ -216,18 +205,14 @@ public class AdvancedAchievements extends JavaPlugin {
 
 		// Update configurations from previous versions of the plugin; only if server reload or restart.
 		FileUpdater fileUpdater = new FileUpdater(this);
-		fileUpdater.updateOldConfiguration(configFile);
-		fileUpdater.updateOldLanguage(langFile);
+		fileUpdater.updateOldConfiguration(config);
+		fileUpdater.updateOldLanguage(lang);
 
-		configurationLoad(configFile, langFile, guiFile);
-
-		this.getLogger().info("Registering listeners...");
+		disabledCategorySet = extractDisabledCategories(config);
+		logAchievementStats();
+		initialiseCommands();
 		registerListeners();
-
-		this.getLogger().info("Setting up custom tab completers...");
-		this.getCommand("aach").setTabCompleter(new CommandTabCompleter(this));
-
-		this.getLogger().info("Initialising database and launching scheduled tasks...");
+		initialiseTabCompleter();
 		databaseManager.initialise();
 
 		// Error while loading database do not do any further work.
@@ -236,31 +221,8 @@ public class AdvancedAchievements extends JavaPlugin {
 			return;
 		}
 
-		asyncCachedRequestsSender = new AsyncCachedRequestsSender(this);
-		// Schedule a repeating task to group database queries when statistics are modified.
-		asyncCachedRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this,
-				asyncCachedRequestsSender, asyncCachedRequestsSenderInterval * 40L,
-				asyncCachedRequestsSenderInterval * 20L);
-
-		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
-		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
-			playTimeRunnable = new AchievePlayTimeRunnable(this);
-			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(this, playTimeRunnable,
-					playtimeTaskInterval * 10L, playtimeTaskInterval * 20L);
-		}
-
-		// Schedule a repeating task to monitor distances travelled by each player (not directly related to an event).
-		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEFOOT.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEPIG.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
-			distanceRunnable = new AchieveDistanceRunnable(this);
-			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(this, distanceRunnable,
-					distanceTaskInterval * 40L, distanceTaskInterval * 20L);
-		}
+		launchScheduledTasks();
+		loadAndRegisterReloadables();
 
 		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
 			BungeeTabListPlusBukkitAPI.registerVariable(this, new AchievementCountBungeeTabListPlusVariable(this));
@@ -274,56 +236,197 @@ public class AdvancedAchievements extends JavaPlugin {
 		}
 	}
 
-	/**
-	 * Loads the plugin configuration and sets values to different parameters; loads the language and GUI files and
-	 * backs configuration files up. Registers permissions. Initialises command modules.
-	 * 
-	 * @param config
-	 * @param lang
-	 */
-	public void configurationLoad(AchievementCommentedYamlConfiguration config,
-			AchievementCommentedYamlConfiguration lang, AchievementCommentedYamlConfiguration gui) {
-		this.config = config;
-		this.lang = lang;
-		this.gui = gui;
+	@Override
+	public void onDisable() {
+		// Error while loading .yml files or database; do not do any further work.
+		if (overrideDisable) {
+			return;
+		}
 
-		this.getLogger().info("Loading parameters, registering permissions and initialising command modules...");
-		extractParameters();
+		// Cancel scheduled tasks.
+		if (asyncCachedRequestsSenderTask != null) {
+			asyncCachedRequestsSenderTask.cancel();
+		}
+		if (playedTimeTask != null) {
+			playedTimeTask.cancel();
+		}
+		if (distanceTask != null) {
+			distanceTask.cancel();
+		}
+
+		// Send remaining statistics to the database and close DatabaseManager.
+		asyncCachedRequestsSender.sendBatchedRequests();
+
+		databaseManager.shutdown();
+
+		this.getLogger().info("Remaining requests sent to database, plugin disabled.");
+	}
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+		if (!"aach".equalsIgnoreCase(cmd.getName())) {
+			return false;
+		}
+		// Map to an Advanced Achievements command.
+		if ((args.length == 1) && !"help".equalsIgnoreCase(args[0])) {
+			if ("book".equalsIgnoreCase(args[0])) {
+				bookCommand.executeCommand(sender, null, "book");
+			} else if ("hcaa".equalsIgnoreCase(args[0])) {
+				easterEggCommand.executeCommand(sender, null, "easteregg");
+			} else if ("reload".equalsIgnoreCase(args[0])) {
+				reloadCommand.executeCommand(sender, null, "reload");
+			} else if ("stats".equalsIgnoreCase(args[0])) {
+				statsCommand.executeCommand(sender, null, "stats");
+			} else if ("list".equalsIgnoreCase(args[0])) {
+				listCommand.executeCommand(sender, null, "list");
+			} else if ("top".equalsIgnoreCase(args[0])) {
+				topCommand.executeCommand(sender, null, "top");
+			} else if ("week".equalsIgnoreCase(args[0])) {
+				weekCommand.executeCommand(sender, null, "week");
+			} else if ("month".equalsIgnoreCase(args[0])) {
+				monthCommand.executeCommand(sender, null, "month");
+			} else if ("info".equalsIgnoreCase(args[0])) {
+				infoCommand.executeCommand(sender, null, null);
+			} else if ("toggle".equalsIgnoreCase(args[0])) {
+				toggleCommand.executeCommand(sender, null, "toggle");
+			} else {
+				helpCommand.executeCommand(sender, args, null);
+			}
+		} else if ((args.length == 3) && "reset".equalsIgnoreCase(args[0])) {
+			resetCommand.executeCommand(sender, args, "reset");
+		} else if ((args.length == 3) && "give".equalsIgnoreCase(args[0])) {
+			giveCommand.executeCommand(sender, args, "give");
+		} else if ((args.length >= 3) && "check".equalsIgnoreCase(args[0])) {
+			checkCommand.executeCommand(sender, args, "check");
+		} else if ((args.length >= 3) && "delete".equalsIgnoreCase(args[0])) {
+			deleteCommand.executeCommand(sender, args, "delete");
+		} else {
+			helpCommand.executeCommand(sender, args, null);
+		}
+		return true;
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		parseHeader();
+
 		registerPermissions();
-		initialiseCommands();
 
-		// Reload some parameters.
-		if (playerAdvancedAchievementListener != null) {
-			playerAdvancedAchievementListener.extractParameters();
-		}
-		if (distanceRunnable != null) {
-			distanceRunnable.extractParameter();
-		}
-
-		// Unregister events if user changed the option and did an /aach reload. We do not recheck for update on /aach
-		// reload.
+		// If user switched config parameter to false, unregister UpdateChecker; if user switched config pameter to
+		// false, launch an UpdateChecker task. Otherwise do not recheck for update on /aach reload.
 		if (!config.getBoolean("CheckForUpdate", true)) {
 			PlayerJoinEvent.getHandlerList().unregister(updateChecker);
+		} else if (updateChecker == null) {
+			initialiseUpdateChecker();
+		}
+	}
+
+	/**
+	 * Logs number of achievements and disabled categories.
+	 */
+	private void logAchievementStats() {
+		int totalAchievements = 0;
+		int categoriesInUse = 0;
+
+		// Enumerate Commands achievements.
+		if (!disabledCategorySet.contains("Commands")) {
+			ConfigurationSection categoryConfig = config.getConfigurationSection("Commands");
+			int keyCount = categoryConfig.getKeys(false).size();
+			if (keyCount > 0) {
+				categoriesInUse += 1;
+				totalAchievements += keyCount;
+			}
 		}
 
-		logAchievementStats();
+		// Enumerate the normal achievements.
+		for (NormalAchievements category : NormalAchievements.values()) {
+			if (disabledCategorySet.contains(category.toString())) {
+				continue;
+			}
+
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
+			int keyCount = categoryConfig.getKeys(false).size();
+			if (keyCount > 0) {
+				categoriesInUse += 1;
+				totalAchievements += keyCount;
+			}
+		}
+
+		// Enumerate the achievements with multiple categories.
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			if (disabledCategorySet.contains(category.toString())) {
+				continue;
+			}
+
+			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
+			Set<String> categorySections = categoryConfig.getKeys(false);
+
+			if (categorySections.isEmpty()) {
+				continue;
+			}
+
+			categoriesInUse += 1;
+
+			// Enumerate the subcategories.
+			for (String section : categorySections) {
+				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
+				int achievementCount = subcategoryConfig.getKeys(false).size();
+				if (achievementCount > 0) {
+					totalAchievements += achievementCount;
+				}
+			}
+		}
+		this.getLogger().info("Loaded " + totalAchievements + " achievements in " + categoriesInUse + " categories.");
+
+		if (!disabledCategorySet.isEmpty()) {
+			String disabledCategories;
+
+			if (disabledCategorySet.size() == 1) {
+				disabledCategories = disabledCategorySet.size() + " disabled category: "
+						+ disabledCategorySet.toString();
+			} else {
+				disabledCategories = disabledCategorySet.size() + " disabled categories: "
+						+ disabledCategorySet.toString();
+			}
+
+			this.getLogger().info(disabledCategories);
+		}
+	}
+
+	/**
+	 * Initialises the command modules.
+	 */
+	private void initialiseCommands() {
+		this.getLogger().info("Initialising command modules...");
+
+		rewardParser = new RewardParser(this);
+		giveCommand = new GiveCommand(this);
+		bookCommand = new BookCommand(this);
+		topCommand = new TopCommand(this);
+		weekCommand = new WeekCommand(this);
+		monthCommand = new MonthCommand(this);
+		statsCommand = new StatsCommand(this);
+		infoCommand = new InfoCommand(this);
+		listCommand = new ListCommand(this);
+		helpCommand = new HelpCommand(this);
+		checkCommand = new CheckCommand(this);
+		deleteCommand = new DeleteCommand(this);
+		reloadCommand = new ReloadCommand(this);
+		toggleCommand = new ToggleCommand(this);
+		resetCommand = new ResetCommand(this);
+		easterEggCommand = new EasterEggCommand(this);
 	}
 
 	/**
 	 * Registers the different event listeners.
 	 */
 	private void registerListeners() {
-		PluginManager pm = getServer().getPluginManager();
+		this.getLogger().info("Registering listeners...");
 
+		PluginManager pm = getServer().getPluginManager();
 		// Check for available plugin update.
 		if (config.getBoolean("CheckForUpdate", true)) {
-			updateChecker = new UpdateChecker(this,
-					"https://raw.githubusercontent.com/PyvesB/AdvancedAchievements/master/pom.xml",
-					new String[] { "dev.bukkit.org/bukkit-plugins/advanced-achievements/files",
-							"spigotmc.org/resources/advanced-achievements.6239" },
-					"achievement.update", chatHeader);
-			pm.registerEvents(updateChecker, this);
-			updateChecker.launchUpdateCheckerTask();
+			initialiseUpdateChecker();
 		}
 
 		// Register listeners so they can monitor server events; if there are no config related achievements, listeners
@@ -483,6 +586,87 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
+	 * Initialises the plugin's custom command tab completer.
+	 */
+	private void initialiseTabCompleter() {
+		this.getLogger().info("Setting up custom tab completers...");
+		commandTabCompleter = new CommandTabCompleter(this);
+		this.getCommand("aach").setTabCompleter(commandTabCompleter);
+	}
+
+	/**
+	 * Launches asynchronous scheduled tasks.
+	 */
+	private void launchScheduledTasks() {
+		this.getLogger().info("Launching scheduled tasks...");
+
+		asyncCachedRequestsSender = new AsyncCachedRequestsSender(this);
+		// Schedule a repeating task to group database queries when statistics are modified.
+		int configPooledRequestsTaskInterval = config.getInt("PooledRequestsTaskInterval", 10);
+		asyncCachedRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this,
+				asyncCachedRequestsSender, configPooledRequestsTaskInterval * 40L,
+				configPooledRequestsTaskInterval * 20L);
+
+		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
+		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
+			playTimeRunnable = new AchievePlayTimeRunnable(this);
+			int configPlaytimeTaskInterval = config.getInt("PlaytimeTaskInterval", 60);
+			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(this, playTimeRunnable,
+					configPlaytimeTaskInterval * 10L, configPlaytimeTaskInterval * 20L);
+		}
+
+		// Schedule a repeating task to monitor distances travelled by each player (not directly related to an event).
+		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEFOOT.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEPIG.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
+			distanceRunnable = new AchieveDistanceRunnable(this);
+			int configDistanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
+			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(this, distanceRunnable,
+					configDistanceTaskInterval * 40L, configDistanceTaskInterval * 20L);
+		}
+	}
+
+	/**
+	 * Performs an initial load of all the Reloadable fields. Registers them as observers of the ReloadCommand.
+	 */
+	private void loadAndRegisterReloadables() {
+		this.extractConfigurationParameters();
+		reloadCommand.registerReloadable(this);
+		try {
+			for (Field field : AdvancedAchievements.class.getDeclaredFields()) {
+				Object fieldObject = field.get(this);
+				if (fieldObject instanceof Reloadable) {
+					Reloadable reloadable = (Reloadable) fieldObject;
+					reloadable.extractConfigurationParameters();
+					reloadCommand.registerReloadable(reloadable);
+				}
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			this.getLogger().severe("Unexpected error while registering Reloadables.");
+		}
+	}
+
+	/**
+	 * Launches an update check task.
+	 * 
+	 * @param pm
+	 */
+	private void initialiseUpdateChecker() {
+		PluginManager pm = getServer().getPluginManager();
+		updateChecker = new UpdateChecker(this,
+				"https://raw.githubusercontent.com/PyvesB/AdvancedAchievements/master/pom.xml",
+				new String[] { "dev.bukkit.org/bukkit-plugins/advanced-achievements/files",
+						"spigotmc.org/resources/advanced-achievements.6239" },
+				"achievement.update", chatHeader);
+		pm.registerEvents(updateChecker, this);
+		updateChecker.launchUpdateCheckerTask();
+	}
+
+	/**
 	 * Loads and backs up file fileName.
 	 * 
 	 * @param fileName
@@ -513,33 +697,29 @@ public class AdvancedAchievements extends JavaPlugin {
 	}
 
 	/**
-	 * Extracts plugin parameters from the configuration file.
+	 * Parses the plugin's header, used throughout the project.
 	 */
-	private void extractParameters() {
+	private void parseHeader() {
+		String icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
+		if (Strings.isNullOrEmpty(icon)) {
+			chatHeader = "";
+		} else {
+			chatHeader = ChatColor.GRAY + "[" + ChatColor.getByChar(config.getString("Color", "5").charAt(0)) + icon
+					+ ChatColor.GRAY + "] ";
+		}
+	}
+
+	/**
+	 * Extracts plugin parameters from the configuration file.
+	 * 
+	 * @return
+	 */
+	public Set<String> extractDisabledCategories(AchievementCommentedYamlConfiguration config) {
 		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
 		// versions change in the future.
 		int minecraftVersion = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 
-		icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
-		color = ChatColor.getByChar(config.getString("Color", "5").charAt(0));
-		if (Strings.isNullOrEmpty(icon)) {
-			chatHeader = "";
-		} else {
-			chatHeader = ChatColor.GRAY + "[" + color + icon + ChatColor.GRAY + "] ";
-		}
-		chatNotify = config.getBoolean("ChatNotify", false);
-
-		restrictCreative = config.getBoolean("RestrictCreative", false);
-		restrictSpectator = config.getBoolean("RestrictSpectator", true);
-		// Spectator mode introduced in Minecraft 1.8.
-		if (restrictSpectator && minecraftVersion < 8) {
-			restrictSpectator = false;
-			this.getLogger().warning(
-					"Overriding configuration: disabling RestrictSpectator. Please set it to false in your config.");
-		}
-		excludedWorldSet = new HashSet<>(config.getList("ExcludedWorlds"));
-
-		disabledCategorySet = new HashSet<>(config.getList("DisabledCategories"));
+		Set<String> disabledCategorySet = new HashSet<>(config.getList("DisabledCategories"));
 		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
 		if ((!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString()))
@@ -567,104 +747,7 @@ public class AdvancedAchievements extends JavaPlugin {
 			this.getLogger().warning(
 					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in your config.");
 		}
-
-		playtimeTaskInterval = config.getInt("PlaytimeTaskInterval", 60);
-		distanceTaskInterval = config.getInt("DistanceTaskInterval", 5);
-		asyncCachedRequestsSenderInterval = config.getInt("PooledRequestsTaskInterval", 10);
-	}
-
-	/**
-	 * Initialises the command modules.
-	 */
-	private void initialiseCommands() {
-		rewardParser = new RewardParser(this);
-		giveCommand = new GiveCommand(this);
-		bookCommand = new BookCommand(this);
-		topCommand = new TopCommand(this);
-		weekCommand = new WeekCommand(this);
-		monthCommand = new MonthCommand(this);
-		statsCommand = new StatsCommand(this);
-		infoCommand = new InfoCommand(this);
-		listCommand = new ListCommand(this);
-		helpCommand = new HelpCommand(this);
-		checkCommand = new CheckCommand(this);
-		deleteCommand = new DeleteCommand(this);
-		reloadCommand = new ReloadCommand(this);
-		toggleCommand = new ToggleCommand(this);
-		resetCommand = new ResetCommand(this);
-		easterEggCommand = new EasterEggCommand(this);
-	}
-
-	/**
-	 * Logs number of achievements and disabled categories.
-	 */
-	private void logAchievementStats() {
-		int totalAchievements = 0;
-		int categoriesInUse = 0;
-
-		// Enumerate Commands achievements.
-		if (!disabledCategorySet.contains("Commands")) {
-			ConfigurationSection categoryConfig = config.getConfigurationSection("Commands");
-			int keyCount = categoryConfig.getKeys(false).size();
-			if (keyCount > 0) {
-				categoriesInUse += 1;
-				totalAchievements += keyCount;
-			}
-		}
-
-		// Enumerate the normal achievements.
-		for (NormalAchievements category : NormalAchievements.values()) {
-			if (disabledCategorySet.contains(category.toString())) {
-				continue;
-			}
-
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
-			int keyCount = categoryConfig.getKeys(false).size();
-			if (keyCount > 0) {
-				categoriesInUse += 1;
-				totalAchievements += keyCount;
-			}
-		}
-
-		// Enumerate the achievements with multiple categories.
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			if (disabledCategorySet.contains(category.toString())) {
-				continue;
-			}
-
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
-			Set<String> categorySections = categoryConfig.getKeys(false);
-
-			if (categorySections.isEmpty()) {
-				continue;
-			}
-
-			categoriesInUse += 1;
-
-			// Enumerate the subcategories.
-			for (String section : categorySections) {
-				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
-				int achievementCount = subcategoryConfig.getKeys(false).size();
-				if (achievementCount > 0) {
-					totalAchievements += achievementCount;
-				}
-			}
-		}
-		this.getLogger().info("Loaded " + totalAchievements + " achievements in " + categoriesInUse + " categories.");
-
-		if (!disabledCategorySet.isEmpty()) {
-			String disabledCategories;
-
-			if (disabledCategorySet.size() == 1) {
-				disabledCategories = disabledCategorySet.size() + " disabled category: "
-						+ disabledCategorySet.toString();
-			} else {
-				disabledCategories = disabledCategorySet.size() + " disabled categories: "
-						+ disabledCategorySet.toString();
-			}
-
-			this.getLogger().info(disabledCategories);
-		}
+		return disabledCategorySet;
 	}
 
 	/**
@@ -672,6 +755,8 @@ public class AdvancedAchievements extends JavaPlugin {
 	 * stone breaks, achievement.count.breaks.stone will be registered).
 	 */
 	private void registerPermissions() {
+		this.getLogger().info("Registering permissions...");
+
 		PluginManager pluginManager = this.getServer().getPluginManager();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
@@ -693,97 +778,6 @@ public class AdvancedAchievements extends JavaPlugin {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Called when server is stopped or reloaded.
-	 */
-	@Override
-	public void onDisable() {
-		// Error while loading .yml files or database; do not do any further work.
-		if (overrideDisable) {
-			return;
-		}
-
-		// Cancel scheduled tasks.
-		if (asyncCachedRequestsSenderTask != null) {
-			asyncCachedRequestsSenderTask.cancel();
-		}
-		if (playedTimeTask != null) {
-			playedTimeTask.cancel();
-		}
-		if (distanceTask != null) {
-			distanceTask.cancel();
-		}
-
-		// Send remaining statistics to the database and close DatabaseManager.
-		asyncCachedRequestsSender.sendBatchedRequests();
-
-		databaseManager.shutdown();
-
-		this.getLogger().info("Remaining requests sent to database, plugin disabled.");
-	}
-
-	/**
-	 * Called when a player or the console enters a command. Handles command directly or dispatches to one of the
-	 * command modules.
-	 */
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (!"aach".equalsIgnoreCase(cmd.getName())) {
-			return false;
-		}
-		// Map to an Advanced Achievements command.
-		if ((args.length == 1) && !"help".equalsIgnoreCase(args[0])) {
-			if ("book".equalsIgnoreCase(args[0])) {
-				bookCommand.executeCommand(sender, null, "book");
-			} else if ("hcaa".equalsIgnoreCase(args[0])) {
-				easterEggCommand.executeCommand(sender, null, "easteregg");
-			} else if ("reload".equalsIgnoreCase(args[0])) {
-				reloadCommand.executeCommand(sender, null, "reload");
-			} else if ("stats".equalsIgnoreCase(args[0])) {
-				statsCommand.executeCommand(sender, null, "stats");
-			} else if ("list".equalsIgnoreCase(args[0])) {
-				listCommand.executeCommand(sender, null, "list");
-			} else if ("top".equalsIgnoreCase(args[0])) {
-				topCommand.executeCommand(sender, null, "top");
-			} else if ("week".equalsIgnoreCase(args[0])) {
-				weekCommand.executeCommand(sender, null, "week");
-			} else if ("month".equalsIgnoreCase(args[0])) {
-				monthCommand.executeCommand(sender, null, "month");
-			} else if ("info".equalsIgnoreCase(args[0])) {
-				infoCommand.executeCommand(sender, null, null);
-			} else if ("toggle".equalsIgnoreCase(args[0])) {
-				toggleCommand.executeCommand(sender, null, "toggle");
-			} else {
-				helpCommand.executeCommand(sender, args, null);
-			}
-		} else if ((args.length == 3) && "reset".equalsIgnoreCase(args[0])) {
-			resetCommand.executeCommand(sender, args, "reset");
-		} else if ((args.length == 3) && "give".equalsIgnoreCase(args[0])) {
-			giveCommand.executeCommand(sender, args, "give");
-		} else if ((args.length >= 3) && "check".equalsIgnoreCase(args[0])) {
-			checkCommand.executeCommand(sender, args, "check");
-		} else if ((args.length >= 3) && "delete".equalsIgnoreCase(args[0])) {
-			deleteCommand.executeCommand(sender, args, "delete");
-		} else {
-			helpCommand.executeCommand(sender, args, null);
-		}
-		return true;
-	}
-
-	/**
-	 * Checks if a player is in a world in which achievements must not be received.
-	 * 
-	 * @param player
-	 * @return true if player is in excluded world, false otherwise
-	 */
-	public boolean isInExludedWorld(Player player) {
-		if (excludedWorldSet.isEmpty()) {
-			return false;
-		}
-
-		return excludedWorldSet.contains(player.getWorld().getName());
 	}
 
 	/**
@@ -854,18 +848,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		return chatHeader;
 	}
 
-	public boolean isRestrictCreative() {
-		return restrictCreative;
-	}
-
-	public boolean isRestrictSpectator() {
-		return restrictSpectator;
-	}
-
-	public boolean isChatNotify() {
-		return chatNotify;
-	}
-
 	public boolean isSuccessfulLoad() {
 		return successfulLoad;
 	}
@@ -930,16 +912,12 @@ public class AdvancedAchievements extends JavaPlugin {
 		return fireworkListener;
 	}
 
-	public String getIcon() {
-		return icon;
-	}
-
-	public ChatColor getColor() {
-		return color;
-	}
-
 	public AchievementCommentedYamlConfiguration getPluginConfig() {
 		return config;
+	}
+
+	public void setPluginConfig(AchievementCommentedYamlConfiguration config) {
+		this.config = config;
 	}
 
 	@Override
@@ -952,7 +930,15 @@ public class AdvancedAchievements extends JavaPlugin {
 		return lang;
 	}
 
+	public void setPluginLang(AchievementCommentedYamlConfiguration lang) {
+		this.lang = lang;
+	}
+
 	public AchievementCommentedYamlConfiguration getPluginGui() {
 		return gui;
+	}
+
+	public void setGui(AchievementCommentedYamlConfiguration gui) {
+		this.gui = gui;
 	}
 }

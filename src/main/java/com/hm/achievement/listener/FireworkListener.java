@@ -9,7 +9,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -20,12 +19,13 @@ import com.hm.achievement.AdvancedAchievements;
  * @author Pyves
  *
  */
-public class FireworkListener extends AbstractListener implements Listener {
+public class FireworkListener extends AbstractListener {
 
 	private final Set<String> fireworksLaunchedByPlugin;
 
 	public FireworkListener(AdvancedAchievements plugin) {
 		super(plugin);
+
 		fireworksLaunchedByPlugin = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 	}
 

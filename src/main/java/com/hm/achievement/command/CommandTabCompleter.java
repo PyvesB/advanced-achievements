@@ -14,6 +14,7 @@ import org.bukkit.command.TabCompleter;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.utils.Reloadable;
 
 /**
  * Class in charge of handling auto-completion for achievements and categories when using /aach check, /aach reset,
@@ -22,12 +23,14 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class CommandTabCompleter implements TabCompleter {
+public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	private static final int MAX_LIST_LENGTH = 50;
 
 	private final Set<String> categories;
 	private final AdvancedAchievements plugin;
+
+	private Set<String> configCommandsKeys;
 
 	public CommandTabCompleter(AdvancedAchievements plugin) {
 		categories = new HashSet<>(MultipleAchievements.values().length + NormalAchievements.values().length + 1);
@@ -38,7 +41,13 @@ public class CommandTabCompleter implements TabCompleter {
 			categories.add(category.toString());
 		}
 		categories.add("Commands");
+
 		this.plugin = plugin;
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		configCommandsKeys = plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false);
 	}
 
 	@Override
@@ -49,7 +58,7 @@ public class CommandTabCompleter implements TabCompleter {
 		} else if (args.length == 2 && "reset".equalsIgnoreCase(args[0])) {
 			return getPartialList(categories, args[1]);
 		} else if (args.length == 2 && "give".equalsIgnoreCase(args[0])) {
-			return getPartialList(plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false), args[1]);
+			return getPartialList(configCommandsKeys, args[1]);
 		} else if (args.length == 2 && ("delete".equalsIgnoreCase(args[0]) || "check".equalsIgnoreCase(args[0]))) {
 			return getPartialList(plugin.getAchievementsAndDisplayNames().keySet(), args[1]);
 		}

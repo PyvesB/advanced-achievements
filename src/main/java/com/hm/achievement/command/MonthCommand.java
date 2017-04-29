@@ -12,9 +12,7 @@ import com.hm.achievement.AdvancedAchievements;
 public class MonthCommand extends AbstractRankingCommand {
 
 	public MonthCommand(AdvancedAchievements plugin) {
-		super(plugin);
-		languageHeaderKey = "month-achievement";
-		defaultHeaderMessage = "Monthly achievement rankings:";
+		super(plugin, "month-achievement", "Monthly achievement rankings:");
 	}
 
 	@Override

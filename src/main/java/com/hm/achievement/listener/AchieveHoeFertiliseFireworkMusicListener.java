@@ -6,7 +6,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -20,7 +19,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimitedListener implements Listener {
+public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimitedListener {
 
 	public AchieveHoeFertiliseFireworkMusicListener(AdvancedAchievements plugin) {
 		super(plugin);

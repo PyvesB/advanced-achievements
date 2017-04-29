@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -18,14 +17,14 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAch
  * @author Pyves
  *
  */
-public class AchieveConnectionRunnable implements Runnable {
+public class AchieveConnectionRunnable extends AbstractRunnable implements Runnable {
 
 	private final Player player;
-	private final AdvancedAchievements plugin;
 
 	public AchieveConnectionRunnable(Player player, AdvancedAchievements plugin) {
+		super(plugin);
+		super.extractConfigurationParameters();
 		this.player = player;
-		this.plugin = plugin;
 	}
 
 	@Override
@@ -36,9 +35,7 @@ public class AchieveConnectionRunnable implements Runnable {
 		}
 
 		// Check again in case player has changed world or game mode by the time this runnable was scheduled.
-		if (plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isRestrictSpectator() && player.getGameMode() == GameMode.SPECTATOR
-				|| plugin.isInExludedWorld(player)) {
+		if (!shouldRunBeTakenIntoAccount(player)) {
 			return;
 		}
 

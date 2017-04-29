@@ -19,32 +19,49 @@ import com.hm.mcshared.particle.ParticleEffect;
  */
 public abstract class AbstractRankingCommand extends AbstractCommand {
 
-	protected String languageHeaderKey;
-	protected String defaultHeaderMessage;
-
 	private static final int VALUES_EXPIRATION_DELAY = 60000;
 	private static final int DECIMAL_CIRCLED_ONE = Integer.parseInt("2780", 16);
 	private static final int DECIMAL_CIRCLED_ELEVEN = Integer.parseInt("246A", 16);
 	private static final int DECIMAL_CIRCLED_TWENTY_ONE = Integer.parseInt("3251", 16);
 	private static final int DECIMAL_CIRCLED_THIRTY_SIX = Integer.parseInt("32B1", 16);
 
-	private final int topListLength;
-	private final boolean additionalEffects;
-	private final boolean sound;
+	private final String languageHeaderKey;
+	private final String defaultHeaderMessage;
 
+	private int configTopList;
+	private boolean configAdditionalEffects;
+	private boolean configSound;
+	private String langPeriodAchievement;
+	private String langPlayerRank;
+	private String langNotRanked;
 	// Used for caching.
 	private int totalPlayersInRanking;
 	private List<String> playersRanking;
-	// Caching cooldown.
 	private long lastCommandTime;
 
-	protected AbstractRankingCommand(AdvancedAchievements plugin) {
+	protected AbstractRankingCommand(AdvancedAchievements plugin, String languageHeaderKey,
+			String defaultHeaderMessage) {
 		super(plugin);
+
+		this.languageHeaderKey = languageHeaderKey;
+		this.defaultHeaderMessage = defaultHeaderMessage;
 		lastCommandTime = 0L;
-		// Load configuration parameters.
-		topListLength = plugin.getPluginConfig().getInt("TopList", 5);
-		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
-		sound = plugin.getPluginConfig().getBoolean("Sound", true);
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		configTopList = plugin.getPluginConfig().getInt("TopList", 5);
+		configAdditionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
+		configSound = plugin.getPluginConfig().getBoolean("Sound", true);
+
+		langPeriodAchievement = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString(languageHeaderKey, defaultHeaderMessage);
+		langPlayerRank = plugin.getChatHeader() + plugin.getPluginLang().getString("player-rank", "Current rank:") + " "
+				+ configColor;
+		langNotRanked = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("not-ranked", "You are currently not ranked for this period.");
 	}
 
 	@Override
@@ -59,11 +76,10 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		}
 		// Update top list on given period if too old.
 		if (currentTime - lastCommandTime >= VALUES_EXPIRATION_DELAY) {
-			playersRanking = plugin.getDatabaseManager().getTopList(topListLength, rankingStartTime);
+			playersRanking = plugin.getDatabaseManager().getTopList(configTopList, rankingStartTime);
 		}
 
-		sender.sendMessage(
-				plugin.getChatHeader() + plugin.getPluginLang().getString(languageHeaderKey, defaultHeaderMessage));
+		sender.sendMessage(langPeriodAchievement);
 
 		for (int i = 0; i < playersRanking.size(); i += 2) {
 			String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(playersRanking.get(i))).getName();
@@ -71,7 +87,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 				// Color the name of the player if he is in the top list.
 				String color = "";
 				if (sender instanceof Player && playerName.equals(((Player) sender).getName())) {
-					color = plugin.getColor().toString();
+					color = configColor.toString();
 				}
 				sender.sendMessage(ChatColor.GRAY + " " + color + getRankingSymbol((i + 2) >> 1) + ' ' + playerName
 						+ " - " + playersRanking.get(i + 1));
@@ -80,7 +96,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 			}
 		}
 		// Launch effect if player is in top list.
-		if (rank <= topListLength) {
+		if (rank <= configTopList) {
 			launchEffects((Player) sender);
 		}
 
@@ -92,12 +108,9 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 		// If rank > totalPlayersInRanking, player has not yet received an achievement for this period, not ranked.
 		if (rank <= totalPlayersInRanking) {
-			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang().getString("player-rank", "Current rank:")
-					+ " " + plugin.getColor() + rank + ChatColor.GRAY + "/" + plugin.getColor()
-					+ totalPlayersInRanking);
+			sender.sendMessage(langPlayerRank + rank + ChatColor.GRAY + "/" + configColor + totalPlayersInRanking);
 		} else if (sender instanceof Player) {
-			sender.sendMessage(plugin.getChatHeader()
-					+ plugin.getPluginLang().getString("not-ranked", "You are currently not ranked for this period."));
+			sender.sendMessage(langNotRanked);
 		}
 	}
 
@@ -136,7 +149,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private void launchEffects(Player player) {
 		try {
 			// Play special effect when in top list.
-			if (additionalEffects) {
+			if (configAdditionalEffects) {
 				ParticleEffect.PORTAL.display(0, 1, 0, 0.5f, 1000, player.getLocation(), 1);
 			}
 		} catch (Exception e) {
@@ -144,7 +157,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		}
 
 		// Play special sound when in top list.
-		if (sound) {
+		if (configSound) {
 			playFireworkSound(player);
 		}
 	}

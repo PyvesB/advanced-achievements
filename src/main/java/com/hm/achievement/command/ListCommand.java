@@ -43,57 +43,119 @@ public class ListCommand extends AbstractCommand {
 	// Minecraft font, used to get size information in the progress bar.
 	private static final MinecraftFont FONT = MinecraftFont.Font;
 
-	private final boolean hideNotReceivedCategories;
-	private final boolean obfuscateNotReceived;
-	private final boolean obfuscateProgressiveAchievements;
-	private final boolean hideRewardDisplay;
-	private final boolean enrichedProgressBars;
-	private final boolean numberedItemsInList;
-
-	// Array of item stacks for items displayed in the GUI.
+	// Items stacks displayed in the GUI.
 	private final Map<MultipleAchievements, ItemStack> multipleAchievementCategoryItems;
 	private final Map<NormalAchievements, ItemStack> normalAchievementCategoryItems;
-	private final ItemStack commandsCategoryItem;
-
+	private ItemStack commandsCategoryItem;
 	private final ItemStack backButton = new ItemStack(Material.PAPER);
+	private final ItemStack barrier = new ItemStack(Material.BARRIER);
+
+	private boolean configHideNotReceivedCategories;
+	private boolean configObfuscateNotReceived;
+	private boolean configObfuscateProgressiveAchievements;
+	private boolean configHideRewardDisplayInList;
+	private boolean configEnrichedProgressBars;
+	private boolean configNumberedItemsInList;
+	private String configListAchievementFormat;
+	private String langListGUITitle;
+	private String langListCategoryNotUnlocked;
+	private String langListAchievementsInCategoryPlural;
+	private String langListAchievementInCategorySingular;
+	private String langListAchievementReceived;
+	private String langListAchievementNotReceived;
+	private String langListDescription;
+	private String langListReception;
+	private String langListGoal;
+	private String langListProgress;
+	private String langListReward;
 
 	public ListCommand(AdvancedAchievements plugin) {
 		super(plugin);
-		// Load configuration parameters.
-		hideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
-		obfuscateNotReceived = plugin.getPluginConfig().getBoolean("ObfuscateNotReceived", true);
-		obfuscateProgressiveAchievements = plugin.getPluginConfig().getBoolean("ObfuscateProgressiveAchievements",
-				false);
-		hideRewardDisplay = plugin.getPluginConfig().getBoolean("HideRewardDisplayInList", false);
-		enrichedProgressBars = plugin.getPluginConfig().getBoolean("EnrichedListProgressBars", true);
-		numberedItemsInList = plugin.getPluginConfig().getBoolean("NumberedItemsInList", false);
 
 		multipleAchievementCategoryItems = new EnumMap<>(MultipleAchievements.class);
-		// Get list of item stacks for items displayed in the GUI, for multiple achievements.
+		normalAchievementCategoryItems = new EnumMap<>(NormalAchievements.class);
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		configHideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
+		configObfuscateNotReceived = plugin.getPluginConfig().getBoolean("ObfuscateNotReceived", true);
+		configObfuscateProgressiveAchievements = plugin.getPluginConfig().getBoolean("ObfuscateProgressiveAchievements",
+				false);
+		configHideRewardDisplayInList = plugin.getPluginConfig().getBoolean("HideRewardDisplayInList", false);
+		configEnrichedProgressBars = plugin.getPluginConfig().getBoolean("EnrichedListProgressBars", true);
+		configNumberedItemsInList = plugin.getPluginConfig().getBoolean("NumberedItemsInList", false);
+		configListAchievementFormat = "&8"
+				+ plugin.getPluginConfig().getString("ListAchievementFormat", "%ICON% %NAME% %ICON%");
+
+		langListGUITitle = ChatColor.translateAlternateColorCodes('&',
+				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List"));
+		langListCategoryNotUnlocked = ChatColor.translateAlternateColorCodes('&', "&8" + plugin.getPluginLang()
+				.getString("list-category-not-unlocked", "You have not yet unlocked this category."));
+		langListAchievementsInCategoryPlural = plugin.getPluginLang().getString("list-achievements-in-category-plural",
+				"AMOUNT achievements");
+		langListAchievementInCategorySingular = plugin.getPluginLang()
+				.getString("list-achievements-in-category-singular", "AMOUNT achievement");
+		langListAchievementReceived = StringEscapeUtils
+				.unescapeJava(plugin.getPluginLang().getString("list-achievement-received", "&a\u2714&f "));
+		langListAchievementNotReceived = StringEscapeUtils
+				.unescapeJava(plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2718&8 "));
+		langListDescription = ChatColor.translateAlternateColorCodes('&',
+				"&7&l" + plugin.getPluginLang().getString("list-description", "Description:"));
+		langListReception = ChatColor.translateAlternateColorCodes('&',
+				"&7&l" + plugin.getPluginLang().getString("list-reception", "Reception date:"));
+		langListGoal = ChatColor.translateAlternateColorCodes('&',
+				"&7&l" + plugin.getPluginLang().getString("list-goal", "Goal:"));
+		langListProgress = ChatColor.translateAlternateColorCodes('&',
+				"&7&l" + plugin.getPluginLang().getString("list-progress", "Progress:"));
+		langListReward = ChatColor.translateAlternateColorCodes('&',
+				"&7&l" + plugin.getPluginLang().getString("list-reward", "Reward(s):"));
+
+		// Prepare item stacks displayed in the GUI for Multiple achievements.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
+			String categoryName = category.toString();
 			Material material = Material.getMaterial(
-					plugin.getPluginGui().getString(category.toString() + ".Item", "bedrock").toUpperCase());
-			short metadata = (short) plugin.getPluginGui().getInt(category.toString() + ".Metadata", 0);
+					plugin.getPluginGui().getString(categoryName + ".Item", "bedrock").toUpperCase());
+			short metadata = (short) plugin.getPluginGui().getInt(categoryName + ".Metadata", 0);
 			if (material == null) {
 				material = Material.BEDROCK;
-				plugin.getLogger().warning("GUI material for category " + category.toString()
+				plugin.getLogger().warning("GUI material for category " + categoryName
 						+ " was not found. Have you spelt the name correctly or is it available for your Minecraft version?");
 			}
-			multipleAchievementCategoryItems.put(category, new ItemStack(material, 1, metadata));
+			ItemStack itemStack = new ItemStack(material, 1, metadata);
+
+			// Sum all achievements in the sub-categories of this main category.
+			int totalAchievementsInCategory = 0;
+			for (String section : plugin.getPluginConfig().getConfigurationSection(categoryName)
+					.getKeys(false)) {
+				totalAchievementsInCategory += plugin.getPluginConfig()
+						.getConfigurationSection(categoryName + '.' + section).getKeys(false).size();
+			}
+			constructItemStackLore(itemStack,
+					plugin.getPluginLang().getString(category.toLangName(), category.toLangDefault()),
+					totalAchievementsInCategory);
+			multipleAchievementCategoryItems.put(category, itemStack);
 		}
 
-		normalAchievementCategoryItems = new EnumMap<>(NormalAchievements.class);
-		// Get list of item stacks for items displayed in the GUI, for normal achievements.
+		// Prepare item stacks displayed in the GUI for Normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
+			String categoryName = category.toString();
 			Material material = Material.getMaterial(
-					plugin.getPluginGui().getString(category.toString() + ".Item", "bedrock").toUpperCase());
-			short metadata = (short) plugin.getPluginGui().getInt(category.toString() + ".Metadata", 0);
+					plugin.getPluginGui().getString(categoryName + ".Item", "bedrock").toUpperCase());
+			short metadata = (short) plugin.getPluginGui().getInt(categoryName + ".Metadata", 0);
 			if (material == null) {
 				material = Material.BEDROCK;
 			}
-			normalAchievementCategoryItems.put(category, new ItemStack(material, 1, metadata));
+			ItemStack itemStack = new ItemStack(material, 1, metadata);
+			constructItemStackLore(itemStack,
+					plugin.getPluginLang().getString(category.toLangName(), category.toLangDefault()),
+					plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false).size());
+			normalAchievementCategoryItems.put(category, itemStack);
 		}
 
+		// Prepare item stack displayed in the GUI for Commands achievements.
 		Material material = Material
 				.getMaterial(plugin.getPluginGui().getString("Commands.Item", "bedrock").toUpperCase());
 		short metadata = (short) plugin.getPluginGui().getInt("Commands.Metadata", 0);
@@ -101,11 +163,47 @@ public class ListCommand extends AbstractCommand {
 			material = Material.BEDROCK;
 		}
 		commandsCategoryItem = new ItemStack(material, 1, metadata);
+		constructItemStackLore(commandsCategoryItem,
+				plugin.getPluginLang().getString("list-commands", "Other Achievements"),
+				plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false).size());
 
 		ItemMeta backMeta = backButton.getItemMeta();
 		backMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 				StringEscapeUtils.unescapeJava(plugin.getPluginLang().getString("list-back-message", "&7Back"))));
 		backButton.setItemMeta(backMeta);
+
+		ItemMeta barrierMeta = barrier.getItemMeta();
+		barrierMeta.setDisplayName(langListCategoryNotUnlocked);
+	}
+
+	/**
+	 * Sets the metadata of an ItemStack.
+	 * 
+	 * @param itemStacks
+	 * @param displayName
+	 * @param indexInItemStacksArray
+	 * @param i
+	 * @return
+	 */
+	private void constructItemStackLore(ItemStack categoryItem, String displayName, int totalAchievementsInCategory) {
+		ItemMeta categoryMeta = categoryItem.getItemMeta();
+		// Create item stack that will be displayed in the GUI, with its category name.
+		categoryMeta.setDisplayName(
+				ChatColor.translateAlternateColorCodes('&', StringUtils.replaceEach(configListAchievementFormat,
+						new String[] { "%ICON%", "%NAME%" }, new String[] { configIcon, "&l" + displayName + "&8" })));
+
+		String loreAmountMessage;
+		if (totalAchievementsInCategory > 1) {
+			loreAmountMessage = langListAchievementsInCategoryPlural;
+
+		} else {
+			loreAmountMessage = langListAchievementInCategorySingular;
+		}
+		// Set item lore.
+		categoryMeta.setLore(ImmutableList.of(ChatColor.translateAlternateColorCodes('&', "&8" + StringUtils
+				.replaceOnce(loreAmountMessage, "AMOUNT", Integer.toString(totalAchievementsInCategory)))));
+		// Set item meta.
+		categoryItem.setItemMeta(categoryMeta);
 	}
 
 	@Override
@@ -116,12 +214,10 @@ public class ListCommand extends AbstractCommand {
 
 		Player player = (Player) sender;
 
-		// Create a new chest-like inventory; make it as small as possible while still containing all elements.
-		Inventory guiInv = Bukkit.createInventory(null,
-				getClosestGreaterMultipleOf9(MultipleAchievements.values().length + NormalAchievements.values().length
-						- plugin.getDisabledCategorySet().size() + 1),
-				ChatColor.translateAlternateColorCodes('&',
-						plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
+		Inventory guiInv = Bukkit.createInventory(
+				null, getClosestGreaterMultipleOf9(MultipleAchievements.values().length
+						+ NormalAchievements.values().length - plugin.getDisabledCategorySet().size() + 1),
+				langListGUITitle);
 
 		// Total number of categories already displayed.
 		int numberOfCategories = 0;
@@ -183,8 +279,7 @@ public class ListCommand extends AbstractCommand {
 		int inventorySize = getClosestGreaterMultipleOf9(totalAchievementsInCategory + 1);
 
 		// Create a new chest-like inventory; make it as small as possible while still containing all achievements.
-		Inventory inventory = Bukkit.createInventory(null, inventorySize, ChatColor.translateAlternateColorCodes('&',
-				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
+		Inventory inventory = Bukkit.createInventory(null, inventorySize, langListGUITitle);
 
 		int positionInGUI = 0;
 
@@ -277,8 +372,7 @@ public class ListCommand extends AbstractCommand {
 				plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false).size() + 1);
 
 		// Create a new chest-like inventory.
-		Inventory inventory = Bukkit.createInventory(null, inventorySize, ChatColor.translateAlternateColorCodes('&',
-				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List")));
+		Inventory inventory = Bukkit.createInventory(null, inventorySize, langListGUITitle);
 
 		int positionInGUI = 0;
 
@@ -393,29 +487,26 @@ public class ListCommand extends AbstractCommand {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			// Boolean corresponding to whether a player has received achievements in the current category. Used for
 			// HideNotReceivedCategories config option.
-			boolean hasReceivedInCategory = !hideNotReceivedCategories;
+			boolean hasReceivedInCategory = !configHideNotReceivedCategories;
 
-			String displayName = plugin.getPluginLang().getString(category.toLangName(), category.toLangDefault());
+			ItemStack itemStack = multipleAchievementCategoryItems.get(category);
 			String categoryName = category.toString();
 			// Hide category if the user has defined an empty name for it or if it's in the disabled list.
-			if (displayName.length() == 0 || plugin.getDisabledCategorySet().contains(categoryName)) {
+			if (itemStack.getItemMeta().getDisplayName().length() == 0
+					|| plugin.getDisabledCategorySet().contains(categoryName)) {
 				continue;
 			}
-
-			int totalAchievementsInCategory = 0;
 
 			// Iterate through all sub-categories.
 			for (String section : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
 				Set<String> configSubcategory = plugin.getPluginConfig()
 						.getConfigurationSection(categoryName + '.' + section).getKeys(false);
-				totalAchievementsInCategory += configSubcategory.size();
 				// No need to check next sub-category, continue and move to next sub-category.
 				if (hasReceivedInCategory) {
 					continue;
 				}
 				// Hide not yet unlocked categories: we must check whether the player has received at least one
-				// achievement
-				// in the category. Iterate through all achievements in sub-category.
+				// achievement in the category. Iterate through all achievements in sub-category.
 				for (String level : configSubcategory) {
 					// Check whether player has received achievement.
 					if (plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), plugin.getPluginConfig()
@@ -427,9 +518,12 @@ public class ListCommand extends AbstractCommand {
 					}
 				}
 			}
-			ItemStack categoryItem = enrichItemStack(multipleAchievementCategoryItems.get(category), displayName,
-					hasReceivedInCategory, totalAchievementsInCategory);
-			guiInv.setItem(categoriesProcessed, categoryItem);
+
+			if (hasReceivedInCategory) {
+				guiInv.setItem(categoriesProcessed, itemStack);
+			} else {
+				guiInv.setItem(categoriesProcessed, barrier);
+			}
 			categoriesProcessed++;
 		}
 		return categoriesProcessed;
@@ -448,10 +542,11 @@ public class ListCommand extends AbstractCommand {
 
 		// Display categories with normal achievements in GUI.
 		for (NormalAchievements category : NormalAchievements.values()) {
-			String displayName = plugin.getPluginLang().getString(category.toLangName(), category.toLangDefault());
+			ItemStack itemStack = normalAchievementCategoryItems.get(category);
 			String categoryName = category.toString();
 			// Hide category if the user has defined an empty name for it or if it's in the disabled list.
-			if (displayName.length() == 0 || plugin.getDisabledCategorySet().contains(categoryName)) {
+			if (itemStack.getItemMeta().getDisplayName().length() == 0
+					|| plugin.getDisabledCategorySet().contains(categoryName)) {
 				continue;
 			}
 
@@ -463,7 +558,7 @@ public class ListCommand extends AbstractCommand {
 
 			// Hide not yet unlocked categories: we must check whether the player has received at least one achievement
 			// in the category.
-			if (hideNotReceivedCategories) {
+			if (configHideNotReceivedCategories) {
 				hasReceivedInCategory = false;
 				// Iterate through all achievements in category.
 
@@ -478,9 +573,12 @@ public class ListCommand extends AbstractCommand {
 					}
 				}
 			}
-			ItemStack itemInMainGui = enrichItemStack(normalAchievementCategoryItems.get(category), displayName,
-					hasReceivedInCategory, configCategory.size());
-			guiInv.setItem(categoriesPreviouslyProcessed + categoriesProcessed, itemInMainGui);
+
+			if (hasReceivedInCategory) {
+				guiInv.setItem(categoriesPreviouslyProcessed + categoriesProcessed, itemStack);
+			} else {
+				guiInv.setItem(categoriesPreviouslyProcessed + categoriesProcessed, barrier);
+			}
 			categoriesProcessed++;
 		}
 		return categoriesProcessed;
@@ -495,9 +593,9 @@ public class ListCommand extends AbstractCommand {
 	 */
 	private void populateMainGUIWithCommandsAchievements(Player player, Inventory guiInv,
 			int categoriesPreviouslyProcessed) {
-		String commandsDisplayName = plugin.getPluginLang().getString("list-commands", "Other Achievements");
 		// Hide Commands category if the user has defined an empty name for it or if it was disabled.
-		if (commandsDisplayName.length() == 0 || plugin.getDisabledCategorySet().contains("Commands")) {
+		if (commandsCategoryItem.getItemMeta().getDisplayName().length() == 0
+				|| plugin.getDisabledCategorySet().contains("Commands")) {
 			return;
 		}
 		// Boolean corresponding to whether a player has received achievements in the current category. Used for
@@ -508,7 +606,7 @@ public class ListCommand extends AbstractCommand {
 
 		// Hide not yet unlocked categories: we must check whether the player has received at least one achievement in
 		// the category.
-		if (hideNotReceivedCategories) {
+		if (configHideNotReceivedCategories) {
 			hasReceivedInCategory = false;
 			// Iterate through all achievements in category.
 			for (String ach : configCategory) {
@@ -522,60 +620,12 @@ public class ListCommand extends AbstractCommand {
 				}
 			}
 		}
-		ItemStack itemInMainGui = enrichItemStack(commandsCategoryItem, commandsDisplayName, hasReceivedInCategory,
-				configCategory.size());
-		guiInv.setItem(categoriesPreviouslyProcessed, itemInMainGui);
-	}
 
-	/**
-	 * Sets the metadata of an ItemStack or returns Barrier if category not yet discovered.
-	 * 
-	 * @param itemStacks
-	 * @param displayName
-	 * @param indexInItemStacksArray
-	 * @param hasReceivedInCategory
-	 * @param i
-	 * @return
-	 */
-	private ItemStack enrichItemStack(ItemStack categoryItem, String displayName, boolean hasReceivedInCategory,
-			int totalAchievementsInCategory) {
-		ItemStack itemToDisplay;
-		ItemMeta categoryMeta;
 		if (hasReceivedInCategory) {
-			// Create item stack that will be displayed in the GUI, with its category name.
-			itemToDisplay = categoryItem;
-			categoryMeta = itemToDisplay.getItemMeta();
-			categoryMeta
-					.setDisplayName(
-							ChatColor.translateAlternateColorCodes('&',
-									"&8" + StringUtils.replaceEach(
-											plugin.getPluginConfig().getString("ListAchievementFormat",
-													"%ICON% %NAME% %ICON%"),
-											new String[] { "%ICON%", "%NAME%" },
-											new String[] { plugin.getIcon(), "&l" + displayName + "&8" })));
+			guiInv.setItem(categoriesPreviouslyProcessed, commandsCategoryItem);
 		} else {
-			// The player has not unlocked any achievements in the category: display barrier item with message.
-			itemToDisplay = new ItemStack(Material.BARRIER);
-			categoryMeta = itemToDisplay.getItemMeta();
-			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&8" + plugin.getPluginLang()
-					.getString("list-category-not-unlocked", "You have not yet unlocked this category.")));
+			guiInv.setItem(categoriesPreviouslyProcessed, barrier);
 		}
-		String loreAmountMessage;
-		if (totalAchievementsInCategory > 1) {
-			loreAmountMessage = plugin.getPluginLang().getString("list-achievements-in-category-plural",
-					"AMOUNT achievements");
-
-		} else {
-			loreAmountMessage = plugin.getPluginLang().getString("list-achievements-in-category-singular",
-					"AMOUNT achievement");
-		}
-		// Set item lore.
-		categoryMeta.setLore(ImmutableList.of(ChatColor.translateAlternateColorCodes('&', "&8" + StringUtils
-				.replaceOnce(loreAmountMessage, "AMOUNT", Integer.toString(totalAchievementsInCategory)))));
-		// Set item meta.
-		itemToDisplay.setItemMeta(categoryMeta);
-
-		return itemToDisplay;
 	}
 
 	/**
@@ -612,21 +662,13 @@ public class ListCommand extends AbstractCommand {
 		// obfuscateNotReceived and/or obfuscateProgressiveAchievements in the config.
 		ItemMeta itemMeta = achItem.getItemMeta();
 		if (date != null) {
-			itemMeta.setDisplayName(
-					ChatColor.translateAlternateColorCodes('&',
-							StringEscapeUtils.unescapeJava(
-									plugin.getPluginLang().getString("list-achievement-received", "&a\u2714&f "))
-									+ achName));
-		} else if (obfuscateNotReceived || (obfuscateProgressiveAchievements && inelligibleSeriesItem)) {
+			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', langListAchievementReceived + achName));
+		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && inelligibleSeriesItem)) {
 			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-					StringEscapeUtils.unescapeJava(
-							plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2718&8 ")) + "&k"
-							+ REGEX_PATTERN.matcher(achName).replaceAll("")));
+					langListAchievementNotReceived + "&k" + REGEX_PATTERN.matcher(achName).replaceAll("")));
 		} else {
-			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-					StringEscapeUtils.unescapeJava(
-							plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2718&8 ") + "&o"
-									+ REGEX_PATTERN.matcher(achName).replaceAll(""))));
+			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(
+					langListAchievementNotReceived + "&o" + REGEX_PATTERN.matcher(achName).replaceAll(""))));
 		}
 
 		// Build the lore of the item.
@@ -635,7 +677,7 @@ public class ListCommand extends AbstractCommand {
 
 		itemMeta.setLore(lore);
 		achItem.setItemMeta(itemMeta);
-		if (numberedItemsInList) {
+		if (configNumberedItemsInList) {
 			achItem.setAmount(positionInGUI % 64 + 1);
 		}
 		inventory.setItem(positionInGUI, achItem);
@@ -659,32 +701,24 @@ public class ListCommand extends AbstractCommand {
 		lore.add("");
 
 		if (date != null) {
-			// Display description.
-			lore.add(ChatColor.translateAlternateColorCodes('&',
-					"&7&l" + plugin.getPluginLang().getString("list-description", "Description:")));
+			lore.add(langListDescription);
 			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + achMessage));
 			lore.add("");
-			// Display reception date.
-			lore.add(ChatColor.translateAlternateColorCodes('&',
-					"&7&l" + plugin.getPluginLang().getString("list-reception", "Reception date:")));
+			lore.add(langListReception);
 			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + date));
 			lore.add("");
 		} else {
-			// Display goal. The style depends whether it was received or not and whether the user has set
-			// obfuscateNotReceived in the config.
-			lore.add(ChatColor.translateAlternateColorCodes('&',
-					"&7&l" + plugin.getPluginLang().getString("list-goal", "Goal:")));
+			lore.add(langListGoal);
 			String strippedAchMessage = REGEX_PATTERN.matcher(achMessage).replaceAll("");
-			if (obfuscateNotReceived || (obfuscateProgressiveAchievements && inelligibleSeriesItem)) {
+			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && inelligibleSeriesItem)) {
 				lore.add(ChatColor.translateAlternateColorCodes('&', "&8&k" + strippedAchMessage));
 			} else {
 				lore.add(ChatColor.translateAlternateColorCodes('&', "&8&o" + strippedAchMessage));
 			}
 			lore.add("");
 			// Display progress bar. Achievements with statistic -1 correspond to Commands achievements, ignore.
-			if (!obfuscateNotReceived && statistic >= 0) {
-				lore.add(ChatColor.translateAlternateColorCodes('&',
-						"&7&l" + plugin.getPluginLang().getString("list-progress", "Progress:")));
+			if (!configObfuscateNotReceived && statistic >= 0) {
+				lore.add(langListProgress);
 				lore.add(ChatColor.translateAlternateColorCodes('&',
 						constructProgressBar(strippedAchMessage, level, statistic, playedTime)));
 				lore.add("");
@@ -692,9 +726,8 @@ public class ListCommand extends AbstractCommand {
 		}
 
 		// Add the rewards information.
-		if (!rewards.isEmpty() && !hideRewardDisplay) {
-			lore.add(ChatColor.translateAlternateColorCodes('&',
-					"&7&l" + plugin.getPluginLang().getString("list-reward", "Reward(s):")));
+		if (!rewards.isEmpty() && !configHideRewardDisplayInList) {
+			lore.add(langListReward);
 			String dot;
 			if (date != null) {
 				dot = StringEscapeUtils.unescapeJava("&r\u25CF ");
@@ -748,7 +781,7 @@ public class ListCommand extends AbstractCommand {
 		boolean hasDisplayedMiddleText = false;
 		int i = 1;
 		while (i < textSize / 2) {
-			if (enrichedProgressBars && !hasDisplayedMiddleText && i >= (textSize - middleTextSize) / 4) {
+			if (configEnrichedProgressBars && !hasDisplayedMiddleText && i >= (textSize - middleTextSize) / 4) {
 				// Middle reached: append enriched statistic information.
 				barDisplay.append(middleText);
 				// Do not display middleText again.
@@ -758,7 +791,7 @@ public class ListCommand extends AbstractCommand {
 				i = textSize / 2 + 1 - i;
 			} else if (i < ((textSize / 2 - 1) * statisticDouble) / levelInt) {
 				// Color: progress by user.
-				barDisplay.append(plugin.getColor()).append('|');
+				barDisplay.append(configColor).append('|');
 				i++;
 			} else {
 				// Grey: amount not yet reached by user.

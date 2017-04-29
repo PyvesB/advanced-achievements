@@ -1,14 +1,19 @@
 package com.hm.achievement.listener;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
+import com.hm.achievement.utils.Reloadable;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
@@ -16,16 +21,34 @@ import com.hm.mcshared.particle.ReflectionUtils.PackageType;
  * 
  * @author Pyves
  */
-public abstract class AbstractListener {
+public abstract class AbstractListener implements Listener, Reloadable {
 
 	protected final int version;
 	protected final AdvancedAchievements plugin;
 
+	private boolean configRestrictCreative;
+	private boolean configRestrictSpectator;
+	private Set<String> configExcludedWorlds;
+
 	protected AbstractListener(AdvancedAchievements plugin) {
 		this.plugin = plugin;
+
 		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
 		// versions change in the future.
 		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		configRestrictCreative = plugin.getPluginConfig().getBoolean("RestrictCreative", false);
+		configRestrictSpectator = plugin.getPluginConfig().getBoolean("RestrictSpectator", true);
+		// Spectator mode introduced in Minecraft 1.8.
+		if (configRestrictSpectator && version < 8) {
+			configRestrictSpectator = false;
+			plugin.getLogger().warning(
+					"Overriding configuration: disabling RestrictSpectator. Please set it to false in your config.");
+		}
+		configExcludedWorlds = new HashSet<>(plugin.getPluginConfig().getList("ExcludedWorlds"));
 	}
 
 	/**
@@ -38,9 +61,9 @@ public abstract class AbstractListener {
 	protected boolean shouldEventBeTakenIntoAccount(Player player, NormalAchievements category) {
 		boolean isNPC = player.hasMetadata("NPC");
 		boolean permission = player.hasPermission(category.toPermName());
-		boolean restrictedCreative = plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
-		boolean restrictedSpectator = plugin.isRestrictSpectator() && player.getGameMode() == GameMode.SPECTATOR;
-		boolean excludedWorld = plugin.isInExludedWorld(player);
+		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
+		boolean restrictedSpectator = configRestrictSpectator && player.getGameMode() == GameMode.SPECTATOR;
+		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
 
 		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !excludedWorld;
 	}
@@ -54,9 +77,9 @@ public abstract class AbstractListener {
 	 */
 	protected boolean shouldEventBeTakenIntoAccountNoPermission(Player player) {
 		boolean isNPC = player.hasMetadata("NPC");
-		boolean restrictedCreative = plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE;
-		boolean restrictedSpectator = plugin.isRestrictSpectator() && player.getGameMode() == GameMode.SPECTATOR;
-		boolean excludedWorld = plugin.isInExludedWorld(player);
+		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
+		boolean restrictedSpectator = configRestrictSpectator && player.getGameMode() == GameMode.SPECTATOR;
+		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
 
 		return !isNPC && !restrictedCreative && !restrictedSpectator && !excludedWorld;
 	}

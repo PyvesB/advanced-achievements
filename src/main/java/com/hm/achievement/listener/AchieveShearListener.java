@@ -4,7 +4,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -16,7 +15,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveShearListener extends AbstractListener implements Listener {
+public class AchieveShearListener extends AbstractListener {
 
 	public AchieveShearListener(AdvancedAchievements plugin) {
 		super(plugin);

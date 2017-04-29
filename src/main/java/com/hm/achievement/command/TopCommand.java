@@ -10,9 +10,7 @@ import com.hm.achievement.AdvancedAchievements;
 public class TopCommand extends AbstractRankingCommand {
 
 	public TopCommand(AdvancedAchievements plugin) {
-		super(plugin);
-		languageHeaderKey = "top-achievement";
-		defaultHeaderMessage = "Top achievement owners:";
+		super(plugin, "top-achievement", "Top achievement owners:");
 	}
 
 	@Override

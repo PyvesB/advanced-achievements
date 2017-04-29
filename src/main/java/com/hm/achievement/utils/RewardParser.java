@@ -22,15 +22,25 @@ import net.milkbowl.vault.item.Items;
  * 
  * @author Pyves
  */
-public class RewardParser {
+public class RewardParser implements Reloadable {
 
 	private final AdvancedAchievements plugin;
 
+	private String langListRewardMoney;
+	private String langListRewardItem;
+	private String langListRewardCommand;
 	// Used for Vault plugin integration.
 	private Economy economy;
 
 	public RewardParser(AdvancedAchievements achievement) {
 		this.plugin = achievement;
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		langListRewardMoney = plugin.getPluginLang().getString("list-reward-money", "receive AMOUNT");
+		langListRewardItem = plugin.getPluginLang().getString("list-reward-item", "receive AMOUNT ITEM");
+		langListRewardCommand = plugin.getPluginLang().getString("list-reward-command", "other");
 	}
 
 	public Economy getEconomy() {
@@ -72,22 +82,21 @@ public class RewardParser {
 		List<String> rewardTypes = new ArrayList<>();
 		Set<String> keyNames = plugin.getPluginConfig().getKeys(true);
 
-		AchievementCommentedYamlConfiguration pluginLang = plugin.getPluginLang();
 		if (isEconomySet(false) && keyNames.contains(configAchievement + ".Reward.Money")) {
 			int amount = getMoneyAmount(configAchievement);
-			rewardTypes.add(StringUtils.replaceOnce(pluginLang.getString("list-reward-money", "receive AMOUNT"),
-					"AMOUNT", amount + " " + getCurrencyName(amount)));
+			rewardTypes.add(
+					StringUtils.replaceOnce(langListRewardMoney, "AMOUNT", amount + " " + getCurrencyName(amount)));
 		}
 
 		if (keyNames.contains(configAchievement + ".Reward.Item")) {
 			int amount = getItemAmount(configAchievement);
 			String name = getItemName(getItemReward(configAchievement));
-			rewardTypes.add(StringUtils.replaceEach(pluginLang.getString("list-reward-item", "receive AMOUNT ITEM"),
-					new String[] { "AMOUNT", "ITEM" }, new String[] { Integer.toString(amount), name }));
+			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
+					new String[] { Integer.toString(amount), name }));
 		}
 
 		if (keyNames.contains(configAchievement + ".Reward.Command")) {
-			rewardTypes.add(pluginLang.getString("list-reward-command", "other"));
+			rewardTypes.add(langListRewardCommand);
 		}
 		return rewardTypes;
 	}
@@ -225,4 +234,5 @@ public class RewardParser {
 		}
 		return itemAmount;
 	}
+
 }

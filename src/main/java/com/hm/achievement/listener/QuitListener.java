@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -16,7 +15,7 @@ import com.hm.achievement.AdvancedAchievements;
  * @author Pyves
  *
  */
-public class QuitListener extends AbstractListener implements Listener {
+public class QuitListener extends AbstractListener {
 
 	public QuitListener(AdvancedAchievements plugin) {
 		super(plugin);

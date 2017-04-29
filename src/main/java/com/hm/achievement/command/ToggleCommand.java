@@ -18,9 +18,26 @@ public class ToggleCommand extends AbstractCommand {
 
 	private final Set<String> toggledPlayers;
 
+	private boolean configChatNotify;
+	private String langToggleDisplayed;
+	private String langToggleHidden;
+
 	public ToggleCommand(AdvancedAchievements plugin) {
 		super(plugin);
+
 		toggledPlayers = new HashSet<>();
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		configChatNotify = plugin.getPluginConfig().getBoolean("ChatNotify", false);
+
+		langToggleDisplayed = plugin.getChatHeader() + plugin.getPluginLang().getString("toggle-displayed",
+				"You will now be notified when other players get achievements.");
+		langToggleHidden = plugin.getChatHeader() + plugin.getPluginLang().getString("toggle-hidden",
+				"You will no longer be notified when other players get achievements.");
 	}
 
 	/**
@@ -42,20 +59,18 @@ public class ToggleCommand extends AbstractCommand {
 		String uuid = player.getUniqueId().toString();
 		if (toggledPlayers.contains(uuid)) {
 			toggledPlayers.remove(uuid);
-			displayChatMessage(player, plugin.isChatNotify());
+			displayChatMessage(player, configChatNotify);
 		} else {
 			toggledPlayers.add(uuid);
-			displayChatMessage(player, !plugin.isChatNotify());
+			displayChatMessage(player, !configChatNotify);
 		}
 	}
 
 	private void displayChatMessage(Player player, boolean notifications) {
 		if (notifications) {
-			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang().getString("toggle-displayed",
-					"You will now be notified when other players get achievements."));
+			player.sendMessage(langToggleDisplayed);
 		} else {
-			player.sendMessage(plugin.getChatHeader() + plugin.getPluginLang().getString("toggle-hidden",
-					"You will no longer be notified when other players get achievements."));
+			player.sendMessage(langToggleHidden);
 		}
 	}
 }

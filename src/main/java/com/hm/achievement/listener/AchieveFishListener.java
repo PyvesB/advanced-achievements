@@ -5,7 +5,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -17,7 +16,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveFishListener extends AbstractListener implements Listener {
+public class AchieveFishListener extends AbstractListener {
 
 	public AchieveFishListener(AdvancedAchievements plugin) {
 		super(plugin);

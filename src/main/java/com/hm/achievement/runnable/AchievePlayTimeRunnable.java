@@ -1,7 +1,6 @@
 package com.hm.achievement.runnable;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -14,14 +13,12 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAch
  * @author Pyves
  *
  */
-public class AchievePlayTimeRunnable implements Runnable {
-
-	private final AdvancedAchievements plugin;
+public class AchievePlayTimeRunnable extends AbstractRunnable implements Runnable {
 
 	private long previousRunMillis;
 
 	public AchievePlayTimeRunnable(AdvancedAchievements plugin) {
-		this.plugin = plugin;
+		super(plugin);
 
 		previousRunMillis = System.currentTimeMillis();
 	}
@@ -42,9 +39,7 @@ public class AchievePlayTimeRunnable implements Runnable {
 	 */
 	private void registerTimes(Player player) {
 		// If player is in restricted creative mode or is in a blocked world, don't update played time.
-		if (player.hasMetadata("NPC") || plugin.isRestrictCreative() && player.getGameMode() == GameMode.CREATIVE
-				|| plugin.isRestrictSpectator() && player.getGameMode() == GameMode.SPECTATOR
-				|| plugin.isInExludedWorld(player)) {
+		if (!shouldRunBeTakenIntoAccount(player)) {
 			return;
 		}
 

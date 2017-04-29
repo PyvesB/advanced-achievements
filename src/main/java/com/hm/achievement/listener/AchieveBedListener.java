@@ -3,7 +3,6 @@ package com.hm.achievement.listener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -15,7 +14,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveBedListener extends AbstractRateLimitedListener implements Listener {
+public class AchieveBedListener extends AbstractRateLimitedListener {
 
 	public AchieveBedListener(AdvancedAchievements plugin) {
 		super(plugin);

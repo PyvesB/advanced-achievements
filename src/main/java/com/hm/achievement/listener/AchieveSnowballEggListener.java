@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -17,7 +16,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveSnowballEggListener extends AbstractListener implements Listener {
+public class AchieveSnowballEggListener extends AbstractListener {
 
 	public AchieveSnowballEggListener(AdvancedAchievements plugin) {
 		super(plugin);

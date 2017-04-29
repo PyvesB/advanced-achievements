@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -22,13 +21,14 @@ import com.hm.achievement.runnable.AchieveConnectionRunnable;
  * @author Pyves
  *
  */
-public class AchieveConnectionListener extends AbstractListener implements Listener {
+public class AchieveConnectionListener extends AbstractListener {
 
 	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
 	private final Set<String> playersAchieveConnectionRan;
 
 	public AchieveConnectionListener(AdvancedAchievements plugin) {
 		super(plugin);
+
 		playersAchieveConnectionRan = new HashSet<>();
 	}
 

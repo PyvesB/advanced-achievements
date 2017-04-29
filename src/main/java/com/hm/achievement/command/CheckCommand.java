@@ -13,8 +13,21 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public class CheckCommand extends AbstractParsableCommand {
 
+	private String langCheckAchievementTrue;
+	private String langCheckAchievementFalse;
+
 	public CheckCommand(AdvancedAchievements plugin) {
 		super(plugin);
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		langCheckAchievementTrue = plugin.getChatHeader() + plugin.getPluginLang().getString("check-achievement-true",
+				"PLAYER has received the achievement ACH!");
+		langCheckAchievementFalse = plugin.getChatHeader() + plugin.getPluginLang()
+				.getString("check-achievements-false", "PLAYER has not received the achievement ACH!");
 	}
 
 	@Override
@@ -23,15 +36,11 @@ public class CheckCommand extends AbstractParsableCommand {
 
 		// Check if achievement exists in database and display message accordingly.
 		if (plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
-			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceEach(
-					plugin.getPluginLang().getString("check-achievement-true",
-							"PLAYER has received the achievement ACH!"),
-					new String[] { "PLAYER", "ACH" }, new String[] { args[args.length - 1], achievementName }));
+			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementTrue, new String[] { "PLAYER", "ACH" },
+					new String[] { args[args.length - 1], achievementName }));
 		} else {
-			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceEach(
-					plugin.getPluginLang().getString("check-achievements-false",
-							"PLAYER has not received the achievement ACH!"),
-					new String[] { "PLAYER", "ACH" }, new String[] { args[args.length - 1], achievementName }));
+			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementFalse, new String[] { "PLAYER", "ACH" },
+					new String[] { args[args.length - 1], achievementName }));
 		}
 	}
 }

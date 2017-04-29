@@ -15,7 +15,6 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
@@ -31,34 +30,54 @@ import com.hm.mcshared.particle.ParticleEffect;
  * @author Pyves
  *
  */
-public class PlayerAdvancedAchievementListener extends AbstractListener implements Listener {
+public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	private static final Random RANDOM = new Random();
 
-	private boolean rewardCommandNotif;
-	private String fireworkStyle;
-	private boolean fireworks;
-	private boolean simplifiedReception;
-	private boolean titleScreen;
+	private boolean configRewardCommandNotif;
+	private String configFireworkStyle;
+	private boolean configFirework;
+	private boolean configSimplifiedReception;
+	private boolean configTitleScreen;
+	private boolean configChatNotify;
+	private String langCommandReward;
+	private String langAchievementReceived;
+	private String langItemRewardReceived;
+	private String langMoneyRewardReceived;
+	private String langAchievementNew;
 
 	public PlayerAdvancedAchievementListener(AdvancedAchievements plugin) {
 		super(plugin);
-		extractParameters();
 	}
 
-	public void extractParameters() {
-		fireworkStyle = plugin.getPluginConfig().getString("FireworkStyle", "BALL_LARGE");
-		fireworks = plugin.getPluginConfig().getBoolean("Firework", true);
-		simplifiedReception = plugin.getPluginConfig().getBoolean("SimplifiedReception", false);
-		titleScreen = plugin.getPluginConfig().getBoolean("TitleScreen", true);
-		if (titleScreen && version < 8) {
-			titleScreen = false;
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		configFireworkStyle = plugin.getPluginConfig().getString("FireworkStyle", "BALL_LARGE");
+		configFirework = plugin.getPluginConfig().getBoolean("Firework", true);
+		configSimplifiedReception = plugin.getPluginConfig().getBoolean("SimplifiedReception", false);
+		configTitleScreen = plugin.getPluginConfig().getBoolean("TitleScreen", true);
+		if (configTitleScreen && version < 8) {
+			configTitleScreen = false;
 			plugin.getLogger()
 					.warning("Overriding configuration: disabling TitleScreen. Please set it to false in your config.");
 		}
+		configChatNotify = plugin.getPluginConfig().getBoolean("ChatNotify", false);
 		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
 		// a player is notified in case of a command reward.
-		rewardCommandNotif = plugin.getPluginConfig().getBoolean("RewardCommandNotif", true);
+		configRewardCommandNotif = plugin.getPluginConfig().getBoolean("RewardCommandNotif", true);
+
+		langCommandReward = plugin.getPluginLang().getString("command-reward", "Reward command carried out!");
+		langAchievementReceived = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("achievement-received", "PLAYER received the achievement:") + " "
+				+ ChatColor.WHITE;
+		langItemRewardReceived = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " ";
+		langMoneyRewardReceived = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!");
+		langAchievementNew = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " " + ChatColor.WHITE;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -94,11 +113,10 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 		for (String command : commands) {
 			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
 		}
-		String rewardMsg = plugin.getPluginLang().getString("command-reward", "Reward command carried out!");
-		if (!rewardCommandNotif || rewardMsg.length() == 0) {
+		if (!configRewardCommandNotif || langCommandReward.length() == 0) {
 			return;
 		}
-		player.sendMessage(plugin.getChatHeader() + rewardMsg);
+		player.sendMessage(plugin.getChatHeader() + langCommandReward);
 	}
 
 	/**
@@ -113,9 +131,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 		} else {
 			player.getWorld().dropItem(player.getLocation(), item);
 		}
-		player.sendMessage(plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " "
-				+ plugin.getRewardParser().getItemName(item));
+		player.sendMessage(langItemRewardReceived + plugin.getRewardParser().getItemName(item));
 	}
 
 	/**
@@ -135,11 +151,8 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 			}
 
 			String currencyName = plugin.getRewardParser().getCurrencyName(amount);
-
-			player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&',
-					StringUtils.replaceOnce(
-							plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!"),
-							"AMOUNT", amount + " " + currencyName)));
+			player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+					StringUtils.replaceOnce(langMoneyRewardReceived, "AMOUNT", amount + " " + currencyName)));
 		}
 	}
 
@@ -162,33 +175,28 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 					"Player " + player.getName() + " received the achievement: " + name + " (" + displayName + ")");
 		}
 
-		String msg = ChatColor.translateAlternateColorCodes('&', description);
-
-		player.sendMessage(
-				plugin.getChatHeader() + plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " "
-						+ ChatColor.WHITE + nameToShowUser);
+		player.sendMessage(langAchievementNew + nameToShowUser);
 
 		// Notify other online players that the player has received an achievement.
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
 			// Notify other players only if chatNotify is enabled and player has not used /aach toggle, or if
 			// chatNotify is disabled and player has used /aach toggle.
-			if ((plugin.isChatNotify() ^ plugin.getToggleCommand().isPlayerToggled(p))
+			if ((configChatNotify ^ plugin.getToggleCommand().isPlayerToggled(p))
 					&& !p.getName().equals(player.getName())) {
-				p.sendMessage(plugin.getChatHeader()
-						+ StringUtils.replaceOnce(plugin.getPluginLang().getString("achievement-received",
-								"PLAYER received the achievement:"), "PLAYER", player.getName())
-						+ " " + ChatColor.WHITE + nameToShowUser);
+				p.sendMessage(
+						StringUtils.replaceOnce(langAchievementReceived, "PLAYER", player.getName()) + nameToShowUser);
 			}
 		}
+		String msg = ChatColor.translateAlternateColorCodes('&', description);
 		player.sendMessage(plugin.getChatHeader() + ChatColor.WHITE + msg);
 
-		if (fireworks) {
+		if (configFirework) {
 			displayFirework(player);
-		} else if (simplifiedReception) {
+		} else if (configSimplifiedReception) {
 			displaySimplifiedReception(player);
 		}
 
-		if (titleScreen) {
+		if (configTitleScreen) {
 			displayTitle(player, nameToShowUser, msg);
 		}
 	}
@@ -227,11 +235,11 @@ public class PlayerAdvancedAchievementListener extends AbstractListener implemen
 			FireworkMeta fireworkMeta = firework.getFireworkMeta();
 			Builder effectBuilder = FireworkEffect.builder().flicker(false).trail(false)
 					.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).withFade(Color.PURPLE);
-			if ("RANDOM".equalsIgnoreCase(fireworkStyle)) {
+			if ("RANDOM".equalsIgnoreCase(configFireworkStyle)) {
 				effectBuilder.with(getRandomFireworkType());
 			} else {
 				try {
-					effectBuilder.with(Type.valueOf(fireworkStyle.toUpperCase()));
+					effectBuilder.with(Type.valueOf(configFireworkStyle.toUpperCase()));
 				} catch (Exception e) {
 					effectBuilder.with(Type.BALL_LARGE);
 					plugin.getLogger().warning(

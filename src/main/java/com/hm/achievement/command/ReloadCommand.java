@@ -1,15 +1,15 @@
 package com.hm.achievement.command;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
+import com.hm.achievement.utils.Reloadable;
 
 /**
  * Class in charge of handling the /aach reload command, which reloads the plugin's configuration files.
@@ -18,8 +18,12 @@ import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
  */
 public class ReloadCommand extends AbstractCommand {
 
+	private final List<Reloadable> reloadableObservers;
+
 	public ReloadCommand(AdvancedAchievements plugin) {
 		super(plugin);
+
+		reloadableObservers = new ArrayList<>();
 	}
 
 	@Override
@@ -27,15 +31,10 @@ public class ReloadCommand extends AbstractCommand {
 		plugin.reloadConfig();
 		plugin.setSuccessfulLoad(true);
 
-		AchievementCommentedYamlConfiguration configFile = plugin.loadAndBackupFile("config.yml");
+		AchievementCommentedYamlConfiguration config = plugin.loadAndBackupFile("config.yml");
 
 		// Compare the DisabledCategories configuration list in the previous configuration file and the new one.
-		Set<String> disabledCategorySet = new HashSet<>(configFile.getList("DisabledCategories"));
-		if (!Bukkit.getPluginManager().isPluginEnabled("PetMaster") || Integer.parseInt(Character.toString(
-				Bukkit.getPluginManager().getPlugin("PetMaster").getDescription().getVersion().charAt(2))) < 4) {
-			disabledCategorySet.add(NormalAchievements.PETMASTERGIVE.toString());
-			disabledCategorySet.add(NormalAchievements.PETMASTERRECEIVE.toString());
-		}
+		Set<String> disabledCategorySet = plugin.extractDisabledCategories(config);
 		if (!disabledCategorySet.equals(plugin.getDisabledCategorySet())) {
 			if (sender instanceof Player) {
 				sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang().getString("server-restart-reload",
@@ -47,11 +46,14 @@ public class ReloadCommand extends AbstractCommand {
 			return;
 		}
 
-		AchievementCommentedYamlConfiguration langFile = plugin
-				.loadAndBackupFile(configFile.getString("LanguageFileName", "lang.yml"));
-		AchievementCommentedYamlConfiguration guiFile = plugin.loadAndBackupFile("gui.yml");
+		plugin.setPluginConfig(config);
+		plugin.setPluginLang(plugin.loadAndBackupFile(config.getString("LanguageFileName", "lang.yml")));
+		plugin.setGui(plugin.loadAndBackupFile("gui.yml"));
 
-		plugin.configurationLoad(configFile, langFile, guiFile);
+		for (Reloadable reloadable : reloadableObservers) {
+			// Reload all observers.
+			reloadable.extractConfigurationParameters();
+		}
 
 		if (plugin.isSuccessfulLoad()) {
 			if (sender instanceof Player) {
@@ -69,4 +71,7 @@ public class ReloadCommand extends AbstractCommand {
 		}
 	}
 
+	public void registerReloadable(Reloadable reloadable) {
+		reloadableObservers.add(reloadable);
+	}
 }

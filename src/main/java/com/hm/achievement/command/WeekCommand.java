@@ -12,9 +12,7 @@ import com.hm.achievement.AdvancedAchievements;
 public class WeekCommand extends AbstractRankingCommand {
 
 	public WeekCommand(AdvancedAchievements plugin) {
-		super(plugin);
-		languageHeaderKey = "week-achievement";
-		defaultHeaderMessage = "Weekly achievement rankings:";
+		super(plugin, "week-achievement", "Weekly achievement rankings:");
 	}
 
 	@Override

@@ -4,7 +4,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -16,7 +15,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveMilkLavaWaterListener extends AbstractRateLimitedListener implements Listener {
+public class AchieveMilkLavaWaterListener extends AbstractRateLimitedListener {
 
 	public AchieveMilkLavaWaterListener(AdvancedAchievements plugin) {
 		super(plugin);

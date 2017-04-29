@@ -17,8 +17,21 @@ import com.hm.achievement.db.CachedStatistic;
  */
 public class ResetCommand extends AbstractParsableCommand {
 
+	private String langResetSuccessful;
+	private String langCategoryDoesNotExist;
+
 	public ResetCommand(AdvancedAchievements plugin) {
 		super(plugin);
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		langResetSuccessful = plugin.getPluginLang().getString("reset-successful",
+				" statistics were cleared for PLAYER.");
+		langCategoryDoesNotExist = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("category-does-not-exist", "The specified category does not exist.");
 	}
 
 	@Override
@@ -37,9 +50,8 @@ public class ResetCommand extends AbstractParsableCommand {
 						statistic.setValue(0L);
 					}
 				}
-				sender.sendMessage(plugin.getChatHeader() + args[1] + StringUtils.replaceOnce(
-						plugin.getPluginLang().getString("reset-successful", " statistics were cleared for PLAYER."),
-						"PLAYER", player.getName()));
+				sender.sendMessage(plugin.getChatHeader() + args[1]
+						+ StringUtils.replaceOnce(langResetSuccessful, "PLAYER", player.getName()));
 				return;
 			}
 		}
@@ -48,8 +60,9 @@ public class ResetCommand extends AbstractParsableCommand {
 			if (category.toString().equalsIgnoreCase(args[1])) {
 				for (String subcategory : plugin.getPluginConfig().getConfigurationSection(category.toString())
 						.getKeys(false)) {
-					CachedStatistic statistic = plugin.getCacheManager().getHashMap(category).get(plugin
-							.getCacheManager().getMultipleCategoryCacheKey(category, player.getUniqueId(), subcategory));
+					CachedStatistic statistic = plugin.getCacheManager().getHashMap(category)
+							.get(plugin.getCacheManager().getMultipleCategoryCacheKey(category, player.getUniqueId(),
+									subcategory));
 					if (statistic == null) {
 						plugin.getCacheManager().getHashMap(category).put(plugin.getCacheManager()
 								.getMultipleCategoryCacheKey(category, player.getUniqueId(), subcategory),
@@ -58,13 +71,11 @@ public class ResetCommand extends AbstractParsableCommand {
 						statistic.setValue(0L);
 					}
 				}
-				sender.sendMessage(plugin.getChatHeader() + args[1] + StringUtils.replaceOnce(
-						plugin.getPluginLang().getString("reset-successful", " statistics were cleared for PLAYER."),
-						"PLAYER", player.getName()));
+				sender.sendMessage(plugin.getChatHeader() + args[1]
+						+ StringUtils.replaceOnce(langResetSuccessful, "PLAYER", player.getName()));
 				return;
 			}
 		}
-		sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang().getString("category-does-not-exist",
-				"The specified category does not exist."));
+		sender.sendMessage(langCategoryDoesNotExist);
 	}
 }

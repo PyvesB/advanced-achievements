@@ -3,7 +3,6 @@ package com.hm.achievement.listener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -15,7 +14,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveEnchantListener extends AbstractListener implements Listener {
+public class AchieveEnchantListener extends AbstractListener {
 
 	public AchieveEnchantListener(AdvancedAchievements plugin) {
 		super(plugin);

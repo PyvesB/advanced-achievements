@@ -9,13 +9,12 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 
-public class AchievePlayerCommandListener extends AbstractListener implements Listener {
+public class AchievePlayerCommandListener extends AbstractListener {
 
 	public AchievePlayerCommandListener(AdvancedAchievements plugin) {
 		super(plugin);

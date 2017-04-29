@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -21,7 +20,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListener implements Listener {
+public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListener {
 
 	public AchieveTradeAnvilBrewSmeltListener(AdvancedAchievements plugin) {
 		super(plugin);

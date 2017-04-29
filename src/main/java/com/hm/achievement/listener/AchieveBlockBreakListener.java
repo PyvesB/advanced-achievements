@@ -5,7 +5,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -17,14 +16,19 @@ import com.hm.achievement.category.MultipleAchievements;
  * @author Pyves
  *
  */
-public class AchieveBlockBreakListener extends AbstractListener implements Listener {
+public class AchieveBlockBreakListener extends AbstractListener {
 
-	private final boolean disableSilkTouchBreaks;
-	private final boolean disableSilkTouchOreBreaks;
+	private boolean disableSilkTouchBreaks;
+	private boolean disableSilkTouchOreBreaks;
 
 	public AchieveBlockBreakListener(AdvancedAchievements plugin) {
 		super(plugin);
-		// Load configuration parameter.
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
 		disableSilkTouchBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchBreaks", false);
 		disableSilkTouchOreBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchOreBreaks", false);
 	}

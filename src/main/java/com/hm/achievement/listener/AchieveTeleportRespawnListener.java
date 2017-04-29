@@ -3,7 +3,6 @@ package com.hm.achievement.listener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -16,7 +15,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchieveTeleportRespawnListener extends AbstractListener implements Listener {
+public class AchieveTeleportRespawnListener extends AbstractListener {
 
 	public AchieveTeleportRespawnListener(AdvancedAchievements plugin) {
 		super(plugin);

@@ -18,16 +18,22 @@ import com.hm.mcshared.particle.ParticleEffect;
  */
 public class StatsCommand extends AbstractCommand {
 
-	private final boolean additionalEffects;
-	private final boolean sound;
-
-	private int totalAchievements;
-
 	// Minecraft font, used to get size information in the progress bar.
 	private static final MinecraftFont FONT = MinecraftFont.Font;
 
+	private boolean configAdditionalEffects;
+	private boolean configSound;
+	private String langNumberAchievements;
+	private int totalAchievements;
+
 	public StatsCommand(AdvancedAchievements plugin) {
 		super(plugin);
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
 		// Calculate the total number of achievements in the config file.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
@@ -54,8 +60,11 @@ public class StatsCommand extends AbstractCommand {
 		}
 
 		// Load configuration parameters.
-		additionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
-		sound = plugin.getPluginConfig().getBoolean("Sound", true);
+		configAdditionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
+		configSound = plugin.getPluginConfig().getBoolean("Sound", true);
+
+		langNumberAchievements = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("number-achievements", "Achievements received:") + " " + configColor;
 	}
 
 	@Override
@@ -69,13 +78,11 @@ public class StatsCommand extends AbstractCommand {
 		// Retrieve total number of achievements received by the player.
 		int achievements = plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId());
 
-		// Display percentage of achievements received.
-		player.sendMessage(plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("number-achievements", "Achievements received:") + " "
-				+ plugin.getColor() + String.format("%.1f", 100 * (double) achievements / totalAchievements) + "%");
+		player.sendMessage(
+				langNumberAchievements + String.format("%.1f", 100 * (double) achievements / totalAchievements) + "%");
 
 		String middleText = " " + achievements + "/" + totalAchievements + " ";
-		int verticalBarsToDisplay = 150 - plugin.getIcon().length() - FONT.getWidth(middleText);
+		int verticalBarsToDisplay = 150 - configIcon.length() - FONT.getWidth(middleText);
 		boolean hasDisplayedMiddleText = false;
 		StringBuilder barDisplay = new StringBuilder();
 		int i = 1;
@@ -90,7 +97,7 @@ public class StatsCommand extends AbstractCommand {
 				i = verticalBarsToDisplay - i;
 			} else if (i < ((verticalBarsToDisplay - 1) * achievements) / totalAchievements) {
 				// Color: progress by user.
-				barDisplay.append(plugin.getColor()).append('|');
+				barDisplay.append(configColor).append('|');
 				i++;
 			} else {
 				// Grey: amount not yet reached by user.
@@ -106,7 +113,7 @@ public class StatsCommand extends AbstractCommand {
 		if (achievements >= totalAchievements) {
 			try {
 				// Play special effect.
-				if (additionalEffects) {
+				if (configAdditionalEffects) {
 					ParticleEffect.SPELL_WITCH.display(0, 1, 0, 0.5f, 400, player.getLocation(), 1);
 				}
 			} catch (Exception e) {
@@ -114,7 +121,7 @@ public class StatsCommand extends AbstractCommand {
 			}
 
 			// Play special sound.
-			if (sound) {
+			if (configSound) {
 				playFireworkSound(player);
 			}
 		}

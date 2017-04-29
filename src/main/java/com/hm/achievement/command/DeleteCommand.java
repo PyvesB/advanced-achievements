@@ -13,8 +13,21 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public class DeleteCommand extends AbstractParsableCommand {
 
+	private String langCheckAchievementFalse;
+	private String langDeleteAchievements;
+
 	public DeleteCommand(AdvancedAchievements plugin) {
 		super(plugin);
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		langCheckAchievementFalse = plugin.getChatHeader() + plugin.getPluginLang()
+				.getString("check-achievements-false", "PLAYER has not received the achievement ACH!");
+		langDeleteAchievements = plugin.getChatHeader() + plugin.getPluginLang().getString("delete-achievements",
+				"The achievement ACH was deleted from PLAYER.");
 	}
 
 	@Override
@@ -23,10 +36,8 @@ public class DeleteCommand extends AbstractParsableCommand {
 
 		// Check if achievement exists in database and display message accordingly; if received, delete it.
 		if (!plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
-			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceEach(
-					plugin.getPluginLang().getString("check-achievements-false",
-							"PLAYER has not received the achievement ACH!"),
-					new String[] { "PLAYER", "ACH" }, new String[] { args[args.length - 1], achievementName }));
+			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementFalse, new String[] { "PLAYER", "ACH" },
+					new String[] { args[args.length - 1], achievementName }));
 		} else {
 			String uuid = player.getUniqueId().toString();
 			plugin.getCacheManager().getReceivedAchievementsCache().remove(uuid, achievementName);
@@ -35,10 +46,8 @@ public class DeleteCommand extends AbstractParsableCommand {
 					plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId()) - 1);
 			plugin.getDatabaseManager().deletePlayerAchievement(player.getUniqueId(), achievementName);
 
-			sender.sendMessage(plugin.getChatHeader() + StringUtils.replaceEach(
-					plugin.getPluginLang().getString("delete-achievements",
-							"The achievement ACH was deleted from PLAYER."),
-					new String[] { "PLAYER", "ACH" }, new String[] { args[args.length - 1], achievementName }));
+			sender.sendMessage(StringUtils.replaceEach(langDeleteAchievements, new String[] { "PLAYER", "ACH" },
+					new String[] { args[args.length - 1], achievementName }));
 		}
 	}
 }

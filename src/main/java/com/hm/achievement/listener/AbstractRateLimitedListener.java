@@ -18,19 +18,30 @@ public class AbstractRateLimitedListener extends AbstractListener {
 
 	private final Map<String, Long> cooldownMap;
 
-	private int cooldownTime;
-	private boolean cooldownActionBar;
+	private int configStatisticCooldown;
+	private boolean configCooldownActionBar;
+	private String langStatisticCooldown;
 
 	protected AbstractRateLimitedListener(AdvancedAchievements plugin) {
 		super(plugin);
-		cooldownTime = plugin.getPluginConfig().getInt("StatisticCooldown", 10) * 1000;
+
 		cooldownMap = new HashMap<>();
-		cooldownActionBar = plugin.getPluginConfig().getBoolean("CooldownActionBar", true);
-		if (cooldownActionBar && version < 8) {
-			cooldownActionBar = false;
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		configStatisticCooldown = plugin.getPluginConfig().getInt("StatisticCooldown", 10) * 1000;
+		configCooldownActionBar = plugin.getPluginConfig().getBoolean("CooldownActionBar", true);
+		if (configCooldownActionBar && version < 8) {
+			configCooldownActionBar = false;
 			plugin.getLogger().warning(
 					"Overriding configuration: disabling CooldownActionBar. Please set it to false in your config.");
 		}
+
+		langStatisticCooldown = plugin.getPluginLang().getString("statistic-cooldown",
+				"Achievements cooldown, wait TIME seconds before this action counts again.");
 	}
 
 	/**
@@ -57,13 +68,11 @@ public class AbstractRateLimitedListener extends AbstractListener {
 		if (lastEventTime == null) {
 			lastEventTime = 0L;
 		}
-		long timeToWait = lastEventTime + cooldownTime - System.currentTimeMillis();
+		long timeToWait = lastEventTime + configStatisticCooldown - System.currentTimeMillis();
 		if (timeToWait > 0) {
-			if (cooldownActionBar) {
-				String actionBarJsonMessage = "{\"text\":\"&o" + StringUtils.replaceOnce(
-						plugin.getPluginLang().getString("statistic-cooldown",
-								"Achievements cooldown, wait TIME seconds before this action counts again."),
-						"TIME", String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
+			if (configCooldownActionBar) {
+				String actionBarJsonMessage = "{\"text\":\"&o" + StringUtils.replaceOnce(langStatisticCooldown, "TIME",
+						String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
 				try {
 					PacketSender.sendActionBarPacket(player, actionBarJsonMessage);
 				} catch (Exception e) {
