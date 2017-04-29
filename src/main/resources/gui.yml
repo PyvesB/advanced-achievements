@@ -7,6 +7,7 @@
 # Material names are not case sensitive in this configuration file.
 # Do not use bedrock, barrier, stained_clay or paper.
 # Do not use the same Item and Metadata pair twice.
+# If you are using a Minecraft version prior to 1.9, change grass_path of HoePlowings!
 
 Connections:
   Item: book_and_quill

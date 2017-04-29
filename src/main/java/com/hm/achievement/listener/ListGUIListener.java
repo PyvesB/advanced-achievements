@@ -54,7 +54,7 @@ public class ListGUIListener extends AbstractListener {
 
 		// Main GUI displaying all the categories. Do not let players interact with locked categories or slots not
 		// corresponding to a category item.
-		if (event.getCurrentItem().getType() == Material.BARRIER || event.getCurrentItem().getType() == Material.BEDROCK
+		if (event.getCurrentItem().getType() == Material.BARRIER
 				|| event.getRawSlot() > NormalAchievements.values().length + MultipleAchievements.values().length
 						- plugin.getDisabledCategorySet().size()) {
 			return;
