@@ -27,20 +27,23 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	private static final int MAX_LIST_LENGTH = 50;
 
-	private final Set<String> categories;
+	private final Set<String> enabledCategories;
 	private final AdvancedAchievements plugin;
 
 	private Set<String> configCommandsKeys;
 
 	public CommandTabCompleter(AdvancedAchievements plugin) {
-		categories = new HashSet<>(MultipleAchievements.values().length + NormalAchievements.values().length + 1);
+		enabledCategories = new HashSet<>(
+				MultipleAchievements.values().length + NormalAchievements.values().length + 1);
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			categories.add(category.toString());
+			enabledCategories.add(category.toString());
 		}
 		for (NormalAchievements category : NormalAchievements.values()) {
-			categories.add(category.toString());
+			enabledCategories.add(category.toString());
 		}
-		categories.add("Commands");
+		enabledCategories.add("Commands");
+		// Only auto-complete with non-disabled categories.
+		enabledCategories.removeAll(plugin.getDisabledCategorySet());
 
 		this.plugin = plugin;
 	}
@@ -56,7 +59,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 			// Complete with players.
 			return null;
 		} else if (args.length == 2 && "reset".equalsIgnoreCase(args[0])) {
-			return getPartialList(categories, args[1]);
+			return getPartialList(enabledCategories, args[1]);
 		} else if (args.length == 2 && "give".equalsIgnoreCase(args[0])) {
 			return getPartialList(configCommandsKeys, args[1]);
 		} else if (args.length == 2 && ("delete".equalsIgnoreCase(args[0]) || "check".equalsIgnoreCase(args[0]))) {
