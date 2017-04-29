@@ -1,122 +1,173 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
-# |    Advanced Achievements German translation by Mazuu    | #
-# |             ~ Valid as of version 2.5.2 ~               | #
+# |   Advanced Achievements German translation by YtKater.de| #
+# |             ~ Valid as of version 5.0.3 ~               | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
 #=============================================================#
+no-permissions: "Du hast nicht die Erlaubnis dies zu tun."
 
-no-permissions: Du hast nicht die Erlaubnis dies zu tun.
+statistic-cooldown: "Achievements Abklingzeit: warte TIME sekunden bis die Aktion wieder funktioniert."
 
 # Related to /aach reload.
-configuration-successfully-reloaded: Konfiguration neu geladen!
-configuration-reload-failed: Fehler beim neu laden des Plugins!
+configuration-successfully-reloaded: "Konfiguration neu geladen!"
+configuration-reload-failed: "Fehler beim neu laden des Plugins! Bitte schaue in den Logs nach!"
+server-restart-reload: "Die Liste der deaktivierten Kategorien wurde geändert. Server muss vollstaendig neu geladen oder neu gestartet werden, damit Ihre Aenderungen wirksam werden."
 
-# Related to /aach top.
-top-achievement: 'Top Achievement Sammler:'
-player-rank: 'Aktueller Rang:'
+# Related to /aach top week and month.
+top-achievement: "Top Achievement Sammler:"
+player-rank: "Aktueller Rang:"
+week-achievement: "Woechentliches achievement ranking:"
+month-achievement: "Monatliches Achievements ranking:"
+not-ranked: "Sie sind derzeit nicht für diesen Zeitraum geordnet."
 
 # Related to /aach stats.
-number-achievements: 'Achievements erhalten:'
+number-achievements: "Achievements erhalten:"
 
 # Related to /aach book.
-book-received: Du hast dein Achievement Buch erhalten!
-book-delay: Du musst TIME Sekunden warten!
-book-name: Achievements
+book-received: "Du hast dein Achievement Buch erhalten!"
+book-delay: "Du musst TIME Sekunden warten!"
+book-name: "Achievements Buch"
+book-date: "Buch gemacht an DATE"
+book-not-received: "Sie haben noch keine Achievements erreicht."
 
 # Related to /aach give.
-player-offline: Der Spieler PLAYER ist offline!
-achievement-already-received: PLAYER hat dieses Achievement bereits!
-achievement-not-found: Das Spezifische Achievement wurde nicht gefunden.
-achievement-given: Achievement übertragen!
+player-offline: "Der Spieler PLAYER ist offline!"
+achievement-already-received: "PLAYER hat dieses Achievement bereits!"
+achievement-not-found: "Das Spezifische Achievement wurde nicht gefunden."
+achievement-given: "Achievement übertragen!"
 
 # Related to achievement reception.
-achievement-received: 'PLAYER erhielt das Achievement:'
-achievement-new: 'Neues Achievement:'
+achievement-received: "PLAYER erhielt das Achievement:"
+achievement-new: "Neues Achievement:"
 
 # Related to /aach check.
-check-achievement-true: PLAYER hat das Achievement ACH erhalten!
-check-achievements-false: PLAYER besitzt das Achievement ACH nicht!
+check-achievement-true: "PLAYER hat das Achievement ACH erhalten!"
+check-achievements-false: "PLAYER besitzt das Achievement ACH nicht!"
 
 # Related to /aach delete.
-delete-achievements: Das Achievement ACH wurde von PLAYER gelöscht.
+delete-achievements: "Das Achievement ACH wurde von PLAYER gelöscht."
 
 # Related to achievement rewards.
-item-reward-received: 'Du hast ein Item erhalten:'
-money-reward-received: 'Du erhaelst: AMOUNT !'
-command-reward: Belohnung wurde ueberliefert!
+item-reward-received: "Du hast eine Itembelohnung erhalten:"
+money-reward-received: "Du erhaelst: AMOUNT !"
+command-reward: "Belohnung wurde ueberliefert!"
 
 # Related to /aach help.
-aach-command-book: Erhalte dein Achievement-Buch.
-aach-command-stats: Anzahl der erhaltenen Achievements.
-aach-command-list: Zeige alle Achievements an.
-aach-command-top: Zeige alle Rankings an.
-aach-command-give: Gebe Achievement ACH zu &7Spieler NAME.
-aach-command-reload: Lade das Plugin neu.
-aach-command-info: Zeige diverse Informationen des Plugins an.
-aach-command-check: Pruefe ob NAME das Achievement &7ACH besitzt.
-aach-command-delete: Lösche ACH von &7 NAME.
+aach-command-book: "Erhalte dein Achievement-Buch."
+aach-command-book-hover: "RP Artikel kannst du sammeln und mit anderen austauschen! Zeitbasierte Auflistung."
+aach-command-stats: "Anzahl der erhaltenen Achievements."
+aach-command-stats-hover: "Fortschrittsanzeige. Schnapp sie dir alle!"
+aach-command-list: "Zeige alle Achievements an."
+aach-command-list-hover: "Fancy GUI, um einen Überblick über alle Leistungen und Ihren Fortschritt zu bekommen!"
+aach-command-top: "Zeige alle Rankings an."
+aach-command-top-hover: "Wer sind die Leiter des Servers und wie verhält man sich mit ihnen?"
+aach-command-give: "Gebe Achievement ACH zu &7NAME."
+aach-command-give-hover: "Spieler muss online sein; nur Befehl Achievements können gegeben werden"
+aach-command-reload: "Lade das Plugin neu."
+aach-command-reload-hover: "Laden Sie die meisten Einstellungen in config.yml und lang.yml Dateien neu."
+aach-command-info: "Zeige diverse Informationen des Plugins an."
+aach-command-info-hover: "Einige zusätzliche Infos über das Plugin und seinen großartigen Autor!"
+aach-command-check: "Pruefe ob NAME das Achievement &7ACH besitzt."
+aach-command-check-hover: "Verwenden Sie den in der config angegebenen Namen-Parameter."
+aach-command-delete: "Loesche ACH von &7 NAME."
+aach-command-delete-hover: "Spieler muss online sein; Setzt keine zugehoerigen Statistiken zurück."
+aach-command-week: "Wochen Topliste anzeigen"
+aach-command-week-hover: "Beste Erfolgsjaeger seit Beginn der Woche!"
+aach-command-month: "Monats Topliste anzeigen"
+aach-command-month-hover: "Beste Erfolgsjaeger seit Beginn des Monats!"
+aach-command-toggle: "Umschalten von Achievements andere Spieler"
+aach-command-toggle-hover: "Ihre Wahl wird bis zum naechsten Neustart des Servers gespeichert!"
+aach-command-reset: "Resetet dieStatistik für Kategorie &7CAT ."
+aach-command-reset-hover: "Spieler muss online sein; fuer Kategorien mit Unterkategorien, Sie sind alle zurückgesetzt!"
+aach-tip: "&lHinweis&8Du kannst &7&n&über &8oder &7&n&oauf &8die Befehle klicken!"
 
 # Related to /aach info.
-version-command-name: 'Name:'
-version-command-version: 'Version:'
-version-command-website: 'Website:'
-version-command-author: 'Author:'
-version-command-description: 'Description:'
-version-command-description-details: Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!
-version-command-vault: 'Vault integration:'
-version-command-database: 'Database type:'
+version-command-version: "Version:"
+version-command-website: "Website:"
+version-command-author: "Autor:"
+version-command-description: "Beschreibung:"
+version-command-description-details: "Advanced Achievements ermöglichen einzigartige und herausfordernde Leistungen. Versuchen Sie, so viele zu sammeln, wie Sie koennen, verdienen Sie Belohnungen, klettern Sie die Rangliste rauf und erhalten Sie RP Buecher!"
+version-command-vault: "Vault integration:"
+version-command-petmaster: "Pet Master integration:"
+version-command-btlp: "BungeeTabListPlus integration:"
+version-command-database: "Database type:"
 
 # Related to /aach list.
-list-gui-title: '&5Liste aller Achievements'
-list-delay: Du musst TIME Sekunden warten!
-list-reward: ' Belohnung:'
-list-reward-money: Geld
-list-reward-item: Items
-list-reward-command: Anderes
-list-amount: ' Lvl:'
+list-gui-title: "&5Liste aller Achievements"
+list-delay: "Du musst TIME Sekunden warten!"
+list-description: "Beschreibung:"
+list-goal: "Ziel:"
+list-reception: "Fertigstellung:"
+list-progress: "Fortschritt:"
+list-reward: " Belohnung:"
+list-reward-money: "Geld"
+list-reward-item: "Items"
+list-reward-command: "Anderes"
 list-achievement-received: "&a\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "
+list-category-not-unlocked: "Du hast diese Kategorie noch nicht freigeschaltet."
+list-back-message: "&7Back"
+list-achievements-in-category-singular: "AMOUNT achievement"
+list-achievements-in-category-plural: "AMOUNT achievements"
 
 # Related to category names in /aach list.
 # Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: Verbindungen
-list-places: Bloecke platziert
-list-breaks: Bloecke zerstoert
-list-kills: Mobs getoetet
-list-crafts: Items gecrafted
-list-deaths: Anzahl der Tode
-list-arrows: Pfeile geschossen
-list-snowballs: Schneebaelle geworfen
-list-eggs: Eier geworfen
-list-fish: Fische geangelt
-list-itembreaks: Items zerstoert
-list-eatenitems: Items Egegessen
-list-shear: Schafe geschoren
-list-milk: Kuehe gemolken
-list-trades: Anzahl der Handel
-list-anvils: Ambosse genutzt
-list-enchantments: Items verzaubert
-list-beds: Betten betreten
-list-maxlevel: Level erreicht
-list-potions: Tränke getrunken
-list-playedtime: Spielzeit
-list-distance-foot: Distanz via Fuss
-list-distance-pig: Distanz via Schwein
-list-distance-horse: Distanz via Pferd
-list-distance-minecart: Distanz via Minecart
-list-distance-boat: Distanz via Boot
-list-distance-gliding: Distanz mit Elytren geflogen"
-list-itemdrops: Items weggeworfen
-list-hoeplowings: Ackerboeden erstellt
-list-fertilising: Knochenmehl genutzt
-list-taming: Tiere gezaehmt
-list-brewing: Traenke gebraut
-list-fireworks: Feuerwerke gezuendet
-list-musicdiscs: Schallplatten abgespielt
-list-enderpearls: Teleportationen mit Enderperlen
-list-commands: Easter-Eggs
+list-places: "Bloecke platziert"
+list-breaks: "Bloecke zerstoert"
+list-kills: "Mobs getoetet"
+list-crafts: "Items gecrafted"
+list-playercommands: "Befehle eingeben"
+list-deaths: "Anzahl der Tode"
+list-arrows: "Pfeile geschossen"
+list-snowballs: "Schneebaelle geworfen"
+list-eggs: "Eier geworfen"
+list-fish: "Fische geangelt"
+list-treasure: "Schaetze geangelt"
+list-itembreaks: "Items zerstoert"
+list-eatenitems: "Items gegessen"
+list-shear: "Schafe geschoren"
+list-milk: "Kuehe gemolken"
+list-lavabuckets: "Eimer mit Lava gefuellt"
+list-waterbuckets: "Eimer mit Wasser gefuellt"
+list-trades: "Anzahl der Handel"
+list-anvils: "Ambosse genutzt"
+list-enchantments: "Items verzaubert"
+list-beds: "Betten betreten"
+list-maxlevel: "Level erreicht"
+list-potions: "Traenke getrunken"
+list-playedtime: "Spielzeit"
+list-distance-foot: "Distanz zu Fuss gelaufen"
+list-distance-pig: "Distanz mit Schwein geritten"
+list-distance-horse: "Distanz mit Pferd geritten"
+list-distance-minecart: "Distanz mit Lore gefahren"
+list-distance-boat: "Distanz mit Boot gefahren"
+list-distance-gliding: "Distanz mit Elytren geflogen"
+list-distance-llama: "Distanz mit Lama geritten"
+list-itemdrops: "Items weggeworfen"
+list-itempickups: "Items aufgehoben"
+list-hoeplowings: "Ackerboeden erstellt"
+list-fertilising: "Knochenmehl genutzt"
+list-taming: "Tiere gezaehmt"
+list-brewing: "Traenke gebraut"
+list-fireworks: "Feuerwerk gezuendet"
+list-musicdiscs: "Schallplatten abgespielt"
+list-enderpearls: "Teleportationen mit Enderperlen"
+list-petmastergive: "Pet an einen anderen Spieler gegeben"
+list-petmasterreceive: "Pet von einen anderen Spieler bekommen"
+list-smelting: "Items geschmolzen"
+list-commands: "Andere Achievements"
+
+# Related to /aach toggle.
+toggle-displayed: "Du wirst nun informiert wenn andere Spieler Achievements erreichen."
+toggle-hidden: "Du wirst nun nicht mehr informiert wenn andere Spieler Achievements erreichen."
+
+# Related to /aach reset.
+reset-successful: "Statistik von Spieler geleert"
+category-does-not-exist: "Die angegebene Kategorie existiert nicht."
+
 
 #============================================================#
 # +--------------------------------------------------------+ #
