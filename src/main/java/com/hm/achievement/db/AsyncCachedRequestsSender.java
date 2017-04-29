@@ -55,6 +55,11 @@ public class AsyncCachedRequestsSender implements Runnable {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			addRequestsForNormalCategory(batchedRequests, category);
 		}
+
+		if (batchedRequests.isEmpty()) {
+			return;
+		}
+
 		new SQLWriteOperation() {
 
 			@Override
