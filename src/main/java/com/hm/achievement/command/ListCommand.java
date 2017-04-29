@@ -1,6 +1,7 @@
 package com.hm.achievement.command;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +9,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,9 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MinecraftFont;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Longs;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -116,8 +115,8 @@ public class ListCommand extends AbstractCommand {
 		// Prepare item stacks displayed in the GUI for Multiple achievements.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
-			Material material = Material.getMaterial(
-					plugin.getPluginGui().getString(categoryName + ".Item", "bedrock").toUpperCase());
+			Material material = Material
+					.getMaterial(plugin.getPluginGui().getString(categoryName + ".Item", "bedrock").toUpperCase());
 			short metadata = (short) plugin.getPluginGui().getInt(categoryName + ".Metadata", 0);
 			if (material == null) {
 				material = Material.BEDROCK;
@@ -128,8 +127,7 @@ public class ListCommand extends AbstractCommand {
 
 			// Sum all achievements in the sub-categories of this main category.
 			int totalAchievementsInCategory = 0;
-			for (String section : plugin.getPluginConfig().getConfigurationSection(categoryName)
-					.getKeys(false)) {
+			for (String section : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
 				totalAchievementsInCategory += plugin.getPluginConfig()
 						.getConfigurationSection(categoryName + '.' + section).getKeys(false).size();
 			}
@@ -142,8 +140,8 @@ public class ListCommand extends AbstractCommand {
 		// Prepare item stacks displayed in the GUI for Normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
-			Material material = Material.getMaterial(
-					plugin.getPluginGui().getString(categoryName + ".Item", "bedrock").toUpperCase());
+			Material material = Material
+					.getMaterial(plugin.getPluginGui().getString(categoryName + ".Item", "bedrock").toUpperCase());
 			short metadata = (short) plugin.getPluginGui().getInt(categoryName + ".Metadata", 0);
 			if (material == null) {
 				material = Material.BEDROCK;
@@ -200,7 +198,7 @@ public class ListCommand extends AbstractCommand {
 			loreAmountMessage = langListAchievementInCategorySingular;
 		}
 		// Set item lore.
-		categoryMeta.setLore(ImmutableList.of(ChatColor.translateAlternateColorCodes('&', "&8" + StringUtils
+		categoryMeta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + StringUtils
 				.replaceOnce(loreAmountMessage, "AMOUNT", Integer.toString(totalAchievementsInCategory)))));
 		// Set item meta.
 		categoryItem.setItemMeta(categoryMeta);
@@ -386,7 +384,7 @@ public class ListCommand extends AbstractCommand {
 			}
 
 			// Convert threshold to an integer.
-			Long currentItemGoal = Longs.tryParse(level);
+			Long currentItemGoal = NumberUtils.toLong(level, 0);
 
 			String achName = plugin.getPluginConfig().getString(categoryName + '.' + level + ".Name", "");
 			String nameToShowUser = getAchievementNameToDisplay(categoryName, "", achName, level);
@@ -442,12 +440,12 @@ public class ListCommand extends AbstractCommand {
 		String nameToShowUser;
 		String displayName = plugin.getPluginConfig()
 				.getString(categoryName + subcategory + '.' + level + ".DisplayName", "");
-		if (Strings.isNullOrEmpty(displayName)) {
-			// Use the achievement key name (this name is used in the achievements table in the database).
-			nameToShowUser = achName;
-		} else {
+		if (StringUtils.isNotBlank(displayName)) {
 			// Display name is defined; use it.
 			nameToShowUser = displayName;
+		} else {
+			// Use the achievement key name (this name is used in the achievements table in the database).
+			nameToShowUser = achName;
 		}
 		return nameToShowUser;
 	}
@@ -463,12 +461,12 @@ public class ListCommand extends AbstractCommand {
 	private String getAchievementMessageToDisplay(String categoryName, String subcategory, String level) {
 		String achMessage;
 		String goal = plugin.getPluginConfig().getString(categoryName + subcategory + '.' + level + ".Goal", "");
-		if (Strings.isNullOrEmpty(goal)) {
-			// Show the achievement message below the achievement name.
-			achMessage = plugin.getPluginConfig().getString(categoryName + subcategory + '.' + level + ".Message", "");
-		} else {
+		if (StringUtils.isNotBlank(goal)) {
 			// Show the goal below the achievement name.
 			achMessage = goal;
+		} else {
+			// Show the achievement message below the achievement name.
+			achMessage = plugin.getPluginConfig().getString(categoryName + subcategory + '.' + level + ".Message", "");
 		}
 		return achMessage;
 	}

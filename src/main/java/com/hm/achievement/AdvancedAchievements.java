@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,7 +24,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.google.common.base.Strings;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.BookCommand;
@@ -701,11 +700,11 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 */
 	private void parseHeader() {
 		String icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
-		if (Strings.isNullOrEmpty(icon)) {
-			chatHeader = "";
-		} else {
+		if (StringUtils.isNotBlank(icon)) {
 			chatHeader = ChatColor.GRAY + "[" + ChatColor.getByChar(config.getString("Color", "5").charAt(0)) + icon
 					+ ChatColor.GRAY + "] ";
+		} else {
+			chatHeader = "";
 		}
 	}
 

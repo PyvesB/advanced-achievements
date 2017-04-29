@@ -3,7 +3,7 @@ package com.hm.achievement.listener;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;

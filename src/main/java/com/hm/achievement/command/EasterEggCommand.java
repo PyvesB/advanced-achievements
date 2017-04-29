@@ -1,6 +1,6 @@
 package com.hm.achievement.command;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.command.CommandSender;
 
 import com.hm.achievement.AdvancedAchievements;

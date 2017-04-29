@@ -20,9 +20,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.Strings;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -253,10 +252,10 @@ public class SQLDatabaseManager implements Reloadable {
 				// where names containing single quotes were inserted with two single quotes in the database.
 				String achName = StringUtils.replace(rs.getString(2), "''", "'");
 				String displayName = achievementsAndDisplayNames.get(achName);
-				if (Strings.isNullOrEmpty(displayName)) {
-					achievementsList.add(achName);
-				} else {
+				if (StringUtils.isNotBlank(displayName)) {
 					achievementsList.add(displayName);
+				} else {
+					achievementsList.add(achName);
 				}
 				achievementsList.add(rs.getString(3));
 				achievementsList.add(dateFormat.format(rs.getDate(4)));

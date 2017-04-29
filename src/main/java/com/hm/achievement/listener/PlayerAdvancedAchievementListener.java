@@ -3,7 +3,7 @@ package com.hm.achievement.listener;
 import java.util.Random;
 import java.util.logging.Level;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -18,7 +18,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import com.google.common.base.Strings;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.mcshared.particle.PacketSender;
@@ -164,15 +163,16 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 */
 	private void displayAchievement(Player player, String name, String displayName, String description) {
 		String nameToShowUser;
-		if (Strings.isNullOrEmpty(displayName)) {
-			// Use the achievement key name (this name is used in the achievements table in the database).
-			nameToShowUser = ChatColor.translateAlternateColorCodes('&', name);
-			plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + name);
-		} else {
+		if (StringUtils.isNotBlank(displayName)) {
 			// Display name is defined; use it.
 			nameToShowUser = ChatColor.translateAlternateColorCodes('&', displayName);
 			plugin.getLogger().info(
 					"Player " + player.getName() + " received the achievement: " + name + " (" + displayName + ")");
+		} else {
+			// Use the achievement key name (this name is used in the achievements table in the database).
+			nameToShowUser = ChatColor.translateAlternateColorCodes('&', name);
+			plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + name);
+
 		}
 
 		player.sendMessage(langAchievementNew + nameToShowUser);
