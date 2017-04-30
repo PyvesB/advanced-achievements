@@ -34,10 +34,9 @@ public class AbstractRateLimitedListener extends AbstractListener {
 
 		configStatisticCooldown = plugin.getPluginConfig().getInt("StatisticCooldown", 10) * 1000;
 		configCooldownActionBar = plugin.getPluginConfig().getBoolean("CooldownActionBar", true);
+		// Action bars introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configCooldownActionBar && version < 8) {
 			configCooldownActionBar = false;
-			plugin.getLogger().warning(
-					"Overriding configuration: disabling CooldownActionBar. Please set it to false in your config.");
 		}
 
 		langStatisticCooldown = plugin.getPluginLang().getString("statistic-cooldown",

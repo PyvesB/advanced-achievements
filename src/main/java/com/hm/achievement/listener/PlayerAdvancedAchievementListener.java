@@ -57,10 +57,9 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		configFirework = plugin.getPluginConfig().getBoolean("Firework", true);
 		configSimplifiedReception = plugin.getPluginConfig().getBoolean("SimplifiedReception", false);
 		configTitleScreen = plugin.getPluginConfig().getBoolean("TitleScreen", true);
+		// Title screens introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configTitleScreen && version < 8) {
 			configTitleScreen = false;
-			plugin.getLogger()
-					.warning("Overriding configuration: disabling TitleScreen. Please set it to false in your config.");
 		}
 		configChatNotify = plugin.getPluginConfig().getBoolean("ChatNotify", false);
 		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether

@@ -42,11 +42,9 @@ public abstract class AbstractListener implements Listener, Reloadable {
 	public void extractConfigurationParameters() {
 		configRestrictCreative = plugin.getPluginConfig().getBoolean("RestrictCreative", false);
 		configRestrictSpectator = plugin.getPluginConfig().getBoolean("RestrictSpectator", true);
-		// Spectator mode introduced in Minecraft 1.8.
+		// Spectator mode introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configRestrictSpectator && version < 8) {
 			configRestrictSpectator = false;
-			plugin.getLogger().warning(
-					"Overriding configuration: disabling RestrictSpectator. Please set it to false in your config.");
 		}
 		configExcludedWorlds = new HashSet<>(plugin.getPluginConfig().getList("ExcludedWorlds"));
 	}
