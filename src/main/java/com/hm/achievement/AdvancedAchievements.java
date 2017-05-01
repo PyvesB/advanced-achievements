@@ -422,7 +422,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * Registers the different event listeners.
 	 */
 	private void registerListeners() {
-		this.getLogger().info("Registering listeners...");
+		this.getLogger().info("Registering event listeners...");
 
 		PluginManager pm = getServer().getPluginManager();
 		// Check for available plugin update.
@@ -655,7 +655,6 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * Registers all the Cleanable fields as observers of the QuitListener.
 	 */
 	private void registerCleanables() {
-		this.extractConfigurationParameters();
 		try {
 			for (Field field : AdvancedAchievements.class.getDeclaredFields()) {
 				Object fieldObject = field.get(this);
