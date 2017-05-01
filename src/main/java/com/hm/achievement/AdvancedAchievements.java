@@ -176,6 +176,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	private BukkitTask distanceTask;
 
 	// Various other fields and parameters.
+	private final Map<String, String> achievementsAndDisplayNames;
 	private String chatHeader;
 	private Set<String> disabledCategorySet;
 	private boolean successfulLoad;
@@ -186,6 +187,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		overrideDisable = false;
 		databaseManager = new SQLDatabaseManager(this);
 		cacheManager = new DatabaseCacheManager(this);
+		achievementsAndDisplayNames = new HashMap<>();
 	}
 
 	@Override
@@ -310,7 +312,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	@Override
 	public void extractConfigurationParameters() {
 		parseHeader();
-
+		parseAchievementsAndDisplayNames();
 		registerPermissions();
 
 		// If user switched config parameter to false, unregister UpdateChecker; if user switched config pameter to
@@ -320,6 +322,77 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		} else if (updateChecker == null) {
 			initialiseUpdateChecker();
 		}
+	}
+
+	/**
+	 * Loads and backs up file fileName.
+	 * 
+	 * @param fileName
+	 * @return the loaded file AchievementCommentedYamlConfiguration
+	 */
+	public AchievementCommentedYamlConfiguration loadAndBackupFile(String fileName) {
+		AchievementCommentedYamlConfiguration configFile = null;
+		this.getLogger().info("Loading and backing up " + fileName + " file...");
+		try {
+			configFile = new AchievementCommentedYamlConfiguration(fileName, this);
+		} catch (IOException | InvalidConfigurationException e) {
+			this.getLogger().severe("Error while loading " + fileName + " file, disabling plugin.");
+			this.getLogger().log(Level.SEVERE,
+					"Verify your syntax by visiting yaml-online-parser.appspot.com and using the following logs:", e);
+			successfulLoad = false;
+			overrideDisable = true;
+			Bukkit.getServer().getPluginManager().disablePlugin(this);
+			return null;
+		}
+
+		try {
+			configFile.backupConfiguration();
+		} catch (IOException e) {
+			this.getLogger().log(Level.SEVERE, "Error while backing up " + fileName + " file:", e);
+			successfulLoad = false;
+		}
+		return configFile;
+	}
+
+	/**
+	 * Extracts plugin parameters from the configuration file.
+	 * 
+	 * @return
+	 */
+	public Set<String> extractDisabledCategories(AchievementCommentedYamlConfiguration config) {
+		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
+		// versions change in the future.
+		int minecraftVersion = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
+
+		Set<String> disabledCategorySet = new HashSet<>(config.getList("DisabledCategories"));
+		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
+		if ((!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
+				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString()))
+				&& (!Bukkit.getPluginManager().isPluginEnabled("PetMaster")
+						|| Integer.parseInt(Character.toString(Bukkit.getPluginManager().getPlugin("PetMaster")
+								.getDescription().getVersion().charAt(2))) < 4)) {
+			disabledCategorySet.add(NormalAchievements.PETMASTERGIVE.toString());
+			disabledCategorySet.add(NormalAchievements.PETMASTERRECEIVE.toString());
+			this.getLogger()
+					.warning("Overriding configuration: disabling PetMasterGive and PetMasterReceive categories.");
+			this.getLogger().warning(
+					"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
+		}
+		// Elytras introduced in Minecraft 1.9.
+		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString()) && minecraftVersion < 9) {
+			disabledCategorySet.add(NormalAchievements.DISTANCEGLIDING.toString());
+			this.getLogger().warning("Overriding configuration: disabling DistanceGliding category.");
+			this.getLogger().warning(
+					"Elytra are not available in your Minecraft version, please add DistanceGliding to the DisabledCategories list in your config.");
+		}
+		// Llamas introduced in Minecraft 1.11.
+		if (!disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString()) && minecraftVersion < 11) {
+			disabledCategorySet.add(NormalAchievements.DISTANCELLAMA.toString());
+			this.getLogger().warning("Overriding configuration: disabling DistanceLlama category.");
+			this.getLogger().warning(
+					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in your config.");
+		}
+		return disabledCategorySet;
 	}
 
 	/**
@@ -348,7 +421,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
 			int keyCount = categoryConfig.getKeys(false).size();
 			if (keyCount > 0) {
-				categoriesInUse += 1;
+				++categoriesInUse;
 				totalAchievements += keyCount;
 			}
 		}
@@ -366,7 +439,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				continue;
 			}
 
-			categoriesInUse += 1;
+			++categoriesInUse;
 
 			// Enumerate the subcategories.
 			for (String section : categorySections) {
@@ -419,19 +492,13 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	}
 
 	/**
-	 * Registers the different event listeners.
+	 * Registers the different event listeners so they can monitor server events. If relevant categories are disabled,
+	 * listeners aren't registered.
 	 */
 	private void registerListeners() {
 		this.getLogger().info("Registering event listeners...");
-
 		PluginManager pm = getServer().getPluginManager();
-		// Check for available plugin update.
-		if (config.getBoolean("CheckForUpdate", true)) {
-			initialiseUpdateChecker();
-		}
 
-		// Register listeners so they can monitor server events; if there are no config related achievements, listeners
-		// aren't registered.
 		if (!disabledCategorySet.contains(MultipleAchievements.PLACES.toString())) {
 			blockPlaceListener = new AchieveBlockPlaceListener(this);
 			pm.registerEvents(blockPlaceListener, this);
@@ -566,9 +633,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		}
 
 		if (!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString()))
-
-		{
+				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString())) {
 			petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
 			pm.registerEvents(petMasterGiveReceiveListener, this);
 		}
@@ -684,36 +749,6 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	}
 
 	/**
-	 * Loads and backs up file fileName.
-	 * 
-	 * @param fileName
-	 * @return the loaded file AchievementCommentedYamlConfiguration
-	 */
-	public AchievementCommentedYamlConfiguration loadAndBackupFile(String fileName) {
-		AchievementCommentedYamlConfiguration configFile = null;
-		this.getLogger().info("Loading and backing up " + fileName + " file...");
-		try {
-			configFile = new AchievementCommentedYamlConfiguration(fileName, this);
-		} catch (IOException | InvalidConfigurationException e) {
-			this.getLogger().severe("Error while loading " + fileName + " file, disabling plugin.");
-			this.getLogger().log(Level.SEVERE,
-					"Verify your syntax by visiting yaml-online-parser.appspot.com and using the following logs:", e);
-			successfulLoad = false;
-			overrideDisable = true;
-			Bukkit.getServer().getPluginManager().disablePlugin(this);
-			return null;
-		}
-
-		try {
-			configFile.backupConfiguration();
-		} catch (IOException e) {
-			this.getLogger().log(Level.SEVERE, "Error while backing up " + fileName + " file:", e);
-			successfulLoad = false;
-		}
-		return configFile;
-	}
-
-	/**
 	 * Parses the plugin's header, used throughout the project.
 	 */
 	private void parseHeader() {
@@ -727,85 +762,12 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	}
 
 	/**
-	 * Extracts plugin parameters from the configuration file.
-	 * 
-	 * @return
-	 */
-	public Set<String> extractDisabledCategories(AchievementCommentedYamlConfiguration config) {
-		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
-		// versions change in the future.
-		int minecraftVersion = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
-
-		Set<String> disabledCategorySet = new HashSet<>(config.getList("DisabledCategories"));
-		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
-		if ((!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.PETMASTERRECEIVE.toString()))
-				&& (!Bukkit.getPluginManager().isPluginEnabled("PetMaster")
-						|| Integer.parseInt(Character.toString(Bukkit.getPluginManager().getPlugin("PetMaster")
-								.getDescription().getVersion().charAt(2))) < 4)) {
-			disabledCategorySet.add(NormalAchievements.PETMASTERGIVE.toString());
-			disabledCategorySet.add(NormalAchievements.PETMASTERRECEIVE.toString());
-			this.getLogger()
-					.warning("Overriding configuration: disabling PetMasterGive and PetMasterReceive categories.");
-			this.getLogger().warning(
-					"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
-		}
-		// Elytras introduced in Minecraft 1.9.
-		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString()) && minecraftVersion < 9) {
-			disabledCategorySet.add(NormalAchievements.DISTANCEGLIDING.toString());
-			this.getLogger().warning("Overriding configuration: disabling DistanceGliding category.");
-			this.getLogger().warning(
-					"Elytra are not available in your Minecraft version, please add DistanceGliding to the DisabledCategories list in your config.");
-		}
-		// Llamas introduced in Minecraft 1.11.
-		if (!disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString()) && minecraftVersion < 11) {
-			disabledCategorySet.add(NormalAchievements.DISTANCELLAMA.toString());
-			this.getLogger().warning("Overriding configuration: disabling DistanceLlama category.");
-			this.getLogger().warning(
-					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in your config.");
-		}
-		return disabledCategorySet;
-	}
-
-	/**
-	 * Registers permissions that depend on the user's configuration file (for MultipleAchievements; for instance for
-	 * stone breaks, achievement.count.breaks.stone will be registered).
-	 */
-	private void registerPermissions() {
-		this.getLogger().info("Registering permissions...");
-
-		PluginManager pluginManager = this.getServer().getPluginManager();
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
-				int startOfMetadata = section.indexOf(':');
-				if (startOfMetadata > -1) {
-					// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories.
-					section = section.substring(0, startOfMetadata);
-				}
-				if (category == MultipleAchievements.PLAYERCOMMANDS) {
-					// Permissions don't take sapces into account for this category.
-					section = StringUtils.replace(section, " ", "");
-				}
-
-				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when
-				// performing /aach reload.
-				if (pluginManager.getPermission(category.toPermName() + "." + section) == null) {
-					pluginManager.addPermission(
-							new Permission(category.toPermName() + "." + section, PermissionDefault.TRUE));
-				}
-			}
-		}
-	}
-
-	/**
-	 * Returns a map from achievement name (as stored in the database) to DisplayName. If multiple achievements have the
+	 * Creates a map from achievement name (as stored in the database) to DisplayName. If multiple achievements have the
 	 * same achievement name, only the first DisplayName will be tracked. If DisplayName for an achievement is empty or
 	 * undefined, the value in the returned map will be an empty string.
-	 * 
-	 * @return Map from achievement name to user-friendly display name
 	 */
-	public Map<String, String> getAchievementsAndDisplayNames() {
-		Map<String, String> achievementsAndDisplayNames = new HashMap<>();
+	private void parseAchievementsAndDisplayNames() {
+		achievementsAndDisplayNames.clear();
 
 		// Enumerate Commands achievements.
 		for (String ach : config.getConfigurationSection("Commands").getKeys(false)) {
@@ -845,7 +807,39 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				}
 			}
 		}
+	}
 
+	/**
+	 * Registers permissions that depend on the user's configuration file (for MultipleAchievements; for instance for
+	 * stone breaks, achievement.count.breaks.stone will be registered).
+	 */
+	private void registerPermissions() {
+		this.getLogger().info("Registering permissions...");
+
+		PluginManager pluginManager = this.getServer().getPluginManager();
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
+				int startOfMetadata = section.indexOf(':');
+				if (startOfMetadata > -1) {
+					// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories.
+					section = section.substring(0, startOfMetadata);
+				}
+				if (category == MultipleAchievements.PLAYERCOMMANDS) {
+					// Permissions don't take sapces into account for this category.
+					section = StringUtils.replace(section, " ", "");
+				}
+
+				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when
+				// performing /aach reload.
+				if (pluginManager.getPermission(category.toPermName() + "." + section) == null) {
+					pluginManager.addPermission(
+							new Permission(category.toPermName() + "." + section, PermissionDefault.TRUE));
+				}
+			}
+		}
+	}
+
+	public Map<String, String> getAchievementsAndDisplayNames() {
 		return achievementsAndDisplayNames;
 	}
 

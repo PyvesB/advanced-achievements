@@ -184,7 +184,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		// Notify other online players that the player has received an achievement.
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
 			// Notify other players only if NotifyOtherPlayers is enabled and player has not used /aach toggle, or if
-			// chatNotify is disabled and player has used /aach toggle.
+			// NotifyOtherPlayers is disabled and player has used /aach toggle.
 			if ((configNotifyOtherPlayers ^ plugin.getToggleCommand().isPlayerToggled(p))
 					&& !p.getName().equals(player.getName())) {
 				displayNotification(player, nameToShowUser, p);

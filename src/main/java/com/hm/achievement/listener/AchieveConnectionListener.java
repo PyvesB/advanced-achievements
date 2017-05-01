@@ -27,7 +27,7 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAch
  */
 public class AchieveConnectionListener extends AbstractListener implements Cleanable {
 
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
 	private final Set<String> playersAchieveConnectionRan;
@@ -93,7 +93,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 							return;
 						}
 
-						String dateString = DATE_FORMAT.format(new Date());
+						String dateString = dateFormat.format(new Date());
 						if (!dateString
 								.equals(plugin.getDatabaseManager().getPlayerConnectionDate(player.getUniqueId()))) {
 							int connections = plugin.getDatabaseManager().updateAndGetConnection(player.getUniqueId(),

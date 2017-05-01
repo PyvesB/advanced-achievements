@@ -49,8 +49,8 @@ public class StatsCommand extends AbstractCommand {
 				// Ignore this type.
 				continue;
 			}
-			for (String item : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
-				totalAchievements += plugin.getPluginConfig().getConfigurationSection(categoryName + '.' + item)
+			for (String section : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
+				totalAchievements += plugin.getPluginConfig().getConfigurationSection(categoryName + '.' + section)
 						.getKeys(false).size();
 			}
 		}
