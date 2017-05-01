@@ -38,7 +38,8 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	private boolean configFirework;
 	private boolean configSimplifiedReception;
 	private boolean configTitleScreen;
-	private boolean configChatNotify;
+	private boolean configNotifyOtherPlayers;
+	private boolean configActionBarNotify;
 	private String langCommandReward;
 	private String langAchievementReceived;
 	private String langItemRewardReceived;
@@ -61,15 +62,19 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		if (configTitleScreen && version < 8) {
 			configTitleScreen = false;
 		}
-		configChatNotify = plugin.getPluginConfig().getBoolean("ChatNotify", false);
+		configNotifyOtherPlayers = plugin.getPluginConfig().getBoolean("NotifyOtherPlayers", false);
+		configActionBarNotify = plugin.getPluginConfig().getBoolean("ActionBarNotify", false);
+		// Action bars introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
+		if (configActionBarNotify && version < 8) {
+			configActionBarNotify = false;
+		}
 		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
 		// a player is notified in case of a command reward.
 		configRewardCommandNotif = plugin.getPluginConfig().getBoolean("RewardCommandNotif", true);
 
 		langCommandReward = plugin.getPluginLang().getString("command-reward", "Reward command carried out!");
-		langAchievementReceived = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("achievement-received", "PLAYER received the achievement:") + " "
-				+ ChatColor.WHITE;
+		langAchievementReceived = plugin.getPluginLang().getString("achievement-received",
+				"PLAYER received the achievement:") + " " + ChatColor.WHITE;
 		langItemRewardReceived = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " ";
 		langMoneyRewardReceived = plugin.getChatHeader()
@@ -178,12 +183,11 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 		// Notify other online players that the player has received an achievement.
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
-			// Notify other players only if chatNotify is enabled and player has not used /aach toggle, or if
+			// Notify other players only if NotifyOtherPlayers is enabled and player has not used /aach toggle, or if
 			// chatNotify is disabled and player has used /aach toggle.
-			if ((configChatNotify ^ plugin.getToggleCommand().isPlayerToggled(p))
+			if ((configNotifyOtherPlayers ^ plugin.getToggleCommand().isPlayerToggled(p))
 					&& !p.getName().equals(player.getName())) {
-				p.sendMessage(
-						StringUtils.replaceOnce(langAchievementReceived, "PLAYER", player.getName()) + nameToShowUser);
+				displayNotification(player, nameToShowUser, p);
 			}
 		}
 		String msg = ChatColor.translateAlternateColorCodes('&', description);
@@ -197,6 +201,29 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 		if (configTitleScreen) {
 			displayTitle(player, nameToShowUser, msg);
+		}
+	}
+
+	/**
+	 * Displays an action bar message or chat notification to another player.
+	 * 
+	 * @param achievementReceiver
+	 * @param configAchievement
+	 */
+	private void displayNotification(Player achievementReceiver, String nameToShowUser, Player otherPlayer) {
+		if (configActionBarNotify) {
+			String actionBarJsonMessage = "{\"text\":\"&o"
+					+ StringUtils.replaceOnce(langAchievementReceived, "PLAYER", achievementReceiver.getName())
+					+ nameToShowUser + "\"}";
+			try {
+				PacketSender.sendActionBarPacket(otherPlayer, actionBarJsonMessage);
+			} catch (Exception e) {
+				plugin.getLogger().warning("Errors while trying to display action bar message for notifications.");
+			}
+		} else {
+			otherPlayer.sendMessage(plugin.getChatHeader()
+					+ StringUtils.replaceOnce(langAchievementReceived, "PLAYER", achievementReceiver.getName())
+					+ nameToShowUser);
 		}
 	}
 

@@ -54,7 +54,11 @@ Color: 5
 
 # Notify other connected players when an achievement is received.
 # Default behaviour, a player can override what he sees by using /aach toggle.
-ChatNotify: false
+NotifyOtherPlayers: false
+
+# When NotifyOtherPlayers is enabled, notifications are done using action bars when ActionBarNotify is true.
+# When ActionBarNotify is false, chat messages are used.
+ActionBarNotify: true
 
 # Separator between name, description and date on a book page.
 BookSeparator: ""

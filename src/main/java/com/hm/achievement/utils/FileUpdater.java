@@ -162,9 +162,11 @@ public class FileUpdater {
 
 		// Added in version 4.2:
 		if (!configFile.getKeys(false).contains("RestrictSpectator")) {
-			configFile.set("RestrictSpectator", true, new String[] {
-					"Stop all stats from increasing when player in spectator mode, including PlayedTime.",
-					"Connection achievements will only be handled once a player switches to a non-spectator mode." });
+			configFile.set("RestrictSpectator", true,
+					new String[] {
+							"Stop all stats from increasing when player in spectator mode, including PlayedTime.",
+							"Connection achievements will only be handled once a player switches to a non-spectator mode.",
+							"No effect if using Minecraft 1.7.9 or 1.7.10." });
 			updateDone = true;
 		}
 
@@ -174,6 +176,22 @@ public class FileUpdater {
 					new String[] {
 							"Set to true to activate simpler effects and a calm sound when a player receives an achievement.",
 							"Ignored if Firework parameter is set to true." });
+			updateDone = true;
+		}
+
+		// Added in version 5.1:
+		if (!configFile.getKeys(false).contains("NotifyOtherPlayers")) {
+			configFile.set("NotifyOtherPlayers", false,
+					new String[] { "Notify other connected players when an achievement is received.",
+							"Default behaviour, a player can override what he sees by using /aach toggle." });
+			updateDone = true;
+		}
+
+		if (!configFile.getKeys(false).contains("ActionBarNotify")) {
+			configFile.set("ActionBarNotify", true,
+					new String[] {
+							"When NotifyOtherPlayers is enabled, notifications are done using action bars when ActionBarNotify is true.",
+							"When ActionBarNotify is false, chat messages are used." });
 			updateDone = true;
 		}
 
