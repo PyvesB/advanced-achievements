@@ -31,7 +31,7 @@ permissions:
     description: Allows to display achievement stats.
     default: true
   achievement.toggle:
-    description: Allows to override the default behaviour of the ChatNotify parameter on a per player basis.
+    description: Allows to override the default behaviour of the NotifyOtherPlayers parameter on a per player basis.
     default: true
   achievement.easteregg:
     description: Allows to display the plugin's easter egg.

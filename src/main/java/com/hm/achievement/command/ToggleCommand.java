@@ -10,7 +10,7 @@ import com.hm.achievement.AdvancedAchievements;
 
 /**
  * Class in charge of handling the /aach toggle command, which allows a player to override the default behaviour of the
- * ChatNotify parameter.
+ * NotifyOtherPlayers parameter.
  * 
  * @author Pyves
  */
@@ -19,7 +19,7 @@ public class ToggleCommand extends AbstractCommand {
 	// Indicates whether a player has used toggle since last server restart.
 	private final Set<String> toggledPlayers;
 
-	private boolean configChatNotify;
+	private boolean configNotifyOtherPlayers;
 	private String langToggleDisplayed;
 	private String langToggleHidden;
 
@@ -33,7 +33,7 @@ public class ToggleCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configChatNotify = plugin.getPluginConfig().getBoolean("ChatNotify", false);
+		configNotifyOtherPlayers = plugin.getPluginConfig().getBoolean("NotifyOtherPlayers", false);
 
 		langToggleDisplayed = plugin.getChatHeader() + plugin.getPluginLang().getString("toggle-displayed",
 				"You will now be notified when other players get achievements.");
@@ -60,10 +60,10 @@ public class ToggleCommand extends AbstractCommand {
 		String uuid = player.getUniqueId().toString();
 		if (toggledPlayers.contains(uuid)) {
 			toggledPlayers.remove(uuid);
-			displayChatMessage(player, configChatNotify);
+			displayChatMessage(player, configNotifyOtherPlayers);
 		} else {
 			toggledPlayers.add(uuid);
-			displayChatMessage(player, !configChatNotify);
+			displayChatMessage(player, !configNotifyOtherPlayers);
 		}
 	}
 
