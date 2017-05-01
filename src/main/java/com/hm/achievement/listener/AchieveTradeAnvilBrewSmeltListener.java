@@ -1,6 +1,7 @@
 package com.hm.achievement.listener;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,6 +25,16 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListe
 
 	public AchieveTradeAnvilBrewSmeltListener(AdvancedAchievements plugin) {
 		super(plugin);
+	}
+
+	@Override
+	public void cleanPlayerData(UUID uuid) {
+		String uuidString = uuid.toString();
+		// The cooldown for this class only handles Brewing achievements, but each slot in the brewing stand must be
+		// handled independently, hence the prefix in the cooldown map.
+		cooldownMap.remove("0" + uuidString);
+		cooldownMap.remove("1" + uuidString);
+		cooldownMap.remove("2" + uuidString);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -83,18 +94,5 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListe
 		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, eventAmount);
-	}
-
-	/**
-	 * Removes a given player UUID from the cooldown map. The cooldown for this class only handles Brewing achievements,
-	 * but each slot in the brewing stand must be handled independently, hence the prefix in the cooldown map.
-	 * 
-	 * @param playerUUID
-	 */
-	@Override
-	public void removePlayerFromCooldownMap(String playerUUID) {
-		super.removePlayerFromCooldownMap("0" + playerUUID);
-		super.removePlayerFromCooldownMap("1" + playerUUID);
-		super.removePlayerFromCooldownMap("2" + playerUUID);
 	}
 }

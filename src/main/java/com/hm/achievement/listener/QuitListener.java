@@ -1,5 +1,7 @@
 package com.hm.achievement.listener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -8,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.utils.Cleanable;
 
 /**
  * Listener class to deal with Distance and PlayedTime achievements.
@@ -17,15 +20,18 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public class QuitListener extends AbstractListener {
 
+	private final List<Cleanable> cleanableObservers;
+
 	public QuitListener(AdvancedAchievements plugin) {
 		super(plugin);
+
+		cleanableObservers = new ArrayList<>();
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerQuit(final PlayerQuitEvent event) {
 
 		final UUID uuid = event.getPlayer().getUniqueId();
-		final String uuidString = uuid.toString();
 
 		// Delay cleaning up to avoid invalidating data immediately: players frequently disconnect and reconnect just
 		// after. This also avoids players taking advantage of the reset of cooldowns.
@@ -39,40 +45,15 @@ public class QuitListener extends AbstractListener {
 							return;
 						}
 
-						// Prepare the removal of cached statistics from the different category caches.
-						plugin.getCacheManager().signalPlayerDisconnectionToCachedStatistics(uuid);
-
-						// Clean cooldown HashMap for book command.
-						plugin.getAchievementBookCommand().getPlayersBookTime().remove(uuidString);
-
-						// Clear achievements caches.
-						plugin.getCacheManager().getReceivedAchievementsCache().removeAll(uuidString);
-						plugin.getCacheManager().getNotReceivedAchievementsCache().removeAll(uuidString);
-						plugin.getCacheManager().getTotalPlayerAchievementsCache().remove(uuidString);
-
-						if (plugin.getDistanceRunnable() != null) {
-							plugin.getDistanceRunnable().getPlayerLocations().remove(uuidString);
-						}
-
-						// Remove player from HashSet for Connection achievements.
-						if (plugin.getConnectionListener() != null) {
-							plugin.getConnectionListener().getPlayersAchieveConnectionRan().remove(uuidString);
-						}
-
-						// Remove player from cooldown structures.
-						if (plugin.getBedListener() != null) {
-							plugin.getBedListener().removePlayerFromCooldownMap(uuidString);
-						}
-						if (plugin.getTradeAnvilBrewSmeltListener() != null) {
-							plugin.getTradeAnvilBrewSmeltListener().removePlayerFromCooldownMap(uuidString);
-						}
-						if (plugin.getMilkLavaWaterListener() != null) {
-							plugin.getMilkLavaWaterListener().removePlayerFromCooldownMap(uuidString);
-						}
-						if (plugin.getHoeFertiliseFireworkMusicListener() != null) {
-							plugin.getHoeFertiliseFireworkMusicListener().removePlayerFromCooldownMap(uuidString);
+						for (Cleanable cleanable : cleanableObservers) {
+							// Clean all observers.
+							cleanable.cleanPlayerData(uuid);
 						}
 					}
 				}, 200);
+	}
+
+	public void registerCleanable(Cleanable cleanable) {
+		cleanableObservers.add(cleanable);
 	}
 }

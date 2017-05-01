@@ -27,7 +27,6 @@ public class AsyncCachedRequestsSender implements Runnable {
 	private final AdvancedAchievements plugin;
 
 	public AsyncCachedRequestsSender(AdvancedAchievements plugin) {
-		plugin.getCacheManager().databaseCachesInit();
 		this.plugin = plugin;
 	}
 

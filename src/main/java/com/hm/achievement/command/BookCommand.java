@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.utils.Cleanable;
 import com.hm.mcshared.particle.ParticleEffect;
 
 /**
@@ -27,7 +28,7 @@ import com.hm.mcshared.particle.ParticleEffect;
  * 
  * @author Pyves
  */
-public class BookCommand extends AbstractCommand {
+public class BookCommand extends AbstractCommand implements Cleanable {
 
 	// Corresponds to times at which players have received their books. Cooldown structure.
 	private final HashMap<String, Long> playersBookTime;
@@ -72,6 +73,11 @@ public class BookCommand extends AbstractCommand {
 
 		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
 		dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, new Locale(localeString));
+	}
+
+	@Override
+	public void cleanPlayerData(UUID uuid) {
+		playersBookTime.remove(uuid.toString());
 	}
 
 	@Override
@@ -178,9 +184,5 @@ public class BookCommand extends AbstractCommand {
 			return false;
 		}
 		return true;
-	}
-
-	public Map<String, Long> getPlayersBookTime() {
-		return playersBookTime;
 	}
 }

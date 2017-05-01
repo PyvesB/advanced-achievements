@@ -2,6 +2,7 @@ package com.hm.achievement.runnable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,6 +16,7 @@ import org.bukkit.util.NumberConversions;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.utils.Cleanable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 
 /**
@@ -23,9 +25,9 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAch
  * @author Pyves
  *
  */
-public class AchieveDistanceRunnable extends AbstractRunnable implements Runnable {
+public class AchieveDistanceRunnable extends AbstractRunnable implements Cleanable, Runnable {
 
-	private final HashMap<String, Location> playerLocations;
+	private final Map<String, Location> playerLocations;
 
 	private boolean configIgnoreVerticalDistance;
 
@@ -40,6 +42,11 @@ public class AchieveDistanceRunnable extends AbstractRunnable implements Runnabl
 		super.extractConfigurationParameters();
 
 		configIgnoreVerticalDistance = plugin.getPluginConfig().getBoolean("IgnoreVerticalDistance", false);
+	}
+
+	@Override
+	public void cleanPlayerData(UUID uuid) {
+		playerLocations.remove(uuid.toString());
 	}
 
 	@Override

@@ -2,11 +2,13 @@ package com.hm.achievement.listener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.utils.Cleanable;
 import com.hm.mcshared.particle.PacketSender;
 
 /**
@@ -14,9 +16,9 @@ import com.hm.mcshared.particle.PacketSender;
  * 
  * @author Pyves
  */
-public class AbstractRateLimitedListener extends AbstractListener {
+public class AbstractRateLimitedListener extends AbstractListener implements Cleanable {
 
-	private final Map<String, Long> cooldownMap;
+	protected final Map<String, Long> cooldownMap;
 
 	private int configStatisticCooldown;
 	private boolean configCooldownActionBar;
@@ -41,6 +43,11 @@ public class AbstractRateLimitedListener extends AbstractListener {
 
 		langStatisticCooldown = plugin.getPluginLang().getString("statistic-cooldown",
 				"Achievements cooldown, wait TIME seconds before this action counts again.");
+	}
+
+	@Override
+	public void cleanPlayerData(UUID uuid) {
+		cooldownMap.remove(uuid.toString());
 	}
 
 	/**
@@ -82,14 +89,5 @@ public class AbstractRateLimitedListener extends AbstractListener {
 		}
 		cooldownMap.put(prefixInMap + uuid, System.currentTimeMillis());
 		return false;
-	}
-
-	/**
-	 * Removes a given player UUID from the cooldown map.
-	 * 
-	 * @param playerUUID
-	 */
-	protected void removePlayerFromCooldownMap(String playerUUID) {
-		cooldownMap.remove(playerUUID);
 	}
 }

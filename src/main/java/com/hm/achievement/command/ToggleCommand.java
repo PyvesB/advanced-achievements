@@ -16,6 +16,7 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public class ToggleCommand extends AbstractCommand {
 
+	// Indicates whether a player has used toggle since last server restart.
 	private final Set<String> toggledPlayers;
 
 	private boolean configChatNotify;

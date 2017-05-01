@@ -77,6 +77,7 @@ import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.achievement.utils.AchievementCountBungeeTabListPlusVariable;
+import com.hm.achievement.utils.Cleanable;
 import com.hm.achievement.utils.FileUpdater;
 import com.hm.achievement.utils.Reloadable;
 import com.hm.achievement.utils.RewardParser;
@@ -222,6 +223,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 		launchScheduledTasks();
 		loadAndRegisterReloadables();
+		registerCleanables();
 
 		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
 			BungeeTabListPlusBukkitAPI.registerVariable(this, new AchievementCountBungeeTabListPlusVariable(this));
@@ -650,6 +652,23 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	}
 
 	/**
+	 * Registers all the Cleanable fields as observers of the QuitListener.
+	 */
+	private void registerCleanables() {
+		this.extractConfigurationParameters();
+		try {
+			for (Field field : AdvancedAchievements.class.getDeclaredFields()) {
+				Object fieldObject = field.get(this);
+				if (fieldObject instanceof Cleanable) {
+					quitListener.registerCleanable((Cleanable) fieldObject);
+				}
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			this.getLogger().severe("Unexpected error while registering Cleanables.");
+		}
+	}
+
+	/**
 	 * Launches an update check task.
 	 * 
 	 * @param pm
@@ -863,10 +882,6 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		this.successfulLoad = successfulLoad;
 	}
 
-	public BookCommand getAchievementBookCommand() {
-		return bookCommand;
-	}
-
 	public ListCommand getAchievementListCommand() {
 		return listCommand;
 	}
@@ -879,28 +894,8 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		return distanceRunnable;
 	}
 
-	public AchievePlayTimeRunnable getPlayTimeRunnable() {
-		return playTimeRunnable;
-	}
-
 	public AchieveConnectionListener getConnectionListener() {
 		return connectionListener;
-	}
-
-	public AchieveMilkLavaWaterListener getMilkLavaWaterListener() {
-		return milkLavaWaterListener;
-	}
-
-	public AchieveTradeAnvilBrewSmeltListener getTradeAnvilBrewSmeltListener() {
-		return tradeAnvilBrewSmeltListener;
-	}
-
-	public AchieveBedListener getBedListener() {
-		return bedListener;
-	}
-
-	public AchieveHoeFertiliseFireworkMusicListener getHoeFertiliseFireworkMusicListener() {
-		return hoeFertiliseFireworkMusicListener;
 	}
 
 	public AchievePetMasterGiveReceiveListener getPetMasterGiveReceiveListener() {

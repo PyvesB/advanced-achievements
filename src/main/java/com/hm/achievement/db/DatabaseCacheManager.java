@@ -11,6 +11,7 @@ import com.google.common.collect.HashMultimap;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.utils.Cleanable;
 
 /**
  * Class used to provide a cache wrapper for various database statistics, in order to reduce load of database and enable
@@ -19,7 +20,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class DatabaseCacheManager {
+public class DatabaseCacheManager implements Cleanable {
 
 	private final AdvancedAchievements plugin;
 	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
@@ -27,21 +28,16 @@ public class DatabaseCacheManager {
 	// Statistics of the different players for multiple achievements; keys in the inner maps correspond to concatenated
 	// UUIDs and block/entity/command identifiers.
 	private final Map<MultipleAchievements, Map<String, CachedStatistic>> multipleAchievementsToPlayerStatistics;
-
 	// Multimaps corresponding to the different achievements received by the players.
-	private HashMultimap<String, String> receivedAchievementsCache;
-	private HashMultimap<String, String> notReceivedAchievementsCache;
-
+	private final HashMultimap<String, String> receivedAchievementsCache;
+	private final HashMultimap<String, String> notReceivedAchievementsCache;
 	// Map corresponding to the total amount of achievements received by each player.
-	private Map<String, Integer> totalPlayerAchievementsCache;
+	private final Map<String, Integer> totalPlayerAchievementsCache;
 
 	public DatabaseCacheManager(AdvancedAchievements plugin) {
 		this.plugin = plugin;
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
-	}
-
-	public void databaseCachesInit() {
 		receivedAchievementsCache = HashMultimap.create();
 		notReceivedAchievementsCache = HashMultimap.create();
 
@@ -57,24 +53,27 @@ public class DatabaseCacheManager {
 		totalPlayerAchievementsCache = new ConcurrentHashMap<>();
 	}
 
-	/**
-	 * Indicates to the relevant cached statistics that the player has disconnected.
-	 * 
-	 * @param player
-	 */
-	public void signalPlayerDisconnectionToCachedStatistics(UUID player) {
+	@Override
+	public void cleanPlayerData(UUID uuid) {
+		// Clear achievements caches.
+		String uuidString = uuid.toString();
+		receivedAchievementsCache.removeAll(uuidString);
+		notReceivedAchievementsCache.removeAll(uuidString);
+		totalPlayerAchievementsCache.remove(uuidString);
+
+		// Indicate to the relevant cached statistics that the player has disconnected.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Map<String, CachedStatistic> categoryMap = getHashMap(category);
 			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(category.toString())
 					.getKeys(false)) {
-				CachedStatistic statistic = categoryMap.get(getMultipleCategoryCacheKey(category, player, subcategory));
+				CachedStatistic statistic = categoryMap.get(getMultipleCategoryCacheKey(category, uuid, subcategory));
 				if (statistic != null) {
 					statistic.signalPlayerDisconnection();
 				}
 			}
 		}
 		for (NormalAchievements category : NormalAchievements.values()) {
-			CachedStatistic statistic = getHashMap(category).get(player.toString());
+			CachedStatistic statistic = getHashMap(category).get(uuid.toString());
 			if (statistic != null) {
 				statistic.signalPlayerDisconnection();
 			}

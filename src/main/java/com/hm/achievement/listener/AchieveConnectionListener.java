@@ -2,6 +2,7 @@ package com.hm.achievement.listener;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.runnable.AchieveConnectionRunnable;
+import com.hm.achievement.utils.Cleanable;
 
 /**
  * Listener class to deal with Connections achievements, as well as update checker.
@@ -21,7 +23,7 @@ import com.hm.achievement.runnable.AchieveConnectionRunnable;
  * @author Pyves
  *
  */
-public class AchieveConnectionListener extends AbstractListener {
+public class AchieveConnectionListener extends AbstractListener implements Cleanable {
 
 	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
 	private final Set<String> playersAchieveConnectionRan;
@@ -30,6 +32,11 @@ public class AchieveConnectionListener extends AbstractListener {
 		super(plugin);
 
 		playersAchieveConnectionRan = new HashSet<>();
+	}
+
+	@Override
+	public void cleanPlayerData(UUID uuid) {
+		playersAchieveConnectionRan.remove(uuid.toString());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
