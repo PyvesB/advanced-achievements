@@ -1,5 +1,7 @@
 package com.hm.achievement.listener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -14,8 +16,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.runnable.AchieveConnectionRunnable;
 import com.hm.achievement.utils.Cleanable;
+import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 
 /**
  * Listener class to deal with Connections achievements, as well as update checker.
@@ -24,6 +26,8 @@ import com.hm.achievement.utils.Cleanable;
  *
  */
 public class AchieveConnectionListener extends AbstractListener implements Cleanable {
+
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
 	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
 	private final Set<String> playersAchieveConnectionRan;
@@ -41,7 +45,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		scheduleTaskIfAllowed(event.getPlayer());
+		scheduleTask(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -50,7 +54,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 			return;
 		}
 
-		scheduleTaskIfAllowed(event.getPlayer());
+		scheduleTask(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -59,7 +63,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 			return;
 		}
 
-		scheduleTaskIfAllowed(event.getPlayer());
+		scheduleTask(event.getPlayer());
 	}
 
 	/**
@@ -68,18 +72,54 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	 * 
 	 * @param player
 	 */
-	private void scheduleTaskIfAllowed(Player player) {
-		if (shouldEventBeTakenIntoAccountNoPermission(player)
-				&& !plugin.getDisabledCategorySet().contains(NormalAchievements.CONNECTIONS.toString())) {
-			// Schedule delayed task to check if player should receive a Connections achievement. This is done to avoid
-			// immediately awarding the achievement.
-			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-					Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()),
-					new AchieveConnectionRunnable(player, plugin), 100);
-		}
-	}
+	private void scheduleTask(final Player player) {
+		// Schedule delayed task to check if player should receive a Connections achievement. This is done to avoid
+		// immediately awarding the achievement.
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
+				Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()), new Runnable() {
 
-	public Set<String> getPlayersAchieveConnectionRan() {
-		return playersAchieveConnectionRan;
+					@Override
+					public void run() {
+						// Check if player has disconnected by the time this runnable was scheduled and other
+						// achievement conditions.
+						if (!player.isOnline()
+								|| !shouldEventBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
+							return;
+						}
+
+						// Check whether another runnable has already done the work (even though this method is intended
+						// to run once per player per connection instance, it might happen with some server settings).
+						if (playersAchieveConnectionRan.contains(player.getUniqueId().toString())) {
+							return;
+						}
+
+						String dateString = DATE_FORMAT.format(new Date());
+						if (!dateString
+								.equals(plugin.getDatabaseManager().getPlayerConnectionDate(player.getUniqueId()))) {
+							int connections = plugin.getDatabaseManager().updateAndGetConnection(player.getUniqueId(),
+									dateString);
+							String configAchievement = NormalAchievements.CONNECTIONS + "." + connections;
+							if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
+								// Fire achievement event.
+								PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
+										.player(player)
+										.name(plugin.getPluginConfig().getString(configAchievement + ".Name"))
+										.displayName(
+												plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
+										.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
+										.commandRewards(
+												plugin.getRewardParser().getCommandRewards(configAchievement, player))
+										.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
+										.moneyReward(plugin.getRewardParser().getMoneyAmount(configAchievement));
+
+								Bukkit.getServer().getPluginManager()
+										.callEvent(playerAdvancedAchievementEventBuilder.build());
+							}
+						}
+
+						// Ran successfully to completion: no need to re-run while player is connected.
+						playersAchieveConnectionRan.add(player.getUniqueId().toString());
+					}
+				}, 100);
 	}
 }

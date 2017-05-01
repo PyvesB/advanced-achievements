@@ -893,10 +893,6 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		return distanceRunnable;
 	}
 
-	public AchieveConnectionListener getConnectionListener() {
-		return connectionListener;
-	}
-
 	public AchievePetMasterGiveReceiveListener getPetMasterGiveReceiveListener() {
 		return petMasterGiveReceiveListener;
 	}
