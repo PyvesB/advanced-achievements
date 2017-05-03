@@ -66,7 +66,7 @@ aach-command-top-hover: "Who are the server's leaders and how do you compare to 
 aach-command-give: "Give achievement ACH to NAME."
 aach-command-give-hover: "Player must be online; only Commands achievements can be used."
 aach-command-reload: "Reload the plugin's configuration."
-aach-command-reload-hover: "Reload most settings in config.yml and lang.yml files."
+aach-command-reload-hover: "Reload most settings in config.yml, gui.yml and lang.yml files."
 aach-command-info: "Display information about the plugin."
 aach-command-info-hover: "Some extra info about the plugin and its awesome author!"
 aach-command-check: "Check if NAME has ACH."

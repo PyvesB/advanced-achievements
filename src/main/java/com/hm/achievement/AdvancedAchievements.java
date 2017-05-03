@@ -776,6 +776,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 			if (!achievementsAndDisplayNames.containsKey(achName)) {
 				achievementsAndDisplayNames.put(achName, displayName);
+			} else {
+				this.getLogger()
+						.warning("Duplicate achievement Name (" + achName + "), this may lead to undefined behaviour.");
 			}
 		}
 
@@ -788,6 +791,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 				if (!achievementsAndDisplayNames.containsKey(achName)) {
 					achievementsAndDisplayNames.put(achName, displayName);
+				} else {
+					this.getLogger().warning(
+							"Duplicate achievement Name (" + achName + "), this may lead to undefined behaviour.");
 				}
 			}
 		}
@@ -803,6 +809,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 					if (!achievementsAndDisplayNames.containsKey(achName)) {
 						achievementsAndDisplayNames.put(achName, displayName);
+					} else {
+						this.getLogger().warning(
+								"Duplicate achievement Name (" + achName + "), this may lead to undefined behaviour.");
 					}
 				}
 			}
