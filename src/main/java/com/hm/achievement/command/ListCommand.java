@@ -787,7 +787,7 @@ public class ListCommand extends AbstractCommand {
 				// Iterate a number of times equal to the number of iterations so far to have the same number of
 				// vertical bars left and right from the middle text.
 				i = textSize / 2 + 1 - i;
-			} else if (i < ((textSize / 2 - 1) * statisticDouble) / levelInt) {
+			} else if (i < (((double) textSize / 2 - 1) * statisticDouble) / levelInt) {
 				// Color: progress by user.
 				barDisplay.append(configColor).append('|');
 				i++;

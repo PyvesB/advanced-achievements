@@ -261,17 +261,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			FireworkMeta fireworkMeta = firework.getFireworkMeta();
 			Builder effectBuilder = FireworkEffect.builder().flicker(false).trail(false)
 					.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).withFade(Color.PURPLE);
-			if ("RANDOM".equalsIgnoreCase(configFireworkStyle)) {
-				effectBuilder.with(getRandomFireworkType());
-			} else {
-				try {
-					effectBuilder.with(Type.valueOf(configFireworkStyle.toUpperCase()));
-				} catch (Exception e) {
-					effectBuilder.with(Type.BALL_LARGE);
-					plugin.getLogger().warning(
-							"Error while loading FireworkStyle. Please use one of the following: BALL_LARGE, BALL, BURST, CREEPER or STAR.");
-				}
-			}
+			setFireworkType(effectBuilder);
 			fireworkMeta.addEffects(effectBuilder.build());
 			firework.setVelocity(player.getLocation().getDirection().multiply(0));
 			firework.setFireworkMeta(fireworkMeta);
@@ -289,14 +279,25 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	}
 
 	/**
-	 * Returns a random firework type.
+	 * Sets the type of the firwrok, which can either be predefined or random.
 	 * 
-	 * @return
+	 * @param effectBuilder
 	 */
-	private Type getRandomFireworkType() {
-		Type[] fireworkTypes = Type.values();
-		return fireworkTypes[RANDOM.nextInt(fireworkTypes.length)];
+	private void setFireworkType(Builder effectBuilder) {
+		if ("RANDOM".equalsIgnoreCase(configFireworkStyle)) {
+			Type[] fireworkTypes = Type.values();
+			effectBuilder.with(fireworkTypes[RANDOM.nextInt(fireworkTypes.length)]);
+		} else {
+			try {
+				effectBuilder.with(Type.valueOf(configFireworkStyle.toUpperCase()));
+			} catch (Exception e) {
+				effectBuilder.with(Type.BALL_LARGE);
+				plugin.getLogger().warning(
+						"Error while loading FireworkStyle. Please use one of the following: BALL_LARGE, BALL, BURST, CREEPER or STAR.");
+			}
+		}
 	}
+
 
 	/**
 	 * Displays a simplified particle effect and calm sound when receiving an achievement. Is used instead of
