@@ -87,10 +87,14 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	public void onPlayerAdvancedAchievementReception(PlayerAdvancedAchievementEvent event) {
 		Player player = event.getPlayer();
 		String uuid = player.getUniqueId().toString();
-		plugin.getCacheManager().getReceivedAchievementsCache().put(uuid, event.getName());
-		plugin.getCacheManager().getNotReceivedAchievementsCache().remove(uuid, event.getName());
-		plugin.getCacheManager().getTotalPlayerAchievementsCache().put(uuid,
-				plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId()) + 1);
+		// Check before updating caches; achievement could have already been received if MultiCommand is set to true in
+		// the configuration.
+		if (!plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), event.getName())) {
+			plugin.getCacheManager().getReceivedAchievementsCache().put(uuid, event.getName());
+			plugin.getCacheManager().getNotReceivedAchievementsCache().remove(uuid, event.getName());
+			plugin.getCacheManager().getTotalPlayerAchievementsCache().put(uuid,
+					plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId()) + 1);
+		}
 		plugin.getDatabaseManager().registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage());
@@ -297,7 +301,6 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			}
 		}
 	}
-
 
 	/**
 	 * Displays a simplified particle effect and calm sound when receiving an achievement. Is used instead of
