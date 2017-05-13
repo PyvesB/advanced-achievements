@@ -195,6 +195,14 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 5.1.1:
+		if (!configFile.getKeys(false).contains("RestrictAdventure")) {
+			configFile.set("RestrictAdventure", false, new String[] {
+					"Stop all stats from increasing when player in adventure mode, including PlayedTime.",
+					"Connection achievements will only be handled once a player switches to a non-adventure mode." });
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {

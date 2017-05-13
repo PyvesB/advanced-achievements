@@ -22,6 +22,7 @@ public class AbstractRunnable implements Reloadable {
 
 	private boolean configRestrictCreative;
 	private boolean configRestrictSpectator;
+	private boolean configRestrictAdventure;
 	private Set<String> configExcludedWorlds;
 
 	public AbstractRunnable(AdvancedAchievements plugin) {
@@ -35,6 +36,7 @@ public class AbstractRunnable implements Reloadable {
 	public void extractConfigurationParameters() {
 		configRestrictCreative = plugin.getPluginConfig().getBoolean("RestrictCreative", false);
 		configRestrictSpectator = plugin.getPluginConfig().getBoolean("RestrictSpectator", true);
+		configRestrictAdventure = plugin.getPluginConfig().getBoolean("RestrictAdventure", false);
 		// Spectator mode introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configRestrictSpectator && version < 8) {
 			configRestrictSpectator = false;
@@ -53,9 +55,10 @@ public class AbstractRunnable implements Reloadable {
 		boolean isNPC = player.hasMetadata("NPC");
 		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
 		boolean restrictedSpectator = configRestrictSpectator && player.getGameMode() == GameMode.SPECTATOR;
+		boolean restrictedAdventure = configRestrictAdventure && player.getGameMode() == GameMode.ADVENTURE;
 		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
 
-		return !isNPC && !restrictedCreative && !restrictedSpectator && !excludedWorld;
+		return !isNPC && !restrictedCreative && !restrictedSpectator && !restrictedAdventure && !excludedWorld;
 	}
 
 }

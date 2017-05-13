@@ -74,7 +74,7 @@ public class AchieveDistanceRunnable extends AbstractRunnable implements Cleanab
 			return;
 		}
 
-		// If player is in restricted creative mode or is in a blocked world, don't update distances.
+		// If player is in restricted game mode or is in a blocked world, don't update distances.
 		if (!shouldRunBeTakenIntoAccount(player)) {
 			return;
 		}

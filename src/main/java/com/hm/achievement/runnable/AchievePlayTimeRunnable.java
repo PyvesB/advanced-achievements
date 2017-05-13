@@ -38,7 +38,7 @@ public class AchievePlayTimeRunnable extends AbstractRunnable implements Runnabl
 	 * @param player
 	 */
 	private void registerTimes(Player player) {
-		// If player is in restricted creative mode or is in a blocked world, don't update played time.
+		// If player is in restricted game mode or is in a blocked world, don't update played time.
 		if (!shouldRunBeTakenIntoAccount(player)) {
 			return;
 		}

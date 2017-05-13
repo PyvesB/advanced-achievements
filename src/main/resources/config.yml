@@ -75,6 +75,10 @@ RestrictCreative: false
 # No effect if using Minecraft 1.7.9 or 1.7.10.
 RestrictSpectator: true
 
+# Stop all stats from increasing when player in adventure mode, including PlayedTime.
+# Connection achievements will only be handled once a player switches to a non-adventure mode.
+RestrictAdventure: false
+
 # Stop all stats from increasing when player in a specific world, including PlayedTime (delete the [] before adding values).
 # Connection achievements will only be handled once a player enters a non-excluded world.
 ExcludedWorlds: []

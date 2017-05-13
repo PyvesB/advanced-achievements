@@ -28,6 +28,7 @@ public abstract class AbstractListener implements Listener, Reloadable {
 
 	private boolean configRestrictCreative;
 	private boolean configRestrictSpectator;
+	private boolean configRestrictAdventure;
 	private Set<String> configExcludedWorlds;
 
 	protected AbstractListener(AdvancedAchievements plugin) {
@@ -42,6 +43,7 @@ public abstract class AbstractListener implements Listener, Reloadable {
 	public void extractConfigurationParameters() {
 		configRestrictCreative = plugin.getPluginConfig().getBoolean("RestrictCreative", false);
 		configRestrictSpectator = plugin.getPluginConfig().getBoolean("RestrictSpectator", true);
+		configRestrictAdventure = plugin.getPluginConfig().getBoolean("RestrictAdventure", false);
 		// Spectator mode introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configRestrictSpectator && version < 8) {
 			configRestrictSpectator = false;
@@ -61,9 +63,11 @@ public abstract class AbstractListener implements Listener, Reloadable {
 		boolean permission = player.hasPermission(category.toPermName());
 		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
 		boolean restrictedSpectator = configRestrictSpectator && player.getGameMode() == GameMode.SPECTATOR;
+		boolean restrictedAdventure = configRestrictAdventure && player.getGameMode() == GameMode.ADVENTURE;
 		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
 
-		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !excludedWorld;
+		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !restrictedAdventure
+				&& !excludedWorld;
 	}
 
 	/**
@@ -77,9 +81,10 @@ public abstract class AbstractListener implements Listener, Reloadable {
 		boolean isNPC = player.hasMetadata("NPC");
 		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
 		boolean restrictedSpectator = configRestrictSpectator && player.getGameMode() == GameMode.SPECTATOR;
+		boolean restrictedAdventure = configRestrictAdventure && player.getGameMode() == GameMode.ADVENTURE;
 		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
 
-		return !isNPC && !restrictedCreative && !restrictedSpectator && !excludedWorld;
+		return !isNPC && !restrictedCreative && !restrictedSpectator && !restrictedAdventure && !excludedWorld;
 	}
 
 	/**

@@ -67,8 +67,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	}
 
 	/**
-	 * Schedules a delayed task to deal with Connection achievements if player is not in restricted creative or blocked
-	 * world.
+	 * Schedules a delayed task to deal with Connection achievements.
 	 * 
 	 * @param player
 	 */
