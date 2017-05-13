@@ -5,8 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionType;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -31,18 +29,8 @@ public class AchieveConsumeListener extends AbstractListener {
 		Material itemMaterial = event.getItem().getType();
 		if (itemMaterial == Material.POTION) {
 			// Don't count drinking water toward ConsumePotions; check the potion type.
-			if (version >= 9) {
-				PotionMeta meta = (PotionMeta) (event.getItem().getItemMeta());
-				PotionType potionType = meta.getBasePotionData().getType();
-
-				if (potionType == PotionType.WATER) {
-					return;
-				}
-			} else {
-				// Method getBasePotionData does not exist for versions prior to Minecraft 1.9.
-				if (event.getItem().getDurability() == 0) {
-					return;
-				}
+			if (isWaterPotion(event.getItem())) {
+				return;
 			}
 			category = NormalAchievements.CONSUMEDPOTIONS;
 		} else if (itemMaterial != Material.MILK_BUCKET) {

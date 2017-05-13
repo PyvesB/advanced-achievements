@@ -7,6 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionType;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
@@ -158,5 +161,28 @@ public abstract class AbstractListener implements Listener, Reloadable {
 
 			Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 		}
+	}
+
+	/**
+	 * Determines whether an item is a water potion.
+	 * 
+	 * @param item
+	 * @return
+	 */
+	protected boolean isWaterPotion(ItemStack item) {
+		if (version >= 9) {
+			PotionMeta meta = (PotionMeta) (item.getItemMeta());
+			PotionType potionType = meta.getBasePotionData().getType();
+
+			if (potionType == PotionType.WATER) {
+				return true;
+			}
+		} else {
+			// Method getBasePotionData does not exist for versions prior to Minecraft 1.9.
+			if (item.getDurability() == 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

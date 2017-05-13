@@ -51,8 +51,8 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListe
 			category = NormalAchievements.TRADES;
 		} else if (event.getRawSlot() == 2 && inventoryType == InventoryType.ANVIL) {
 			category = NormalAchievements.ANVILS;
-		} else if (inventoryType == InventoryType.BREWING && event.getCurrentItem().getDurability() > 0) {
-			// Durability > 0: not empty bottle nor water bottle.
+		} else if (inventoryType == InventoryType.BREWING && event.getCurrentItem().getType() == Material.POTION
+				&& !isWaterPotion(event.getCurrentItem())) {
 			category = NormalAchievements.BREWING;
 		} else if (event.getRawSlot() == 2 && inventoryType == InventoryType.FURNACE) {
 			category = NormalAchievements.SMELTING;
