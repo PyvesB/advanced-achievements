@@ -1,5 +1,7 @@
 package com.hm.achievement.command;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +23,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.utils.Cleanable;
 import com.hm.mcshared.particle.ParticleEffect;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Class in charge of handling the /aach book command, which creates and gives a book containing the player's
@@ -29,6 +32,14 @@ import com.hm.mcshared.particle.ParticleEffect;
  * @author Pyves
  */
 public class BookCommand extends AbstractCommand implements Cleanable {
+
+	// Strings related to Reflection.
+	private static final String PACKAGE_INVENTORY = "inventory";
+	private static final String PACKAGE_UTIL = "util";
+	private static final String CLASS_CRAFT_META_BOOK = "CraftMetaBook";
+	private static final String CLASS_CRAFT_CHAT_MESSAGE = "CraftChatMessage";
+	private static final String FIELD_PAGES = "pages";
+	private static final String METHOD_FROM_STRING = "fromString";
 
 	// Corresponds to times at which players have received their books. Cooldown structure.
 	private final HashMap<String, Long> playersBookTime;
@@ -126,8 +137,8 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	 */
 	private void fillBook(List<String> achievements, Player player) {
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-		List<String> pages = new ArrayList<>(achievements.size() / 3);
-		BookMeta bm = (BookMeta) book.getItemMeta();
+		List<String> bookPages = new ArrayList<>(achievements.size() / 3);
+		BookMeta bookMeta = (BookMeta) book.getItemMeta();
 
 		try {
 			// Elements in the array go by groups of 3: name, description and date.
@@ -135,7 +146,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 				String currentAchievement = "&0" + achievements.get(i) + configBookSeparator + achievements.get(i + 1)
 						+ configBookSeparator + achievements.get(i + 2);
 				currentAchievement = ChatColor.translateAlternateColorCodes('&', currentAchievement);
-				pages.add(currentAchievement);
+				bookPages.add(currentAchievement);
 			}
 		} catch (Exception e) {
 			// Catch runtime exception (for instance ArrayIndexOutOfBoundsException); this should not happen unless
@@ -143,18 +154,18 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 			plugin.getLogger().severe("Error while creating pages of book.");
 		}
 
-		if (pages.isEmpty()) {
+		if (bookPages.isEmpty()) {
 			player.sendMessage(langBookNotReceived);
 			return;
 		}
 
 		// Set the pages and other elements of the book (author, title and date of reception).
-		bm.setPages(pages);
-		bm.setAuthor(player.getName());
-		bm.setTitle(langBookName);
-		bm.setLore(Arrays.asList(StringUtils.replaceOnce(langBookDate, "DATE", dateFormat.format(new Date()))));
+		setBookPages(bookPages, bookMeta);
+		bookMeta.setAuthor(player.getName());
+		bookMeta.setTitle(langBookName);
+		bookMeta.setLore(Arrays.asList(StringUtils.replaceOnce(langBookDate, "DATE", dateFormat.format(new Date()))));
 
-		book.setItemMeta(bm);
+		book.setItemMeta(bookMeta);
 
 		// Check whether player has room in his inventory, else drop book on the ground.
 		if (player.getInventory().firstEmpty() != -1) {
@@ -184,5 +195,39 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Adds pages to the BookMeta. A Spigot commit in the late days of Minecraft 1.11.2 started enforcing extremely low
+	 * limits (why? If it's not broken, don't fix it.), with books limited in page size and total number of pages, as
+	 * well as title length. This function bypasses such limits and restores the original CraftBukkit behaviour. See
+	 * https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/4acd0f49e07e0912096e79494472535baf0db2ab
+	 * for more information.
+	 */
+	@SuppressWarnings("unchecked")
+	private void setBookPages(List<String> bookPages, BookMeta bookMeta) {
+		if (version >= 11) {
+			try {
+				// Code we're trying to execute: this.pages.add(CraftChatMessage.fromString(page, true)[0]); in
+				// CraftMetaBook.java.
+				Class<?> craftMetaBookClass = PackageType.CRAFTBUKKIT
+						.getClass(PACKAGE_INVENTORY + "." + CLASS_CRAFT_META_BOOK);
+				List<Object> pages = (List<Object>) craftMetaBookClass.getField(FIELD_PAGES)
+						.get(craftMetaBookClass.cast(bookMeta));
+				Method fromStringMethod = PackageType.CRAFTBUKKIT
+						.getClass(PACKAGE_UTIL + "." + CLASS_CRAFT_CHAT_MESSAGE)
+						.getMethod(METHOD_FROM_STRING, String.class, boolean.class);
+				for (String bookPage : bookPages) {
+					pages.add(((Object[]) fromStringMethod.invoke(null, bookPage, true))[0]);
+				}
+			} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | NoSuchFieldException
+					| IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+				plugin.getLogger().warning(
+						"Error while creating book pages. Your achievements book may be trimmed down to 50 pages.");
+				bookMeta.setPages(bookPages);
+			}
+		} else {
+			bookMeta.setPages(bookPages);
+		}
 	}
 }
