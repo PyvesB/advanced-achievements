@@ -7,7 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -29,8 +30,8 @@ public class DatabaseCacheManager implements Cleanable {
 	// UUIDs and block/entity/command identifiers.
 	private final Map<MultipleAchievements, Map<String, CachedStatistic>> multipleAchievementsToPlayerStatistics;
 	// Multimaps corresponding to the different achievements received by the players.
-	private final HashMultimap<String, String> receivedAchievementsCache;
-	private final HashMultimap<String, String> notReceivedAchievementsCache;
+	private final Multimap<String, String> receivedAchievementsCache;
+	private final Multimap<String, String> notReceivedAchievementsCache;
 	// Map corresponding to the total amount of achievements received by each player.
 	private final Map<String, Integer> totalPlayerAchievementsCache;
 
@@ -38,8 +39,8 @@ public class DatabaseCacheManager implements Cleanable {
 		this.plugin = plugin;
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
-		receivedAchievementsCache = HashMultimap.create();
-		notReceivedAchievementsCache = HashMultimap.create();
+		receivedAchievementsCache = MultimapBuilder.hashKeys().hashSetValues().build();
+		notReceivedAchievementsCache = MultimapBuilder.hashKeys().hashSetValues().build();
 
 		// ConcurrentHashMaps are necessary to guarantee thread safety.
 		for (NormalAchievements normalAchievement : NormalAchievements.values()) {
@@ -212,11 +213,11 @@ public class DatabaseCacheManager implements Cleanable {
 		return player.toString() + subcategory;
 	}
 
-	public HashMultimap<String, String> getReceivedAchievementsCache() {
+	public Multimap<String, String> getReceivedAchievementsCache() {
 		return receivedAchievementsCache;
 	}
 
-	public HashMultimap<String, String> getNotReceivedAchievementsCache() {
+	public Multimap<String, String> getNotReceivedAchievementsCache() {
 		return notReceivedAchievementsCache;
 	}
 
