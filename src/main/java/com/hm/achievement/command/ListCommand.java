@@ -186,9 +186,13 @@ public class ListCommand extends AbstractCommand {
 	private void constructItemStackLore(ItemStack categoryItem, String displayName, int totalAchievementsInCategory) {
 		ItemMeta categoryMeta = categoryItem.getItemMeta();
 		// Create item stack that will be displayed in the GUI, with its category name.
-		categoryMeta.setDisplayName(
-				ChatColor.translateAlternateColorCodes('&', StringUtils.replaceEach(configListAchievementFormat,
-						new String[] { "%ICON%", "%NAME%" }, new String[] { configIcon, "&l" + displayName + "&8" })));
+		if (StringUtils.isBlank(displayName)) {
+			categoryMeta.setDisplayName("");
+		} else {
+			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+					StringUtils.replaceEach(configListAchievementFormat, new String[] { "%ICON%", "%NAME%" },
+							new String[] { configIcon, "&l" + displayName + "&8" })));
+		}
 
 		String loreAmountMessage;
 		if (totalAchievementsInCategory > 1) {
