@@ -32,7 +32,9 @@ public class HelpCommand extends AbstractCommand {
 	private String langCommandToggleHover;
 	private String langCommandToggle;
 	private String langCommandReload;
-	private String langCommandReloadgover;
+	private String langCommandReloadHover;
+	private String langCommandGenerate;
+	private String langCommandGenerateHover;
 	private String langCommandGive;
 	private String langCommandGiveHover;
 	private String langCommandReset;
@@ -85,8 +87,12 @@ public class HelpCommand extends AbstractCommand {
 				"Your choice is saved until next server restart!");
 		langCommandReload = plugin.getChatHeader() + configColor + "/aach reload" + ChatColor.GRAY + " > "
 				+ plugin.getPluginLang().getString("aach-command-reload", "Reload the plugin's configuration.");
-		langCommandReloadgover = plugin.getPluginLang().getString("aach-command-reload-hover",
+		langCommandReloadHover = plugin.getPluginLang().getString("aach-command-reload-hover",
 				"Reload most settings in config.yml and lang.yml files.");
+		langCommandGenerate = plugin.getChatHeader() + configColor + "/aach generate" + ChatColor.GRAY + " > "
+				+ plugin.getPluginLang().getString("aach-command-generate", "Generate advancements.");
+		langCommandGenerateHover = plugin.getPluginLang().getString("aach-command-generate-hover",
+				"Potentially slow command; requires a full server restart after usage.");
 		langCommandGive = plugin.getChatHeader() + configColor + "/aach give &oach player" + ChatColor.GRAY + " > "
 				+ ChatColor.translateAlternateColorCodes('&',
 						StringUtils.replaceEach(
@@ -157,7 +163,11 @@ public class HelpCommand extends AbstractCommand {
 		}
 
 		if (sender.hasPermission("achievement.reload")) {
-			sendJsonClickableHoverableMessage(sender, langCommandReload, "/aach reload", langCommandReloadgover);
+			sendJsonClickableHoverableMessage(sender, langCommandReload, "/aach reload", langCommandReloadHover);
+		}
+
+		if (version >= 12 && sender.hasPermission("achievement.generate")) {
+			sendJsonClickableHoverableMessage(sender, langCommandGenerate, "/aach generate", langCommandGenerateHover);
 		}
 
 		if (sender.hasPermission("achievement.give")) {

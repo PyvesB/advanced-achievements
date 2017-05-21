@@ -449,6 +449,30 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 5.2:
+		if (!langFile.getKeys(false).contains("advancements-generated")) {
+			langFile.set("advancements-generated",
+					"Advancements were successfully generated. Please perform a full server restart for changes to take effect properly.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("aach-command-generate")) {
+			langFile.set("aach-command-generate", "Generate advancements.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("aach-command-generate-hover")) {
+			langFile.set("aach-command-generate-hover",
+					"Potentially slow command; requires a full server restart after usage.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("minecraft-not-supported")) {
+			langFile.set("minecraft-not-supported",
+					"Advancements not supported in your Minecraft version. Please update to 1.12+.");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the language file: save and do a fresh load.
 			try {

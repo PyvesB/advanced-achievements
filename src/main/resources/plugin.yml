@@ -51,6 +51,9 @@ permissions:
   achievement.reset:
     description: Allows to reset category statistics for a player.
     default: op
+  achievement.generate:
+    description: Allows to generate advancements from the configuration defined achievements.
+    default: op
   achievement.update:
     description: Allows to be notified when a plugin update is available and CheckForUpdate is set to true in config.
     default: op
@@ -71,6 +74,7 @@ permissions:
       achievement.check: true
       achievement.delete: true
       achievement.reset: true
+      achievement.generate: true
       achievement.update: true  
   achievement.count.connections:
     description: Allows connection statistics in database to increase.

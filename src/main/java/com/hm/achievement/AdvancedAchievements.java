@@ -31,6 +31,7 @@ import com.hm.achievement.command.CheckCommand;
 import com.hm.achievement.command.CommandTabCompleter;
 import com.hm.achievement.command.DeleteCommand;
 import com.hm.achievement.command.EasterEggCommand;
+import com.hm.achievement.command.GenerateCommand;
 import com.hm.achievement.command.GiveCommand;
 import com.hm.achievement.command.HelpCommand;
 import com.hm.achievement.command.InfoCommand;
@@ -152,6 +153,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	private ReloadCommand reloadCommand;
 	private ToggleCommand toggleCommand;
 	private ResetCommand resetCommand;
+	private GenerateCommand generateCommand;
 	private EasterEggCommand easterEggCommand;
 	private CommandTabCompleter commandTabCompleter;
 	private UpdateChecker updateChecker;
@@ -278,6 +280,8 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				easterEggCommand.executeCommand(sender, null, "easteregg");
 			} else if ("reload".equalsIgnoreCase(args[0])) {
 				reloadCommand.executeCommand(sender, null, "reload");
+			} else if ("generate".equalsIgnoreCase(args[0])) {
+				generateCommand.executeCommand(sender, null, "generate");
 			} else if ("stats".equalsIgnoreCase(args[0])) {
 				statsCommand.executeCommand(sender, null, "stats");
 			} else if ("list".equalsIgnoreCase(args[0])) {
@@ -488,6 +492,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		reloadCommand = new ReloadCommand(this);
 		toggleCommand = new ToggleCommand(this);
 		resetCommand = new ResetCommand(this);
+		generateCommand = new GenerateCommand(this);
 		easterEggCommand = new EasterEggCommand(this);
 	}
 
