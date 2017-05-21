@@ -84,9 +84,12 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 
 					@Override
 					public void run() {
-						handleConnectionAchievements(player);
-						if (version >= 12) {
-							awardAdvancements(player);
+						// Check whether player is connected, as he could have left in the meantime.
+						if (player.isOnline()) {
+							handleConnectionAchievements(player);
+							if (version >= 12) {
+								awardAdvancements(player);
+							}
 						}
 					}
 
@@ -99,9 +102,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	 * @param player
 	 */
 	private void handleConnectionAchievements(final Player player) {
-		// Check if player has disconnected by the time this runnable was scheduled and other
-		// achievement conditions.
-		if (!player.isOnline() || !shouldEventBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
+		if (!shouldEventBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
 			return;
 		}
 
@@ -141,16 +142,14 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	 * @param player
 	 */
 	private void awardAdvancements(final Player player) {
-		for (String achName : plugin.getAchievementsAndDisplayNames().keySet()) {
-			if (plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achName)) {
-				Advancement advancement = Bukkit.getServer()
-						.getAdvancement(new NamespacedKey(plugin, AdvancementManager.getKey(achName)));
-				// Matching advancement might not exist if user has not called /aach generate.
-				if (advancement != null) {
-					AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
-					if (!advancementProgress.isDone()) {
-						advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
-					}
+		for (String achName : plugin.getDatabaseManager().getPlayerAchievementNamesList(player.getUniqueId())) {
+			Advancement advancement = Bukkit.getServer()
+					.getAdvancement(new NamespacedKey(plugin, AdvancementManager.getKey(achName)));
+			// Matching advancement might not exist if user has not called /aach generate.
+			if (advancement != null) {
+				AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
+				if (!advancementProgress.isDone()) {
+					advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
 				}
 			}
 		}

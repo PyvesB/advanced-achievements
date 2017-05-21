@@ -233,7 +233,7 @@ public class SQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Gets the list of all the achievements of a player.
+	 * Gets the list of all the achievements of a player, sorted by chronological or reverse ordering.
 	 * 
 	 * @param player
 	 * @return array list with groups of 3 strings: achievement name, description and date
@@ -264,6 +264,29 @@ public class SQLDatabaseManager implements Reloadable {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving achievements: ", e);
 		}
 		return achievementsList;
+	}
+
+	/**
+	 * Gets the list of names of all the achievements of a player.
+	 * 
+	 * @param player
+	 * @return array list with Name parameters
+	 */
+	public List<String> getPlayerAchievementNamesList(UUID player) {
+		List<String> achievementNamesList = new ArrayList<>();
+		Connection conn = getSQLConnection();
+		try (Statement st = conn.createStatement()) {
+			ResultSet rs = st.executeQuery("SELECT achievement FROM " + tablePrefix
+					+ "achievements WHERE playername = '" + player.toString() + "'");
+			while (rs.next()) {
+				// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
+				// where names containing single quotes were inserted with two single quotes in the database.
+				achievementNamesList.add(StringUtils.replace(rs.getString(1), "''", "'"));
+			}
+		} catch (SQLException e) {
+			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving achievement names: ", e);
+		}
+		return achievementNamesList;
 	}
 
 	/**
