@@ -4,13 +4,16 @@ import java.util.Random;
 import java.util.logging.Level;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,6 +22,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.advancement.AchievementAdvancement;
+import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.mcshared.particle.PacketSender;
 import com.hm.mcshared.particle.ParticleEffect;
@@ -94,6 +99,15 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			plugin.getCacheManager().getNotReceivedAchievementsCache().remove(uuid, event.getName());
 			plugin.getCacheManager().getTotalPlayerAchievementsCache().put(uuid,
 					plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId()) + 1);
+
+			if (version >= 12) {
+				Advancement advancement = Bukkit.getServer()
+						.getAdvancement(new NamespacedKey(plugin, AdvancementManager.getKey(event.getName())));
+				// Matching advancement might not exist if user has not called /aach generate.
+				if (advancement != null) {
+					player.getAdvancementProgress(advancement).awardCriteria(AchievementAdvancement.CRITERIA_NAME);
+				}
+			}
 		}
 		plugin.getDatabaseManager().registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 

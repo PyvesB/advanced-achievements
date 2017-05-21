@@ -8,6 +8,8 @@ package com.hm.achievement.advancement;
  */
 public class AchievementAdvancement {
 
+	public static final String CRITERIA_NAME = "aach_handled";
+
 	private String iconItem;
 	private String iconData;
 	private String title;
@@ -27,16 +29,16 @@ public class AchievementAdvancement {
 
 	public String toJson() {
 		if (parent == null) {
-			return "{\"criteria\": {\"aach_handled\": {\"trigger\": \"minecraft:impossible\"}}, "
-					+ "\"requirements\": [[\"aach_handled\"]], " + "\"display\": " + "{\"icon\": {\"item\": \""
+			return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
+					+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]], " + "\"display\": " + "{\"icon\": {\"item\": \""
 					+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", "
 					+ "\"description\": \"" + description + "\", \"frame\": \"" + frame
 					+ "\", \"background\": \"minecraft:textures/items/book_enchanted.png\", \"announce_to_chat\": false}}";
 		}
-		return "{\"criteria\": {\"aach_handled\": {\"trigger\": \"minecraft:impossible\"}}, "
-				+ "\"requirements\": [[\"aach_handled\"]], " + "\"display\": " + "{\"icon\": {\"item\": \"" + iconItem
-				+ "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", " + "\"description\": \""
-				+ description + "\", \"frame\": \"" + frame
+		return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
+				+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]], " + "\"display\": " + "{\"icon\": {\"item\": \""
+				+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", "
+				+ "\"description\": \"" + description + "\", \"frame\": \"" + frame
 				+ "\", \"announce_to_chat\": false}, \"parent\": \"advancedachievements:" + parent + "\"}";
 	}
 

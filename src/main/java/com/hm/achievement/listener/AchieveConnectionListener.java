@@ -7,6 +7,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,12 +18,14 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.advancement.AchievementAdvancement;
+import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.Cleanable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 
 /**
- * Listener class to deal with Connections achievements, as well as update checker.
+ * Listener class to deal with Connections achievements and advancements for Minecraft 1.12+.
  * 
  * @author Pyves
  *
@@ -79,46 +84,74 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 
 					@Override
 					public void run() {
-						// Check if player has disconnected by the time this runnable was scheduled and other
-						// achievement conditions.
-						if (!player.isOnline()
-								|| !shouldEventBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
-							return;
+						handleConnectionAchievements(player);
+						if (version >= 12) {
+							awardAdvancements(player);
 						}
-
-						// Check whether another runnable has already done the work (even though this method is intended
-						// to run once per player per connection instance, it might happen with some server settings).
-						if (playersAchieveConnectionRan.contains(player.getUniqueId().toString())) {
-							return;
-						}
-
-						String dateString = dateFormat.format(new Date());
-						if (!dateString
-								.equals(plugin.getDatabaseManager().getPlayerConnectionDate(player.getUniqueId()))) {
-							int connections = plugin.getDatabaseManager().updateAndGetConnection(player.getUniqueId(),
-									dateString);
-							String configAchievement = NormalAchievements.CONNECTIONS + "." + connections;
-							if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
-								// Fire achievement event.
-								PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
-										.player(player)
-										.name(plugin.getPluginConfig().getString(configAchievement + ".Name"))
-										.displayName(
-												plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
-										.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
-										.commandRewards(
-												plugin.getRewardParser().getCommandRewards(configAchievement, player))
-										.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
-										.moneyReward(plugin.getRewardParser().getMoneyAmount(configAchievement));
-
-								Bukkit.getServer().getPluginManager()
-										.callEvent(playerAdvancedAchievementEventBuilder.build());
-							}
-						}
-
-						// Ran successfully to completion: no need to re-run while player is connected.
-						playersAchieveConnectionRan.add(player.getUniqueId().toString());
 					}
+
 				}, 100);
+	}
+
+	/**
+	 * Updates Connection statistics and awards achievement if need-be.
+	 * 
+	 * @param player
+	 */
+	private void handleConnectionAchievements(final Player player) {
+		// Check if player has disconnected by the time this runnable was scheduled and other
+		// achievement conditions.
+		if (!player.isOnline() || !shouldEventBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
+			return;
+		}
+
+		// Check whether another runnable has already done the work (even though this method is intended
+		// to run once per player per connection instance, it might happen with some server settings).
+		if (playersAchieveConnectionRan.contains(player.getUniqueId().toString())) {
+			return;
+		}
+
+		String dateString = dateFormat.format(new Date());
+		if (!dateString.equals(plugin.getDatabaseManager().getPlayerConnectionDate(player.getUniqueId()))) {
+			int connections = plugin.getDatabaseManager().updateAndGetConnection(player.getUniqueId(), dateString);
+			String configAchievement = NormalAchievements.CONNECTIONS + "." + connections;
+			if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
+				// Fire achievement event.
+				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
+						.player(player).name(plugin.getPluginConfig().getString(configAchievement + ".Name"))
+						.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
+						.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
+						.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
+						.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
+						.moneyReward(plugin.getRewardParser().getMoneyAmount(configAchievement));
+
+				Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
+			}
+		}
+
+		// Ran successfully to completion: no need to re-run while player is connected.
+		playersAchieveConnectionRan.add(player.getUniqueId().toString());
+	}
+
+	/**
+	 * Awards advancements created by Advanced Achievements. This method can be seen as a synchronisation to give
+	 * advancements which were generated after the corresponding achievement was received for a given player.
+	 * 
+	 * @param player
+	 */
+	private void awardAdvancements(final Player player) {
+		for (String achName : plugin.getAchievementsAndDisplayNames().keySet()) {
+			if (plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achName)) {
+				Advancement advancement = Bukkit.getServer()
+						.getAdvancement(new NamespacedKey(plugin, AdvancementManager.getKey(achName)));
+				// Matching advancement might not exist if user has not called /aach generate.
+				if (advancement != null) {
+					AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
+					if (!advancementProgress.isDone()) {
+						advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
+					}
+				}
+			}
+		}
 	}
 }

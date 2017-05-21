@@ -569,11 +569,6 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			pm.registerEvents(milkLavaWaterListener, this);
 		}
 
-		if (!disabledCategorySet.contains(NormalAchievements.CONNECTIONS.toString())) {
-			connectionListener = new AchieveConnectionListener(this);
-			pm.registerEvents(connectionListener, this);
-		}
-
 		if (!disabledCategorySet.contains(NormalAchievements.TRADES.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.ANVILS.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.BREWING.toString())
@@ -637,6 +632,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			petMasterGiveReceiveListener = new AchievePetMasterGiveReceiveListener(this);
 			pm.registerEvents(petMasterGiveReceiveListener, this);
 		}
+
+		connectionListener = new AchieveConnectionListener(this);
+		pm.registerEvents(connectionListener, this);
 
 		quitListener = new QuitListener(this);
 		pm.registerEvents(quitListener, this);
