@@ -49,6 +49,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	private String langAchievementReceived;
 	private String langItemRewardReceived;
 	private String langMoneyRewardReceived;
+	private String langExperienceRewardReceived;
 	private String langAchievementNew;
 
 	public PlayerAdvancedAchievementListener(AdvancedAchievements plugin) {
@@ -84,6 +85,8 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 				+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " ";
 		langMoneyRewardReceived = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!");
+		langExperienceRewardReceived = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("experience-reward-received", "You received: AMOUNT experience!");
 		langAchievementNew = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " " + ChatColor.WHITE;
 	}
@@ -113,14 +116,17 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage());
 
-		if (event.getMoneyReward() > 0) {
-			rewardMoney(player, event.getMoneyReward());
+		if (event.getCommandRewards() != null && event.getCommandRewards().length > 0) {
+			rewardCommands(player, event.getCommandRewards());
 		}
 		if (event.getItemReward() != null) {
 			rewardItem(player, event.getItemReward());
 		}
-		if (event.getCommandRewards() != null && event.getCommandRewards().length > 0) {
-			rewardCommands(player, event.getCommandRewards());
+		if (event.getMoneyReward() > 0) {
+			rewardMoney(player, event.getMoneyReward());
+		}
+		if (event.getExperienceReward() > 0) {
+			rewardExperience(player, event.getExperienceReward());
 		}
 	}
 
@@ -175,6 +181,18 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			player.sendMessage(ChatColor.translateAlternateColorCodes('&',
 					StringUtils.replaceOnce(langMoneyRewardReceived, "AMOUNT", amount + " " + currencyName)));
 		}
+	}
+
+	/**
+	 * Gives an experience reward to a player.
+	 * 
+	 * @param player
+	 * @param amount
+	 */
+	private void rewardExperience(Player player, int amount) {
+		player.giveExp(amount);
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+				StringUtils.replaceOnce(langExperienceRewardReceived, "AMOUNT", Integer.toString(amount))));
 	}
 
 	/**

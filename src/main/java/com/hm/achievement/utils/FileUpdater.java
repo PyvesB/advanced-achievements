@@ -473,6 +473,16 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!langFile.getKeys(false).contains("experience-reward-received")) {
+			langFile.set("experience-reward-received", "You received: AMOUNT experience!");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("list-reward-experience")) {
+			langFile.set("list-reward-experience", "receive AMOUNT experience");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the language file: save and do a fresh load.
 			try {

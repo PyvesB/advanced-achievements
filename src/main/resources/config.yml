@@ -361,7 +361,9 @@ Milk:
   1:
     Message: Just milked a cow!
     Name: milk_1
-    DisplayName: First Milk    
+    DisplayName: First Milk
+    Reward:
+      Experience: 100
     
 # When a bucket is filled with lava.
 LavaBuckets:
@@ -527,6 +529,8 @@ Fireworks:
     Message: You launched 10 fireworks!
     Name: fireworks_10
     DisplayName: Pyrotechnist
+    Reward:
+      Experience: 200
 
 # When a music disc is played.
 MusicDiscs:
