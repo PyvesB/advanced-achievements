@@ -203,6 +203,16 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 5.2:
+		if (!configFile.getKeys(false).contains("RegisterAdvancementDescriptions")) {
+			configFile.set("RegisterAdvancementDescriptions", true,
+					new String[] {
+							"Register advancements with a description corresponding to the Message parameter of each achievement.",
+							"If changed, run /aach generate to regenerate advancements with the new parameter value.",
+							"No effect if using Minecraft versions prior to 1.12." });
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {
