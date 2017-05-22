@@ -282,6 +282,8 @@ Kills:
       Message: You killed the author of the plugin!
       DisplayName: No More DarkPyves
       Name: kills_1_darkpyves
+      Reward:
+        IncreaseMaxHealth: 1
           
 # When a specific item is crafted (specify material name, lower case).
 Crafts:

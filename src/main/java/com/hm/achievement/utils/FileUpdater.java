@@ -483,6 +483,16 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!langFile.getKeys(false).contains("increase-max-health-reward-received")) {
+			langFile.set("increase-max-health-reward-received", "Your max health has increased by AMOUNT!");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("list-reward-increase-max-health")) {
+			langFile.set("list-reward-increase-max-health", "increase max health by AMOUNT");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the language file: save and do a fresh load.
 			try {

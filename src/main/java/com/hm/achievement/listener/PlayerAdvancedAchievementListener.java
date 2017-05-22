@@ -14,6 +14,8 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,6 +52,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	private String langItemRewardReceived;
 	private String langMoneyRewardReceived;
 	private String langExperienceRewardReceived;
+	private String langIncreaseMaxHealthRewardReceived;
 	private String langAchievementNew;
 
 	public PlayerAdvancedAchievementListener(AdvancedAchievements plugin) {
@@ -87,6 +90,8 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 				+ plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!");
 		langExperienceRewardReceived = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("experience-reward-received", "You received: AMOUNT experience!");
+		langIncreaseMaxHealthRewardReceived = plugin.getChatHeader() + plugin.getPluginLang()
+				.getString("increase-max-health-reward-received", "Your max health was increased by AMOUNT!");
 		langAchievementNew = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " " + ChatColor.WHITE;
 	}
@@ -127,6 +132,9 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		}
 		if (event.getExperienceReward() > 0) {
 			rewardExperience(player, event.getExperienceReward());
+		}
+		if (event.getMaxHealthReward() > 0) {
+			rewardMaxHealth(player, event.getExperienceReward());
 		}
 	}
 
@@ -193,6 +201,19 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		player.giveExp(amount);
 		player.sendMessage(ChatColor.translateAlternateColorCodes('&',
 				StringUtils.replaceOnce(langExperienceRewardReceived, "AMOUNT", Integer.toString(amount))));
+	}
+
+	/**
+	 * Gives an increased max health reward to a player.
+	 * 
+	 * @param player
+	 * @param amount
+	 */
+	private void rewardMaxHealth(Player player, int amount) {
+		AttributeInstance playerAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+		playerAttribute.setBaseValue(playerAttribute.getBaseValue() + amount);
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+				StringUtils.replaceOnce(langIncreaseMaxHealthRewardReceived, "AMOUNT", Integer.toString(amount))));
 	}
 
 	/**

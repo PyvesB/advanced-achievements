@@ -24,11 +24,12 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private final ItemStack itemReward;
 	private final int moneyReward;
 	private final int experienceReward;
+	private final int maxHealthReward;
 
 	private boolean cancelled;
 
 	private PlayerAdvancedAchievementEvent(Player receiver, String name, String displayName, String message,
-			String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward) {
+			String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward, int maxHealthReward) {
 		this.player = receiver;
 		this.name = name;
 		this.displayName = displayName;
@@ -37,6 +38,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		this.itemReward = itemReward;
 		this.moneyReward = moneyReward;
 		this.experienceReward = experienceReward;
+		this.maxHealthReward = maxHealthReward;
 		this.cancelled = false;
 	}
 
@@ -95,6 +97,10 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		return experienceReward;
 	}
 
+	public int getMaxHealthReward() {
+		return maxHealthReward;
+	}
+
 	public static class PlayerAdvancedAchievementEventBuilder {
 
 		private Player player;
@@ -105,6 +111,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		private ItemStack itemReward;
 		private int moneyReward;
 		private int experienceReward;
+		private int maxHealthReward;
 
 		public PlayerAdvancedAchievementEventBuilder player(Player player) {
 			this.player = player;
@@ -146,9 +153,14 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 			return this;
 		}
 
+		public PlayerAdvancedAchievementEventBuilder maxHealthReward(int maxHealthReward) {
+			this.maxHealthReward = maxHealthReward;
+			return this;
+		}
+
 		public PlayerAdvancedAchievementEvent build() {
 			return new PlayerAdvancedAchievementEvent(player, name, displayName, message, commandRewards, itemReward,
-					moneyReward, experienceReward);
+					moneyReward, experienceReward, maxHealthReward);
 		}
 	}
 }
