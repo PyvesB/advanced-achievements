@@ -25,11 +25,11 @@ public class GenerateCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configRegisterAdvancementDescriptions = plugin.getPluginConfig()
-				.getBoolean("configRegisterAdvancementDescriptions", true);
+		configRegisterAdvancementDescriptions = plugin.getPluginConfig().getBoolean("RegisterAdvancementDescriptions",
+				true);
 
 		langAdvancementsGenerated = plugin.getChatHeader() + plugin.getPluginLang().getString("advancements-generated",
-				"Advancements were successfully generated. Please perform a full server restart for changes to take effect properly.");
+				"Advancements were successfully generated. Please perform a full server restart for changes to properly take effect.");
 		langMinecraftNotSupported = plugin.getChatHeader() + plugin.getPluginLang().getString("minecraft-not-supported",
 				"Advancements not supported in your Minecraft version. Please update to 1.12+.");
 	}

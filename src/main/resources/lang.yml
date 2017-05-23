@@ -175,7 +175,7 @@ reset-successful: " statistics were cleared for PLAYER."
 category-does-not-exist: "The specified category does not exist."
 
 # Related to /aach generate.
-advancements-generated: "Advancements were successfully generated. Please perform a full server restart for changes to take effect properly."
+advancements-generated: "Advancements were successfully generated. Please perform a full server restart for changes to properly take effect."
 minecraft-not-supported: "Advancements not supported in your Minecraft version. Please update to 1.12+."
 
 #============================================================#

@@ -35,17 +35,17 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
-	private final Set<String> playersAchieveConnectionRan;
+	private final Set<String> playersProcessingRan;
 
 	public AchieveConnectionListener(AdvancedAchievements plugin) {
 		super(plugin);
 
-		playersAchieveConnectionRan = new HashSet<>();
+		playersProcessingRan = new HashSet<>();
 	}
 
 	@Override
 	public void cleanPlayerData(UUID uuid) {
-		playersAchieveConnectionRan.remove(uuid.toString());
+		playersProcessingRan.remove(uuid.toString());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -55,7 +55,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onWorldChanged(PlayerChangedWorldEvent event) {
-		if (playersAchieveConnectionRan.contains(event.getPlayer().getUniqueId().toString())) {
+		if (playersProcessingRan.contains(event.getPlayer().getUniqueId().toString())) {
 			return;
 		}
 
@@ -64,7 +64,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameModeChange(PlayerGameModeChangeEvent event) {
-		if (playersAchieveConnectionRan.contains(event.getPlayer().getUniqueId().toString())) {
+		if (playersProcessingRan.contains(event.getPlayer().getUniqueId().toString())) {
 			return;
 		}
 
@@ -77,41 +77,44 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	 * @param player
 	 */
 	private void scheduleTask(final Player player) {
-		// Schedule delayed task to check if player should receive a Connections achievement. This is done to avoid
-		// immediately awarding the achievement.
+		// Schedule delayed task to check if player should receive a Connections achievement or advancements he is
+		// missing. This processing is delayed to avoid spamming a barely connected player.
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 				Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()), new Runnable() {
 
 					@Override
 					public void run() {
-						// Check whether player is connected, as he could have left in the meantime.
-						if (player.isOnline()) {
-							handleConnectionAchievements(player);
-							if (version >= 12) {
-								awardAdvancements(player);
-							}
+						// Check reception conditions and whether player is still connected, as he could have left in
+						// the meantime.
+						if (!player.isOnline()
+								|| !shouldEventBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
+							return;
 						}
+
+						// Check whether another runnable has already done the work (even though this method is intended
+						// to run once per player per connection instance, it might happen with some server settings).
+						if (playersProcessingRan.contains(player.getUniqueId().toString())) {
+							return;
+						}
+
+						handleConnectionAchievements(player);
+						if (version >= 12) {
+							awardAdvancements(player);
+						}
+
+						// Ran successfully to completion: no need to re-run while player is connected.
+						playersProcessingRan.add(player.getUniqueId().toString());
 					}
 
 				}, 100);
 	}
 
 	/**
-	 * Updates Connection statistics and awards achievement if need-be.
+	 * Updates Connection statistics and awards an achievement if need-be.
 	 * 
 	 * @param player
 	 */
 	private void handleConnectionAchievements(final Player player) {
-		if (!shouldEventBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
-			return;
-		}
-
-		// Check whether another runnable has already done the work (even though this method is intended
-		// to run once per player per connection instance, it might happen with some server settings).
-		if (playersAchieveConnectionRan.contains(player.getUniqueId().toString())) {
-			return;
-		}
-
 		String dateString = dateFormat.format(new Date());
 		if (!dateString.equals(plugin.getDatabaseManager().getPlayerConnectionDate(player.getUniqueId()))) {
 			int connections = plugin.getDatabaseManager().updateAndGetConnection(player.getUniqueId(), dateString);
@@ -132,9 +135,6 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 				Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 			}
 		}
-
-		// Ran successfully to completion: no need to re-run while player is connected.
-		playersAchieveConnectionRan.add(player.getUniqueId().toString());
 	}
 
 	/**

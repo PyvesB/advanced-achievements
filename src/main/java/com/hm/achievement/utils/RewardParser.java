@@ -34,7 +34,6 @@ public class RewardParser implements Reloadable {
 	// Used for Vault plugin integration.
 	private Economy economy;
 
-
 	public RewardParser(AdvancedAchievements achievement) {
 		this.plugin = achievement;
 	}
@@ -154,7 +153,7 @@ public class RewardParser implements Reloadable {
 	}
 
 	/**
-	 * Extracts the money or experience reward amount from the configuration.
+	 * Extracts the money, experience or increased max health rewards amount from the configuration.
 	 * 
 	 * @param configAchievement
 	 * @return

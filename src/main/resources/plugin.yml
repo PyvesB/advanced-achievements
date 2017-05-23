@@ -52,7 +52,7 @@ permissions:
     description: Allows to reset category statistics for a player.
     default: op
   achievement.generate:
-    description: Allows to generate advancements from the configuration defined achievements.
+    description: Allows to generate advancements from the achievements defined in the configuration.
     default: op
   achievement.update:
     description: Allows to be notified when a plugin update is available and CheckForUpdate is set to true in config.

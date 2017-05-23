@@ -91,7 +91,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		langExperienceRewardReceived = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("experience-reward-received", "You received: AMOUNT experience!");
 		langIncreaseMaxHealthRewardReceived = plugin.getChatHeader() + plugin.getPluginLang()
-				.getString("increase-max-health-reward-received", "Your max health was increased by AMOUNT!");
+				.getString("increase-max-health-reward-received", "Your max health has increased by AMOUNT!");
 		langAchievementNew = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " " + ChatColor.WHITE;
 	}

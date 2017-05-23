@@ -1,6 +1,5 @@
 package com.hm.achievement.advancement;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -89,7 +88,6 @@ public class AdvancementManager {
 				registerCategoryAdvancements(category.toString(), "." + section);
 			}
 		}
-
 		plugin.getLogger().info("Generated " + generatedAdvancements + " new advancements.");
 	}
 
@@ -100,8 +98,7 @@ public class AdvancementManager {
 		int achievementsCleaned = 0;
 		Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
 		while (advancements.hasNext()) {
-			Advancement advancement = advancements.next();
-			NamespacedKey namespacedKey = advancement.getKey();
+			NamespacedKey namespacedKey = advancements.next().getKey();
 			if ("advancedachievements".equals(namespacedKey.getNamespace())
 					&& !ADVANCED_ACHIEVEMENTS_PARENT.equals(namespacedKey.getKey())) {
 				++achievementsCleaned;
@@ -112,7 +109,7 @@ public class AdvancementManager {
 	}
 
 	/**
-	 * Registers an "Advanced Achievements" advancements, which will be used as the parent of all advancements generated
+	 * Registers an "Advanced Achievements" advancement, which will be used as the parent of all advancements generated
 	 * by Advanced Achievements.
 	 */
 	private void registerParentAdvancement() {
@@ -153,13 +150,13 @@ public class AdvancementManager {
 	}
 
 	/**
-	 * Registers an individual advancements.
+	 * Registers an individual advancement.
 	 * 
 	 * @param categoryName
 	 * @param configAchievement
 	 * @param parentKey
 	 * @param lastAchievement
-	 * @return
+	 * @return the key of the registered achievement
 	 */
 	private String registerAdvancement(String categoryName, String configAchievement, String parentKey,
 			boolean lastAchievement) {
@@ -211,7 +208,7 @@ public class AdvancementManager {
 	 * and internal names can differ quite significantly (for instance: book_and_quill vs. writable_book).
 	 * 
 	 * @param item
-	 * @return
+	 * @return the internal Minecraft name
 	 */
 	private String getInternalName(ItemStack item) {
 		try {
@@ -224,8 +221,7 @@ public class AdvancementManager {
 					.getMethod(METHOD_B, Object.class).invoke(registry, nmsItem);
 			return (String) PackageType.MINECRAFT_SERVER.getClass(CLASS_MINECRAFT_KEY).getMethod(METHOD_GET_KEY)
 					.invoke(minecraftKey);
-		} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException | NoSuchFieldException e) {
+		} catch (Exception e) {
 			plugin.getLogger().warning("Error getting internal item name for advancements. Registering as book.");
 			return "book";
 		}

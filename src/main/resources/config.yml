@@ -156,7 +156,7 @@ DateLocale: en
 DateDisplayTime: true
 
 # Register advancements with a description corresponding to the Message parameter of each achievement.
-# If changed, run /aach generate to regenerate advancements with the new parameter value.
+# If changed, run /aach generate to regenerate advancements with the new parameter value taken into account.
 # No effect if using Minecraft versions prior to 1.12.
 RegisterAdvancementDescriptions: true
 

@@ -208,7 +208,7 @@ public class FileUpdater {
 			configFile.set("RegisterAdvancementDescriptions", true,
 					new String[] {
 							"Register advancements with a description corresponding to the Message parameter of each achievement.",
-							"If changed, run /aach generate to regenerate advancements with the new parameter value.",
+							"If changed, run /aach generate to regenerate advancements with the new parameter value taken into account.",
 							"No effect if using Minecraft versions prior to 1.12." });
 			updateDone = true;
 		}
@@ -452,7 +452,7 @@ public class FileUpdater {
 		// Added in version 5.2:
 		if (!langFile.getKeys(false).contains("advancements-generated")) {
 			langFile.set("advancements-generated",
-					"Advancements were successfully generated. Please perform a full server restart for changes to take effect properly.");
+					"Advancements were successfully generated. Please perform a full server restart for changes to properly take effect.");
 			updateDone = true;
 		}
 

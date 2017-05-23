@@ -1,6 +1,5 @@
 package com.hm.achievement.command;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -220,8 +219,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 				for (String bookPage : bookPages) {
 					pages.add(((Object[]) fromStringMethod.invoke(null, bookPage, true))[0]);
 				}
-			} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | NoSuchFieldException
-					| IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+			} catch (Exception e) {
 				plugin.getLogger().warning(
 						"Error while creating book pages. Your achievements book may be trimmed down to 50 pages.");
 				bookMeta.setPages(bookPages);
