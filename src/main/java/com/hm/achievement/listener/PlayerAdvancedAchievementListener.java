@@ -134,7 +134,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			rewardExperience(player, event.getExperienceReward());
 		}
 		if (event.getMaxHealthReward() > 0) {
-			rewardMaxHealth(player, event.getExperienceReward());
+			rewardMaxHealth(player, event.getMaxHealthReward());
 		}
 	}
 
