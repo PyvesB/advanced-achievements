@@ -171,8 +171,15 @@ public class AdvancementManager {
 		String achKey = getKey(achName);
 		NamespacedKey namespacedKey = new NamespacedKey(plugin, achKey);
 		int metadata = plugin.getPluginGui().getInt(categoryName + ".Metadata", 0);
-		String description = configRegisterAdvancementDescriptions ? REGEX_PATTERN_COLOURS
-				.matcher(plugin.getPluginConfig().getString(configAchievement + ".Message")).replaceAll("") : "";
+		String description = "";
+		if (configRegisterAdvancementDescriptions) {
+			// Give priority to the goal to stick with Vanilla naming of advancements.
+			description = plugin.getPluginConfig().getString(configAchievement + ".Goal", "");
+			if (!StringUtils.isNotBlank(description)) {
+				description = plugin.getPluginConfig().getString(configAchievement + ".Message", "");
+			}
+			description = REGEX_PATTERN_COLOURS.matcher(description).replaceAll("");
+		}
 
 		AchievementAdvancementBuilder achievementAdvancementBuilder = new AchievementAdvancementBuilder()
 				.iconItem("minecraft:" + getInternalName(new ItemStack(getMaterial(categoryName), 1, (short) metadata)))
