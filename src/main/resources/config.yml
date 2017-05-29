@@ -155,6 +155,11 @@ DateLocale: en
 # received in plugin versions prior to 3.0, the precise time information is not available and will be displayed as midnight.
 DateDisplayTime: true
 
+# Register advancements with a description corresponding to the Message parameter of each achievement.
+# If changed, run /aach generate to regenerate advancements with the new parameter value taken into account.
+# No effect if using Minecraft versions prior to 1.12.
+RegisterAdvancementDescriptions: true
+
 #=============================OOO=============================#
 # III-----------------------------------------------------III #
 # |                    Database settings                    | #
@@ -277,6 +282,8 @@ Kills:
       Message: You killed the author of the plugin!
       DisplayName: No More DarkPyves
       Name: kills_1_darkpyves
+      Reward:
+        IncreaseMaxHealth: 1
           
 # When a specific item is crafted (specify material name, lower case).
 Crafts:
@@ -356,7 +363,9 @@ Milk:
   1:
     Message: Just milked a cow!
     Name: milk_1
-    DisplayName: First Milk    
+    DisplayName: First Milk
+    Reward:
+      Experience: 100
     
 # When a bucket is filled with lava.
 LavaBuckets:
@@ -522,6 +531,8 @@ Fireworks:
     Message: You launched 10 fireworks!
     Name: fireworks_10
     DisplayName: Pyrotechnist
+    Reward:
+      Experience: 200
 
 # When a music disc is played.
 MusicDiscs:

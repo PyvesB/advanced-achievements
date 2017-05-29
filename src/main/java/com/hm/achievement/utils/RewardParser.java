@@ -29,6 +29,8 @@ public class RewardParser implements Reloadable {
 	private String langListRewardMoney;
 	private String langListRewardItem;
 	private String langListRewardCommand;
+	private String langListRewardExperience;
+	private String langListRewardIncreaseMaxHealth;
 	// Used for Vault plugin integration.
 	private Economy economy;
 
@@ -41,6 +43,10 @@ public class RewardParser implements Reloadable {
 		langListRewardMoney = plugin.getPluginLang().getString("list-reward-money", "receive AMOUNT");
 		langListRewardItem = plugin.getPluginLang().getString("list-reward-item", "receive AMOUNT ITEM");
 		langListRewardCommand = plugin.getPluginLang().getString("list-reward-command", "other");
+		langListRewardExperience = plugin.getPluginLang().getString("list-reward-experience",
+				"receive AMOUNT experience");
+		langListRewardIncreaseMaxHealth = plugin.getPluginLang().getString("list-reward-increase-max-health",
+				"increase max health by AMOUNT");
 	}
 
 	public Economy getEconomy() {
@@ -83,7 +89,7 @@ public class RewardParser implements Reloadable {
 		Set<String> keyNames = plugin.getPluginConfig().getKeys(true);
 
 		if (isEconomySet(false) && keyNames.contains(configAchievement + ".Reward.Money")) {
-			int amount = getMoneyAmount(configAchievement);
+			int amount = getRewardAmount(configAchievement, "Money");
 			rewardTypes.add(
 					StringUtils.replaceOnce(langListRewardMoney, "AMOUNT", amount + " " + getCurrencyName(amount)));
 		}
@@ -93,6 +99,17 @@ public class RewardParser implements Reloadable {
 			String name = getItemName(getItemReward(configAchievement));
 			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
 					new String[] { Integer.toString(amount), name }));
+		}
+
+		if (keyNames.contains(configAchievement + ".Reward.Experience")) {
+			int amount = getRewardAmount(configAchievement, "Experience");
+			rewardTypes.add(StringUtils.replaceOnce(langListRewardExperience, "AMOUNT", Integer.toString(amount)));
+		}
+
+		if (keyNames.contains(configAchievement + ".Reward.IncreaseMaxHealth")) {
+			int amount = getRewardAmount(configAchievement, "IncreaseMaxHealth");
+			rewardTypes
+					.add(StringUtils.replaceOnce(langListRewardIncreaseMaxHealth, "AMOUNT", Integer.toString(amount)));
 		}
 
 		if (keyNames.contains(configAchievement + ".Reward.Command")) {
@@ -136,15 +153,15 @@ public class RewardParser implements Reloadable {
 	}
 
 	/**
-	 * Extracts the money reward amount from the configuration.
+	 * Extracts the money, experience or increased max health rewards amount from the configuration.
 	 * 
 	 * @param configAchievement
 	 * @return
 	 */
-	public int getMoneyAmount(String configAchievement) {
+	public int getRewardAmount(String configAchievement, String type) {
 		// Supports both old and new plugin syntax (Amount used to be a separate sub-category).
-		return Math.max(plugin.getPluginConfig().getInt(configAchievement + ".Reward.Money", 0),
-				plugin.getPluginConfig().getInt(configAchievement + ".Reward.Money.Amount", 0));
+		return Math.max(plugin.getPluginConfig().getInt(configAchievement + ".Reward." + type, 0),
+				plugin.getPluginConfig().getInt(configAchievement + ".Reward." + type + ".Amount", 0));
 	}
 
 	/**
@@ -234,5 +251,4 @@ public class RewardParser implements Reloadable {
 		}
 		return itemAmount;
 	}
-
 }

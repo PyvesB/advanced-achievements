@@ -308,11 +308,10 @@ public class ListCommand extends AbstractCommand {
 
 				String achName = config.getString(categoryName + '.' + section + '.' + level + ".Name", "");
 				String nameToShowUser = getAchievementNameToDisplay(categoryName, '.' + section, achName, level);
-				String achMessage = getAchievementMessageToDisplay(categoryName, '.' + section, level);
-
 				List<String> rewards = plugin.getRewardParser()
 						.getRewardListing(categoryName + '.' + section + '.' + level);
 				String date = plugin.getDatabaseManager().getPlayerAchievementDate(player.getUniqueId(), achName);
+				String achMessage = getAchievementMessageToDisplay(categoryName, '.' + section, level, date != null);
 
 				boolean inelligibleSeriesItem;
 				if (subcategoryIndex == 0 || date != null || previousItemDate != null) {
@@ -392,10 +391,9 @@ public class ListCommand extends AbstractCommand {
 
 			String achName = plugin.getPluginConfig().getString(categoryName + '.' + level + ".Name", "");
 			String nameToShowUser = getAchievementNameToDisplay(categoryName, "", achName, level);
-			String achMessage = getAchievementMessageToDisplay(categoryName, "", level);
-
 			List<String> rewards = plugin.getRewardParser().getRewardListing(categoryName + '.' + level);
 			String date = plugin.getDatabaseManager().getPlayerAchievementDate(player.getUniqueId(), achName);
+			String achMessage = getAchievementMessageToDisplay(categoryName, "", level, date != null);
 
 			boolean inelligibleSeriesItem;
 			if (statistic == -1L || positionInGUI == 0 || date != null || previousItemDate != null) {
@@ -460,12 +458,14 @@ public class ListCommand extends AbstractCommand {
 	 * @param categoryName
 	 * @param subcategory
 	 * @param level
+	 * @param completed
 	 * @return
 	 */
-	private String getAchievementMessageToDisplay(String categoryName, String subcategory, String level) {
+	private String getAchievementMessageToDisplay(String categoryName, String subcategory, String level,
+			boolean completed) {
 		String achMessage;
 		String goal = plugin.getPluginConfig().getString(categoryName + subcategory + '.' + level + ".Goal", "");
-		if (StringUtils.isNotBlank(goal)) {
+		if (StringUtils.isNotBlank(goal) && !completed) {
 			// Show the goal below the achievement name.
 			achMessage = goal;
 		} else {

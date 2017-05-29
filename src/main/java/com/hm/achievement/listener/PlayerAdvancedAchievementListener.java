@@ -4,13 +4,18 @@ import java.util.Random;
 import java.util.logging.Level;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,6 +24,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.advancement.AchievementAdvancement;
+import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.mcshared.particle.PacketSender;
 import com.hm.mcshared.particle.ParticleEffect;
@@ -44,6 +51,8 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	private String langAchievementReceived;
 	private String langItemRewardReceived;
 	private String langMoneyRewardReceived;
+	private String langExperienceRewardReceived;
+	private String langIncreaseMaxHealthRewardReceived;
 	private String langAchievementNew;
 
 	public PlayerAdvancedAchievementListener(AdvancedAchievements plugin) {
@@ -79,6 +88,10 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 				+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " ";
 		langMoneyRewardReceived = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!");
+		langExperienceRewardReceived = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("experience-reward-received", "You received: AMOUNT experience!");
+		langIncreaseMaxHealthRewardReceived = plugin.getChatHeader() + plugin.getPluginLang()
+				.getString("increase-max-health-reward-received", "Your max health has increased by AMOUNT!");
 		langAchievementNew = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " " + ChatColor.WHITE;
 	}
@@ -94,19 +107,34 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			plugin.getCacheManager().getNotReceivedAchievementsCache().remove(uuid, event.getName());
 			plugin.getCacheManager().getTotalPlayerAchievementsCache().put(uuid,
 					plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId()) + 1);
+
+			if (version >= 12) {
+				Advancement advancement = Bukkit.getServer()
+						.getAdvancement(new NamespacedKey(plugin, AdvancementManager.getKey(event.getName())));
+				// Matching advancement might not exist if user has not called /aach generate.
+				if (advancement != null) {
+					player.getAdvancementProgress(advancement).awardCriteria(AchievementAdvancement.CRITERIA_NAME);
+				}
+			}
 		}
 		plugin.getDatabaseManager().registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage());
 
-		if (event.getMoneyReward() > 0) {
-			rewardMoney(player, event.getMoneyReward());
+		if (event.getCommandRewards() != null && event.getCommandRewards().length > 0) {
+			rewardCommands(player, event.getCommandRewards());
 		}
 		if (event.getItemReward() != null) {
 			rewardItem(player, event.getItemReward());
 		}
-		if (event.getCommandRewards() != null && event.getCommandRewards().length > 0) {
-			rewardCommands(player, event.getCommandRewards());
+		if (event.getMoneyReward() > 0) {
+			rewardMoney(player, event.getMoneyReward());
+		}
+		if (event.getExperienceReward() > 0) {
+			rewardExperience(player, event.getExperienceReward());
+		}
+		if (event.getMaxHealthReward() > 0) {
+			rewardMaxHealth(player, event.getMaxHealthReward());
 		}
 	}
 
@@ -161,6 +189,31 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			player.sendMessage(ChatColor.translateAlternateColorCodes('&',
 					StringUtils.replaceOnce(langMoneyRewardReceived, "AMOUNT", amount + " " + currencyName)));
 		}
+	}
+
+	/**
+	 * Gives an experience reward to a player.
+	 * 
+	 * @param player
+	 * @param amount
+	 */
+	private void rewardExperience(Player player, int amount) {
+		player.giveExp(amount);
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+				StringUtils.replaceOnce(langExperienceRewardReceived, "AMOUNT", Integer.toString(amount))));
+	}
+
+	/**
+	 * Gives an increased max health reward to a player.
+	 * 
+	 * @param player
+	 * @param amount
+	 */
+	private void rewardMaxHealth(Player player, int amount) {
+		AttributeInstance playerAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+		playerAttribute.setBaseValue(playerAttribute.getBaseValue() + amount);
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+				StringUtils.replaceOnce(langIncreaseMaxHealthRewardReceived, "AMOUNT", Integer.toString(amount))));
 	}
 
 	/**

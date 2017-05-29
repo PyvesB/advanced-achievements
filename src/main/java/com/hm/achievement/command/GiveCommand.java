@@ -58,7 +58,9 @@ public class GiveCommand extends AbstractParsableCommand {
 					.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
 					.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
 					.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
-					.moneyReward(plugin.getRewardParser().getMoneyAmount(configAchievement));
+					.moneyReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Money"))
+					.experienceReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Experience"))
+					.maxHealthReward(plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxHealth"));
 
 			Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 

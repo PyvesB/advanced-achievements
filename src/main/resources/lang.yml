@@ -53,6 +53,8 @@ delete-achievements: "The achievement ACH was deleted from PLAYER."
 item-reward-received: "You received an item reward:"
 money-reward-received: "You received: AMOUNT!"
 command-reward: "Reward command carried out!"
+experience-reward-received: "You received: AMOUNT experience!"
+increase-max-health-reward-received: "Your max health has increased by AMOUNT!"
 
 # Related to /aach help.
 aach-command-book: "Receive your achievements book."
@@ -81,6 +83,8 @@ aach-command-toggle: "Toggle achievements of other players."
 aach-command-toggle-hover: "Your choice is saved until next server restart!"
 aach-command-reset: "Reset statistic for category CAT."
 aach-command-reset-hover: "Player must be online; for categories with subcategories, they are all reset!"
+aach-command-generate: "Generate advancements."
+aach-command-generate-hover: "Potentially slow command; requires a full server restart after usage."
 aach-tip: "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!"
 
 # Related to /aach info.
@@ -105,6 +109,8 @@ list-reward: "Reward(s):"
 list-reward-money: "receive AMOUNT"
 list-reward-item: "receive AMOUNT ITEM"
 list-reward-command: "other"
+list-reward-experience: "receive AMOUNT experience"
+list-reward-increase-max-health: "increase max health by AMOUNT"
 list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "
 list-category-not-unlocked: "You have not yet unlocked this category."
@@ -167,6 +173,10 @@ toggle-hidden: "You will no longer be notified when other players get achievemen
 # Related to /aach reset.
 reset-successful: " statistics were cleared for PLAYER."
 category-does-not-exist: "The specified category does not exist."
+
+# Related to /aach generate.
+advancements-generated: "Advancements were successfully generated. Please perform a full server restart for changes to properly take effect."
+minecraft-not-supported: "Advancements not supported in your Minecraft version. Please update to 1.12+."
 
 #============================================================#
 # +--------------------------------------------------------+ #

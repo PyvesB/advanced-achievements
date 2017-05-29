@@ -203,6 +203,16 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 5.2:
+		if (!configFile.getKeys(false).contains("RegisterAdvancementDescriptions")) {
+			configFile.set("RegisterAdvancementDescriptions", true,
+					new String[] {
+							"Register advancements with a description corresponding to the Message parameter of each achievement.",
+							"If changed, run /aach generate to regenerate advancements with the new parameter value taken into account.",
+							"No effect if using Minecraft versions prior to 1.12." });
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {
@@ -436,6 +446,50 @@ public class FileUpdater {
 
 		if (!langFile.getKeys(false).contains("version-command-btlp")) {
 			langFile.set("version-command-btlp", "BungeeTabListPlus integration:");
+			updateDone = true;
+		}
+
+		// Added in version 5.2:
+		if (!langFile.getKeys(false).contains("advancements-generated")) {
+			langFile.set("advancements-generated",
+					"Advancements were successfully generated. Please perform a full server restart for changes to properly take effect.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("aach-command-generate")) {
+			langFile.set("aach-command-generate", "Generate advancements.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("aach-command-generate-hover")) {
+			langFile.set("aach-command-generate-hover",
+					"Potentially slow command; requires a full server restart after usage.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("minecraft-not-supported")) {
+			langFile.set("minecraft-not-supported",
+					"Advancements not supported in your Minecraft version. Please update to 1.12+.");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("experience-reward-received")) {
+			langFile.set("experience-reward-received", "You received: AMOUNT experience!");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("list-reward-experience")) {
+			langFile.set("list-reward-experience", "receive AMOUNT experience");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("increase-max-health-reward-received")) {
+			langFile.set("increase-max-health-reward-received", "Your max health has increased by AMOUNT!");
+			updateDone = true;
+		}
+
+		if (!langFile.getKeys(false).contains("list-reward-increase-max-health")) {
+			langFile.set("list-reward-increase-max-health", "increase max health by AMOUNT");
 			updateDone = true;
 		}
 
