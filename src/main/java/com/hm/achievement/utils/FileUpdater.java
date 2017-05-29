@@ -213,6 +213,12 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		if (!configFile.getKeys(false).contains("HideNoPermissionCategories")) {
+			configFile.set("HideNoPermissionCategories", false,
+					"Hide categories for which the player does not have the corresponding count permissions.");
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {

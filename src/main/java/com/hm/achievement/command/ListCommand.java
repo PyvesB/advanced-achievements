@@ -50,6 +50,7 @@ public class ListCommand extends AbstractCommand {
 	private final ItemStack barrier = new ItemStack(Material.BARRIER);
 
 	private boolean configHideNotReceivedCategories;
+	private boolean configHideNoPermissionCategories;
 	private boolean configObfuscateNotReceived;
 	private boolean configObfuscateProgressiveAchievements;
 	private boolean configHideRewardDisplayInList;
@@ -80,6 +81,7 @@ public class ListCommand extends AbstractCommand {
 		super.extractConfigurationParameters();
 
 		configHideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
+		configHideNoPermissionCategories = plugin.getPluginConfig().getBoolean("HideNoPermissionCategories", false);
 		configObfuscateNotReceived = plugin.getPluginConfig().getBoolean("ObfuscateNotReceived", true);
 		configObfuscateProgressiveAchievements = plugin.getPluginConfig().getBoolean("ObfuscateProgressiveAchievements",
 				false);
@@ -495,7 +497,8 @@ public class ListCommand extends AbstractCommand {
 			String categoryName = category.toString();
 			// Hide category if the user has defined an empty name for it or if it's in the disabled list.
 			if (itemStack.getItemMeta().getDisplayName().length() == 0
-					|| plugin.getDisabledCategorySet().contains(categoryName)) {
+					|| plugin.getDisabledCategorySet().contains(categoryName)
+					|| configHideNoPermissionCategories && !player.hasPermission(category.toPermName())) {
 				continue;
 			}
 
@@ -548,7 +551,8 @@ public class ListCommand extends AbstractCommand {
 			String categoryName = category.toString();
 			// Hide category if the user has defined an empty name for it or if it's in the disabled list.
 			if (itemStack.getItemMeta().getDisplayName().length() == 0
-					|| plugin.getDisabledCategorySet().contains(categoryName)) {
+					|| plugin.getDisabledCategorySet().contains(categoryName)
+					|| configHideNoPermissionCategories && !player.hasPermission(category.toPermName())) {
 				continue;
 			}
 

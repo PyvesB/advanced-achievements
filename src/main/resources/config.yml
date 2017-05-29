@@ -113,6 +113,9 @@ ObfuscateProgressiveAchievements: false
 # Hide categories with no achievements yet received in /aach list.
 HideNotReceivedCategories: false
 
+# Hide categories for which the player does not have the corresponding count permissions.
+HideNoPermissionCategories: false
+
 # Hide the reward display in /aach list.
 HideRewardDisplayInList: false
 
