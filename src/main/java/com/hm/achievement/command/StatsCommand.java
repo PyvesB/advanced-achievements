@@ -34,6 +34,7 @@ public class StatsCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
+		totalAchievements = 0;
 		// Calculate the total number of achievements in the config file.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
