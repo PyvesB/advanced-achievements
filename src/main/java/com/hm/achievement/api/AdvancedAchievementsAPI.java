@@ -1,6 +1,7 @@
 package com.hm.achievement.api;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.hm.achievement.category.MultipleAchievements;
@@ -108,6 +109,14 @@ public interface AdvancedAchievementsAPI {
 	 * @return the DisplayName parameter of an achievement or "" or null
 	 */
 	public String getDisplayNameForName(String achievementName);
+
+	/**
+	 * Retrieves the total numbers of achievements received by every player who has at least one achievement.
+	 * 
+	 * @since 5.2
+	 * @return map containing total achievements for everyplayer
+	 */
+	public Map<UUID, Integer> getPlayersTotalAchievements();
 
 	public final class Rank {
 

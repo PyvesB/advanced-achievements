@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -322,8 +323,28 @@ public class SQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Gets the total number of achievements received by a player, using an UUID; this method is provided as a
-	 * convenience for other plugins.
+	 * Gets the total number of achievements received by every player; this method is provided as a convenience for
+	 * other plugins.
+	 * 
+	 * @return map containing number of achievements for every players
+	 */
+	public Map<UUID, Integer> getPlayersAchievementsAmount() {
+		Map<UUID, Integer> achievementAmounts = new HashMap<>();
+		Connection conn = getSQLConnection();
+		try (Statement st = conn.createStatement()) {
+			ResultSet rs = st.executeQuery(
+					"SELECT playername, COUNT(*) FROM " + tablePrefix + "achievements GROUP BY playername");
+			while (rs.next()) {
+				achievementAmounts.put(UUID.fromString(rs.getString(1)), rs.getInt(2));
+			}
+		} catch (SQLException e) {
+			plugin.getLogger().log(Level.SEVERE, "SQL error while counting all player achievements: ", e);
+		}
+		return achievementAmounts;
+	}
+
+	/**
+	 * Gets the total number of achievements received by a player, using an UUID.
 	 * 
 	 * @param uuid
 	 * @return number of achievements

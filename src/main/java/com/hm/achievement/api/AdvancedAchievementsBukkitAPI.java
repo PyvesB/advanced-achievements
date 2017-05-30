@@ -2,6 +2,7 @@ package com.hm.achievement.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
@@ -126,6 +127,11 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	@Override
 	public String getDisplayNameForName(String achievementName) {
 		return pluginInstance.getAchievementsAndDisplayNames().get(achievementName);
+	}
+
+	@Override
+	public Map<UUID, Integer> getPlayersTotalAchievements() {
+		return pluginInstance.getDatabaseManager().getPlayersAchievementsAmount();
 	}
 
 	/**
