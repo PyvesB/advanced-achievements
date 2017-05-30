@@ -114,7 +114,7 @@ public interface AdvancedAchievementsAPI {
 	 * Retrieves the total numbers of achievements received by every player who has at least one achievement.
 	 * 
 	 * @since 5.2
-	 * @return map containing total achievements for everyplayer
+	 * @return map containing total achievements for every player
 	 */
 	public Map<UUID, Integer> getPlayersTotalAchievements();
 
