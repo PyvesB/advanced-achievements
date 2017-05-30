@@ -457,8 +457,7 @@ public class FileUpdater {
 
 		// Added in version 5.2:
 		if (!langFile.getKeys(false).contains("advancements-generated")) {
-			langFile.set("advancements-generated",
-					"Advancements were successfully generated. Please perform a full server restart for changes to properly take effect.");
+			langFile.set("advancements-generated", "Advancements were successfully generated.");
 			updateDone = true;
 		}
 
@@ -468,8 +467,7 @@ public class FileUpdater {
 		}
 
 		if (!langFile.getKeys(false).contains("aach-command-generate-hover")) {
-			langFile.set("aach-command-generate-hover",
-					"Potentially slow command; requires a full server restart after usage.");
+			langFile.set("aach-command-generate-hover", "Potentially slow command; use with care!");
 			updateDone = true;
 		}
 

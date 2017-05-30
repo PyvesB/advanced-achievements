@@ -29,7 +29,7 @@ public class GenerateCommand extends AbstractCommand {
 				true);
 
 		langAdvancementsGenerated = plugin.getChatHeader() + plugin.getPluginLang().getString("advancements-generated",
-				"Advancements were successfully generated. Please perform a full server restart for changes to properly take effect.");
+				"Advancements were successfully generated.");
 		langMinecraftNotSupported = plugin.getChatHeader() + plugin.getPluginLang().getString("minecraft-not-supported",
 				"Advancements not supported in your Minecraft version. Please update to 1.12+.");
 	}

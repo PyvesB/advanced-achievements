@@ -92,7 +92,7 @@ public class HelpCommand extends AbstractCommand {
 		langCommandGenerate = plugin.getChatHeader() + configColor + "/aach generate" + ChatColor.GRAY + " > "
 				+ plugin.getPluginLang().getString("aach-command-generate", "Generate advancements.");
 		langCommandGenerateHover = plugin.getPluginLang().getString("aach-command-generate-hover",
-				"Potentially slow command; requires a full server restart after usage.");
+				"Potentially slow command; use with care!");
 		langCommandGive = plugin.getChatHeader() + configColor + "/aach give &oach player" + ChatColor.GRAY + " > "
 				+ ChatColor.translateAlternateColorCodes('&',
 						StringUtils.replaceEach(

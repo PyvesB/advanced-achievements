@@ -84,7 +84,7 @@ aach-command-toggle-hover: "Your choice is saved until next server restart!"
 aach-command-reset: "Reset statistic for category CAT."
 aach-command-reset-hover: "Player must be online; for categories with subcategories, they are all reset!"
 aach-command-generate: "Generate advancements."
-aach-command-generate-hover: "Potentially slow command; requires a full server restart after usage."
+aach-command-generate-hover: "Potentially slow command; use with care!"
 aach-tip: "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!"
 
 # Related to /aach info.
@@ -175,7 +175,7 @@ reset-successful: " statistics were cleared for PLAYER."
 category-does-not-exist: "The specified category does not exist."
 
 # Related to /aach generate.
-advancements-generated: "Advancements were successfully generated. Please perform a full server restart for changes to properly take effect."
+advancements-generated: "Advancements were successfully generated."
 minecraft-not-supported: "Advancements not supported in your Minecraft version. Please update to 1.12+."
 
 #============================================================#
