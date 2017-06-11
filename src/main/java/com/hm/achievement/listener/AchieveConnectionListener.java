@@ -97,10 +97,10 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 							return;
 						}
 
-						handleConnectionAchievements(player);
 						if (version >= 12) {
 							awardAdvancements(player);
 						}
+						handleConnectionAchievements(player);
 
 						// Ran successfully to completion: no need to re-run while player is connected.
 						playersProcessingRan.add(player.getUniqueId().toString());
@@ -144,14 +144,23 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	 * @param player
 	 */
 	private void awardAdvancements(final Player player) {
-		for (String achName : plugin.getDatabaseManager().getPlayerAchievementNamesList(player.getUniqueId())) {
-			Advancement advancement = Bukkit.getServer()
-					.getAdvancement(new NamespacedKey(plugin, AdvancementManager.getKey(achName)));
-			// Matching advancement might not exist if user has not called /aach generate.
-			if (advancement != null) {
-				AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
-				if (!advancementProgress.isDone()) {
-					advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
+		Advancement advancement = Bukkit.getServer()
+				.getAdvancement(new NamespacedKey(plugin, AdvancementManager.ADVANCED_ACHIEVEMENTS_PARENT));
+		// If no parent, user has not used /aach generate, do not do anything.
+		if (advancement != null) {
+			AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
+			if (!advancementProgress.isDone()) {
+				advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
+			}
+			for (String achName : plugin.getDatabaseManager().getPlayerAchievementNamesList(player.getUniqueId())) {
+				advancement = Bukkit.getServer()
+						.getAdvancement(new NamespacedKey(plugin, AdvancementManager.getKey(achName)));
+				// Matching advancement might not exist if user has not called /aach generate.
+				if (advancement != null) {
+					advancementProgress = player.getAdvancementProgress(advancement);
+					if (!advancementProgress.isDone()) {
+						advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
+					}
 				}
 			}
 		}

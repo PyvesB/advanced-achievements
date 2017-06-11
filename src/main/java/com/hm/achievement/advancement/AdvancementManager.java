@@ -28,7 +28,7 @@ import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 @SuppressWarnings("deprecation")
 public class AdvancementManager {
 
-	private static final String ADVANCED_ACHIEVEMENTS_PARENT = "advanced_achievements_parent";
+	public static final String ADVANCED_ACHIEVEMENTS_PARENT = "advanced_achievements_parent";
 	// Pattern to produce keys for advancements.
 	private static final Pattern REGEX_PATTERN_KEYS = Pattern.compile("[^A-Za-z0-9|_]");
 	// Pattern to delete colours as the advancement interface does not support them.
