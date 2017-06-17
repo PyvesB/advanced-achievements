@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
@@ -31,7 +32,8 @@ public class AchieveCraftListener extends AbstractListener {
 
 		Player player = (Player) event.getWhoClicked();
 		if (!shouldEventBeTakenIntoAccountNoPermission(player)
-				|| event.isShiftClick() && player.getInventory().firstEmpty() < 0) {
+				|| (event.isShiftClick() || event.getClick() == ClickType.NUMBER_KEY)
+						&& player.getInventory().firstEmpty() < 0) {
 			return;
 		}
 
