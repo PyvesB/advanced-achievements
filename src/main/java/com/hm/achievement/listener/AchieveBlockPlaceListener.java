@@ -21,6 +21,7 @@ public class AchieveBlockPlaceListener extends AbstractListener {
 		super(plugin);
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();

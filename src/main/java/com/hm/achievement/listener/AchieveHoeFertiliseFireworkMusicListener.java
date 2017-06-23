@@ -69,6 +69,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 	 * @param block
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	private boolean canBeFertilised(Material clickedMaterial, Block block) {
 		short durability = block.getState().getData().toItemStack().getDurability();
 		if (clickedMaterial == Material.DOUBLE_PLANT) {
