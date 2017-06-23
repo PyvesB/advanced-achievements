@@ -28,18 +28,24 @@ public class AchievementAdvancement {
 	}
 
 	public String toJson() {
-		if (parent == null) {
-			return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
-					+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]], " + "\"display\": " + "{\"icon\": {\"item\": \""
-					+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", "
-					+ "\"description\": \"" + description + "\", \"frame\": \"" + frame
-					+ "\", \"background\": \"minecraft:textures/items/book_enchanted.png\", \"announce_to_chat\": false}}";
-		}
 		return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
 				+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]], " + "\"display\": " + "{\"icon\": {\"item\": \""
 				+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", "
 				+ "\"description\": \"" + description + "\", \"frame\": \"" + frame
 				+ "\", \"announce_to_chat\": false}, \"parent\": \"advancedachievements:" + parent + "\"}";
+	}
+
+	public String toParentJson(boolean configHideAdvancements) {
+		if (configHideAdvancements) {
+			return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
+					+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]]}";
+
+		}
+		return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
+				+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]], " + "\"display\": " + "{\"icon\": {\"item\": \""
+				+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", "
+				+ "\"description\": \"" + description + "\", \"frame\": \"" + frame
+				+ "\", \"background\": \"minecraft:textures/items/book_enchanted.png\", \"announce_to_chat\": false}}";
 	}
 
 	public static class AchievementAdvancementBuilder {
@@ -87,5 +93,4 @@ public class AchievementAdvancement {
 			return new AchievementAdvancement(iconItem, iconData, title, description, parent, "goal");
 		}
 	}
-
 }

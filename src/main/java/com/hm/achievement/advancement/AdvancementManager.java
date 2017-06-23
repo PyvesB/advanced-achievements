@@ -50,13 +50,16 @@ public class AdvancementManager {
 	private final AdvancedAchievements plugin;
 	private final UnsafeValues unsafeValues;
 	private final boolean configRegisterAdvancementDescriptions;
+	private final boolean configHideAdvancements;
 
 	private int generatedAdvancements;
 
-	public AdvancementManager(AdvancedAchievements plugin, boolean configRegisterAdvancementDescriptions) {
+	public AdvancementManager(AdvancedAchievements plugin, boolean configRegisterAdvancementDescriptions,
+			boolean configHideAdvancements) {
 		this.plugin = plugin;
 		unsafeValues = Bukkit.getUnsafe();
 		this.configRegisterAdvancementDescriptions = configRegisterAdvancementDescriptions;
+		this.configHideAdvancements = configHideAdvancements;
 		generatedAdvancements = 0;
 	}
 
@@ -98,10 +101,11 @@ public class AdvancementManager {
 	private void registerParentAdvancement() {
 		AchievementAdvancementBuilder achievementAdvancementBuilder = new AchievementAdvancementBuilder()
 				.iconItem("minecraft:" + getInternalName(new ItemStack(Material.BOOK, 1, (short) 0)))
-				.iconData(Integer.toString(0)).title("Advanced Achievements").description("").parent(null);
+				.iconData(Integer.toString(0)).title("Advanced Achievements").description("");
 		NamespacedKey namespacedKey = new NamespacedKey(plugin, ADVANCED_ACHIEVEMENTS_PARENT);
 		if (Bukkit.getServer().getAdvancement(namespacedKey) == null) {
-			unsafeValues.loadAdvancement(namespacedKey, achievementAdvancementBuilder.buildGoal().toJson());
+			unsafeValues.loadAdvancement(namespacedKey,
+					achievementAdvancementBuilder.buildGoal().toParentJson(configHideAdvancements));
 		}
 	}
 

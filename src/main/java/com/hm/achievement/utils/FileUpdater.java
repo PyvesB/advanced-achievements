@@ -219,6 +219,15 @@ public class FileUpdater {
 			updateDone = true;
 		}
 
+		// Added in version 5.2.2:
+		if (!configFile.getKeys(false).contains("HideAdvancements")) {
+			configFile.set("HideAdvancements", false,
+					new String[] {
+							"If true, hide avancements from the advancement GUI. Advancement notifications will still appear when receiving achievements.",
+							"No effect if using Minecraft versions prior to 1.12." });
+			updateDone = true;
+		}
+
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
 			try {

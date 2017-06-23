@@ -163,6 +163,10 @@ DateDisplayTime: true
 # No effect if using Minecraft versions prior to 1.12.
 RegisterAdvancementDescriptions: true
 
+# If true, hide avancements from the advancement GUI. Advancement notifications will still appear when receiving achievements.
+# No effect if using Minecraft versions prior to 1.12.
+HideAdvancements: false
+
 #=============================OOO=============================#
 # III-----------------------------------------------------III #
 # |                    Database settings                    | #

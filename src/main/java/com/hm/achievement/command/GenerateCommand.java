@@ -14,6 +14,7 @@ import com.hm.achievement.advancement.AdvancementManager;
 public class GenerateCommand extends AbstractCommand {
 
 	private boolean configRegisterAdvancementDescriptions;
+	private boolean configHideAdvancements;
 	private String langAdvancementsGenerated;
 	private String langMinecraftNotSupported;
 
@@ -27,6 +28,7 @@ public class GenerateCommand extends AbstractCommand {
 
 		configRegisterAdvancementDescriptions = plugin.getPluginConfig().getBoolean("RegisterAdvancementDescriptions",
 				true);
+		configHideAdvancements = plugin.getPluginConfig().getBoolean("HideAdvancements", false);
 
 		langAdvancementsGenerated = plugin.getChatHeader() + plugin.getPluginLang().getString("advancements-generated",
 				"Advancements were successfully generated.");
@@ -38,7 +40,7 @@ public class GenerateCommand extends AbstractCommand {
 	protected void executeCommand(CommandSender sender, String[] args) {
 		if (version >= 12) {
 			AdvancementManager advancementManager = new AdvancementManager(plugin,
-					configRegisterAdvancementDescriptions);
+					configRegisterAdvancementDescriptions, configHideAdvancements);
 			advancementManager.registerAdvancements();
 
 			sender.sendMessage(langAdvancementsGenerated);
