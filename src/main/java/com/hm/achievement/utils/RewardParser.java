@@ -1,21 +1,20 @@
 package com.hm.achievement.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
+import com.hm.achievement.AdvancedAchievements;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.item.ItemInfo;
+import net.milkbowl.vault.item.Items;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import com.hm.achievement.AdvancedAchievements;
-
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.item.ItemInfo;
-import net.milkbowl.vault.item.Items;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Class in charge of handling the rewards for achievements.
@@ -96,7 +95,10 @@ public class RewardParser implements Reloadable {
 
 		if (keyNames.contains(configAchievement + ".Reward.Item")) {
 			int amount = getItemAmount(configAchievement);
-			String name = getItemName(getItemReward(configAchievement));
+			String name = getItemName(configAchievement);
+			if (name == null || name.isEmpty()) {
+				name = getItemName(getItemReward(configAchievement));
+			}
 			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
 					new String[] { Integer.toString(amount), name }));
 		}
@@ -167,13 +169,12 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Returns an item reward for a given achievement (specified in configuration file).
 	 * 
-	 * @param player
 	 * @param configAchievement
-	 * @param amount
 	 * @return ItemStack object corresponding to the reward
 	 */
 	public ItemStack getItemReward(String configAchievement) {
 		int amount = getItemAmount(configAchievement);
+		String name = getItemName(configAchievement);
 		if (amount <= 0) {
 			return null;
 		}
@@ -188,7 +189,7 @@ public class RewardParser implements Reloadable {
 				item = new ItemStack(rewardMaterial, amount);
 			}
 		} else {
-			// New config syntax. Reward is of the form: "Item: coal 5"
+			// New config syntax. Reward is of the form: "Item: coal 5 Christmas Coal"
 			// The amount has already been parsed out and is provided by parameter amount.
 			String materialNameAndQty = config.getString(configAchievement + ".Reward.Item", "stone");
 			int spaceIndex = materialNameAndQty.indexOf(' ');
@@ -203,6 +204,13 @@ public class RewardParser implements Reloadable {
 			Material rewardMaterial = Material.getMaterial(materialName);
 			if (rewardMaterial != null) {
 				item = new ItemStack(rewardMaterial, amount);
+
+				if (name != null) {
+					ItemMeta meta = item.getItemMeta();
+					meta.setDisplayName(name);
+					item.setItemMeta(meta);
+				}
+
 			}
 		}
 		if (item == null) {
@@ -246,9 +254,44 @@ public class RewardParser implements Reloadable {
 			String materialAndQty = config.getString(configAchievement + ".Reward.Item", "");
 			int indexOfAmount = materialAndQty.indexOf(' ');
 			if (indexOfAmount != -1) {
-				itemAmount = Integer.parseInt(materialAndQty.substring(indexOfAmount + 1));
+				String intString = materialAndQty.substring(indexOfAmount + 1);
+				int indexOfName = intString.indexOf(' ');
+				if (indexOfName != -1) {
+					itemAmount = Integer.parseInt(intString.split(" ")[0]);
+				} else {
+					itemAmount = Integer.parseInt(intString);
+				}
 			}
 		}
 		return itemAmount;
 	}
+
+	/**
+	 * Extracts the item reward custom name from the configuration.
+	 *
+	 * @param configAchievement
+	 * @return
+	 */
+	private String getItemName(String configAchievement) {
+		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
+		String itemName = null;
+
+		// Old config syntax does not support item reward names
+		if (!config.getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
+			String configString = config.getString(configAchievement + ".Reward.Item", "");
+			String[] splittedString = configString.split(" ");
+			if (splittedString.length >= 2) {
+				StringBuilder builder = new StringBuilder();
+				for (int i = 2; i < splittedString.length; i++) {
+					builder.append(splittedString[i]).append(" ");
+				}
+
+				itemName = builder.toString().trim();
+
+			}
+		}
+
+		return itemName;
+	}
+
 }

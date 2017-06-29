@@ -1,18 +1,15 @@
 package com.hm.achievement.listener;
 
-import java.util.Random;
-import java.util.logging.Level;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.advancement.AchievementAdvancement;
+import com.hm.achievement.advancement.AdvancementManager;
+import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
+import com.hm.mcshared.particle.PacketSender;
+import com.hm.mcshared.particle.ParticleEffect;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
+import org.bukkit.*;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.FireworkEffect.Type;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -23,12 +20,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.advancement.AchievementAdvancement;
-import com.hm.achievement.advancement.AdvancementManager;
-import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
-import com.hm.mcshared.particle.PacketSender;
-import com.hm.mcshared.particle.ParticleEffect;
+import java.util.Random;
+import java.util.logging.Level;
 
 /**
  * Listener class to deal with achievement receptions: rewards, display and database operations.
@@ -166,7 +159,13 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		} else {
 			player.getWorld().dropItem(player.getLocation(), item);
 		}
-		player.sendMessage(langItemRewardReceived + plugin.getRewardParser().getItemName(item));
+
+		String name = item.getItemMeta().getDisplayName();
+		if (name == null || name.isEmpty()) {
+			name = plugin.getRewardParser().getItemName(item);
+		}
+
+		player.sendMessage(langItemRewardReceived + name);
 	}
 
 	/**
@@ -220,7 +219,6 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * Displays chat messages, screen title and launches a firework when a player receives an achievement.
 	 * 
 	 * @param player
-	 * @param configAchievement
 	 */
 	private void displayAchievement(Player player, String name, String displayName, String description) {
 		String nameToShowUser;
@@ -265,7 +263,6 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * Displays an action bar message or chat notification to another player.
 	 * 
 	 * @param achievementReceiver
-	 * @param configAchievement
 	 */
 	private void displayNotification(Player achievementReceiver, String nameToShowUser, Player otherPlayer) {
 		if (configActionBarNotify) {
