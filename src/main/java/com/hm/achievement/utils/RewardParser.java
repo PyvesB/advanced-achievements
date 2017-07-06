@@ -1,9 +1,9 @@
 package com.hm.achievement.utils;
 
-import com.hm.achievement.AdvancedAchievements;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.item.ItemInfo;
-import net.milkbowl.vault.item.Items;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,9 +12,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.hm.achievement.AdvancedAchievements;
+
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.item.ItemInfo;
+import net.milkbowl.vault.item.Items;
 
 /**
  * Class in charge of handling the rewards for achievements.
@@ -158,6 +160,7 @@ public class RewardParser implements Reloadable {
 	 * Extracts the money, experience or increased max health rewards amount from the configuration.
 	 * 
 	 * @param configAchievement
+	 * @param type
 	 * @return
 	 */
 	public int getRewardAmount(String configAchievement, String type) {
@@ -290,7 +293,6 @@ public class RewardParser implements Reloadable {
 
 			}
 		}
-
 		return itemName;
 	}
 

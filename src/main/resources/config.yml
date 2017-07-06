@@ -308,6 +308,9 @@ Deaths:
     Message: The first time you died!
     Name: deaths_1
     DisplayName: Rest in Peace
+    Reward:
+        # Text after the material and quantity is interpreted as a custom name, shown in /aach list and when receiving the reward.
+        Item: stone 5 Tombstone
     
 # When an arrow is shot.
 Arrows:
