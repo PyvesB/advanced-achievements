@@ -215,9 +215,14 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * @param player
 	 * @param amount
 	 */
+	@SuppressWarnings("deprecation")
 	private void rewardMaxHealth(Player player, int amount) {
-		AttributeInstance playerAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-		playerAttribute.setBaseValue(playerAttribute.getBaseValue() + amount);
+		if (version >= 9) {
+			AttributeInstance playerAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+			playerAttribute.setBaseValue(playerAttribute.getBaseValue() + amount);
+		} else {
+			player.setMaxHealth(player.getMaxHealth() + amount);
+		}
 		player.sendMessage(ChatColor.translateAlternateColorCodes('&',
 				StringUtils.replaceOnce(langIncreaseMaxHealthRewardReceived, "AMOUNT", Integer.toString(amount))));
 	}

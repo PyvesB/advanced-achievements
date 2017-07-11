@@ -208,8 +208,14 @@ public abstract class AbstractListener implements Listener, Reloadable {
 			}
 		}
 
+		ItemStack[] storageContents;
+		if (version >= 9) {
+			storageContents = player.getInventory().getStorageContents();
+		} else {
+			storageContents = player.getInventory().getContents();
+		}
 		// Get all empty slots in the player's inventory.
-		for (ItemStack currentItemStack : player.getInventory().getStorageContents()) {
+		for (ItemStack currentItemStack : storageContents) {
 			if (currentItemStack == null) {
 				availableSpace += newItemStack.getMaxStackSize();
 			}
