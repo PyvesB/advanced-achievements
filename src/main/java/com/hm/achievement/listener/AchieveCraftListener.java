@@ -26,20 +26,20 @@ public class AchieveCraftListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(CraftItemEvent event) {
-		if (!(event.getWhoClicked() instanceof Player) || event.getAction() == InventoryAction.NOTHING) {
+		if (!(event.getWhoClicked() instanceof Player) || event.getAction() == InventoryAction.NOTHING
+				|| event.getClick() == ClickType.NUMBER_KEY
+						&& event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
 			return;
 		}
 
 		Player player = (Player) event.getWhoClicked();
-		if (!shouldEventBeTakenIntoAccountNoPermission(player)
-				|| (event.isShiftClick() || event.getClick() == ClickType.NUMBER_KEY)
-						&& player.getInventory().firstEmpty() < 0) {
+		if (!shouldEventBeTakenIntoAccountNoPermission(player)) {
 			return;
 		}
 
 		MultipleAchievements category = MultipleAchievements.CRAFTS;
 
-		ItemStack item = event.getRecipe().getResult();
+		ItemStack item = event.getCurrentItem();
 		String craftName = item.getType().name().toLowerCase();
 		if (!player.hasPermission(category.toPermName() + '.' + craftName)) {
 			return;
@@ -50,21 +50,23 @@ public class AchieveCraftListener extends AbstractListener {
 			return;
 		}
 
-		// Some items appear as having amount equal to 0, regardless of the amount crafted (for instance fireworks).
-		// Probably a bug in Spigot.
-		int eventAmount = item.getAmount() > 0 ? item.getAmount() : 1;
+		int eventAmount = event.getCurrentItem().getAmount();
 		if (event.isShiftClick()) {
-			int max = event.getInventory().getMaxStackSize();
+			int maxAmount = event.getInventory().getMaxStackSize();
 			ItemStack[] matrix = event.getInventory().getMatrix();
 			for (ItemStack itemStack : matrix) {
 				if (itemStack != null && itemStack.getType() != Material.AIR) {
 					int itemStackAmount = itemStack.getAmount();
-					if (itemStackAmount < max && itemStackAmount > 0) {
-						max = itemStackAmount;
+					if (itemStackAmount < maxAmount && itemStackAmount > 0) {
+						maxAmount = itemStackAmount;
 					}
 				}
 			}
-			eventAmount *= max;
+			eventAmount *= maxAmount;
+			eventAmount = Math.min(eventAmount, getInventoryAvailableSpace(player, event.getCurrentItem()));
+			if (eventAmount == 0) {
+				return;
+			}
 		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, craftName, eventAmount);

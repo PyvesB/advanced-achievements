@@ -1,5 +1,6 @@
 package com.hm.achievement.listener;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -186,5 +187,34 @@ public abstract class AbstractListener implements Listener, Reloadable {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Calculates the space available to accommodate a new item stack. This method takes empty slots and existing item
+	 * stacks of the same type into account.
+	 * 
+	 * @param player
+	 * @param newItemStack
+	 * @return
+	 */
+	protected int getInventoryAvailableSpace(Player player, ItemStack newItemStack) {
+		int availableSpace = 0;
+		// Get all similar item stacks with a similar material in the player's inventory.
+		HashMap<Integer, ? extends ItemStack> inventoryItemStackMap = player.getInventory().all(newItemStack.getType());
+		// If matching item stack, add remaining space.
+		for (ItemStack currentItemStack : inventoryItemStackMap.values()) {
+			if (newItemStack.isSimilar(currentItemStack)) {
+				availableSpace += (newItemStack.getMaxStackSize() - currentItemStack.getAmount());
+			}
+		}
+
+		// Get all empty slots in the player's inventory.
+		for (ItemStack currentItemStack : player.getInventory().getStorageContents()) {
+			if (currentItemStack == null) {
+				availableSpace += newItemStack.getMaxStackSize();
+			}
+		}
+
+		return availableSpace;
 	}
 }
