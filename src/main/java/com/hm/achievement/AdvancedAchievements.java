@@ -50,6 +50,7 @@ import com.hm.achievement.listener.AchieveArrowListener;
 import com.hm.achievement.listener.AchieveBedListener;
 import com.hm.achievement.listener.AchieveBlockBreakListener;
 import com.hm.achievement.listener.AchieveBlockPlaceListener;
+import com.hm.achievement.listener.AchieveBreedListener;
 import com.hm.achievement.listener.AchieveConnectionListener;
 import com.hm.achievement.listener.AchieveConsumeListener;
 import com.hm.achievement.listener.AchieveCraftListener;
@@ -124,6 +125,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	private AchievePickupListener pickupListener;
 	private AchieveHoeFertiliseFireworkMusicListener hoeFertiliseFireworkMusicListener;
 	private AchieveTameListener tameListener;
+	private AchieveBreedListener breedListener;
 	private AchieveBlockPlaceListener blockPlaceListener;
 	private AchieveBlockBreakListener blockBreakListener;
 	private AchieveKillListener killListener;
@@ -612,6 +614,11 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			pm.registerEvents(tameListener, this);
 		}
 
+		if (!disabledCategorySet.contains(MultipleAchievements.BREEDING.toString())) {
+			breedListener = new AchieveBreedListener(this);
+			pm.registerEvents(breedListener, this);
+		}
+		
 		if (!disabledCategorySet.contains(NormalAchievements.HOEPLOWING.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.FERTILISING.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.FIREWORKS.toString())
