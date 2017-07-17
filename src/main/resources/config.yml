@@ -367,7 +367,7 @@ Shear:
     Message: 100 sheep sheared!
     Name: shear_100
     DisplayName: "&1Wool Addict"
-    
+
 # When a cow is milked.
 Milk:
   1:
@@ -527,7 +527,16 @@ Taming:
     Message: You tamed your first animal!
     Name: taming_1
     DisplayName: Tamer
-    
+
+# When animals breed.
+# Use an Entity name, in lower case.
+Breeding:
+  sheep:
+    100:
+      Message: You bred your first animal!
+      Name: breeding_1
+      DisplayName: Breeder
+
 # When a potion is brewed.
 Brewing:
   1:
