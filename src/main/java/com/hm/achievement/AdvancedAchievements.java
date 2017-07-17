@@ -398,6 +398,14 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			this.getLogger().warning(
 					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in your config.");
 		}
+		// Breeding event introduced in Spigot 1319 (Minecraft 1.10.2).
+		if (!disabledCategorySet.contains(MultipleAchievements.BREEDING.toString()) && minecraftVersion < 10) {
+			disabledCategorySet.add(MultipleAchievements.BREEDING.toString());
+			this.getLogger().warning("Overriding configuration: disabling Breeding category.");
+			this.getLogger().warning(
+					"The breeding event is not available in your server version, please add Breeding to the DisabledCategories list in your config.");
+		}
+		
 		return disabledCategorySet;
 	}
 
