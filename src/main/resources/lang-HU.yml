@@ -1,0 +1,187 @@
+#=============================================================#
+# +---------------------------------------------------------+ #
+# |Advanced Achievements Hungarian translation by pocakking | #
+# |             ~ Valid as of version 5.2.4 ~               | #
+# |   Newer plugin versions will automatically append new   | #
+# |     untranslated parameters to the end of the file.     | #
+# +---------------------------------------------------------+ #
+#=============================================================#
+
+no-permissions: "Nincs jogod ehhez."
+statistic-cooldown: "Előrelépés eltiltás: várj TIME másodpercet mielőtt ez a művelet újra számítana."
+statistic-cooldown: ""
+statistic-cooldown: ""
+
+# Related to /aach reload.
+configuration-successfully-reloaded: "Konfiguráció sikeresen újratöltve."
+configuration-reload-failed: "Hiba a konfiguráció újratöltésében. Please view logs for more details."
+server-restart-reload: "A DisabledCategories listát módosították. A szervert teljesen újratölteni vagy újra kell indítani, hogy a módosítások érvénybe lépjenek."
+
+# Related to /aach top week and month.
+top-achievement: "Legtöbb előrelépés tulajdonosai:"
+player-rank: "Jelenlegi rank:"
+week-achievement: "Heti előrelépés rangsor:"
+month-achievement: "Hónapi előrelépés rangsor:"
+not-ranked: "Éppen nincs rangod erre az időközre."
+
+# Related to /aach stats.
+number-achievements: "Elért előrelépésok:"
+
+# Related to /aach book.
+book-received: "Megkaptad az előrelépéskönyvedet!"
+book-delay: "Várjod kell TIME másodpercet minden könyvlekérés között."
+book-name: "Előrelépés Könyv"
+book-date: "Köny készítési dátuma: DATE."
+book-not-received: "Még nem szereztél előrelépéseket."
+
+# Related to /aach give.
+player-offline: "PLAYER éppen offline!"
+achievement-already-received: "PLAYER már megszerezte ezt az előrelépést!"
+achievement-not-found: "A kijelölt előrelépés nem található a Commands kategóriában."
+achievement-given: "Előrelépés megadva!"
+
+# Related to achievement reception.
+achievement-received: "PLAYER megszerezte az előrelépést:"
+achievement-new: "Új előrelépés:"
+
+# Related to /aach check.
+check-achievement-true: "PLAYER megszerezte az ACH előrelépést!"
+check-achievements-false: "PLAYER nem szerezte meg az ACH előrelépést ACH!"
+
+# Related to /aach delete.
+delete-achievements: "ACH előrelépés ki lett törölve PLAYER-től/tól."
+
+# Related to achievement rewards.
+item-reward-received: "kaptál egy tárgyjutalmat:"
+money-reward-received: "kaptál AMOUNT-t!"
+command-reward: "Jutalom sikeresen megadva!"
+experience-reward-received: "kaptál AMOUNT tapasztalatpontot!"
+increase-max-health-reward-received: "A maximális életerőd AMOUNT-al/el növekedett!"
+
+# Related to /aach help.
+aach-command-book: "Kapd meg az előrelépéskönyvedet."
+aach-command-book-hover: "RP tárgyak amiket összegyűjthetsz és cserélhetsz másokkal! Időalapú lista."
+aach-command-stats: "Megszerzett előrelépések mennyiségének kimutatása."
+aach-command-stats-hover: "Fejlődésmutató. Kapd el mindet!"
+aach-command-list: "Megszerzett és hiányos előrelépések kimutatása"
+aach-command-list-hover: "Díszes felhasználói felület hogy áttenkitsd a haladásodat az előrelépésekben!"
+aach-command-top: "Személyes és globális rangsor kimutatása."
+aach-command-top-hover: "Kik a szerver vezetői és hogyan hasonlítasz össze velük?"
+aach-command-give: "ACH előrelépés megadása NAME játékosnak."
+aach-command-give-hover: "A játékosnak online kell lenni; csak parancs előrelépéseket lehet használni."
+aach-command-reload: "Konfigurációs fájlok újratöltésése."
+aach-command-reload-hover: "legtöbb beállítás újratöltésése a config.yml, gui.yml and lang.yml fájlokban."
+aach-command-info: "Információ kimutatása a pluginról."
+aach-command-info-hover: "Egy kis extra információ a pluginról és a király készítőjéről!"
+aach-command-check: "Ellenőrizd, hogy NAME rendelkezik-e ACH előrelépéssel."
+aach-command-check-hover: "Használd a konfigurációban megadott Name paramétert."
+aach-command-delete: "Előrelépés ACH kitörlése NAME játékostól."
+aach-command-delete-hover: "A játékosnak online kell lenni; does not reset any associated statistics."
+aach-command-week: "Heti rangsor kimutatása."
+aach-command-week-hover: "Legjobb előrelépés vadászok a hét eleje óta!"
+aach-command-month: "Hónapi rangsor kimutatása."
+aach-command-month-hover: "Legjobb előrelépés vadászok a hónap eleje óta!"
+aach-command-toggle: "Más játékosok előrelépéseinek kimutatása."
+aach-command-toggle-hover: "A választásod el van mentve a következő szerver újraindításig!"
+aach-command-reset: "CAT kategória statisztikái alaphelyzetbe állítása."
+aach-command-reset-hover: "A játékosnak online kell lenni; az olyan kategóriáknak amelynek van alkategóriája, mind alaphelyzetbe lesznek állítva!"
+aach-command-generate: "Generálj előrelépésokat."
+aach-command-generate-hover: "Potenciálisan lassú parancs; óvatosan használd!"
+aach-tip: "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!"
+
+# Related to /aach info.
+version-command-version: "Verzió:"
+version-command-website: "Weboldal:"
+version-command-author: "Készítő:"
+version-command-description: "Leirás:"
+version-command-description-details: "Az Advanced Achievements egyedi és kihívásokkal teli előrelépésokat nyújt. Próbálj meg összegyűjteni annyit amennyit csak tudsz, szerezz jutalmakat, mászz fel a rangsorban és szerezz RP könyveket!"
+version-command-vault: "Vault integráció:"
+version-command-petmaster: "Pet Master integráció:"
+version-command-btlp: "BungeeTabListPlus integráció:"
+version-command-database: "Adatbázis típus:"
+
+# Related to /aach list.
+list-gui-title: "&5&lElőrelépés Lista"
+list-delay: "Várnod kell TIME másodpercet mind list parancs között!"
+list-description: "Leírás:"
+list-goal: "Cél:"
+list-reception: "Megszerzés dátuma:"
+list-progress: "Haladás:"
+list-reward: "Jutalmak:"
+list-reward-money: "kap AMOUNT-t"
+list-reward-item: "kap AMOUNT ITEM-t"
+list-reward-command: "egyéb"
+list-reward-experience: "kap AMOUNT tapasztalatpontot"
+list-reward-increase-max-health: "a maximális életerő AMOUNT-al/el növekedik"
+list-achievement-received: "&5\u2714&f "
+list-achievement-not-received: "&4\u2718&8 "
+list-category-not-unlocked: "Még nem oldottad fel ezt a kategóriát."
+list-back-message: "&7Vissza"
+list-achievements-in-category-singular: "AMOUNT előrelépés"
+list-achievements-in-category-plural: "AMOUNT előrelépés"
+
+# Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
+list-connections: "Kapcsolódások"
+list-places: "Lerakott Blokkok"
+list-breaks: "Kiütött Blokkok"
+list-kills: "Megölt Entitások"
+list-crafts: "Bárkácsolt Tárgyak"
+list-playercommands: "Beírt Parancsok"
+list-deaths: "Halálok"
+list-arrows: "Kilőtt Nyilak"
+list-snowballs: "Eldobott Hógolyók"
+list-eggs: "Eldobott Tojások"
+list-fish: "Horgászott Hal"
+list-treasure: "Kincs Kihalászva"
+list-itembreaks: "Eltört Tárgyak"
+list-eatenitems: "Megevett Tárgyak"
+list-shear: "Lenyírt Birkák"
+list-milk: "Megfejt Tehenek"
+list-lavabuckets: "Lávával Megtöltött Vödrök"
+list-waterbuckets: "Vízzel Megtöltött Vödrök"
+list-trades: "Cserék Száma"
+list-anvils: "Űllők Felhasználva"
+list-enchantments: "Megbűvölt tárgyak"
+list-beds: "Ágyak használva"
+list-maxlevel: "Legmagasabb Elért Szint"
+list-potions: "Megivott Bájitalok "
+list-playedtime: "Játékidő"
+list-distance-foot: "Távolság Lábon"
+list-distance-pig: "Távolság Malacháton"
+list-distance-horse: "Távolság Lóháton"
+list-distance-minecart: "Távolság Csillével"
+list-distance-boat: "Távolság Csónakkal"
+list-distance-gliding: "Távolság Kitinszárnnyal"
+list-distance-llama: "Távolság Lámaháton"
+list-itemdrops: "Eldobott Tárgyak"
+list-itempickups: "Felvettet tárgyak"
+list-hoeplowings: "Szántott Terület"
+list-fertilising: "Növények megtermékenyítve"
+list-taming: "Megszelidített állatok"
+list-brewing: "Főzött Bájitalok"
+list-fireworks: "Kilőtt Tüzijátékok"
+list-musicdiscs: "Lejátszott Hanglemezek"
+list-enderpearls: "Teleportálások endergyöngyel"
+list-petmastergive: "Háziállatok másik játékosnak adva"
+list-petmasterreceive: "Háziállatok másik játékostól befogadva"
+list-smelting: "Kisütött Tárgyak"
+list-commands: "Egyéb Előrelépésok"
+
+# Related to /aach toggle.
+toggle-displayed: "Mostantól figyelmeztetve leszel ha más játékosok szereznek előrelépésokat."
+toggle-hidden: "Mostantól nem leszel figyelmeztetve ha más játékosok szereznek előrelépésokat."
+
+# Related to /aach reset.
+reset-successful: " statisztikák kitisztítva PLAYER-nek/nak."
+category-does-not-exist: "A meghatározott a kategória nem létezik."
+
+# Related to /aach generate.
+advancements-generated: "Előrelépésok sikeresen generálva."
+minecraft-not-supported: "Előrelépésok nem támogatottak a minecraft verziódban. Kérlek frissíts 1.12-re vagy újabbra."
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# | Parameters in future plugin versions will  appear here | #
+# +--------------------------------------------------------+ #
+#============================================================#
