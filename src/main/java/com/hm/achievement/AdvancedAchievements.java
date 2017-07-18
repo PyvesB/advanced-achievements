@@ -50,6 +50,7 @@ import com.hm.achievement.listener.AchieveArrowListener;
 import com.hm.achievement.listener.AchieveBedListener;
 import com.hm.achievement.listener.AchieveBlockBreakListener;
 import com.hm.achievement.listener.AchieveBlockPlaceListener;
+import com.hm.achievement.listener.AchieveBreedListener;
 import com.hm.achievement.listener.AchieveConnectionListener;
 import com.hm.achievement.listener.AchieveConsumeListener;
 import com.hm.achievement.listener.AchieveCraftListener;
@@ -124,6 +125,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	private AchievePickupListener pickupListener;
 	private AchieveHoeFertiliseFireworkMusicListener hoeFertiliseFireworkMusicListener;
 	private AchieveTameListener tameListener;
+	private AchieveBreedListener breedListener;
 	private AchieveBlockPlaceListener blockPlaceListener;
 	private AchieveBlockBreakListener blockBreakListener;
 	private AchieveKillListener killListener;
@@ -396,6 +398,14 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			this.getLogger().warning(
 					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in your config.");
 		}
+		// Breeding event introduced in Spigot 1319 (Minecraft 1.10.2).
+		if (!disabledCategorySet.contains(MultipleAchievements.BREEDING.toString()) && minecraftVersion < 10) {
+			disabledCategorySet.add(MultipleAchievements.BREEDING.toString());
+			this.getLogger().warning("Overriding configuration: disabling Breeding category.");
+			this.getLogger().warning(
+					"The breeding event is not available in your server version, please add Breeding to the DisabledCategories list in your config.");
+		}
+		
 		return disabledCategorySet;
 	}
 
@@ -612,6 +622,11 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			pm.registerEvents(tameListener, this);
 		}
 
+		if (!disabledCategorySet.contains(MultipleAchievements.BREEDING.toString())) {
+			breedListener = new AchieveBreedListener(this);
+			pm.registerEvents(breedListener, this);
+		}
+		
 		if (!disabledCategorySet.contains(NormalAchievements.HOEPLOWING.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.FERTILISING.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.FIREWORKS.toString())

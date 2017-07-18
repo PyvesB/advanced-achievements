@@ -117,6 +117,9 @@ Fertilising:
 Taming:
   Item: leash
   Metadata: 0
+Breeding:
+  Item: wheat
+  Metadata: 0
 Brewing:
   Item: brewing_stand_item
   Metadata: 0
