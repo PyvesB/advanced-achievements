@@ -3,6 +3,8 @@ package com.hm.achievement.runnable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
@@ -15,12 +17,30 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAch
  */
 public class AchievePlayTimeRunnable extends AbstractRunnable implements Runnable {
 
+	private Essentials essentials;
 	private long previousRunMillis;
+	
+	private boolean configIgnoreAFKPlayedTime;
 
 	public AchievePlayTimeRunnable(AdvancedAchievements plugin) {
 		super(plugin);
 
+		if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
+			essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+		}
+		
 		previousRunMillis = System.currentTimeMillis();
+	}
+	
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		if (essentials != null) {
+			configIgnoreAFKPlayedTime = plugin.getPluginConfig().getBoolean("IgnoreAFKPlayedTime", false);
+		} else {
+			configIgnoreAFKPlayedTime = false;
+		}
 	}
 
 	@Override
@@ -41,6 +61,14 @@ public class AchievePlayTimeRunnable extends AbstractRunnable implements Runnabl
 		// If player is in restricted game mode or is in a blocked world, don't update played time.
 		if (!shouldRunBeTakenIntoAccount(player)) {
 			return;
+		}
+		
+		if (configIgnoreAFKPlayedTime) {
+			User user = essentials.getUser(player);
+			// If player is AFK, don't update played time.
+			if (user != null && user.isAfk()) {
+				return;
+			}
 		}
 
 		NormalAchievements category = NormalAchievements.PLAYEDTIME;

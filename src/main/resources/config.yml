@@ -167,6 +167,9 @@ RegisterAdvancementDescriptions: true
 # No effect if using Minecraft versions prior to 1.12.
 HideAdvancements: false
 
+# If true, PlayedTime will no longer increase when the player is AFK. Requires Essentials to work.
+IgnoreAFKPlayedTime: false
+
 #=============================OOO=============================#
 # III-----------------------------------------------------III #
 # |                    Database settings                    | #

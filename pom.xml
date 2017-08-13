@@ -90,6 +90,10 @@
 			<id>codecrafter47-repo</id>
 			<url>http://nexus.codecrafter47.de/content/repositories/public/</url>
 		</repository>
+		<repository>
+			<id>ess-repo</id>
+			<url>http://repo.ess3.net/content/groups/essentials/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -123,6 +127,11 @@
 			<artifactId>bungeetablistplus-api-bukkit</artifactId>
 			<version>2.7.3</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.ess3</groupId>
+			<artifactId>Essentials</artifactId>
+			<version>2.14-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

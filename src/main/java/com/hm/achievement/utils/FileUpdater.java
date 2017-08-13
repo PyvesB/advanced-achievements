@@ -227,6 +227,13 @@ public class FileUpdater {
 							"No effect if using Minecraft versions prior to 1.12." });
 			updateDone = true;
 		}
+		
+		if (!configFile.getKeys(false).contains("IgnoreAFKPlayedTime")) {
+			configFile.set("IgnoreAFKPlayedTime", false,
+					new String[] {
+							"If true, PlayedTime will no longer increase when the player is AFK. Requires Essentials to work." });
+			updateDone = true;
+		}
 
 		if (updateDone) {
 			// Changes in the configuration: save and do a fresh load.
