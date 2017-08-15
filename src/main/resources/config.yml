@@ -9,7 +9,7 @@
 # To check syntax errors in your file, use: yaml-online-parser.appspot.com
 # Do NOT delete any top level (= not indentented) sections in the configuration file.
 # Possible items for rewards/Crafts/Places/Breaks: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
-# Possible mobs for the Kills section: 	  hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
+# Possible mobs for the Kills section:    hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
 # Default config.yml file:  github.com/PyvesB/AdvancedAchievements/blob/master/src/main/resources/config.yml
 # Visit the wiki for some valuable additional documentation: github.com/PyvesB/AdvancedAchievements/wiki
 
@@ -32,7 +32,7 @@ Firework: true
 FireworkStyle: BALL_LARGE
 
 # Set to true to activate simpler effects and a calm sound when a player receives an achievement.
-# Ignored if Firework parameter is set to true.
+# Ignored if Firework setting is set to true.
 SimplifiedReception: false
 
 # Number of players displayed in /aach top, week and month commands.
