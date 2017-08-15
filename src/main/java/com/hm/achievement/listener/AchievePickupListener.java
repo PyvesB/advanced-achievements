@@ -14,6 +14,7 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
+@SuppressWarnings("deprecation")
 public class AchievePickupListener extends AbstractListener {
 
 	public AchievePickupListener(AdvancedAchievements plugin) {
