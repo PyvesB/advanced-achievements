@@ -15,9 +15,9 @@ import org.bukkit.potion.PotionType;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.utils.Reloadable;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
@@ -149,7 +149,7 @@ public abstract class AbstractListener implements Listener, Reloadable {
 	 * @param configAchievement
 	 */
 	protected void awardAchievementIfAvailable(Player player, String configAchievement) {
-		AchievementCommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
+		CommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
 		if (pluginConfig.getString(configAchievement + ".Message", null) != null) {
 			// Fire achievement event.
 			PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()

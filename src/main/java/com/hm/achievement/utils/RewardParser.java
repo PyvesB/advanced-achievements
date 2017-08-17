@@ -13,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.item.ItemInfo;
@@ -183,7 +184,7 @@ public class RewardParser implements Reloadable {
 		}
 
 		ItemStack item = null;
-		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
+		CommentedYamlConfiguration config = plugin.getPluginConfig();
 		if (config.getKeys(true).contains(configAchievement + ".Reward.Item.Type")) {
 			// Old config syntax (type of item separated in a additional subcategory).
 			Material rewardMaterial = Material
@@ -247,7 +248,7 @@ public class RewardParser implements Reloadable {
 	 * @return
 	 */
 	private int getItemAmount(String configAchievement) {
-		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
+		CommentedYamlConfiguration config = plugin.getPluginConfig();
 		int itemAmount = 0;
 		if (config.getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
 			// Old config syntax.
@@ -276,7 +277,7 @@ public class RewardParser implements Reloadable {
 	 * @return
 	 */
 	private String getItemName(String configAchievement) {
-		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
+		CommentedYamlConfiguration config = plugin.getPluginConfig();
 		String itemName = null;
 
 		// Old config syntax does not support item reward names

@@ -8,8 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.achievement.utils.Reloadable;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach reload command, which reloads the plugin's configuration files.
@@ -31,7 +31,7 @@ public class ReloadCommand extends AbstractCommand {
 		plugin.reloadConfig();
 		plugin.setSuccessfulLoad(true);
 
-		AchievementCommentedYamlConfiguration config = plugin.loadAndBackupFile("config.yml");
+		CommentedYamlConfiguration config = plugin.loadAndBackupFile("config.yml");
 
 		// Compare the DisabledCategories configuration list in the previous configuration file and the new one.
 		Set<String> disabledCategorySet = plugin.extractDisabledCategories(config);

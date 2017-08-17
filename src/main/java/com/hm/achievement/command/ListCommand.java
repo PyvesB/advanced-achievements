@@ -26,7 +26,7 @@ import org.bukkit.map.MinecraftFont;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach list command, which displays interactive GUIs. The command displays the main
@@ -268,7 +268,7 @@ public class ListCommand extends AbstractCommand {
 	public void createCategoryGUIMultiple(MultipleAchievements category, Player player) {
 		String categoryName = category.toString();
 
-		AchievementCommentedYamlConfiguration config = plugin.getPluginConfig();
+		CommentedYamlConfiguration config = plugin.getPluginConfig();
 		ConfigurationSection categoryConfig = config.getConfigurationSection(categoryName);
 
 		int totalAchievementsInCategory = 0;

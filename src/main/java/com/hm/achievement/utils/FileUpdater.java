@@ -12,6 +12,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of updating the language and configuration files when a new version of the plugin is released.
@@ -35,7 +36,7 @@ public class FileUpdater {
 	 * 
 	 * @param config
 	 */
-	public void updateOldConfiguration(AchievementCommentedYamlConfiguration config) {
+	public void updateOldConfiguration(CommentedYamlConfiguration config) {
 		updatePerformed = false;
 
 		// Make sure DisabledCategories exists so elements can then be added to it:
@@ -156,7 +157,7 @@ public class FileUpdater {
 	 * 
 	 * @param lang
 	 */
-	public void updateOldLanguage(AchievementCommentedYamlConfiguration lang) {
+	public void updateOldLanguage(CommentedYamlConfiguration lang) {
 		updatePerformed = false;
 
 		// Iterate through all categories to add missing ones.
@@ -271,8 +272,7 @@ public class FileUpdater {
 	 * @param value
 	 * @param comments
 	 */
-	private void updateSetting(AchievementCommentedYamlConfiguration file, String name, Object value,
-			String[] comments) {
+	private void updateSetting(CommentedYamlConfiguration file, String name, Object value, String[] comments) {
 		if (!file.getKeys(false).contains(name)) {
 			file.set(name, value, comments);
 			updatePerformed = true;
@@ -286,8 +286,7 @@ public class FileUpdater {
 	 * @param categoryName
 	 * @param categoryComment
 	 */
-	private void addNewCategory(AchievementCommentedYamlConfiguration config, String categoryName,
-			String categoryComment) {
+	private void addNewCategory(CommentedYamlConfiguration config, String categoryName, String categoryComment) {
 		if (!config.getKeys(false).contains(categoryName)) {
 			Map<Object, Object> emptyMap = new HashMap<>();
 			config.set(categoryName, emptyMap, categoryComment);

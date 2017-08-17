@@ -77,12 +77,12 @@ import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
 import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
-import com.hm.achievement.utils.AchievementCommentedYamlConfiguration;
 import com.hm.achievement.utils.AchievementCountBungeeTabListPlusVariable;
 import com.hm.achievement.utils.Cleanable;
 import com.hm.achievement.utils.FileUpdater;
 import com.hm.achievement.utils.Reloadable;
 import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import com.hm.mcshared.update.UpdateChecker;
 
@@ -161,9 +161,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	private UpdateChecker updateChecker;
 
 	// Language, configuration and GUI related.
-	private AchievementCommentedYamlConfiguration config;
-	private AchievementCommentedYamlConfiguration lang;
-	private AchievementCommentedYamlConfiguration gui;
+	private CommentedYamlConfiguration config;
+	private CommentedYamlConfiguration lang;
+	private CommentedYamlConfiguration gui;
 
 	// Database related.
 	private final SQLDatabaseManager databaseManager;
@@ -336,11 +336,11 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * @param fileName
 	 * @return the loaded file AchievementCommentedYamlConfiguration
 	 */
-	public AchievementCommentedYamlConfiguration loadAndBackupFile(String fileName) {
-		AchievementCommentedYamlConfiguration configFile = null;
+	public CommentedYamlConfiguration loadAndBackupFile(String fileName) {
+		CommentedYamlConfiguration configFile = null;
 		this.getLogger().info("Loading and backing up " + fileName + " file...");
 		try {
-			configFile = new AchievementCommentedYamlConfiguration(fileName, this);
+			configFile = new CommentedYamlConfiguration(fileName, this);
 		} catch (IOException | InvalidConfigurationException e) {
 			this.getLogger().severe("Error while loading " + fileName + " file, disabling plugin.");
 			this.getLogger().log(Level.SEVERE,
@@ -365,7 +365,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * 
 	 * @return
 	 */
-	public Set<String> extractDisabledCategories(AchievementCommentedYamlConfiguration config) {
+	public Set<String> extractDisabledCategories(CommentedYamlConfiguration config) {
 		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
 		// versions change in the future.
 		int minecraftVersion = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
@@ -922,11 +922,11 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		return fireworkListener;
 	}
 
-	public AchievementCommentedYamlConfiguration getPluginConfig() {
+	public CommentedYamlConfiguration getPluginConfig() {
 		return config;
 	}
 
-	public void setPluginConfig(AchievementCommentedYamlConfiguration config) {
+	public void setPluginConfig(CommentedYamlConfiguration config) {
 		this.config = config;
 	}
 
@@ -936,19 +936,19 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		return null;
 	}
 
-	public AchievementCommentedYamlConfiguration getPluginLang() {
+	public CommentedYamlConfiguration getPluginLang() {
 		return lang;
 	}
 
-	public void setPluginLang(AchievementCommentedYamlConfiguration lang) {
+	public void setPluginLang(CommentedYamlConfiguration lang) {
 		this.lang = lang;
 	}
 
-	public AchievementCommentedYamlConfiguration getPluginGui() {
+	public CommentedYamlConfiguration getPluginGui() {
 		return gui;
 	}
 
-	public void setGui(AchievementCommentedYamlConfiguration gui) {
+	public void setGui(CommentedYamlConfiguration gui) {
 		this.gui = gui;
 	}
 }
