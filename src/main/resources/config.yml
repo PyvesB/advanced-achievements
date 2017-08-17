@@ -531,8 +531,7 @@ Taming:
     Name: taming_1
     DisplayName: Tamer
 
-# When animals breed.
-# Use an Entity name, in lower case.
+# When animals breed (specify an entity name, lower case).
 Breeding:
   sheep:
     100:
