@@ -2,6 +2,7 @@ package com.hm.achievement.runnable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -17,7 +18,6 @@ import org.bukkit.util.NumberConversions;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.Cleanable;
-import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 
 /**
  * Class used to monitor distances travelled by players for the different available categories.
@@ -28,6 +28,14 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAch
 public class AchieveDistanceRunnable extends AbstractRunnable implements Cleanable, Runnable {
 
 	private final Map<String, Location> playerLocations;
+	// Keys in the map are thresholds as Long values, values are the paths to the achievements.
+	private final Map<Long, String> horseThresholds;
+	private final Map<Long, String> pigThresholds;
+	private final Map<Long, String> minecartThresholds;
+	private final Map<Long, String> boatThresholds;
+	private final Map<Long, String> llamaThresholds;
+	private final Map<Long, String> footThresholds;
+	private final Map<Long, String> glidingThresholds;
 
 	private boolean configIgnoreVerticalDistance;
 
@@ -35,6 +43,13 @@ public class AchieveDistanceRunnable extends AbstractRunnable implements Cleanab
 		super(plugin);
 
 		playerLocations = new HashMap<>();
+		horseThresholds = new TreeMap<>();
+		pigThresholds = new TreeMap<>();
+		minecartThresholds = new TreeMap<>();
+		boatThresholds = new TreeMap<>();
+		llamaThresholds = new TreeMap<>();
+		footThresholds = new TreeMap<>();
+		glidingThresholds = new TreeMap<>();
 	}
 
 	@Override
@@ -42,6 +57,14 @@ public class AchieveDistanceRunnable extends AbstractRunnable implements Cleanab
 		super.extractConfigurationParameters();
 
 		configIgnoreVerticalDistance = plugin.getPluginConfig().getBoolean("IgnoreVerticalDistance", false);
+
+		populateThresholds(NormalAchievements.DISTANCEHORSE, horseThresholds);
+		populateThresholds(NormalAchievements.DISTANCEPIG, pigThresholds);
+		populateThresholds(NormalAchievements.DISTANCEMINECART, minecartThresholds);
+		populateThresholds(NormalAchievements.DISTANCEBOAT, boatThresholds);
+		populateThresholds(NormalAchievements.DISTANCELLAMA, llamaThresholds);
+		populateThresholds(NormalAchievements.DISTANCEFOOT, footThresholds);
+		populateThresholds(NormalAchievements.DISTANCEGLIDING, glidingThresholds);
 	}
 
 	@Override
@@ -52,8 +75,12 @@ public class AchieveDistanceRunnable extends AbstractRunnable implements Cleanab
 	@Override
 	public void run() {
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			refreshDistance(player);
+			validateMovementAndUpdateDistance(player);
 		}
+	}
+
+	public Map<String, Location> getPlayerLocations() {
+		return playerLocations;
 	}
 
 	/**
@@ -61,7 +88,7 @@ public class AchieveDistanceRunnable extends AbstractRunnable implements Cleanab
 	 * 
 	 * @param player
 	 */
-	private void refreshDistance(Player player) {
+	private void validateMovementAndUpdateDistance(Player player) {
 		String uuid = player.getUniqueId().toString();
 		Location previousLocation = playerLocations.get(uuid);
 
@@ -86,19 +113,19 @@ public class AchieveDistanceRunnable extends AbstractRunnable implements Cleanab
 		}
 
 		if (player.getVehicle() instanceof Horse) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEHORSE);
+			updateDistance(difference, player, NormalAchievements.DISTANCEHORSE, horseThresholds);
 		} else if (player.getVehicle() instanceof Pig) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEPIG);
+			updateDistance(difference, player, NormalAchievements.DISTANCEPIG, pigThresholds);
 		} else if (player.getVehicle() instanceof Minecart) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEMINECART);
+			updateDistance(difference, player, NormalAchievements.DISTANCEMINECART, minecartThresholds);
 		} else if (player.getVehicle() instanceof Boat) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEBOAT);
+			updateDistance(difference, player, NormalAchievements.DISTANCEBOAT, boatThresholds);
 		} else if (version >= 11 && player.getVehicle() instanceof Llama) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCELLAMA);
+			updateDistance(difference, player, NormalAchievements.DISTANCELLAMA, llamaThresholds);
 		} else if (!player.isFlying() && (version < 9 || !player.isGliding())) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEFOOT);
+			updateDistance(difference, player, NormalAchievements.DISTANCEFOOT, footThresholds);
 		} else if (version >= 9 && player.isGliding()) {
-			updateDistanceAndCheckAchievements(difference, player, NormalAchievements.DISTANCEGLIDING);
+			updateDistance(difference, player, NormalAchievements.DISTANCEGLIDING, glidingThresholds);
 		}
 	}
 
@@ -122,14 +149,15 @@ public class AchieveDistanceRunnable extends AbstractRunnable implements Cleanab
 	}
 
 	/**
-	 * Compares the distance travelled to the achievement thresholds. If a threshold is reached, awards the achievement.
-	 * Updates the various tracking objects.
+	 * Updates disatance if all conditions are met and awards achievements if necessary.
 	 * 
 	 * @param difference
 	 * @param player
 	 * @param category
+	 * @param thresholds
 	 */
-	private void updateDistanceAndCheckAchievements(int difference, Player player, NormalAchievements category) {
+	private void updateDistance(int difference, Player player, NormalAchievements category,
+			Map<Long, String> thresholds) {
 		if (!player.hasPermission(category.toPermName())
 				|| plugin.getDisabledCategorySet().contains(category.toString())) {
 			return;
@@ -138,35 +166,20 @@ public class AchieveDistanceRunnable extends AbstractRunnable implements Cleanab
 		long distance = plugin.getCacheManager().getAndIncrementStatisticAmount(category, player.getUniqueId(),
 				difference);
 
-		// Iterate through all the different achievements.
-		for (String achievementThreshold : plugin.getPluginConfig().getConfigurationSection(category.toString())
-				.getKeys(false)) {
-			long threshold = Long.parseLong(achievementThreshold);
-			String achievementName = plugin.getPluginConfig()
-					.getString(category + "." + achievementThreshold + ".Name");
-
-			// Check whether player has met the threshold and whether we he has not yet received the achievement.
-			if (distance > threshold
-					&& !plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
-				String configAchievement = category.toString() + "." + achievementThreshold;
-				// Fire achievement event.
-				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
-						.player(player).name(plugin.getPluginConfig().getString(configAchievement + ".Name"))
-						.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
-						.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
-						.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
-						.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
-						.moneyReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Money"))
-						.experienceReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Experience"))
-						.maxHealthReward(
-								plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxHealth"));
-
-				Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
-			}
-		}
+		checkThresholdsAndAchievements(player, thresholds, distance);
 	}
 
-	public Map<String, Location> getPlayerLocations() {
-		return playerLocations;
+	/**
+	 * Parses the configuration for a given category and populates the relevant map accordingly.
+	 * 
+	 * @param category
+	 * @param thresholds
+	 */
+	private void populateThresholds(NormalAchievements category, Map<Long, String> thresholds) {
+		thresholds.clear();
+		for (String achievementThreshold : plugin.getPluginConfig().getConfigurationSection(category.toString())
+				.getKeys(false)) {
+			thresholds.put(Long.parseLong(achievementThreshold), category + "." + achievementThreshold);
+		}
 	}
 }

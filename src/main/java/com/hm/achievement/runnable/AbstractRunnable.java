@@ -1,12 +1,16 @@
 package com.hm.achievement.runnable;
 
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.utils.Reloadable;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
@@ -61,4 +65,41 @@ public class AbstractRunnable implements Reloadable {
 		return !isNPC && !restrictedCreative && !restrictedSpectator && !restrictedAdventure && !excludedWorld;
 	}
 
+	/**
+	 * Compares the current value to the achievement thresholds. If a threshold is reached, awards the achievement if it
+	 * wasn't previously received.
+	 * 
+	 * @param player
+	 * @param thresholds
+	 * @param currentValue
+	 */
+	protected void checkThresholdsAndAchievements(Player player, Map<Long, String> thresholds, long currentValue) {
+		// Iterate through all the different thresholds.
+		for (Entry<Long, String> achievementThreshold : thresholds.entrySet()) {
+			// Check whether player has met the threshold.
+			if (currentValue > achievementThreshold.getKey()) {
+				String configAchievement = achievementThreshold.getValue();
+				String achievementName = plugin.getPluginConfig().getString(configAchievement + ".Name");
+				// Check whether player has received the achievement.
+				if (!plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
+					// Fire achievement event.
+					PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
+							.player(player).name(achievementName)
+							.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
+							.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
+							.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
+							.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
+							.moneyReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Money"))
+							.experienceReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Experience"))
+							.maxHealthReward(
+									plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxHealth"));
+
+					Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
+				}
+			} else {
+				// Entries in TreeMap sorted in increasing order, all subsequent thresholds will fail the condition.
+				return;
+			}
+		}
+	}
 }
