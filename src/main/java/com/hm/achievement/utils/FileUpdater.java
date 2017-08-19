@@ -21,7 +21,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  */
 public class FileUpdater {
 
-	private final static String[] NO_COMMENTS = new String[] {};
+	private static final String[] NO_COMMENTS = new String[] {};
 
 	private AdvancedAchievements plugin;
 	private boolean updatePerformed;
