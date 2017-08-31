@@ -24,7 +24,7 @@ public class AchieveBedListener extends AbstractRateLimitedListener {
 	public void onPlayerBedEnter(PlayerBedEnterEvent event) {
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.BEDS;
-		if (!shouldEventBeTakenIntoAccount(player, category) || isInCooldownPeriod(player)) {
+		if (!shouldEventBeTakenIntoAccount(player, category) || isInCooldownPeriod(player, false)) {
 			return;
 		}
 

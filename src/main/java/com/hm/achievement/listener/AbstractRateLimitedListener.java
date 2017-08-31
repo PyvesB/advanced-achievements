@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -57,8 +58,8 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * @param player
 	 * @return
 	 */
-	protected boolean isInCooldownPeriod(Player player) {
-		return isInCooldownPeriod(player, "");
+	protected boolean isInCooldownPeriod(Player player, boolean delay) {
+		return isInCooldownPeriod(player, "", delay);
 	}
 
 	/**
@@ -66,9 +67,11 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * period. Stores elements in the map with prefixes to enable several distinct entries for the same player.
 	 * 
 	 * @param player
+	 * @param prefixInMap
+	 * @param delay
 	 * @return
 	 */
-	protected boolean isInCooldownPeriod(Player player, String prefixInMap) {
+	protected boolean isInCooldownPeriod(final Player player, String prefixInMap, boolean delay) {
 		String uuid = player.getUniqueId().toString();
 		Long lastEventTime = cooldownMap.get(prefixInMap + uuid);
 		if (lastEventTime == null) {
@@ -77,17 +80,41 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 		long timeToWait = lastEventTime + configStatisticCooldown - System.currentTimeMillis();
 		if (timeToWait > 0) {
 			if (configCooldownActionBar) {
-				String actionBarJsonMessage = "{\"text\":\"&o" + StringUtils.replaceOnce(langStatisticCooldown, "TIME",
-						String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
-				try {
-					PacketSender.sendActionBarPacket(player, actionBarJsonMessage);
-				} catch (Exception e) {
-					plugin.getLogger().warning("Errors while trying to display action bar message for cooldown.");
+				final String actionBarJsonMessage = "{\"text\":\"&o" + StringUtils.replaceOnce(langStatisticCooldown,
+						"TIME", String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
+				if (delay) {
+					// Display message with a delay to avoid it being overwritten by another message (typically disc
+					// name).
+					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
+							Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()), new Runnable() {
+
+								@Override
+								public void run() {
+									displayActionBarMessage(player, actionBarJsonMessage);
+								}
+
+							}, 20);
+				} else {
+					displayActionBarMessage(player, actionBarJsonMessage);
 				}
 			}
 			return true;
 		}
 		cooldownMap.put(prefixInMap + uuid, System.currentTimeMillis());
 		return false;
+	}
+
+	/**
+	 * Displays the cooldown action bar message.
+	 * 
+	 * @param player
+	 * @param actionBarJsonMessage
+	 */
+	private void displayActionBarMessage(final Player player, final String actionBarJsonMessage) {
+		try {
+			PacketSender.sendActionBarPacket(player, actionBarJsonMessage);
+		} catch (Exception e) {
+			plugin.getLogger().warning("Errors while trying to display action bar message for cooldown.");
+		}
 	}
 }
