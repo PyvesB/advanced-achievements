@@ -1,21 +1,21 @@
-#=============================================================#
-# +---------------------------------------------------------+ #
-# |  Advanced Achievements French translation by DarkPyves  | #
-# |            ~ Valid as of version 5.1.1 ~                | #
-# |   Newer plugin versions will automatically append new   | #
-# |     untranslated parameters to the end of the file.     | #
-# +---------------------------------------------------------+ #
-#=============================================================#
+#=====================================================================#
+# +-----------------------------------------------------------------+ #
+# | Advanced Achievements French translation by DarkPyves/Taehyuun  | #
+# |                 ~ Valid as of version 5.2.6 ~                   | #
+# |       Newer plugin versions will automatically append new       | #
+# |         untranslated parameters to the end of the file.         | #
+# +-----------------------------------------------------------------+ #
+#=====================================================================#
 
 no-permissions: "Vous n'avez pas la permission de faire cela."
-statistic-cooldown: "Archivement cooldown: attendre TIME secondes avant que cette action ne compte à nouveau."
+statistic-cooldown: "Achievements: attendre TIME secondes avant que cette action ne compte à nouveau."
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "Configuration rechargée avec succès."
 configuration-reload-failed: "Erreur(s) lors du rechargement des configurations. Merci de consulter les logs détaillés pour plus d'informations."
 server-restart-reload: "La liste DisabledCategories a été modifiée. Le serveur doit être reload ou redémarré pour que vos modifications prennent effet."
 
-# Related to /aach top.
+# Related to /aach top week and month.
 top-achievement: "Joueurs ayant obtenu le plus de succès :"
 player-rank: "Classement actuel :"
 week-achievement: "Joueurs ayant obtenu le plus de succès cette semaine :"
@@ -53,34 +53,38 @@ delete-achievements: "Le succès ACH a été supprimé du joueur PLAYER."
 item-reward-received: "Vous avez reçu une récompense :"
 money-reward-received: "Vous avez gagné : AMOUNT !"
 command-reward: "Commande de récompense exécutée !"
+experience-reward-received: "Vous recevez: AMOUNT points d'EXP!"
+increase-max-health-reward-received: "Votre vie max. a été augmentée de AMOUNT!"
 
 # Related to /aach help.
 aach-command-book: "Obtenir votre livre de succès."
-aach-command-stats: "Visualiser son nombre total de succès."
-aach-command-top: "Afficher le classement des succès."
-aach-command-reload: "Recharger la configuration du plugin."
-aach-command-give: "Donner le succès ACH à &7NAME."
-aach-command-info: "Afficher des informations à propos du plugin."
-aach-command-list: "Afficher les succès reçus et manquants."
-aach-command-check: "Vérifier si NAME a reçu le &7succès ACH."
-aach-command-delete: "Supprimer le succès ACH du &7joueur NAME."
-aach-command-week: "Classement hebdomadaire."
-aach-command-month: "Classement mensuel."
-aach-command-toggle: "Voir succès d'autres joueurs."
-aach-command-reset: "Réinitialiser la stat pour CAT."
 aach-command-book-hover: "Des livres RP, que vous pouvez échanger et collectionner !"
+aach-command-stats: "Visualiser son nombre total de succès."
 aach-command-stats-hover: "Attrappez-les tous !"
+aach-command-list: "Afficher les succès reçus et manquants."
 aach-command-list-hover: "Interface graphique pour visualiser vos succès !"
+aach-command-top: "Afficher le classement des succès."
 aach-command-top-hover: "Qui sont les meilleurs joueurs du serveur ?"
+aach-command-give: "Donner le succès ACH à NAME."
 aach-command-give-hover: "Le joueur doit être en ligne. Supporte les succès de la catégorie Commands."
+aach-command-reload: "Recharger la configuration du plugin."
 aach-command-reload-hover: "Recharge la plupart des paramètres de gui.yml, lang.yml et config.yml."
+aach-command-info: "Afficher des informations à propos du plugin."
 aach-command-info-hover: "Des infos supplémentaires sur le plugin !"
+aach-command-check: "Vérifier si NAME a reçu le succès ACH."
 aach-command-check-hover: "Il faut utiliser le nom spécifié dans le fichier de config."
+aach-command-delete: "Supprimer le succès ACH du joueur NAME."
 aach-command-delete-hover: "Lisez la documentation avant d'utiliser cette commande !"
+aach-command-week: "Classement hebdomadaire."
 aach-command-week-hover: "Les meilleurs joueurs de la semaine !"
+aach-command-month: "Classement mensuel."
 aach-command-month-hover: "Les meilleurs joueurs du mois !"
+aach-command-toggle: "Voir succès d'autres joueurs."
 aach-command-toggle-hover: "Choix sauvegardé jusqu'au prochain redémarrage !"
+aach-command-reset: "Réinitialiser la stat pour CAT."
 aach-command-reset-hover: "Pour les catégories avec sous-catégories, elles sont toutes réinitialisées."
+aach-command-generate: "Générer les avancements."
+aach-command-generate-hover: "La commande rique de prendre du temps, à utiliser avec précaution!"
 aach-tip: "&lASTUCE &7&n&oCliquez &8ou &7&n&opassez votre curseur &8sur les commandes !"
 
 # Related to /aach info.
@@ -102,11 +106,13 @@ list-description: "Description :"
 list-goal: "Objectif :"
 list-reception: "Date de réception :"
 list-progress: "Progression :"
-list-reward: " Récompense(s) :"
+list-reward: "Récompense(s) :"
 list-reward-money: "POs"
 list-reward-item: "objet"
 list-reward-command: "objet spécial"
-list-achievement-received: "&a\u2714&f "
+list-reward-experience: "recevez AMOUNT points d'EXP"
+list-reward-increase-max-health: "vie max. augmentée de AMOUNT"
+list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "
 list-category-not-unlocked: "Vous n'avez pas encore déverrouillé cette catégorie."
 list-back-message: "&7Retour"
@@ -148,10 +154,11 @@ list-distance-boat: "Distance Parcourue en Bateau"
 list-distance-gliding: "Distance Parcourue avec Elytre"
 list-distance-llama: "Distance Parcourue avec Lama"
 list-itemdrops: "Objets Jetés"
-list-itempickups: "Objets Attrapés"
+list-itempickups: "Objets ramassés"
 list-hoeplowings: "Parcelles Labourées"
 list-fertilising: "Plantes Fertilisées"
 list-taming: "Animaux Domptés"
+list-breeding: "Animaux nourris"
 list-brewing: "Potions Préparées"
 list-fireworks: "Feux d'Artifice Lancés"
 list-musicdiscs: "Disques Joués"
@@ -159,8 +166,7 @@ list-enderpearls: "Téléportations avec Perles de l'Ender"
 list-petmastergive: "Animaux donnés à un autre Joueur"
 list-petmasterreceive: "Animaux reçus d'un autre Joueur"
 list-smelting: "Objets Fondus"
-
-list-commands: "Autres Succès"
+list-commands: "Autres succès"
 
 # Related to /aach toggle.
 toggle-displayed: "Vous serez notifié quand d'autres joueurs recevront des succès."
@@ -170,8 +176,12 @@ toggle-hidden: "Vous ne serez plus notifié quand d'autres joueurs recevront des
 reset-successful: " statistique réinitialisée pour joueur PLAYER."
 category-does-not-exist: "Cette catégorie n'existe pas."
 
+# Related to /aach generate.
+advancements-generated: "Avancements générés avec succès."
+minecraft-not-supported: "Les avancements ne sont pas supportés avec votre version de Minecraft. (1.12+)"
+
 #============================================================#
 # +--------------------------------------------------------+ #
-# |         Parameters to appear in future versions        | #
+# | Parameters in future plugin versions will  appear here | #
 # +--------------------------------------------------------+ #
 #============================================================#
