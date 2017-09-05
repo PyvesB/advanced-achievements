@@ -25,11 +25,13 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private final int moneyReward;
 	private final int experienceReward;
 	private final int maxHealthReward;
+	private final int maxOxygenReward;
 
 	private boolean cancelled;
 
 	private PlayerAdvancedAchievementEvent(Player receiver, String name, String displayName, String message,
-			String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward, int maxHealthReward) {
+			String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward, int maxHealthReward,
+			int maxOxygenReward) {
 		this.player = receiver;
 		this.name = name;
 		this.displayName = displayName;
@@ -39,6 +41,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		this.moneyReward = moneyReward;
 		this.experienceReward = experienceReward;
 		this.maxHealthReward = maxHealthReward;
+		this.maxOxygenReward = maxOxygenReward;
 		this.cancelled = false;
 	}
 
@@ -101,6 +104,10 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		return maxHealthReward;
 	}
 
+	public int getMaxOxygenReward() {
+		return maxOxygenReward;
+	}
+
 	public static class PlayerAdvancedAchievementEventBuilder {
 
 		private Player player;
@@ -112,6 +119,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		private int moneyReward;
 		private int experienceReward;
 		private int maxHealthReward;
+		private int maxOxygenReward;
 
 		public PlayerAdvancedAchievementEventBuilder player(Player player) {
 			this.player = player;
@@ -158,9 +166,14 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 			return this;
 		}
 
+		public PlayerAdvancedAchievementEventBuilder maxOxygenReward(int maxOxygenReward) {
+			this.maxOxygenReward = maxOxygenReward;
+			return this;
+		}
+
 		public PlayerAdvancedAchievementEvent build() {
 			return new PlayerAdvancedAchievementEvent(player, name, displayName, message, commandRewards, itemReward,
-					moneyReward, experienceReward, maxHealthReward);
+					moneyReward, experienceReward, maxHealthReward, maxOxygenReward);
 		}
 	}
 }

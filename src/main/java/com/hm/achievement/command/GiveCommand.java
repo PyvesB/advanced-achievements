@@ -60,7 +60,8 @@ public class GiveCommand extends AbstractParsableCommand {
 					.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
 					.moneyReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Money"))
 					.experienceReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Experience"))
-					.maxHealthReward(plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxHealth"));
+					.maxHealthReward(plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxHealth"))
+					.maxOxygenReward(plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxOxygen"));
 
 			Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 

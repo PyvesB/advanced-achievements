@@ -53,6 +53,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	private String langMoneyRewardReceived;
 	private String langExperienceRewardReceived;
 	private String langIncreaseMaxHealthRewardReceived;
+	private String langIncreaseMaxOxygenRewardReceived;
 	private String langAchievementNew;
 
 	public PlayerAdvancedAchievementListener(AdvancedAchievements plugin) {
@@ -92,6 +93,8 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 				+ plugin.getPluginLang().getString("experience-reward-received", "You received: AMOUNT experience!");
 		langIncreaseMaxHealthRewardReceived = plugin.getChatHeader() + plugin.getPluginLang()
 				.getString("increase-max-health-reward-received", "Your max health has increased by AMOUNT!");
+		langIncreaseMaxOxygenRewardReceived = plugin.getChatHeader() + plugin.getPluginLang()
+				.getString("increase-max-oxygen-reward-received", "Your max oxygen has increased by AMOUNT!");
 		langAchievementNew = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " " + ChatColor.WHITE;
 	}
@@ -135,6 +138,9 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		}
 		if (event.getMaxHealthReward() > 0) {
 			rewardMaxHealth(player, event.getMaxHealthReward());
+		}
+		if (event.getMaxOxygenReward() > 0) {
+			rewardMaxOxygen(player, event.getMaxOxygenReward());
 		}
 	}
 
@@ -225,6 +231,18 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		}
 		player.sendMessage(ChatColor.translateAlternateColorCodes('&',
 				StringUtils.replaceOnce(langIncreaseMaxHealthRewardReceived, "AMOUNT", Integer.toString(amount))));
+	}
+
+	/**
+	 * Gives an increased max oxygen reward to a player.
+	 * 
+	 * @param player
+	 * @param amount
+	 */
+	private void rewardMaxOxygen(Player player, int amount) {
+		player.setMaximumAir(player.getMaximumAir() + amount);
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+				StringUtils.replaceOnce(langIncreaseMaxOxygenRewardReceived, "AMOUNT", Integer.toString(amount))));
 	}
 
 	/**

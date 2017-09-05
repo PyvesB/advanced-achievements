@@ -328,6 +328,9 @@ Snowballs:
     Message: 1000 snowballs thrown. That's the spirit!
     Name: snowballs_1000
     DisplayName: Winter Addict 
+    Reward:
+        # 30 corresponds to one bubble in the oxygen bar.
+        IncreaseMaxOxygen: 30
     
 # When an egg is thrown.  
 Eggs:

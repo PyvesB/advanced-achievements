@@ -251,6 +251,9 @@ public class FileUpdater {
 		updateSetting(lang, "increase-max-health-reward-received", "Your max health has increased by AMOUNT!",
 				NO_COMMENTS);
 		updateSetting(lang, "list-reward-increase-max-health", "increase max health by AMOUNT", NO_COMMENTS);
+		updateSetting(lang, "increase-max-oxygen-reward-received", "Your max oxygen has increased by AMOUNT!",
+				NO_COMMENTS);
+		updateSetting(lang, "list-reward-increase-max-oxygen", "increase max oxygen by AMOUNT", NO_COMMENTS);
 
 		if (updatePerformed) {
 			// Changes in the language file: save and do a fresh load.

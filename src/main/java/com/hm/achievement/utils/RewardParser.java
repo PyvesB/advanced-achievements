@@ -33,6 +33,7 @@ public class RewardParser implements Reloadable {
 	private String langListRewardCommand;
 	private String langListRewardExperience;
 	private String langListRewardIncreaseMaxHealth;
+	private String langListRewardIncreaseMaxOxygen;
 	// Used for Vault plugin integration.
 	private Economy economy;
 
@@ -49,6 +50,8 @@ public class RewardParser implements Reloadable {
 				"receive AMOUNT experience");
 		langListRewardIncreaseMaxHealth = plugin.getPluginLang().getString("list-reward-increase-max-health",
 				"increase max health by AMOUNT");
+		langListRewardIncreaseMaxOxygen = plugin.getPluginLang().getString("list-reward-increase-max-oxygen",
+				"increase max oxygen by AMOUNT");
 	}
 
 	public Economy getEconomy() {
@@ -117,6 +120,12 @@ public class RewardParser implements Reloadable {
 					.add(StringUtils.replaceOnce(langListRewardIncreaseMaxHealth, "AMOUNT", Integer.toString(amount)));
 		}
 
+		if (keyNames.contains(configAchievement + ".Reward.IncreaseMaxOxygen")) {
+			int amount = getRewardAmount(configAchievement, "IncreaseMaxOxygen");
+			rewardTypes
+					.add(StringUtils.replaceOnce(langListRewardIncreaseMaxOxygen, "AMOUNT", Integer.toString(amount)));
+		}
+
 		if (keyNames.contains(configAchievement + ".Reward.Command")) {
 			rewardTypes.add(langListRewardCommand);
 		}
@@ -158,7 +167,8 @@ public class RewardParser implements Reloadable {
 	}
 
 	/**
-	 * Extracts the money, experience or increased max health rewards amount from the configuration.
+	 * Extracts the money, experience, increased max health or increased max oxygen rewards amount from the
+	 * configuration.
 	 * 
 	 * @param configAchievement
 	 * @param type

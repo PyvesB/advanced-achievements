@@ -92,7 +92,9 @@ public class AbstractRunnable implements Reloadable {
 							.moneyReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Money"))
 							.experienceReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Experience"))
 							.maxHealthReward(
-									plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxHealth"));
+									plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxHealth"))
+							.maxOxygenReward(
+									plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxOxygen"));
 
 					Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 				}
