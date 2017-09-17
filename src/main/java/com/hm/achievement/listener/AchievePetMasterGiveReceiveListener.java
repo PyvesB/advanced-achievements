@@ -22,17 +22,11 @@ public class AchievePetMasterGiveReceiveListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onChangeOwnership(PlayerChangeAnimalOwnershipEvent event) {
-		Player giverPlayer = (Player) event.getOldOwner();
-		NormalAchievements categoryGive = NormalAchievements.PETMASTERGIVE;
-		if (!shouldEventBeTakenIntoAccount(giverPlayer, categoryGive)) {
+		Player receiverPlayer = (Player) event.getNewOwner();
+		if (receiverPlayer == null) {
+			// /petm free command ignored.
 			return;
 		}
-
-		if (!plugin.getDisabledCategorySet().contains(categoryGive.toString())) {
-			updateStatisticAndAwardAchievementsIfAvailable(giverPlayer, categoryGive, 1);
-		}
-
-		Player receiverPlayer = (Player) event.getNewOwner();
 		NormalAchievements categoryReceive = NormalAchievements.PETMASTERRECEIVE;
 
 		if (!shouldEventBeTakenIntoAccount(receiverPlayer, categoryReceive)) {
@@ -41,6 +35,16 @@ public class AchievePetMasterGiveReceiveListener extends AbstractListener {
 
 		if (!plugin.getDisabledCategorySet().contains(categoryReceive.toString())) {
 			updateStatisticAndAwardAchievementsIfAvailable(receiverPlayer, categoryReceive, 1);
+		}
+
+		Player giverPlayer = (Player) event.getOldOwner();
+		NormalAchievements categoryGive = NormalAchievements.PETMASTERGIVE;
+		if (!shouldEventBeTakenIntoAccount(giverPlayer, categoryGive)) {
+			return;
+		}
+
+		if (!plugin.getDisabledCategorySet().contains(categoryGive.toString())) {
+			updateStatisticAndAwardAchievementsIfAvailable(giverPlayer, categoryGive, 1);
 		}
 	}
 }
