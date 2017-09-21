@@ -102,7 +102,7 @@ import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 5.2.8
+ * @version 5.2.9
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin implements Reloadable {
@@ -334,7 +334,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * Loads and backs up file fileName.
 	 * 
 	 * @param fileName
-	 * @return the loaded file AchievementCommentedYamlConfiguration
+	 * @return the loaded file CommentedYamlConfiguration
 	 */
 	public CommentedYamlConfiguration loadAndBackupFile(String fileName) {
 		CommentedYamlConfiguration configFile = null;
