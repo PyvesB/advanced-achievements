@@ -4,9 +4,6 @@
 </p>
 
 # Advanced Achievements
-
-<p>
-<br/>
 <a href="https://github.com/PyvesB/AdvancedAchievements/blob/master/LICENSE">
 <img src ="https://img.shields.io/github/license/PyvesB/AdvancedAchievements.svg" />
 </a>
@@ -22,11 +19,9 @@
 <a href="https://github.com/PyvesB/AdvancedAchievements/network">
 <img src ="https://img.shields.io/github/forks/PyvesB/AdvancedAchievements.svg" />
 </a>
-
 <a href="https://github.com/PyvesB/AdvancedAchievements/contributors">
 <img src ="https://img.shields.io/github/contributors/PyvesB/AdvancedAchievements.svg" />
 </a>
-</p>
 
 **Advanced Achievements enables unique and challenging achievements on Minecraft servers. Collect as many as you can, earn rewards, climb the rankings and receive RP books! The plugin supports SQLite, MySQL and PostgreSQL, manages an extensive statistics system, handles YAML configuration files and features fancy in-game GUIs and effects!**
 
@@ -49,15 +44,15 @@ Your generated `AdvancedAchievements.jar` can be found in the `target` folder.
 
 #### :earth_americas: Useful links
 
-* [![Spigot](http://images.jupload.fr/1483481688.png)](https://www.spigotmc.org/resources/advanced-achievements.6239/) [Spigot](https://www.spigotmc.org/resources/advanced-achievements.6239/), _homepage of the plugin._
+* [Spigot](https://www.spigotmc.org/resources/advanced-achievements.6239/), homepage of the plugin.
 
-* [![Bukkit](http://images.jupload.fr/1483481295.png)](http://dev.bukkit.org/bukkit-plugins/advanced-achievements/) [Bukkit](http://dev.bukkit.org/bukkit-plugins/advanced-achievements/), _another homepage of the plugin._
+* [Bukkit](http://dev.bukkit.org/bukkit-plugins/advanced-achievements/), another homepage of the plugin.
 
-* [![Wiki](http://images.jupload.fr/1469708815.png)](https://github.com/PyvesB/AdvancedAchievements/wiki) [Documentation, installation and FAQ ](https://github.com/PyvesB/AdvancedAchievements/wiki), _a lot of valuable information on how to set the plugin up or use it properly!_
+* [Documentation, installation and FAQ](https://github.com/PyvesB/AdvancedAchievements/wiki), a lot of valuable information on how to set the plugin up or use it properly.
 
-* [![Translations](http://images.jupload.fr/1470315586.png)](https://github.com/PyvesB/AdvancedAchievements/tree/master/src/main/resources) [Plugin translations ](https://github.com/PyvesB/AdvancedAchievements/tree/master/src/main/resources), _12 languages available, feel free to improve the translations!_
+* [Plugin translations ](https://github.com/PyvesB/AdvancedAchievements/tree/master/src/main/resources), 13 languages available, feel free to improve the translations!
 
-* [![HelloMinecraft](http://images.jupload.fr/1469708948.png)](http://hellominecraft.fr/) [HelloMinecraft, the plugin's official server](http://hellominecraft.fr/), _amongst the best French servers out there!_
+* [HelloMinecraft, the plugin's official server](http://hellominecraft.fr/), amongst the best French servers out there!
 
 # Contributing
 
