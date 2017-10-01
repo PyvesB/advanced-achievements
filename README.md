@@ -30,14 +30,14 @@
 <br/>
 </p>
 
-# Getting Started
+# Getting started
 
 #### :cd: Setup
 
 Ensure you have the JDK and Maven installed, and simply run the following commands in a terminal:
 ````
 git clone https://github.com/PyvesB/AdvancedAchievements.git
-cd AdvancedAchievements/
+cd AdvancedAchievements
 mvn clean install
 ````
 Your generated `AdvancedAchievements.jar` can be found in the `target` folder.
@@ -46,23 +46,23 @@ Your generated `AdvancedAchievements.jar` can be found in the `target` folder.
 
 * [Spigot](https://www.spigotmc.org/resources/advanced-achievements.6239/), homepage of the plugin.
 
-* [Bukkit](http://dev.bukkit.org/bukkit-plugins/advanced-achievements/), another homepage of the plugin.
+* [Bukkit](http://dev.bukkit.org/bukkit-plugins/advanced-achievements/), another homepage.
 
 * [Documentation, installation and FAQ](https://github.com/PyvesB/AdvancedAchievements/wiki), a lot of valuable information on how to set the plugin up or use it properly.
 
-* [Plugin translations ](https://github.com/PyvesB/AdvancedAchievements/tree/master/src/main/resources), 13 languages available, feel free to improve the translations!
+* [Plugin translations](https://github.com/PyvesB/AdvancedAchievements/tree/master/src/main/resources), 13 languages available, feel free to improve the translations!
 
-* [HelloMinecraft, the plugin's official server](http://hellominecraft.fr/), amongst the best French servers out there!
+* [HelloMinecraft](http://hellominecraft.fr/), the plugin's official server, amongst the best French servers out there!
 
 # Contributing
 
 #### `$ code`
 
-Want to make Advanced Achievements better, faster, stronger? Contributions are more than welcome, open a **pull request** and share your code! Simply [fork the repository](https://github.com/PyvesB/AdvancedAchievements#fork-destination-box) and refer to [the Wiki](https://github.com/PyvesB/AdvancedAchievements/wiki/Developers) to get your copy up and running and interact with Advanced Achievements.
+Want to make Advanced Achievements better, faster, stronger? Contributions are more than welcome, open a **pull request** and share your code! Simply **fork** the repository by clicking on the icon on the top right of this page and refer to the [Wiki](https://github.com/PyvesB/AdvancedAchievements/wiki/Developers) to get your copy up and running and interact with the plugin.
 
 #### :speech_balloon: Support
 
-Thought of a cool idea? Found a problem or want to ask for help? Simply [open an issue](https://github.com/PyvesB/AdvancedAchievements/issues)!
+Thought of a cool idea? Found a problem or need some help? Simply open an [**issue**](https://github.com/PyvesB/AdvancedAchievements/issues)!
 
 #### :star: Thanks
 
