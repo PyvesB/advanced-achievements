@@ -311,7 +311,7 @@ public class FileUpdater {
 	 * @param comments
 	 */
 	private void updateSetting(CommentedYamlConfiguration file, String name, Object value, String[] comments) {
-		if (!file.getKeys(false).contains(name)) {
+		if (!file.getKeys(true).contains(name)) {
 			file.set(name, value, comments);
 			updatePerformed = true;
 		}
