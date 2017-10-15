@@ -266,6 +266,31 @@ public class FileUpdater {
 			}
 		}
 	}
+	
+	/**
+	 * Updates gui file from older plugin versions by adding missing parameters. New configuration file introduced in
+	 * version 5.0 of the plugin.
+	 * 
+	 * @param gui
+	 */
+	public void updateOldGui(CommentedYamlConfiguration gui) {
+		updatePerformed = false;
+
+		// Added in version 5.2.5:
+		updateSetting(gui, "Breeding.Item", "wheat", NO_COMMENTS);
+		updateSetting(gui, "Breeding.Metadata", 0, NO_COMMENTS);
+
+		if (updatePerformed) {
+			// Changes in the gui file: save and do a fresh load.
+			try {
+				gui.saveConfiguration();
+				gui.loadConfiguration();
+			} catch (IOException | InvalidConfigurationException e) {
+				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the gui file: ", e);
+				plugin.setSuccessfulLoad(false);
+			}
+		}
+	}
 
 	/**
 	 * Updates the configuration file to include a new setting with its default value and its comments.

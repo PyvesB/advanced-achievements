@@ -213,6 +213,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		FileUpdater fileUpdater = new FileUpdater(this);
 		fileUpdater.updateOldConfiguration(config);
 		fileUpdater.updateOldLanguage(lang);
+		fileUpdater.updateOldGui(gui);
 
 		disabledCategorySet = extractDisabledCategories(config);
 		logAchievementStats();
@@ -690,7 +691,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		asyncCachedRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this,
 				asyncCachedRequestsSender, configPooledRequestsTaskInterval * 40L,
 				configPooledRequestsTaskInterval * 20L);
-
+		
 		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
 		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
 			playTimeRunnable = new AchievePlayTimeRunnable(this);
