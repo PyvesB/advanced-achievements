@@ -138,6 +138,10 @@ public class FileUpdater {
 				"No effect if using Minecraft versions prior to 1.12." });
 		updateSetting(config, "IgnoreAFKPlayedTime", false, new String[] {
 				"If true, PlayedTime will no longer increase when the player is AFK. Requires Essentials to work." });
+		
+		// Added in version 5.3:
+		updateSetting(config, "ChatHeader", "&7[%ICON%&7]", new String[] {
+				"Set the format of the header used for most chat messages (default: \"&7[%ICON%&7]\")." });
 
 		if (updatePerformed) {
 			// Changes in the configuration: save and do a fresh load.

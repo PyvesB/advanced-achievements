@@ -773,8 +773,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	private void parseHeader() {
 		String icon = StringEscapeUtils.unescapeJava(config.getString("Icon", "\u2618"));
 		if (StringUtils.isNotBlank(icon)) {
-			chatHeader = ChatColor.GRAY + "[" + ChatColor.getByChar(config.getString("Color", "5").charAt(0)) + icon
-					+ ChatColor.GRAY + "] ";
+			String coloredIcon = ChatColor.getByChar(config.getString("Color", "5").charAt(0)) + icon;
+			chatHeader = ChatColor.translateAlternateColorCodes('&',
+					StringUtils.replace(config.getString("ChatHeader", "&7[%ICON%&7]"), "%ICON%", coloredIcon)) + " ";
 		} else {
 			chatHeader = "";
 		}

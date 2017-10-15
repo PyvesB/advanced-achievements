@@ -66,6 +66,9 @@ BookSeparator: ""
 # Set the format of the achievement name in /aach list (default: "%ICON% %NAME% %ICON%").
 ListAchievementFormat: "%ICON% %NAME% %ICON%"
 
+# Set the format of the header used for most chat messages (default: "&7[%ICON%&7]").
+ChatHeader: "&7[%ICON%&7]"
+
 # Stop all stats from increasing when player in creative mode, including PlayedTime.
 # Connection achievements will only be handled once a player switches to a non-creative mode.
 RestrictCreative: false
