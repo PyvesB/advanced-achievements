@@ -1,5 +1,9 @@
 package com.hm.achievement.listener;
 
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -43,16 +47,28 @@ public class ListGUIListener extends AbstractListener {
 		// Prevent players from taking items out of the GUI.
 		event.setCancelled(true);
 
-		// Back button; display main GUI again.
 		if (haveSameGUIPurpose(event.getCurrentItem(), plugin.getListCommand().getBackButton())) {
-			plugin.getListCommand().executeCommand(event.getWhoClicked(), null, "list");
-			return;
+			// Clicked item seems to be the back button. But player could have clicked on item in his personal inventory
+			// that matches the properties of the back button used by Advanced Achievements. The first item matching the
+			// properties of the back button is the real one, check that this is indeed the clicked one.
+			Map<Integer, ItemStack> backButtonCandidates = new TreeMap<>(
+					event.getInventory().all(event.getCurrentItem().getType()));
+			for (Entry<Integer, ItemStack> entry : backButtonCandidates.entrySet()) {
+				if (entry.getValue().getDurability() == event.getCurrentItem().getDurability()) {
+					// Found real back button. Did the player click on it?
+					if (entry.getKey() == event.getRawSlot()) {
+						plugin.getListCommand().executeCommand(event.getWhoClicked(), null, "list");
+					}
+					return;
+				}
+			}
 		}
 
-		// GUI corresponding to the achievement listing of a given category. Do not let the player interact with it.
-		if (haveSameGUIPurpose(event.getCurrentItem(), plugin.getListCommand().getAchievementNotStarted())
-				|| haveSameGUIPurpose(event.getCurrentItem(), plugin.getListCommand().getAchievementStarted())
-				|| haveSameGUIPurpose(event.getCurrentItem(), plugin.getListCommand().getAchievementReceived())) {
+		ItemStack firstItem = event.getInventory().getItem(0);
+		if (haveSameGUIPurpose(firstItem, plugin.getListCommand().getAchievementNotStarted())
+				|| haveSameGUIPurpose(firstItem, plugin.getListCommand().getAchievementStarted())
+				|| haveSameGUIPurpose(firstItem, plugin.getListCommand().getAchievementReceived())) {
+			// GUI corresponding to the achievement listing of a given category. Do not let the player interact with it.
 			return;
 		}
 
