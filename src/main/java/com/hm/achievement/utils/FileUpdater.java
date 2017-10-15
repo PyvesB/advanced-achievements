@@ -268,17 +268,27 @@ public class FileUpdater {
 	}
 	
 	/**
-	 * Updates gui file from older plugin versions by adding missing parameters. New configuration file introduced in
+	 * Updates GUI file from older plugin versions by adding missing parameters. New configuration file introduced in
 	 * version 5.0 of the plugin.
 	 * 
 	 * @param gui
 	 */
-	public void updateOldGui(CommentedYamlConfiguration gui) {
+	public void updateOldGUI(CommentedYamlConfiguration gui) {
 		updatePerformed = false;
 
 		// Added in version 5.2.5:
 		updateSetting(gui, "Breeding.Item", "wheat", NO_COMMENTS);
 		updateSetting(gui, "Breeding.Metadata", 0, NO_COMMENTS);
+		
+		// Added in version 5.3:
+		updateSetting(gui, "AchievementNotStarted.Item", "stained_clay", NO_COMMENTS);
+		updateSetting(gui, "AchievementNotStarted.Metadata", 14, NO_COMMENTS);
+		updateSetting(gui, "AchievementStarted.Item", "stained_clay", NO_COMMENTS);
+		updateSetting(gui, "AchievementStarted.Metadata", 4, NO_COMMENTS);
+		updateSetting(gui, "AchievementReceived.Item", "stained_clay", NO_COMMENTS);
+		updateSetting(gui, "AchievementReceived.Metadata", 5, NO_COMMENTS);
+		updateSetting(gui, "BackButton.Item", "paper", NO_COMMENTS);
+		updateSetting(gui, "BackButton.Metadata", 0, NO_COMMENTS);
 
 		if (updatePerformed) {
 			// Changes in the gui file: save and do a fresh load.

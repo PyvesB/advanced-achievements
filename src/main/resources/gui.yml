@@ -5,10 +5,27 @@
 #==============================================================#
 # Possible items: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
 # Material names are not case sensitive in this configuration file.
-# Do not use bedrock, barrier, stained_clay or paper.
+# Do not use bedrock or barrier.
 # Do not use the same Item and Metadata pair twice.
 # If you are using a Minecraft version prior to 1.9, change grass_path of HoePlowings!
 
+# Items used to represent the achievements.
+AchievementNotStarted:
+  Item: stained_clay
+  Metadata: 14
+AchievementStarted:
+  Item: stained_clay
+  Metadata: 4
+AchievementReceived:
+  Item: stained_clay
+  Metadata: 5
+  
+# Back button when navigating in a category.
+BackButton:
+  Item: paper
+  Metadata: 0
+
+# Items used to represent the categories.
 Connections:
   Item: book_and_quill
   Metadata: 0

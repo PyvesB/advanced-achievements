@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
@@ -43,12 +44,15 @@ public class ListGUIListener extends AbstractListener {
 		event.setCancelled(true);
 
 		// Back button; display main GUI again.
-		if (event.getCurrentItem().getType() == Material.PAPER) {
-			plugin.getAchievementListCommand().executeCommand(event.getWhoClicked(), null, "list");
+		if (haveSameGUIPurpose(event.getCurrentItem(), plugin.getListCommand().getBackButton())) {
+			plugin.getListCommand().executeCommand(event.getWhoClicked(), null, "list");
+			return;
 		}
 
 		// GUI corresponding to the achievement listing of a given category. Do not let the player interact with it.
-		if (event.getInventory().getItem(0).getType() == Material.STAINED_CLAY) {
+		if (haveSameGUIPurpose(event.getCurrentItem(), plugin.getListCommand().getAchievementNotStarted())
+				|| haveSameGUIPurpose(event.getCurrentItem(), plugin.getListCommand().getAchievementStarted())
+				|| haveSameGUIPurpose(event.getCurrentItem(), plugin.getListCommand().getAchievementReceived())) {
 			return;
 		}
 
@@ -60,6 +64,18 @@ public class ListGUIListener extends AbstractListener {
 			return;
 		}
 
-		plugin.getAchievementListCommand().createCategoryGUI(event.getCurrentItem(), (Player) event.getWhoClicked());
+		plugin.getListCommand().createCategoryGUI(event.getCurrentItem(), (Player) event.getWhoClicked());
+	}
+
+	/**
+	 * Determines whether two ItemStacks in the GUI have the same purpose, in other words whether they have been
+	 * generated from the same element in gui.yml.
+	 * 
+	 * @param clicked
+	 * @param reference
+	 * @return
+	 */
+	private boolean haveSameGUIPurpose(ItemStack clicked, ItemStack reference) {
+		return clicked.getDurability() == reference.getDurability() && clicked.getType() == reference.getType();
 	}
 }

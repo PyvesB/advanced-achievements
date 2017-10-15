@@ -213,7 +213,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		FileUpdater fileUpdater = new FileUpdater(this);
 		fileUpdater.updateOldConfiguration(config);
 		fileUpdater.updateOldLanguage(lang);
-		fileUpdater.updateOldGui(gui);
+		fileUpdater.updateOldGUI(gui);
 
 		disabledCategorySet = extractDisabledCategories(config);
 		logAchievementStats();
@@ -903,7 +903,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		this.successfulLoad = successfulLoad;
 	}
 
-	public ListCommand getAchievementListCommand() {
+	public ListCommand getListCommand() {
 		return listCommand;
 	}
 

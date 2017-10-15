@@ -45,9 +45,12 @@ public class ListCommand extends AbstractCommand {
 	// Items stacks displayed in the GUI.
 	private final Map<MultipleAchievements, ItemStack> multipleAchievementCategoryItems;
 	private final Map<NormalAchievements, ItemStack> normalAchievementCategoryItems;
-	private ItemStack commandsCategoryItem;
-	private final ItemStack backButton = new ItemStack(Material.PAPER);
 	private final ItemStack barrier = new ItemStack(Material.BARRIER);
+	private ItemStack commandsCategoryItem;
+	private ItemStack backButton;
+	private ItemStack achievementNotStarted;
+	private ItemStack achievementStarted;
+	private ItemStack achievementReceived;
 
 	private boolean configHideNotReceivedCategories;
 	private boolean configHideNoPermissionCategories;
@@ -71,7 +74,7 @@ public class ListCommand extends AbstractCommand {
 
 	public ListCommand(AdvancedAchievements plugin) {
 		super(plugin);
-
+		
 		multipleAchievementCategoryItems = new EnumMap<>(MultipleAchievements.class);
 		normalAchievementCategoryItems = new EnumMap<>(NormalAchievements.class);
 	}
@@ -117,22 +120,13 @@ public class ListCommand extends AbstractCommand {
 		// Prepare item stacks displayed in the GUI for Multiple achievements.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
-			Material material = Material
-					.getMaterial(plugin.getPluginGui().getString(categoryName + ".Item", "bedrock").toUpperCase());
-			short metadata = (short) plugin.getPluginGui().getInt(categoryName + ".Metadata", 0);
-			if (material == null) {
-				material = Material.BEDROCK;
-				plugin.getLogger().warning("GUI material for category " + categoryName
-						+ " was not found. Have you spelt the name correctly or is it available for your Minecraft version?");
-			}
-			ItemStack itemStack = new ItemStack(material, 1, metadata);
-
 			// Sum all achievements in the sub-categories of this main category.
 			int totalAchievementsInCategory = 0;
 			for (String section : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
 				totalAchievementsInCategory += plugin.getPluginConfig()
 						.getConfigurationSection(categoryName + '.' + section).getKeys(false).size();
 			}
+			ItemStack itemStack = createRawItemStack(categoryName);
 			constructItemStackLore(itemStack,
 					plugin.getPluginLang().getString(category.toLangName(), category.toLangDefault()),
 					totalAchievementsInCategory);
@@ -142,13 +136,7 @@ public class ListCommand extends AbstractCommand {
 		// Prepare item stacks displayed in the GUI for Normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
-			Material material = Material
-					.getMaterial(plugin.getPluginGui().getString(categoryName + ".Item", "bedrock").toUpperCase());
-			short metadata = (short) plugin.getPluginGui().getInt(categoryName + ".Metadata", 0);
-			if (material == null) {
-				material = Material.BEDROCK;
-			}
-			ItemStack itemStack = new ItemStack(material, 1, metadata);
+			ItemStack itemStack = createRawItemStack(categoryName);
 			constructItemStackLore(itemStack,
 					plugin.getPluginLang().getString(category.toLangName(), category.toLangDefault()),
 					plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false).size());
@@ -156,58 +144,23 @@ public class ListCommand extends AbstractCommand {
 		}
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
-		Material material = Material
-				.getMaterial(plugin.getPluginGui().getString("Commands.Item", "bedrock").toUpperCase());
-		short metadata = (short) plugin.getPluginGui().getInt("Commands.Metadata", 0);
-		if (material == null) {
-			material = Material.BEDROCK;
-		}
-		commandsCategoryItem = new ItemStack(material, 1, metadata);
+		commandsCategoryItem = createRawItemStack("Commands");
 		constructItemStackLore(commandsCategoryItem,
 				plugin.getPluginLang().getString("list-commands", "Other Achievements"),
 				plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false).size());
 
+		// Prepare various other item stacks used in the GUI.
+		backButton = createRawItemStack("BackButton");
 		ItemMeta backMeta = backButton.getItemMeta();
 		backMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 				StringEscapeUtils.unescapeJava(plugin.getPluginLang().getString("list-back-message", "&7Back"))));
 		backButton.setItemMeta(backMeta);
+		
+		achievementNotStarted = createRawItemStack("AchievementNotStarted");
+		achievementStarted = createRawItemStack("AchievementStarted");
+		achievementReceived = createRawItemStack("AchievementReceived");
 
-		ItemMeta barrierMeta = barrier.getItemMeta();
-		barrierMeta.setDisplayName(langListCategoryNotUnlocked);
-	}
-
-	/**
-	 * Sets the metadata of an ItemStack.
-	 * 
-	 * @param itemStacks
-	 * @param displayName
-	 * @param indexInItemStacksArray
-	 * @param i
-	 * @return
-	 */
-	private void constructItemStackLore(ItemStack categoryItem, String displayName, int totalAchievementsInCategory) {
-		ItemMeta categoryMeta = categoryItem.getItemMeta();
-		// Create item stack that will be displayed in the GUI, with its category name.
-		if (StringUtils.isBlank(displayName)) {
-			categoryMeta.setDisplayName("");
-		} else {
-			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-					StringUtils.replaceEach(configListAchievementFormat, new String[] { "%ICON%", "%NAME%" },
-							new String[] { configIcon, "&l" + displayName + "&8" })));
-		}
-
-		String loreAmountMessage;
-		if (totalAchievementsInCategory > 1) {
-			loreAmountMessage = langListAchievementsInCategoryPlural;
-
-		} else {
-			loreAmountMessage = langListAchievementInCategorySingular;
-		}
-		// Set item lore.
-		categoryMeta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + StringUtils
-				.replaceOnce(loreAmountMessage, "AMOUNT", Integer.toString(totalAchievementsInCategory)))));
-		// Set item meta.
-		categoryItem.setItemMeta(categoryMeta);
+		barrier.getItemMeta().setDisplayName(langListCategoryNotUnlocked);
 	}
 
 	@Override
@@ -265,7 +218,7 @@ public class ListCommand extends AbstractCommand {
 	 * @param category
 	 * @param player
 	 */
-	public void createCategoryGUIMultiple(MultipleAchievements category, Player player) {
+	private void createCategoryGUIMultiple(MultipleAchievements category, Player player) {
 		String categoryName = category.toString();
 
 		CommentedYamlConfiguration config = plugin.getPluginConfig();
@@ -650,18 +603,15 @@ public class ListCommand extends AbstractCommand {
 	private void createCategoryGUIItem(Inventory inventory, int positionInGUI, String level, long statistic,
 			String achName, String achMessage, List<String> rewards, String date, boolean inelligibleSeriesItem,
 			boolean playedTime) {
-		// Display a clay block in the GUI, with a color depending on whether it was received or not, or whether
-		// progress was started.
+		// Display an item depending on whether the achievement was received or not, or whether progress was started.
+		// Clone in order to work with an independent set of metadata.
 		ItemStack achItem;
 		if (date != null) {
-			// Achievement has been received.
-			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 5);
+			achItem = achievementReceived.clone();
 		} else if (statistic > 0) {
-			// Player is making progress toward the achievement.
-			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 4);
+			achItem = achievementStarted.clone();
 		} else {
-			// Player has not started progress.
-			achItem = new ItemStack(Material.STAINED_CLAY, 1, (short) 14);
+			achItem = achievementNotStarted.clone();
 		}
 
 		// Set name of the achievement. The style depends whether it was received or not and whether the user has set
@@ -824,5 +774,71 @@ public class ListCommand extends AbstractCommand {
 			multipleOfNine += 9;
 		}
 		return multipleOfNine;
+	}
+	
+	/**
+	 * Creates an ItemStack based on information extracted from gui.yml.
+	 * @param key
+	 * @return
+	 */
+	private ItemStack createRawItemStack(String key) {
+		Material material = Material
+				.getMaterial(plugin.getPluginGui().getString(key + ".Item", "bedrock").toUpperCase());
+		short metadata = (short) plugin.getPluginGui().getInt(key + ".Metadata", 0);
+		if (material == null) {
+			material = Material.BEDROCK;
+			plugin.getLogger().warning("GUI material for category " + key
+					+ " was not found. Have you spelt the name correctly or is it available for your Minecraft version?");
+		}
+		return new ItemStack(material, 1, metadata);
+	}
+	
+	/**
+	 * Sets the metadata of an ItemStack.
+	 * 
+	 * @param itemStacks
+	 * @param displayName
+	 * @param totalAchievementsInCategory
+	 * @return
+	 */
+	private void constructItemStackLore(ItemStack categoryItem, String displayName, int totalAchievementsInCategory) {
+		ItemMeta categoryMeta = categoryItem.getItemMeta();
+		// Create item stack that will be displayed in the GUI, with its category name.
+		if (StringUtils.isBlank(displayName)) {
+			categoryMeta.setDisplayName("");
+		} else {
+			categoryMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+					StringUtils.replaceEach(configListAchievementFormat, new String[] { "%ICON%", "%NAME%" },
+							new String[] { configIcon, "&l" + displayName + "&8" })));
+		}
+
+		String loreAmountMessage;
+		if (totalAchievementsInCategory > 1) {
+			loreAmountMessage = langListAchievementsInCategoryPlural;
+
+		} else {
+			loreAmountMessage = langListAchievementInCategorySingular;
+		}
+		// Set item lore.
+		categoryMeta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + StringUtils
+				.replaceOnce(loreAmountMessage, "AMOUNT", Integer.toString(totalAchievementsInCategory)))));
+		// Set item meta.
+		categoryItem.setItemMeta(categoryMeta);
+	}
+	
+	public ItemStack getBackButton() {
+		return backButton;
+	}
+
+	public ItemStack getAchievementNotStarted() {
+		return achievementNotStarted;
+	}
+
+	public ItemStack getAchievementStarted() {
+		return achievementStarted;
+	}
+
+	public ItemStack getAchievementReceived() {
+		return achievementReceived;
 	}
 }
