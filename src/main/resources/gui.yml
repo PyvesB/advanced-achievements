@@ -20,9 +20,15 @@ AchievementReceived:
   Item: stained_clay
   Metadata: 5
   
-# Back button when navigating in a category.
+# Buttons when navigating in a category.
 BackButton:
-  Item: paper
+  Item: book
+  Metadata: 0
+PreviousButton:
+  Item: wood_button
+  Metadata: 0
+NextButton:
+  Item: stone_button
   Metadata: 0
 
 # Items used to represent the categories.

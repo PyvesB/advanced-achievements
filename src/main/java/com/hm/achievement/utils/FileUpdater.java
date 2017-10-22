@@ -259,6 +259,10 @@ public class FileUpdater {
 				NO_COMMENTS);
 		updateSetting(lang, "list-reward-increase-max-oxygen", "increase max oxygen by AMOUNT", NO_COMMENTS);
 
+		// Added in version 5.3:
+		updateSetting(lang, "list-previous-message", "&7Previous", NO_COMMENTS);
+		updateSetting(lang, "list-next-message", "&7Next", NO_COMMENTS);
+
 		if (updatePerformed) {
 			// Changes in the language file: save and do a fresh load.
 			try {
@@ -291,8 +295,12 @@ public class FileUpdater {
 		updateSetting(gui, "AchievementStarted.Metadata", 4, NO_COMMENTS);
 		updateSetting(gui, "AchievementReceived.Item", "stained_clay", NO_COMMENTS);
 		updateSetting(gui, "AchievementReceived.Metadata", 5, NO_COMMENTS);
-		updateSetting(gui, "BackButton.Item", "paper", NO_COMMENTS);
+		updateSetting(gui, "BackButton.Item", "book", NO_COMMENTS);
 		updateSetting(gui, "BackButton.Metadata", 0, NO_COMMENTS);
+		updateSetting(gui, "PreviousButton.Item", "wood_button", NO_COMMENTS);
+		updateSetting(gui, "PreviousButton.Metadata", 0, NO_COMMENTS);
+		updateSetting(gui, "NextButton.Item", "stone_button", NO_COMMENTS);
+		updateSetting(gui, "NextButton.Metadata", 0, NO_COMMENTS);
 
 		if (updatePerformed) {
 			// Changes in the gui file: save and do a fresh load.

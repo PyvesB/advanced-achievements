@@ -2,8 +2,10 @@ package com.hm.achievement;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -46,6 +48,8 @@ import com.hm.achievement.command.WeekCommand;
 import com.hm.achievement.db.AsyncCachedRequestsSender;
 import com.hm.achievement.db.DatabaseCacheManager;
 import com.hm.achievement.db.SQLDatabaseManager;
+import com.hm.achievement.gui.CategoryGUI;
+import com.hm.achievement.gui.MainGUI;
 import com.hm.achievement.listener.AchieveArrowListener;
 import com.hm.achievement.listener.AchieveBedListener;
 import com.hm.achievement.listener.AchieveBlockBreakListener;
@@ -174,6 +178,10 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	private AchieveDistanceRunnable distanceRunnable;
 	private AchievePlayTimeRunnable playTimeRunnable;
 
+	// GUI classes.
+	private MainGUI mainGUI;
+	private CategoryGUI categoryGUI;
+
 	// Bukkit scheduler tasks.
 	private BukkitTask asyncCachedRequestsSenderTask;
 	private BukkitTask playedTimeTask;
@@ -181,6 +189,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 	// Various other fields and parameters.
 	private final Map<String, String> achievementsAndDisplayNames;
+	private Map<String, List<Long>> sortedThresholds;
 	private String chatHeader;
 	private Set<String> disabledCategorySet;
 	private boolean successfulLoad;
@@ -192,6 +201,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		databaseManager = new SQLDatabaseManager(this);
 		cacheManager = new DatabaseCacheManager(this);
 		achievementsAndDisplayNames = new HashMap<>();
+		sortedThresholds = new HashMap<>();
 	}
 
 	@Override
@@ -220,6 +230,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		initialiseCommands();
 		registerListeners();
 		initialiseTabCompleter();
+		initialiseGUIs();
 		databaseManager.initialise();
 
 		// Error while loading database do not do any further work.
@@ -320,6 +331,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	public void extractConfigurationParameters() {
 		parseHeader();
 		parseAchievementsAndDisplayNames();
+		parseAchievementThresholds();
 		registerPermissions();
 
 		// If user switched config parameter to false, unregister UpdateChecker; if user switched config pameter to
@@ -406,7 +418,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			this.getLogger().warning(
 					"The breeding event is not available in your server version, please add Breeding to the DisabledCategories list in your config.");
 		}
-		
+
 		return disabledCategorySet;
 	}
 
@@ -627,7 +639,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			breedListener = new AchieveBreedListener(this);
 			pm.registerEvents(breedListener, this);
 		}
-		
+
 		if (!disabledCategorySet.contains(NormalAchievements.HOEPLOWING.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.FERTILISING.toString())
 				|| !disabledCategorySet.contains(NormalAchievements.FIREWORKS.toString())
@@ -680,6 +692,15 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	}
 
 	/**
+	 * Initialises the plugin's main and category GUIs.
+	 */
+	private void initialiseGUIs() {
+		this.getLogger().info("Setting up graphical interfaces...");
+		mainGUI = new MainGUI(this);
+		categoryGUI = new CategoryGUI(this);
+	}
+
+	/**
 	 * Launches asynchronous scheduled tasks.
 	 */
 	private void launchScheduledTasks() {
@@ -691,7 +712,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		asyncCachedRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this,
 				asyncCachedRequestsSender, configPooledRequestsTaskInterval * 40L,
 				configPooledRequestsTaskInterval * 20L);
-		
+
 		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
 		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
 			playTimeRunnable = new AchievePlayTimeRunnable(this);
@@ -839,6 +860,37 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	}
 
 	/**
+	 * Creates a map from categories (or categories + subcategories) to lists of sorted thresholds.
+	 */
+	private void parseAchievementThresholds() {
+		sortedThresholds.clear();
+
+		// Enumerate the normal achievements.
+		for (NormalAchievements category : NormalAchievements.values()) {
+			List<Long> thresholds = new ArrayList<>();
+			String categoryName = category.toString();
+			for (String threshold : config.getConfigurationSection(categoryName).getKeys(false)) {
+				thresholds.add(Long.valueOf(threshold));
+			}
+			thresholds.sort(null);
+			sortedThresholds.put(categoryName, thresholds);
+		}
+
+		// Enumerate the achievements with multiple categories.
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			String categoryName = category.toString();
+			for (String section : config.getConfigurationSection(categoryName).getKeys(false)) {
+				List<Long> thresholds = new ArrayList<>();
+				for (String threshold : config.getConfigurationSection(categoryName + "." + section).getKeys(false)) {
+					thresholds.add(Long.valueOf(threshold));
+				}
+				thresholds.sort(null);
+				sortedThresholds.put(categoryName + "." + section, thresholds);
+			}
+		}
+	}
+
+	/**
 	 * Registers permissions that depend on the user's configuration file (for MultipleAchievements; for instance for
 	 * stone breaks, achievement.count.breaks.stone will be registered).
 	 */
@@ -870,6 +922,10 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 	public Map<String, String> getAchievementsAndDisplayNames() {
 		return achievementsAndDisplayNames;
+	}
+
+	public Map<String, List<Long>> getSortedThresholds() {
+		return sortedThresholds;
 	}
 
 	public SQLDatabaseManager getDatabaseManager() {
@@ -904,8 +960,12 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		this.successfulLoad = successfulLoad;
 	}
 
-	public ListCommand getListCommand() {
-		return listCommand;
+	public MainGUI getMainGUI() {
+		return mainGUI;
+	}
+
+	public CategoryGUI getCategoryGUI() {
+		return categoryGUI;
 	}
 
 	public ToggleCommand getToggleCommand() {
@@ -953,4 +1013,5 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	public void setGui(CommentedYamlConfiguration gui) {
 		this.gui = gui;
 	}
+
 }

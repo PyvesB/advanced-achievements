@@ -115,6 +115,8 @@ list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "
 list-category-not-unlocked: "You have not yet unlocked this category."
 list-back-message: "&7Back"
+list-previous-message: "&7Previous"
+list-next-message: "&7Next"
 list-achievements-in-category-singular: "AMOUNT achievement"
 list-achievements-in-category-plural: "AMOUNT achievements"
 
