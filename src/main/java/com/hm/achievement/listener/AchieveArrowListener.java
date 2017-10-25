@@ -28,7 +28,7 @@ public class AchieveArrowListener extends AbstractListener {
 
 		Player player = (Player) event.getEntity();
 		NormalAchievements category = NormalAchievements.ARROWS;
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 

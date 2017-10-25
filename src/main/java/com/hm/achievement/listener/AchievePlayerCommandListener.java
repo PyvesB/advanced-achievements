@@ -24,7 +24,7 @@ public class AchievePlayerCommandListener extends AbstractListener {
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
 
-		if (!shouldEventBeTakenIntoAccountNoPermission(player)) {
+		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
 			return;
 		}
 

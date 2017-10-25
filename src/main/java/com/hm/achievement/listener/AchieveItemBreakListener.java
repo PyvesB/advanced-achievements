@@ -24,7 +24,7 @@ public class AchieveItemBreakListener extends AbstractListener {
 	public void onPlayerItemBreak(PlayerItemBreakEvent event) {
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.ITEMBREAKS;
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 

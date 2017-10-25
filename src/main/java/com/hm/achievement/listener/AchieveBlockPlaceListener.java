@@ -25,7 +25,7 @@ public class AchieveBlockPlaceListener extends AbstractListener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		if (!shouldEventBeTakenIntoAccountNoPermission(player)) {
+		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
 			return;
 		}
 

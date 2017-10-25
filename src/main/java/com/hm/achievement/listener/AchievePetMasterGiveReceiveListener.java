@@ -29,7 +29,7 @@ public class AchievePetMasterGiveReceiveListener extends AbstractListener {
 		}
 		NormalAchievements categoryReceive = NormalAchievements.PETMASTERRECEIVE;
 
-		if (!shouldEventBeTakenIntoAccount(receiverPlayer, categoryReceive)) {
+		if (!shouldIncreaseBeTakenIntoAccount(receiverPlayer, categoryReceive)) {
 			return;
 		}
 
@@ -39,7 +39,7 @@ public class AchievePetMasterGiveReceiveListener extends AbstractListener {
 
 		Player giverPlayer = (Player) event.getOldOwner();
 		NormalAchievements categoryGive = NormalAchievements.PETMASTERGIVE;
-		if (!shouldEventBeTakenIntoAccount(giverPlayer, categoryGive)) {
+		if (!shouldIncreaseBeTakenIntoAccount(giverPlayer, categoryGive)) {
 			return;
 		}
 

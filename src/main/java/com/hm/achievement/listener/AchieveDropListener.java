@@ -24,7 +24,7 @@ public class AchieveDropListener extends AbstractListener {
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.DROPS;
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 

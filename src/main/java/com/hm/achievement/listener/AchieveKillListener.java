@@ -31,7 +31,7 @@ public class AchieveKillListener extends AbstractListener {
 			return;
 		}
 
-		if (!shouldEventBeTakenIntoAccountNoPermission(player)) {
+		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
 			return;
 		}
 

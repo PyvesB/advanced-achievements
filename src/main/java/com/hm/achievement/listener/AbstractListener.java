@@ -1,11 +1,7 @@
 package com.hm.achievement.listener;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -15,80 +11,17 @@ import org.bukkit.potion.PotionType;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
-import com.hm.achievement.utils.Reloadable;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
+import com.hm.achievement.utils.StatisticIncreaseHandler;
 
 /**
  * Abstract class in charge of factoring out common functionality for the listener classes.
  * 
  * @author Pyves
  */
-public abstract class AbstractListener implements Listener, Reloadable {
-
-	protected final int version;
-	protected final AdvancedAchievements plugin;
-
-	private boolean configRestrictCreative;
-	private boolean configRestrictSpectator;
-	private boolean configRestrictAdventure;
-	private Set<String> configExcludedWorlds;
+public abstract class AbstractListener extends StatisticIncreaseHandler implements Listener {
 
 	protected AbstractListener(AdvancedAchievements plugin) {
-		this.plugin = plugin;
-
-		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
-		// versions change in the future.
-		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
-	}
-
-	@Override
-	public void extractConfigurationParameters() {
-		configRestrictCreative = plugin.getPluginConfig().getBoolean("RestrictCreative", false);
-		configRestrictSpectator = plugin.getPluginConfig().getBoolean("RestrictSpectator", true);
-		configRestrictAdventure = plugin.getPluginConfig().getBoolean("RestrictAdventure", false);
-		// Spectator mode introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
-		if (configRestrictSpectator && version < 8) {
-			configRestrictSpectator = false;
-		}
-		configExcludedWorlds = new HashSet<>(plugin.getPluginConfig().getList("ExcludedWorlds"));
-	}
-
-	/**
-	 * Determines whether the listened event should be taken into account.
-	 * 
-	 * @param player
-	 * @param category
-	 * @return
-	 */
-	protected boolean shouldEventBeTakenIntoAccount(Player player, NormalAchievements category) {
-		boolean isNPC = player.hasMetadata("NPC");
-		boolean permission = player.hasPermission(category.toPermName());
-		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
-		boolean restrictedSpectator = configRestrictSpectator && player.getGameMode() == GameMode.SPECTATOR;
-		boolean restrictedAdventure = configRestrictAdventure && player.getGameMode() == GameMode.ADVENTURE;
-		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
-
-		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !restrictedAdventure
-				&& !excludedWorld;
-	}
-
-	/**
-	 * Determines whether the listened event should be taken into account. Ignore permission check.
-	 * 
-	 * @param player
-	 * @param category
-	 * @return
-	 */
-	protected boolean shouldEventBeTakenIntoAccountNoPermission(Player player) {
-		boolean isNPC = player.hasMetadata("NPC");
-		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
-		boolean restrictedSpectator = configRestrictSpectator && player.getGameMode() == GameMode.SPECTATOR;
-		boolean restrictedAdventure = configRestrictAdventure && player.getGameMode() == GameMode.ADVENTURE;
-		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
-
-		return !isNPC && !restrictedCreative && !restrictedSpectator && !restrictedAdventure && !excludedWorld;
+		super(plugin);
 	}
 
 	/**
@@ -103,17 +36,7 @@ public abstract class AbstractListener implements Listener, Reloadable {
 			int incrementValue) {
 		long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, player.getUniqueId(),
 				incrementValue);
-
-		if (incrementValue > 1) {
-			// Every value must be checked to see whether it corresponds to an achievement's threshold.
-			for (long threshold = amount - incrementValue + 1; threshold <= amount; ++threshold) {
-				String configAchievement = category + "." + threshold;
-				awardAchievementIfAvailable(player, configAchievement);
-			}
-		} else {
-			String configAchievement = category + "." + amount;
-			awardAchievementIfAvailable(player, configAchievement);
-		}
+		checkThresholdsAndAchievements(player, category.toString(), amount);
 	}
 
 	/**
@@ -129,42 +52,7 @@ public abstract class AbstractListener implements Listener, Reloadable {
 			String subcategory, int incrementValue) {
 		long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, subcategory,
 				player.getUniqueId(), incrementValue);
-
-		if (incrementValue > 1) {
-			// Every value must be checked to see whether it corresponds to an achievement's threshold.
-			for (long threshold = amount - incrementValue + 1; threshold <= amount; ++threshold) {
-				String configAchievement = category + "." + subcategory + '.' + threshold;
-				awardAchievementIfAvailable(player, configAchievement);
-			}
-		} else {
-			String configAchievement = category + "." + subcategory + '.' + amount;
-			awardAchievementIfAvailable(player, configAchievement);
-		}
-	}
-
-	/**
-	 * Awards an achievement if the corresponding threshold was found in the configuration file.
-	 * 
-	 * @param player
-	 * @param configAchievement
-	 */
-	protected void awardAchievementIfAvailable(Player player, String configAchievement) {
-		CommentedYamlConfiguration pluginConfig = plugin.getPluginConfig();
-		if (pluginConfig.getString(configAchievement + ".Message", null) != null) {
-			// Fire achievement event.
-			PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
-					.player(player).name(plugin.getPluginConfig().getString(configAchievement + ".Name"))
-					.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
-					.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
-					.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
-					.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
-					.moneyReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Money"))
-					.experienceReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Experience"))
-					.maxHealthReward(plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxHealth"))
-					.maxOxygenReward(plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxOxygen"));
-
-			Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
-		}
+		checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
 	}
 
 	/**

@@ -24,7 +24,7 @@ public class AchieveEnchantListener extends AbstractListener {
 	public void onEnchantItem(EnchantItemEvent event) {
 		Player player = event.getEnchanter();
 		NormalAchievements category = NormalAchievements.ENCHANTMENTS;
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 

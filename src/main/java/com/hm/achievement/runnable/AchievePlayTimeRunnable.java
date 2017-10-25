@@ -1,8 +1,5 @@
 package com.hm.achievement.runnable;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -10,6 +7,7 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.utils.StatisticIncreaseHandler;
 
 /**
  * Class used to monitor players' played times.
@@ -17,12 +15,10 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-public class AchievePlayTimeRunnable extends AbstractRunnable implements Runnable {
+public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements Runnable {
 
 	private Essentials essentials;
 	private long previousRunMillis;
-	// Keys in the map are thresholds in milliseconds, values are the paths to the achievements.
-	private final Map<Long, String> parsedThresholds;
 
 	private boolean configIgnoreAFKPlayedTime;
 
@@ -34,7 +30,6 @@ public class AchievePlayTimeRunnable extends AbstractRunnable implements Runnabl
 		}
 
 		previousRunMillis = System.currentTimeMillis();
-		parsedThresholds = new TreeMap<>();
 	}
 
 	@Override
@@ -45,13 +40,6 @@ public class AchievePlayTimeRunnable extends AbstractRunnable implements Runnabl
 			configIgnoreAFKPlayedTime = plugin.getPluginConfig().getBoolean("IgnoreAFKPlayedTime", false);
 		} else {
 			configIgnoreAFKPlayedTime = false;
-		}
-
-		parsedThresholds.clear();
-		for (String achievementThreshold : plugin.getPluginConfig()
-				.getConfigurationSection(NormalAchievements.PLAYEDTIME.toString()).getKeys(false)) {
-			parsedThresholds.put(Long.parseLong(achievementThreshold) * 3600000L,
-					NormalAchievements.PLAYEDTIME + "." + achievementThreshold);
 		}
 	}
 
@@ -71,7 +59,7 @@ public class AchievePlayTimeRunnable extends AbstractRunnable implements Runnabl
 	 */
 	private void updateTime(Player player) {
 		// If player is in restricted game mode or is in a blocked world, don't update played time.
-		if (!shouldRunBeTakenIntoAccount(player)) {
+		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
 			return;
 		}
 
@@ -83,16 +71,13 @@ public class AchievePlayTimeRunnable extends AbstractRunnable implements Runnabl
 			}
 		}
 
-		NormalAchievements category = NormalAchievements.PLAYEDTIME;
-
 		// Do not register any times if player does not have permission.
-		if (!player.hasPermission(category.toPermName())) {
+		if (!player.hasPermission(NormalAchievements.PLAYEDTIME.toPermName())) {
 			return;
 		}
 
 		long playedTime = plugin.getCacheManager().getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME,
 				player.getUniqueId(), (int) (System.currentTimeMillis() - previousRunMillis));
-
-		checkThresholdsAndAchievements(player, parsedThresholds, playedTime);
+		checkThresholdsAndAchievements(player, NormalAchievements.PLAYEDTIME.toString(), playedTime);
 	}
 }

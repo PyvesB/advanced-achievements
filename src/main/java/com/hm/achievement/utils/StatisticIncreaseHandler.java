@@ -1,8 +1,6 @@
-package com.hm.achievement.runnable;
+package com.hm.achievement.utils;
 
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -10,16 +8,17 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
-import com.hm.achievement.utils.Reloadable;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
- * Abstract class in charge of factoring out common functionality for runnables.
+ * Abstract class in charge of factoring out common functionality for classes which track statistic increases (such as
+ * listeners or runnables).
  * 
  * @author Pyves
  */
-public class AbstractRunnable implements Reloadable {
+public class StatisticIncreaseHandler implements Reloadable {
 
 	protected final AdvancedAchievements plugin;
 	protected final int version;
@@ -29,7 +28,7 @@ public class AbstractRunnable implements Reloadable {
 	private boolean configRestrictAdventure;
 	private Set<String> configExcludedWorlds;
 
-	public AbstractRunnable(AdvancedAchievements plugin) {
+	public StatisticIncreaseHandler(AdvancedAchievements plugin) {
 		this.plugin = plugin;
 		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
 		// versions change in the future.
@@ -49,13 +48,32 @@ public class AbstractRunnable implements Reloadable {
 	}
 
 	/**
-	 * Determines whether the listened event should be taken into account. Ignore permission check.
+	 * Determines whether the statistic increase should be taken into account.
 	 * 
 	 * @param player
 	 * @param category
 	 * @return
 	 */
-	protected boolean shouldRunBeTakenIntoAccount(Player player) {
+	protected boolean shouldIncreaseBeTakenIntoAccount(Player player, NormalAchievements category) {
+		boolean isNPC = player.hasMetadata("NPC");
+		boolean permission = player.hasPermission(category.toPermName());
+		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
+		boolean restrictedSpectator = configRestrictSpectator && player.getGameMode() == GameMode.SPECTATOR;
+		boolean restrictedAdventure = configRestrictAdventure && player.getGameMode() == GameMode.ADVENTURE;
+		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
+
+		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !restrictedAdventure
+				&& !excludedWorld;
+	}
+
+	/**
+	 * Determines whether the statistic increase should be taken into account. Ignore permission check.
+	 * 
+	 * @param player
+	 * @param category
+	 * @return
+	 */
+	protected boolean shouldIncreaseBeTakenIntoAccountNoPermissions(Player player) {
 		boolean isNPC = player.hasMetadata("NPC");
 		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
 		boolean restrictedSpectator = configRestrictSpectator && player.getGameMode() == GameMode.SPECTATOR;
@@ -70,15 +88,16 @@ public class AbstractRunnable implements Reloadable {
 	 * wasn't previously received.
 	 * 
 	 * @param player
-	 * @param thresholds
+	 * @param categorySubcategory
 	 * @param currentValue
 	 */
-	protected void checkThresholdsAndAchievements(Player player, Map<Long, String> thresholds, long currentValue) {
+	protected void checkThresholdsAndAchievements(Player player, String categorySubcategory, long currentValue) {
 		// Iterate through all the different thresholds.
-		for (Entry<Long, String> achievementThreshold : thresholds.entrySet()) {
-			// Check whether player has met the threshold.
-			if (currentValue > achievementThreshold.getKey()) {
-				String configAchievement = achievementThreshold.getValue();
+		for (long threshold : plugin.getSortedThresholds().get(categorySubcategory)) {
+			// Check whether player has met the threshold; convert from hours to millis if played time.
+			if (currentValue >= threshold && !"PlayedTime".equals(categorySubcategory)
+					|| currentValue >= 3600000L * threshold) {
+				String configAchievement = categorySubcategory + "." + threshold;
 				String achievementName = plugin.getPluginConfig().getString(configAchievement + ".Name");
 				// Check whether player has received the achievement.
 				if (!plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
@@ -99,7 +118,7 @@ public class AbstractRunnable implements Reloadable {
 					Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 				}
 			} else {
-				// Entries in TreeMap sorted in increasing order, all subsequent thresholds will fail the condition.
+				// Entries in List sorted in increasing order, all subsequent thresholds will fail the condition.
 				return;
 			}
 		}

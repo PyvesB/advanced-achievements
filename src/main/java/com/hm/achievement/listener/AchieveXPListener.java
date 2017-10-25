@@ -25,7 +25,7 @@ public class AchieveXPListener extends AbstractListener {
 		Player player = event.getPlayer();
 
 		NormalAchievements category = NormalAchievements.LEVELS;
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 

@@ -33,7 +33,7 @@ public class AchieveCraftListener extends AbstractListener {
 		}
 
 		Player player = (Player) event.getWhoClicked();
-		if (!shouldEventBeTakenIntoAccountNoPermission(player)) {
+		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
 			return;
 		}
 

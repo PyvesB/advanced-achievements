@@ -41,7 +41,7 @@ public class AchieveBlockBreakListener extends AbstractListener {
 				&& player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
 				|| version < 9 && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
 
-		if (!shouldEventBeTakenIntoAccountNoPermission(player) || disableSilkTouchBreaks && silkTouchBreak) {
+		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player) || disableSilkTouchBreaks && silkTouchBreak) {
 			return;
 		}
 

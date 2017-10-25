@@ -87,7 +87,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 						// Check reception conditions and whether player is still connected, as he could have left in
 						// the meantime.
 						if (!player.isOnline()
-								|| !shouldEventBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
+								|| !shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
 							return;
 						}
 

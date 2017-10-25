@@ -39,7 +39,7 @@ public class AchieveMilkLavaWaterListener extends AbstractRateLimitedListener {
 			return;
 		}
 
-		if (!shouldEventBeTakenIntoAccount(player, category)
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)
 				|| category != NormalAchievements.MILKS && isInCooldownPeriod(player, false)) {
 			return;
 		}

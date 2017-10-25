@@ -28,7 +28,7 @@ public class AchieveDeathListener extends AbstractListener {
 		}
 
 		NormalAchievements category = NormalAchievements.DEATHS;
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 

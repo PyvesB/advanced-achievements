@@ -43,7 +43,7 @@ public class AchieveConsumeListener extends AbstractListener {
 			return;
 		}
 
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 

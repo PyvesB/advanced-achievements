@@ -29,7 +29,7 @@ public class AchieveShearListener extends AbstractListener {
 
 		Player player = event.getPlayer();
 		NormalAchievements category = NormalAchievements.SHEARS;
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 

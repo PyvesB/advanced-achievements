@@ -28,7 +28,7 @@ public class AchieveTameListener extends AbstractListener {
 
 		Player player = (Player) event.getOwner();
 		NormalAchievements category = NormalAchievements.TAMES;
-		if (!shouldEventBeTakenIntoAccount(player, category)) {
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 
