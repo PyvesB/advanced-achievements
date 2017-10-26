@@ -85,7 +85,7 @@ public class DatabaseCacheManager implements Cleanable {
 	 * Retrieves a HashMap for a NormalAchievement based on the category.
 	 * 
 	 * @param category
-	 * @return
+	 * @return the map of cached statistics for a Normal category
 	 */
 	public Map<String, CachedStatistic> getHashMap(NormalAchievements category) {
 		return normalAchievementsToPlayerStatistics.get(category);
@@ -95,7 +95,7 @@ public class DatabaseCacheManager implements Cleanable {
 	 * Retrieves a HashMap for a MultipleAchievement based on the category.
 	 * 
 	 * @param category
-	 * @return
+	 * @return the map of cached statistics for a Multiple category
 	 */
 	public Map<String, CachedStatistic> getHashMap(MultipleAchievements category) {
 		return multipleAchievementsToPlayerStatistics.get(category);
@@ -108,7 +108,7 @@ public class DatabaseCacheManager implements Cleanable {
 	 * @param category
 	 * @param player
 	 * @param value
-	 * @return
+	 * @return the updated statistic value
 	 */
 	public long getAndIncrementStatisticAmount(NormalAchievements category, UUID player, int value) {
 		CachedStatistic statistic = getHashMap(category).get(player.toString());
@@ -133,7 +133,7 @@ public class DatabaseCacheManager implements Cleanable {
 	 * @param subcategory
 	 * @param player
 	 * @param value
-	 * @return
+	 * @return the updated statistic value
 	 */
 	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player,
 			int value) {
@@ -186,7 +186,7 @@ public class DatabaseCacheManager implements Cleanable {
 	 * method must therefore be synchronized to avoid race conditions if a player calls /aach stats at the same time.
 	 * 
 	 * @param player
-	 * @return
+	 * @return the number of achievements received by the player
 	 */
 	public synchronized int getPlayerTotalAchievements(UUID player) {
 		Integer totalAchievements = totalPlayerAchievementsCache.get(player.toString());
@@ -204,7 +204,7 @@ public class DatabaseCacheManager implements Cleanable {
 	 * @param category
 	 * @param player
 	 * @param subcategory
-	 * @return
+	 * @return the statistics key for a Multiple category
 	 */
 	public String getMultipleCategoryCacheKey(MultipleAchievements category, UUID player, String subcategory) {
 		if (category == MultipleAchievements.PLAYERCOMMANDS) {

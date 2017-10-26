@@ -374,9 +374,11 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	}
 
 	/**
-	 * Extracts plugin parameters from the configuration file.
+	 * Extracts disabled categories from the configuration file.
 	 * 
-	 * @return
+	 * @param config
+	 * 
+	 * @return the set containing the names of the disabled categories
 	 */
 	public Set<String> extractDisabledCategories(CommentedYamlConfiguration config) {
 		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
@@ -431,8 +433,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 		// Enumerate Commands achievements.
 		if (!disabledCategorySet.contains("Commands")) {
-			ConfigurationSection categoryConfig = config.getConfigurationSection("Commands");
-			int keyCount = categoryConfig.getKeys(false).size();
+			int keyCount = config.getConfigurationSection("Commands").getKeys(false).size();
 			if (keyCount > 0) {
 				categoriesInUse += 1;
 				totalAchievements += keyCount;
@@ -445,8 +446,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				continue;
 			}
 
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
-			int keyCount = categoryConfig.getKeys(false).size();
+			int keyCount = config.getConfigurationSection(category.toString()).getKeys(false).size();
 			if (keyCount > 0) {
 				++categoriesInUse;
 				totalAchievements += keyCount;
@@ -459,8 +459,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				continue;
 			}
 
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
-			Set<String> categorySections = categoryConfig.getKeys(false);
+			Set<String> categorySections = config.getConfigurationSection(category.toString()).getKeys(false);
 
 			if (categorySections.isEmpty()) {
 				continue;
@@ -470,8 +469,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 			// Enumerate the subcategories.
 			for (String section : categorySections) {
-				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
-				int achievementCount = subcategoryConfig.getKeys(false).size();
+				int achievementCount = config.getConfigurationSection(category + "." + section).getKeys(false).size();
 				if (achievementCount > 0) {
 					totalAchievements += achievementCount;
 				}
@@ -774,8 +772,6 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 	/**
 	 * Launches an update check task.
-	 * 
-	 * @param pm
 	 */
 	private void initialiseUpdateChecker() {
 		PluginManager pm = getServer().getPluginManager();
@@ -825,8 +821,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
-			for (String ach : categoryConfig.getKeys(false)) {
+			for (String ach : config.getConfigurationSection(category.toString()).getKeys(false)) {
 				String achName = config.getString(category + "." + ach + ".Name", "");
 				String displayName = config.getString(category + "." + ach + ".DisplayName", "");
 
@@ -841,8 +836,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 		// Enumerate the achievements with multiple categories.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			ConfigurationSection categoryConfig = config.getConfigurationSection(category.toString());
-			for (String section : categoryConfig.getKeys(false)) {
+			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
 				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
 				for (String level : subcategoryConfig.getKeys(false)) {
 					String achName = config.getString(category + "." + section + '.' + level + ".Name", "");
@@ -1013,5 +1007,4 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	public void setGui(CommentedYamlConfiguration gui) {
 		this.gui = gui;
 	}
-
 }

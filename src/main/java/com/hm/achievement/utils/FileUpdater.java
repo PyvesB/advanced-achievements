@@ -138,7 +138,7 @@ public class FileUpdater {
 				"No effect if using Minecraft versions prior to 1.12." });
 		updateSetting(config, "IgnoreAFKPlayedTime", false, new String[] {
 				"If true, PlayedTime will no longer increase when the player is AFK. Requires Essentials to work." });
-		
+
 		// Added in version 5.3:
 		updateSetting(config, "ChatHeader", "&7[%ICON%&7]", new String[] {
 				"Set the format of the header used for most chat messages (default: \"&7[%ICON%&7]\")." });
@@ -274,7 +274,7 @@ public class FileUpdater {
 			}
 		}
 	}
-	
+
 	/**
 	 * Updates GUI file from older plugin versions by adding missing parameters. New configuration file introduced in
 	 * version 5.0 of the plugin.
@@ -287,7 +287,7 @@ public class FileUpdater {
 		// Added in version 5.2.5:
 		updateSetting(gui, "Breeding.Item", "wheat", NO_COMMENTS);
 		updateSetting(gui, "Breeding.Metadata", 0, NO_COMMENTS);
-		
+
 		// Added in version 5.3:
 		updateSetting(gui, "AchievementNotStarted.Item", "stained_clay", NO_COMMENTS);
 		updateSetting(gui, "AchievementNotStarted.Metadata", 14, NO_COMMENTS);

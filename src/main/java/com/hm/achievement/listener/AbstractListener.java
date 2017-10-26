@@ -59,23 +59,14 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * Determines whether an item is a water potion.
 	 * 
 	 * @param item
-	 * @return
+	 * @return true if the item is a water potion, false otherwise
 	 */
 	protected boolean isWaterPotion(ItemStack item) {
 		if (version >= 9) {
-			PotionMeta meta = (PotionMeta) (item.getItemMeta());
-			PotionType potionType = meta.getBasePotionData().getType();
-
-			if (potionType == PotionType.WATER) {
-				return true;
-			}
-		} else {
 			// Method getBasePotionData does not exist for versions prior to Minecraft 1.9.
-			if (item.getDurability() == 0) {
-				return true;
-			}
+			return ((PotionMeta) (item.getItemMeta())).getBasePotionData().getType() == PotionType.WATER;
 		}
-		return false;
+		return item.getDurability() == 0;
 	}
 
 	/**
@@ -84,7 +75,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * 
 	 * @param player
 	 * @param newItemStack
-	 * @return
+	 * @return the available space for the item
 	 */
 	protected int getInventoryAvailableSpace(Player player, ItemStack newItemStack) {
 		int availableSpace = 0;
@@ -97,12 +88,8 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 			}
 		}
 
-		ItemStack[] storageContents;
-		if (version >= 9) {
-			storageContents = player.getInventory().getStorageContents();
-		} else {
-			storageContents = player.getInventory().getContents();
-		}
+		ItemStack[] storageContents = version >= 9 ? player.getInventory().getStorageContents()
+				: player.getInventory().getContents();
 		// Get all empty slots in the player's inventory.
 		for (ItemStack currentItemStack : storageContents) {
 			if (currentItemStack == null) {

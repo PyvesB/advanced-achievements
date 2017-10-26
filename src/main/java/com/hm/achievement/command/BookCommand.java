@@ -110,15 +110,8 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 
 			// Play special sound when receiving the book.
 			if (configSound) {
-				Sound sound;
-				if (version < 9) {
-					// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in
-					// newer versions.
-					sound = Sound.valueOf("LEVEL_UP");
-				} else {
-					// Play sound with enum for newer versions.
-					sound = Sound.ENTITY_PLAYER_LEVELUP;
-				}
+				// If old version, retrieving sound by name as it no longer exists in newer versions.
+				Sound sound = version < 9 ? Sound.valueOf("LEVEL_UP") : Sound.ENTITY_PLAYER_LEVELUP;
 				player.getWorld().playSound(player.getLocation(), sound, 1.0f, 0.0f);
 			}
 
@@ -202,6 +195,9 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	 * well as title length. This function bypasses such limits and restores the original CraftBukkit behaviour. See
 	 * https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/4acd0f49e07e0912096e79494472535baf0db2ab
 	 * for more information.
+	 * 
+	 * @param bookPages
+	 * @param bookMeta
 	 */
 	@SuppressWarnings("unchecked")
 	private void setBookPages(List<String> bookPages, BookMeta bookMeta) {

@@ -52,7 +52,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 	 * 
 	 * @param player
 	 * @param category
-	 * @return
+	 * @return true if the increase should be taken into account, false otherwise
 	 */
 	protected boolean shouldIncreaseBeTakenIntoAccount(Player player, NormalAchievements category) {
 		boolean isNPC = player.hasMetadata("NPC");
@@ -70,8 +70,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 	 * Determines whether the statistic increase should be taken into account. Ignore permission check.
 	 * 
 	 * @param player
-	 * @param category
-	 * @return
+	 * @return true if the increase should be taken into account, false otherwise
 	 */
 	protected boolean shouldIncreaseBeTakenIntoAccountNoPermissions(Player player) {
 		boolean isNPC = player.hasMetadata("NPC");

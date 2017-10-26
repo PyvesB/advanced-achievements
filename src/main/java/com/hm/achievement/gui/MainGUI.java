@@ -80,7 +80,6 @@ public class MainGUI extends AbstractGUI {
 		// Display the Commands category.
 		if (shouldDisplayCategory(commandsAchievementsItem, player, "Commands", null)) {
 			displayNormalCategory(commandsAchievementsItem, mainGUI, player, "Commands", displayedSoFar);
-			++displayedSoFar;
 		}
 
 		// Display the main GUI to the player.
@@ -143,7 +142,7 @@ public class MainGUI extends AbstractGUI {
 	 * 
 	 * @param player
 	 * @param configPath
-	 * @return
+	 * @return true if the player has received at least one achievement in the category, false otherwise
 	 */
 	private boolean hasReceivedInCategory(Player player, String configPath) {
 		for (String threshold : plugin.getPluginConfig().getConfigurationSection(configPath).getKeys(false)) {
@@ -155,5 +154,4 @@ public class MainGUI extends AbstractGUI {
 		}
 		return false;
 	}
-
 }

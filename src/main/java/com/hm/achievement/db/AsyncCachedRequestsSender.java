@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 
 import org.bukkit.Bukkit;
 
@@ -43,8 +42,6 @@ public class AsyncCachedRequestsSender implements Runnable {
 	/**
 	 * Writes cached statistics to the database, with batched writes for efficiency purposes. If a failure occurs, the
 	 * same queries will be attempted again.
-	 * 
-	 * @return
 	 */
 	public void sendBatchedRequests() {
 		final List<String> batchedRequests = new ArrayList<>();
@@ -158,24 +155,20 @@ public class AsyncCachedRequestsSender implements Runnable {
 			if (entry.getValue().didPlayerDisconnect() && entry.getValue().isDatabaseConsistent()) {
 				// Player was disconnected at some point in the recent past. Hand over the cleaning to the main server
 				// thread.
-				Bukkit.getScheduler().callSyncMethod(plugin, new Callable<Void>() {
-
-					@Override
-					public Void call() {
-						// Check again whether statistic has been written to the database. This is necessary to cover
-						// cases where the player may have reconnected in the meantime.
-						if (entry.getValue().isDatabaseConsistent()) {
-							categoryMap.remove(entry.getKey());
-						} else {
-							// Get player UUID, which always corresponds to the 36 first characters of the key
-							// regardless of the category type.
-							UUID player = UUID.fromString(entry.getKey().substring(0, 36));
-							if (Bukkit.getPlayer(player) != null) {
-								entry.getValue().resetDisconnection();
-							}
+				Bukkit.getScheduler().callSyncMethod(plugin, () -> {
+					// Check again whether statistic has been written to the database. This is necessary to cover
+					// cases where the player may have reconnected in the meantime.
+					if (entry.getValue().isDatabaseConsistent()) {
+						categoryMap.remove(entry.getKey());
+					} else {
+						// Get player UUID, which always corresponds to the 36 first characters of the key
+						// regardless of the category type.
+						UUID player = UUID.fromString(entry.getKey().substring(0, 36));
+						if (Bukkit.getPlayer(player) != null) {
+							entry.getValue().resetDisconnection();
 						}
-						return null;
 					}
+					return null;
 				});
 			}
 		}

@@ -35,24 +35,23 @@ public class QuitListener extends AbstractListener {
 
 		// Delay cleaning up to avoid invalidating data immediately: players frequently disconnect and reconnect just
 		// after. This also avoids players taking advantage of the reset of cooldowns.
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-				Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()), new Runnable() {
-
-					@Override
-					public void run() {
-						if (Bukkit.getPlayer(uuid) != null) {
-							// Player reconnected.
-							return;
-						}
-
-						for (Cleanable cleanable : cleanableObservers) {
-							// Clean all observers.
-							cleanable.cleanPlayerData(uuid);
-						}
+		Bukkit.getServer().getScheduler()
+				.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()), () -> {
+					if (Bukkit.getPlayer(uuid) != null) {
+						// Player reconnected.
+						return;
 					}
+
+					// Clean all observers.
+					cleanableObservers.stream().forEach(cleanable -> cleanable.cleanPlayerData(uuid));
 				}, 200);
 	}
 
+	/**
+	 * Adds a new Cleanable object that will be notified when a player has disconnected from the server.
+	 * 
+	 * @param cleanable
+	 */
 	public void registerCleanable(Cleanable cleanable) {
 		cleanableObservers.add(cleanable);
 	}

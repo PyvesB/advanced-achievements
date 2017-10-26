@@ -1,10 +1,10 @@
 package com.hm.achievement.command;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
@@ -73,22 +73,17 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	/**
 	 * Returns a partial list based on the input set. Members of the returned list must start with what the player has
-	 * types so far. The list also has a limited length to avoid spamming the console.
+	 * types so far. The list also has a limited length to avoid filling the player's screen.
 	 * 
 	 * @param fullSet
 	 * @param prefix
-	 * @return
+	 * @return a list limited in length, containing elements matching the prefix,
 	 */
 	private List<String> getPartialList(Set<String> fullSet, String prefix) {
-		List<String> fullList = new ArrayList<>(fullSet.size() + 1);
-		for (String string : fullSet) {
-			// Check whether string is a prefix of what the player has typed so far.
-			if (string.toLowerCase().startsWith(prefix.toLowerCase())) {
-				fullList.add(StringUtils.replace(string, " ", "\u2423"));
-			}
-		}
-		// Sort list alphabetically.
-		Collections.sort(fullList);
+		// Sort matching elements by alphabetical order.
+		List<String> fullList = fullSet.stream().filter(s -> s.toLowerCase().startsWith(prefix.toLowerCase()))
+				.map(s -> StringUtils.replace(s, " ", "\u2423")).sorted().collect(Collectors.toList());
+
 		if (fullList.size() > MAX_LIST_LENGTH) {
 			List<String> partialList = fullList.subList(0, MAX_LIST_LENGTH - 2);
 			// Suspension points to show that list was truncated.

@@ -50,10 +50,8 @@ public class ReloadCommand extends AbstractCommand {
 		plugin.setPluginLang(plugin.loadAndBackupFile(config.getString("LanguageFileName", "lang.yml")));
 		plugin.setGui(plugin.loadAndBackupFile("gui.yml"));
 
-		for (Reloadable reloadable : reloadableObservers) {
-			// Reload all observers.
-			reloadable.extractConfigurationParameters();
-		}
+		// Reload all observers.
+		reloadableObservers.stream().forEach(Reloadable::extractConfigurationParameters);
 
 		if (plugin.isSuccessfulLoad()) {
 			if (sender instanceof Player) {
@@ -71,6 +69,11 @@ public class ReloadCommand extends AbstractCommand {
 		}
 	}
 
+	/**
+	 * Adds a new Reloadable object that will be notified when the plugin is reloaded.
+	 * 
+	 * @param reloadable
+	 */
 	public void registerReloadable(Reloadable reloadable) {
 		reloadableObservers.add(reloadable);
 	}

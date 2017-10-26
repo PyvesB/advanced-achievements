@@ -22,7 +22,7 @@ public class CachedStatistic {
 	public CachedStatistic(long value, boolean databaseConsistent) {
 		this.value = value;
 		this.databaseConsistent = new AtomicBoolean(databaseConsistent);
-		this.disconnection = false;
+		disconnection = false;
 	}
 
 	public long getValue() {
@@ -47,10 +47,10 @@ public class CachedStatistic {
 	}
 
 	public void signalPlayerDisconnection() {
-		this.disconnection = true;
+		disconnection = true;
 	}
 
 	public void resetDisconnection() {
-		this.disconnection = false;
+		disconnection = false;
 	}
 }

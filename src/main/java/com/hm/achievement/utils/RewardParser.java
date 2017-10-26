@@ -37,8 +37,8 @@ public class RewardParser implements Reloadable {
 	// Used for Vault plugin integration.
 	private Economy economy;
 
-	public RewardParser(AdvancedAchievements achievement) {
-		this.plugin = achievement;
+	public RewardParser(AdvancedAchievements plugin) {
+		this.plugin = plugin;
 	}
 
 	@Override
@@ -136,23 +136,17 @@ public class RewardParser implements Reloadable {
 	 * Returns name of currency depending on amount.
 	 * 
 	 * @param amount
-	 * @return
+	 * @return the name of the currency
 	 */
 	public String getCurrencyName(int amount) {
-		String currencyName;
-		if (amount > 1) {
-			currencyName = economy.currencyNamePlural();
-		} else {
-			currencyName = economy.currencyNameSingular();
-		}
-		return currencyName;
+		return amount > 1 ? economy.currencyNamePlural() : economy.currencyNameSingular();
 	}
 
 	/**
-	 * Returns the name of an item reward.
+	 * Returns the name of an item reward, in a readable format.
 	 * 
 	 * @param item
-	 * @return
+	 * @return the item name
 	 */
 	public String getItemName(ItemStack item) {
 		// Return Vault name of object if available.
@@ -172,7 +166,7 @@ public class RewardParser implements Reloadable {
 	 * 
 	 * @param configAchievement
 	 * @param type
-	 * @return
+	 * @return the reward amount
 	 */
 	public int getRewardAmount(String configAchievement, String type) {
 		// Supports both old and new plugin syntax (Amount used to be a separate sub-category).
@@ -208,12 +202,8 @@ public class RewardParser implements Reloadable {
 			String materialNameAndQty = config.getString(configAchievement + ".Reward.Item", "stone");
 			int spaceIndex = materialNameAndQty.indexOf(' ');
 
-			String materialName;
-			if (spaceIndex > 0) {
-				materialName = materialNameAndQty.toUpperCase().substring(0, spaceIndex);
-			} else {
-				materialName = materialNameAndQty.toUpperCase();
-			}
+			String materialName = spaceIndex > 0 ? materialNameAndQty.toUpperCase().substring(0, spaceIndex)
+					: materialNameAndQty.toUpperCase();
 
 			Material rewardMaterial = Material.getMaterial(materialName);
 			if (rewardMaterial != null) {
@@ -239,7 +229,7 @@ public class RewardParser implements Reloadable {
 	 * 
 	 * @param configAchievement
 	 * @param player
-	 * @return
+	 * @return the array containing the commands to be performed as a reward
 	 */
 	public String[] getCommandRewards(String configAchievement, Player player) {
 		String commandReward = plugin.getPluginConfig().getString(configAchievement + ".Reward.Command", null);
@@ -255,7 +245,7 @@ public class RewardParser implements Reloadable {
 	 * Extracts the item reward amount from the configuration.
 	 * 
 	 * @param configAchievement
-	 * @return
+	 * @return the amount for an item reward
 	 */
 	private int getItemAmount(String configAchievement) {
 		CommentedYamlConfiguration config = plugin.getPluginConfig();
@@ -284,15 +274,13 @@ public class RewardParser implements Reloadable {
 	 * Extracts the item reward custom name from the configuration.
 	 *
 	 * @param configAchievement
-	 * @return
+	 * @return the custom name for an item reward
 	 */
 	private String getItemName(String configAchievement) {
-		CommentedYamlConfiguration config = plugin.getPluginConfig();
 		String itemName = null;
-
 		// Old config syntax does not support item reward names
-		if (!config.getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
-			String configString = config.getString(configAchievement + ".Reward.Item", "");
+		if (!plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
+			String configString = plugin.getPluginConfig().getString(configAchievement + ".Reward.Item", "");
 			String[] splittedString = configString.split(" ");
 			if (splittedString.length >= 2) {
 				StringBuilder builder = new StringBuilder();
@@ -301,10 +289,8 @@ public class RewardParser implements Reloadable {
 				}
 
 				itemName = builder.toString().trim();
-
 			}
 		}
 		return itemName;
 	}
-
 }

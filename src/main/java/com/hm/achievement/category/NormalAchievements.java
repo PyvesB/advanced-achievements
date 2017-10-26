@@ -68,8 +68,7 @@ public enum NormalAchievements {
 	/**
 	 * Converts to database name: name of the enum in lower case.
 	 * 
-	 * @param type
-	 * @return
+	 * @return the name used for the database table
 	 */
 	public String toDBName() {
 		return name().toLowerCase();
@@ -78,8 +77,7 @@ public enum NormalAchievements {
 	/**
 	 * Converts to permission name: common prefix + name of the category in lower case.
 	 * 
-	 * @param type
-	 * @return
+	 * @return the Bukkit permission name
 	 */
 	public String toPermName() {
 		return "achievement.count." + categoryName.toLowerCase();
@@ -88,8 +86,7 @@ public enum NormalAchievements {
 	/**
 	 * Converts to the key in the language file used in the list command.
 	 * 
-	 * @param type
-	 * @return
+	 * @return the language configuration key
 	 */
 	public String toLangName() {
 		return langName;
@@ -98,8 +95,7 @@ public enum NormalAchievements {
 	/**
 	 * Converts to the default name that appears in the list command, if not found in the configuration.
 	 * 
-	 * @param type
-	 * @return
+	 * @return the language configuration default value
 	 */
 	public String toLangDefault() {
 		return langDefault;
@@ -108,8 +104,7 @@ public enum NormalAchievements {
 	/**
 	 * Converts to the comment that is inserted about the category name in the configuration file.
 	 * 
-	 * @param type
-	 * @return
+	 * @return the configuration comment
 	 */
 	public String toConfigComment() {
 		return configComment;

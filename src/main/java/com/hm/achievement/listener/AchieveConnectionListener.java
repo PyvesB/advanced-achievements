@@ -79,33 +79,28 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	private void scheduleTask(final Player player) {
 		// Schedule delayed task to check if player should receive a Connections achievement or advancements he is
 		// missing. This processing is delayed to avoid spamming a barely connected player.
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-				Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()), new Runnable() {
-
-					@Override
-					public void run() {
-						// Check reception conditions and whether player is still connected, as he could have left in
-						// the meantime.
-						if (!player.isOnline()
-								|| !shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
-							return;
-						}
-
-						// Check whether another runnable has already done the work (even though this method is intended
-						// to run once per player per connection instance, it might happen with some server settings).
-						if (playersProcessingRan.contains(player.getUniqueId().toString())) {
-							return;
-						}
-
-						if (version >= 12) {
-							awardAdvancements(player);
-						}
-						handleConnectionAchievements(player);
-
-						// Ran successfully to completion: no need to re-run while player is connected.
-						playersProcessingRan.add(player.getUniqueId().toString());
+		Bukkit.getServer().getScheduler()
+				.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()), () -> {
+					// Check reception conditions and whether player is still connected, as he could have left in
+					// the meantime.
+					if (!player.isOnline()
+							|| !shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
+						return;
 					}
 
+					// Check whether another runnable has already done the work (even though this method is intended
+					// to run once per player per connection instance, it might happen with some server settings).
+					if (playersProcessingRan.contains(player.getUniqueId().toString())) {
+						return;
+					}
+
+					if (version >= 12) {
+						awardAdvancements(player);
+					}
+					handleConnectionAchievements(player);
+
+					// Ran successfully to completion: no need to re-run while player is connected.
+					playersProcessingRan.add(player.getUniqueId().toString());
 				}, 100);
 	}
 

@@ -48,7 +48,7 @@ public class AchievePlayerCommandListener extends AbstractListener {
 	 * returned list is: ["aach stats", "advancedachievements stats", "aachievements stats", "aa stats"]
 	 * 
 	 * @param command
-	 * @return
+	 * @return the list of commands have the same effect as the input one
 	 */
 	private List<String> getEquivalentCommands(String command) {
 		int firstSpaceIndex = command.indexOf(' ');

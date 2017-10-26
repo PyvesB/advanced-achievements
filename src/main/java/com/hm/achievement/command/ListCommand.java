@@ -26,5 +26,4 @@ public class ListCommand extends AbstractCommand {
 
 		plugin.getMainGUI().displayMainGUI(player);
 	}
-
 }

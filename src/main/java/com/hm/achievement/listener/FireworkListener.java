@@ -42,12 +42,7 @@ public class FireworkListener extends AbstractListener {
 		fireworksLaunchedByPlugin.add(uuid);
 
 		// Schedule for removal to avoid creating memory leaks.
-		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
-
-			@Override
-			public void run() {
-				fireworksLaunchedByPlugin.remove(uuid);
-			}
-		}, 100);
+		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
+				() -> fireworksLaunchedByPlugin.remove(uuid), 100);
 	}
 }

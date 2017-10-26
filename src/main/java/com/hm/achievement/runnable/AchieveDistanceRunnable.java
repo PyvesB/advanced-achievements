@@ -16,8 +16,8 @@ import org.bukkit.util.NumberConversions;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.StatisticIncreaseHandler;
 import com.hm.achievement.utils.Cleanable;
+import com.hm.achievement.utils.StatisticIncreaseHandler;
 
 /**
  * Class used to monitor distances travelled by players for the different available categories.
@@ -51,9 +51,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 
 	@Override
 	public void run() {
-		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			validateMovementAndUpdateDistance(player);
-		}
+		Bukkit.getServer().getOnlinePlayers().stream().forEach(this::validateMovementAndUpdateDistance);
 	}
 
 	public Map<String, Location> getPlayerLocations() {
@@ -131,7 +129,6 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	 * @param difference
 	 * @param player
 	 * @param category
-	 * @param thresholds
 	 */
 	private void updateDistance(int difference, Player player, NormalAchievements category) {
 		if (!player.hasPermission(category.toPermName())
@@ -143,5 +140,4 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 				difference);
 		checkThresholdsAndAchievements(player, category.toString(), distance);
 	}
-
 }

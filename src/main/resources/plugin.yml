@@ -58,7 +58,7 @@ permissions:
     description: Allows to be notified when a plugin update is available and CheckForUpdate is set to true in config.
     default: op
   achievement.*:
-    description: Star notation of permissions, includes all the above ones and disables book and list commands delays.
+    description: Star notation of permissions, includes all the above ones and disables book command cooldowns.
     default: op
     children:      
       achievement.book: true

@@ -55,7 +55,7 @@ public class ListGUIListener extends AbstractListener {
 		Player player = (Player) event.getWhoClicked();
 		if (page == MAIN_GUI_PAGE) {
 			// Main GUI, check whether player can interact with the selected item.
-			if (event.getCurrentItem().getType() != Material.BARRIER && event.getRawSlot() <= getMainGUIItemCount()) {
+			if (event.getCurrentItem().getType() != Material.BARRIER && event.getRawSlot() < getMainGUIItemCount()) {
 				plugin.getCategoryGUI().displayCategoryGUI(event.getCurrentItem(), player, 1);
 			}
 			return;
@@ -77,7 +77,7 @@ public class ListGUIListener extends AbstractListener {
 	 * 
 	 * @param event
 	 * @param button
-	 * @return
+	 * @return true if the button is clicked, false otherwise
 	 */
 	private boolean isButtonClicked(InventoryClickEvent event, ItemStack button) {
 		if (event.getCurrentItem().getDurability() == button.getDurability()
@@ -104,7 +104,7 @@ public class ListGUIListener extends AbstractListener {
 	 * Gets the current page index, by parsing the inventory title.
 	 * 
 	 * @param name
-	 * @return
+	 * @return the current page number (start index is 1)
 	 */
 	private int getCurrentCategoryPage(String name) {
 		String pageNumber = StringUtils.replaceOnce(name, langListGUITitle + " ", "");
@@ -117,10 +117,10 @@ public class ListGUIListener extends AbstractListener {
 	/**
 	 * Returns the number of items in the main GUI.
 	 * 
-	 * @return
+	 * @return the count of non disabled categories
 	 */
 	private int getMainGUIItemCount() {
 		return NormalAchievements.values().length + MultipleAchievements.values().length
-				- plugin.getDisabledCategorySet().size();
+				- plugin.getDisabledCategorySet().size() + 1;
 	}
 }

@@ -48,5 +48,4 @@ public class GenerateCommand extends AbstractCommand {
 			sender.sendMessage(langMinecraftNotSupported);
 		}
 	}
-
 }

@@ -112,13 +112,13 @@ public class StatsCommand extends AbstractCommand {
 
 		// Player has received all achievement; play special effect and sound.
 		if (achievements >= totalAchievements) {
-			try {
-				// Play special effect.
-				if (configAdditionalEffects) {
+			if (configAdditionalEffects) {
+				try {
+					// Play special effect.
 					ParticleEffect.SPELL_WITCH.display(0, 1, 0, 0.5f, 400, player.getLocation(), 1);
+				} catch (Exception e) {
+					plugin.getLogger().severe("Error while displaying additional particle effects.");
 				}
-			} catch (Exception e) {
-				plugin.getLogger().severe("Error while displaying additional particle effects.");
 			}
 
 			// Play special sound.

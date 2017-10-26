@@ -71,15 +71,8 @@ public abstract class AbstractCommand implements Reloadable {
 	 * @param player
 	 */
 	protected void playFireworkSound(Player player) {
-		Sound sound;
-		if (version < 9) {
-			// Old enum for versions prior to Minecraft 1.9. Retrieving it by name as it does no longer exist in newer
-			// versions.
-			sound = Sound.valueOf("FIREWORK_BLAST");
-		} else {
-			// Play sound with enum for newer versions.
-			sound = Sound.ENTITY_FIREWORK_LARGE_BLAST;
-		}
+		// If old version, retrieving sound by name as it no longer exists in newer versions.
+		Sound sound = version < 9 ? Sound.valueOf("FIREWORK_BLAST") : Sound.ENTITY_FIREWORK_LARGE_BLAST;
 		player.getWorld().playSound(player.getLocation(), sound, 1, 0.7f);
 	}
 }

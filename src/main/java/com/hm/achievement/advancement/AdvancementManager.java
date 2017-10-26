@@ -1,9 +1,7 @@
 package com.hm.achievement.advancement;
 
 import java.util.Iterator;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -146,18 +144,13 @@ public class AdvancementManager {
 			return;
 		}
 
-		Set<String> thresholds = plugin.getPluginConfig().getConfigurationSection(categoryName + subcategory)
-				.getKeys(false);
-		// Use priority queue so that advancements will be registered as a branch with increasing threshold values.
-		Queue<Integer> orderedThresholds = new PriorityQueue<>(thresholds.size());
-		for (String threshold : thresholds) {
-			orderedThresholds.add(Integer.valueOf(threshold));
-		}
-
+		List<Long> orderedThresholds = subcategory.isEmpty() ? plugin.getSortedThresholds().get(categoryName)
+				: plugin.getSortedThresholds().get(categoryName + subcategory);
 		String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
-		while (!orderedThresholds.isEmpty()) {
-			parentKey = registerAdvancement(categoryName, categoryName + subcategory + "." + orderedThresholds.poll(),
-					parentKey, orderedThresholds.isEmpty());
+		// Advancements are registered as a branch with increasing threshold values.
+		for (long threshold : orderedThresholds) {
+			parentKey = registerAdvancement(categoryName, categoryName + subcategory + "." + threshold, parentKey,
+					orderedThresholds.isEmpty());
 		}
 	}
 
@@ -209,7 +202,7 @@ public class AdvancementManager {
 	 * Retrieves the Material enum corresponding to a name specified in gui.yml.
 	 * 
 	 * @param categoryName
-	 * @return
+	 * @return the material for that category
 	 */
 	private Material getMaterial(String categoryName) {
 		Material material = Material

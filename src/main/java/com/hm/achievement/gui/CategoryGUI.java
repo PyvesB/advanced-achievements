@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -118,7 +119,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * 
 	 * @param item
 	 * @param player
-	 * @pram requestedPage
+	 * @param requestedPage
 	 */
 	public void displayCategoryGUI(ItemStack item, Player player, int requestedPage) {
 		for (Entry<MultipleAchievements, ItemStack> entry : multipleAchievementItems.entrySet()) {
@@ -153,7 +154,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * 
 	 * @param categoryName
 	 * @param player
-	 * @param statistic
+	 * @param subcategoriesToStatistics
 	 * @param requestedPage
 	 * @param clickedItem
 	 * @param achievementPaths
@@ -221,14 +222,11 @@ public class CategoryGUI extends AbstractGUI {
 	 * 
 	 * @param gui
 	 * @param position
-	 * @param threshold
 	 * @param statistic
 	 * @param name
-	 * @param achMessage
-	 * @param rewards
 	 * @param date
 	 * @param inelligibleSeriesItem
-	 * @param time
+	 * @param lore
 	 */
 	private void insertAchievement(Inventory gui, int position, long statistic, String name, String date,
 			boolean inelligibleSeriesItem, List<String> lore) {
@@ -265,10 +263,10 @@ public class CategoryGUI extends AbstractGUI {
 	}
 
 	/**
-	 * Gets a sorted list of paths (sucategory + threshold) for a Multiple category.
+	 * Gets a sorted list of paths (subcategory + threshold) for a Multiple category.
 	 * 
 	 * @param categoryName
-	 * @return
+	 * @return the list of paths for the Multiple category
 	 */
 	public List<String> getSortedMultipleAchievementPaths(String categoryName) {
 		List<String> paths = new ArrayList<>();
@@ -287,14 +285,11 @@ public class CategoryGUI extends AbstractGUI {
 	 * Gets a sorted list of thresholds for a Normal category.
 	 * 
 	 * @param categoryName
-	 * @return
+	 * @return the list of paths for the Normal category
 	 */
 	public List<String> getSortedNormalAchievementThresholds(String categoryName) {
-		List<String> thresholds = new ArrayList<>();
-		for (long threshold : plugin.getSortedThresholds().get(categoryName)) {
-			thresholds.add(Long.toString(threshold));
-		}
-		return thresholds;
+		return plugin.getSortedThresholds().get(categoryName).stream().map(i -> Long.toString(i))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -302,7 +297,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * 
 	 * @param category
 	 * @param player
-	 * @return
+	 * @return the mapping from subcategory to player's statistics
 	 */
 	public Map<String, Long> getMultipleStatisticsMapping(MultipleAchievements category, Player player) {
 		Map<String, Long> subcategoriesToStatistics = new HashMap<>();
@@ -320,7 +315,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * 
 	 * @param category
 	 * @param player
-	 * @return
+	 * @return the player's statistic for the category
 	 */
 	public long getNormalStatistic(NormalAchievements category, Player player) {
 		if (category == NormalAchievements.CONNECTIONS) {
@@ -334,8 +329,8 @@ public class CategoryGUI extends AbstractGUI {
 	 * 
 	 * @param category
 	 * @param path
-	 * @param threshold
-	 * @return
+	 * @param achName
+	 * @return the name to display in the GUI
 	 */
 	private String getNameToDisplay(String category, String path, String achName) {
 		String displayName = plugin.getPluginConfig().getString(category + '.' + path + ".DisplayName", "");
@@ -352,7 +347,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @param category
 	 * @param path
 	 * @param completed
-	 * @return
+	 * @return the description to display in the GUI
 	 */
 	private String getDescriptionToDisplay(String category, String path, boolean completed) {
 		String goal = plugin.getPluginConfig().getString(category + '.' + path + ".Goal", "");
@@ -371,7 +366,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * 
 	 * @param requestedPage
 	 * @param totalAchievements
-	 * @return
+	 * @return the page number to display (start index is 1)
 	 */
 	private int getPageToDisplay(int requestedPage, int totalAchievements) {
 		if (totalAchievements <= MAX_PER_PAGE * (requestedPage - 1)) {
@@ -386,13 +381,13 @@ public class CategoryGUI extends AbstractGUI {
 	 * Creates the lore for the current achievement, containing information about the progress, date of reception,
 	 * description, rewards.
 	 * 
-	 * @param achMessage
-	 * @param level
-	 * @param rewards
+	 * @param categoryName
+	 * @param description
+	 * @param path
 	 * @param date
 	 * @param statistic
 	 * @param inelligibleSeriesItem
-	 * @return
+	 * @return the list representing the lore of a category item
 	 */
 	private List<String> buildLore(String categoryName, String description, String path, String date, long statistic,
 			boolean inelligibleSeriesItem) {
@@ -515,5 +510,4 @@ public class CategoryGUI extends AbstractGUI {
 	public ItemStack getBackButton() {
 		return backButton;
 	}
-
 }

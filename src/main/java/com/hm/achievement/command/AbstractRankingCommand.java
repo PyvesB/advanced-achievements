@@ -118,7 +118,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	 * Returns an UTF-8 circled number based on the player's rank.
 	 * 
 	 * @param rank
-	 * @return
+	 * @return an UTF-8 string corresponding to the rank
 	 */
 	private String getRankingSymbol(int rank) {
 		int decimalRankSymbol;
@@ -144,16 +144,16 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	/**
 	 * Launches sound and particle effects if player is in a top list.
 	 * 
-	 * @param sender
+	 * @param player
 	 */
 	private void launchEffects(Player player) {
-		try {
-			// Play special effect when in top list.
-			if (configAdditionalEffects) {
+		// Play special effect when in top list.
+		if (configAdditionalEffects) {
+			try {
 				ParticleEffect.PORTAL.display(0, 1, 0, 0.5f, 1000, player.getLocation(), 1);
+			} catch (Exception e) {
+				plugin.getLogger().severe("Error while displaying additional particle effects.");
 			}
-		} catch (Exception e) {
-			plugin.getLogger().severe("Error while displaying additional particle effects.");
 		}
 
 		// Play special sound when in top list.

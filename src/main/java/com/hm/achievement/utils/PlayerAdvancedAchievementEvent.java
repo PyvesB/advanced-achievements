@@ -32,7 +32,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private PlayerAdvancedAchievementEvent(Player receiver, String name, String displayName, String message,
 			String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward, int maxHealthReward,
 			int maxOxygenReward) {
-		this.player = receiver;
+		player = receiver;
 		this.name = name;
 		this.displayName = displayName;
 		this.message = message;
@@ -42,7 +42,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		this.experienceReward = experienceReward;
 		this.maxHealthReward = maxHealthReward;
 		this.maxOxygenReward = maxOxygenReward;
-		this.cancelled = false;
+		cancelled = false;
 	}
 
 	@Override

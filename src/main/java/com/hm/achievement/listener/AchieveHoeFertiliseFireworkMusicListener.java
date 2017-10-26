@@ -67,7 +67,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 	 * 
 	 * @param clickedMaterial
 	 * @param block
-	 * @return
+	 * @return true if the block can be fertilised, false otherwise
 	 */
 	@SuppressWarnings("deprecation")
 	private boolean canBeFertilised(Material clickedMaterial, Block block) {
@@ -95,7 +95,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 	 * Determines whether a firework can be launched when interacting with this block.
 	 * 
 	 * @param clickedMaterial
-	 * @return
+	 * @return true if the material can be used to launch a firework, false otherwise
 	 */
 	private boolean canAccommodateFireworkLaunch(Material clickedMaterial) {
 		switch (clickedMaterial) {

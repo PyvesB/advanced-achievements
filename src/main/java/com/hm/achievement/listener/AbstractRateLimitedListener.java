@@ -56,7 +56,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * period.
 	 * 
 	 * @param player
-	 * @return
+	 * @return true if the player is still in cooldown, false otherwise
 	 */
 	protected boolean isInCooldownPeriod(Player player, boolean delay) {
 		return isInCooldownPeriod(player, "", delay);
@@ -69,7 +69,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * @param player
 	 * @param prefixInMap
 	 * @param delay
-	 * @return
+	 * @return true if the player is still in cooldown, false otherwise
 	 */
 	protected boolean isInCooldownPeriod(final Player player, String prefixInMap, boolean delay) {
 		String uuid = player.getUniqueId().toString();
@@ -86,14 +86,8 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 					// Display message with a delay to avoid it being overwritten by another message (typically disc
 					// name).
 					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-							Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()), new Runnable() {
-
-								@Override
-								public void run() {
-									displayActionBarMessage(player, actionBarJsonMessage);
-								}
-
-							}, 20);
+							Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()),
+							() -> displayActionBarMessage(player, actionBarJsonMessage), 20);
 				} else {
 					displayActionBarMessage(player, actionBarJsonMessage);
 				}

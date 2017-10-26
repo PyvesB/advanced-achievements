@@ -21,12 +21,12 @@ public class AchieveBreedListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityBreed(EntityBreedEvent event) {
-		if(!(event.getBreeder() instanceof Player)) {
+		if (!(event.getBreeder() instanceof Player)) {
 			return;
 		}
-		
-		Player player = (Player)event.getBreeder();
-		
+
+		Player player = (Player) event.getBreeder();
+
 		if (player == null) {
 			return;
 		}

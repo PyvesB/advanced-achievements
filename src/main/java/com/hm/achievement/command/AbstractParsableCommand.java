@@ -39,14 +39,8 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
-		Player player = null;
-		// Retrieve player instance with his name.
-		for (Player currentPlayer : Bukkit.getOnlinePlayers()) {
-			if (currentPlayer.getName().equalsIgnoreCase(args[args.length - 1])) {
-				player = currentPlayer;
-				break;
-			}
-		}
+		Player player = Bukkit.getOnlinePlayers().stream()
+				.filter(p -> p.getName().equalsIgnoreCase(args[args.length - 1])).findFirst().orElse(null);
 
 		// If player not found or is offline.
 		if (player == null) {
@@ -62,7 +56,7 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	 * Extracts the name of the achievement from the command line arguments.
 	 * 
 	 * @param args
-	 * @return
+	 * @return the achievement name
 	 */
 	protected String parseAchievementName(String[] args) {
 		StringBuilder achievementName = new StringBuilder();

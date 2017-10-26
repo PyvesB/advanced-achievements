@@ -103,7 +103,7 @@ public abstract class AbstractGUI implements Reloadable {
 	 * Creates an ItemStack based on information extracted from gui.yml.
 	 * 
 	 * @param categoryName
-	 * @return
+	 * @return the item for the category
 	 */
 	protected ItemStack createItemStack(String categoryName) {
 		Material material = Material
@@ -120,10 +120,9 @@ public abstract class AbstractGUI implements Reloadable {
 	/**
 	 * Sets the metadata of an ItemStack representing a category in the main GUI.
 	 * 
-	 * @param itemStacks
+	 * @param item
 	 * @param displayName
 	 * @param totalAchievements
-	 * @return
 	 */
 	private void buildItemLore(ItemStack item, String displayName, int totalAchievements) {
 		ItemMeta itemMeta = item.getItemMeta();
@@ -148,5 +147,4 @@ public abstract class AbstractGUI implements Reloadable {
 		itemMeta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
 		item.setItemMeta(itemMeta);
 	}
-
 }

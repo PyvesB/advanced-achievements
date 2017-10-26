@@ -46,11 +46,8 @@ public class AchieveKillListener extends AbstractListener {
 			mobName = "player";
 		} else {
 			mobName = entity.getType().name().toLowerCase();
-			if (entity instanceof Creeper) {
-				Creeper c = (Creeper) entity;
-				if (c.isPowered()) {
-					mobName = "poweredcreeper";
-				}
+			if (entity instanceof Creeper && ((Creeper) entity).isPowered()) {
+				mobName = "poweredcreeper";
 			}
 		}
 

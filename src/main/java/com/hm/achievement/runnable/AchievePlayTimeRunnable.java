@@ -45,9 +45,7 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 
 	@Override
 	public void run() {
-		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			updateTime(player);
-		}
+		Bukkit.getServer().getOnlinePlayers().stream().forEach(this::updateTime);
 
 		previousRunMillis = System.currentTimeMillis();
 	}

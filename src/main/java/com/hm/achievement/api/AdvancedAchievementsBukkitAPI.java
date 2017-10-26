@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -34,7 +33,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	 * Returns a ready to use API instance. The caller must previously check whether the plugin is enabled and has a
 	 * minimum version of 5.0.
 	 * 
-	 * @return
+	 * @return API instance
 	 */
 	public static AdvancedAchievementsAPI linkAdvancedAchievements() {
 		return new AdvancedAchievementsBukkitAPI(
@@ -137,8 +136,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	/**
 	 * Checks whether the player is online by making a call on the server's main thread of execution.
 	 * 
-	 * @param uuidString
-	 * @return
+	 * @param player
+	 * @return true if player is online, false otherwise
 	 */
 	private boolean isPlayerOnline(final UUID player) {
 		if (Bukkit.getServer().isPrimaryThread()) {
@@ -146,13 +145,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		}
 		// Called asynchronously. To ensure thread safety we must issue a call on the server's main thread of execution.
 		Future<Boolean> onlineCheckFuture = Bukkit.getScheduler().callSyncMethod(pluginInstance,
-				new Callable<Boolean>() {
-
-					@Override
-					public Boolean call() {
-						return Bukkit.getPlayer(player) != null;
-					}
-				});
+				() -> Bukkit.getPlayer(player) != null);
 
 		boolean playerOnline = true;
 		try {

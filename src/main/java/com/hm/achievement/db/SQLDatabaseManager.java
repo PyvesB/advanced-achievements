@@ -188,6 +188,8 @@ public class SQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Retrieves SQL connection to MySQL, PostgreSQL or SQLite database.
+	 * 
+	 * @return the cached SQL connection or a new one
 	 */
 	protected Connection getSQLConnection() {
 		Connection oldConnection = sqlConnection.get();
@@ -346,7 +348,7 @@ public class SQLDatabaseManager implements Reloadable {
 	/**
 	 * Gets the total number of achievements received by a player, using an UUID.
 	 * 
-	 * @param uuid
+	 * @param player
 	 * @return number of achievements
 	 */
 	public int getPlayerAchievementsAmount(UUID player) {
@@ -545,7 +547,7 @@ public class SQLDatabaseManager implements Reloadable {
 	 * Gets the amount of a NormalAchievement statistic.
 	 * 
 	 * @param player
-	 * @param table
+	 * @param category
 	 * @return statistic
 	 */
 	public long getNormalAchievementAmount(UUID player, NormalAchievements category) {

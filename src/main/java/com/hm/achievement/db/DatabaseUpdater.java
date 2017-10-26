@@ -37,8 +37,6 @@ public class DatabaseUpdater {
 	/**
 	 * Renames the database tables with the prefix given in the configuration file. This method is only used and only
 	 * works if the tables had the default name. It does not support multiple successive table renamings.
-	 * 
-	 * @throws SQLException
 	 */
 	protected void renameExistingTables(String databaseAddress) {
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
@@ -82,8 +80,6 @@ public class DatabaseUpdater {
 	/**
 	 * Initialises database tables by creating non existing ones. We batch the requests to send a unique batch to the
 	 * database.
-	 * 
-	 * @throws SQLException
 	 */
 	protected void initialiseTables() {
 		Connection conn = sqlDatabaseManager.getSQLConnection();

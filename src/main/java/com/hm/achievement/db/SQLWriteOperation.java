@@ -30,14 +30,7 @@ public abstract class SQLWriteOperation {
 	 * @param exceptionMessage
 	 */
 	protected void executeOperation(final Executor executor, final Logger logger, final String exceptionMessage) {
-		executor.execute(new Runnable() {
-
-			@Override
-			public void run() {
-				attemptWrites(logger, exceptionMessage);
-			}
-
-		});
+		executor.execute(() -> attemptWrites(logger, exceptionMessage));
 	}
 
 	/**
