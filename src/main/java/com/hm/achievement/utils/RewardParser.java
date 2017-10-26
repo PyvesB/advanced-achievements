@@ -238,7 +238,7 @@ public class RewardParser implements Reloadable {
 		}
 		commandReward = StringUtils.replace(commandReward, "PLAYER", player.getName());
 		// Multiple reward commands can be set, separated by a semicolon and space. Extra parsing needed.
-		return commandReward.split("; ");
+		return commandReward.split(";[ ]*");
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class RewardParser implements Reloadable {
 			String materialAndQty = config.getString(configAchievement + ".Reward.Item", "");
 			int indexOfAmount = materialAndQty.indexOf(' ');
 			if (indexOfAmount != -1) {
-				String intString = materialAndQty.substring(indexOfAmount + 1);
+				String intString = materialAndQty.substring(indexOfAmount + 1).trim();
 				int indexOfName = intString.indexOf(' ');
 				if (indexOfName != -1) {
 					itemAmount = Integer.parseInt(intString.split(" ")[0]);
