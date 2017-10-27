@@ -106,7 +106,7 @@ import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 5.2.9
+ * @version 5.3
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin implements Reloadable {
@@ -900,7 +900,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 					section = section.substring(0, startOfMetadata);
 				}
 				if (category == MultipleAchievements.PLAYERCOMMANDS) {
-					// Permissions don't take sapces into account for this category.
+					// Permissions don't take spaces into account for this category.
 					section = StringUtils.replace(section, " ", "");
 				}
 

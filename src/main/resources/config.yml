@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |    Advanced Achievements 5.2.9 configuration - Readme   | #
+# |     Advanced Achievements 5.3 configuration - Readme    | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -103,7 +103,6 @@ DisabledCategories: []
 # Obfuscate achievements that have not yet been received in /aach list.
 ObfuscateNotReceived: false
 
-# Obfuscate progressive achievements:
 # For categories with a series of related achievements where the only thing changing is the number of times
 # the event has occurred, show achievements that have been obtained and show the next obtainable achievement,
 # but obfuscate the additional achievements. For example, under Places, stone, the first achievement could have a

@@ -66,10 +66,9 @@ public class FileUpdater {
 		updateSetting(config, "DisableSilkTouchBreaks", false,
 				new String[] { "Do not take into accound items broken with Silk Touch for the Breaks achievements." });
 		updateSetting(config, "ObfuscateProgressiveAchievements", false, new String[] {
-				"Obfuscate progressive achievements:",
 				"For categories with a series of related achievements where the only thing changing is the number of times",
 				"the event has occurred, show achievements that have been obtained and show the next obtainable achievement,",
-				"but obfuscate the additional achievements. In order for this to work properly, achievements must be sorted",
+				"but obfuscate the additional achievements.",
 				"in order of increasing difficulty. For example, under Places, stone, the first achievement could have a",
 				"target of 100 stone,# the second 500 stone, and the third 1000 stone.  When ObfuscateProgressiveAchievements",
 				"is true, initially only the 100 stone achievement will be readable in the GUI.  Once 100 stone have been placed,",
