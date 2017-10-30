@@ -164,10 +164,11 @@ public class CategoryGUI extends AbstractGUI {
 		int pageToDisplay = getPageToDisplay(requestedPage, achievementPaths.size());
 		int pageStart = MAX_PER_PAGE * (pageToDisplay - 1);
 		int pageEnd = Math.min(MAX_PER_PAGE * pageToDisplay, achievementPaths.size());
+		int navigationItems = achievementPaths.size() > MAX_PER_PAGE ? 3 : 1;
 
-		// Create a new chest-like inventory as small as possible whilst still containing all page achievements and
-		// navigation items.
-		int guiSize = nextMultipleOf9(achievementPaths.size() + 4, MAX_PER_PAGE);
+		// Create a new chest-like inventory as small as possible whilst still containing the category item, all page
+		// achievements and the navigation items.
+		int guiSize = nextMultipleOf9(achievementPaths.size() + navigationItems + 1, MAX_PER_PAGE);
 		Inventory inventory = Bukkit.createInventory(null, guiSize, langListGUITitle + " " + pageToDisplay);
 		// Persist clicked item (ie. category's item in the main GUI) as first item in the category GUI.
 		inventory.setItem(0, clickedItem);
@@ -210,9 +211,13 @@ public class CategoryGUI extends AbstractGUI {
 			previousSubcategory = subcategory;
 		}
 		// Add navigation items.
-		inventory.setItem(pageEnd - pageStart + 1, previousButton);
-		inventory.setItem(pageEnd - pageStart + 2, nextButton);
-		inventory.setItem(pageEnd - pageStart + 3, backButton);
+		if (navigationItems > 1) {
+			inventory.setItem(pageEnd - pageStart + 1, previousButton);
+			inventory.setItem(pageEnd - pageStart + 2, nextButton);
+			inventory.setItem(pageEnd - pageStart + 3, backButton);
+		} else {
+			inventory.setItem(pageEnd - pageStart + 1, backButton);
+		}
 
 		// Display page.
 		player.openInventory(inventory);
