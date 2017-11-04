@@ -203,13 +203,12 @@ public class HelpCommand extends AbstractCommand {
 	 * @param hover
 	 */
 	private void sendJsonClickableHoverableMessage(CommandSender sender, String message, String command, String hover) {
-		// Build the json format string.
-		String json = "{\"text\":\"" + message + "\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\""
-				+ command + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[{\"text\":\"" + hover
-				+ "\",\"color\":\"dark_purple\"}]}}";
-
-		// Send clickable and hoverable message if sender is a player and if no exception is caught.
-		if (sender instanceof Player) {
+		// Send clickable and hoverable message if sender is a player and if supported by the Minecraft version.
+		if (sender instanceof Player && version > 7) {
+			// Build the json format string.
+			String json = "{\"text\":\"" + message + "\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\""
+					+ command + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[{\"text\":\"" + hover
+					+ "\",\"color\":\"dark_purple\"}]}}";
 			try {
 				PacketSender.sendChatMessagePacket((Player) sender, json);
 			} catch (Exception e) {
