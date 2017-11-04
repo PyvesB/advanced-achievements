@@ -65,7 +65,7 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListe
 
 		if (plugin.getDisabledCategorySet().contains(category.toString())
 				|| !shouldIncreaseBeTakenIntoAccount(player, category) || category == NormalAchievements.BREWING
-						&& isInCooldownPeriod(player, Integer.toString(event.getRawSlot()), false)) {
+						&& isInCooldownPeriod(player, Integer.toString(event.getRawSlot()), false, category)) {
 			return;
 		}
 

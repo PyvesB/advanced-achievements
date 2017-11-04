@@ -1,6 +1,7 @@
 package com.hm.achievement.listener;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -9,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.Cleanable;
 import com.hm.mcshared.particle.PacketSender;
 
@@ -56,10 +58,12 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * period.
 	 * 
 	 * @param player
+	 * @param delay
+	 * @param category
 	 * @return true if the player is still in cooldown, false otherwise
 	 */
-	protected boolean isInCooldownPeriod(Player player, boolean delay) {
-		return isInCooldownPeriod(player, "", delay);
+	protected boolean isInCooldownPeriod(Player player, boolean delay, NormalAchievements category) {
+		return isInCooldownPeriod(player, "", delay, category);
 	}
 
 	/**
@@ -69,9 +73,20 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * @param player
 	 * @param prefixInMap
 	 * @param delay
+	 * @param category
 	 * @return true if the player is still in cooldown, false otherwise
 	 */
-	protected boolean isInCooldownPeriod(final Player player, String prefixInMap, boolean delay) {
+	protected boolean isInCooldownPeriod(Player player, String prefixInMap, boolean delay,
+			NormalAchievements category) {
+		List<Long> categoryThresholds = plugin.getSortedThresholds().get(category.toString());
+		long hardestAchievementThreshold = categoryThresholds.get(categoryThresholds.size() - 1);
+		long currentPlayerStatistic = plugin.getCacheManager().getAndIncrementStatisticAmount(category,
+				player.getUniqueId(), 0);
+		// Ignore cooldown if player has received all achievements in the category.
+		if (currentPlayerStatistic >= hardestAchievementThreshold) {
+			return false;
+		}
+
 		String uuid = player.getUniqueId().toString();
 		Long lastEventTime = cooldownMap.get(prefixInMap + uuid);
 		if (lastEventTime == null) {
