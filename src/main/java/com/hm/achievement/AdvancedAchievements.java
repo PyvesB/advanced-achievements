@@ -106,7 +106,7 @@ import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 5.3.1
+ * @version 5.3.2
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin implements Reloadable {

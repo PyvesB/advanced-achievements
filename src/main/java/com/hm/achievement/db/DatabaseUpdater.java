@@ -37,6 +37,8 @@ public class DatabaseUpdater {
 	/**
 	 * Renames the database tables with the prefix given in the configuration file. This method is only used and only
 	 * works if the tables had the default name. It does not support multiple successive table renamings.
+	 * 
+	 * @param databaseAddress
 	 */
 	protected void renameExistingTables(String databaseAddress) {
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
