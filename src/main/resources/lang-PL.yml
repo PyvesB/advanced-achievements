@@ -1,0 +1,188 @@
+#=============================================================#
+# +---------------------------------------------------------+ #
+# | Advanced Achievements English translation by DarkPyves  | #
+# |              ~ Valid as of version 5.3 ~                | #
+# |   Newer plugin versions will automatically append new   | #
+# |     untranslated parameters to the end of the file.     | #
+# +---------------------------------------------------------+ #
+#=============================================================#
+
+no-permissions: "Nie masz do tego dostepu."
+statistic-cooldown: "Poczekaj TIME sek, by ponownie uzyc tej komendy."
+
+# Related to /aach reload.
+configuration-successfully-reloaded: "Pliki konfiguracyje zostaly pomyslnie przeladowane."
+configuration-reload-failed: "Wystapil blad podczas przeladowywania plików konfiguracyjnych. Szczególy znajdziesz w logach."
+server-restart-reload: "Wylaczone Kategorie zostaly zmodyfikowane. Konieczny jest pelen restart serwera, by wprowadzone przez Ciebie opcje zaczely dzialac."
+
+# Related to /aach top week and month.
+top-achievement: "Calkowity ranking osiagniec:"
+player-rank: "Aktualne miejsce:"
+week-achievement: "Tygodniowy ranking osiagniec:"
+month-achievement: "Miesieczny ranking osiagniec:"
+not-ranked: "Aktualnie nie ma Cie w rankingu."
+
+# Related to /aach stats.
+number-achievements: "Otrzymane osiagniecia:"
+
+# Related to /aach book.
+book-received: "Otrzymano ksiege osiagniec!"
+book-delay: "Musisz poczekac TIME sek, przed ponownym dostaniem ksiegi osiagniec!"
+book-name: "Ksiega Osiagniec"
+book-date: "Ksiega utworzona DATE."
+book-not-received: "Nie otrzymano jeszcze zadnych osiagniec."
+
+# Related to /aach give.
+player-offline: "Gracz PLAYER jest offline!"
+achievement-already-received: "Gracz PLAYER otrzymal juz te osiagniecie!"
+achievement-not-found: "Podane osiagniecie nie zostalo znalezione."
+achievement-given: "Podarowano osiagniecie!"
+
+# Related to achievement reception.
+achievement-received: "Gracz PLAYER otrzymal osiagniecie:"
+achievement-new: "Nowe osiagniecie:"
+
+# Related to /aach check.
+check-achievement-true: "Gracz PLAYER otrzymal osiagniecie o nazwie ACH!"
+check-achievements-false: "Gracz PLAYER nie otrzymal osiagniecia o nazwie ACH!"
+
+# Related to /aach delete.
+delete-achievements: "Gracz PLAYER ponownie musi wykonac osiagniecie o nazwie ACH."
+
+# Related to achievement rewards.
+item-reward-received: "Otrzymano nagrode:"
+money-reward-received: "Otrzymano: AMOUNT!"
+command-reward: "Komenda Reward zostala wykonana!"
+experience-reward-received: "Otrzymano: AMOUNT doswiadczenia!"
+increase-max-health-reward-received: "Twoje zdrowie zostalo zwiekszone o AMOUNT!"
+
+# Related to /aach help.
+aach-command-book: "Otrzymaj swoja ksiege osiagniec."
+aach-command-book-hover: "Ksiega z wykonanymi osiagnieciami."
+aach-command-stats: "Wyswietla liczbe wykonanych osiagniec."
+aach-command-stats-hover: "Osiagniecia... zlap je wszystkie!"
+aach-command-list: "Wyswietla otrzymane i nieotrzymane osiagniecia."
+aach-command-list-hover: "Ciekawe okno ze wszystkimi osiagnieciami!"
+aach-command-top: "Wyswietla globalny i osobisty ranking."
+aach-command-top-hover: "Kto jest najlepszy na serwerze i jak wypadasz na jego tle?"
+aach-command-give: "Odblokuj osiagniecie ACH graczowi NAME."
+aach-command-give-hover: "Gracz musi byc online; tylko komendy Osiagniec moga zostac uzyte."
+aach-command-reload: "Przeladowuje pliki konfiguracyjne."
+aach-command-reload-hover: "Przeladowuje najwazniejsze pliki."
+aach-command-info: "Wyswietla informacje o pluginie."
+aach-command-info-hover: "Dowiedz sie dodatkowych informacji o pluginie i jego swietnym autorze!"
+aach-command-check: "Sprawdz, czy NAME odblokowal ACH."
+aach-command-check-hover: "Uzyj parametru Name uzytego w configu."
+aach-command-delete: "Usun osiagniecie ACH graczowi NAME."
+aach-command-delete-hover: "Gracz musi byc online; nie usuwa innych podobnych statystyk."
+aach-command-week: "Wyswietla tygodniowy ranking."
+aach-command-week-hover: "Najlepsi gracze ze zdobytymi osiagnieciami od poczatku tygodnia!"
+aach-command-month: "Wyswietla miesieczny ranking."
+aach-command-month-hover: "Najlepsi gracze ze zdobytymi osiagnieciami od poczatku miesiaca!"
+aach-command-toggle: "Wlacza widocznosc osiagniec innych graczy."
+aach-command-toggle-hover: "Twój wybór zostanie zpamietany az do nastepnego restartu serwra."
+aach-command-reset: "Zresetuj statystyki dla kategorii CAT."
+aach-command-reset-hover: "Gracz musi byc online; wszystkie podkategorie z danej kategori sa resetowane!"
+aach-command-generate: "Generuj postepy."
+aach-command-generate-hover: "Powolna komenda; uzywaj jej rozwaznie!"
+aach-tip: "&lWSKAZÓWKA &8Mozesz &7&n&onajechac &8lub &7&n&okliknac &8na pokazane komendy!"
+
+# Related to /aach info.
+version-command-version: "Wersja:"
+version-command-website: "Strona:"
+version-command-author: "Autor:"
+version-command-description: "Opis:"
+version-command-description-details: "Advanced Achievements wprowadza do gry unikalne i ciezkie wyzwania. Spróbuj wykonac ich jak najwiecej, zdobadz nagrody, wspinaj sie po szczeblach rankingu i zbieraj ksiegi osiagniec!"
+version-command-vault: "Integracja z Vault:"
+version-command-petmaster: "Integracja z Pet Master:"
+version-command-btlp: "Integracja z BungeeTabListPlus:"
+version-command-database: "Typ bazy danych:"
+
+# Related to /aach list.
+list-gui-title: "&5&lOsiagniecia"
+list-delay: "Musisz odczekac TIME sek zanim ponownie wpiszesz te komende!"
+list-description: "Opis:"
+list-goal: "Cel:"
+list-reception: "Data wykonania:"
+list-progress: "Postep:"
+list-reward: "Nagroda(y):"
+list-reward-money: "Otrzymaj AMOUNT"
+list-reward-item: "Otrzymaj AMOUNT ITEM"
+list-reward-command: "inne"
+list-reward-experience: "Otrzymaj AMOUNT doswiadczenia"
+list-reward-increase-max-health: "Zwieksz swoje zdrowie o AMOUNT"
+list-achievement-received: "&5\u2714&f "
+list-achievement-not-received: "&4\u2718&8 "
+list-category-not-unlocked: "Ta kategoria nie zostala jeszcze przez Ciebie odblokowana."
+list-back-message: "&7Wróc"
+list-previous-message: "&7Poprzednia"
+list-next-message: "&7Nastepna"
+list-achievements-in-category-singular: "AMOUNT osiagniecie"
+list-achievements-in-category-plural: "AMOUNT osiagniecia"
+
+# Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
+list-connections: "Polaczenia"
+list-places: "Postawionych Bloków"
+list-breaks: "Zniszczonych Bloków"
+list-kills: "Zabitych Stworzeń"
+list-crafts: "Utworzonych Przedmiotów"
+list-playercommands: "Uzytych Komend"
+list-deaths: "Liczba Smierci"
+list-arrows: "Wystrzelonych Strzal"
+list-snowballs: "Rzuconych Sniezek"
+list-eggs: "Rzuconych Jaj"
+list-fish: "Zlowionych Ryb"
+list-treasure: "Zlapanych Skarbów poprzez Wedke"
+list-itembreaks: "Zepsutych Przedmiotów"
+list-eatenitems: "Zjedzona Zywnosc"
+list-shear: "Ogolonych Owiec"
+list-milk: "Wydojonych Krów"
+list-lavabuckets: "Wiaderek Wypelnionych Lawa"
+list-waterbuckets: "Wiaderek Wypelnionych Woda"
+list-trades: "Liczba Transakcji"
+list-anvils: "Uzytych Kowadel"
+list-enchantments: "Zaczarowanych Przedmiotów"
+list-beds: "Lezenia w Lózkach"
+list-maxlevel: "Najwiekszy Osiagniety Poziom"
+list-potions: "Zuzytych Mikstur"
+list-playedtime: "Czas Gry"
+list-distance-foot: "Odleglosc Przebyta na Nogach"
+list-distance-pig: "Odleglosc Przebyta na Swini"
+list-distance-horse: "Odleglosc Przebyta na Koniu"
+list-distance-minecart: "Odleglosc Przebyta poprzez Wagon"
+list-distance-boat: "Odleglosc Przebyta w Lódce"
+list-distance-gliding: "Odleglosc Przebyta za pomoca Elytry"
+list-distance-llama: "Odleglosc Przebyta na Lamie"
+list-itemdrops: "Upuszczonych Przedmiotów"
+list-itempickups: "Podniesionych Przedmiotów"
+list-hoeplowings: "Zaoranych Ziem"
+list-fertilising: "Nawiezionych Roslin"
+list-taming: "Oswojonych Zwierzat"
+list-breeding: "Rozmnozonych Zwierzat"
+list-brewing: "Stworzonych Mikstur"
+list-fireworks: "Wystrzelonych Fajerwerek"
+list-musicdiscs: "Puszczonych Plyt Muzycznych"
+list-enderpearls: "Teleportacji za pomoca Ender Perel"
+list-petmastergive: "Zwierzat Podarowanych Innym Graczom"
+list-petmasterreceive: "Zwierzat Otrzymanych od Innych Graczy"
+list-smelting: "Przepalonych Surowców"
+list-commands: "Inne Osiagniecia"
+
+# Related to /aach toggle.
+toggle-displayed: "Od teraz bedziesz otrzymywac powiadomienia, gdy jakis gracz otrzyma osiagniecie."
+toggle-hidden: "Od teraz nie bedziesz otrzymywac powiadomien, gdy jakis gracz otrzyma osiagniecie."
+
+# Related to /aach reset.
+reset-successful: " statystyki zostaly wyczyszczone przez gracza PLAYER."
+category-does-not-exist: "Podana kategoria nie istnieje."
+
+# Related to /aach generate.
+advancements-generated: "Pomyslnie wygenerowano postepy."
+minecraft-not-supported: "Postepy nie sa wspierane w twojej wersji Minecrafta. Zmien wersje na 1.12+."
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# | Parameters in future plugin versions will  appear here | #
+# +--------------------------------------------------------+ #
+#============================================================#
