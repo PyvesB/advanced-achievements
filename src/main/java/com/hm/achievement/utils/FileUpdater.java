@@ -142,6 +142,11 @@ public class FileUpdater {
 		updateSetting(config, "ChatHeader", "&7[%ICON%&7]", new String[] {
 				"Set the format of the header used for most chat messages (default: \"&7[%ICON%&7]\")." });
 
+		// Added in version 5.3.3:
+		updateSetting(config, "AdditionalConnectionOptions", "", new String[] {
+				"Specify additional options when opening a connection to a MySQL/PostgreSQL database. Start each option with &,",
+				"for instance \"&useUnicode=yes&characterEncoding=UTF-8\"." });
+
 		if (updatePerformed) {
 			// Changes in the configuration: save and do a fresh load.
 			try {

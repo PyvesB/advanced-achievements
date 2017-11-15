@@ -186,6 +186,10 @@ DatabaseType: sqlite
 # the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.
 # Do a full server restart for this to take effect.
 TablePrefix: ""
+  
+# Specify additional options when opening a connection to a MySQL/PostgreSQL database. Start each option with &,
+# for instance "&useUnicode=yes&characterEncoding=UTF-8".
+AdditionalConnectionOptions: ""
 
 # Settings to link with MySQL database (ignored if sqlite or postgresql).
 MYSQL:

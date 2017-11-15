@@ -48,9 +48,10 @@ public class SQLDatabaseManager implements Reloadable {
 	private volatile String databaseUser;
 	private volatile String databasePassword;
 	private volatile String tablePrefix;
+	private volatile String additionalConnectionOptions;
 	private volatile DatabaseType databaseType;
-	private boolean configBookChronologicalOrder;
 	private DateFormat dateFormat;
+	private boolean configBookChronologicalOrder;
 	private boolean configDatabaseBackup;
 
 	public SQLDatabaseManager(AdvancedAchievements plugin) {
@@ -139,6 +140,7 @@ public class SQLDatabaseManager implements Reloadable {
 	 */
 	private void configurationLoad() {
 		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
+		additionalConnectionOptions = plugin.getPluginConfig().getString("AdditionalConnectionOptions", "");
 
 		String dataHandler = plugin.getPluginConfig().getString("DatabaseType", "sqlite");
 		if ("mysql".equalsIgnoreCase(dataHandler)) {
@@ -227,11 +229,11 @@ public class SQLDatabaseManager implements Reloadable {
 			}
 			return DriverManager.getConnection("jdbc:sqlite:" + dbfile);
 		} else if (databaseType == DatabaseType.MYSQL) {
-			return DriverManager.getConnection(databaseAddress + "?useSSL=false&autoReconnect=true&user=" + databaseUser
-					+ "&password=" + databasePassword);
+			return DriverManager.getConnection(databaseAddress + "?useSSL=false&autoReconnect=true"
+					+ additionalConnectionOptions + "&user=" + databaseUser + "&password=" + databasePassword);
 		} else {
-			return DriverManager.getConnection(
-					databaseAddress + "?autoReconnect=true&user=" + databaseUser + "&password=" + databasePassword);
+			return DriverManager.getConnection(databaseAddress + "?autoReconnect=true" + additionalConnectionOptions
+					+ "&user=" + databaseUser + "&password=" + databasePassword);
 		}
 	}
 
