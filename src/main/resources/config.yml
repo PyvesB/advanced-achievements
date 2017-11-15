@@ -111,10 +111,10 @@ ObfuscateNotReceived: false
 # the 500 stone achievement will become legible.
 ObfuscateProgressiveAchievements: false
 
-# Hide categories with no achievements yet received in /aach list.
+# Hide categories with no achievements yet received in /aach list by marking them as locked.
 HideNotReceivedCategories: false
 
-# Hide categories for which the player does not have the corresponding count permissions.
+# Completely hide categories for which the player does not have the corresponding count permissions.
 HideNoPermissionCategories: false
 
 # Hide the reward display in /aach list.
