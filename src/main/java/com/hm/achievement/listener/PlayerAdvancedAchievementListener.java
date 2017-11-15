@@ -1,5 +1,7 @@
 package com.hm.achievement.listener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 
@@ -47,6 +49,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	private boolean configTitleScreen;
 	private boolean configNotifyOtherPlayers;
 	private boolean configActionBarNotify;
+	private boolean configHoverableReceiverChatText;
 	private String langCommandReward;
 	private String langAchievementReceived;
 	private String langItemRewardReceived;
@@ -81,20 +84,24 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
 		// a player is notified in case of a command reward.
 		configRewardCommandNotif = plugin.getPluginConfig().getBoolean("RewardCommandNotif", true);
+		configHoverableReceiverChatText = plugin.getPluginConfig().getBoolean("HoverableReceiverChatText", false);
+		// Hoverable chat messages introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
+		if (configHoverableReceiverChatText && version < 8) {
+			configHoverableReceiverChatText = false;
+		}
 
 		langCommandReward = plugin.getPluginLang().getString("command-reward", "Reward command carried out!");
 		langAchievementReceived = plugin.getPluginLang().getString("achievement-received",
 				"PLAYER received the achievement:") + " " + ChatColor.WHITE;
-		langItemRewardReceived = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("item-reward-received", "You received an item reward:") + " ";
-		langMoneyRewardReceived = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!");
-		langExperienceRewardReceived = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("experience-reward-received", "You received: AMOUNT experience!");
-		langIncreaseMaxHealthRewardReceived = plugin.getChatHeader() + plugin.getPluginLang()
-				.getString("increase-max-health-reward-received", "Your max health has increased by AMOUNT!");
-		langIncreaseMaxOxygenRewardReceived = plugin.getChatHeader() + plugin.getPluginLang()
-				.getString("increase-max-oxygen-reward-received", "Your max oxygen has increased by AMOUNT!");
+		langItemRewardReceived = plugin.getPluginLang().getString("item-reward-received",
+				"You received an item reward:") + " ";
+		langMoneyRewardReceived = plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!");
+		langExperienceRewardReceived = plugin.getPluginLang().getString("experience-reward-received",
+				"You received: AMOUNT experience!");
+		langIncreaseMaxHealthRewardReceived = plugin.getPluginLang().getString("increase-max-health-reward-received",
+				"Your max health has increased by AMOUNT!");
+		langIncreaseMaxOxygenRewardReceived = plugin.getPluginLang().getString("increase-max-oxygen-reward-received",
+				"Your max oxygen has increased by AMOUNT!");
 		langAchievementNew = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " " + ChatColor.WHITE;
 	}
@@ -122,42 +129,42 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		}
 		plugin.getDatabaseManager().registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 
-		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage());
-
+		List<String> rewardTexts = new ArrayList<>();
 		if (event.getCommandRewards() != null && event.getCommandRewards().length > 0) {
-			rewardCommands(player, event.getCommandRewards());
+			rewardTexts.add(rewardCommands(event.getCommandRewards()));
 		}
 		if (event.getItemReward() != null) {
-			rewardItem(player, event.getItemReward());
+			rewardTexts.add(rewardItem(player, event.getItemReward()));
 		}
 		if (event.getMoneyReward() > 0) {
-			rewardMoney(player, event.getMoneyReward());
+			rewardTexts.add(rewardMoney(player, event.getMoneyReward()));
 		}
 		if (event.getExperienceReward() > 0) {
-			rewardExperience(player, event.getExperienceReward());
+			rewardTexts.add(rewardExperience(player, event.getExperienceReward()));
 		}
 		if (event.getMaxHealthReward() > 0) {
-			rewardMaxHealth(player, event.getMaxHealthReward());
+			rewardTexts.add(rewardMaxHealth(player, event.getMaxHealthReward()));
 		}
 		if (event.getMaxOxygenReward() > 0) {
-			rewardMaxOxygen(player, event.getMaxOxygenReward());
+			rewardTexts.add(rewardMaxOxygen(player, event.getMaxOxygenReward()));
 		}
+		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage(), rewardTexts);
 	}
 
 	/**
 	 * Executes player command rewards.
 	 * 
-	 * @param player
 	 * @param commands
+	 * @return the reward text to display to the player
 	 */
-	private void rewardCommands(Player player, String[] commands) {
+	private String rewardCommands(String[] commands) {
 		for (String command : commands) {
 			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
 		}
 		if (!configRewardCommandNotif || langCommandReward.length() == 0) {
-			return;
+			return "";
 		}
-		player.sendMessage(plugin.getChatHeader() + langCommandReward);
+		return langCommandReward;
 	}
 
 	/**
@@ -165,8 +172,9 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * 
 	 * @param player
 	 * @param item
+	 * @return the reward text to display to the player
 	 */
-	private void rewardItem(Player player, ItemStack item) {
+	private String rewardItem(Player player, ItemStack item) {
 		if (player.getInventory().firstEmpty() != -1) {
 			player.getInventory().addItem(item);
 		} else {
@@ -178,7 +186,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			name = plugin.getRewardParser().getItemName(item);
 		}
 
-		player.sendMessage(langItemRewardReceived + name);
+		return langItemRewardReceived + name;
 	}
 
 	/**
@@ -186,9 +194,10 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * 
 	 * @param player
 	 * @param amount
+	 * @return the reward text to display to the player
 	 */
 	@SuppressWarnings("deprecation")
-	private void rewardMoney(Player player, int amount) {
+	private String rewardMoney(Player player, int amount) {
 		if (plugin.getRewardParser().isEconomySet(true)) {
 			try {
 				plugin.getRewardParser().getEconomy().depositPlayer(player, amount);
@@ -198,9 +207,10 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			}
 
 			String currencyName = plugin.getRewardParser().getCurrencyName(amount);
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-					StringUtils.replaceOnce(langMoneyRewardReceived, "AMOUNT", amount + " " + currencyName)));
+			return ChatColor.translateAlternateColorCodes('&',
+					StringUtils.replaceOnce(langMoneyRewardReceived, "AMOUNT", amount + " " + currencyName));
 		}
+		return "";
 	}
 
 	/**
@@ -208,11 +218,12 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * 
 	 * @param player
 	 * @param amount
+	 * @return the reward text to display to the player
 	 */
-	private void rewardExperience(Player player, int amount) {
+	private String rewardExperience(Player player, int amount) {
 		player.giveExp(amount);
-		player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-				StringUtils.replaceOnce(langExperienceRewardReceived, "AMOUNT", Integer.toString(amount))));
+		return ChatColor.translateAlternateColorCodes('&',
+				StringUtils.replaceOnce(langExperienceRewardReceived, "AMOUNT", Integer.toString(amount)));
 	}
 
 	/**
@@ -220,17 +231,18 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * 
 	 * @param player
 	 * @param amount
+	 * @return the reward text to display to the player
 	 */
 	@SuppressWarnings("deprecation")
-	private void rewardMaxHealth(Player player, int amount) {
+	private String rewardMaxHealth(Player player, int amount) {
 		if (version >= 9) {
 			AttributeInstance playerAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
 			playerAttribute.setBaseValue(playerAttribute.getBaseValue() + amount);
 		} else {
 			player.setMaxHealth(player.getMaxHealth() + amount);
 		}
-		player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-				StringUtils.replaceOnce(langIncreaseMaxHealthRewardReceived, "AMOUNT", Integer.toString(amount))));
+		return ChatColor.translateAlternateColorCodes('&',
+				StringUtils.replaceOnce(langIncreaseMaxHealthRewardReceived, "AMOUNT", Integer.toString(amount)));
 	}
 
 	/**
@@ -238,11 +250,12 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * 
 	 * @param player
 	 * @param amount
+	 * @return the reward text to display to the player
 	 */
-	private void rewardMaxOxygen(Player player, int amount) {
+	private String rewardMaxOxygen(Player player, int amount) {
 		player.setMaximumAir(player.getMaximumAir() + amount);
-		player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-				StringUtils.replaceOnce(langIncreaseMaxOxygenRewardReceived, "AMOUNT", Integer.toString(amount))));
+		return ChatColor.translateAlternateColorCodes('&',
+				StringUtils.replaceOnce(langIncreaseMaxOxygenRewardReceived, "AMOUNT", Integer.toString(amount)));
 	}
 
 	/**
@@ -251,9 +264,11 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * @param player
 	 * @param name
 	 * @param displayName
-	 * @param description
+	 * @param message
+	 * @param rewardTexts
 	 */
-	private void displayAchievement(Player player, String name, String displayName, String description) {
+	private void displayAchievement(Player player, String name, String displayName, String message,
+			List<String> rewardTexts) {
 		String nameToShowUser;
 		if (StringUtils.isNotBlank(displayName)) {
 			// Display name is defined; use it.
@@ -266,8 +281,9 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + name);
 
 		}
+		String messageToShowUser = ChatColor.translateAlternateColorCodes('&', message);
 
-		player.sendMessage(langAchievementNew + nameToShowUser);
+		displayReceiverMessages(player, nameToShowUser, messageToShowUser, rewardTexts);
 
 		// Notify other online players that the player has received an achievement.
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
@@ -278,8 +294,6 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 				displayNotification(player, nameToShowUser, p);
 			}
 		}
-		String msg = ChatColor.translateAlternateColorCodes('&', description);
-		player.sendMessage(plugin.getChatHeader() + ChatColor.WHITE + msg);
 
 		if (configFirework) {
 			displayFirework(player);
@@ -288,8 +302,39 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		}
 
 		if (configTitleScreen) {
-			displayTitle(player, nameToShowUser, msg);
+			displayTitle(player, nameToShowUser, messageToShowUser);
 		}
+	}
+
+	/**
+	 * Displays texts related to the achievement in the receiver's chat. This method can display a single hoverable
+	 * message or several messages one after the other.
+	 * 
+	 * @param player
+	 * @param nameToShowUser
+	 * @param messageToShowUser
+	 * @param rewardTexts
+	 */
+	private void displayReceiverMessages(Player player, String nameToShowUser, String messageToShowUser,
+			List<String> rewardTexts) {
+		if (configHoverableReceiverChatText) {
+			StringBuilder hover = new StringBuilder(messageToShowUser + "\n");
+			rewardTexts.stream().filter(StringUtils::isNotBlank).forEach(t -> hover.append(t).append("\n"));
+			String json = "{\"text\":\"" + langAchievementNew + nameToShowUser
+					+ "\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":[{\"text\":\""
+					+ hover.substring(0, hover.length() - 1) + "\"}]}}";
+			try {
+				PacketSender.sendChatMessagePacket(player, json);
+				return;
+			} catch (Exception e) {
+				plugin.getLogger().warning(
+						"Errors while trying to display hoverable message for achievement reception. Displaying standard messages instead.");
+			}
+		}
+		player.sendMessage(langAchievementNew + nameToShowUser);
+		player.sendMessage(plugin.getChatHeader() + ChatColor.WHITE + messageToShowUser);
+		rewardTexts.stream().filter(StringUtils::isNotBlank)
+				.forEach(t -> player.sendMessage(plugin.getChatHeader() + t));
 	}
 
 	/**
@@ -321,14 +366,14 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * 
 	 * @param player
 	 * @param nameToShowUser
-	 * @param msg
+	 * @param messageToShowUser
 	 */
-	private void displayTitle(Player player, String nameToShowUser, String msg) {
+	private void displayTitle(Player player, String nameToShowUser, String messageToShowUser) {
 		try {
 			// Escape quotations in case quotations are used in config.yml.
 			PacketSender.sendTitlePacket(player,
 					"{\"text\":\"" + StringUtils.replace(nameToShowUser, "\"", "\\\"") + "\"}",
-					"{\"text\":\"" + StringUtils.replace(msg, "\"", "\\\"") + "\"}");
+					"{\"text\":\"" + StringUtils.replace(messageToShowUser, "\"", "\\\"") + "\"}");
 		} catch (Exception e) {
 			plugin.getLogger().log(Level.SEVERE,
 					"Errors while trying to display achievement screen title. Is your server up-to-date? ", e);

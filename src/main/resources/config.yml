@@ -60,6 +60,14 @@ NotifyOtherPlayers: false
 # When ActionBarNotify is false, chat messages are used.
 ActionBarNotify: true
 
+# Display achievement Name and Message as screen titles. No effect if using Minecraft 1.7.9 or 1.7.10.
+TitleScreen: true
+
+# When a player receives an achievement, the Name, Message and rewards of the achievement are displayed in
+# the chat. If HoverableReceiverChatText is true, as single hoverable text will be displayed to the receiver.
+# Otherwise texts will be displayed one after the other.
+HoverableReceiverChatText: false
+
 # Separator between name, description and date on a book page.
 BookSeparator: ""
 
@@ -125,9 +133,6 @@ EnrichedListProgressBars: true
 
 # Annotate each achievement displayed in a /aach list category with a number.
 NumberedItemsInList: false
-
-# Display achievement Name and Message as screen titles. No effect if using Minecraft 1.7.9 or 1.7.10.
-TitleScreen: true
 
 # Sort pages of the book in chronological order (false for reverse chronological order).
 BookChronologicalOrder: true

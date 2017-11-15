@@ -146,6 +146,10 @@ public class FileUpdater {
 		updateSetting(config, "AdditionalConnectionOptions", "", new String[] {
 				"Specify additional options when opening a connection to a MySQL/PostgreSQL database. Start each option with &,",
 				"for instance \"&useUnicode=yes&characterEncoding=UTF-8\"." });
+		updateSetting(config, "HoverableReceiverChatText", false, new String[] {
+				"When a player receives an achievement, the Name, Message and rewards of the achievement are displayed in",
+				"the chat. If HoverableReceiverChatText is true, as single hoverable text will be displayed to the receiver.",
+				"Otherwise texts will be displayed one after the other." });
 
 		if (updatePerformed) {
 			// Changes in the configuration: save and do a fresh load.
