@@ -34,14 +34,17 @@
 				<configuration>
 					<artifactSet>
 						<includes>
-							<include>com.hm.mcshared:*</include>
+							<include>com.hm.mcshared</include>
 							<include>codecrafter47.bungeetablistplus</include>
 						</includes>
 					</artifactSet>
 					<relocations>
 						<relocation>
 							<pattern>com.hm.mcshared</pattern>
-							<shadedPattern>com.hm.mcshared</shadedPattern>
+							<shadedPattern>com.hm.achievement</shadedPattern>
+							<excludes>
+								<exclude>com.hm.mcshared.event.*</exclude>
+							</excludes>
 						</relocation>
 						<relocation>
 							<pattern>codecrafter47.bungeetablistplus</pattern>
@@ -119,7 +122,7 @@
 		<dependency>
 			<groupId>com.hm.mcshared</groupId>
 			<artifactId>MCShared</artifactId>
-			<version>1.0.4</version>
+			<version>1.0.5</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
