@@ -21,8 +21,6 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  */
 public class FileUpdater {
 
-	private static final String[] NO_COMMENTS = new String[] {};
-
 	private AdvancedAchievements plugin;
 	private boolean updatePerformed;
 
@@ -42,10 +40,10 @@ public class FileUpdater {
 		// Make sure DisabledCategories exists so elements can then be added to it:
 		if (!config.getKeys(false).contains("DisabledCategories")) {
 			List<String> emptyList = new ArrayList<>();
-			config.set("DisabledCategories", emptyList, new String[] {
+			config.set("DisabledCategories", emptyList,
 					"Don't show these categories in the achievement GUI or in the stats output (delete the [] before using).",
 					"Also prevent obtaining achievements for these categories and prevent stats from increasing.",
-					"If changed, do a full server reload, and not just /aach reload." });
+					"If changed, do a full server reload, and not just /aach reload.");
 			updatePerformed = true;
 		}
 		// Iterate through all categories to add missing ones.
@@ -57,99 +55,98 @@ public class FileUpdater {
 		}
 
 		// Added in version 3.0:
-		updateSetting(config, "TablePrefix", "", new String[] {
+		updateSetting(config, "TablePrefix", "",
 				"Prefix added to the tables in the database. If you switch from the default tables names (no prefix),",
 				"the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.",
-				"Do a full server reload or restart to make this effective." });
-		updateSetting(config, "BookChronologicalOrder", true, new String[] {
-				"Sort pages of the book in chronological order (false for reverse chronological order)." });
+				"Do a full server reload or restart to make this effective.");
+		updateSetting(config, "BookChronologicalOrder", true,
+				"Sort pages of the book in chronological order (false for reverse chronological order).");
 		updateSetting(config, "DisableSilkTouchBreaks", false,
-				new String[] { "Do not take into accound items broken with Silk Touch for the Breaks achievements." });
-		updateSetting(config, "ObfuscateProgressiveAchievements", false, new String[] {
+				"Do not take into accound items broken with Silk Touch for the Breaks achievements.");
+		updateSetting(config, "ObfuscateProgressiveAchievements", false,
 				"For categories with a series of related achievements where the only thing changing is the number of times",
 				"the event has occurred, show achievements that have been obtained and show the next obtainable achievement,",
 				"but obfuscate the additional achievements.",
 				"in order of increasing difficulty. For example, under Places, stone, the first achievement could have a",
 				"target of 100 stone,# the second 500 stone, and the third 1000 stone.  When ObfuscateProgressiveAchievements",
 				"is true, initially only the 100 stone achievement will be readable in the GUI.  Once 100 stone have been placed,",
-				"the 500 stone achievement will become legible." });
+				"the 500 stone achievement will become legible.");
 
 		// Added in version 3.0.2:
 		updateSetting(config, "DisableSilkTouchOreBreaks", false,
-				new String[] { "Do not take into account ores broken with Silk Touch for the Breaks achievements.",
-						"DisableSilkTouchBreaks takes precedence over this." });
-		updateSetting(config, "LanguageFileName", "lang.yml", new String[] { "Name of the language file." });
+				"Do not take into account ores broken with Silk Touch for the Breaks achievements.",
+				"DisableSilkTouchBreaks takes precedence over this.");
+		updateSetting(config, "LanguageFileName", "lang.yml", "Name of the language file.");
 
 		// Added in version 4.0:
 		updateSetting(config, "EnrichedListProgressBars", true,
-				new String[] { "Display precise statistic information in the /aach list progress bars." });
-		updateSetting(config, "StatisticCooldown", 10,
-				new String[] { "LavaBuckets, WaterBuckets, Beds, Brewing, MusicDiscs." });
+				"Display precise statistic information in the /aach list progress bars.");
+		updateSetting(config, "StatisticCooldown", 10, "LavaBuckets, WaterBuckets, Beds, Brewing, MusicDiscs.");
 		updateSetting(config, "CooldownActionBar", true,
-				new String[] { "Display action bar message when player does an action while in the cooldown period." });
+				"Display action bar message when player does an action while in the cooldown period.");
 
 		// Added in version 4.1:
-		updateSetting(config, "NumberedItemsInList", true, new String[] {
+		updateSetting(config, "NumberedItemsInList", true,
 				"Annotate each achievement displayed in a /aach list category with a number. Due to a Minecraft limitation,",
-				"if you have more than 64 achievements for a category, the counting will start back at 1 after number 64." });
-		updateSetting(config, "DateLocale", "en", new String[] {
+				"if you have more than 64 achievements for a category, the counting will start back at 1 after number 64.");
+		updateSetting(config, "DateLocale", "en",
 				"Locale used to format dates in /aach book and /aach list. You must select an ISO 639 language code.",
-				"The list of possible language codes can be found here at www.loc.gov/standards/iso639-2/php/code_list.php" });
-		updateSetting(config, "DateDisplayTime", false, new String[] {
+				"The list of possible language codes can be found here at www.loc.gov/standards/iso639-2/php/code_list.php");
+		updateSetting(config, "DateDisplayTime", false,
 				"Display time of reception of achievements in /aach book and /aach list in addition to the date. For achievements",
-				"received in plugin versions prior to 3.0, the precise time information is not available and will be displayed as midnight." });
+				"received in plugin versions prior to 3.0, the precise time information is not available and will be displayed as midnight.");
 
 		// Added in version 4.2:
 		updateSetting(config, "RestrictSpectator", true,
-				new String[] { "Stop all stats from increasing when player in spectator mode, including PlayedTime.",
-						"Connection achievements will only be handled once a player switches to a non-spectator mode.",
-						"No effect if using Minecraft 1.7.9 or 1.7.10." });
+				"Stop all stats from increasing when player in spectator mode, including PlayedTime.",
+				"Connection achievements will only be handled once a player switches to a non-spectator mode.",
+				"No effect if using Minecraft 1.7.9 or 1.7.10.");
 
 		// Added in version 5.0:
-		updateSetting(config, "SimplifiedReception", false, new String[] {
+		updateSetting(config, "SimplifiedReception", false,
 				"Set to true to activate simpler effects and a calm sound when a player receives an achievement.",
-				"Ignored if Firework parameter is set to true." });
+				"Ignored if Firework parameter is set to true.");
 
 		// Added in version 5.1:
 		updateSetting(config, "NotifyOtherPlayers", false,
-				new String[] { "Notify other connected players when an achievement is received.",
-						"Default behaviour, a player can override what he sees by using /aach toggle." });
-		updateSetting(config, "ActionBarNotify", true, new String[] {
+				"Notify other connected players when an achievement is received.",
+				"Default behaviour, a player can override what he sees by using /aach toggle.");
+		updateSetting(config, "ActionBarNotify", true,
 				"When NotifyOtherPlayers is enabled, notifications are done using action bars when ActionBarNotify is true.",
-				"When ActionBarNotify is false, chat messages are used." });
+				"When ActionBarNotify is false, chat messages are used.");
 
 		// Added in version 5.1.1:
-		updateSetting(config, "RestrictAdventure", false, new String[] {
+		updateSetting(config, "RestrictAdventure", false,
 				"Stop all stats from increasing when player in adventure mode, including PlayedTime.",
-				"Connection achievements will only be handled once a player switches to a non-adventure mode." });
+				"Connection achievements will only be handled once a player switches to a non-adventure mode.");
 
 		// Added in version 5.2:
-		updateSetting(config, "RegisterAdvancementDescriptions", true, new String[] {
+		updateSetting(config, "RegisterAdvancementDescriptions", true,
 				"Register advancements with a description corresponding to the Goal parameter of each achievement.",
 				"If changed, run /aach generate to regenerate advancements with the new parameter value taken into account.",
-				"No effect if using Minecraft versions prior to 1.12." });
-		updateSetting(config, "HideNoPermissionCategories", false, new String[] {
-				"Hide categories for which the player does not have the corresponding count permissions." });
+				"No effect if using Minecraft versions prior to 1.12.");
+		updateSetting(config, "HideNoPermissionCategories", false,
+				"Hide categories for which the player does not have the corresponding count permissions.");
 
 		// Added in version 5.2.2:
-		updateSetting(config, "HideAdvancements", false, new String[] {
+		updateSetting(config, "HideAdvancements", false,
 				"If true, hide advancements from the advancement GUI. Advancement notifications will still appear when receiving achievements.",
-				"No effect if using Minecraft versions prior to 1.12." });
-		updateSetting(config, "IgnoreAFKPlayedTime", false, new String[] {
-				"If true, PlayedTime will no longer increase when the player is AFK. Requires Essentials to work." });
+				"No effect if using Minecraft versions prior to 1.12.");
+		updateSetting(config, "IgnoreAFKPlayedTime", false,
+				"If true, PlayedTime will no longer increase when the player is AFK. Requires Essentials to work.");
 
 		// Added in version 5.3:
-		updateSetting(config, "ChatHeader", "&7[%ICON%&7]", new String[] {
-				"Set the format of the header used for most chat messages (default: \"&7[%ICON%&7]\")." });
+		updateSetting(config, "ChatHeader", "&7[%ICON%&7]",
+				"Set the format of the header used for most chat messages (default: \"&7[%ICON%&7]\").");
 
 		// Added in version 5.3.3:
-		updateSetting(config, "AdditionalConnectionOptions", "", new String[] {
+		updateSetting(config, "AdditionalConnectionOptions", "",
 				"Specify additional options when opening a connection to a MySQL/PostgreSQL database. Start each option with &,",
-				"for instance \"&useUnicode=yes&characterEncoding=UTF-8\"." });
-		updateSetting(config, "HoverableReceiverChatText", false, new String[] {
+				"for instance \"&useUnicode=yes&characterEncoding=UTF-8\".");
+		updateSetting(config, "HoverableReceiverChatText", false,
 				"When a player receives an achievement, the Name, Message and rewards of the achievement are displayed in",
 				"the chat. If HoverableReceiverChatText is true, as single hoverable text will be displayed to the receiver.",
-				"Otherwise texts will be displayed one after the other." });
+				"Otherwise texts will be displayed one after the other.");
 
 		if (updatePerformed) {
 			// Changes in the configuration: save and do a fresh load.
@@ -187,89 +184,76 @@ public class FileUpdater {
 		}
 
 		// Added in version 3.0:
-		updateSetting(lang, "book-date", "Book created on DATE.", NO_COMMENTS);
-		updateSetting(lang, "list-back-message", "&7Back", NO_COMMENTS);
-		updateSetting(lang, "week-achievement", "Weekly achievement rankings:", NO_COMMENTS);
-		updateSetting(lang, "month-achievement", "Monthly achievement rankings:", NO_COMMENTS);
-		updateSetting(lang, "aach-command-week", "Display weekly rankings.", NO_COMMENTS);
-		updateSetting(lang, "aach-command-month", "Display monthly rankings.", NO_COMMENTS);
-		updateSetting(lang, "not-ranked", "You are currently not ranked for this period.", NO_COMMENTS);
+		updateSetting(lang, "book-date", "Book created on DATE.");
+		updateSetting(lang, "list-back-message", "&7Back");
+		updateSetting(lang, "week-achievement", "Weekly achievement rankings:");
+		updateSetting(lang, "month-achievement", "Monthly achievement rankings:");
+		updateSetting(lang, "aach-command-week", "Display weekly rankings.");
+		updateSetting(lang, "aach-command-month", "Display monthly rankings.");
+		updateSetting(lang, "not-ranked", "You are currently not ranked for this period.");
 		updateSetting(lang, "aach-command-book-hover",
-				"RP items you can collect and exchange with others! Time-based listing.", NO_COMMENTS);
-		updateSetting(lang, "aach-command-stats-hover", "Progress bar. Gotta catch 'em all!", NO_COMMENTS);
+				"RP items you can collect and exchange with others! Time-based listing.");
+		updateSetting(lang, "aach-command-stats-hover", "Progress bar. Gotta catch 'em all!");
 		updateSetting(lang, "aach-command-list-hover",
-				"Fancy GUI to get an overview of all achievements and your progress!", NO_COMMENTS);
-		updateSetting(lang, "aach-command-top-hover", "Who are the server's leaders and how do you compare to them?",
-				NO_COMMENTS);
+				"Fancy GUI to get an overview of all achievements and your progress!");
+		updateSetting(lang, "aach-command-top-hover", "Who are the server's leaders and how do you compare to them?");
 		updateSetting(lang, "aach-command-reload-hover",
-				"Player must be online; only Commands achievements can be used.", NO_COMMENTS);
-		updateSetting(lang, "aach-command-give-hover", "Reload most settings in config.yml and lang.yml files.",
-				NO_COMMENTS);
-		updateSetting(lang, "aach-command-info-hover", "Some extra info about the plugin and its awesome author!",
-				NO_COMMENTS);
-		updateSetting(lang, "aach-command-check-hover", "Don't forget to add the colors defined in the config file.",
-				NO_COMMENTS);
+				"Player must be online; only Commands achievements can be used.");
+		updateSetting(lang, "aach-command-give-hover", "Reload most settings in config.yml and lang.yml files.");
+		updateSetting(lang, "aach-command-info-hover", "Some extra info about the plugin and its awesome author!");
+		updateSetting(lang, "aach-command-check-hover", "Don't forget to add the colors defined in the config file.");
 		updateSetting(lang, "aach-command-delete-hover",
-				"Player must be online; does not reset any associated statistics.", NO_COMMENTS);
-		updateSetting(lang, "aach-command-week-hover", "Best achievement hunters since the start of the week!",
-				NO_COMMENTS);
-		updateSetting(lang, "aach-command-month-hover", "Best achievement hunters since the start of the month!",
-				NO_COMMENTS);
-		updateSetting(lang, "aach-tip", "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!",
-				NO_COMMENTS);
+				"Player must be online; does not reset any associated statistics.");
+		updateSetting(lang, "aach-command-week-hover", "Best achievement hunters since the start of the week!");
+		updateSetting(lang, "aach-command-month-hover", "Best achievement hunters since the start of the month!");
+		updateSetting(lang, "aach-tip", "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!");
 
 		// Added in version 4.0:
-		updateSetting(lang, "list-achievements-in-category-singular", "AMOUNT achievement", NO_COMMENTS);
-		updateSetting(lang, "list-achievements-in-category-plural", "AMOUNT achievements", NO_COMMENTS);
+		updateSetting(lang, "list-achievements-in-category-singular", "AMOUNT achievement");
+		updateSetting(lang, "list-achievements-in-category-plural", "AMOUNT achievements");
 		updateSetting(lang, "server-restart-reload",
-				"DisabledCategories list was modified. Server must be fully reloaded or restarted for your changes to take effect.",
-				NO_COMMENTS);
+				"DisabledCategories list was modified. Server must be fully reloaded or restarted for your changes to take effect.");
 		updateSetting(lang, "statistic-cooldown",
-				"Achievements cooldown, wait TIME seconds before this action counts again.", NO_COMMENTS);
-		updateSetting(lang, "version-command-petmaster", "Pet Master integration:", NO_COMMENTS);
+				"Achievements cooldown, wait TIME seconds before this action counts again.");
+		updateSetting(lang, "version-command-petmaster", "Pet Master integration:");
 
 		// Added in version 4.1:
-		updateSetting(lang, "list-description", "Description:", NO_COMMENTS);
-		updateSetting(lang, "list-goal", "Goal:", NO_COMMENTS);
-		updateSetting(lang, "list-reception", "Reception date:", NO_COMMENTS);
-		updateSetting(lang, "list-progress", "Progress:", NO_COMMENTS);
-		updateSetting(lang, "book-not-received", "You have not yet received any achievements.", NO_COMMENTS);
+		updateSetting(lang, "list-description", "Description:");
+		updateSetting(lang, "list-goal", "Goal:");
+		updateSetting(lang, "list-reception", "Reception date:");
+		updateSetting(lang, "list-progress", "Progress:");
+		updateSetting(lang, "book-not-received", "You have not yet received any achievements.");
 
 		// Added in version 4.2:
-		updateSetting(lang, "aach-command-toggle", "Toggle achievements of other players.", NO_COMMENTS);
-		updateSetting(lang, "aach-command-toggle-hover", "Your choice is saved until next server restart!",
-				NO_COMMENTS);
-		updateSetting(lang, "toggle-displayed", "You will now be notified when other players get achievements.",
-				NO_COMMENTS);
-		updateSetting(lang, "toggle-hidden", "You will no longer be notified when other players get achievements.",
-				NO_COMMENTS);
+		updateSetting(lang, "aach-command-toggle", "Toggle achievements of other players.");
+		updateSetting(lang, "aach-command-toggle-hover", "Your choice is saved until next server restart!");
+		updateSetting(lang, "toggle-displayed", "You will now be notified when other players get achievements.");
+		updateSetting(lang, "toggle-hidden", "You will no longer be notified when other players get achievements.");
 
 		// Added in version 5.0:
-		updateSetting(lang, "aach-command-reset", "Reset statistic for category CAT.", NO_COMMENTS);
+		updateSetting(lang, "aach-command-reset", "Reset statistic for category CAT.");
 		updateSetting(lang, "aach-command-reset-hover",
-				"Player must be online; for categories with subcategories, they are all reset!", NO_COMMENTS);
-		updateSetting(lang, "reset-successful", " statistics were cleared for PLAYER.", NO_COMMENTS);
-		updateSetting(lang, "category-does-not-exist", "The specified category does not exist.", NO_COMMENTS);
-		updateSetting(lang, "version-command-btlp", "BungeeTabListPlus integration:", NO_COMMENTS);
+				"Player must be online; for categories with subcategories, they are all reset!");
+		updateSetting(lang, "reset-successful", " statistics were cleared for PLAYER.");
+		updateSetting(lang, "category-does-not-exist", "The specified category does not exist.");
+		updateSetting(lang, "version-command-btlp", "BungeeTabListPlus integration:");
 
 		// Added in version 5.2:
-		updateSetting(lang, "advancements-generated", "Advancements were successfully generated.", NO_COMMENTS);
-		updateSetting(lang, "aach-command-generate", "Generate advancements.", NO_COMMENTS);
-		updateSetting(lang, "aach-command-generate-hover", "Potentially slow command; use with care!", NO_COMMENTS);
+		updateSetting(lang, "advancements-generated", "Advancements were successfully generated.");
+		updateSetting(lang, "aach-command-generate", "Generate advancements.");
+		updateSetting(lang, "aach-command-generate-hover", "Potentially slow command; use with care!");
 		updateSetting(lang, "minecraft-not-supported",
-				"Advancements not supported in your Minecraft version. Please update to 1.12+.", NO_COMMENTS);
-		updateSetting(lang, "experience-reward-received", "You received: AMOUNT experience!", NO_COMMENTS);
-		updateSetting(lang, "list-reward-experience", "receive AMOUNT experience", NO_COMMENTS);
-		updateSetting(lang, "increase-max-health-reward-received", "Your max health has increased by AMOUNT!",
-				NO_COMMENTS);
-		updateSetting(lang, "list-reward-increase-max-health", "increase max health by AMOUNT", NO_COMMENTS);
-		updateSetting(lang, "increase-max-oxygen-reward-received", "Your max oxygen has increased by AMOUNT!",
-				NO_COMMENTS);
-		updateSetting(lang, "list-reward-increase-max-oxygen", "increase max oxygen by AMOUNT", NO_COMMENTS);
+				"Advancements not supported in your Minecraft version. Please update to 1.12+.");
+		updateSetting(lang, "experience-reward-received", "You received: AMOUNT experience!");
+		updateSetting(lang, "list-reward-experience", "receive AMOUNT experience");
+		updateSetting(lang, "increase-max-health-reward-received", "Your max health has increased by AMOUNT!");
+		updateSetting(lang, "list-reward-increase-max-health", "increase max health by AMOUNT");
+		updateSetting(lang, "increase-max-oxygen-reward-received", "Your max oxygen has increased by AMOUNT!");
+		updateSetting(lang, "list-reward-increase-max-oxygen", "increase max oxygen by AMOUNT");
 
 		// Added in version 5.3:
-		updateSetting(lang, "list-previous-message", "&7Previous", NO_COMMENTS);
-		updateSetting(lang, "list-next-message", "&7Next", NO_COMMENTS);
+		updateSetting(lang, "list-previous-message", "&7Previous");
+		updateSetting(lang, "list-next-message", "&7Next");
 
 		if (updatePerformed) {
 			// Changes in the language file: save and do a fresh load.
@@ -293,22 +277,22 @@ public class FileUpdater {
 		updatePerformed = false;
 
 		// Added in version 5.2.5:
-		updateSetting(gui, "Breeding.Item", "wheat", NO_COMMENTS);
-		updateSetting(gui, "Breeding.Metadata", 0, NO_COMMENTS);
+		updateSetting(gui, "Breeding.Item", "wheat");
+		updateSetting(gui, "Breeding.Metadata", 0);
 
 		// Added in version 5.3:
-		updateSetting(gui, "AchievementNotStarted.Item", "stained_clay", NO_COMMENTS);
-		updateSetting(gui, "AchievementNotStarted.Metadata", 14, NO_COMMENTS);
-		updateSetting(gui, "AchievementStarted.Item", "stained_clay", NO_COMMENTS);
-		updateSetting(gui, "AchievementStarted.Metadata", 4, NO_COMMENTS);
-		updateSetting(gui, "AchievementReceived.Item", "stained_clay", NO_COMMENTS);
-		updateSetting(gui, "AchievementReceived.Metadata", 5, NO_COMMENTS);
-		updateSetting(gui, "BackButton.Item", "book", NO_COMMENTS);
-		updateSetting(gui, "BackButton.Metadata", 0, NO_COMMENTS);
-		updateSetting(gui, "PreviousButton.Item", "wood_button", NO_COMMENTS);
-		updateSetting(gui, "PreviousButton.Metadata", 0, NO_COMMENTS);
-		updateSetting(gui, "NextButton.Item", "stone_button", NO_COMMENTS);
-		updateSetting(gui, "NextButton.Metadata", 0, NO_COMMENTS);
+		updateSetting(gui, "AchievementNotStarted.Item", "stained_clay");
+		updateSetting(gui, "AchievementNotStarted.Metadata", 14);
+		updateSetting(gui, "AchievementStarted.Item", "stained_clay");
+		updateSetting(gui, "AchievementStarted.Metadata", 4);
+		updateSetting(gui, "AchievementReceived.Item", "stained_clay");
+		updateSetting(gui, "AchievementReceived.Metadata", 5);
+		updateSetting(gui, "BackButton.Item", "book");
+		updateSetting(gui, "BackButton.Metadata", 0);
+		updateSetting(gui, "PreviousButton.Item", "wood_button");
+		updateSetting(gui, "PreviousButton.Metadata", 0);
+		updateSetting(gui, "NextButton.Item", "stone_button");
+		updateSetting(gui, "NextButton.Metadata", 0);
 
 		if (updatePerformed) {
 			// Changes in the gui file: save and do a fresh load.
@@ -323,14 +307,15 @@ public class FileUpdater {
 	}
 
 	/**
-	 * Updates the configuration file to include a new setting with its default value and its comments.
+	 * Updates the configuration file to include a new setting with its default value and its comments (each comment
+	 * String corresponding to a separate line).
 	 * 
 	 * @param file
 	 * @param name
 	 * @param value
 	 * @param comments
 	 */
-	private void updateSetting(CommentedYamlConfiguration file, String name, Object value, String[] comments) {
+	private void updateSetting(CommentedYamlConfiguration file, String name, Object value, String... comments) {
 		if (!file.getKeys(true).contains(name)) {
 			file.set(name, value, comments);
 			updatePerformed = true;
