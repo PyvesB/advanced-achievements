@@ -145,7 +145,7 @@ public class FileUpdater {
 				"for instance \"&useUnicode=yes&characterEncoding=UTF-8\".");
 		updateSetting(config, "HoverableReceiverChatText", false,
 				"When a player receives an achievement, the Name, Message and rewards of the achievement are displayed in",
-				"the chat. If HoverableReceiverChatText is true, as single hoverable text will be displayed to the receiver.",
+				"the chat. If HoverableReceiverChatText is true, a single hoverable text will be displayed to the receiver.",
 				"Otherwise texts will be displayed one after the other.");
 
 		if (updatePerformed) {
