@@ -34,6 +34,7 @@ public class RewardParser implements Reloadable {
 	private String langListRewardExperience;
 	private String langListRewardIncreaseMaxHealth;
 	private String langListRewardIncreaseMaxOxygen;
+	private String langListRewardCommandCustomMessage;
 	// Used for Vault plugin integration.
 	private Economy economy;
 
@@ -52,6 +53,8 @@ public class RewardParser implements Reloadable {
 				"increase max health by AMOUNT");
 		langListRewardIncreaseMaxOxygen = plugin.getPluginLang().getString("list-reward-increase-max-oxygen",
 				"increase max oxygen by AMOUNT");
+		langListRewardCommandCustomMessage = plugin.getPluginLang().getString("list-reward-command-custom-message",
+				"MESSAGE");
 	}
 
 	public Economy getEconomy() {
@@ -127,7 +130,13 @@ public class RewardParser implements Reloadable {
 		}
 
 		if (keyNames.contains(configAchievement + ".Reward.Command")) {
-			rewardTypes.add(langListRewardCommand);
+			if (plugin.getPluginConfig().isConfigurationSection(configAchievement + ".Reward.Command")
+					&& keyNames.contains(configAchievement + ".Reward.Command.Display")) {
+				String message = getCustomCommandMessage(configAchievement);
+				rewardTypes.add(StringUtils.replaceOnce(langListRewardCommandCustomMessage, "MESSAGE", message));
+			} else {
+				rewardTypes.add(langListRewardCommand);
+			}
 		}
 		return rewardTypes;
 	}
@@ -232,13 +241,37 @@ public class RewardParser implements Reloadable {
 	 * @return the array containing the commands to be performed as a reward
 	 */
 	public String[] getCommandRewards(String configAchievement, Player player) {
-		String commandReward = plugin.getPluginConfig().getString(configAchievement + ".Reward.Command", null);
+		String searchFrom = configAchievement + ".Reward.Command";
+		if (plugin.getPluginConfig().isConfigurationSection(configAchievement + ".Reward.Command")) {
+			searchFrom += ".Command";
+		}
+
+		String commandReward = plugin.getPluginConfig().getString(searchFrom, null);
 		if (commandReward == null) {
 			return new String[0];
 		}
 		commandReward = StringUtils.replace(commandReward, "PLAYER", player.getName());
 		// Multiple reward commands can be set, separated by a semicolon and space. Extra parsing needed.
 		return commandReward.split(";[ ]*");
+	}
+
+	/**
+	 * Extracts custom command message from config. Might be null.
+	 *
+	 * @author tassu
+	 * @param configAchievement
+	 * @return the custom command message (null if not present)
+	 */
+	public String getCustomCommandMessage(String configAchievement) {
+		if (!plugin.getPluginConfig().isConfigurationSection(configAchievement + ".Reward.Command")) {
+			return null;
+		}
+
+		if (!plugin.getPluginConfig().contains(configAchievement + ".Reward.Command.Display")) {
+			return null;
+		}
+
+		return plugin.getPluginConfig().getString(configAchievement + ".Reward.Command.Display");
 	}
 
 	/**

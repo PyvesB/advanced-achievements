@@ -121,6 +121,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 						.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
 						.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
 						.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
+						.commandMessage(plugin.getRewardParser().getCustomCommandMessage(configAchievement))
 						.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
 						.moneyReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Money"))
 						.experienceReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Experience"))

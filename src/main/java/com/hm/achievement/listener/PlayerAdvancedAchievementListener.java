@@ -58,6 +58,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	private String langIncreaseMaxHealthRewardReceived;
 	private String langIncreaseMaxOxygenRewardReceived;
 	private String langAchievementNew;
+	private String langCustomMessageCommandReward;
 
 	public PlayerAdvancedAchievementListener(AdvancedAchievements plugin) {
 		super(plugin);
@@ -104,6 +105,8 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 				"Your max oxygen has increased by AMOUNT!");
 		langAchievementNew = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " " + ChatColor.WHITE;
+		langCustomMessageCommandReward = plugin.getPluginLang().getString("custom-command-reward",
+				"You received your reward: MESSAGE");
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -131,7 +134,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 		List<String> rewardTexts = new ArrayList<>();
 		if (event.getCommandRewards() != null && event.getCommandRewards().length > 0) {
-			rewardTexts.add(rewardCommands(event.getCommandRewards()));
+			rewardTexts.add(rewardCommands(event.getCommandRewards(), event.getCommandMessage()));
 		}
 		if (event.getItemReward() != null) {
 			rewardTexts.add(rewardItem(player, event.getItemReward()));
@@ -155,15 +158,21 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * Executes player command rewards.
 	 * 
 	 * @param commands
+	 * @param message
 	 * @return the reward text to display to the player
 	 */
-	private String rewardCommands(String[] commands) {
+	private String rewardCommands(String[] commands, String message) {
 		for (String command : commands) {
 			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
 		}
 		if (!configRewardCommandNotif || langCommandReward.length() == 0) {
 			return "";
 		}
+
+		if (message != null) {
+			return StringUtils.replace(langCustomMessageCommandReward, "MESSAGE", message);
+		}
+
 		return langCommandReward;
 	}
 
