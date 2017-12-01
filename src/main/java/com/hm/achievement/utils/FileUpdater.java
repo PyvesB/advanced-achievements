@@ -255,6 +255,8 @@ public class FileUpdater {
 		updateSetting(lang, "list-previous-message", "&7Previous");
 		updateSetting(lang, "list-next-message", "&7Next");
 
+		updateSetting(lang, "custom-command-reward", "You received your reward: MESSAGE");
+
 		if (updatePerformed) {
 			// Changes in the language file: save and do a fresh load.
 			try {

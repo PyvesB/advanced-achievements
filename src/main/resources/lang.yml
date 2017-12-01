@@ -53,6 +53,7 @@ delete-achievements: "The achievement ACH was deleted from PLAYER."
 item-reward-received: "You received an item reward:"
 money-reward-received: "You received: AMOUNT!"
 command-reward: "Reward command carried out!"
+custom-command-reward: "You received your reward: MESSAGE"
 experience-reward-received: "You received: AMOUNT experience!"
 increase-max-health-reward-received: "Your max health has increased by AMOUNT!"
 

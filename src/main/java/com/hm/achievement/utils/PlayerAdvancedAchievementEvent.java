@@ -20,6 +20,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private final String name;
 	private final String displayName;
 	private final String message;
+	private final String commandMessage;
 	private final String[] commandRewards;
 	private final ItemStack itemReward;
 	private final int moneyReward;
@@ -30,12 +31,13 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private boolean cancelled;
 
 	private PlayerAdvancedAchievementEvent(Player receiver, String name, String displayName, String message,
-			String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward, int maxHealthReward,
+			String commandMessage, String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward, int maxHealthReward,
 			int maxOxygenReward) {
 		player = receiver;
 		this.name = name;
 		this.displayName = displayName;
 		this.message = message;
+		this.commandMessage = commandMessage;
 		this.commandRewards = commandRewards;
 		this.itemReward = itemReward;
 		this.moneyReward = moneyReward;
@@ -84,6 +86,10 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		return message;
 	}
 
+	public String getCommandMessage() {
+		return commandMessage;
+	}
+
 	public String[] getCommandRewards() {
 		return commandRewards;
 	}
@@ -114,6 +120,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		private String name;
 		private String displayName;
 		private String message;
+		private String commandMessage;
 		private String[] commandRewards;
 		private ItemStack itemReward;
 		private int moneyReward;
@@ -138,6 +145,11 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 
 		public PlayerAdvancedAchievementEventBuilder message(String message) {
 			this.message = message;
+			return this;
+		}
+
+		public PlayerAdvancedAchievementEventBuilder commandMessage(String commandMessage) {
+			this.commandMessage = commandMessage;
 			return this;
 		}
 
@@ -172,7 +184,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		}
 
 		public PlayerAdvancedAchievementEvent build() {
-			return new PlayerAdvancedAchievementEvent(player, name, displayName, message, commandRewards, itemReward,
+			return new PlayerAdvancedAchievementEvent(player, name, displayName, message, commandMessage, commandRewards, itemReward,
 					moneyReward, experienceReward, maxHealthReward, maxOxygenReward);
 		}
 	}
