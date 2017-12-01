@@ -267,8 +267,8 @@ Places:
       DisplayName: Stone God
       Reward:
         Command:
-          Command: "say §7ALERT: §4PLAYER§7 has become the §4STONE GOD§7!"
-          Display: "Become the Stone God!"
+          Execute: "say §7ALERT: §4PLAYER§7 has become the §4STONE GOD§7!"
+          Display: Become the Stone God!
 
 # When a specific block is broken (specify material name, lower case).
 # Below, the notation sand:1 means sand item with metadata 1 (red sand).
@@ -285,7 +285,8 @@ Breaks:
       DisplayName: Cobble!
       # Use semicolons for multiple command rewards. PLAYER will be replaced by players name.
       Reward:
-        Command: give PLAYER 158 10; give PLAYER 126 5
+        Command:
+          Execute: give PLAYER 158 10; give PLAYER 126 5
               
 # When a specific mob is killed.
 # Use an Entity name or poweredcreeper, in lower case.
@@ -617,7 +618,7 @@ PlayerCommands:
       DisplayName: Statistician
       Rewards:
         Commands:
-          Command: say §cALERT: §7PLAYER is now a statistician
+          Execute: say §cALERT: §7PLAYER is now a statistician
           Display: Broadcast
     
 #===========================OOO=OOO===========================#

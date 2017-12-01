@@ -34,7 +34,6 @@ public class RewardParser implements Reloadable {
 	private String langListRewardExperience;
 	private String langListRewardIncreaseMaxHealth;
 	private String langListRewardIncreaseMaxOxygen;
-	private String langListRewardCommandCustomMessage;
 	// Used for Vault plugin integration.
 	private Economy economy;
 
@@ -53,8 +52,6 @@ public class RewardParser implements Reloadable {
 				"increase max health by AMOUNT");
 		langListRewardIncreaseMaxOxygen = plugin.getPluginLang().getString("list-reward-increase-max-oxygen",
 				"increase max oxygen by AMOUNT");
-		langListRewardCommandCustomMessage = plugin.getPluginLang().getString("list-reward-command-custom-message",
-				"MESSAGE");
 	}
 
 	public Economy getEconomy() {
@@ -133,7 +130,7 @@ public class RewardParser implements Reloadable {
 			if (plugin.getPluginConfig().isConfigurationSection(configAchievement + ".Reward.Command")
 					&& keyNames.contains(configAchievement + ".Reward.Command.Display")) {
 				String message = getCustomCommandMessage(configAchievement);
-				rewardTypes.add(StringUtils.replaceOnce(langListRewardCommandCustomMessage, "MESSAGE", message));
+				rewardTypes.add(message);
 			} else {
 				rewardTypes.add(langListRewardCommand);
 			}
@@ -243,7 +240,7 @@ public class RewardParser implements Reloadable {
 	public String[] getCommandRewards(String configAchievement, Player player) {
 		String searchFrom = configAchievement + ".Reward.Command";
 		if (plugin.getPluginConfig().isConfigurationSection(configAchievement + ".Reward.Command")) {
-			searchFrom += ".Command";
+			searchFrom += ".Execute";
 		}
 
 		String commandReward = plugin.getPluginConfig().getString(searchFrom, null);
@@ -264,10 +261,6 @@ public class RewardParser implements Reloadable {
 	 */
 	public String getCustomCommandMessage(String configAchievement) {
 		if (!plugin.getPluginConfig().isConfigurationSection(configAchievement + ".Reward.Command")) {
-			return null;
-		}
-
-		if (!plugin.getPluginConfig().contains(configAchievement + ".Reward.Command.Display")) {
 			return null;
 		}
 
