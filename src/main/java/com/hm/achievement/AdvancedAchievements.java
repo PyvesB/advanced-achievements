@@ -678,6 +678,11 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 		playerAdvancedAchievementListener = new PlayerAdvancedAchievementListener(this);
 		pm.registerEvents(playerAdvancedAchievementListener, this);
+		
+		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
+		{
+			new PlaceholderAchievementListener(this, AdvancedAchievementsBukkitAPI.linkAdvancedAchievements()).hook();
+		}
 	}
 
 	/**
