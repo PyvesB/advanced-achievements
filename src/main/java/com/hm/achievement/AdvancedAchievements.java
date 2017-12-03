@@ -26,6 +26,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.hm.achievement.api.AdvancedAchievementsBukkitAPI;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.BookCommand;
@@ -77,6 +78,7 @@ import com.hm.achievement.listener.AchieveTradeAnvilBrewSmeltListener;
 import com.hm.achievement.listener.AchieveXPListener;
 import com.hm.achievement.listener.FireworkListener;
 import com.hm.achievement.listener.ListGUIListener;
+import com.hm.achievement.listener.PlaceholderAchievementListener;
 import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
 import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
