@@ -82,6 +82,7 @@ import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 import com.hm.achievement.utils.AchievementCountBungeeTabListPlusVariable;
+import com.hm.achievement.utils.AchievementPlaceholderHook;
 import com.hm.achievement.utils.Cleanable;
 import com.hm.achievement.utils.FileUpdater;
 import com.hm.achievement.utils.Reloadable;
@@ -245,6 +246,10 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
 			BungeeTabListPlusBukkitAPI.registerVariable(this, new AchievementCountBungeeTabListPlusVariable(this));
+		}
+		
+		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+			new AchievementPlaceholderHook(this).hook();
 		}
 
 		if (successfulLoad) {
