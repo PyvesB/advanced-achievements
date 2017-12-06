@@ -27,9 +27,9 @@ import com.hm.achievement.category.NormalAchievements;
 public class DatabaseUpdater {
 
 	private final AdvancedAchievements plugin;
-	private final SQLDatabaseManager sqlDatabaseManager;
+	private final AbstractSQLDatabaseManager sqlDatabaseManager;
 
-	protected DatabaseUpdater(AdvancedAchievements plugin, SQLDatabaseManager sqlDatabaseManager) {
+	protected DatabaseUpdater(AdvancedAchievements plugin, AbstractSQLDatabaseManager sqlDatabaseManager) {
 		this.plugin = plugin;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 	}
@@ -46,9 +46,9 @@ public class DatabaseUpdater {
 			Connection conn = sqlDatabaseManager.getSQLConnection();
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs;
-				if (sqlDatabaseManager.getDatabaseType() == DatabaseType.SQLITE) {
+				if (plugin.getDatabaseManager() instanceof SQLiteDatabaseManager) {
 					rs = st.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='achievements'");
-				} else if (sqlDatabaseManager.getDatabaseType() == DatabaseType.MYSQL) {
+				} else if (plugin.getDatabaseManager() instanceof MySQLDatabaseManager) {
 					rs = st.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='"
 							+ databaseAddress.substring(databaseAddress.lastIndexOf('/') + 1)
 							+ "' AND table_name ='achievements'");
@@ -284,7 +284,7 @@ public class DatabaseUpdater {
 	protected void updateOldDBMobnameSize() {
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		// SQLite ignores size for varchar datatype.
-		if (sqlDatabaseManager.getDatabaseType() != DatabaseType.SQLITE) {
+		if (!(plugin.getDatabaseManager() instanceof SQLiteDatabaseManager)) {
 			int size = 51;
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs = st
@@ -294,7 +294,7 @@ public class DatabaseUpdater {
 				if (size == 32) {
 					plugin.getLogger().warning("Updating database table with extended mobname column, please wait...");
 					// Increase size of table.
-					if (sqlDatabaseManager.getDatabaseType() == DatabaseType.POSTGRESQL) {
+					if (plugin.getDatabaseManager() instanceof PostgreSQLDatabaseManager) {
 						st.execute("ALTER TABLE " + sqlDatabaseManager.getTablePrefix()
 								+ "kills ALTER COLUMN mobname TYPE varchar(51)");
 					} else {
