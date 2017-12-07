@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.hm.achievement</groupId>
 	<artifactId>AdvancedAchievements</artifactId>
-	<version>5.3.3</version>
+	<version>5.4</version>
 	<url>https://github.com/PyvesB/AdvancedAchievements</url>
 	<name>AdvancedAchievements</name>
 	<description>A Minecraft plugin that brings unique and challenging achievements on your server! Books, GUI, rankings, rewards, effects and more!</description>
@@ -98,9 +98,9 @@
 			<url>http://repo.ess3.net/content/groups/essentials/</url>
 		</repository>
 		<repository>
-            <id>placeholderapi</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository>
+			<id>placeholderapi</id>
+			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -148,10 +148,10 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-         <groupId>me.clip</groupId>
-          <artifactId>placeholderapi</artifactId>
-          <version>2.8.2</version>
-         <scope>provided</scope>
-        </dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>placeholderapi</artifactId>
+			<version>2.8.2</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>

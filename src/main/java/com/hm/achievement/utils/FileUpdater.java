@@ -255,6 +255,7 @@ public class FileUpdater {
 		updateSetting(lang, "list-previous-message", "&7Previous");
 		updateSetting(lang, "list-next-message", "&7Next");
 
+		// Added in version 5.4:
 		updateSetting(lang, "custom-command-reward", "You received your reward: MESSAGE");
 
 		if (updatePerformed) {
