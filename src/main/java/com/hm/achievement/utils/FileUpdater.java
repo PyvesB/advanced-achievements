@@ -147,6 +147,10 @@ public class FileUpdater {
 				"When a player receives an achievement, the Name, Message and rewards of the achievement are displayed in",
 				"the chat. If HoverableReceiverChatText is true, a single hoverable text will be displayed to the receiver.",
 				"Otherwise texts will be displayed one after the other.");
+		
+		// Added in version 5.4.1:
+		updateSetting(config, "ListColorNotReceived", 8,
+				"Color used for Goals and progress bars in /aach list when an achievement is not yet received.");
 
 		if (updatePerformed) {
 			// Changes in the configuration: save and do a fresh load.
