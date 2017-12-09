@@ -208,7 +208,7 @@ public class HelpCommand extends AbstractCommand {
 			// Build the json format string.
 			String json = "{\"text\":\"" + message + "\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\""
 					+ command + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[{\"text\":\"" + hover
-					+ "\",\"color\":\"dark_purple\"}]}}";
+					+ "\",\"color\":\"" + configColor.name().toLowerCase() + "\"}]}}";
 			try {
 				PacketSender.sendChatMessagePacket((Player) sender, json);
 			} catch (Exception e) {
