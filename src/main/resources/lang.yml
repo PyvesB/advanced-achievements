@@ -97,6 +97,8 @@ version-command-description-details: "Advanced Achievements enables unique and c
 version-command-vault: "Vault integration:"
 version-command-petmaster: "Pet Master integration:"
 version-command-btlp: "BungeeTabListPlus integration:"
+version-command-essentials: "Essentials integration:"
+version-command-placeholderapi: "PlaceholderAPI integration:"
 version-command-database: "Database type:"
 
 # Related to /aach list.

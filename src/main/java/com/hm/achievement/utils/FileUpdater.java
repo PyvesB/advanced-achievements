@@ -261,6 +261,10 @@ public class FileUpdater {
 
 		// Added in version 5.4:
 		updateSetting(lang, "custom-command-reward", "You received your reward: MESSAGE");
+		
+		// Added in version 5.4.1:
+		updateSetting(lang, "version-command-essentials", "Essentials integration:");
+		updateSetting(lang, "version-command-placeholderapi", "PlaceholderAPI integration:");
 
 		if (updatePerformed) {
 			// Changes in the language file: save and do a fresh load.
