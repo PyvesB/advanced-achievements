@@ -85,8 +85,8 @@ public class CategoryGUI extends AbstractGUI {
 		langListAchievementReceived = StringEscapeUtils
 				.unescapeJava(plugin.getPluginLang().getString("list-achievement-received", "&a\u2714&f "));
 		langListAchievementNotReceived = StringEscapeUtils
-				.unescapeJava(plugin.getPluginLang().getString("list-achievement-not-received",
-						"&4\u2718 " + configListColorNotReceived));
+				.unescapeJava(plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2718 ")
+						+ configListColorNotReceived);
 		langListDescription = ChatColor.translateAlternateColorCodes('&',
 				"&7&l" + plugin.getPluginLang().getString("list-description", "Description:"));
 		langListReception = ChatColor.translateAlternateColorCodes('&',
@@ -415,9 +415,11 @@ public class CategoryGUI extends AbstractGUI {
 			lore.add(langListGoal);
 			String strippedAchMessage = REGEX_PATTERN.matcher(description).replaceAll("");
 			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && inelligibleSeriesItem)) {
-				lore.add(ChatColor.translateAlternateColorCodes('&', configListColorNotReceived + "&k" + strippedAchMessage));
+				lore.add(ChatColor.translateAlternateColorCodes('&',
+						configListColorNotReceived + "&k" + strippedAchMessage));
 			} else {
-				lore.add(ChatColor.translateAlternateColorCodes('&', configListColorNotReceived + "&o" + strippedAchMessage));
+				lore.add(ChatColor.translateAlternateColorCodes('&',
+						configListColorNotReceived + "&o" + strippedAchMessage));
 			}
 			lore.add("");
 			// Display progress if not COmmands category.
@@ -439,7 +441,7 @@ public class CategoryGUI extends AbstractGUI {
 			if (date != null) {
 				dot = StringEscapeUtils.unescapeJava("&r\u25CF ");
 			} else {
-				dot = StringEscapeUtils.unescapeJava(configListColorNotReceived +"\u25CF &o");
+				dot = StringEscapeUtils.unescapeJava(configListColorNotReceived + "\u25CF &o");
 			}
 			for (String reward : rewards) {
 				lore.add(ChatColor.translateAlternateColorCodes('&', dot + reward));

@@ -328,7 +328,8 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			List<String> rewardTexts) {
 		if (configHoverableReceiverChatText) {
 			StringBuilder hover = new StringBuilder(messageToShowUser + "\n");
-			rewardTexts.stream().filter(StringUtils::isNotBlank).forEach(t -> hover.append(t).append("\n"));
+			rewardTexts.stream().filter(StringUtils::isNotBlank)
+					.forEach(t -> hover.append(ChatColor.translateAlternateColorCodes('&', t)).append("\n"));
 			String json = "{\"text\":\"" + langAchievementNew + nameToShowUser
 					+ "\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":[{\"text\":\""
 					+ hover.substring(0, hover.length() - 1) + "\"}]}}";
@@ -342,8 +343,8 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		}
 		player.sendMessage(langAchievementNew + nameToShowUser);
 		player.sendMessage(plugin.getChatHeader() + ChatColor.WHITE + messageToShowUser);
-		rewardTexts.stream().filter(StringUtils::isNotBlank)
-				.forEach(t -> player.sendMessage(plugin.getChatHeader() + t));
+		rewardTexts.stream().filter(StringUtils::isNotBlank).forEach(
+				t -> player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&', t)));
 	}
 
 	/**
