@@ -9,7 +9,8 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 
 /**
- * Listener class to deal with ItemPickups achievements.
+ * Listener class to deal with ItemPickups achievements. Keep PlayerPickupItemEvent for now, as it was only introduced
+ * in late Minecraft 1.12 versions.
  * 
  * @author Pyves
  *

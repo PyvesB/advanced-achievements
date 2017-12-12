@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Class used to update the database schema.
@@ -133,9 +134,19 @@ public class DatabaseUpdater {
 		// Old column type for versions prior to 2.4.1 was integer for SQLite and smallint unsigned for MySQL.
 		if ("integer".equalsIgnoreCase(type) || "smallint unsigned".equalsIgnoreCase(type)) {
 			plugin.getLogger().warning("Updating database tables with Material names, please wait...");
-			updateOldDBToMaterial(MultipleAchievements.BREAKS);
-			updateOldDBToMaterial(MultipleAchievements.CRAFTS);
-			updateOldDBToMaterial(MultipleAchievements.PLACES);
+			// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
+			// versions change in the future.
+			int version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
+			if (version < 13) {
+				updateOldDBToMaterial(MultipleAchievements.BREAKS);
+				updateOldDBToMaterial(MultipleAchievements.CRAFTS);
+				updateOldDBToMaterial(MultipleAchievements.PLACES);
+			} else {
+				plugin.getLogger().severe("The database must be updated using tools no longer available in Bukkit.");
+				plugin.getLogger().severe("Start this plugin build once using a Minecraft version prior to 1.13.");
+				plugin.getLogger().severe("You can then happily use Advanced Achievements with Minecraft 1.13+!");
+				plugin.setSuccessfulLoad(false);
+			}
 		}
 	}
 
@@ -144,7 +155,6 @@ public class DatabaseUpdater {
 	 * 
 	 * @param category
 	 */
-	@SuppressWarnings("deprecation")
 	private void updateOldDBToMaterial(MultipleAchievements category) {
 		String tableName = sqlDatabaseManager.getTablePrefix() + category.toDBName();
 		Connection conn = sqlDatabaseManager.getSQLConnection();
@@ -165,8 +175,10 @@ public class DatabaseUpdater {
 			List<String> materials = new ArrayList<>(ids.size());
 
 			for (int id : ids) {
-				// Convert from ID to Material name.
-				materials.add(Material.getMaterial(id).name().toLowerCase());
+				// Convert from ID to Material name. getMaterial(int id) is only available on Minecraft versions prior
+				// to 1.13.
+				Material material = (Material) Material.class.getMethod("getMaterial", int.class).invoke(null, id);
+				materials.add(material.name().toLowerCase());
 			}
 			// Prevent from doing any commits before entire transaction is ready.
 			conn.setAutoCommit(false);
@@ -191,8 +203,8 @@ public class DatabaseUpdater {
 			// Commit entire transaction.
 			conn.commit();
 			conn.setAutoCommit(true);
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while updating old DB (ids to material): ", e);
+		} catch (Exception e) {
+			plugin.getLogger().log(Level.SEVERE, "Error while updating old DB (ids to material): ", e);
 		}
 	}
 
