@@ -37,6 +37,8 @@ public class HelpCommand extends AbstractCommand {
 	private String langCommandGenerateHover;
 	private String langCommandGive;
 	private String langCommandGiveHover;
+	private String langCommandAdd;
+	private String langCommandAddHover;
 	private String langCommandReset;
 	private String langCommandResetHover;
 	private String langCommandCheck;
@@ -101,6 +103,10 @@ public class HelpCommand extends AbstractCommand {
 								new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
 		langCommandGiveHover = plugin.getPluginLang().getString("aach-command-give-hover",
 				"Player must be online; only Commands achievements can be used.");
+		langCommandAdd = plugin.getChatHeader() + configColor + "/aach add &oamount cat player" + ChatColor.GRAY + " > "
+				+ ChatColor.translateAlternateColorCodes('&', "Increase the progression of an achievement.");
+		langCommandAddHover = plugin.getPluginLang().getString("aach-command-add-hover",
+				"Player must be online; All achievements can be used except Commands achievements; Write a subcategory like this: category.subcategory");
 		langCommandReset = plugin.getChatHeader() + configColor + "/aach reset &ocat player" + ChatColor.GRAY + " > "
 				+ StringUtils.replaceOnce(
 						plugin.getPluginLang().getString("aach-command-reset", "Reset statistic for category CAT."),
@@ -172,6 +178,10 @@ public class HelpCommand extends AbstractCommand {
 
 		if (sender.hasPermission("achievement.give")) {
 			sendJsonClickableHoverableMessage(sender, langCommandGive, "/aach give ach name", langCommandGiveHover);
+		}
+		
+		if (sender.hasPermission("achievement.add")) {
+			sendJsonClickableHoverableMessage(sender, langCommandAdd, "/aach add amount cat name", langCommandAddHover);
 		}
 
 		if (sender.hasPermission("achievement.reset")) {
