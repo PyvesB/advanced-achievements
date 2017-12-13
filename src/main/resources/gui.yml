@@ -170,6 +170,9 @@ PlayerCommands:
 Commands:
   Item: bookshelf
   Metadata: 0
+Customs:
+  Item: writable_book
+  Metadata: 0
 
 #============================================================#
 # +--------------------------------------------------------+ #
