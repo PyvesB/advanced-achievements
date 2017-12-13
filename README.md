@@ -50,7 +50,7 @@ Your generated `AdvancedAchievements.jar` can be found in the `target` folder.
 
 * [Documentation, installation and FAQ](https://github.com/PyvesB/AdvancedAchievements/wiki), a lot of valuable information on how to set the plugin up or use it properly.
 
-* [Plugin translations](https://github.com/PyvesB/AdvancedAchievements/tree/master/src/main/resources), 13 languages available, feel free to improve the translations!
+* [Plugin translations](https://github.com/PyvesB/AdvancedAchievements/tree/master/src/main/resources), 14 languages available, feel free to improve them!
 
 * [HelloMinecraft](http://hellominecraft.fr/), the plugin's official server, amongst the best French servers out there!
 

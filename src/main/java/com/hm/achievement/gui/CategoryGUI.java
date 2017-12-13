@@ -44,6 +44,7 @@ public class CategoryGUI extends AbstractGUI {
 	private boolean configEnrichedProgressBars;
 	private boolean configNumberedItemsInList;
 	private ChatColor configColor;
+	private ChatColor configListColorNotReceived;
 	private String langListGUITitle;
 	private String langListAchievementReceived;
 	private String langListAchievementNotReceived;
@@ -76,13 +77,16 @@ public class CategoryGUI extends AbstractGUI {
 		configEnrichedProgressBars = plugin.getPluginConfig().getBoolean("EnrichedListProgressBars", true);
 		configNumberedItemsInList = plugin.getPluginConfig().getBoolean("NumberedItemsInList", false);
 		configColor = ChatColor.getByChar(plugin.getPluginConfig().getString("Color", "5").charAt(0));
+		configListColorNotReceived = ChatColor
+				.getByChar(plugin.getPluginConfig().getString("ListColorNotReceived", "8").charAt(0));
 
 		langListGUITitle = ChatColor.translateAlternateColorCodes('&',
 				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List"));
 		langListAchievementReceived = StringEscapeUtils
 				.unescapeJava(plugin.getPluginLang().getString("list-achievement-received", "&a\u2714&f "));
 		langListAchievementNotReceived = StringEscapeUtils
-				.unescapeJava(plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2718&8 "));
+				.unescapeJava(plugin.getPluginLang().getString("list-achievement-not-received", "&4\u2718 ")
+						+ configListColorNotReceived);
 		langListDescription = ChatColor.translateAlternateColorCodes('&',
 				"&7&l" + plugin.getPluginLang().getString("list-description", "Description:"));
 		langListReception = ChatColor.translateAlternateColorCodes('&',
@@ -411,9 +415,11 @@ public class CategoryGUI extends AbstractGUI {
 			lore.add(langListGoal);
 			String strippedAchMessage = REGEX_PATTERN.matcher(description).replaceAll("");
 			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && inelligibleSeriesItem)) {
-				lore.add(ChatColor.translateAlternateColorCodes('&', "&8&k" + strippedAchMessage));
+				lore.add(ChatColor.translateAlternateColorCodes('&',
+						configListColorNotReceived + "&k" + strippedAchMessage));
 			} else {
-				lore.add(ChatColor.translateAlternateColorCodes('&', "&8&o" + strippedAchMessage));
+				lore.add(ChatColor.translateAlternateColorCodes('&',
+						configListColorNotReceived + "&o" + strippedAchMessage));
 			}
 			lore.add("");
 			// Display progress if not COmmands category.
@@ -435,7 +441,7 @@ public class CategoryGUI extends AbstractGUI {
 			if (date != null) {
 				dot = StringEscapeUtils.unescapeJava("&r\u25CF ");
 			} else {
-				dot = StringEscapeUtils.unescapeJava("&8\u25CF &o");
+				dot = StringEscapeUtils.unescapeJava(configListColorNotReceived + "\u25CF &o");
 			}
 			for (String reward : rewards) {
 				lore.add(ChatColor.translateAlternateColorCodes('&', dot + reward));
@@ -454,7 +460,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @return progress bar
 	 */
 	private String constructProgressBar(String achMessage, String level, long statistic, boolean time) {
-		StringBuilder barDisplay = new StringBuilder("&8[");
+		StringBuilder barDisplay = new StringBuilder(configListColorNotReceived.toString()).append("[");
 		// Length of the progress bar; we make it the same size as Goal/Message.
 		int textSize;
 		// MinecraftFont essentially supports latin alphabet characters. If invalid characters are found just use
@@ -479,7 +485,7 @@ public class CategoryGUI extends AbstractGUI {
 			statisticDouble = statistic;
 		}
 		int middleTextSize = FONT.getWidth(middleText);
-		middleText = "&8&o" + middleText;
+		middleText = configListColorNotReceived + "&o" + middleText;
 
 		boolean hasDisplayedMiddleText = false;
 		int i = 1;
@@ -492,17 +498,19 @@ public class CategoryGUI extends AbstractGUI {
 				// Iterate a number of times equal to the number of iterations so far to have the same number of
 				// vertical bars left and right from the middle text.
 				i = textSize / 2 + 1 - i;
-			} else if (i < (((double) textSize / 2 - 1) * statisticDouble) / levelInt) {
-				// Color: progress by user.
-				barDisplay.append(configColor).append('|');
-				i++;
 			} else {
-				// Grey: amount not yet reached by user.
-				barDisplay.append("&8|");
+				if (i < (((double) textSize / 2 - 1) * statisticDouble) / levelInt) {
+					// Standard color: progress by user.
+					barDisplay.append(configColor);
+				} else {
+					// Not received color: amount not yet reached by user.
+					barDisplay.append(configListColorNotReceived);
+				}
+				barDisplay.append("|");
 				i++;
 			}
 		}
-		return barDisplay.append("&8]").toString();
+		return barDisplay.append(configListColorNotReceived).append("]").toString();
 	}
 
 	public ItemStack getPreviousButton() {

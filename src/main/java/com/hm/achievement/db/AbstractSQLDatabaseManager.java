@@ -1,9 +1,6 @@
 package com.hm.achievement.db;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,34 +24,30 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.Reloadable;
-import com.hm.mcshared.file.FileManager;
 
 /**
- * Class used to deal with the database and provide functions to evaluate common queries and retrieve the relevant
- * results.
+ * Abstract class in charge of factoring out common functionality for the database manager.
  * 
  * @author Pyves
- *
  */
-public class SQLDatabaseManager implements Reloadable {
+public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
-	private final AdvancedAchievements plugin;
+	protected final AdvancedAchievements plugin;
 	// Used to do some write operations to the database asynchronously.
-	private final ExecutorService pool;
+	protected final ExecutorService pool;
 	// Connection to the database; remains opened and shared.
-	private final AtomicReference<Connection> sqlConnection;
+	protected final AtomicReference<Connection> sqlConnection;
 
-	private volatile String databaseAddress;
-	private volatile String databaseUser;
-	private volatile String databasePassword;
-	private volatile String tablePrefix;
-	private volatile String additionalConnectionOptions;
-	private volatile DatabaseType databaseType;
+	protected volatile String databaseAddress;
+	protected volatile String databaseUser;
+	protected volatile String databasePassword;
+	protected volatile String tablePrefix;
+	protected volatile String additionalConnectionOptions;
+
 	private DateFormat dateFormat;
 	private boolean configBookChronologicalOrder;
-	private boolean configDatabaseBackup;
 
-	public SQLDatabaseManager(AdvancedAchievements plugin) {
+	public AbstractSQLDatabaseManager(AdvancedAchievements plugin) {
 		this.plugin = plugin;
 		// We expect to execute many short writes to the database. The pool can grow dynamically under high load and
 		// allows to reuse threads.
@@ -65,7 +58,6 @@ public class SQLDatabaseManager implements Reloadable {
 	@Override
 	public void extractConfigurationParameters() {
 		configBookChronologicalOrder = plugin.getPluginConfig().getBoolean("BookChronologicalOrder", true);
-		configDatabaseBackup = plugin.getPluginConfig().getBoolean("DatabaseBackup", true);
 		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
 		boolean dateDisplayTime = plugin.getPluginConfig().getBoolean("DateDisplayTime", false);
 		Locale locale = new Locale(localeString);
@@ -77,42 +69,20 @@ public class SQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Initialises database system and plugin settings.
+	 * Initialises the database system by extracting settings, performing setup tasks and updating schemas if necessary.
 	 */
 	public void initialise() {
 		plugin.getLogger().info("Initialising database... ");
 
-		// Load plugin settings.
-		configurationLoad();
+		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
+		additionalConnectionOptions = plugin.getPluginConfig().getString("AdditionalConnectionOptions", "");
 
-		// Check if JDBC library for the specified database system is available.
 		try {
-			if (databaseType == DatabaseType.SQLITE) {
-				Class.forName("org.sqlite.JDBC");
-			} else if (databaseType == DatabaseType.MYSQL) {
-				Class.forName("com.mysql.jdbc.Driver");
-			} else {
-				Class.forName("org.postgresql.Driver");
-			}
+			performPreliminaryTasks();
 		} catch (ClassNotFoundException e) {
 			plugin.getLogger().severe(
 					"The JBDC library for your database type was not found. Please read the plugin's support for more information.");
 			plugin.setSuccessfulLoad(false);
-		}
-
-		if (configDatabaseBackup && databaseType == DatabaseType.SQLITE) {
-			File backup = new File(plugin.getDataFolder(), "achievements.db.bak");
-			// Only do a daily backup for the .db file.
-			if (System.currentTimeMillis() - backup.lastModified() > 86400000L || backup.length() == 0L) {
-				plugin.getLogger().info("Backing up database file...");
-				try {
-					FileManager fileManager = new FileManager("achievements.db", plugin);
-					fileManager.backupFile();
-				} catch (IOException e) {
-					plugin.getLogger().log(Level.SEVERE, "Error while backing up database file:", e);
-					plugin.setSuccessfulLoad(false);
-				}
-			}
 		}
 
 		// Try to establish connection with database; stays opened until explicitely closed by the plugin..
@@ -135,33 +105,11 @@ public class SQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Loads plugin configuration and sets parameters relevant to the database system. These parameters are not reloaded
-	 * and require a full server restart to change.
+	 * Performs any needed tasks before opening a connection to the database.
+	 * 
+	 * @throws ClassNotFoundException
 	 */
-	private void configurationLoad() {
-		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
-		additionalConnectionOptions = plugin.getPluginConfig().getString("AdditionalConnectionOptions", "");
-
-		String dataHandler = plugin.getPluginConfig().getString("DatabaseType", "sqlite");
-		if ("mysql".equalsIgnoreCase(dataHandler)) {
-			// Get parameters from the MySQL config category.
-			databaseType = DatabaseType.MYSQL;
-			databaseAddress = plugin.getPluginConfig().getString("MYSQL.Database",
-					"jdbc:mysql://localhost:3306/minecraft");
-			databaseUser = plugin.getPluginConfig().getString("MYSQL.User", "root");
-			databasePassword = plugin.getPluginConfig().getString("MYSQL.Password", "root");
-		} else if ("postgresql".equalsIgnoreCase(dataHandler)) {
-			// Get parameters from the PostgreSQL config category.
-			databaseType = DatabaseType.POSTGRESQL;
-			databaseAddress = plugin.getPluginConfig().getString("POSTGRESQL.Database",
-					"jdbc:postgresql://localhost:5432/minecraft");
-			databaseUser = plugin.getPluginConfig().getString("POSTGRESQL.User", "root");
-			databasePassword = plugin.getPluginConfig().getString("POSTGRESQL.Password", "root");
-		} else {
-			// No extra parameters to retrieve!
-			databaseType = DatabaseType.SQLITE;
-		}
-	}
+	protected abstract void performPreliminaryTasks() throws ClassNotFoundException;
 
 	/**
 	 * Shuts the thread pool down and closes connection to database.
@@ -216,26 +164,7 @@ public class SQLDatabaseManager implements Reloadable {
 	 * @return connection object to database
 	 * @throws SQLException
 	 */
-	private Connection createSQLConnection() throws SQLException {
-		if (databaseType == DatabaseType.SQLITE) {
-			File dbfile = new File(plugin.getDataFolder(), "achievements.db");
-			try {
-				if (dbfile.createNewFile()) {
-					plugin.getLogger().info("Successfully created database file.");
-				}
-			} catch (IOException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while creating database file: ", e);
-				plugin.setSuccessfulLoad(false);
-			}
-			return DriverManager.getConnection("jdbc:sqlite:" + dbfile);
-		} else if (databaseType == DatabaseType.MYSQL) {
-			return DriverManager.getConnection(databaseAddress + "?useSSL=false&autoReconnect=true"
-					+ additionalConnectionOptions + "&user=" + databaseUser + "&password=" + databasePassword);
-		} else {
-			return DriverManager.getConnection(databaseAddress + "?autoReconnect=true" + additionalConnectionOptions
-					+ "&user=" + databaseUser + "&password=" + databasePassword);
-		}
-	}
+	protected abstract Connection createSQLConnection() throws SQLException;
 
 	/**
 	 * Gets the list of all the achievements of a player, sorted by chronological or reverse ordering.
@@ -490,24 +419,13 @@ public class SQLDatabaseManager implements Reloadable {
 
 			@Override
 			protected void performWrite() throws SQLException {
-				String query;
-				if (databaseType == DatabaseType.POSTGRESQL) {
-					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
-					// available for PostgreSQL 9.5+.
-					query = "INSERT INTO " + tablePrefix + "achievements VALUES ('" + player.toString()
-							+ "',?,?,?) ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)";
-				} else {
-					query = "REPLACE INTO " + tablePrefix + "achievements VALUES ('" + player.toString() + "',?,?,?)";
-				}
+				String query = "REPLACE INTO " + tablePrefix + "achievements VALUES ('" + player.toString()
+						+ "',?,?,?)";
 				Connection conn = getSQLConnection();
 				try (PreparedStatement prep = conn.prepareStatement(query)) {
 					prep.setString(1, achName);
 					prep.setString(2, achMessage);
 					prep.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
-					if (databaseType == DatabaseType.POSTGRESQL) {
-						prep.setString(4, achMessage);
-						prep.setDate(5, new java.sql.Date(new java.util.Date().getTime()));
-					}
 					prep.execute();
 				}
 			}
@@ -661,24 +579,10 @@ public class SQLDatabaseManager implements Reloadable {
 				@Override
 				protected void performWrite() throws SQLException {
 					Connection conn = getSQLConnection();
-					String query;
-					if (databaseType == DatabaseType.POSTGRESQL) {
-						// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct,
-						// which is available for PostgreSQL 9.5+.
-						query = "INSERT INTO " + tablePrefix + dbName + " VALUES ('" + player.toString() + "', "
-								+ newConnections + ", ?)" + " ON CONFLICT (playername) DO UPDATE SET (" + dbName
-								+ ",date)=('" + newConnections + "', ?)";
-					} else {
-						query = "REPLACE INTO " + tablePrefix + dbName + " VALUES ('" + player.toString() + "', "
-								+ newConnections + ", ?)";
-					}
+					String query = "REPLACE INTO " + tablePrefix + dbName + " VALUES ('" + player.toString() + "', "
+							+ newConnections + ", ?)";
 					try (PreparedStatement prep = conn.prepareStatement(query)) {
-						if (databaseType == DatabaseType.POSTGRESQL) {
-							prep.setString(1, date);
-							prep.setString(2, date);
-						} else {
-							prep.setString(1, date);
-						}
+						prep.setString(1, date);
 						prep.execute();
 					}
 				}
@@ -737,10 +641,6 @@ public class SQLDatabaseManager implements Reloadable {
 				}
 			}
 		}.executeOperation(pool, plugin.getLogger(), "SQL error while deleting connections.");
-	}
-
-	public DatabaseType getDatabaseType() {
-		return databaseType;
 	}
 
 	protected String getTablePrefix() {

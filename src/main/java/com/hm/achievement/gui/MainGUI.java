@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Represents the main GUI, corresponding to all the different available categories and their names.
@@ -20,7 +21,8 @@ import com.hm.achievement.category.NormalAchievements;
 public class MainGUI extends AbstractGUI {
 
 	private static final int MAX_PER_PAGE = 54;
-	private static final ItemStack BARRIER = new ItemStack(Material.BARRIER);
+
+	private final ItemStack lockedItem;
 
 	private boolean configHideNotReceivedCategories;
 	private boolean configHideNoPermissionCategories;
@@ -30,6 +32,11 @@ public class MainGUI extends AbstractGUI {
 
 	public MainGUI(AdvancedAchievements plugin) {
 		super(plugin);
+
+		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
+		// versions change in the future.
+		int version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
+		lockedItem = new ItemStack(version < 8 ? Material.OBSIDIAN : Material.BARRIER);
 	}
 
 	@Override
@@ -44,9 +51,9 @@ public class MainGUI extends AbstractGUI {
 		langListCategoryNotUnlocked = ChatColor.translateAlternateColorCodes('&', "&8" + plugin.getPluginLang()
 				.getString("list-category-not-unlocked", "You have not yet unlocked this category."));
 
-		ItemMeta itemMeta = BARRIER.getItemMeta();
+		ItemMeta itemMeta = lockedItem.getItemMeta();
 		itemMeta.setDisplayName(langListCategoryNotUnlocked);
-		BARRIER.setItemMeta(itemMeta);
+		lockedItem.setItemMeta(itemMeta);
 	}
 
 	/**
@@ -117,7 +124,7 @@ public class MainGUI extends AbstractGUI {
 				return;
 			}
 		}
-		gui.setItem(position, BARRIER);
+		gui.setItem(position, lockedItem);
 	}
 
 	/**
@@ -131,7 +138,7 @@ public class MainGUI extends AbstractGUI {
 	 */
 	private void displayNormalCategory(ItemStack item, Inventory gui, Player player, String category, int position) {
 		if (configHideNotReceivedCategories && !hasReceivedInCategory(player, category)) {
-			gui.setItem(position, BARRIER);
+			gui.setItem(position, lockedItem);
 		} else {
 			gui.setItem(position, item);
 		}

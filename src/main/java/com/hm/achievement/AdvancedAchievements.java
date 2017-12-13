@@ -45,9 +45,12 @@ import com.hm.achievement.command.StatsCommand;
 import com.hm.achievement.command.ToggleCommand;
 import com.hm.achievement.command.TopCommand;
 import com.hm.achievement.command.WeekCommand;
+import com.hm.achievement.db.AbstractSQLDatabaseManager;
 import com.hm.achievement.db.AsyncCachedRequestsSender;
 import com.hm.achievement.db.DatabaseCacheManager;
-import com.hm.achievement.db.SQLDatabaseManager;
+import com.hm.achievement.db.MySQLDatabaseManager;
+import com.hm.achievement.db.PostgreSQLDatabaseManager;
+import com.hm.achievement.db.SQLiteDatabaseManager;
 import com.hm.achievement.gui.CategoryGUI;
 import com.hm.achievement.gui.MainGUI;
 import com.hm.achievement.listener.AchieveArrowListener;
@@ -107,7 +110,7 @@ import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 5.3.3
+ * @version 5.4
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin implements Reloadable {
@@ -171,8 +174,8 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	private CommentedYamlConfiguration gui;
 
 	// Database related.
-	private final SQLDatabaseManager databaseManager;
 	private final DatabaseCacheManager cacheManager;
+	private AbstractSQLDatabaseManager databaseManager;
 	private AsyncCachedRequestsSender asyncCachedRequestsSender;
 
 	// Plugin runnable classes.
@@ -199,7 +202,6 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	public AdvancedAchievements() {
 		successfulLoad = true;
 		overrideDisable = false;
-		databaseManager = new SQLDatabaseManager(this);
 		cacheManager = new DatabaseCacheManager(this);
 		achievementsAndDisplayNames = new HashMap<>();
 		sortedThresholds = new HashMap<>();
@@ -232,7 +234,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		registerListeners();
 		initialiseTabCompleter();
 		initialiseGUIs();
-		databaseManager.initialise();
+		selectAndInitialiseDatabaseManager();
 
 		// Error while loading database do not do any further work.
 		if (overrideDisable) {
@@ -702,6 +704,23 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		mainGUI = new MainGUI(this);
 		categoryGUI = new CategoryGUI(this);
 	}
+	
+	/**
+	 * Selects a database manager implementation (SQLite, MySQL or PostgreSQL) and initialises it.
+	 */
+	private void selectAndInitialiseDatabaseManager() {
+		String dataHandler = config.getString("DatabaseType", "sqlite");
+		if ("mysql".equalsIgnoreCase(dataHandler)) {
+			databaseManager = new MySQLDatabaseManager(this);
+		} else if ("postgresql".equalsIgnoreCase(dataHandler)) {
+			databaseManager = new PostgreSQLDatabaseManager(this);
+		} else {
+			// User has specified "sqlite" or an invalid type.
+			databaseManager = new SQLiteDatabaseManager(this);
+		}
+		databaseManager.initialise();
+	}
+
 
 	/**
 	 * Launches asynchronous scheduled tasks.
@@ -927,14 +946,14 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		return sortedThresholds;
 	}
 
-	public SQLDatabaseManager getDatabaseManager() {
+	public AbstractSQLDatabaseManager getDatabaseManager() {
 		return databaseManager;
 	}
 
 	public DatabaseCacheManager getCacheManager() {
 		return cacheManager;
 	}
-
+	
 	public RewardParser getRewardParser() {
 		return rewardParser;
 	}

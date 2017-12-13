@@ -21,7 +21,6 @@ public class AchieveBlockPlaceListener extends AbstractListener {
 		super(plugin);
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
@@ -38,8 +37,8 @@ public class AchieveBlockPlaceListener extends AbstractListener {
 			return;
 		}
 		if (plugin.getPluginConfig().isConfigurationSection(
-				category + "." + blockName + ':' + block.getState().getData().toItemStack().getDurability())) {
-			blockName += ":" + block.getState().getData().toItemStack().getDurability();
+				category + "." + blockName + ':' + block.getState().getData().toItemStack(0).getDurability())) {
+			blockName += ":" + block.getState().getData().toItemStack(0).getDurability();
 		} else if (!plugin.getPluginConfig().isConfigurationSection(category + "." + blockName)) {
 			return;
 		}

@@ -69,13 +69,12 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 	 * @param block
 	 * @return true if the block can be fertilised, false otherwise
 	 */
-	@SuppressWarnings("deprecation")
 	private boolean canBeFertilised(Material clickedMaterial, Block block) {
-		short durability = block.getState().getData().toItemStack().getDurability();
+		short durability = block.getState().getData().toItemStack(0).getDurability();
 		if (clickedMaterial == Material.DOUBLE_PLANT) {
 			if (durability == 10) {
 				// Upper part of double plant. We must look at the lower part to get the double plant type.
-				durability = block.getRelative(BlockFace.DOWN).getState().getData().toItemStack().getDurability();
+				durability = block.getRelative(BlockFace.DOWN).getState().getData().toItemStack(0).getDurability();
 			}
 			// Fertilisation does not work on double tallgrass and large fern.
 			return durability != 2 && durability != 3;

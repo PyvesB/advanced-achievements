@@ -27,10 +27,14 @@ public class ListGUIListener extends AbstractListener {
 
 	private static final int MAIN_GUI_PAGE = 0;
 
+	private final Material lockedMaterial;
+
 	private String langListGUITitle;
 
 	public ListGUIListener(AdvancedAchievements plugin) {
 		super(plugin);
+
+		lockedMaterial = version < 8 ? Material.OBSIDIAN : Material.BARRIER;
 	}
 
 	@Override
@@ -55,7 +59,7 @@ public class ListGUIListener extends AbstractListener {
 		Player player = (Player) event.getWhoClicked();
 		if (page == MAIN_GUI_PAGE) {
 			// Main GUI, check whether player can interact with the selected item.
-			if (event.getCurrentItem().getType() != Material.BARRIER && event.getRawSlot() < getMainGUIItemCount()) {
+			if (event.getCurrentItem().getType() != lockedMaterial && event.getRawSlot() < getMainGUIItemCount()) {
 				plugin.getCategoryGUI().displayCategoryGUI(event.getCurrentItem(), player, 1);
 			}
 			return;

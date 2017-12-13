@@ -1,7 +1,7 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
 # | Advanced Achievements English translation by DarkPyves  | #
-# |             ~ Valid as of version 5.3.3 ~               | #
+# |              ~ Valid as of version 5.4 ~                | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
@@ -97,6 +97,8 @@ version-command-description-details: "Advanced Achievements enables unique and c
 version-command-vault: "Vault integration:"
 version-command-petmaster: "Pet Master integration:"
 version-command-btlp: "BungeeTabListPlus integration:"
+version-command-essentials: "Essentials integration:"
+version-command-placeholderapi: "PlaceholderAPI integration:"
 version-command-database: "Database type:"
 
 # Related to /aach list.
@@ -113,7 +115,7 @@ list-reward-command: "other"
 list-reward-experience: "receive AMOUNT experience"
 list-reward-increase-max-health: "increase max health by AMOUNT"
 list-achievement-received: "&5\u2714&f "
-list-achievement-not-received: "&4\u2718&8 "
+list-achievement-not-received: "&4\u2718 "
 list-category-not-unlocked: "You have not yet unlocked this category."
 list-back-message: "&7Back"
 list-previous-message: "&7Previous"

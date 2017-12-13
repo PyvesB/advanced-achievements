@@ -86,7 +86,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 			if (!entry.getValue().isDatabaseConsistent()) {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
 				entry.getValue().prepareDatabaseWrite();
-				if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
+				if (plugin.getDatabaseManager() instanceof PostgreSQLDatabaseManager) {
 					batchedRequests.add("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix()
 							+ category.toDBName() + " VALUES ('" + entry.getKey().substring(0, 36) + "', '"
 							+ entry.getKey().substring(36) + "', " + entry.getValue().getValue()
@@ -116,7 +116,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 			if (!entry.getValue().isDatabaseConsistent()) {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
 				entry.getValue().prepareDatabaseWrite();
-				if (plugin.getDatabaseManager().getDatabaseType() == DatabaseType.POSTGRESQL) {
+				if (plugin.getDatabaseManager() instanceof PostgreSQLDatabaseManager) {
 					batchedRequests.add("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix()
 							+ category.toDBName() + " VALUES ('" + entry.getKey() + "', " + entry.getValue().getValue()
 							+ ") ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("

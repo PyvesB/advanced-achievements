@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |    Advanced Achievements 5.3.3 configuration - Readme   | #
+# |     Advanced Achievements 5.4 configuration - Readme    | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -133,6 +133,9 @@ EnrichedListProgressBars: true
 
 # Annotate each achievement displayed in a /aach list category with a number.
 NumberedItemsInList: false
+
+# Color used for Goals and progress bars in /aach list when an achievement is not yet received.
+ListColorNotReceived: 8
 
 # Sort pages of the book in chronological order (false for reverse chronological order).
 BookChronologicalOrder: true

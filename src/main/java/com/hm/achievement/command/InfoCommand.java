@@ -21,6 +21,8 @@ public class InfoCommand extends AbstractCommand {
 	private String langVersionCommandVault;
 	private String langVersionCommandPetmaster;
 	private String langVersionCommandBtlp;
+	private String langVersionCommandEssentials;
+	private String langVersionCommandPlaceholderAPI;
 	private String configDatabaseType;
 	private String langVersionCommandDatabase;
 	private String header;
@@ -57,39 +59,41 @@ public class InfoCommand extends AbstractCommand {
 				+ plugin.getDescription().getWebsite();
 
 		// Display whether Advanced Achievements is linked to Vault.
-		String vaultState;
-		if (plugin.getRewardParser().isEconomySet(false)) {
-			vaultState = "&a\u2714";
-		} else {
-			vaultState = "&4\u2718";
-		}
+		String vaultState = plugin.getRewardParser().isEconomySet(false) ? "&a\u2714" : "&4\u2718";
 		langVersionCommandVault = plugin.getChatHeader() + configColor
 				+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " " + ChatColor.GRAY
 				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(vaultState));
 
 		// Display whether Advanced Achievements is linked to Pet Master.
-		String petMasterState;
-		if (plugin.getPetMasterGiveReceiveListener() != null) {
-			petMasterState = "&a\u2714";
-		} else {
-			petMasterState = "&4\u2718";
-		}
+		String petMasterState = plugin.getPetMasterGiveReceiveListener() != null ? "&a\u2714" : "&4\u2718";
 		langVersionCommandPetmaster = plugin.getChatHeader() + configColor
 				+ plugin.getPluginLang().getString("version-command-petmaster", "Pet Master integration:") + " "
 				+ ChatColor.GRAY
 				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(petMasterState));
 
-		// Display whether BungeeTabListPlus is linked to Pet Master.
-		String btlpState;
-		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
-			btlpState = "&a\u2714";
-		} else {
-			btlpState = "&4\u2718";
-		}
+		// Display whether Advanced Achievements is linked to BungeeTabListPlus.
+		String btlpState = Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus") ? "&a\u2714" : "&4\u2718";
 		langVersionCommandBtlp = plugin.getChatHeader() + configColor
 				+ plugin.getPluginLang().getString("version-command-btlp", "BungeeTabListPlus integration:") + " "
 				+ ChatColor.GRAY
 				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(btlpState));
+
+		// Display whether Advanced Achievements is linked to Essentials.
+		boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials")
+				&& plugin.getPluginConfig().getBoolean("IgnoreAFKPlayedTime", false);
+		String essentialsState = essentialsUsed ? "&a\u2714" : "&4\u2718";
+		langVersionCommandEssentials = plugin.getChatHeader() + configColor
+				+ plugin.getPluginLang().getString("version-command-essentials", "Essentials integration:") + " "
+				+ ChatColor.GRAY
+				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(essentialsState));
+
+		// Display whether Advanced Achievements is linked to PlaceholderAPI.
+		String placeholderAPIState = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "&a\u2714"
+				: "&4\u2718";
+		langVersionCommandPlaceholderAPI = plugin.getChatHeader() + configColor
+				+ plugin.getPluginLang().getString("version-command-placeholderapi", "PlaceholderAPI integration:")
+				+ " " + ChatColor.GRAY
+				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(placeholderAPIState));
 
 		// Display database type.
 		String databaseType;
@@ -115,6 +119,8 @@ public class InfoCommand extends AbstractCommand {
 		sender.sendMessage(langVersionCommandVault);
 		sender.sendMessage(langVersionCommandPetmaster);
 		sender.sendMessage(langVersionCommandBtlp);
+		sender.sendMessage(langVersionCommandEssentials);
+		sender.sendMessage(langVersionCommandPlaceholderAPI);
 		sender.sendMessage(langVersionCommandDatabase);
 	}
 }
