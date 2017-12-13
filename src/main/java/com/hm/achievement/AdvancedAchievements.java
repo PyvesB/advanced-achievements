@@ -28,6 +28,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.AddCommand;
 import com.hm.achievement.command.BookCommand;
 import com.hm.achievement.command.CheckCommand;
 import com.hm.achievement.command.CommandTabCompleter;
@@ -150,6 +151,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	// Additional classes related to plugin modules and commands.
 	private RewardParser rewardParser;
 	private GiveCommand giveCommand;
+	private AddCommand addCommand;
 	private BookCommand bookCommand;
 	private TopCommand topCommand;
 	private WeekCommand weekCommand;
@@ -328,6 +330,8 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			checkCommand.executeCommand(sender, args, "check");
 		} else if ((args.length >= 3) && "delete".equalsIgnoreCase(args[0])) {
 			deleteCommand.executeCommand(sender, args, "delete");
+		} else if ((args.length == 4) && "add".equalsIgnoreCase(args[0])) {
+			addCommand.executeCommand(sender, args, "add");
 		} else {
 			helpCommand.executeCommand(sender, args, null);
 		}
@@ -507,6 +511,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 		rewardParser = new RewardParser(this);
 		giveCommand = new GiveCommand(this);
+		addCommand = new AddCommand(this);
 		bookCommand = new BookCommand(this);
 		topCommand = new TopCommand(this);
 		weekCommand = new WeekCommand(this);
