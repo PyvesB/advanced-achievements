@@ -623,6 +623,16 @@ PlayerCommands:
         Commands:
           Execute: "say §cALERT: §7PLAYER is now a statistician"
           Display: Broadcast
+          
+# When the command /aach add is called for this category.
+Customs:
+  votes:
+    10:
+      Message: Vote 10 times for the server!
+      Name: customs_votes_10
+      DisplayName: Server fan
+      Reward:
+        Money: 5
     
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
