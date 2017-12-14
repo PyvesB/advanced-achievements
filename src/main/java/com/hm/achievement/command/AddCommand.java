@@ -1,7 +1,7 @@
 package com.hm.achievement.command;
 
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -11,50 +11,27 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
 
 /**
- * Class in charge of increase the progression of an achievement by command.
+ * Class in charge of increase a statistic of an achievement by command.
  * 
  * @author Phoetrix
  */
-public class AddCommand extends AbstractCommand {
+public class AddCommand extends AbstractParsableCommand {
 
-	private String langPlayerOffline;
 	private String langErrorValue;
 	private String langAchievementIncrease;
 	private String langUnknownCategory;
 
-	private class StatisticIncrease extends StatisticIncreaseHandler {
-		protected StatisticIncrease(AdvancedAchievements plugin) {
-			super(plugin);
-		}
-
-		protected void updateStatisticAndAwardAchievementsIfAvailable(Player player, NormalAchievements category,
-				int incrementValue) {
-			long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, player.getUniqueId(),
-					incrementValue);
-			checkThresholdsAndAchievements(player, category.toString(), amount);
-		}
-
-		protected void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category,
-				String subcategory, int incrementValue) {
-			long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, subcategory,
-					player.getUniqueId(), incrementValue);
-			checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
-		}
-	}
-
-	static StatisticIncrease statistic;
+	private final StatisticIncreaseHandler statistic;
 
 	public AddCommand(AdvancedAchievements plugin) {
 		super(plugin);
-		statistic = new StatisticIncrease(plugin);
+		statistic = new StatisticIncreaseHandler(plugin);
 
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
-		langPlayerOffline = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("player-offline", "The player PLAYER is offline!");
 		langErrorValue = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("error-value", "The value VALUE must to be an integer!");
 		langAchievementIncrease = plugin.getChatHeader() + plugin.getPluginLang().getString("achievement-increase",
@@ -63,20 +40,13 @@ public class AddCommand extends AbstractCommand {
 				+ plugin.getPluginLang().getString("achievement-unknown", "Achievement ACH is unknown!");
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	protected void executeCommand(CommandSender sender, String[] args) {
+	protected void executeSpecificActions(CommandSender sender, String[] args, Player player) {
 		int value = 0;
-		Player player = Bukkit.getPlayer(args[3]);
 
-		if (player == null) {
-			sender.sendMessage(StringUtils.replaceOnce(langPlayerOffline, "PLAYER", args[3]));
-			return;
-		}
-
-		try {
+		if (NumberUtils.isNumber(args[1])) {
 			value = Integer.parseInt(args[1]);
-		} catch (NumberFormatException nfe) {
+		} else {
 			sender.sendMessage(StringUtils.replaceOnce(langErrorValue, "VALUE", args[1]));
 			return;
 		}
@@ -84,8 +54,10 @@ public class AddCommand extends AbstractCommand {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
 
-			if (args[2].equalsIgnoreCase(categoryName) && !categoryName.equalsIgnoreCase("connections")) {
-				statistic.updateStatisticAndAwardAchievementsIfAvailable(player, category, value);
+			if (args[2].equalsIgnoreCase(categoryName) && category != NormalAchievements.CONNECTIONS) {
+				long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, player.getUniqueId(),
+						value);
+				statistic.checkThresholdsAndAchievements(player, category.toString(), amount);
 				sender.sendMessage(StringUtils.replaceEach(langAchievementIncrease,
 						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
 				return;
@@ -98,7 +70,9 @@ public class AddCommand extends AbstractCommand {
 				String categoryPath = categoryName + "." + subcategory;
 
 				if (args[2].equalsIgnoreCase(categoryPath)) {
-					statistic.updateStatisticAndAwardAchievementsIfAvailable(player, category, subcategory, value);
+					long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, subcategory,
+							player.getUniqueId(), value);
+					statistic.checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
 					sender.sendMessage(StringUtils.replaceEach(langAchievementIncrease,
 							new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
 					return;
