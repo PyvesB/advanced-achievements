@@ -270,8 +270,8 @@ public class FileUpdater {
 		updateSetting(lang, "error-value", "The value VALUE must to be an integer!");
 		updateSetting(lang, "achievement-increase", "Achievement ACH increase by AMOUNT for PLAYER!");
 		updateSetting(lang, "achievement-unknown", "Achievement ACH is unknown!");
-		updateSetting(lang, "aach-command-add", "Increase the progression of an achievement.");
-		updateSetting(lang, "aach-command-add-hover", "Player must be online; All achievements can be used except Commands achievements; Write a subcategory like this: category.subcategory");
+		updateSetting(lang, "aach-command-add", "Increase a statistic.");
+		updateSetting(lang, "aach-command-add-hover", "Player must be online; mainly used for Customs achievements.");
 		updateSetting(lang, "list-customs", "Customs Achievements");
 		
 		if (updatePerformed) {
@@ -314,7 +314,7 @@ public class FileUpdater {
 		updateSetting(gui, "NextButton.Metadata", 0);
 		
 		// Added in version 5.4.X:
-		updateSetting(gui, "Customs.Item", "writable_book");
+		updateSetting(gui, "Customs.Item", "feather");
 		updateSetting(gui, "Customs.Metadata", 0);
 
 		if (updatePerformed) {
