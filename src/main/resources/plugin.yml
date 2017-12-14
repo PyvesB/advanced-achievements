@@ -43,7 +43,7 @@ permissions:
     description: Allows to give achievements by command.
     default: op
   achievement.add:
-    description: Allows to increase the progression of an achievement by command.
+    description: Allows to increase a statistic.
     default: op
   achievement.check:
     description: Allows to check if achievements were received by players.
