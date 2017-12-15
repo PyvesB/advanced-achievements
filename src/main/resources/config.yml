@@ -625,7 +625,7 @@ PlayerCommands:
           Display: Broadcast
           
 # When the command /aach add is called for this category.
-Customs:
+Custom:
   votes:
     10:
       Message: Vote 10 times for the server!
