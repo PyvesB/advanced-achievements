@@ -18,7 +18,7 @@ import com.hm.achievement.utils.StatisticIncreaseHandler;
 public class AddCommand extends AbstractParsableCommand {
 
 	private String langErrorValue;
-	private String langAchievementIncrease;
+	private String langStatisticIncreased;
 	private String langUnknownCategory;
 
 	private final StatisticIncreaseHandler statistic;
@@ -34,8 +34,8 @@ public class AddCommand extends AbstractParsableCommand {
 		super.extractConfigurationParameters();
 		langErrorValue = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("error-value", "The value VALUE must to be an integer!");
-		langAchievementIncrease = plugin.getChatHeader() + plugin.getPluginLang().getString("achievement-increase",
-				"Achievement ACH increase by AMOUNT for PLAYER!");
+		langStatisticIncreased = plugin.getChatHeader() + plugin.getPluginLang().getString("statistic-increased",
+				"Statistic ACH increased by AMOUNT for PLAYER!");
 		langUnknownCategory = plugin.getChatHeader()
 				+ plugin.getPluginLang().getString("achievement-unknown", "Achievement ACH is unknown!");
 	}
@@ -58,7 +58,7 @@ public class AddCommand extends AbstractParsableCommand {
 				long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, player.getUniqueId(),
 						value);
 				statistic.checkThresholdsAndAchievements(player, category.toString(), amount);
-				sender.sendMessage(StringUtils.replaceEach(langAchievementIncrease,
+				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
 						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
 				return;
 			}
@@ -73,7 +73,7 @@ public class AddCommand extends AbstractParsableCommand {
 					long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, subcategory,
 							player.getUniqueId(), value);
 					statistic.checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
-					sender.sendMessage(StringUtils.replaceEach(langAchievementIncrease,
+					sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
 							new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
 					return;
 				}
