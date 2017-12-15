@@ -268,11 +268,11 @@ public class FileUpdater {
 
 		// Added in version 5.4.X:
 		updateSetting(lang, "error-value", "The value VALUE must to be an integer!");
-		updateSetting(lang, "achievement-increase", "Achievement ACH increase by AMOUNT for PLAYER!");
+		updateSetting(lang, "statistic-increased", "Statistic ACH increased by AMOUNT for PLAYER!");
 		updateSetting(lang, "achievement-unknown", "Achievement ACH is unknown!");
 		updateSetting(lang, "aach-command-add", "Increase a statistic.");
 		updateSetting(lang, "aach-command-add-hover", "Player must be online; mainly used for Customs achievements.");
-		updateSetting(lang, "list-customs", "Customs Achievements");
+		updateSetting(lang, "list-custom", "Custom Categories");
 		
 		if (updatePerformed) {
 			// Changes in the language file: save and do a fresh load.
