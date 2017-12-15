@@ -40,7 +40,7 @@ achievement-given: "Achievement given!"
 
 # Related to /aach add.
 error-value: "The value VALUE must to be an integer!"
-achievement-increase: "Achievement ACH increase by AMOUNT for PLAYER!"
+achievement-increase: "Statistic ACH increased by AMOUNT for PLAYER!"
 achievement-unknown: "Achievement ACH is unknown!"
 
 # Related to achievement reception.
