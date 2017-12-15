@@ -14,7 +14,7 @@ public enum MultipleAchievements {
 	CRAFTS("Crafts", "Items Crafted", "When a specific item is crafted (specify material name, lower case).", "item"),
 	BREEDING("Breeding", "Animals Bred", "When animals breed (specify an entity name, lower case).", "mobname"),
 	PLAYERCOMMANDS("PlayerCommands", "Commands Entered", "When a player enters a specific command (specify command prefixes in lower case without spaces).", "command"),
-	CUSTOMS("Customs", "Customs Achievements", "When the command /aach add is called for this category.", "customname");
+	CUSTOMS("Customs", "Custom Categories", "When the command /aach add is called for this category.", "customname");
 
 	private final String categoryName;
 	private final String langDefault;
