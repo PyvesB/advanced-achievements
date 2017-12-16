@@ -1,7 +1,6 @@
 package com.hm.achievement.db;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,19 +55,15 @@ public class AsyncCachedRequestsSender implements Runnable {
 			return;
 		}
 
-		new SQLWriteOperation() {
-
-			@Override
-			protected void performWrite() throws SQLException {
-				Connection conn = plugin.getDatabaseManager().getSQLConnection();
-				try (Statement st = conn.createStatement()) {
-					for (String request : batchedRequests) {
-						st.addBatch(request);
-					}
-					st.executeBatch();
+		((SQLWriteOperation) () -> {
+			Connection conn = plugin.getDatabaseManager().getSQLConnection();
+			try (Statement st = conn.createStatement()) {
+				for (String request : batchedRequests) {
+					st.addBatch(request);
 				}
+				st.executeBatch();
 			}
-		}.attemptWrites(plugin.getLogger(), "SQL error while batching statistic updates.");
+		}).attemptWrites(plugin.getLogger(), "SQL error while batching statistic updates.");
 	}
 
 	/**

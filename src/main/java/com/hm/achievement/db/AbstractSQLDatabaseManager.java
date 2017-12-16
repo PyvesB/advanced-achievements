@@ -415,21 +415,16 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param achMessage
 	 */
 	public void registerAchievement(final UUID player, final String achName, final String achMessage) {
-		new SQLWriteOperation() {
-
-			@Override
-			protected void performWrite() throws SQLException {
-				String query = "REPLACE INTO " + tablePrefix + "achievements VALUES ('" + player.toString()
-						+ "',?,?,?)";
-				Connection conn = getSQLConnection();
-				try (PreparedStatement prep = conn.prepareStatement(query)) {
-					prep.setString(1, achName);
-					prep.setString(2, achMessage);
-					prep.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
-					prep.execute();
-				}
+		((SQLWriteOperation) () -> {
+			String query = "REPLACE INTO " + tablePrefix + "achievements VALUES ('" + player.toString() + "',?,?,?)";
+			Connection conn = getSQLConnection();
+			try (PreparedStatement prep = conn.prepareStatement(query)) {
+				prep.setString(1, achName);
+				prep.setString(2, achMessage);
+				prep.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
+				prep.execute();
 			}
-		}.executeOperation(pool, plugin.getLogger(), "SQL error while registering achievement.");
+		}).executeOperation(pool, plugin.getLogger(), "SQL error while registering achievement.");
 	}
 
 	/**
@@ -574,19 +569,15 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				prev = rs.getInt(dbName);
 			}
 			final int newConnections = prev + 1;
-			new SQLWriteOperation() {
-
-				@Override
-				protected void performWrite() throws SQLException {
-					Connection conn = getSQLConnection();
-					String query = "REPLACE INTO " + tablePrefix + dbName + " VALUES ('" + player.toString() + "', "
-							+ newConnections + ", ?)";
-					try (PreparedStatement prep = conn.prepareStatement(query)) {
-						prep.setString(1, date);
-						prep.execute();
-					}
+			((SQLWriteOperation) () -> {
+				Connection writeConn = getSQLConnection();
+				String query = "REPLACE INTO " + tablePrefix + dbName + " VALUES ('" + player.toString() + "', "
+						+ newConnections + ", ?)";
+				try (PreparedStatement writePrep = writeConn.prepareStatement(query)) {
+					writePrep.setString(1, date);
+					writePrep.execute();
 				}
-			}.executeOperation(pool, plugin.getLogger(), "SQL error while updating connection.");
+			}).executeOperation(pool, plugin.getLogger(), "SQL error while updating connection.");
 			return newConnections;
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while handling connection event: ", e);
@@ -601,27 +592,23 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param achName
 	 */
 	public void deletePlayerAchievement(final UUID player, final String achName) {
-		new SQLWriteOperation() {
-
-			@Override
-			protected void performWrite() throws SQLException {
-				Connection conn = getSQLConnection();
-				String query = "DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
-						+ "' AND achievement = ?";
-				if (achName.contains("'")) {
-					// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to
-					// 3.0.2 where names containing single quotes were inserted with two single quotes in the database.
-					query = StringUtils.replaceOnce(query, "achievement = ?", "(achievement = ? OR achievement = ?)");
-				}
-				try (PreparedStatement prep = conn.prepareStatement(query)) {
-					prep.setString(1, achName);
-					if (achName.contains("'")) {
-						prep.setString(2, StringUtils.replace(achName, "'", "''"));
-					}
-					prep.execute();
-				}
+		((SQLWriteOperation) () -> {
+			Connection conn = getSQLConnection();
+			String query = "DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
+					+ "' AND achievement = ?";
+			if (achName.contains("'")) {
+				// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
+				// where names containing single quotes were inserted with two single quotes in the database.
+				query = StringUtils.replaceOnce(query, "achievement = ?", "(achievement = ? OR achievement = ?)");
 			}
-		}.executeOperation(pool, plugin.getLogger(), "SQL error while deleting achievement.");
+			try (PreparedStatement prep = conn.prepareStatement(query)) {
+				prep.setString(1, achName);
+				if (achName.contains("'")) {
+					prep.setString(2, StringUtils.replace(achName, "'", "''"));
+				}
+				prep.execute();
+			}
+		}).executeOperation(pool, plugin.getLogger(), "SQL error while deleting achievement.");
 	}
 
 	/**
@@ -630,17 +617,13 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param player
 	 */
 	public void clearConnection(final UUID player) {
-		new SQLWriteOperation() {
-
-			@Override
-			protected void performWrite() throws SQLException {
-				Connection conn = getSQLConnection();
-				try (Statement st = conn.createStatement()) {
-					st.executeQuery("DELETE FROM " + tablePrefix + "connections WHERE playername = '"
-							+ player.toString() + "'");
-				}
+		((SQLWriteOperation) () -> {
+			Connection conn = getSQLConnection();
+			try (Statement st = conn.createStatement()) {
+				st.executeQuery(
+						"DELETE FROM " + tablePrefix + "connections WHERE playername = '" + player.toString() + "'");
 			}
-		}.executeOperation(pool, plugin.getLogger(), "SQL error while deleting connections.");
+		}).executeOperation(pool, plugin.getLogger(), "SQL error while deleting connections.");
 	}
 
 	protected String getTablePrefix() {

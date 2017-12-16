@@ -11,16 +11,17 @@ import java.util.logging.Logger;
  * @author Pyves
  *
  */
-public abstract class SQLWriteOperation {
+@FunctionalInterface
+public interface SQLWriteOperation {
 
-	private static final int NUM_OF_ATTEMPTS = 5;
+	static final int MAX_ATTEMPTS = 5;
 
 	/**
 	 * Performs a single write operation to the database.
 	 * 
 	 * @throws SQLException
 	 */
-	protected abstract void performWrite() throws SQLException;
+	void performWrite() throws SQLException;
 
 	/**
 	 * Performs the write operation with an Executor.
@@ -29,7 +30,7 @@ public abstract class SQLWriteOperation {
 	 * @param logger
 	 * @param exceptionMessage
 	 */
-	protected void executeOperation(final Executor executor, final Logger logger, final String exceptionMessage) {
+	public default void executeOperation(final Executor executor, final Logger logger, final String exceptionMessage) {
 		executor.execute(() -> attemptWrites(logger, exceptionMessage));
 	}
 
@@ -39,14 +40,14 @@ public abstract class SQLWriteOperation {
 	 * @param logger
 	 * @param exceptionMessage
 	 */
-	protected void attemptWrites(final Logger logger, final String exceptionMessage) {
-		for (int attempt = 1; attempt <= NUM_OF_ATTEMPTS; ++attempt) {
+	default void attemptWrites(final Logger logger, final String exceptionMessage) {
+		for (int attempt = 1; attempt <= MAX_ATTEMPTS; ++attempt) {
 			try {
 				performWrite();
 				// Operation succeeded: return immediately.
 				return;
 			} catch (SQLException e) {
-				if (attempt == NUM_OF_ATTEMPTS) {
+				if (attempt == MAX_ATTEMPTS) {
 					// Final attempt: log error.
 					logger.log(Level.SEVERE, exceptionMessage, e);
 				} else {
@@ -62,7 +63,7 @@ public abstract class SQLWriteOperation {
 	 * 
 	 * @param logger
 	 */
-	private void sleepOneSecond(Logger logger) {
+	default void sleepOneSecond(Logger logger) {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {

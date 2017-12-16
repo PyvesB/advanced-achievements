@@ -43,25 +43,21 @@ public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 
 	@Override
 	public void registerAchievement(final UUID player, final String achName, final String achMessage) {
-		new SQLWriteOperation() {
-
-			@Override
-			protected void performWrite() throws SQLException {
-				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
-				// available for PostgreSQL 9.5+.
-				String query = "INSERT INTO " + tablePrefix + "achievements VALUES ('" + player.toString()
-						+ "',?,?,?) ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)";
-				Connection conn = getSQLConnection();
-				try (PreparedStatement prep = conn.prepareStatement(query)) {
-					prep.setString(1, achName);
-					prep.setString(2, achMessage);
-					prep.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
-					prep.setString(4, achMessage);
-					prep.setDate(5, new java.sql.Date(new java.util.Date().getTime()));
-					prep.execute();
-				}
+		((SQLWriteOperation) () -> {
+			// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
+			// available for PostgreSQL 9.5+.
+			String query = "INSERT INTO " + tablePrefix + "achievements VALUES ('" + player.toString() + "',?,?,?)"
+					+ " ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)";
+			Connection conn = getSQLConnection();
+			try (PreparedStatement prep = conn.prepareStatement(query)) {
+				prep.setString(1, achName);
+				prep.setString(2, achMessage);
+				prep.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
+				prep.setString(4, achMessage);
+				prep.setDate(5, new java.sql.Date(new java.util.Date().getTime()));
+				prep.execute();
 			}
-		}.executeOperation(pool, plugin.getLogger(), "SQL error while registering achievement.");
+		}).executeOperation(pool, plugin.getLogger(), "SQL error while registering achievement.");
 	}
 
 	@Override
@@ -77,23 +73,19 @@ public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 				prev = rs.getInt(dbName);
 			}
 			final int newConnections = prev + 1;
-			new SQLWriteOperation() {
-
-				@Override
-				protected void performWrite() throws SQLException {
-					Connection conn = getSQLConnection();
-					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct,
-					// which is available for PostgreSQL 9.5+.
-					String query = "INSERT INTO " + tablePrefix + dbName + " VALUES ('" + player.toString() + "', "
-							+ newConnections + ", ?)" + " ON CONFLICT (playername) DO UPDATE SET (" + dbName
-							+ ",date)=('" + newConnections + "', ?)";
-					try (PreparedStatement prep = conn.prepareStatement(query)) {
-						prep.setString(1, date);
-						prep.setString(2, date);
-						prep.execute();
-					}
+			((SQLWriteOperation) () -> {
+				Connection writeConn = getSQLConnection();
+				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct,
+				// which is available for PostgreSQL 9.5+.
+				String query = "INSERT INTO " + tablePrefix + dbName + " VALUES ('" + player.toString() + "', "
+						+ newConnections + ", ?)" + " ON CONFLICT (playername) DO UPDATE SET (" + dbName + ",date)=('"
+						+ newConnections + "', ?)";
+				try (PreparedStatement writePrep = writeConn.prepareStatement(query)) {
+					writePrep.setString(1, date);
+					writePrep.setString(2, date);
+					writePrep.execute();
 				}
-			}.executeOperation(pool, plugin.getLogger(), "SQL error while updating connection.");
+			}).executeOperation(pool, plugin.getLogger(), "SQL error while updating connection.");
 			return newConnections;
 		} catch (SQLException e) {
 			plugin.getLogger().log(Level.SEVERE, "SQL error while handling connection event: ", e);
