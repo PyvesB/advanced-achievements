@@ -42,6 +42,9 @@ permissions:
   achievement.give:
     description: Allows to give achievements by command.
     default: op
+  achievement.add:
+    description: Allows to increase a statistic.
+    default: op
   achievement.check:
     description: Allows to check if achievements were received by players.
     default: op
@@ -193,6 +196,6 @@ permissions:
   achievement.count.smelting:
     description: Allows smelting statistics in database to increase.
     default: true
-# Additional permissions are available for the Breaks, Places, Crafts, Kills, Breeding and PlayerCommands categories.
+# Additional permissions are available for the Breaks, Places, Crafts, Kills, Breeding, PlayerCommands and Custom categories.
 # They depend on the sub-categories defined; for instance for stone breaks: achievement.count.breaks.stone
 # For PlayerCommands, use lower case without spaces nor the initial slash: achievement.count.playercommands.aachbook

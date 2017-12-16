@@ -170,6 +170,9 @@ PlayerCommands:
 Commands:
   Item: bookshelf
   Metadata: 0
+Custom:
+  Item: feather
+  Metadata: 0
 
 #============================================================#
 # +--------------------------------------------------------+ #

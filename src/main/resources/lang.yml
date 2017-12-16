@@ -38,6 +38,11 @@ achievement-already-received: "The player PLAYER has already received this achie
 achievement-not-found: "The specified achievement was not found in Commands category."
 achievement-given: "Achievement given!"
 
+# Related to /aach add.
+error-value: "The value VALUE must to be an integer!"
+statistic-increased: "Statistic ACH increased by AMOUNT for PLAYER!"
+achievement-unknown: "Achievement ACH is unknown!"
+
 # Related to achievement reception.
 achievement-received: "PLAYER received the achievement:"
 achievement-new: "New Achievement:"
@@ -68,6 +73,8 @@ aach-command-top: "Display personal and global rankings."
 aach-command-top-hover: "Who are the server's leaders and how do you compare to them?"
 aach-command-give: "Give achievement ACH to NAME."
 aach-command-give-hover: "Player must be online; only Commands achievements can be used."
+aach-command-add: "Increase a statistic."
+aach-command-add-hover: "Player must be online; mainly used for Custom Categories."
 aach-command-reload: "Reload the plugin's configuration."
 aach-command-reload-hover: "Reload most settings in config.yml, gui.yml and lang.yml files."
 aach-command-info: "Display information about the plugin."
@@ -171,6 +178,7 @@ list-petmastergive: "Pets Given to Another Player"
 list-petmasterreceive: "Pets Received from Another Player"
 list-smelting: "Items Smelt"
 list-commands: "Other Achievements"
+list-custom: "Custom Categories"
 
 # Related to /aach toggle.
 toggle-displayed: "You will now be notified when other players get achievements."

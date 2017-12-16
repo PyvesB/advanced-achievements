@@ -46,6 +46,48 @@ public class StatisticIncreaseHandler implements Reloadable {
 		}
 		configExcludedWorlds = new HashSet<>(plugin.getPluginConfig().getList("ExcludedWorlds"));
 	}
+	
+	/**
+	 * Compares the current value to the achievement thresholds. If a threshold is reached, awards the achievement if it
+	 * wasn't previously received.
+	 * 
+	 * @param player
+	 * @param categorySubcategory
+	 * @param currentValue
+	 */
+	public void checkThresholdsAndAchievements(Player player, String categorySubcategory, long currentValue) {
+		// Iterate through all the different thresholds.
+		for (long threshold : plugin.getSortedThresholds().get(categorySubcategory)) {
+			// Check whether player has met the threshold; convert from hours to millis if played time.
+			if (currentValue >= threshold && !"PlayedTime".equals(categorySubcategory)
+					|| currentValue >= 3600000L * threshold) {
+				String configAchievement = categorySubcategory + "." + threshold;
+				String achievementName = plugin.getPluginConfig().getString(configAchievement + ".Name");
+				// Check whether player has received the achievement.
+				if (!plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
+					// Fire achievement event.
+					PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
+							.player(player).name(achievementName)
+							.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
+							.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
+							.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
+							.commandMessage(plugin.getRewardParser().getCustomCommandMessage(configAchievement))
+							.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
+							.moneyReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Money"))
+							.experienceReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Experience"))
+							.maxHealthReward(
+									plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxHealth"))
+							.maxOxygenReward(
+									plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxOxygen"));
+
+					Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
+				}
+			} else {
+				// Entries in List sorted in increasing order, all subsequent thresholds will fail the condition.
+				return;
+			}
+		}
+	}
 
 	/**
 	 * Determines whether the statistic increase should be taken into account.
@@ -80,47 +122,5 @@ public class StatisticIncreaseHandler implements Reloadable {
 		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
 
 		return !isNPC && !restrictedCreative && !restrictedSpectator && !restrictedAdventure && !excludedWorld;
-	}
-
-	/**
-	 * Compares the current value to the achievement thresholds. If a threshold is reached, awards the achievement if it
-	 * wasn't previously received.
-	 * 
-	 * @param player
-	 * @param categorySubcategory
-	 * @param currentValue
-	 */
-	protected void checkThresholdsAndAchievements(Player player, String categorySubcategory, long currentValue) {
-		// Iterate through all the different thresholds.
-		for (long threshold : plugin.getSortedThresholds().get(categorySubcategory)) {
-			// Check whether player has met the threshold; convert from hours to millis if played time.
-			if (currentValue >= threshold && !"PlayedTime".equals(categorySubcategory)
-					|| currentValue >= 3600000L * threshold) {
-				String configAchievement = categorySubcategory + "." + threshold;
-				String achievementName = plugin.getPluginConfig().getString(configAchievement + ".Name");
-				// Check whether player has received the achievement.
-				if (!plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
-					// Fire achievement event.
-					PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
-							.player(player).name(achievementName)
-							.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
-							.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
-							.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
-							.commandMessage(plugin.getRewardParser().getCustomCommandMessage(configAchievement))
-							.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
-							.moneyReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Money"))
-							.experienceReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Experience"))
-							.maxHealthReward(
-									plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxHealth"))
-							.maxOxygenReward(
-									plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxOxygen"));
-
-					Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
-				}
-			} else {
-				// Entries in List sorted in increasing order, all subsequent thresholds will fail the condition.
-				return;
-			}
-		}
 	}
 }

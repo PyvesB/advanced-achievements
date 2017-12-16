@@ -266,6 +266,14 @@ public class FileUpdater {
 		updateSetting(lang, "version-command-essentials", "Essentials integration:");
 		updateSetting(lang, "version-command-placeholderapi", "PlaceholderAPI integration:");
 
+		// Added in version 5.4.X:
+		updateSetting(lang, "error-value", "The value VALUE must to be an integer!");
+		updateSetting(lang, "statistic-increased", "Statistic ACH increased by AMOUNT for PLAYER!");
+		updateSetting(lang, "achievement-unknown", "Achievement ACH is unknown!");
+		updateSetting(lang, "aach-command-add", "Increase a statistic.");
+		updateSetting(lang, "aach-command-add-hover", "Player must be online; mainly used for Custom Categories.");
+		updateSetting(lang, "list-custom", "Custom Categories");
+		
 		if (updatePerformed) {
 			// Changes in the language file: save and do a fresh load.
 			try {
@@ -304,6 +312,10 @@ public class FileUpdater {
 		updateSetting(gui, "PreviousButton.Metadata", 0);
 		updateSetting(gui, "NextButton.Item", "stone_button");
 		updateSetting(gui, "NextButton.Metadata", 0);
+		
+		// Added in version 5.4.X:
+		updateSetting(gui, "Customs.Item", "feather");
+		updateSetting(gui, "Customs.Metadata", 0);
 
 		if (updatePerformed) {
 			// Changes in the gui file: save and do a fresh load.
