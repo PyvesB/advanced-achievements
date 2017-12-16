@@ -271,7 +271,7 @@ public class FileUpdater {
 		updateSetting(lang, "statistic-increased", "Statistic ACH increased by AMOUNT for PLAYER!");
 		updateSetting(lang, "achievement-unknown", "Achievement ACH is unknown!");
 		updateSetting(lang, "aach-command-add", "Increase a statistic.");
-		updateSetting(lang, "aach-command-add-hover", "Player must be online; mainly used for Customs achievements.");
+		updateSetting(lang, "aach-command-add-hover", "Player must be online; mainly used for Custom Categories.");
 		updateSetting(lang, "list-custom", "Custom Categories");
 		
 		if (updatePerformed) {
