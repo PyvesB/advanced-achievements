@@ -414,9 +414,9 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param achName
 	 * @param achMessage
 	 */
-	public void registerAchievement(final UUID player, final String achName, final String achMessage) {
+	public void registerAchievement(UUID player, String achName, String achMessage) {
+		String query = "REPLACE INTO " + tablePrefix + "achievements VALUES ('" + player.toString() + "',?,?,?)";
 		((SQLWriteOperation) () -> {
-			String query = "REPLACE INTO " + tablePrefix + "achievements VALUES ('" + player.toString() + "',?,?,?)";
 			Connection conn = getSQLConnection();
 			try (PreparedStatement prep = conn.prepareStatement(query)) {
 				prep.setString(1, achName);
@@ -557,8 +557,8 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param date
 	 * @return connections statistic
 	 */
-	public int updateAndGetConnection(final UUID player, final String date) {
-		final String dbName = NormalAchievements.CONNECTIONS.toDBName();
+	public int updateAndGetConnection(UUID player, String date) {
+		String dbName = NormalAchievements.CONNECTIONS.toDBName();
 		Connection conn = getSQLConnection();
 		try (PreparedStatement prep = conn
 				.prepareStatement("SELECT " + dbName + " FROM " + tablePrefix + dbName + " WHERE playername = ?")) {
@@ -568,11 +568,11 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			while (rs.next()) {
 				prev = rs.getInt(dbName);
 			}
-			final int newConnections = prev + 1;
+			int newConnections = prev + 1;
+			String query = "REPLACE INTO " + tablePrefix + dbName + " VALUES ('" + player.toString() + "', "
+					+ newConnections + ", ?)";
 			((SQLWriteOperation) () -> {
 				Connection writeConn = getSQLConnection();
-				String query = "REPLACE INTO " + tablePrefix + dbName + " VALUES ('" + player.toString() + "', "
-						+ newConnections + ", ?)";
 				try (PreparedStatement writePrep = writeConn.prepareStatement(query)) {
 					writePrep.setString(1, date);
 					writePrep.execute();
@@ -591,16 +591,16 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param player
 	 * @param achName
 	 */
-	public void deletePlayerAchievement(final UUID player, final String achName) {
+	public void deletePlayerAchievement(UUID player, String achName) {
+		// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
+		// where names containing single quotes were inserted with two single quotes in the database.
+		String query = achName.contains("'")
+				? "DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
+						+ "' AND (achievement = ? OR achievement = ?)"
+				: "DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
+						+ "' AND achievement = ?";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
-			String query = "DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
-					+ "' AND achievement = ?";
-			if (achName.contains("'")) {
-				// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
-				// where names containing single quotes were inserted with two single quotes in the database.
-				query = StringUtils.replaceOnce(query, "achievement = ?", "(achievement = ? OR achievement = ?)");
-			}
 			try (PreparedStatement prep = conn.prepareStatement(query)) {
 				prep.setString(1, achName);
 				if (achName.contains("'")) {
@@ -616,7 +616,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * 
 	 * @param player
 	 */
-	public void clearConnection(final UUID player) {
+	public void clearConnection(UUID player) {
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (Statement st = conn.createStatement()) {

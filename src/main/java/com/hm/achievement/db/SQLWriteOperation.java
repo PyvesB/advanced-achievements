@@ -30,7 +30,7 @@ public interface SQLWriteOperation {
 	 * @param logger
 	 * @param exceptionMessage
 	 */
-	public default void executeOperation(final Executor executor, final Logger logger, final String exceptionMessage) {
+	public default void executeOperation(Executor executor, Logger logger, String exceptionMessage) {
 		executor.execute(() -> attemptWrites(logger, exceptionMessage));
 	}
 
@@ -40,7 +40,7 @@ public interface SQLWriteOperation {
 	 * @param logger
 	 * @param exceptionMessage
 	 */
-	default void attemptWrites(final Logger logger, final String exceptionMessage) {
+	default void attemptWrites(Logger logger, String exceptionMessage) {
 		for (int attempt = 1; attempt <= MAX_ATTEMPTS; ++attempt) {
 			try {
 				performWrite();

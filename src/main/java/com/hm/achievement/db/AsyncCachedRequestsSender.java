@@ -43,7 +43,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 	 * same queries will be attempted again.
 	 */
 	public void sendBatchedRequests() {
-		final List<String> batchedRequests = new ArrayList<>();
+		List<String> batchedRequests = new ArrayList<>();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			addRequestsForMultipleCategory(batchedRequests, category);
 		}
@@ -145,8 +145,8 @@ public class AsyncCachedRequestsSender implements Runnable {
 	 * 
 	 * @param categoryMap
 	 */
-	private void cleanUpCache(final Map<String, CachedStatistic> categoryMap) {
-		for (final Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
+	private void cleanUpCache(Map<String, CachedStatistic> categoryMap) {
+		for (Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
 			if (entry.getValue().didPlayerDisconnect() && entry.getValue().isDatabaseConsistent()) {
 				// Player was disconnected at some point in the recent past. Hand over the cleaning to the main server
 				// thread.

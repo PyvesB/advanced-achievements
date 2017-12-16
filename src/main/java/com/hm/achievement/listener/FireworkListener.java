@@ -38,7 +38,7 @@ public class FireworkListener extends AbstractListener {
 	}
 
 	public void addFirework(Firework firework) {
-		final String uuid = firework.getUniqueId().toString();
+		String uuid = firework.getUniqueId().toString();
 		fireworksLaunchedByPlugin.add(uuid);
 
 		// Schedule for removal to avoid creating memory leaks.

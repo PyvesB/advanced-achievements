@@ -95,8 +95,8 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 		long timeToWait = lastEventTime + configStatisticCooldown - System.currentTimeMillis();
 		if (timeToWait > 0) {
 			if (configCooldownActionBar) {
-				final String actionBarJsonMessage = "{\"text\":\"&o" + StringUtils.replaceOnce(langStatisticCooldown,
-						"TIME", String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
+				String actionBarJsonMessage = "{\"text\":\"&o" + StringUtils.replaceOnce(langStatisticCooldown, "TIME",
+						String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
 				if (delay) {
 					// Display message with a delay to avoid it being overwritten by another message (typically disc
 					// name).
@@ -119,7 +119,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * @param player
 	 * @param actionBarJsonMessage
 	 */
-	private void displayActionBarMessage(final Player player, final String actionBarJsonMessage) {
+	private void displayActionBarMessage(Player player, String actionBarJsonMessage) {
 		try {
 			PacketSender.sendActionBarPacket(player, actionBarJsonMessage);
 		} catch (Exception e) {

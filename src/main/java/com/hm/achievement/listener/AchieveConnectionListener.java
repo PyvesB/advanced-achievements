@@ -76,7 +76,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	 * 
 	 * @param player
 	 */
-	private void scheduleTask(final Player player) {
+	private void scheduleTask(Player player) {
 		// Schedule delayed task to check if player should receive a Connections achievement or advancements he is
 		// missing. This processing is delayed to avoid spamming a barely connected player.
 		Bukkit.getServer().getScheduler()
@@ -109,7 +109,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	 * 
 	 * @param player
 	 */
-	private void handleConnectionAchievements(final Player player) {
+	private void handleConnectionAchievements(Player player) {
 		String dateString = dateFormat.format(new Date());
 		if (!dateString.equals(plugin.getDatabaseManager().getPlayerConnectionDate(player.getUniqueId()))) {
 			int connections = plugin.getDatabaseManager().updateAndGetConnection(player.getUniqueId(), dateString);
@@ -141,7 +141,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	 * 
 	 * @param player
 	 */
-	private void awardAdvancements(final Player player) {
+	private void awardAdvancements(Player player) {
 		Advancement advancement = Bukkit.getServer()
 				.getAdvancement(new NamespacedKey(plugin, AdvancementManager.ADVANCED_ACHIEVEMENTS_PARENT));
 		// If no parent, user has not used /aach generate, do not do anything.

@@ -227,9 +227,9 @@ public class DatabaseUpdater {
 				try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?,?);")) {
 					// Early versions of the plugin added colors to the date. We have to get rid of them by using a
 					// regex pattern, else parsing will fail.
-					final Pattern regexPattern = Pattern.compile("&([a-f]|[0-9]){1}");
+					Pattern regexPattern = Pattern.compile("&([a-f]|[0-9]){1}");
 					// Old date format, which was stored as a string.
-					final SimpleDateFormat oldFormat = new SimpleDateFormat("dd/MM/yyyy");
+					SimpleDateFormat oldFormat = new SimpleDateFormat("dd/MM/yyyy");
 					// Load entire achievements table into memory.
 					rs = st.executeQuery("SELECT * FROM " + sqlDatabaseManager.getTablePrefix() + "achievements");
 					List<String> uuids = new ArrayList<>();

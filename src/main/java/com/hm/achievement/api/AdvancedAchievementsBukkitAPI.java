@@ -74,7 +74,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	}
 
 	@Override
-	public int getPlayerTotalAchievements(final UUID player) {
+	public int getPlayerTotalAchievements(UUID player) {
 		// Only use cached data if player is online.
 		if (isPlayerOnline(player)) {
 			return pluginInstance.getCacheManager().getPlayerTotalAchievements(player);
@@ -139,7 +139,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	 * @param player
 	 * @return true if player is online, false otherwise
 	 */
-	private boolean isPlayerOnline(final UUID player) {
+	private boolean isPlayerOnline(UUID player) {
 		if (Bukkit.getServer().isPrimaryThread()) {
 			return Bukkit.getPlayer(player) != null;
 		}
