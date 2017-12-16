@@ -112,7 +112,7 @@ public class HelpCommand extends AbstractCommand {
 						plugin.getPluginLang().getString("aach-command-reset", "Reset statistic for category CAT."),
 						"CAT", "&ocat&7");
 		langCommandResetHover = plugin.getPluginLang().getString("aach-command-reset-hover",
-				"Player must be online; for categories with subcategories, they are all reset!");
+				"Player must be online; example: reset Places.stone DarkPyves");
 		langCommandCheck = plugin.getChatHeader() + configColor + "/aach check &oach player" + ChatColor.GRAY + " > "
 				+ ChatColor.translateAlternateColorCodes('&',
 						StringUtils.replaceEach(

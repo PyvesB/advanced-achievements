@@ -27,23 +27,26 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	private static final int MAX_LIST_LENGTH = 50;
 
-	private final Set<String> enabledCategories;
+	private final Set<String> enabledCategoriesWithSubcategories;
 	private final AdvancedAchievements plugin;
 
 	private Set<String> configCommandsKeys;
 
 	public CommandTabCompleter(AdvancedAchievements plugin) {
-		enabledCategories = new HashSet<>(
-				MultipleAchievements.values().length + NormalAchievements.values().length + 1);
+		enabledCategoriesWithSubcategories = new HashSet<>();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			enabledCategories.add(category.toString());
+			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(category.toString())
+					.getKeys(false)) {
+				enabledCategoriesWithSubcategories
+						.add(category.toString() + '.' + StringUtils.replace(subcategory, " ", ""));
+			}
 		}
 		for (NormalAchievements category : NormalAchievements.values()) {
-			enabledCategories.add(category.toString());
+			enabledCategoriesWithSubcategories.add(category.toString());
 		}
-		enabledCategories.add("Commands");
+		enabledCategoriesWithSubcategories.add("Commands");
 		// Only auto-complete with non-disabled categories.
-		enabledCategories.removeAll(plugin.getDisabledCategorySet());
+		enabledCategoriesWithSubcategories.removeAll(plugin.getDisabledCategorySet());
 
 		this.plugin = plugin;
 	}
@@ -55,11 +58,14 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-		if (!"aach".equals(command.getName()) || args.length == 3) {
+		if (!"aach".equals(command.getName()) || args.length == 3 && !"add".equalsIgnoreCase(args[0])
+				|| args.length == 4 && "add".equalsIgnoreCase(args[0])) {
 			// Complete with players.
 			return null;
 		} else if (args.length == 2 && "reset".equalsIgnoreCase(args[0])) {
-			return getPartialList(enabledCategories, args[1]);
+			return getPartialList(enabledCategoriesWithSubcategories, args[1]);
+		} else if (args.length == 3 && "add".equalsIgnoreCase(args[0])) {
+			return getPartialList(enabledCategoriesWithSubcategories, args[2]);
 		} else if (args.length == 2 && "give".equalsIgnoreCase(args[0])) {
 			return getPartialList(configCommandsKeys, args[1]);
 		} else if (args.length == 2 && ("delete".equalsIgnoreCase(args[0]) || "check".equalsIgnoreCase(args[0]))) {

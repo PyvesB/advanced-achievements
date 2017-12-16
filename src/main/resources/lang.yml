@@ -9,6 +9,7 @@
 
 no-permissions: "You do not have the permission to do this."
 statistic-cooldown: "Achievements cooldown: wait TIME seconds before this action counts again."
+category-does-not-exist: "The category CAT does not exist."
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "Configuration successfully reloaded."
@@ -41,7 +42,6 @@ achievement-given: "Achievement given!"
 # Related to /aach add.
 error-value: "The value VALUE must to be an integer!"
 statistic-increased: "Statistic ACH increased by AMOUNT for PLAYER!"
-achievement-unknown: "Achievement ACH is unknown!"
 
 # Related to achievement reception.
 achievement-received: "PLAYER received the achievement:"
@@ -90,7 +90,7 @@ aach-command-month-hover: "Best achievement hunters since the start of the month
 aach-command-toggle: "Toggle achievements of other players."
 aach-command-toggle-hover: "Your choice is saved until next server restart!"
 aach-command-reset: "Reset statistic for category CAT."
-aach-command-reset-hover: "Player must be online; for categories with subcategories, they are all reset!"
+aach-command-reset-hover: "Player must be online; example: reset Places.stone DarkPyves"
 aach-command-generate: "Generate advancements."
 aach-command-generate-hover: "Potentially slow command; use with care!"
 aach-tip: "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!"
@@ -186,7 +186,6 @@ toggle-hidden: "You will no longer be notified when other players get achievemen
 
 # Related to /aach reset.
 reset-successful: " statistics were cleared for PLAYER."
-category-does-not-exist: "The specified category does not exist."
 
 # Related to /aach generate.
 advancements-generated: "Advancements were successfully generated."

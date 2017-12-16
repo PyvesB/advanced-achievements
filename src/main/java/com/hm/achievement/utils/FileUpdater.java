@@ -236,10 +236,9 @@ public class FileUpdater {
 
 		// Added in version 5.0:
 		updateSetting(lang, "aach-command-reset", "Reset statistic for category CAT.");
-		updateSetting(lang, "aach-command-reset-hover",
-				"Player must be online; for categories with subcategories, they are all reset!");
+		updateSetting(lang, "aach-command-reset-hover", "Player must be online; example: reset Places.stone DarkPyves");
 		updateSetting(lang, "reset-successful", " statistics were cleared for PLAYER.");
-		updateSetting(lang, "category-does-not-exist", "The specified category does not exist.");
+		updateSetting(lang, "category-does-not-exist", "The category CAT does not exist.");
 		updateSetting(lang, "version-command-btlp", "BungeeTabListPlus integration:");
 
 		// Added in version 5.2:
@@ -269,7 +268,6 @@ public class FileUpdater {
 		// Added in version 5.4.X:
 		updateSetting(lang, "error-value", "The value VALUE must to be an integer!");
 		updateSetting(lang, "statistic-increased", "Statistic ACH increased by AMOUNT for PLAYER!");
-		updateSetting(lang, "achievement-unknown", "Achievement ACH is unknown!");
 		updateSetting(lang, "aach-command-add", "Increase a statistic.");
 		updateSetting(lang, "aach-command-add-hover", "Player must be online; mainly used for Custom Categories.");
 		updateSetting(lang, "list-custom", "Custom Categories");
@@ -314,8 +312,8 @@ public class FileUpdater {
 		updateSetting(gui, "NextButton.Metadata", 0);
 		
 		// Added in version 5.4.X:
-		updateSetting(gui, "Customs.Item", "feather");
-		updateSetting(gui, "Customs.Metadata", 0);
+		updateSetting(gui, "Custom.Item", "feather");
+		updateSetting(gui, "Custom.Metadata", 0);
 
 		if (updatePerformed) {
 			// Changes in the gui file: save and do a fresh load.

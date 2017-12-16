@@ -19,7 +19,7 @@ public class AddCommand extends AbstractParsableCommand {
 
 	private String langErrorValue;
 	private String langStatisticIncreased;
-	private String langUnknownCategory;
+	private String langCategoryDoesNotExist;
 
 	private final StatisticIncreaseHandler statistic;
 
@@ -36,8 +36,8 @@ public class AddCommand extends AbstractParsableCommand {
 				+ plugin.getPluginLang().getString("error-value", "The value VALUE must to be an integer!");
 		langStatisticIncreased = plugin.getChatHeader() + plugin.getPluginLang().getString("statistic-increased",
 				"Statistic ACH increased by AMOUNT for PLAYER!");
-		langUnknownCategory = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("achievement-unknown", "Achievement ACH is unknown!");
+		langCategoryDoesNotExist = plugin.getChatHeader()
+				+ plugin.getPluginLang().getString("category-does-not-exist", "The category CAT  does not exist.");
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class AddCommand extends AbstractParsableCommand {
 			String categoryName = category.toString();
 
 			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
-				String categoryPath = categoryName + "." + subcategory;
+				String categoryPath = categoryName + "." + StringUtils.replace(subcategory, " ", "");
 
 				if (args[2].equalsIgnoreCase(categoryPath)) {
 					long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, subcategory,
@@ -80,6 +80,6 @@ public class AddCommand extends AbstractParsableCommand {
 			}
 		}
 
-		sender.sendMessage(StringUtils.replaceOnce(langUnknownCategory, "ACH", args[2]));
+		sender.sendMessage(StringUtils.replaceOnce(langCategoryDoesNotExist, "CAT", args[2]));
 	}
 }
