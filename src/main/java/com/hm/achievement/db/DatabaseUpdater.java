@@ -1,6 +1,7 @@
 package com.hm.achievement.db;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -245,13 +246,13 @@ public class DatabaseUpdater {
 					}
 
 					// Preallocate space in array containing the values in the new format.
-					List<java.sql.Date> newDates = new ArrayList<>(oldDates.size());
+					List<Date> newDates = new ArrayList<>(oldDates.size());
 
 					try {
 						for (String date : oldDates) {
 							// Convert to SQL date format.
-							newDates.add(new java.sql.Date(
-									oldFormat.parse(regexPattern.matcher(date).replaceAll("")).getTime()));
+							newDates.add(
+									new Date(oldFormat.parse(regexPattern.matcher(date).replaceAll("")).getTime()));
 						}
 					} catch (ParseException e) {
 						plugin.getLogger().log(Level.SEVERE, "Error while parsing dates: ", e);

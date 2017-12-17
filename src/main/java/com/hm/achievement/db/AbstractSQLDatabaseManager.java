@@ -1,6 +1,7 @@
 package com.hm.achievement.db;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -305,7 +306,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				if (start > 0L) {
-					ps.setDate(1, new java.sql.Date(start));
+					ps.setDate(1, new Date(start));
 				}
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
@@ -334,7 +335,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				if (start > 0L) {
-					ps.setDate(1, new java.sql.Date(start));
+					ps.setDate(1, new Date(start));
 				}
 				ResultSet rs = ps.executeQuery();
 				rs.next();
@@ -367,8 +368,8 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				if (start > 0L) {
-					ps.setDate(1, new java.sql.Date(start));
-					ps.setDate(2, new java.sql.Date(start));
+					ps.setDate(1, new Date(start));
+					ps.setDate(2, new Date(start));
 				}
 				ResultSet rs = ps.executeQuery();
 				rs.next();
@@ -393,7 +394,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, achName);
 				ps.setString(2, achMessage);
-				ps.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
+				ps.setDate(3, new Date(System.currentTimeMillis()));
 				ps.execute();
 			}
 		}).executeOperation(pool, plugin.getLogger(), "SQL error while registering achievement");

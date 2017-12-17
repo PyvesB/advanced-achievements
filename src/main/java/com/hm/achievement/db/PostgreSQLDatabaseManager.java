@@ -1,6 +1,7 @@
 package com.hm.achievement.db;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -51,9 +52,9 @@ public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, achName);
 				ps.setString(2, achMessage);
-				ps.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
+				ps.setDate(3, new Date(System.currentTimeMillis()));
 				ps.setString(4, achMessage);
-				ps.setDate(5, new java.sql.Date(new java.util.Date().getTime()));
+				ps.setDate(5, new Date(System.currentTimeMillis()));
 				ps.execute();
 			}
 		}).executeOperation(pool, plugin.getLogger(), "SQL error while registering achievement.");

@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -155,8 +154,8 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		setBookPages(bookPages, bookMeta);
 		bookMeta.setAuthor(player.getName());
 		bookMeta.setTitle(langBookName);
-		bookMeta.setLore(Arrays.asList(StringUtils.replaceOnce(langBookDate, "DATE", dateFormat.format(new Date()))));
-
+		bookMeta.setLore(Arrays
+				.asList(StringUtils.replaceOnce(langBookDate, "DATE", dateFormat.format(System.currentTimeMillis()))));
 		book.setItemMeta(bookMeta);
 
 		// Check whether player has room in his inventory, else drop book on the ground.

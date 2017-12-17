@@ -1,7 +1,7 @@
 package com.hm.achievement.listener;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -32,7 +32,7 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAch
  */
 public class AchieveConnectionListener extends AbstractListener implements Cleanable {
 
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
 	private final Set<String> playersProcessingRan;
@@ -110,7 +110,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	 * @param player
 	 */
 	private void handleConnectionAchievements(Player player) {
-		String dateString = dateFormat.format(new Date());
+		String dateString = LocalDate.now().format(DATE_TIME_FORMATTER);
 		if (!dateString.equals(plugin.getDatabaseManager().getPlayerConnectionDate(player.getUniqueId()))) {
 			int connections = plugin.getDatabaseManager().updateAndGetConnection(player.getUniqueId(), dateString);
 			String configAchievement = NormalAchievements.CONNECTIONS + "." + connections;
