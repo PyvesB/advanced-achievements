@@ -28,19 +28,19 @@ public interface SQLWriteOperation {
 	 * 
 	 * @param executor
 	 * @param logger
-	 * @param exceptionMessage
+	 * @param operationMessage
 	 */
-	public default void executeOperation(Executor executor, Logger logger, String exceptionMessage) {
-		executor.execute(() -> attemptWrites(logger, exceptionMessage));
+	public default void executeOperation(Executor executor, Logger logger, String operationMessage) {
+		executor.execute(() -> attemptWrites(logger, operationMessage));
 	}
 
 	/**
-	 * Calls {@code performWrite} repeatedly until the write succeeds or {@code NUM_OF_ATTEMPTS} is reached.
+	 * Calls {@code performWrite} repeatedly until the write succeeds or {@code MAX_ATTEMPTS} is reached.
 	 *
 	 * @param logger
-	 * @param exceptionMessage
+	 * @param operationMessage
 	 */
-	default void attemptWrites(Logger logger, String exceptionMessage) {
+	default void attemptWrites(Logger logger, String operationMessage) {
 		for (int attempt = 1; attempt <= MAX_ATTEMPTS; ++attempt) {
 			try {
 				performWrite();
@@ -49,7 +49,7 @@ public interface SQLWriteOperation {
 			} catch (SQLException e) {
 				if (attempt == MAX_ATTEMPTS) {
 					// Final attempt: log error.
-					logger.log(Level.SEVERE, exceptionMessage, e);
+					logger.log(Level.SEVERE, "SQL write error while " + operationMessage, e);
 				} else {
 					// Sleep before next attempt.
 					sleepOneSecond(logger);

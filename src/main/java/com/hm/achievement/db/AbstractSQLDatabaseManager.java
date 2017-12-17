@@ -195,7 +195,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 			return achievementsList;
-		}).executeOperation("SQL error while retrieving achievements");
+		}).executeOperation("retrieving the full data of received achievements");
 	}
 
 	/**
@@ -217,7 +217,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 			return achievementNamesList;
-		}).executeOperation("SQL error while retrieving achievement names");
+		}).executeOperation("retrieving the names of received achievements");
 	}
 
 	/**
@@ -247,7 +247,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 			return null;
-		}).executeOperation("SQL error while retrieving achievement date");
+		}).executeOperation("retrieving an achievement's reception date");
 	}
 
 	/**
@@ -267,7 +267,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 			return achievementAmounts;
-		}).executeOperation("SQL error while counting all player achievements");
+		}).executeOperation("counting all players' achievements");
 	}
 
 	/**
@@ -284,7 +284,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				rs.next();
 				return rs.getInt(1);
 			}
-		}).executeOperation("SQL error while counting player's achievements");
+		}).executeOperation("counting a player's achievements");
 	}
 
 	/**
@@ -315,7 +315,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 			return topList;
-		}).executeOperation("SQL error while retrieving top players");
+		}).executeOperation("computing the list of top players");
 	}
 
 	/**
@@ -341,7 +341,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				rs.next();
 				return rs.getInt(1);
 			}
-		}).executeOperation("SQL error while retrieving total players");
+		}).executeOperation("counting total players");
 	}
 
 	/**
@@ -376,7 +376,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				// Rank of a player corresponds to number of players with more achievements + 1.
 				return rs.getInt(1) + 1;
 			}
-		}).executeOperation("SQL error while retrieving player rank");
+		}).executeOperation("computing a player's rank");
 	}
 
 	/**
@@ -397,7 +397,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				ps.setDate(3, new Date(System.currentTimeMillis()));
 				ps.execute();
 			}
-		}).executeOperation(pool, plugin.getLogger(), "SQL error while registering achievement");
+		}).executeOperation(pool, plugin.getLogger(), "registering an achievement");
 	}
 
 	/**
@@ -424,7 +424,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 				return ps.executeQuery().next();
 			}
-		}).executeOperation("SQL error while checking achievement");
+		}).executeOperation("checking for an achievement");
 	}
 
 	/**
@@ -445,7 +445,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 			return 0L;
-		}).executeOperation("SQL error while retrieving " + dbName + " stats");
+		}).executeOperation("retrieving " + category + " statistics");
 	}
 
 	/**
@@ -470,7 +470,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 			return 0L;
-		}).executeOperation("SQL error while retrieving " + dbName + " stats");
+		}).executeOperation("retrieving " + category + "." + subcategory + " statistics");
 	}
 
 	/**
@@ -490,7 +490,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 			return 0;
-		}).executeOperation("SQL error while retrieving connection statistics");
+		}).executeOperation("retrieving connection statistics");
 	}
 
 	/**
@@ -510,7 +510,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 			return null;
-		}).executeOperation("SQL error while retrieving connection date stats");
+		}).executeOperation("retrieving a player's last connection date");
 	}
 
 	/**
@@ -541,10 +541,10 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 						writePrep.setString(1, date);
 						writePrep.execute();
 					}
-				}).executeOperation(pool, plugin.getLogger(), "SQL error while updating connection");
+				}).executeOperation(pool, plugin.getLogger(), "updating connection date and count");
 				return connections;
 			}
-		}).executeOperation("SQL error while handling connection event");
+		}).executeOperation("handling connection event");
 	}
 
 	/**
@@ -569,7 +569,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 				ps.execute();
 			}
-		}).executeOperation(pool, plugin.getLogger(), "SQL error while deleting achievement");
+		}).executeOperation(pool, plugin.getLogger(), "deleting an achievement");
 	}
 
 	/**
@@ -584,7 +584,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.execute();
 			}
-		}).executeOperation(pool, plugin.getLogger(), "SQL error while deleting connections");
+		}).executeOperation(pool, plugin.getLogger(), "clearing connection statistics");
 	}
 
 	protected String getPrefix() {

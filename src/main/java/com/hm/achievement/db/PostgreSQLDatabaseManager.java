@@ -57,7 +57,7 @@ public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 				ps.setDate(5, new Date(System.currentTimeMillis()));
 				ps.execute();
 			}
-		}).executeOperation(pool, plugin.getLogger(), "SQL error while registering achievement.");
+		}).executeOperation(pool, plugin.getLogger(), "registering an achievement");
 	}
 
 	@Override
@@ -84,9 +84,9 @@ public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 						writePrep.setString(2, date);
 						writePrep.execute();
 					}
-				}).executeOperation(pool, plugin.getLogger(), "SQL error while updating connection.");
+				}).executeOperation(pool, plugin.getLogger(), "updating connection date and count");
 				return connections;
 			}
-		}).executeOperation("SQL error while updating connection");
+		}).executeOperation("handling connection event");
 	}
 }

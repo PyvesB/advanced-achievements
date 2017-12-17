@@ -29,10 +29,10 @@ public interface SQLReadOperation<T> {
 	 * Calls {@code performRead} repeatedly until the read succeeds or {@code MAX_ATTEMPTS} is reached, in which case a
 	 * runtime exception is thrown.
 	 *
-	 * @param exceptionMessage
+	 * @param operationMessage
 	 * @return the result of a successful read operation
 	 */
-	public default T executeOperation(String exceptionMessage) {
+	public default T executeOperation(String operationMessage) {
 		SQLException cause = null;
 		for (int attempt = 1; attempt <= MAX_ATTEMPTS; ++attempt) {
 			try {
@@ -41,6 +41,6 @@ public interface SQLReadOperation<T> {
 				cause = e;
 			}
 		}
-		throw new DatabaseReadError(exceptionMessage, cause);
+		throw new DatabaseReadError("SQL read error while " + operationMessage, cause);
 	}
 }
