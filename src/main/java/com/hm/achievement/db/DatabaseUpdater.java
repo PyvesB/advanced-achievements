@@ -43,7 +43,7 @@ public class DatabaseUpdater {
 	 */
 	protected void renameExistingTables(String databaseAddress) {
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
-		if (!"".equals(sqlDatabaseManager.getTablePrefix())) {
+		if (!"".equals(sqlDatabaseManager.getPrefix())) {
 			Connection conn = sqlDatabaseManager.getSQLConnection();
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs;
@@ -61,15 +61,15 @@ public class DatabaseUpdater {
 				// Table achievements still has its default name (ie. no prefix), but a prefix is set in the
 				// configuration; do a renaming of all tables.
 				if (rs.next()) {
-					st.addBatch("ALTER TABLE achievements RENAME TO " + sqlDatabaseManager.getTablePrefix()
-							+ "achievements");
+					st.addBatch(
+							"ALTER TABLE achievements RENAME TO " + sqlDatabaseManager.getPrefix() + "achievements");
 					for (NormalAchievements category : NormalAchievements.values()) {
 						st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO "
-								+ sqlDatabaseManager.getTablePrefix() + category.toDBName());
+								+ sqlDatabaseManager.getPrefix() + category.toDBName());
 					}
 					for (MultipleAchievements category : MultipleAchievements.values()) {
 						st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO "
-								+ sqlDatabaseManager.getTablePrefix() + category.toDBName());
+								+ sqlDatabaseManager.getPrefix() + category.toDBName());
 					}
 					st.executeBatch();
 				}
@@ -87,11 +87,11 @@ public class DatabaseUpdater {
 	protected void initialiseTables() {
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getTablePrefix()
+			st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getPrefix()
 					+ "achievements (playername char(36),achievement varchar(64),description varchar(128),date DATE,PRIMARY KEY (playername, achievement))");
 
 			for (MultipleAchievements category : MultipleAchievements.values()) {
-				st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getTablePrefix() + category.toDBName()
+				st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getPrefix() + category.toDBName()
 						+ " (playername char(36)," + category.toSubcategoryDBName() + " varchar(51),"
 						+ category.toDBName() + " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName()
 						+ "))");
@@ -99,13 +99,12 @@ public class DatabaseUpdater {
 
 			for (NormalAchievements category : NormalAchievements.values()) {
 				if (category == NormalAchievements.CONNECTIONS) {
-					st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getTablePrefix()
-							+ category.toDBName() + " (playername char(36)," + category.toDBName()
+					st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getPrefix() + category.toDBName()
+							+ " (playername char(36)," + category.toDBName()
 							+ " INT,date varchar(10),PRIMARY KEY (playername))");
 				} else {
-					st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getTablePrefix()
-							+ category.toDBName() + " (playername char(36)," + category.toDBName()
-							+ " BIGINT,PRIMARY KEY (playername))");
+					st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getPrefix() + category.toDBName()
+							+ " (playername char(36)," + category.toDBName() + " BIGINT,PRIMARY KEY (playername))");
 				}
 			}
 			st.executeBatch();
@@ -124,7 +123,7 @@ public class DatabaseUpdater {
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		String type = "";
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT blockid FROM " + sqlDatabaseManager.getTablePrefix()
+			ResultSet rs = st.executeQuery("SELECT blockid FROM " + sqlDatabaseManager.getPrefix()
 					+ MultipleAchievements.BREAKS.toDBName() + " LIMIT 1");
 			type = rs.getMetaData().getColumnTypeName(1);
 		} catch (SQLException e) {
@@ -156,7 +155,7 @@ public class DatabaseUpdater {
 	 * @param category
 	 */
 	private void updateOldDBToMaterial(MultipleAchievements category) {
-		String tableName = sqlDatabaseManager.getTablePrefix() + category.toDBName();
+		String tableName = sqlDatabaseManager.getPrefix() + category.toDBName();
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement();
 				PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
@@ -216,7 +215,7 @@ public class DatabaseUpdater {
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st
-					.executeQuery("SELECT date FROM " + sqlDatabaseManager.getTablePrefix() + "achievements LIMIT 1");
+					.executeQuery("SELECT date FROM " + sqlDatabaseManager.getPrefix() + "achievements LIMIT 1");
 			String type = rs.getMetaData().getColumnTypeName(1);
 			// Old column type for versions prior to 3.0 was text for SQLite, char for MySQL and varchar for PostgreSQL
 			// (even though PostgreSQL was not supported on versions prior to 3.0, we still support the upgrade for it
@@ -231,7 +230,7 @@ public class DatabaseUpdater {
 					// Old date format, which was stored as a string.
 					SimpleDateFormat oldFormat = new SimpleDateFormat("dd/MM/yyyy");
 					// Load entire achievements table into memory.
-					rs = st.executeQuery("SELECT * FROM " + sqlDatabaseManager.getTablePrefix() + "achievements");
+					rs = st.executeQuery("SELECT * FROM " + sqlDatabaseManager.getPrefix() + "achievements");
 					List<String> uuids = new ArrayList<>();
 					List<String> achs = new ArrayList<>();
 					List<String> descs = new ArrayList<>();
@@ -275,10 +274,9 @@ public class DatabaseUpdater {
 					prep.executeBatch();
 
 					// Delete old table.
-					st.execute("DROP TABLE " + sqlDatabaseManager.getTablePrefix() + "achievements");
+					st.execute("DROP TABLE " + sqlDatabaseManager.getPrefix() + "achievements");
 					// Rename new table to old one.
-					st.execute(
-							"ALTER TABLE tempTable RENAME TO " + sqlDatabaseManager.getTablePrefix() + "achievements");
+					st.execute("ALTER TABLE tempTable RENAME TO " + sqlDatabaseManager.getPrefix() + "achievements");
 					// Commit entire transaction.
 					conn.commit();
 					conn.setAutoCommit(true);
@@ -300,18 +298,18 @@ public class DatabaseUpdater {
 			int size = 51;
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs = st
-						.executeQuery("SELECT mobname FROM " + sqlDatabaseManager.getTablePrefix() + "kills LIMIT 1");
+						.executeQuery("SELECT mobname FROM " + sqlDatabaseManager.getPrefix() + "kills LIMIT 1");
 				size = rs.getMetaData().getPrecision(1);
 				// Old kills table prior to version 4.2.1 contained a capacity of only 32 chars.
 				if (size == 32) {
 					plugin.getLogger().warning("Updating database table with extended mobname column, please wait...");
 					// Increase size of table.
 					if (plugin.getDatabaseManager() instanceof PostgreSQLDatabaseManager) {
-						st.execute("ALTER TABLE " + sqlDatabaseManager.getTablePrefix()
+						st.execute("ALTER TABLE " + sqlDatabaseManager.getPrefix()
 								+ "kills ALTER COLUMN mobname TYPE varchar(51)");
 					} else {
-						st.execute("ALTER TABLE " + sqlDatabaseManager.getTablePrefix()
-								+ "kills MODIFY mobname varchar(51)");
+						st.execute(
+								"ALTER TABLE " + sqlDatabaseManager.getPrefix() + "kills MODIFY mobname varchar(51)");
 					}
 				}
 			} catch (SQLException e) {

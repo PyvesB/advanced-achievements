@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,8 +40,8 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	protected volatile String databaseAddress;
 	protected volatile String databaseUser;
 	protected volatile String databasePassword;
-	protected volatile String tablePrefix;
 	protected volatile String additionalConnectionOptions;
+	protected volatile String prefix;
 
 	private DateFormat dateFormat;
 	private boolean configBookChronologicalOrder;
@@ -74,7 +73,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	public void initialise() {
 		plugin.getLogger().info("Initialising database... ");
 
-		tablePrefix = plugin.getPluginConfig().getString("TablePrefix", "");
+		prefix = plugin.getPluginConfig().getString("TablePrefix", "");
 		additionalConnectionOptions = plugin.getPluginConfig().getString("AdditionalConnectionOptions", "");
 
 		try {
@@ -85,7 +84,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			plugin.setSuccessfulLoad(false);
 		}
 
-		// Try to establish connection with database; stays opened until explicitely closed by the plugin..
+		// Try to establish connection with database; stays opened until explicitly closed by the plugin.
 		Connection conn = getSQLConnection();
 
 		if (conn == null) {
@@ -169,90 +168,85 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	/**
 	 * Gets the list of all the achievements of a player, sorted by chronological or reverse ordering.
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @return array list with groups of 3 strings: achievement name, description and date
 	 */
-	public List<String> getPlayerAchievementsList(UUID player) {
-		List<String> achievementsList = new ArrayList<>();
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			// Either oldest date to newest one or newest date to oldest one.
-			String chronology = configBookChronologicalOrder ? "ASC" : "DESC";
-			ResultSet rs = st.executeQuery("SELECT * FROM " + tablePrefix + "achievements WHERE playername = '"
-					+ player.toString() + "' ORDER BY date " + chronology);
-			Map<String, String> achievementsAndDisplayNames = plugin.getAchievementsAndDisplayNames();
-			while (rs.next()) {
-				// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
-				// where names containing single quotes were inserted with two single quotes in the database.
-				String achName = StringUtils.replace(rs.getString(2), "''", "'");
-				String displayName = achievementsAndDisplayNames.get(achName);
-				if (StringUtils.isNotBlank(displayName)) {
-					achievementsList.add(displayName);
-				} else {
-					achievementsList.add(achName);
+	public List<String> getPlayerAchievementsList(UUID uuid) {
+		// Either oldest date to newest one or newest date to oldest one.
+		String sql = "SELECT * FROM " + prefix + "achievements WHERE playername = '" + uuid + "' ORDER BY date "
+				+ (configBookChronologicalOrder ? "ASC" : "DESC");
+		return ((SQLReadOperation<List<String>>) () -> {
+			List<String> achievementsList = new ArrayList<>();
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing single
+					// quotes were inserted with two single quotes in the database.
+					String achName = StringUtils.replace(rs.getString(2), "''", "'");
+					String displayName = plugin.getAchievementsAndDisplayNames().get(achName);
+					if (StringUtils.isNotBlank(displayName)) {
+						achievementsList.add(displayName);
+					} else {
+						achievementsList.add(achName);
+					}
+					achievementsList.add(rs.getString(3));
+					achievementsList.add(dateFormat.format(rs.getDate(4)));
 				}
-				achievementsList.add(rs.getString(3));
-				achievementsList.add(dateFormat.format(rs.getDate(4)));
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving achievements: ", e);
-		}
-		return achievementsList;
+			return achievementsList;
+		}).executeOperation("SQL error while retrieving achievements");
 	}
 
 	/**
 	 * Gets the list of names of all the achievements of a player.
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @return array list with Name parameters
 	 */
-	public List<String> getPlayerAchievementNamesList(UUID player) {
-		List<String> achievementNamesList = new ArrayList<>();
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT achievement FROM " + tablePrefix
-					+ "achievements WHERE playername = '" + player.toString() + "'");
-			while (rs.next()) {
-				// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
-				// where names containing single quotes were inserted with two single quotes in the database.
-				achievementNamesList.add(StringUtils.replace(rs.getString(1), "''", "'"));
+	public List<String> getPlayerAchievementNamesList(UUID uuid) {
+		String sql = "SELECT achievement FROM " + prefix + "achievements WHERE playername = '" + uuid + "'";
+		return ((SQLReadOperation<List<String>>) () -> {
+			List<String> achievementNamesList = new ArrayList<>();
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to
+					// 3.0.2 where names containing single quotes were inserted with two single quotes in the database.
+					achievementNamesList.add(StringUtils.replace(rs.getString(1), "''", "'"));
+				}
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving achievement names: ", e);
-		}
-		return achievementNamesList;
+			return achievementNamesList;
+		}).executeOperation("SQL error while retrieving achievement names");
 	}
 
 	/**
 	 * Gets the date of reception of a specific achievement.
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @param achName
 	 * @return date represented as a string
 	 */
-	public String getPlayerAchievementDate(UUID player, String achName) {
-		String achDate = null;
-		String query = "SELECT date FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
-				+ "' AND achievement = ?";
-		if (achName.contains("'")) {
-			// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
-			// where names containing single quotes were inserted with two single quotes in the database.
-			query = StringUtils.replaceOnce(query, "achievement = ?", "(achievement = ? OR achievement = ?)");
-		}
-		Connection conn = getSQLConnection();
-		try (PreparedStatement prep = conn.prepareStatement(query)) {
-			prep.setString(1, achName);
-			if (achName.contains("'")) {
-				prep.setString(2, StringUtils.replace(achName, "'", "''"));
+	public String getPlayerAchievementDate(UUID uuid, String achName) {
+		// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
+		// where names containing single quotes were inserted with two single quotes in the database.
+		String sql = achName.contains("'")
+				? "SELECT date FROM " + prefix + "achievements WHERE playername = '" + uuid
+						+ "' AND (achievement = ? OR achievement = ?)"
+				: "SELECT date FROM " + prefix + "achievements WHERE playername = '" + uuid + "' AND achievement = ?";
+		return ((SQLReadOperation<String>) () -> {
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setString(1, achName);
+				if (achName.contains("'")) {
+					ps.setString(2, StringUtils.replace(achName, "'", "''"));
+				}
+				ResultSet rs = ps.executeQuery();
+				if (rs.next()) {
+					return dateFormat.format(rs.getDate(1));
+				}
 			}
-			ResultSet rs = prep.executeQuery();
-			if (rs.next()) {
-				achDate = dateFormat.format(rs.getDate(1));
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving achievement date: ", e);
-		}
-		return achDate;
+			return null;
+		}).executeOperation("SQL error while retrieving achievement date");
 	}
 
 	/**
@@ -262,75 +256,65 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @return map containing number of achievements for every players
 	 */
 	public Map<UUID, Integer> getPlayersAchievementsAmount() {
-		Map<UUID, Integer> achievementAmounts = new HashMap<>();
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery(
-					"SELECT playername, COUNT(*) FROM " + tablePrefix + "achievements GROUP BY playername");
-			while (rs.next()) {
-				achievementAmounts.put(UUID.fromString(rs.getString(1)), rs.getInt(2));
+		String sql = "SELECT playername, COUNT(*) FROM " + prefix + "achievements GROUP BY playername";
+		return ((SQLReadOperation<Map<UUID, Integer>>) () -> {
+			Map<UUID, Integer> achievementAmounts = new HashMap<>();
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					achievementAmounts.put(UUID.fromString(rs.getString(1)), rs.getInt(2));
+				}
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while counting all player achievements: ", e);
-		}
-		return achievementAmounts;
+			return achievementAmounts;
+		}).executeOperation("SQL error while counting all player achievements");
 	}
 
 	/**
 	 * Gets the total number of achievements received by a player, using an UUID.
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @return number of achievements
 	 */
-	public int getPlayerAchievementsAmount(UUID player) {
-		int achievementsAmount = 0;
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM " + tablePrefix + "achievements WHERE playername = '"
-					+ player.toString() + "'");
-			if (rs.next()) {
-				achievementsAmount = rs.getInt(1);
+	public int getPlayerAchievementsAmount(UUID uuid) {
+		String sql = "SELECT COUNT(*) FROM " + prefix + "achievements WHERE playername = '" + uuid + "'";
+		return ((SQLReadOperation<Integer>) () -> {
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+				rs.next();
+				return rs.getInt(1);
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while counting player achievements: ", e);
-		}
-		return achievementsAmount;
+		}).executeOperation("SQL error while counting player's achievements");
 	}
 
 	/**
 	 * Gets the list of players with the most achievements over a given period.
 	 * 
-	 * @param listLength
+	 * @param length
 	 * @param start
 	 * @return list with player UUIDs
 	 */
-	public List<String> getTopList(int listLength, long start) {
-		List<String> topList = new ArrayList<>(2 * listLength);
-		String query;
-		if (start == 0L) {
-			// We consider all the achievements; no date comparison.
-			query = "SELECT playername, COUNT(*) FROM " + tablePrefix
-					+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC LIMIT " + listLength;
-		} else {
-			// We only consider achievement received after the start date; do date comparisons.
-			query = "SELECT playername, COUNT(*) FROM " + tablePrefix
-					+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC LIMIT " + listLength;
-		}
-		Connection conn = getSQLConnection();
-		try (PreparedStatement prep = conn.prepareStatement(query)) {
-			if (start > 0L) {
-				prep.setDate(1, new java.sql.Date(start));
+	public List<String> getTopList(int length, long start) {
+		// Either consider all the achievements or only those received after the start date.
+		String sql = start == 0L
+				? "SELECT playername, COUNT(*) FROM " + prefix
+						+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC LIMIT " + length
+				: "SELECT playername, COUNT(*) FROM " + prefix
+						+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC LIMIT " + length;
+		return ((SQLReadOperation<List<String>>) () -> {
+			List<String> topList = new ArrayList<>(2 * length);
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				if (start > 0L) {
+					ps.setDate(1, new java.sql.Date(start));
+				}
+				ResultSet rs = ps.executeQuery();
+				while (rs.next()) {
+					topList.add(rs.getString(1));
+					topList.add(Integer.toString(rs.getInt(2)));
+				}
 			}
-			prep.execute();
-			ResultSet rs = prep.getResultSet();
-			while (rs.next()) {
-				topList.add(rs.getString(1));
-				topList.add(Integer.toString(rs.getInt(2)));
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving top players: ", e);
-		}
-		return topList;
+			return topList;
+		}).executeOperation("SQL error while retrieving top players");
 	}
 
 	/**
@@ -340,293 +324,269 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @return list with player UUIDs
 	 */
 	public int getTotalPlayers(long start) {
-		int players = 0;
-		String query;
-		if (start == 0L) {
-			// We consider all the achievements; no date comparison.
-			query = "SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + tablePrefix
-					+ "achievements) AS distinctPlayers";
-		} else {
-			// We only consider achievement received after the start date; do date comparisons.
-			query = "SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + tablePrefix
-					+ "achievements WHERE date > ?) AS distinctPlayers";
-		}
-		Connection conn = getSQLConnection();
-		try (PreparedStatement prep = conn.prepareStatement(query)) {
-			if (start > 0L) {
-				prep.setDate(1, new java.sql.Date(start));
+		// Either consider all the achievements or only those received after the start date.
+		String sql = start == 0L
+				? "SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + prefix
+						+ "achievements) AS distinctPlayers"
+				: "SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + prefix
+						+ "achievements WHERE date > ?) AS distinctPlayers";
+		return ((SQLReadOperation<Integer>) () -> {
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				if (start > 0L) {
+					ps.setDate(1, new java.sql.Date(start));
+				}
+				ResultSet rs = ps.executeQuery();
+				rs.next();
+				return rs.getInt(1);
 			}
-			prep.execute();
-			ResultSet rs = prep.getResultSet();
-			while (rs.next()) {
-				players = rs.getInt(1);
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving total players: ", e);
-		}
-		return players;
+		}).executeOperation("SQL error while retrieving total players");
 	}
 
 	/**
 	 * Gets the rank of a player given his number of achievements received after start date.
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @param start
 	 * @return player's rank
 	 */
-	public int getPlayerRank(UUID player, long start) {
-		int rank = 0;
-		String query;
+	public int getPlayerRank(UUID uuid, long start) {
+		String sql;
 		if (start == 0L) {
 			// We consider all the achievements; no date comparison.
-			query = "SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + tablePrefix
+			sql = "SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + prefix
 					+ "achievements GROUP BY playername) AS achGroupedByPlayer WHERE number > (SELECT COUNT(*) FROM "
-					+ tablePrefix + "achievements WHERE playername = '" + player.toString() + "')";
+					+ prefix + "achievements WHERE playername = '" + uuid + "')";
 		} else {
 			// We only consider achievement received after the start date; do date comparisons.
-			query = "SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + tablePrefix
+			sql = "SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + prefix
 					+ "achievements WHERE date > ? GROUP BY playername) AS achGroupedByPlayer WHERE number > (SELECT COUNT(*) FROM "
-					+ tablePrefix + "achievements WHERE playername = '" + player.toString() + "' AND date > ?)";
+					+ prefix + "achievements WHERE playername = '" + uuid + "' AND date > ?)";
 		}
-		Connection conn = getSQLConnection();
-		try (PreparedStatement prep = conn.prepareStatement(query)) {
-			if (start > 0L) {
-				prep.setDate(1, new java.sql.Date(start));
-				prep.setDate(2, new java.sql.Date(start));
-			}
-			prep.execute();
-			ResultSet rs = prep.getResultSet();
-			while (rs.next()) {
+		return ((SQLReadOperation<Integer>) () -> {
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				if (start > 0L) {
+					ps.setDate(1, new java.sql.Date(start));
+					ps.setDate(2, new java.sql.Date(start));
+				}
+				ResultSet rs = ps.executeQuery();
+				rs.next();
 				// Rank of a player corresponds to number of players with more achievements + 1.
-				rank = rs.getInt(1) + 1;
+				return rs.getInt(1) + 1;
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving player rank: ", e);
-		}
-		return rank;
+		}).executeOperation("SQL error while retrieving player rank");
 	}
 
 	/**
 	 * Registers a new achievement for a player; this method will distinguish between asynchronous and synchronous
 	 * processing.
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @param achName
 	 * @param achMessage
 	 */
-	public void registerAchievement(UUID player, String achName, String achMessage) {
-		String query = "REPLACE INTO " + tablePrefix + "achievements VALUES ('" + player.toString() + "',?,?,?)";
+	public void registerAchievement(UUID uuid, String achName, String achMessage) {
+		String sql = "REPLACE INTO " + prefix + "achievements VALUES ('" + uuid + "',?,?,?)";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
-			try (PreparedStatement prep = conn.prepareStatement(query)) {
-				prep.setString(1, achName);
-				prep.setString(2, achMessage);
-				prep.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
-				prep.execute();
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setString(1, achName);
+				ps.setString(2, achMessage);
+				ps.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
+				ps.execute();
 			}
-		}).executeOperation(pool, plugin.getLogger(), "SQL error while registering achievement.");
+		}).executeOperation(pool, plugin.getLogger(), "SQL error while registering achievement");
 	}
 
 	/**
 	 * Checks whether player has received a specific achievement. Access through PoolsManager.
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @param achName
 	 * @return true if achievement found in database, false otherwise
 	 */
-	public boolean hasPlayerAchievement(UUID player, String achName) {
-		boolean result = false;
-		String query = "SELECT achievement FROM " + tablePrefix + "achievements WHERE playername = '"
-				+ player.toString() + "' AND achievement = ?";
-		if (achName.contains("'")) {
-			// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
-			// where names containing single quotes were inserted with two single quotes in the database.
-			query = StringUtils.replaceOnce(query, "achievement = ?", "(achievement = ? OR achievement = ?)");
-		}
-		Connection conn = getSQLConnection();
-		try (PreparedStatement prep = conn.prepareStatement(query)) {
-			prep.setString(1, achName);
-			if (achName.contains("'")) {
-				prep.setString(2, StringUtils.replace(achName, "'", "''"));
+	public boolean hasPlayerAchievement(UUID uuid, String achName) {
+		// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
+		// where names containing single quotes were inserted with two single quotes in the database.
+		String sql = achName.contains("'")
+				? "SELECT achievement FROM " + prefix + "achievements WHERE playername = '" + uuid
+						+ "' AND (achievement = ? OR achievement = ?)"
+				: "SELECT achievement FROM " + prefix + "achievements WHERE playername = '" + uuid
+						+ "' AND achievement = ?";
+		return ((SQLReadOperation<Boolean>) () -> {
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setString(1, achName);
+				if (achName.contains("'")) {
+					ps.setString(2, StringUtils.replace(achName, "'", "''"));
+				}
+				return ps.executeQuery().next();
 			}
-			if (prep.executeQuery().next()) {
-				result = true;
-			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while checking achievement: ", e);
-		}
-		return result;
+		}).executeOperation("SQL error while checking achievement");
 	}
 
 	/**
 	 * Gets the amount of a NormalAchievement statistic.
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @param category
 	 * @return statistic
 	 */
-	public long getNormalAchievementAmount(UUID player, NormalAchievements category) {
-		long amount = 0;
+	public long getNormalAchievementAmount(UUID uuid, NormalAchievements category) {
 		String dbName = category.toDBName();
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix + dbName
-					+ " WHERE playername = '" + player.toString() + "'");
-			while (rs.next()) {
-				amount = rs.getLong(dbName);
+		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = '" + uuid + "'";
+		return ((SQLReadOperation<Long>) () -> {
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return rs.getLong(dbName);
+				}
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving " + dbName + " stats: ", e);
-		}
-		return amount;
+			return 0L;
+		}).executeOperation("SQL error while retrieving " + dbName + " stats");
 	}
 
 	/**
 	 * Gets the amount of a MultipleAchievement statistic.
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @param category
 	 * @param subcategory
 	 * @return statistic
 	 */
-	public long getMultipleAchievementAmount(UUID player, MultipleAchievements category, String subcategory) {
-		long amount = 0;
+	public long getMultipleAchievementAmount(UUID uuid, MultipleAchievements category, String subcategory) {
 		String dbName = category.toDBName();
-		Connection conn = getSQLConnection();
-		try (PreparedStatement prep = conn.prepareStatement("SELECT " + dbName + " FROM " + tablePrefix + dbName
-				+ " WHERE playername = '" + player.toString() + "' AND " + category.toSubcategoryDBName() + " = ?")) {
-			prep.setString(1, subcategory);
-			ResultSet rs = prep.executeQuery();
-			while (rs.next()) {
-				amount = rs.getLong(dbName);
+		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = '" + uuid + "' AND "
+				+ category.toSubcategoryDBName() + " = ?";
+		return ((SQLReadOperation<Long>) () -> {
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setString(1, subcategory);
+				ResultSet rs = ps.executeQuery();
+				if (rs.next()) {
+					return rs.getLong(dbName);
+				}
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving " + dbName + " stats: ", e);
-		}
-		return amount;
+			return 0L;
+		}).executeOperation("SQL error while retrieving " + dbName + " stats");
 	}
 
 	/**
 	 * Returns player's number of connections on separate days (used by GUI).
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @return connections statistic
 	 */
-	public int getConnectionsAmount(UUID player) {
+	public int getConnectionsAmount(UUID uuid) {
 		String dbName = NormalAchievements.CONNECTIONS.toDBName();
-		int connections = 0;
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT " + dbName + " FROM " + tablePrefix + dbName
-					+ " WHERE playername = '" + player.toString() + "'");
-			while (rs.next()) {
-				connections = rs.getInt(dbName);
+		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = '" + uuid + "'";
+		return ((SQLReadOperation<Integer>) () -> {
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt(dbName);
+				}
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving connection statistics: ", e);
-		}
-		return connections;
+			return 0;
+		}).executeOperation("SQL error while retrieving connection statistics");
 	}
 
 	/**
 	 * Gets a player's last connection date.
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @return String with date
 	 */
-	public String getPlayerConnectionDate(UUID player) {
-		String date = null;
-		Connection conn = getSQLConnection();
-		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st.executeQuery("SELECT date FROM " + tablePrefix + NormalAchievements.CONNECTIONS.toDBName()
-					+ " WHERE playername = '" + player.toString() + "'");
-			while (rs.next()) {
-				date = rs.getString("date");
+	public String getPlayerConnectionDate(UUID uuid) {
+		String dbName = NormalAchievements.CONNECTIONS.toDBName();
+		String sql = "SELECT date FROM " + prefix + dbName + " WHERE playername = '" + uuid + "'";
+		return ((SQLReadOperation<String>) () -> {
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return rs.getString("date");
+				}
 			}
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while retrieving connection date stats: ", e);
-		}
-		return date;
+			return null;
+		}).executeOperation("SQL error while retrieving connection date stats");
 	}
 
 	/**
 	 * Updates player's number of connections and last connection date and returns number of connections (used by
 	 * Connections listener).
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @param date
 	 * @return connections statistic
 	 */
-	public int updateAndGetConnection(UUID player, String date) {
+	public int updateAndGetConnection(UUID uuid, String date) {
 		String dbName = NormalAchievements.CONNECTIONS.toDBName();
-		Connection conn = getSQLConnection();
-		try (PreparedStatement prep = conn
-				.prepareStatement("SELECT " + dbName + " FROM " + tablePrefix + dbName + " WHERE playername = ?")) {
-			prep.setString(1, player.toString());
-			ResultSet rs = prep.executeQuery();
-			int prev = 0;
-			while (rs.next()) {
-				prev = rs.getInt(dbName);
-			}
-			int newConnections = prev + 1;
-			String query = "REPLACE INTO " + tablePrefix + dbName + " VALUES ('" + player.toString() + "', "
-					+ newConnections + ", ?)";
-			((SQLWriteOperation) () -> {
-				Connection writeConn = getSQLConnection();
-				try (PreparedStatement writePrep = writeConn.prepareStatement(query)) {
-					writePrep.setString(1, date);
-					writePrep.execute();
+		String sqlRead = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
+		return ((SQLReadOperation<Integer>) () -> {
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sqlRead)) {
+				ps.setString(1, uuid.toString());
+				int connections = 1;
+				ResultSet rs = ps.executeQuery();
+				if (rs.next()) {
+					connections += rs.getInt(dbName);
 				}
-			}).executeOperation(pool, plugin.getLogger(), "SQL error while updating connection.");
-			return newConnections;
-		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while handling connection event: ", e);
-		}
-		return 0;
+				String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES ('" + uuid + "', " + connections
+						+ ", ?)";
+				((SQLWriteOperation) () -> {
+					Connection writeConn = getSQLConnection();
+					try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
+						writePrep.setString(1, date);
+						writePrep.execute();
+					}
+				}).executeOperation(pool, plugin.getLogger(), "SQL error while updating connection");
+				return connections;
+			}
+		}).executeOperation("SQL error while handling connection event");
 	}
 
 	/**
 	 * Deletes an achievement from a player.
 	 * 
-	 * @param player
+	 * @param uuid
 	 * @param achName
 	 */
-	public void deletePlayerAchievement(UUID player, String achName) {
+	public void deletePlayerAchievement(UUID uuid, String achName) {
 		// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
 		// where names containing single quotes were inserted with two single quotes in the database.
-		String query = achName.contains("'")
-				? "DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
+		String sql = achName.contains("'")
+				? "DELETE FROM " + prefix + "achievements WHERE playername = '" + uuid
 						+ "' AND (achievement = ? OR achievement = ?)"
-				: "DELETE FROM " + tablePrefix + "achievements WHERE playername = '" + player.toString()
-						+ "' AND achievement = ?";
+				: "DELETE FROM " + prefix + "achievements WHERE playername = '" + uuid + "' AND achievement = ?";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
-			try (PreparedStatement prep = conn.prepareStatement(query)) {
-				prep.setString(1, achName);
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setString(1, achName);
 				if (achName.contains("'")) {
-					prep.setString(2, StringUtils.replace(achName, "'", "''"));
+					ps.setString(2, StringUtils.replace(achName, "'", "''"));
 				}
-				prep.execute();
+				ps.execute();
 			}
-		}).executeOperation(pool, plugin.getLogger(), "SQL error while deleting achievement.");
+		}).executeOperation(pool, plugin.getLogger(), "SQL error while deleting achievement");
 	}
 
 	/**
 	 * Clear Connection statistics for a given player.
 	 * 
-	 * @param player
+	 * @param uuid
 	 */
-	public void clearConnection(UUID player) {
+	public void clearConnection(UUID uuid) {
+		String sql = "DELETE FROM " + prefix + "connections WHERE playername = '" + uuid + "'";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
-			try (Statement st = conn.createStatement()) {
-				st.executeQuery(
-						"DELETE FROM " + tablePrefix + "connections WHERE playername = '" + player.toString() + "'");
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.execute();
 			}
-		}).executeOperation(pool, plugin.getLogger(), "SQL error while deleting connections.");
+		}).executeOperation(pool, plugin.getLogger(), "SQL error while deleting connections");
 	}
 
-	protected String getTablePrefix() {
-		return tablePrefix;
+	protected String getPrefix() {
+		return prefix;
 	}
 }

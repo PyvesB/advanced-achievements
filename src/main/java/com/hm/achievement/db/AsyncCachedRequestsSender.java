@@ -82,15 +82,15 @@ public class AsyncCachedRequestsSender implements Runnable {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
 				entry.getValue().prepareDatabaseWrite();
 				if (plugin.getDatabaseManager() instanceof PostgreSQLDatabaseManager) {
-					batchedRequests.add("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix()
-							+ category.toDBName() + " VALUES ('" + entry.getKey().substring(0, 36) + "', '"
-							+ entry.getKey().substring(36) + "', " + entry.getValue().getValue()
-							+ ") ON CONFLICT (playername, " + category.toSubcategoryDBName() + ") DO UPDATE SET ("
-							+ category.toDBName() + ")=(" + entry.getValue().getValue() + ")");
+					batchedRequests.add("INSERT INTO " + plugin.getDatabaseManager().getPrefix() + category.toDBName()
+							+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36)
+							+ "', " + entry.getValue().getValue() + ") ON CONFLICT (playername, "
+							+ category.toSubcategoryDBName() + ") DO UPDATE SET (" + category.toDBName() + ")=("
+							+ entry.getValue().getValue() + ")");
 				} else {
-					batchedRequests.add("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix()
-							+ category.toDBName() + " VALUES ('" + entry.getKey().substring(0, 36) + "', '"
-							+ entry.getKey().substring(36) + "', " + entry.getValue().getValue() + ")");
+					batchedRequests.add("REPLACE INTO " + plugin.getDatabaseManager().getPrefix() + category.toDBName()
+							+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36)
+							+ "', " + entry.getValue().getValue() + ")");
 				}
 			}
 		}
@@ -112,14 +112,13 @@ public class AsyncCachedRequestsSender implements Runnable {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
 				entry.getValue().prepareDatabaseWrite();
 				if (plugin.getDatabaseManager() instanceof PostgreSQLDatabaseManager) {
-					batchedRequests.add("INSERT INTO " + plugin.getDatabaseManager().getTablePrefix()
-							+ category.toDBName() + " VALUES ('" + entry.getKey() + "', " + entry.getValue().getValue()
+					batchedRequests.add("INSERT INTO " + plugin.getDatabaseManager().getPrefix() + category.toDBName()
+							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue().getValue()
 							+ ") ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
 							+ entry.getValue().getValue() + ")");
 				} else {
-					batchedRequests
-							.add("REPLACE INTO " + plugin.getDatabaseManager().getTablePrefix() + category.toDBName()
-									+ " VALUES ('" + entry.getKey() + "', " + entry.getValue().getValue() + ")");
+					batchedRequests.add("REPLACE INTO " + plugin.getDatabaseManager().getPrefix() + category.toDBName()
+							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue().getValue() + ")");
 				}
 			}
 		}
