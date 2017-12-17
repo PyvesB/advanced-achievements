@@ -52,6 +52,7 @@ import com.hm.achievement.db.DatabaseCacheManager;
 import com.hm.achievement.db.MySQLDatabaseManager;
 import com.hm.achievement.db.PostgreSQLDatabaseManager;
 import com.hm.achievement.db.SQLiteDatabaseManager;
+import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.gui.CategoryGUI;
 import com.hm.achievement.gui.MainGUI;
 import com.hm.achievement.listener.AchieveArrowListener;
@@ -198,12 +199,8 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	private Map<String, List<Long>> sortedThresholds;
 	private String chatHeader;
 	private Set<String> disabledCategorySet;
-	private boolean successfulLoad;
-	private boolean overrideDisable;
 
 	public AdvancedAchievements() {
-		successfulLoad = true;
-		overrideDisable = false;
 		cacheManager = new DatabaseCacheManager(this);
 		achievementsAndDisplayNames = new HashMap<>();
 		sortedThresholds = new HashMap<>();
@@ -214,33 +211,28 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		// Start enabling plugin.
 		long startTime = System.currentTimeMillis();
 
-		config = loadAndBackupFile("config.yml");
-		lang = loadAndBackupFile(config.getString("LanguageFileName", "lang.yml"));
-		gui = loadAndBackupFile("gui.yml");
+		try {
+			config = loadAndBackupFile("config.yml");
+			lang = loadAndBackupFile(config.getString("LanguageFileName", "lang.yml"));
+			gui = loadAndBackupFile("gui.yml");
 
-		// Error while loading .yml files; do not do any further work.
-		if (overrideDisable) {
-			overrideDisable = false;
-			return;
-		}
+			// Update configurations from previous versions of the plugin; only if server reload or restart.
+			FileUpdater fileUpdater = new FileUpdater(this);
+			fileUpdater.updateOldConfiguration(config);
+			fileUpdater.updateOldLanguage(lang);
+			fileUpdater.updateOldGUI(gui);
 
-		// Update configurations from previous versions of the plugin; only if server reload or restart.
-		FileUpdater fileUpdater = new FileUpdater(this);
-		fileUpdater.updateOldConfiguration(config);
-		fileUpdater.updateOldLanguage(lang);
-		fileUpdater.updateOldGUI(gui);
-
-		disabledCategorySet = extractDisabledCategories(config);
-		logAchievementStats();
-		initialiseCommands();
-		registerListeners();
-		initialiseTabCompleter();
-		initialiseGUIs();
-		selectAndInitialiseDatabaseManager();
-
-		// Error while loading database do not do any further work.
-		if (overrideDisable) {
-			overrideDisable = false;
+			disabledCategorySet = extractDisabledCategories(config);
+			logAchievementStats();
+			initialiseCommands();
+			registerListeners();
+			initialiseTabCompleter();
+			initialiseGUIs();
+			selectAndInitialiseDatabaseManager();
+		} catch (PluginLoadError e) {
+			getLogger().log(Level.SEVERE,
+					"A non recoverable error was encountered while loading the plugin, disabling it.", e);
+			Bukkit.getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
 
@@ -251,26 +243,17 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
 			BungeeTabListPlusBukkitAPI.registerVariable(this, new AchievementCountBungeeTabListPlusVariable(this));
 		}
-		
+
 		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 			new AchievementPlaceholderHook(this).hook();
 		}
 
-		if (successfulLoad) {
-			this.getLogger().info("Plugin successfully enabled and ready to run! Took "
-					+ (System.currentTimeMillis() - startTime) + "ms.");
-		} else {
-			this.getLogger().severe("Error(s) while loading plugin. Please view previous logs for more information.");
-		}
+		getLogger().info("Plugin has finished loading and is ready to run! Took "
+				+ (System.currentTimeMillis() - startTime) + "ms.");
 	}
 
 	@Override
 	public void onDisable() {
-		// Error while loading .yml files or database; do not do any further work.
-		if (overrideDisable) {
-			return;
-		}
-
 		// Cancel scheduled tasks.
 		if (asyncCachedRequestsSenderTask != null) {
 			asyncCachedRequestsSenderTask.cancel();
@@ -283,11 +266,15 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		}
 
 		// Send remaining statistics to the database and close DatabaseManager.
-		asyncCachedRequestsSender.sendBatchedRequests();
+		if (asyncCachedRequestsSender != null) {
+			asyncCachedRequestsSender.sendBatchedRequests();
+		}
 
-		databaseManager.shutdown();
+		if (databaseManager != null) {
+			databaseManager.shutdown();
+		}
 
-		this.getLogger().info("Remaining requests sent to database, plugin disabled.");
+		getLogger().info("Remaining requests sent to database, plugin disabled.");
 	}
 
 	@Override
@@ -359,27 +346,22 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * 
 	 * @param fileName
 	 * @return the loaded file CommentedYamlConfiguration
+	 * @throws PluginLoadError
 	 */
-	public CommentedYamlConfiguration loadAndBackupFile(String fileName) {
+	public CommentedYamlConfiguration loadAndBackupFile(String fileName) throws PluginLoadError {
 		CommentedYamlConfiguration configFile = null;
-		this.getLogger().info("Loading and backing up " + fileName + " file...");
+		getLogger().info("Loading and backing up " + fileName + " file...");
 		try {
 			configFile = new CommentedYamlConfiguration(fileName, this);
 		} catch (IOException | InvalidConfigurationException e) {
-			this.getLogger().severe("Error while loading " + fileName + " file, disabling plugin.");
-			this.getLogger().log(Level.SEVERE,
-					"Verify your syntax by visiting yaml-online-parser.appspot.com and using the following logs:", e);
-			successfulLoad = false;
-			overrideDisable = true;
-			Bukkit.getServer().getPluginManager().disablePlugin(this);
-			return null;
+			throw new PluginLoadError("Error while loading " + fileName
+					+ ".Verify its syntax on yaml-online-parser.appspot.com and use the following logs", e);
 		}
 
 		try {
 			configFile.backupConfiguration();
 		} catch (IOException e) {
-			this.getLogger().log(Level.SEVERE, "Error while backing up " + fileName + " file:", e);
-			successfulLoad = false;
+			getLogger().log(Level.SEVERE, "Error while backing up " + fileName + ".", e);
 		}
 		return configFile;
 	}
@@ -405,30 +387,29 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 								.getDescription().getVersion().charAt(2))) < 4)) {
 			disabledCategorySet.add(NormalAchievements.PETMASTERGIVE.toString());
 			disabledCategorySet.add(NormalAchievements.PETMASTERRECEIVE.toString());
-			this.getLogger()
-					.warning("Overriding configuration: disabling PetMasterGive and PetMasterReceive categories.");
-			this.getLogger().warning(
+			getLogger().warning("Overriding configuration: disabling PetMasterGive and PetMasterReceive categories.");
+			getLogger().warning(
 					"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
 		}
 		// Elytras introduced in Minecraft 1.9.
 		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString()) && minecraftVersion < 9) {
 			disabledCategorySet.add(NormalAchievements.DISTANCEGLIDING.toString());
-			this.getLogger().warning("Overriding configuration: disabling DistanceGliding category.");
-			this.getLogger().warning(
+			getLogger().warning("Overriding configuration: disabling DistanceGliding category.");
+			getLogger().warning(
 					"Elytra are not available in your Minecraft version, please add DistanceGliding to the DisabledCategories list in your config.");
 		}
 		// Llamas introduced in Minecraft 1.11.
 		if (!disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString()) && minecraftVersion < 11) {
 			disabledCategorySet.add(NormalAchievements.DISTANCELLAMA.toString());
-			this.getLogger().warning("Overriding configuration: disabling DistanceLlama category.");
-			this.getLogger().warning(
+			getLogger().warning("Overriding configuration: disabling DistanceLlama category.");
+			getLogger().warning(
 					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in your config.");
 		}
 		// Breeding event introduced in Spigot 1319 (Minecraft 1.10.2).
 		if (!disabledCategorySet.contains(MultipleAchievements.BREEDING.toString()) && minecraftVersion < 10) {
 			disabledCategorySet.add(MultipleAchievements.BREEDING.toString());
-			this.getLogger().warning("Overriding configuration: disabling Breeding category.");
-			this.getLogger().warning(
+			getLogger().warning("Overriding configuration: disabling Breeding category.");
+			getLogger().warning(
 					"The breeding event is not available in your server version, please add Breeding to the DisabledCategories list in your config.");
 		}
 
@@ -486,7 +467,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				}
 			}
 		}
-		this.getLogger().info("Loaded " + totalAchievements + " achievements in " + categoriesInUse + " categories.");
+		getLogger().info("Loaded " + totalAchievements + " achievements in " + categoriesInUse + " categories.");
 
 		if (!disabledCategorySet.isEmpty()) {
 			String disabledCategories;
@@ -499,7 +480,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 						+ disabledCategorySet.toString();
 			}
 
-			this.getLogger().info(disabledCategories);
+			getLogger().info(disabledCategories);
 		}
 	}
 
@@ -507,7 +488,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * Initialises the command modules.
 	 */
 	private void initialiseCommands() {
-		this.getLogger().info("Initialising command modules...");
+		getLogger().info("Initialising command modules...");
 
 		rewardParser = new RewardParser(this);
 		giveCommand = new GiveCommand(this);
@@ -534,7 +515,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * listeners aren't registered.
 	 */
 	private void registerListeners() {
-		this.getLogger().info("Registering event listeners...");
+		getLogger().info("Registering event listeners...");
 		PluginManager pm = getServer().getPluginManager();
 
 		if (!disabledCategorySet.contains(MultipleAchievements.PLACES.toString())) {
@@ -696,24 +677,26 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * Initialises the plugin's custom command tab completer.
 	 */
 	private void initialiseTabCompleter() {
-		this.getLogger().info("Setting up custom tab completers...");
+		getLogger().info("Setting up custom tab completers...");
 		commandTabCompleter = new CommandTabCompleter(this);
-		this.getCommand("aach").setTabCompleter(commandTabCompleter);
+		getCommand("aach").setTabCompleter(commandTabCompleter);
 	}
 
 	/**
 	 * Initialises the plugin's main and category GUIs.
 	 */
 	private void initialiseGUIs() {
-		this.getLogger().info("Setting up graphical interfaces...");
+		getLogger().info("Setting up graphical interfaces...");
 		mainGUI = new MainGUI(this);
 		categoryGUI = new CategoryGUI(this);
 	}
-	
+
 	/**
 	 * Selects a database manager implementation (SQLite, MySQL or PostgreSQL) and initialises it.
+	 * 
+	 * @throws PluginLoadError
 	 */
-	private void selectAndInitialiseDatabaseManager() {
+	private void selectAndInitialiseDatabaseManager() throws PluginLoadError {
 		String dataHandler = config.getString("DatabaseType", "sqlite");
 		if ("mysql".equalsIgnoreCase(dataHandler)) {
 			databaseManager = new MySQLDatabaseManager(this);
@@ -726,12 +709,11 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		databaseManager.initialise();
 	}
 
-
 	/**
 	 * Launches asynchronous scheduled tasks.
 	 */
 	private void launchScheduledTasks() {
-		this.getLogger().info("Launching scheduled tasks...");
+		getLogger().info("Launching scheduled tasks...");
 
 		asyncCachedRequestsSender = new AsyncCachedRequestsSender(this);
 		// Schedule a repeating task to group database queries when statistics are modified.
@@ -767,7 +749,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * Performs an initial load of all the Reloadable fields. Registers them as observers of the ReloadCommand.
 	 */
 	private void loadAndRegisterReloadables() {
-		this.extractConfigurationParameters();
+		extractConfigurationParameters();
 		reloadCommand.registerReloadable(this);
 		try {
 			for (Field field : AdvancedAchievements.class.getDeclaredFields()) {
@@ -779,7 +761,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				}
 			}
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			this.getLogger().severe("Unexpected error while registering Reloadables.");
+			getLogger().severe("Unexpected error while registering Reloadables.");
 		}
 	}
 
@@ -795,7 +777,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				}
 			}
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			this.getLogger().severe("Unexpected error while registering Cleanables.");
+			getLogger().severe("Unexpected error while registering Cleanables.");
 		}
 	}
 
@@ -843,7 +825,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			if (!achievementsAndDisplayNames.containsKey(achName)) {
 				achievementsAndDisplayNames.put(achName, displayName);
 			} else {
-				this.getLogger()
+				getLogger()
 						.warning("Duplicate achievement Name (" + achName + "), this may lead to undefined behaviour.");
 			}
 		}
@@ -857,7 +839,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				if (!achievementsAndDisplayNames.containsKey(achName)) {
 					achievementsAndDisplayNames.put(achName, displayName);
 				} else {
-					this.getLogger().warning(
+					getLogger().warning(
 							"Duplicate achievement Name (" + achName + "), this may lead to undefined behaviour.");
 				}
 			}
@@ -874,7 +856,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 					if (!achievementsAndDisplayNames.containsKey(achName)) {
 						achievementsAndDisplayNames.put(achName, displayName);
 					} else {
-						this.getLogger().warning(
+						getLogger().warning(
 								"Duplicate achievement Name (" + achName + "), this may lead to undefined behaviour.");
 					}
 				}
@@ -918,9 +900,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * stone breaks, achievement.count.breaks.stone will be registered).
 	 */
 	private void registerPermissions() {
-		this.getLogger().info("Registering permissions...");
+		getLogger().info("Registering permissions...");
 
-		PluginManager pluginManager = this.getServer().getPluginManager();
+		PluginManager pluginManager = getServer().getPluginManager();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
 				int startOfMetadata = section.indexOf(':');
@@ -958,7 +940,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	public DatabaseCacheManager getCacheManager() {
 		return cacheManager;
 	}
-	
+
 	public RewardParser getRewardParser() {
 		return rewardParser;
 	}
@@ -967,20 +949,8 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		return chatHeader;
 	}
 
-	public boolean isSuccessfulLoad() {
-		return successfulLoad;
-	}
-
 	public Set<String> getDisabledCategorySet() {
 		return disabledCategorySet;
-	}
-
-	public void setOverrideDisable(boolean overrideDisable) {
-		this.overrideDisable = overrideDisable;
-	}
-
-	public void setSuccessfulLoad(boolean successfulLoad) {
-		this.successfulLoad = successfulLoad;
 	}
 
 	public MainGUI getMainGUI() {

@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.exception.PluginLoadError;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
@@ -41,8 +42,9 @@ public class DatabaseUpdater {
 	 * works if the tables had the default name. It does not support multiple successive table renamings.
 	 * 
 	 * @param databaseAddress
+	 * @throws PluginLoadError
 	 */
-	protected void renameExistingTables(String databaseAddress) {
+	protected void renameExistingTables(String databaseAddress) throws PluginLoadError {
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
 		if (!"".equals(sqlDatabaseManager.getPrefix())) {
 			Connection conn = sqlDatabaseManager.getSQLConnection();
@@ -75,8 +77,7 @@ public class DatabaseUpdater {
 					st.executeBatch();
 				}
 			} catch (SQLException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while attempting to set prefix of database tables: ", e);
-				plugin.setSuccessfulLoad(false);
+				throw new PluginLoadError("Error while attempting to set prefix of database tables.", e);
 			}
 		}
 	}
@@ -84,8 +85,10 @@ public class DatabaseUpdater {
 	/**
 	 * Initialises database tables by creating non existing ones. We batch the requests to send a unique batch to the
 	 * database.
+	 * 
+	 * @throws PluginLoadError
 	 */
-	protected void initialiseTables() {
+	protected void initialiseTables() throws PluginLoadError {
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getPrefix()
@@ -110,8 +113,7 @@ public class DatabaseUpdater {
 			}
 			st.executeBatch();
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while initialising database tables: ", e);
-			plugin.setSuccessfulLoad(false);
+			throw new PluginLoadError("Error while initialising database tables.", e);
 		}
 	}
 
@@ -119,8 +121,10 @@ public class DatabaseUpdater {
 	 * Update the database tables for Breaks, Crafts and Places achievements (from int to varchar for identification
 	 * column). The tables are now using material names and no longer item IDs, which are deprecated; this also allows
 	 * to store extra data information, extending the number of items available for the user.
+	 * 
+	 * @throws PluginLoadError
 	 */
-	protected void updateOldDBToMaterial() {
+	protected void updateOldDBToMaterial() throws PluginLoadError {
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		String type = "";
 		try (Statement st = conn.createStatement()) {
@@ -142,10 +146,9 @@ public class DatabaseUpdater {
 				updateOldDBToMaterial(MultipleAchievements.CRAFTS);
 				updateOldDBToMaterial(MultipleAchievements.PLACES);
 			} else {
-				plugin.getLogger().severe("The database must be updated using tools no longer available in Bukkit.");
-				plugin.getLogger().severe("Start this plugin build once using a Minecraft version prior to 1.13.");
-				plugin.getLogger().severe("You can then happily use Advanced Achievements with Minecraft 1.13+!");
-				plugin.setSuccessfulLoad(false);
+				throw new PluginLoadError("The database must be updated using tools no longer available in Bukkit. "
+						+ "Start this plugin build once using a Minecraft version prior to 1.13. "
+						+ "You can then happily use Advanced Achievements with Minecraft 1.13+!");
 			}
 		}
 	}

@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.utils.Reloadable;
 
 /**
@@ -70,8 +71,10 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Initialises the database system by extracting settings, performing setup tasks and updating schemas if necessary.
+	 * 
+	 * @throws PluginLoadError
 	 */
-	public void initialise() {
+	public void initialise() throws PluginLoadError {
 		plugin.getLogger().info("Initialising database... ");
 
 		prefix = plugin.getPluginConfig().getString("TablePrefix", "");
@@ -80,20 +83,14 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		try {
 			performPreliminaryTasks();
 		} catch (ClassNotFoundException e) {
-			plugin.getLogger().severe(
-					"The JBDC library for your database type was not found. Please read the plugin's support for more information.");
-			plugin.setSuccessfulLoad(false);
+			plugin.getLogger().severe("The JBDC driver for teh chosen database type was not found.");
 		}
 
 		// Try to establish connection with database; stays opened until explicitly closed by the plugin.
 		Connection conn = getSQLConnection();
 
 		if (conn == null) {
-			plugin.getLogger().severe("Could not establish SQL connection, disabling plugin.");
-			plugin.getLogger().severe("Please verify your settings in the configuration file.");
-			plugin.setOverrideDisable(true);
-			plugin.getServer().getPluginManager().disablePlugin(plugin);
-			return;
+			throw new PluginLoadError("Could not establish SQL connection. Please verify your settings in config.yml.");
 		}
 
 		DatabaseUpdater databaseUpdater = new DatabaseUpdater(plugin, this);
@@ -108,8 +105,9 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * Performs any needed tasks before opening a connection to the database.
 	 * 
 	 * @throws ClassNotFoundException
+	 * @throws PluginLoadError
 	 */
-	protected abstract void performPreliminaryTasks() throws ClassNotFoundException;
+	protected abstract void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError;
 
 	/**
 	 * Shuts the thread pool down and closes connection to database.
@@ -152,8 +150,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while attempting to retrieve connection to database: ", e);
-			plugin.setSuccessfulLoad(false);
+			plugin.getLogger().log(Level.SEVERE, "Error while attempting to retrieve connection to database.", e);
 		}
 		return sqlConnection.get();
 	}

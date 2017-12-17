@@ -147,7 +147,7 @@ public class FileUpdater {
 				"When a player receives an achievement, the Name, Message and rewards of the achievement are displayed in",
 				"the chat. If HoverableReceiverChatText is true, a single hoverable text will be displayed to the receiver.",
 				"Otherwise texts will be displayed one after the other.");
-		
+
 		// Added in version 5.4.1:
 		updateSetting(config, "ListColorNotReceived", 8,
 				"Color used for Goals and progress bars in /aach list when an achievement is not yet received.");
@@ -158,8 +158,7 @@ public class FileUpdater {
 				config.saveConfiguration();
 				config.loadConfiguration();
 			} catch (IOException | InvalidConfigurationException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the configuration file: ", e);
-				plugin.setSuccessfulLoad(false);
+				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the configuration file.", e);
 			}
 		}
 	}
@@ -260,7 +259,7 @@ public class FileUpdater {
 
 		// Added in version 5.4:
 		updateSetting(lang, "custom-command-reward", "You received your reward: MESSAGE");
-		
+
 		// Added in version 5.4.1:
 		updateSetting(lang, "version-command-essentials", "Essentials integration:");
 		updateSetting(lang, "version-command-placeholderapi", "PlaceholderAPI integration:");
@@ -271,15 +270,14 @@ public class FileUpdater {
 		updateSetting(lang, "aach-command-add", "Increase a statistic.");
 		updateSetting(lang, "aach-command-add-hover", "Player must be online; mainly used for Custom Categories.");
 		updateSetting(lang, "list-custom", "Custom Categories");
-		
+
 		if (updatePerformed) {
 			// Changes in the language file: save and do a fresh load.
 			try {
 				lang.saveConfiguration();
 				lang.loadConfiguration();
 			} catch (IOException | InvalidConfigurationException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the language file: ", e);
-				plugin.setSuccessfulLoad(false);
+				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the language file.", e);
 			}
 		}
 	}
@@ -310,7 +308,7 @@ public class FileUpdater {
 		updateSetting(gui, "PreviousButton.Metadata", 0);
 		updateSetting(gui, "NextButton.Item", "stone_button");
 		updateSetting(gui, "NextButton.Metadata", 0);
-		
+
 		// Added in version 5.4.X:
 		updateSetting(gui, "Custom.Item", "feather");
 		updateSetting(gui, "Custom.Metadata", 0);
@@ -321,8 +319,7 @@ public class FileUpdater {
 				gui.saveConfiguration();
 				gui.loadConfiguration();
 			} catch (IOException | InvalidConfigurationException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the gui file: ", e);
-				plugin.setSuccessfulLoad(false);
+				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the gui file.", e);
 			}
 		}
 	}

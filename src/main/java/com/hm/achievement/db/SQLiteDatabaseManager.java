@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.exception.PluginLoadError;
 import com.hm.mcshared.file.FileManager;
 
 /**
@@ -32,7 +33,7 @@ public class SQLiteDatabaseManager extends AbstractSQLDatabaseManager {
 	}
 
 	@Override
-	protected void performPreliminaryTasks() throws ClassNotFoundException {
+	protected void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError {
 		Class.forName("org.sqlite.JDBC");
 
 		if (configDatabaseBackup) {
@@ -44,8 +45,7 @@ public class SQLiteDatabaseManager extends AbstractSQLDatabaseManager {
 					FileManager fileManager = new FileManager("achievements.db", plugin);
 					fileManager.backupFile();
 				} catch (IOException e) {
-					plugin.getLogger().log(Level.SEVERE, "Error while backing up database file:", e);
-					plugin.setSuccessfulLoad(false);
+					plugin.getLogger().log(Level.SEVERE, "Error while backing up database file.", e);
 				}
 			}
 		}
@@ -56,8 +56,7 @@ public class SQLiteDatabaseManager extends AbstractSQLDatabaseManager {
 				plugin.getLogger().info("Successfully created database file.");
 			}
 		} catch (IOException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while creating database file: ", e);
-			plugin.setSuccessfulLoad(false);
+			throw new PluginLoadError("Error while creating database file.", e);
 		}
 	}
 

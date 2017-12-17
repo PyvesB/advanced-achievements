@@ -3,11 +3,14 @@ package com.hm.achievement.command;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.utils.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -29,44 +32,48 @@ public class ReloadCommand extends AbstractCommand {
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
 		plugin.reloadConfig();
-		plugin.setSuccessfulLoad(true);
 
-		CommentedYamlConfiguration config = plugin.loadAndBackupFile("config.yml");
+		try {
+			CommentedYamlConfiguration config = plugin.loadAndBackupFile("config.yml");
 
-		// Compare the DisabledCategories configuration list in the previous configuration file and the new one.
-		Set<String> disabledCategorySet = plugin.extractDisabledCategories(config);
-		if (!disabledCategorySet.equals(plugin.getDisabledCategorySet())) {
-			if (sender instanceof Player) {
-				sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang().getString("server-restart-reload",
-						"DisabledCategories list was modified. Server must be fully reloaded or restarted for your changes to take effect."));
+			// Compare the DisabledCategories configuration list in the previous configuration file and the new one.
+			Set<String> disabledCategorySet = plugin.extractDisabledCategories(config);
+			if (!disabledCategorySet.equals(plugin.getDisabledCategorySet())) {
+				if (sender instanceof Player) {
+					sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang().getString(
+							"server-restart-reload",
+							"DisabledCategories list was modified. Server must be fully reloaded or restarted for your changes to take effect."));
+				}
+				plugin.getLogger().warning(
+						"DisabledCategories list was modified. Server must be fully reloaded or restarted for your changes to take effect.");
+				plugin.getLogger().warning("Aborting plugin reload.");
+				return;
 			}
-			plugin.getLogger().warning(
-					"DisabledCategories list was modified. Server must be fully reloaded or restarted for your changes to take effect.");
-			plugin.getLogger().warning("Aborting plugin reload.");
-			return;
-		}
 
-		plugin.setPluginConfig(config);
-		plugin.setPluginLang(plugin.loadAndBackupFile(config.getString("LanguageFileName", "lang.yml")));
-		plugin.setGui(plugin.loadAndBackupFile("gui.yml"));
-
-		// Reload all observers.
-		reloadableObservers.stream().forEach(Reloadable::extractConfigurationParameters);
-
-		if (plugin.isSuccessfulLoad()) {
-			if (sender instanceof Player) {
-				sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
-						.getString("configuration-successfully-reloaded", "Configuration successfully reloaded."));
-			}
-			plugin.getLogger().info("Configuration successfully reloaded.");
-		} else {
+			plugin.setPluginConfig(config);
+			plugin.setPluginLang(plugin.loadAndBackupFile(config.getString("LanguageFileName", "lang.yml")));
+			plugin.setGui(plugin.loadAndBackupFile("gui.yml"));
+		} catch (PluginLoadError e) {
 			if (sender instanceof Player) {
 				sender.sendMessage(
 						plugin.getChatHeader() + plugin.getPluginLang().getString("configuration-reload-failed",
 								"Errors while reloading configuration. Please view logs for more details."));
 			}
-			plugin.getLogger().severe("Errors while reloading configuration. Please view logs for more details.");
+			plugin.getLogger().log(Level.SEVERE,
+					"A non recoverable error was encountered while reloading the plugin, disabling it.", e);
+			Bukkit.getServer().getPluginManager().disablePlugin(plugin);
+			return;
 		}
+
+		// Reload all observers.
+		reloadableObservers.stream().forEach(Reloadable::extractConfigurationParameters);
+
+		if (sender instanceof Player) {
+			sender.sendMessage(plugin.getChatHeader() + plugin.getPluginLang()
+					.getString("configuration-successfully-reloaded", "Configuration successfully reloaded."));
+		}
+		plugin.getLogger().info("Configuration successfully reloaded.");
+
 	}
 
 	/**
