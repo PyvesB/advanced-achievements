@@ -81,7 +81,15 @@ public class FileUpdater {
 		// Added in version 4.0:
 		updateSetting(config, "EnrichedListProgressBars", true,
 				"Display precise statistic information in the /aach list progress bars.");
-		updateSetting(config, "StatisticCooldown", 10, "LavaBuckets, WaterBuckets, Milk, Beds, Brewing, MusicDiscs:");
+		Map<String, Integer> cooldownCategories = new HashMap<>();
+		cooldownCategories.put("LavaBuckets", 10);
+		cooldownCategories.put("WaterBuckets", 10);
+		cooldownCategories.put("Milk", 10);
+		cooldownCategories.put("Beds", 30);
+		cooldownCategories.put("Brewing", 5);
+		cooldownCategories.put("MusicDiscs", 30);
+		updateSetting(config, "StatisticCooldown", cooldownCategories,
+				"Time in seconds between each statistic count. Only the listed categories are currently supported.");
 		updateSetting(config, "CooldownActionBar", true,
 				"Display action bar message when player does an action while in the cooldown period.");
 

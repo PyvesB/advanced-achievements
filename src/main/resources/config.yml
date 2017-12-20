@@ -150,9 +150,14 @@ DisableSilkTouchOreBreaks: false
 # Name of the language file.
 LanguageFileName: lang.yml
 
-# Time in seconds between each statistic count for the following categories: 
-# LavaBuckets, WaterBuckets, Milk, Beds, Brewing, MusicDiscs.
-StatisticCooldown: 10
+# Time in seconds between each statistic count. Only the listed categories are currently supported.
+StatisticCooldown:
+  LavaBuckets: 10
+  WaterBuckets: 10
+  Milk: 10
+  Beds: 30
+  Brewing: 5
+  MusicDiscs: 30
 
 # Display action bar message when player performs an action while in the cooldown period.
 # No effect if using Minecraft 1.7.9 or 1.7.10.

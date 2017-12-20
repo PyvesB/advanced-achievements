@@ -1,5 +1,6 @@
 package com.hm.achievement.listener;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 
 	protected final Map<String, Long> cooldownMap;
 
-	private int configStatisticCooldown;
+	private Map<String, Integer> configStatisticCooldown;
 	private boolean configCooldownActionBar;
 	private String langStatisticCooldown;
 
@@ -37,7 +38,18 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configStatisticCooldown = plugin.getPluginConfig().getInt("StatisticCooldown", 10) * 1000;
+		configStatisticCooldown = new HashMap<>();
+		for (String cooldownCategory : Arrays.asList("LavaBuckets", "WaterBuckets", "Milk", "Beds", "Brewing",
+				"MusicDiscs")) {
+			if (plugin.getPluginConfig().isInt("StatisticCooldown")) {
+				// Old configuration style for plugin versions up to version 5.4.
+				configStatisticCooldown.put(cooldownCategory,
+						plugin.getPluginConfig().getInt("StatisticCooldown", 10) * 1000);
+			} else {
+				configStatisticCooldown.put(cooldownCategory,
+						plugin.getPluginConfig().getInt("StatisticCooldown." + cooldownCategory, 10) * 1000);
+			}
+		}
 		configCooldownActionBar = plugin.getPluginConfig().getBoolean("CooldownActionBar", true);
 		// Action bars introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configCooldownActionBar && version < 8) {
@@ -92,7 +104,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 		if (lastEventTime == null) {
 			lastEventTime = 0L;
 		}
-		long timeToWait = lastEventTime + configStatisticCooldown - System.currentTimeMillis();
+		long timeToWait = lastEventTime + configStatisticCooldown.get(category.toString()) - System.currentTimeMillis();
 		if (timeToWait > 0) {
 			if (configCooldownActionBar) {
 				String actionBarJsonMessage = "{\"text\":\"&o" + StringUtils.replaceOnce(langStatisticCooldown, "TIME",
