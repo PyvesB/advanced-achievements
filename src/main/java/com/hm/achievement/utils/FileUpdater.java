@@ -81,7 +81,7 @@ public class FileUpdater {
 		// Added in version 4.0:
 		updateSetting(config, "EnrichedListProgressBars", true,
 				"Display precise statistic information in the /aach list progress bars.");
-		updateSetting(config, "StatisticCooldown", 10, "LavaBuckets, WaterBuckets, Beds, Brewing, MusicDiscs.");
+		updateSetting(config, "StatisticCooldown", 10, "LavaBuckets, WaterBuckets, Milk, Beds, Brewing, MusicDiscs:");
 		updateSetting(config, "CooldownActionBar", true,
 				"Display action bar message when player does an action while in the cooldown period.");
 

@@ -150,8 +150,8 @@ DisableSilkTouchOreBreaks: false
 # Name of the language file.
 LanguageFileName: lang.yml
 
-# Time in seconds between each statistic count for the following categories. 
-# LavaBuckets, WaterBuckets, Beds, Brewing, MusicDiscs.
+# Time in seconds between each statistic count for the following categories: 
+# LavaBuckets, WaterBuckets, Milk, Beds, Brewing, MusicDiscs.
 StatisticCooldown: 10
 
 # Display action bar message when player performs an action while in the cooldown period.
