@@ -39,6 +39,15 @@ public class RewardParser implements Reloadable {
 
 	public RewardParser(AdvancedAchievements plugin) {
 		this.plugin = plugin;
+
+		// Try to retrieve an Economy instance from Vault.
+		if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
+			RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager()
+					.getRegistration(Economy.class);
+			if (rsp != null) {
+				economy = rsp.getProvider();
+			}
+		}
 	}
 
 	@Override
@@ -59,31 +68,6 @@ public class RewardParser implements Reloadable {
 	}
 
 	/**
-	 * Tries to hook up with Vault, and log if this is called on plugin initialisation.
-	 * 
-	 * @param log
-	 * @return true if Vault available, false otherwise
-	 */
-	public boolean isEconomySet(boolean log) {
-		if (economy != null) {
-			return true;
-		}
-		try {
-			RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager()
-					.getRegistration(net.milkbowl.vault.economy.Economy.class);
-			if (economyProvider != null) {
-				economy = economyProvider.getProvider();
-			}
-			return economy != null;
-		} catch (NoClassDefFoundError e) {
-			if (log) {
-				plugin.getLogger().warning("Attempt to hook up with Vault failed. Money rewardParser ignored.");
-			}
-			return false;
-		}
-	}
-
-	/**
 	 * Constructs the listing of an achievement's rewards with strings coming from language file.
 	 * 
 	 * @param configAchievement
@@ -93,7 +77,7 @@ public class RewardParser implements Reloadable {
 		List<String> rewardTypes = new ArrayList<>();
 		Set<String> keyNames = plugin.getPluginConfig().getKeys(true);
 
-		if (isEconomySet(false) && keyNames.contains(configAchievement + ".Reward.Money")) {
+		if (economy != null && keyNames.contains(configAchievement + ".Reward.Money")) {
 			int amount = getRewardAmount(configAchievement, "Money");
 			rewardTypes.add(
 					StringUtils.replaceOnce(langListRewardMoney, "AMOUNT", amount + " " + getCurrencyName(amount)));
@@ -156,7 +140,7 @@ public class RewardParser implements Reloadable {
 	 */
 	public String getItemName(ItemStack item) {
 		// Return Vault name of object if available.
-		if (isEconomySet(false)) {
+		if (economy != null) {
 			ItemInfo itemInfo = Items.itemByStack(item);
 			if (itemInfo != null) {
 				return itemInfo.getName();

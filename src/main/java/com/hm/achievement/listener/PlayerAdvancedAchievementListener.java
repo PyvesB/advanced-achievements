@@ -32,6 +32,8 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.mcshared.particle.PacketSender;
 import com.hm.mcshared.particle.ParticleEffect;
 
+import net.milkbowl.vault.economy.Economy;
+
 /**
  * Listener class to deal with achievement receptions: rewards, display and database operations.
  * 
@@ -205,20 +207,16 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * @param amount
 	 * @return the reward text to display to the player
 	 */
-	@SuppressWarnings("deprecation")
 	private String rewardMoney(Player player, int amount) {
-		if (plugin.getRewardParser().isEconomySet(true)) {
-			try {
-				plugin.getRewardParser().getEconomy().depositPlayer(player, amount);
-			} catch (NoSuchMethodError e) {
-				// Deprecated method, but was the only one existing prior to Vault 1.4.
-				plugin.getRewardParser().getEconomy().depositPlayer(player.getName(), amount);
-			}
+		Economy economy = plugin.getRewardParser().getEconomy();
+		if (economy != null) {
+			economy.depositPlayer(player, amount);
 
 			String currencyName = plugin.getRewardParser().getCurrencyName(amount);
 			return ChatColor.translateAlternateColorCodes('&',
 					StringUtils.replaceOnce(langMoneyRewardReceived, "AMOUNT", amount + " " + currencyName));
 		}
+		plugin.getLogger().warning("You have specified a money reward but Vault was not linked successfully.");
 		return "";
 	}
 

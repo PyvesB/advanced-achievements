@@ -59,7 +59,7 @@ public class InfoCommand extends AbstractCommand {
 				+ plugin.getDescription().getWebsite();
 
 		// Display whether Advanced Achievements is linked to Vault.
-		String vaultState = plugin.getRewardParser().isEconomySet(false) ? "&a\u2714" : "&4\u2718";
+		String vaultState = plugin.getRewardParser().getEconomy() != null ? "&a\u2714" : "&4\u2718";
 		langVersionCommandVault = plugin.getChatHeader() + configColor
 				+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " " + ChatColor.GRAY
 				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(vaultState));
