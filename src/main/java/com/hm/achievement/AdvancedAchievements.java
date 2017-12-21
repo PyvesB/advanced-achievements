@@ -787,10 +787,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	private void initialiseUpdateChecker() {
 		PluginManager pm = getServer().getPluginManager();
 		updateChecker = new UpdateChecker(this,
-				"https://raw.githubusercontent.com/PyvesB/AdvancedAchievements/master/pom.xml",
-				new String[] { "dev.bukkit.org/bukkit-plugins/advanced-achievements/files",
-						"spigotmc.org/resources/advanced-achievements.6239" },
-				"achievement.update", chatHeader);
+				"https://raw.githubusercontent.com/PyvesB/AdvancedAchievements/master/pom.xml", "achievement.update",
+				chatHeader, "spigotmc.org/resources/advanced-achievements.6239",
+				"dev.bukkit.org/bukkit-plugins/advanced-achievements/files");
 		pm.registerEvents(updateChecker, this);
 		updateChecker.launchUpdateCheckerTask();
 	}
