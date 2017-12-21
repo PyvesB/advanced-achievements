@@ -1,6 +1,7 @@
 package com.hm.achievement.api;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -8,6 +9,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 
@@ -85,20 +87,22 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public Rank getPlayerRank(UUID player, long rankingPeriodStart) {
-		int playerRank = pluginInstance.getDatabaseManager().getPlayerRank(player, rankingPeriodStart);
-		int totalPlayers = pluginInstance.getDatabaseManager().getTotalPlayers(rankingPeriodStart);
-		return new Rank(playerRank, totalPlayers);
+		LinkedHashMap<String, Integer> rankings = pluginInstance.getDatabaseManager().getTopList(rankingPeriodStart);
+		ArrayList<Integer> achievementCounts = new ArrayList<Integer>(rankings.values());
+		Integer achievementsCount = rankings.get(player.toString());
+		if (achievementsCount != null) {
+			// Rank is the first index in the list that has received as many achievements as the player.
+			int playerRank = achievementCounts.indexOf(achievementsCount) + 1;
+			return new Rank(playerRank, rankings.size());
+		} else {
+			return new Rank(Integer.MAX_VALUE, rankings.size());
+		}
 	}
 
 	@Override
 	public List<UUID> getTopPlayers(int numOfPlayers, long rankingPeriodStart) {
-		List<String> playersWithCounts = pluginInstance.getDatabaseManager().getTopList(numOfPlayers,
-				rankingPeriodStart);
-		List<UUID> topPlayers = new ArrayList<>(numOfPlayers);
-		for (int i = 0; i < playersWithCounts.size(); i += 2) {
-			topPlayers.add(UUID.fromString(playersWithCounts.get(i)));
-		}
-		return topPlayers;
+		return pluginInstance.getDatabaseManager().getTopList(rankingPeriodStart).keySet().stream().limit(numOfPlayers)
+				.map(UUID::fromString).collect(Collectors.toList());
 	}
 
 	@Override
