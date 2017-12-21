@@ -291,15 +291,15 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param start
 	 * @return LinkedHashMap with keys corresponding to player UUIDs and values corresponding to their achievement count
 	 */
-	public LinkedHashMap<String, Integer> getTopList(long start) {
+	public Map<String, Integer> getTopList(long start) {
 		// Either consider all the achievements or only those received after the start date.
 		String sql = start == 0L
 				? "SELECT playername, COUNT(*) FROM " + prefix
 						+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
 				: "SELECT playername, COUNT(*) FROM " + prefix
 						+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC";
-		return ((SQLReadOperation<LinkedHashMap<String, Integer>>) () -> {
-			LinkedHashMap<String, Integer> topList = new LinkedHashMap<>();
+		return ((SQLReadOperation<Map<String, Integer>>) () -> {
+			Map<String, Integer> topList = new LinkedHashMap<>();
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				if (start > 0L) {

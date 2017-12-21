@@ -1,8 +1,8 @@
 package com.hm.achievement.command;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -38,7 +38,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private String langPlayerRank;
 	private String langNotRanked;
 	// Used for caching.
-	private LinkedHashMap<String, Integer> cachedRankings;
+	private Map<String, Integer> cachedSortedRankings;
 	private List<Integer> cachedAchievementCounts;
 	private long lastCacheUpdate = 0L;
 
@@ -70,14 +70,14 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	public void executeCommand(CommandSender sender, String[] args) {
 		if (System.currentTimeMillis() - lastCacheUpdate >= CACHE_EXPIRATION_DELAY) {
 			// Update cached data structures.
-			cachedRankings = plugin.getDatabaseManager().getTopList(getRankingStartTime());
-			cachedAchievementCounts = new ArrayList<Integer>(cachedRankings.values());
+			cachedSortedRankings = plugin.getDatabaseManager().getTopList(getRankingStartTime());
+			cachedAchievementCounts = new ArrayList<>(cachedSortedRankings.values());
 			lastCacheUpdate = System.currentTimeMillis();
 		}
 
 		sender.sendMessage(langPeriodAchievement);
 		int currentRank = 1;
-		for (Entry<String, Integer> ranking : cachedRankings.entrySet()) {
+		for (Entry<String, Integer> ranking : cachedSortedRankings.entrySet()) {
 			String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(ranking.getKey())).getName();
 			if (playerName != null) {
 				// Color the name of the player if he is in the top list.
@@ -97,7 +97,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		}
 
 		if (sender instanceof Player) {
-			Integer achievementsCount = cachedRankings.get((((Player) sender).getUniqueId().toString()));
+			Integer achievementsCount = cachedSortedRankings.get((((Player) sender).getUniqueId().toString()));
 			// If not entry in the map, player has not yet received an achievement for this period, not ranked.
 			if (achievementsCount == null) {
 				sender.sendMessage(langNotRanked);
@@ -109,7 +109,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 					launchEffects((Player) sender);
 				}
 				sender.sendMessage(
-						langPlayerRank + playerRank + ChatColor.GRAY + "/" + configColor + cachedRankings.size());
+						langPlayerRank + playerRank + ChatColor.GRAY + "/" + configColor + cachedSortedRankings.size());
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 package com.hm.achievement.api;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -87,8 +86,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public Rank getPlayerRank(UUID player, long rankingPeriodStart) {
-		LinkedHashMap<String, Integer> rankings = pluginInstance.getDatabaseManager().getTopList(rankingPeriodStart);
-		ArrayList<Integer> achievementCounts = new ArrayList<Integer>(rankings.values());
+		Map<String, Integer> rankings = pluginInstance.getDatabaseManager().getTopList(rankingPeriodStart);
+		List<Integer> achievementCounts = new ArrayList<>(rankings.values());
 		Integer achievementsCount = rankings.get(player.toString());
 		if (achievementsCount != null) {
 			// Rank is the first index in the list that has received as many achievements as the player.
