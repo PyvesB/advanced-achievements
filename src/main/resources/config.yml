@@ -1,6 +1,6 @@
 #==============================O==============================#
 # I---------------------------------------------------------I #
-# |     Advanced Achievements 5.4 configuration - Readme    | #
+# |     Advanced Achievements 5.5 configuration - Readme    | #
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
@@ -629,19 +629,9 @@ PlayerCommands:
           Execute: "say §cALERT: §7PLAYER is now a statistician"
           Display: Broadcast
           
-# When the command /aach add is called for this category.
-Custom:
-  votes:
-    10:
-      Message: Vote 10 times for the server!
-      Name: customs_votes_10
-      DisplayName: Server fan
-      Reward:
-        Money: 5
-    
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
-# |                  Command achievements                   | #
+# |               Command-based achievements                | #
 # 6---------------------------------------------------------6 #
 #===========================ooo=ooo===========================#
     
@@ -655,6 +645,16 @@ Commands:
     Message: You took part in the special event!
     Name: yourAch1
     DisplayName: Special Event Achievement!
+    
+# When the command /aach add is called for this category.
+Custom:
+  votes:
+    10:
+      Message: Vote 10 times for the server!
+      Name: customs_votes_10
+      DisplayName: Server fan
+      Reward:
+        Money: 5
     
 #===========================OOOOOOO===========================#
 # VII-----------------------------------------------------VII #
