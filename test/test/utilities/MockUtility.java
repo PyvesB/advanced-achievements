@@ -46,8 +46,16 @@ public class MockUtility {
 
     private void mockResourceFetching() throws Exception {
         mockPluginDescription();
+        mockDataFolder();
         File configYml = new File(getClass().getResource("/config.yml").getPath());
         when(pluginMock.getResource("config.yml")).thenReturn(new FileInputStream(configYml));
+    }
+
+    private void mockDataFolder() {
+        TestFolderUtility.clearFolder();
+        TestFolderUtility.createFolder();
+        File folder = TestFolderUtility.getFolder();
+        when(pluginMock.getDataFolder()).thenReturn(folder);
     }
 
     private void mockPluginDescription() throws InvalidDescriptionException, FileNotFoundException {
