@@ -8,15 +8,19 @@ import java.util.Objects;
  *
  * @author Rsl1122
  */
-public class TestFolderUtility {
+public class TestFolder {
 
     private static final String path = getPath();
 
     private static String getPath() {
-        return TestFolderUtility.class.getClass().getResource("/test-folder").getPath();
+        File configFile = new File(TestFolder.class.getResource("/config.yml").getPath());
+        File targetFolder = configFile.getParentFile().getParentFile();
+        File testFolder = new File(targetFolder, "test-folder");
+        return testFolder.getPath();
     }
 
     public static boolean clearFolder() {
+        System.out.println("Clearing Folder: " + path);
         File folder = getFolder();
         if (folder.exists()) {
             return clear(folder);
@@ -29,6 +33,7 @@ public class TestFolderUtility {
     }
 
     public static boolean createFolder() {
+        System.out.println("Creating Folder: " + path);
         File folder = getFolder();
         return folder.mkdirs();
     }

@@ -1,9 +1,7 @@
 package test.utilities;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.exception.PluginLoadError;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.powermock.api.mockito.PowerMockito;
@@ -11,7 +9,6 @@ import org.powermock.api.mockito.PowerMockito;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.logging.Logger;
 
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -52,9 +49,9 @@ public class MockUtility {
     }
 
     private void mockDataFolder() {
-        TestFolderUtility.clearFolder();
-        TestFolderUtility.createFolder();
-        File folder = TestFolderUtility.getFolder();
+        TestFolder.clearFolder();
+        TestFolder.createFolder();
+        File folder = TestFolder.getFolder();
         when(pluginMock.getDataFolder()).thenReturn(folder);
     }
 
