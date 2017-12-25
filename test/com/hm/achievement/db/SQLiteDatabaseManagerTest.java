@@ -10,6 +10,11 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import test.utilities.MockUtility;
 
+/**
+ * Class for testing SQLite Database.
+ *
+ * @author Rsl1122
+ */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(JavaPlugin.class)
 public class SQLiteDatabaseManagerTest {
@@ -18,7 +23,9 @@ public class SQLiteDatabaseManagerTest {
 
     @Before
     public void setUp() throws Exception {
-        MockUtility mockUtility = MockUtility.setUp();
+        MockUtility mockUtility = MockUtility.setUp()
+                .mockLogger()
+                .mockPluginConfig();
         AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
         db = new SQLiteDatabaseManager(pluginMock);
