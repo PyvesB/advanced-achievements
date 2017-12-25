@@ -84,7 +84,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		try {
 			performPreliminaryTasks();
 		} catch (ClassNotFoundException e) {
-			plugin.getLogger().severe("The JBDC driver for teh chosen database type was not found.");
+			plugin.getLogger().severe("The JBDC driver for the chosen database type was not found.");
 		}
 
 		// Try to establish connection with database; stays opened until explicitly closed by the plugin.
