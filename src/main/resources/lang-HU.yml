@@ -2,7 +2,7 @@
 # +---------------------------------------------------------+ #
 # | Advanced Achievements Hungarian translation by          | #
 # |                    montlikadani                         | #
-# |             ~ Valid as of version 5.3.3 ~               | #
+# |             ~ Valid as of version 5.5 ~                 | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
@@ -10,6 +10,7 @@
 
 no-permissions: "Nincs jogod erre."
 statistic-cooldown: "Küldetés várakozás: várj TIME másodpercet, mielőtt ez a művelet újra számítana."
+category-does-not-exist: "Ez a kategória CAT nem létezik."
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "A konfiguráció sikeresen újratöltve."
@@ -39,6 +40,10 @@ achievement-already-received: "A játékos PLAYER már kapott küldetést!"
 achievement-not-found: "A megadott küldetés nem található a Parancs kategóriában."
 achievement-given: "Küldetés adva!"
 
+# Related to /aach add.
+error-value: "A VALUE értéknek egész számnak kell lennie!"
+statistic-increased: "A statisztikai ACH összege AMOUNT értékkel nőtt PLAYER számára!"
+
 # Related to achievement reception.
 achievement-received: "PLAYER megkapta a küldetést:"
 achievement-new: "Új küldetések:"
@@ -54,6 +59,7 @@ delete-achievements: "Az ACH küldetését törölték PLAYER."
 item-reward-received: "Kaptál tárgy jutalmakat:"
 money-reward-received: "Kaptál: AMOUNT!"
 command-reward: "A jutalom parancs végrehajtása!"
+custom-command-reward: "Megkaptad a jutalmadat: MESSAGE"
 experience-reward-received: "Kaptál: AMOUNT tapasztalatot!"
 increase-max-health-reward-received: "A max életed megnőtt AMOUNT!"
 
@@ -68,6 +74,8 @@ aach-command-top: "Személyes és globális rangsor megjelenítése."
 aach-command-top-hover: "Ki a szerver vezetője és hogyan hasonlít össze velük?"
 aach-command-give: "Ad egy küldetést ACH NAME."
 aach-command-give-hover: "A játékosnak elérhetőnek kell lennie; csak a parancsok eredményei használhatók."
+aach-command-add: "Növeli a statisztikát."
+aach-command-add-hover: "A játékosnak online kell lennie; elsősorban az egyéni kategóriákban."
 aach-command-reload: "Újratölti a plugin konfigurációt."
 aach-command-reload-hover: "Újratölti a legtöbb beállítást a config.yml, a gui.yml és a lang.yml fájlokban."
 aach-command-info: "A bővítményre vonatkozó információk megjelenítése."
@@ -97,7 +105,9 @@ version-command-description-details: "Advanced Achievements egyedülálló és k
 version-command-vault: "Vault integráció:"
 version-command-petmaster: "Pet Master integráció:"
 version-command-btlp: "BungeeTabListPlus integráció:"
-version-command-database: "Adatbázis típusa:"
+version-command-essentials: "Essentials integráció:"
+version-command-placeholderapi: "PlaceholderAPI integráció:"
+version-command-database: "Adatbázis típus:"
 
 # Related to /aach list.
 list-gui-title: "&5&lKüldetések lista"
@@ -176,7 +186,6 @@ toggle-hidden: "Nem kap több értesítést, ha más játékosok kapnak küldet�
 
 # Related to /aach reset.
 reset-successful: " a statisztikák törölve PLAYER."
-category-does-not-exist: "A kiválasztott kategória nem létezik."
 
 # Related to /aach generate.
 advancements-generated: "A küldetések sikeresen létrehozva."

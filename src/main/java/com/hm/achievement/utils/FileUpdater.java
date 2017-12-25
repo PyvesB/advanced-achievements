@@ -156,7 +156,7 @@ public class FileUpdater {
 				"the chat. If HoverableReceiverChatText is true, a single hoverable text will be displayed to the receiver.",
 				"Otherwise texts will be displayed one after the other.");
 
-		// Added in version 5.4.1:
+		// Added in version 5.5:
 		updateSetting(config, "ListColorNotReceived", 8,
 				"Color used for Goals and progress bars in /aach list when an achievement is not yet received.");
 
@@ -268,11 +268,9 @@ public class FileUpdater {
 		// Added in version 5.4:
 		updateSetting(lang, "custom-command-reward", "You received your reward: MESSAGE");
 
-		// Added in version 5.4.1:
+		// Added in version 5.5:
 		updateSetting(lang, "version-command-essentials", "Essentials integration:");
 		updateSetting(lang, "version-command-placeholderapi", "PlaceholderAPI integration:");
-
-		// Added in version 5.4.X:
 		updateSetting(lang, "error-value", "The value VALUE must to be an integer!");
 		updateSetting(lang, "statistic-increased", "Statistic ACH increased by AMOUNT for PLAYER!");
 		updateSetting(lang, "aach-command-add", "Increase a statistic.");
@@ -317,7 +315,7 @@ public class FileUpdater {
 		updateSetting(gui, "NextButton.Item", "stone_button");
 		updateSetting(gui, "NextButton.Metadata", 0);
 
-		// Added in version 5.4.X:
+		// Added in version 5.5:
 		updateSetting(gui, "Custom.Item", "feather");
 		updateSetting(gui, "Custom.Metadata", 0);
 

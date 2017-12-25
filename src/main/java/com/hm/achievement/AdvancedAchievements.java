@@ -112,7 +112,7 @@ import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 5.4
+ * @version 5.5
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin implements Reloadable {
@@ -787,10 +787,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	private void initialiseUpdateChecker() {
 		PluginManager pm = getServer().getPluginManager();
 		updateChecker = new UpdateChecker(this,
-				"https://raw.githubusercontent.com/PyvesB/AdvancedAchievements/master/pom.xml",
-				new String[] { "dev.bukkit.org/bukkit-plugins/advanced-achievements/files",
-						"spigotmc.org/resources/advanced-achievements.6239" },
-				"achievement.update", chatHeader);
+				"https://raw.githubusercontent.com/PyvesB/AdvancedAchievements/master/pom.xml", "achievement.update",
+				chatHeader, "spigotmc.org/resources/advanced-achievements.6239",
+				"dev.bukkit.org/bukkit-plugins/advanced-achievements/files");
 		pm.registerEvents(updateChecker, this);
 		updateChecker.launchUpdateCheckerTask();
 	}

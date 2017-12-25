@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -285,21 +286,20 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Gets the list of players with the most achievements over a given period.
+	 * Constructs a mapping of players with the most achievements over a given period.
 	 * 
-	 * @param length
 	 * @param start
-	 * @return list with player UUIDs
+	 * @return LinkedHashMap with keys corresponding to player UUIDs and values corresponding to their achievement count
 	 */
-	public List<String> getTopList(int length, long start) {
+	public Map<String, Integer> getTopList(long start) {
 		// Either consider all the achievements or only those received after the start date.
 		String sql = start == 0L
 				? "SELECT playername, COUNT(*) FROM " + prefix
-						+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC LIMIT " + length
+						+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
 				: "SELECT playername, COUNT(*) FROM " + prefix
-						+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC LIMIT " + length;
-		return ((SQLReadOperation<List<String>>) () -> {
-			List<String> topList = new ArrayList<>(2 * length);
+						+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC";
+		return ((SQLReadOperation<Map<String, Integer>>) () -> {
+			Map<String, Integer> topList = new LinkedHashMap<>();
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				if (start > 0L) {
@@ -307,73 +307,11 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
-					topList.add(rs.getString(1));
-					topList.add(Integer.toString(rs.getInt(2)));
+					topList.put(rs.getString(1), rs.getInt(2));
 				}
 			}
 			return topList;
 		}).executeOperation("computing the list of top players");
-	}
-
-	/**
-	 * Gets number of players who have received at least one achievement after start date.
-	 * 
-	 * @param start
-	 * @return list with player UUIDs
-	 */
-	public int getTotalPlayers(long start) {
-		// Either consider all the achievements or only those received after the start date.
-		String sql = start == 0L
-				? "SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + prefix
-						+ "achievements) AS distinctPlayers"
-				: "SELECT COUNT(*) FROM (SELECT DISTINCT playername  FROM " + prefix
-						+ "achievements WHERE date > ?) AS distinctPlayers";
-		return ((SQLReadOperation<Integer>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				if (start > 0L) {
-					ps.setDate(1, new Date(start));
-				}
-				ResultSet rs = ps.executeQuery();
-				rs.next();
-				return rs.getInt(1);
-			}
-		}).executeOperation("counting total players");
-	}
-
-	/**
-	 * Gets the rank of a player given his number of achievements received after start date.
-	 * 
-	 * @param uuid
-	 * @param start
-	 * @return player's rank
-	 */
-	public int getPlayerRank(UUID uuid, long start) {
-		String sql;
-		if (start == 0L) {
-			// We consider all the achievements; no date comparison.
-			sql = "SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + prefix
-					+ "achievements GROUP BY playername) AS achGroupedByPlayer WHERE number > (SELECT COUNT(*) FROM "
-					+ prefix + "achievements WHERE playername = '" + uuid + "')";
-		} else {
-			// We only consider achievement received after the start date; do date comparisons.
-			sql = "SELECT COUNT(*) FROM (SELECT COUNT(*) number FROM " + prefix
-					+ "achievements WHERE date > ? GROUP BY playername) AS achGroupedByPlayer WHERE number > (SELECT COUNT(*) FROM "
-					+ prefix + "achievements WHERE playername = '" + uuid + "' AND date > ?)";
-		}
-		return ((SQLReadOperation<Integer>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				if (start > 0L) {
-					ps.setDate(1, new Date(start));
-					ps.setDate(2, new Date(start));
-				}
-				ResultSet rs = ps.executeQuery();
-				rs.next();
-				// Rank of a player corresponds to number of players with more achievements + 1.
-				return rs.getInt(1) + 1;
-			}
-		}).executeOperation("computing a player's rank");
 	}
 
 	/**

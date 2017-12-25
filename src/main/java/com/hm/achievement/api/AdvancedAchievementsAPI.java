@@ -61,7 +61,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param player
 	 * @param rankingPeriodStart time in millis since epoch; rank will be calculated for achievements received between
 	 *            that starting point and now
-	 * @return rank of the player
+	 * @return rank of the player; if no achievements were received over the period, his rank will be Integer.MAX_VALUE
 	 */
 	public Rank getPlayerRank(UUID player, long rankingPeriodStart);
 

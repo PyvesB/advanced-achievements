@@ -1,6 +1,9 @@
 package com.hm.achievement.command;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -19,7 +22,7 @@ import com.hm.mcshared.particle.ParticleEffect;
  */
 public abstract class AbstractRankingCommand extends AbstractCommand {
 
-	private static final int VALUES_EXPIRATION_DELAY = 60000;
+	private static final int CACHE_EXPIRATION_DELAY = 60000;
 	private static final int DECIMAL_CIRCLED_ONE = Integer.parseInt("2780", 16);
 	private static final int DECIMAL_CIRCLED_ELEVEN = Integer.parseInt("246A", 16);
 	private static final int DECIMAL_CIRCLED_TWENTY_ONE = Integer.parseInt("3251", 16);
@@ -35,9 +38,9 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private String langPlayerRank;
 	private String langNotRanked;
 	// Used for caching.
-	private int totalPlayersInRanking;
-	private List<String> playersRanking;
-	private long lastCommandTime;
+	private Map<String, Integer> cachedSortedRankings;
+	private List<Integer> cachedAchievementCounts;
+	private long lastCacheUpdate = 0L;
 
 	protected AbstractRankingCommand(AdvancedAchievements plugin, String languageHeaderKey,
 			String defaultHeaderMessage) {
@@ -45,7 +48,6 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 		this.languageHeaderKey = languageHeaderKey;
 		this.defaultHeaderMessage = defaultHeaderMessage;
-		lastCommandTime = 0L;
 	}
 
 	@Override
@@ -66,51 +68,49 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 	@Override
 	public void executeCommand(CommandSender sender, String[] args) {
-		long currentTime = System.currentTimeMillis();
-		int rank = Integer.MAX_VALUE;
-
-		long rankingStartTime = getRankingStartTime();
-
-		if (sender instanceof Player) {
-			rank = plugin.getDatabaseManager().getPlayerRank(((Player) sender).getUniqueId(), rankingStartTime);
-		}
-		// Update top list on given period if too old.
-		if (currentTime - lastCommandTime >= VALUES_EXPIRATION_DELAY) {
-			playersRanking = plugin.getDatabaseManager().getTopList(configTopList, rankingStartTime);
+		if (System.currentTimeMillis() - lastCacheUpdate >= CACHE_EXPIRATION_DELAY) {
+			// Update cached data structures.
+			cachedSortedRankings = plugin.getDatabaseManager().getTopList(getRankingStartTime());
+			cachedAchievementCounts = new ArrayList<>(cachedSortedRankings.values());
+			lastCacheUpdate = System.currentTimeMillis();
 		}
 
 		sender.sendMessage(langPeriodAchievement);
-
-		for (int i = 0; i < playersRanking.size(); i += 2) {
-			String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(playersRanking.get(i))).getName();
+		int currentRank = 1;
+		for (Entry<String, Integer> ranking : cachedSortedRankings.entrySet()) {
+			String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(ranking.getKey())).getName();
 			if (playerName != null) {
 				// Color the name of the player if he is in the top list.
-				String color = "";
+				String color = ChatColor.GRAY + " ";
 				if (sender instanceof Player && playerName.equals(((Player) sender).getName())) {
-					color = configColor.toString();
+					color += configColor.toString();
 				}
-				sender.sendMessage(ChatColor.GRAY + " " + color + getRankingSymbol((i + 2) >> 1) + ' ' + playerName
-						+ " - " + playersRanking.get(i + 1));
+				sender.sendMessage(
+						color + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue());
 			} else {
 				plugin.getLogger().warning("Ranking command: name corresponding to UUID not found.");
 			}
-		}
-		// Launch effect if player is in top list.
-		if (rank <= configTopList) {
-			launchEffects((Player) sender);
-		}
-
-		// Update number of players for this period if value is too old, and update timestamp.
-		if (currentTime - lastCommandTime >= VALUES_EXPIRATION_DELAY) {
-			totalPlayersInRanking = plugin.getDatabaseManager().getTotalPlayers(rankingStartTime);
-			lastCommandTime = System.currentTimeMillis();
+			++currentRank;
+			if (currentRank > configTopList) {
+				break;
+			}
 		}
 
-		// If rank > totalPlayersInRanking, player has not yet received an achievement for this period, not ranked.
-		if (rank <= totalPlayersInRanking) {
-			sender.sendMessage(langPlayerRank + rank + ChatColor.GRAY + "/" + configColor + totalPlayersInRanking);
-		} else if (sender instanceof Player) {
-			sender.sendMessage(langNotRanked);
+		if (sender instanceof Player) {
+			Integer achievementsCount = cachedSortedRankings.get((((Player) sender).getUniqueId().toString()));
+			// If not entry in the map, player has not yet received an achievement for this period, not ranked.
+			if (achievementsCount == null) {
+				sender.sendMessage(langNotRanked);
+			} else {
+				// Rank is the first index in the list that has received as many achievements as the player.
+				int playerRank = cachedAchievementCounts.indexOf(achievementsCount) + 1;
+				// Launch effect if player is in top list.
+				if (playerRank <= configTopList) {
+					launchEffects((Player) sender);
+				}
+				sender.sendMessage(
+						langPlayerRank + playerRank + ChatColor.GRAY + "/" + configColor + cachedSortedRankings.size());
+			}
 		}
 	}
 

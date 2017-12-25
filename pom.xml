@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.hm.achievement</groupId>
 	<artifactId>AdvancedAchievements</artifactId>
-	<version>5.4</version>
+	<version>5.5</version>
 	<url>https://github.com/PyvesB/AdvancedAchievements</url>
 	<name>AdvancedAchievements</name>
 	<description>A Minecraft plugin that brings unique and challenging achievements on your server! Books, GUI, rankings, rewards, effects and more!</description>
@@ -132,7 +132,7 @@
 		<dependency>
 			<groupId>com.hm.mcshared</groupId>
 			<artifactId>MCShared</artifactId>
-			<version>1.0.5</version>
+			<version>1.0.6</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
