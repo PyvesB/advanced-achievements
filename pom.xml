@@ -153,6 +153,7 @@
 			<version>2.8.2</version>
 			<scope>provided</scope>
 		</dependency>
+
 		<!-- PowerMock (Test Dependency) -->
 		<dependency>
 			<groupId>org.powermock</groupId>
@@ -177,6 +178,14 @@
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4-rule</artifactId>
 			<version>1.6.6</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- SQLite (Test Dependency) -->
+		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
+		<dependency>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.21.0.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
