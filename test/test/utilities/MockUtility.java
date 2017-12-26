@@ -36,8 +36,8 @@ public class MockUtility {
     }
 
     public MockUtility mockLogger() {
-        Logger loggerMock = PowerMockito.mock(Logger.class);
-        when(pluginMock.getLogger()).thenReturn(loggerMock);
+        Logger testLogger = Logger.getLogger("TestLogger");
+        when(pluginMock.getLogger()).thenReturn(testLogger);
         return this;
     }
 
