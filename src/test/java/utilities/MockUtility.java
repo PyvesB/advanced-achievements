@@ -1,4 +1,4 @@
-package java.utilities;
+package utilities;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.mcshared.file.CommentedYamlConfiguration;

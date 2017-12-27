@@ -1,7 +1,6 @@
-package java.com.hm.achievement.db;
+package com.hm.achievement.db;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.SQLiteDatabaseManager;
 import com.hm.achievement.exception.PluginLoadError;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.After;
@@ -10,11 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import utilities.MockUtility;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.utilities.MockUtility;
 
 import static org.junit.Assert.*;
 

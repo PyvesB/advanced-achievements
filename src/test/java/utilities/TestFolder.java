@@ -1,4 +1,4 @@
-package java.utilities;
+package utilities;
 
 import java.io.File;
 import java.util.Objects;
