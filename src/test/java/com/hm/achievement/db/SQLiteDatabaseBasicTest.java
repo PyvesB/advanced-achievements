@@ -175,4 +175,54 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         assertFalse("Top list from moment before the second save should not include first uuid",
                 topListSecond.containsKey(testUUID.toString()));
     }
+
+    @Test
+    public void testGetAchievementNameList() throws PluginLoadError {
+        initDB();
+        registerAchievement();
+        sleep25ms();
+
+        List<String> achNames = db.getPlayerAchievementNamesList(testUUID);
+        assertEquals(1, achNames.size());
+        assertEquals(testAchievement, achNames.get(0));
+    }
+
+    @Test
+    public void testHasAchievement() throws PluginLoadError {
+        initDB();
+
+        assertFalse(db.hasPlayerAchievement(testUUID, testAchievement));
+
+        registerAchievement();
+        sleep25ms();
+
+        assertTrue(db.hasPlayerAchievement(testUUID, testAchievement));
+    }
+
+    @Test
+    public void testGetPlayerConnectionDate() throws PluginLoadError {
+        initDB();
+
+        assertNull(db.getPlayerConnectionDate(testUUID));
+
+        db.updateAndGetConnection(testUUID, new Date().toString());
+        sleep25ms();
+
+        assertNotNull(db.getPlayerConnectionDate(testUUID));
+    }
+
+    @Test
+    public void testClearConnection() throws PluginLoadError {
+        initDB();
+
+        db.updateAndGetConnection(testUUID, new Date().toString());
+        sleep25ms();
+
+        assertNotNull(db.getPlayerConnectionDate(testUUID));
+
+        db.clearConnection(testUUID);
+        sleep25ms();
+
+        assertNull(db.getPlayerConnectionDate(testUUID));
+    }
 }
