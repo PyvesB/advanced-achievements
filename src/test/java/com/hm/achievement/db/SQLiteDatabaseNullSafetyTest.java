@@ -9,6 +9,10 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import utilities.MockUtility;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -57,16 +61,26 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testRegisterNullUUIDForExceptions() throws PluginLoadError {
+    public void testGetMethodsForNullUUIDExceptions() throws PluginLoadError, SQLException {
         initDB();
-        registerAchievement(null, testAchievement, testAchievementMsg);
+
+        String sql = "REPLACE INTO achievements VALUES ('" + null + "',?,?,?)";
+
+        try (Connection connection = db.getSQLConnection()) {
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, testAchievement);
+                ps.setString(2, testAchievementMsg);
+                ps.setDate(3, new Date(System.currentTimeMillis()));
+                ps.execute();
+            }
+        }
         sleep25ms();
 
-        assertTrue(db.getPlayerAchievementsList(null).isEmpty());
-        assertTrue(db.getPlayersAchievementsAmount().isEmpty());
-        assertEquals(0, db.getPlayerAchievementsAmount(null));
-        assertTrue(db.getPlayerAchievementNamesList(null).isEmpty());
-        assertNull(db.getPlayerAchievementDate(null, testAchievement));
+        db.getPlayerAchievementsList(null);
+        db.getPlayersAchievementsAmount();
+        db.getPlayerAchievementsAmount(null);
+        db.getPlayerAchievementNamesList(null);
+        db.getPlayerAchievementDate(null, testAchievement);
     }
 
     @Test
