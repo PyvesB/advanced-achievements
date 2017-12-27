@@ -2,13 +2,11 @@ package com.hm.achievement.db;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.exception.PluginLoadError;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 import utilities.MockUtility;
 
 import java.util.List;
@@ -22,8 +20,7 @@ import static org.junit.Assert.*;
  *
  * @author Rsl1122
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(JavaPlugin.class)
+@RunWith(MockitoJUnitRunner.class)
 public class SQLiteDatabaseManagerTest {
 
     private SQLiteDatabaseManager db;

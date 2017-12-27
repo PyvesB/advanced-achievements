@@ -4,14 +4,15 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.powermock.api.mockito.PowerMockito;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.logging.Logger;
 
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 /**
  * Utility class for Mocking plugin components prior tests in order to complete testing.
@@ -31,13 +32,13 @@ public class MockUtility {
     }
 
     public MockUtility initializePluginMock() {
-        pluginMock = PowerMockito.mock(AdvancedAchievements.class);
+        pluginMock = Mockito.mock(AdvancedAchievements.class);
         return this;
     }
 
     public MockUtility mockLogger() {
         Logger testLogger = Logger.getLogger("TestLogger");
-        when(pluginMock.getLogger()).thenReturn(testLogger);
+        given(pluginMock.getLogger()).willReturn(testLogger);
         return this;
     }
 
