@@ -21,13 +21,7 @@ import static org.junit.Assert.*;
  * @author Rsl1122
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SQLiteDatabaseManagerTest {
-
-    private SQLiteDatabaseManager db;
-
-    private final UUID testUUID = UUID.randomUUID();
-    private final String testAchievement = "TestAchievement";
-    private final String testAchievementMsg = "TestMessage";
+public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Before
     public void setUp() throws Exception {
@@ -72,17 +66,7 @@ public class SQLiteDatabaseManagerTest {
     }
 
 
-    private void registerAchievement() {
-        System.out.println("Saving test achievement: " + testUUID + " | " + testAchievement + " | " + testAchievementMsg);
-        db.registerAchievement(testUUID, testAchievement, testAchievementMsg);
-    }
 
-    private void sleep25ms() {
-        try {
-            Thread.sleep(25);
-        } catch (InterruptedException e) {
-        }
-    }
 
     @Test
     public void testAchievementCount() throws PluginLoadError {
