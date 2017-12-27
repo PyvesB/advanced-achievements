@@ -142,4 +142,37 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
         assertEquals(3, db.getConnectionsAmount(testUUID));
     }
+
+    @Test
+    public void testGetTopAchievements() throws PluginLoadError {
+        initDB();
+        long firstSave = System.currentTimeMillis();
+
+        registerAchievement(testUUID, testAchievement, testAchievementMsg);
+
+        sleep25ms();
+        sleep25ms();
+        long secondSave = System.currentTimeMillis();
+
+        UUID secondUUID = UUID.randomUUID();
+        String secondAch = "TestAchievement2";
+
+        registerAchievement(secondUUID, testAchievement, testAchievementMsg);
+        sleep25ms();
+        registerAchievement(secondUUID, secondAch, testAchievementMsg);
+        sleep25ms();
+
+        Map<String, Integer> topList = db.getTopList(0);
+        assertEquals(2, topList.size());
+        assertEquals(2, (int) topList.get(secondUUID.toString()));
+        assertEquals(1, (int) topList.get(testUUID.toString()));
+
+        Map<String, Integer> topListFirst = db.getTopList(firstSave);
+        assertEquals("Top list from first save & all top list should be the same",
+                topList, topListFirst);
+
+        Map<String, Integer> topListSecond = db.getTopList(secondSave);
+        assertFalse("Top list from moment before the second save should not include first uuid",
+                topListSecond.containsKey(testUUID.toString()));
+    }
 }
