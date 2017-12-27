@@ -107,4 +107,23 @@ public class SQLiteDatabaseManagerTest {
         String date = db.getPlayerAchievementDate(testUUID, testAchievement);
         assertNotNull(date);
     }
+
+    @Test
+    public void testPlayerAchievementAmount() throws PluginLoadError {
+        initDB();
+        registerAchievement();
+        sleep25ms();
+
+        assertEquals(1, db.getPlayerAchievementsAmount(testUUID));
+    }
+
+    @Test
+    public void testDeleteAchievement() throws PluginLoadError {
+        testPlayerAchievementAmount();
+
+        db.deletePlayerAchievement(testUUID, testAchievement);
+        sleep25ms();
+
+        assertEquals(0, db.getPlayerAchievementsAmount(testUUID));
+    }
 }
