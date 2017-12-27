@@ -1,5 +1,7 @@
 package com.hm.achievement.db;
 
+import com.hm.achievement.exception.PluginLoadError;
+
 import java.util.UUID;
 
 public class SQLiteDatabaseTest {
@@ -9,6 +11,11 @@ public class SQLiteDatabaseTest {
     final UUID testUUID = UUID.randomUUID();
     final String testAchievement = "TestAchievement";
     final String testAchievementMsg = "TestMessage";
+
+    void initDB() throws PluginLoadError {
+        db.initialise();
+        db.extractConfigurationParameters();
+    }
 
     void registerAchievement() {
         registerAchievement(testUUID, testAchievement, testAchievementMsg);

@@ -42,11 +42,6 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
         }
     }
 
-    private void initDB() throws PluginLoadError {
-        db.initialise();
-        db.extractConfigurationParameters();
-    }
-
     @Test
     public void testRegisterNullUUID() throws PluginLoadError {
         initDB();

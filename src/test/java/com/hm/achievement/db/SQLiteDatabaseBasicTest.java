@@ -45,11 +45,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         initDB();
     }
 
-    private void initDB() throws PluginLoadError {
-        db.initialise();
-        db.extractConfigurationParameters();
-    }
-
     @Test
     public void testGetAchievementList() throws PluginLoadError {
         initDB();
