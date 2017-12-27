@@ -9,8 +9,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import utilities.MockUtility;
 
-import java.util.UUID;
-
 /**
  * Class for testing SQLite Database.
  *
@@ -18,12 +16,6 @@ import java.util.UUID;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
-
-    private SQLiteDatabaseManager db;
-
-    private final UUID testUUID = UUID.randomUUID();
-    private final String testAchievement = "TestAchievement";
-    private final String testAchievementMsg = "TestMessage";
 
     @Before
     public void setUp() throws Exception {
