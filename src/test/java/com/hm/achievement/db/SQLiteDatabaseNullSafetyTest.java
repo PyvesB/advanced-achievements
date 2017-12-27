@@ -57,6 +57,19 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     }
 
     @Test
+    public void testRegisterNullUUIDForExceptions() throws PluginLoadError {
+        initDB();
+        registerAchievement(null, testAchievement, testAchievementMsg);
+        sleep25ms();
+
+        assertTrue(db.getPlayerAchievementsList(null).isEmpty());
+        assertTrue(db.getPlayersAchievementsAmount().isEmpty());
+        assertEquals(0, db.getPlayerAchievementsAmount(null));
+        assertTrue(db.getPlayerAchievementNamesList(null).isEmpty());
+        assertNull(db.getPlayerAchievementDate(null, testAchievement));
+    }
+
+    @Test
     public void testRegisterNullAch() throws PluginLoadError {
         initDB();
         registerAchievement(testUUID, null, testAchievementMsg);
