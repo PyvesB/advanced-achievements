@@ -112,13 +112,14 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     public void testDeleteAchievementQuotes() throws PluginLoadError {
         initDB();
         registerAchievement(testUUID, "'" + testAchievement + "'", testAchievementMsg);
+        sleep25ms();
         registerAchievement(testUUID, "''" + testAchievement + "''", testAchievementMsg);
+        sleep25ms();
         registerAchievement(testUUID, testAchievement, testAchievementMsg);
         sleep25ms();
 
         assertEquals(3, db.getPlayerAchievementsAmount(testUUID));
 
-        db.deletePlayerAchievement(testUUID, "'" + testAchievement + "'");
         db.deletePlayerAchievement(testUUID, "'" + testAchievement + "'");
         db.deletePlayerAchievement(testUUID, testAchievement);
         sleep25ms();
