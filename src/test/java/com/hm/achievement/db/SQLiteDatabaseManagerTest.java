@@ -60,6 +60,7 @@ public class SQLiteDatabaseManagerTest {
     public void testGetAchievementList() throws PluginLoadError {
         initDB();
         registerAchievement();
+        sleep25ms();
 
         List<String> achievements = db.getPlayerAchievementsList(testUUID);
         assertFalse("List was empty", achievements.isEmpty());
@@ -70,15 +71,24 @@ public class SQLiteDatabaseManagerTest {
 
     }
 
+
     private void registerAchievement() {
         System.out.println("Saving test achievement: " + testUUID + " | " + testAchievement + " | " + testAchievementMsg);
         db.registerAchievement(testUUID, testAchievement, testAchievementMsg);
+    }
+
+    private void sleep25ms() {
+        try {
+            Thread.sleep(25);
+        } catch (InterruptedException e) {
+        }
     }
 
     @Test
     public void testAchievementCount() throws PluginLoadError {
         initDB();
         registerAchievement();
+        sleep25ms();
 
         Map<UUID, Integer> map = db.getPlayersAchievementsAmount();
         assertFalse("Map was empty", map.isEmpty());
@@ -89,13 +99,12 @@ public class SQLiteDatabaseManagerTest {
     }
 
     @Test
-    public void test() throws PluginLoadError {
+    public void testAchievementDateRegistration() throws PluginLoadError {
         initDB();
         registerAchievement();
+        sleep25ms();
 
         String date = db.getPlayerAchievementDate(testUUID, testAchievement);
-
         assertNotNull(date);
-        assertEquals("", date);
     }
 }
