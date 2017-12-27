@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import utilities.MockUtility;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -60,9 +61,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     }
 
-
-
-
     @Test
     public void testAchievementCount() throws PluginLoadError {
         initDB();
@@ -80,10 +78,14 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     @Test
     public void testAchievementDateRegistration() throws PluginLoadError {
         initDB();
+
+        String date = db.getPlayerAchievementDate(testUUID, testAchievement);
+        assertNull(date);
+
         registerAchievement();
         sleep25ms();
 
-        String date = db.getPlayerAchievementDate(testUUID, testAchievement);
+        date = db.getPlayerAchievementDate(testUUID, testAchievement);
         assertNotNull(date);
     }
 
@@ -104,5 +106,39 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         sleep25ms();
 
         assertEquals(0, db.getPlayerAchievementsAmount(testUUID));
+    }
+
+    @Test
+    public void testDeleteAchievementQuotes() throws PluginLoadError {
+        initDB();
+        registerAchievement(testUUID, "'" + testAchievement + "'", testAchievementMsg);
+        registerAchievement(testUUID, "''" + testAchievement + "''", testAchievementMsg);
+        registerAchievement(testUUID, testAchievement, testAchievementMsg);
+        sleep25ms();
+
+        assertEquals(3, db.getPlayerAchievementsAmount(testUUID));
+
+        db.deletePlayerAchievement(testUUID, "'" + testAchievement + "'");
+        db.deletePlayerAchievement(testUUID, "'" + testAchievement + "'");
+        db.deletePlayerAchievement(testUUID, testAchievement);
+        sleep25ms();
+
+        assertEquals(0, db.getPlayerAchievementsAmount(testUUID));
+    }
+
+    @Test
+    public void testConnectionUpdate() throws PluginLoadError {
+        initDB();
+
+        assertEquals(0, db.getConnectionsAmount(testUUID));
+
+        assertEquals(1, db.updateAndGetConnection(testUUID, new Date().toString()));
+        sleep25ms();
+        assertEquals(2, db.updateAndGetConnection(testUUID, new Date().toString()));
+        sleep25ms();
+        assertEquals(3, db.updateAndGetConnection(testUUID, new Date().toString()));
+        sleep25ms();
+
+        assertEquals(3, db.getConnectionsAmount(testUUID));
     }
 }
