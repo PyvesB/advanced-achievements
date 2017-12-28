@@ -1,31 +1,21 @@
 package com.hm.achievement.db;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.utils.Reloadable;
+import org.apache.commons.lang3.StringUtils;
+
+import java.sql.*;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 
 /**
  * Abstract class in charge of factoring out common functionality for the database manager.
@@ -36,7 +26,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	protected final AdvancedAchievements plugin;
 	// Used to do some write operations to the database asynchronously.
-	protected final ExecutorService pool;
+	protected ExecutorService pool;
 	// Connection to the database; remains opened and shared.
 	protected final AtomicReference<Connection> sqlConnection;
 
@@ -84,7 +74,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		try {
 			performPreliminaryTasks();
 		} catch (ClassNotFoundException e) {
-			plugin.getLogger().severe("The JBDC driver for teh chosen database type was not found.");
+			plugin.getLogger().severe("The JBDC driver for the chosen database type was not found.");
 		}
 
 		// Try to establish connection with database; stays opened until explicitly closed by the plugin.
@@ -323,13 +313,26 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param achMessage
 	 */
 	public void registerAchievement(UUID uuid, String achName, String achMessage) {
+		registerAchievement(uuid, achName, achMessage, System.currentTimeMillis());
+	}
+
+    /**
+     * Registers a new achievement for a player; this method will distinguish between asynchronous and synchronous
+     * processing.
+     *
+     * @param uuid
+     * @param achName
+     * @param achMessage
+     * @param epochMs Moment the achievement was registered at.
+     */
+	protected void registerAchievement(UUID uuid, String achName, String achMessage, long epochMs) {
 		String sql = "REPLACE INTO " + prefix + "achievements VALUES ('" + uuid + "',?,?,?)";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, achName);
 				ps.setString(2, achMessage);
-				ps.setDate(3, new Date(System.currentTimeMillis()));
+				ps.setDate(3, new Date(epochMs));
 				ps.execute();
 			}
 		}).executeOperation(pool, plugin.getLogger(), "registering an achievement");
