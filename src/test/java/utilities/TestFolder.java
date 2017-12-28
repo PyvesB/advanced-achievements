@@ -42,7 +42,7 @@ public class TestFolder {
      * Delete files recursively.
      *
      * @param file File or Folder to delete
-     * @return
+     * @return File was removed successfully.
      */
     private static boolean clear(File file) {
         if (file.isDirectory()) {

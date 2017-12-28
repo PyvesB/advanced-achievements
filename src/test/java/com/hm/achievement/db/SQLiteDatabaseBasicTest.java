@@ -11,9 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import utilities.MockUtility;
 
 import java.sql.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Executors;
 
 import static org.junit.Assert.*;
@@ -51,7 +49,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @AfterClass
-    public static void tearDownClass() throws Exception {
+    public static void tearDownClass() {
         if (db != null) {
             db.shutdown();
         }
@@ -63,33 +61,30 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testGetAchievementList() throws PluginLoadError {
+    public void testGetAchievementList() {
         registerAchievement();
         sleep100ms();
 
         List<String> achievements = db.getPlayerAchievementsList(testUUID);
-        assertFalse("List was empty", achievements.isEmpty());
+        assertEquals(3, achievements.size());
 
-        String actual = achievements.get(0);
-        System.out.println("Saved Achievement: " + actual);
-        assertEquals(testAchievement, actual);
+        List<String> expected = Arrays.asList(testAchievement, testAchievementMsg, achievements.get(2));
+        assertEquals(expected, achievements);
     }
 
     @Test
-    public void testAchievementCount() throws PluginLoadError {
+    public void testAchievementCount() {
         registerAchievement();
         sleep100ms();
 
-        Map<UUID, Integer> map = db.getPlayersAchievementsAmount();
-        assertFalse("Map was empty", map.isEmpty());
+        Map<UUID, Integer> expected = Collections.singletonMap(testUUID, 1);
 
-        Integer amount = map.get(testUUID);
-        assertNotNull(amount);
-        assertEquals(1, (int) amount);
+        Map<UUID, Integer> actual = db.getPlayersAchievementsAmount();
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void testAchievementDateRegistration() throws PluginLoadError {
+    public void testAchievementDateRegistration() {
         String date = db.getPlayerAchievementDate(testUUID, testAchievement);
         assertNull(date);
 
@@ -101,7 +96,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testPlayerAchievementAmount() throws PluginLoadError {
+    public void testPlayerAchievementAmount() {
         registerAchievement();
         sleep100ms();
 
@@ -119,8 +114,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testDeleteAchievementQuotes() throws PluginLoadError {
-
+    public void testDeleteAchievementQuotes() {
         registerAchievement(testUUID, "'" + testAchievement + "'", testAchievementMsg);
         sleep100ms();
         registerAchievement(testUUID, "''" + testAchievement + "''", testAchievementMsg);
@@ -138,7 +132,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testConnectionUpdate() throws PluginLoadError {
+    public void testConnectionUpdate() {
         assertEquals(0, db.getConnectionsAmount(testUUID));
 
         assertEquals(1, db.updateAndGetConnection(testUUID, createDateString()));
@@ -152,13 +146,13 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testGetTopAchievements() throws PluginLoadError {
+    public void testGetTopAchievements() {
         long firstSave = System.currentTimeMillis();
 
         registerAchievement(testUUID, testAchievement, testAchievementMsg);
+        sleep100ms();
+        sleep100ms();
 
-        sleep100ms();
-        sleep100ms();
         long secondSave = System.currentTimeMillis();
 
         UUID secondUUID = UUID.randomUUID();
@@ -169,32 +163,35 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         registerAchievement(secondUUID, secondAch, testAchievementMsg);
         sleep100ms();
 
+        Map<String, Integer> expected = new LinkedHashMap<>();
+        expected.put(secondUUID.toString(), 2);
+        expected.put(testUUID.toString(), 1);
+
         Map<String, Integer> topList = db.getTopList(0);
-        assertEquals(2, topList.size());
-        assertEquals(2, (int) topList.get(secondUUID.toString()));
-        assertEquals(1, (int) topList.get(testUUID.toString()));
+        assertEquals(expected, topList);
 
         Map<String, Integer> topListFirst = db.getTopList(firstSave);
         assertEquals("Top list from first save & all top list should be the same",
                 topList, topListFirst);
 
+        expected.remove(testUUID.toString());
+
         Map<String, Integer> topListSecond = db.getTopList(secondSave);
-        assertFalse("Top list from moment before the second save should not include first uuid",
-                topListSecond.containsKey(testUUID.toString()));
+        assertEquals(expected, topListSecond);
     }
 
     @Test
-    public void testGetAchievementNameList() throws PluginLoadError {
+    public void testGetAchievementNameList() {
         registerAchievement();
         sleep100ms();
 
+        List<String> expected = Collections.singletonList(testAchievement);
         List<String> achNames = db.getPlayerAchievementNamesList(testUUID);
-        assertEquals(1, achNames.size());
-        assertEquals(testAchievement, achNames.get(0));
+        assertEquals(expected, achNames);
     }
 
     @Test
-    public void testHasAchievement() throws PluginLoadError {
+    public void testHasAchievement() {
         assertFalse(db.hasPlayerAchievement(testUUID, testAchievement));
 
         registerAchievement();
@@ -204,7 +201,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testGetPlayerConnectionDate() throws PluginLoadError {
+    public void testGetPlayerConnectionDate() {
         assertNull(db.getPlayerConnectionDate(testUUID));
 
         db.updateAndGetConnection(testUUID, createDateString());
@@ -214,7 +211,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testClearConnection() throws PluginLoadError {
+    public void testClearConnection() {
         db.updateAndGetConnection(testUUID, createDateString());
         sleep100ms();
 

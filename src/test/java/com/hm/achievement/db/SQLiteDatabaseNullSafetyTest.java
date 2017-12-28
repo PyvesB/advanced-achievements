@@ -54,14 +54,14 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     }
 
     @AfterClass
-    public static void tearDownClass() throws Exception {
+    public static void tearDownClass() {
         if (db != null) {
             db.shutdown();
         }
     }
 
     @Test
-    public void testRegisterNullUUID() throws PluginLoadError {
+    public void testRegisterNullUUID() {
         registerAchievement(null, testAchievement, testAchievementMsg);
         sleep100ms();
 
@@ -76,7 +76,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testGetMethodsForNullUUIDExceptions() throws PluginLoadError, SQLException {
+    public void testGetMethodsForNullUUIDExceptions() throws SQLException {
         addNullUUIDtoDB();
         sleep100ms();
 
@@ -87,7 +87,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
         db.getPlayerAchievementDate(null, testAchievement);
     }
 
-    private void addNullUUIDtoDB() throws SQLException {
+    private void addNullUUIDtoDB() {
         String sql = "REPLACE INTO achievements VALUES ('" + null + "',?,?,?)";
 
         ((SQLWriteOperation) () -> {
@@ -102,7 +102,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testRegisterNullAch() throws PluginLoadError {
+    public void testRegisterNullAch() {
         registerAchievement(testUUID, null, testAchievementMsg);
         sleep100ms();
 
@@ -118,7 +118,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testRegisterNullMsg() throws PluginLoadError {
+    public void testRegisterNullMsg() {
         registerAchievement(testUUID, testAchievement, null);
 
         sleep100ms();

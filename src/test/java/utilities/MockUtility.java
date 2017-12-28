@@ -31,7 +31,7 @@ public class MockUtility {
         return new MockUtility().initializePluginMock();
     }
 
-    public MockUtility initializePluginMock() {
+    private MockUtility initializePluginMock() {
         pluginMock = Mockito.mock(AdvancedAchievements.class);
         return this;
     }

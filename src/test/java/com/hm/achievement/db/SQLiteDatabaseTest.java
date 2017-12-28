@@ -4,7 +4,6 @@ import com.hm.achievement.exception.PluginLoadError;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.UUID;
 
 public class SQLiteDatabaseTest {
@@ -33,10 +32,11 @@ public class SQLiteDatabaseTest {
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
-    void clearDatabase() throws SQLException {
+    void clearDatabase() {
         String sql = "DELETE FROM achievements";
 
         ((SQLWriteOperation) () -> {
