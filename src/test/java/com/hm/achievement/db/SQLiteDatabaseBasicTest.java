@@ -29,7 +29,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     public static void setUpClass() throws Exception {
         MockUtility mockUtility = MockUtility.setUp()
                 .mockLogger()
-                .mockDataFolder(temporaryFolder.newFolder())
+                .mockDataFolder(temporaryFolder.getRoot())
                 .mockPluginConfig();
         AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
@@ -44,7 +44,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         clearDatabase();
     }
 
@@ -53,7 +53,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         if (db != null) {
             db.shutdown();
         }
-        temporaryFolder.delete();
     }
 
     @Test
