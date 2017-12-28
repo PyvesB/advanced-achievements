@@ -313,13 +313,26 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param achMessage
 	 */
 	public void registerAchievement(UUID uuid, String achName, String achMessage) {
+		registerAchievement(uuid, achName, achMessage, System.currentTimeMillis());
+	}
+
+    /**
+     * Registers a new achievement for a player; this method will distinguish between asynchronous and synchronous
+     * processing.
+     *
+     * @param uuid
+     * @param achName
+     * @param achMessage
+     * @param epochMs Moment the achievement was registered at.
+     */
+	protected void registerAchievement(UUID uuid, String achName, String achMessage, long epochMs) {
 		String sql = "REPLACE INTO " + prefix + "achievements VALUES ('" + uuid + "',?,?,?)";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, achName);
 				ps.setString(2, achMessage);
-				ps.setDate(3, new Date(System.currentTimeMillis()));
+				ps.setDate(3, new Date(epochMs));
 				ps.execute();
 			}
 		}).executeOperation(pool, plugin.getLogger(), "registering an achievement");
