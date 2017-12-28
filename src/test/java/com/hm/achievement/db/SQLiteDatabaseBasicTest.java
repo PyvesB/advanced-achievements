@@ -137,17 +137,22 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testGetTopAchievements() {
+    public void testGetTopAchievements() throws InterruptedException {
         long firstSave = System.currentTimeMillis();
 
+        System.out.println("Save first achievement:  " + System.currentTimeMillis());
         registerAchievement(testUUID, testAchievement, testAchievementMsg);
 
+        Thread.sleep(100);
         long secondSave = System.currentTimeMillis();
+        Thread.sleep(100);
 
         UUID secondUUID = UUID.randomUUID();
         String secondAch = "TestAchievement2";
 
+        System.out.println("Save second achievement: " + System.currentTimeMillis());
         registerAchievement(secondUUID, testAchievement, testAchievementMsg);
+        System.out.println("Save third achievement:  " + System.currentTimeMillis());
         registerAchievement(secondUUID, secondAch, testAchievementMsg);
 
         Map<String, Integer> expected = new LinkedHashMap<>();
@@ -157,13 +162,13 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         Map<String, Integer> topList = db.getTopList(0);
         assertEquals(expected, topList);
 
-        Map<String, Integer> topListFirst = db.getTopList(firstSave);
+        Map<String, Integer> topListFirst = db.getTopList(firstSave - 50L);
         assertEquals("Top list from first save & all top list should be the same",
                 topList, topListFirst);
 
         expected.remove(testUUID.toString());
 
-        Map<String, Integer> topListSecond = db.getTopList(secondSave);
+        Map<String, Integer> topListSecond = db.getTopList(secondSave - 50L);
         assertEquals(expected, topListSecond);
     }
 
