@@ -1,7 +1,6 @@
 package com.hm.achievement.db;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.exception.PluginLoadError;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -17,7 +16,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Executors;
 
 import static org.junit.Assert.*;
 
@@ -36,15 +34,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
                 .mockPluginConfig();
         AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
-        db = new SQLiteDatabaseManager(pluginMock) {
-            @Override
-            protected void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError {
-                super.performPreliminaryTasks();
-
-                // Set Pool to a SingleThreadExecutor.
-                pool = Executors.newSingleThreadExecutor();
-            }
-        };
+        db = new SQLiteDatabaseManager(pluginMock);
         initDB();
     }
 

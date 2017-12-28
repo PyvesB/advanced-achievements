@@ -12,7 +12,6 @@ import utilities.MockUtility;
 
 import java.sql.Date;
 import java.util.*;
-import java.util.concurrent.Executors;
 
 import static org.junit.Assert.*;
 
@@ -31,15 +30,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
                 .mockPluginConfig();
         AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
-        db = new SQLiteDatabaseManager(pluginMock) {
-            @Override
-            protected void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError {
-                super.performPreliminaryTasks();
-
-                // Set Pool to a SingleThreadExecutor.
-                pool = Executors.newSingleThreadExecutor();
-            }
-        };
+        db = new SQLiteDatabaseManager(pluginMock);
         initDB();
     }
 

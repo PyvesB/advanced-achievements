@@ -26,7 +26,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	protected final AdvancedAchievements plugin;
 	// Used to do some write operations to the database asynchronously.
-	protected ExecutorService pool;
+	protected final ExecutorService pool;
 	// Connection to the database; remains opened and shared.
 	protected final AtomicReference<Connection> sqlConnection;
 
