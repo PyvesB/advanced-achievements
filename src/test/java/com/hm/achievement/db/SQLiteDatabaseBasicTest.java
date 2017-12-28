@@ -95,7 +95,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testDeleteAchievement() throws PluginLoadError {
+    public void testDeleteAchievement() {
         testPlayerAchievementAmount();
 
         db.deletePlayerAchievement(testUUID, testAchievement);
