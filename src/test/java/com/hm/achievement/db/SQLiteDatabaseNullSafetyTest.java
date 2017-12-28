@@ -1,5 +1,6 @@
 package com.hm.achievement.db;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import com.hm.achievement.AdvancedAchievements;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
@@ -35,7 +36,13 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
                 .mockPluginConfig();
         AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
-        db = new SQLiteDatabaseManager(pluginMock);
+        db = new SQLiteDatabaseManager(pluginMock) {
+            @Override
+            public void extractConfigurationParameters() {
+                super.extractConfigurationParameters();
+                pool = MoreExecutors.newDirectExecutorService();
+            }
+        };
         initDB();
     }
 
@@ -56,7 +63,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     @Ignore("Can be enabled later")
     public void testRegisterNullUUID() {
         registerAchievement(null, testAchievement, testAchievementMsg);
-        sleep100ms();
+
 
         List<String> list = db.getPlayerAchievementsList(null);
         Map<UUID, Integer> map = db.getPlayersAchievementsAmount();
@@ -72,7 +79,6 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     @Ignore("Can be enabled later")
     public void testGetMethodsForNullUUIDExceptions() {
         addNullUUIDtoDB();
-        sleep100ms();
 
         db.getPlayerAchievementsList(null);
         db.getPlayersAchievementsAmount();
@@ -99,11 +105,9 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     @Ignore("Can be enabled later")
     public void testRegisterNullAch() {
         registerAchievement(testUUID, null, testAchievementMsg);
-        sleep100ms();
 
         List<String> list = db.getPlayerAchievementsList(testUUID);
         Map<UUID, Integer> map = db.getPlayersAchievementsAmount();
-
 
         System.out.println("Saved Achievements: " + list);
         System.out.println("Saved Achievements Map: " + map);
@@ -116,8 +120,6 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     @Ignore("Can be enabled later")
     public void testRegisterNullMsg() {
         registerAchievement(testUUID, testAchievement, null);
-
-        sleep100ms();
 
         List<String> list = db.getPlayerAchievementsList(testUUID);
         System.out.println("Saved Achievements: " + list);

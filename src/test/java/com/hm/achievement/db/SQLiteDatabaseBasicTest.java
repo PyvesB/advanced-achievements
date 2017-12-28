@@ -1,5 +1,6 @@
 package com.hm.achievement.db;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.exception.PluginLoadError;
 import org.junit.*;
@@ -32,7 +33,13 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
                 .mockPluginConfig();
         AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
-        db = new SQLiteDatabaseManager(pluginMock);
+        db = new SQLiteDatabaseManager(pluginMock) {
+            @Override
+            public void extractConfigurationParameters() {
+                super.extractConfigurationParameters();
+                pool = MoreExecutors.newDirectExecutorService();
+            }
+        };
         initDB();
     }
 
@@ -57,7 +64,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     @Test
     public void testGetAchievementList() {
         registerAchievement();
-        sleep100ms();
 
         List<String> achievements = db.getPlayerAchievementsList(testUUID);
         assertEquals(3, achievements.size());
@@ -69,7 +75,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     @Test
     public void testAchievementCount() {
         registerAchievement();
-        sleep100ms();
+
 
         Map<UUID, Integer> expected = Collections.singletonMap(testUUID, 1);
 
@@ -83,7 +89,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         assertNull(date);
 
         registerAchievement();
-        sleep100ms();
 
         date = db.getPlayerAchievementDate(testUUID, testAchievement);
         assertNotNull(date);
@@ -92,7 +97,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     @Test
     public void testPlayerAchievementAmount() {
         registerAchievement();
-        sleep100ms();
 
         assertEquals(1, db.getPlayerAchievementsAmount(testUUID));
     }
@@ -102,7 +106,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         testPlayerAchievementAmount();
 
         db.deletePlayerAchievement(testUUID, testAchievement);
-        sleep100ms();
 
         assertEquals(0, db.getPlayerAchievementsAmount(testUUID));
     }
@@ -110,17 +113,14 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     @Test
     public void testDeleteAchievementQuotes() {
         registerAchievement(testUUID, "'" + testAchievement + "'", testAchievementMsg);
-        sleep100ms();
+
         registerAchievement(testUUID, "''" + testAchievement + "''", testAchievementMsg);
-        sleep100ms();
         registerAchievement(testUUID, testAchievement, testAchievementMsg);
-        sleep100ms();
 
         assertEquals(3, db.getPlayerAchievementsAmount(testUUID));
 
         db.deletePlayerAchievement(testUUID, "'" + testAchievement + "'");
         db.deletePlayerAchievement(testUUID, testAchievement);
-        sleep100ms();
 
         assertEquals(0, db.getPlayerAchievementsAmount(testUUID));
     }
@@ -130,11 +130,8 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         assertEquals(0, db.getConnectionsAmount(testUUID));
 
         assertEquals(1, db.updateAndGetConnection(testUUID, createDateString()));
-        sleep100ms();
         assertEquals(2, db.updateAndGetConnection(testUUID, createDateString()));
-        sleep100ms();
         assertEquals(3, db.updateAndGetConnection(testUUID, createDateString()));
-        sleep100ms();
 
         assertEquals(3, db.getConnectionsAmount(testUUID));
     }
@@ -144,8 +141,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         long firstSave = System.currentTimeMillis();
 
         registerAchievement(testUUID, testAchievement, testAchievementMsg);
-        sleep100ms();
-        sleep100ms();
 
         long secondSave = System.currentTimeMillis();
 
@@ -153,9 +148,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         String secondAch = "TestAchievement2";
 
         registerAchievement(secondUUID, testAchievement, testAchievementMsg);
-        sleep100ms();
         registerAchievement(secondUUID, secondAch, testAchievementMsg);
-        sleep100ms();
 
         Map<String, Integer> expected = new LinkedHashMap<>();
         expected.put(secondUUID.toString(), 2);
@@ -177,7 +170,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     @Test
     public void testGetAchievementNameList() {
         registerAchievement();
-        sleep100ms();
 
         List<String> expected = Collections.singletonList(testAchievement);
         List<String> achNames = db.getPlayerAchievementNamesList(testUUID);
@@ -189,7 +181,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         assertFalse(db.hasPlayerAchievement(testUUID, testAchievement));
 
         registerAchievement();
-        sleep100ms();
 
         assertTrue(db.hasPlayerAchievement(testUUID, testAchievement));
     }
@@ -199,7 +190,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         assertNull(db.getPlayerConnectionDate(testUUID));
 
         db.updateAndGetConnection(testUUID, createDateString());
-        sleep100ms();
 
         assertNotNull(db.getPlayerConnectionDate(testUUID));
     }
@@ -207,12 +197,10 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     @Test
     public void testClearConnection() {
         db.updateAndGetConnection(testUUID, createDateString());
-        sleep100ms();
 
         assertNotNull(db.getPlayerConnectionDate(testUUID));
 
         db.clearConnection(testUUID);
-        sleep100ms();
 
         assertNull(db.getPlayerConnectionDate(testUUID));
     }

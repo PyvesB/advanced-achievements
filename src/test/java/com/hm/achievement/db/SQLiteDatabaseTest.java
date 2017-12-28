@@ -28,14 +28,6 @@ public class SQLiteDatabaseTest {
         db.registerAchievement(uuid, ach, msg);
     }
 
-    void sleep100ms() {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
     void clearDatabase() {
         String sql = "DELETE FROM achievements";
 
