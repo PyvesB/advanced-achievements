@@ -73,12 +73,10 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         String actual = achievements.get(0);
         System.out.println("Saved Achievement: " + actual);
         assertEquals(testAchievement, actual);
-
     }
 
     @Test
     public void testAchievementCount() throws PluginLoadError {
-
         registerAchievement();
         sleep100ms();
 
@@ -92,8 +90,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testAchievementDateRegistration() throws PluginLoadError {
-
-
         String date = db.getPlayerAchievementDate(testUUID, testAchievement);
         assertNull(date);
 
@@ -106,7 +102,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testPlayerAchievementAmount() throws PluginLoadError {
-
         registerAchievement();
         sleep100ms();
 
@@ -144,8 +139,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testConnectionUpdate() throws PluginLoadError {
-
-
         assertEquals(0, db.getConnectionsAmount(testUUID));
 
         assertEquals(1, db.updateAndGetConnection(testUUID, createDateString()));
@@ -160,7 +153,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testGetTopAchievements() throws PluginLoadError {
-
         long firstSave = System.currentTimeMillis();
 
         registerAchievement(testUUID, testAchievement, testAchievementMsg);
@@ -193,7 +185,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testGetAchievementNameList() throws PluginLoadError {
-
         registerAchievement();
         sleep100ms();
 
@@ -204,8 +195,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testHasAchievement() throws PluginLoadError {
-
-
         assertFalse(db.hasPlayerAchievement(testUUID, testAchievement));
 
         registerAchievement();
@@ -216,8 +205,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testGetPlayerConnectionDate() throws PluginLoadError {
-
-
         assertNull(db.getPlayerConnectionDate(testUUID));
 
         db.updateAndGetConnection(testUUID, createDateString());
@@ -228,8 +215,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testClearConnection() throws PluginLoadError {
-
-
         db.updateAndGetConnection(testUUID, createDateString());
         sleep100ms();
 
