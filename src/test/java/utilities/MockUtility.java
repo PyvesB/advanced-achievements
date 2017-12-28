@@ -44,16 +44,13 @@ public class MockUtility {
 
     private void mockResourceFetching() throws Exception {
         mockPluginDescription();
-        mockDataFolder();
         File configYml = new File(getClass().getResource("/config.yml").getPath());
         when(pluginMock.getResource("config.yml")).thenReturn(new FileInputStream(configYml));
     }
 
-    private void mockDataFolder() {
-        TestFolder.clearFolder();
-        TestFolder.createFolder();
-        File folder = TestFolder.getFolder();
+    public MockUtility mockDataFolder(File folder) {
         when(pluginMock.getDataFolder()).thenReturn(folder);
+        return this;
     }
 
     private void mockPluginDescription() throws InvalidDescriptionException, FileNotFoundException {
@@ -63,6 +60,9 @@ public class MockUtility {
     }
 
     public MockUtility mockPluginConfig() throws Exception {
+        if (pluginMock.getDataFolder() == null) {
+            throw new IllegalStateException("mockDataFolder needs to be called before mockPluginConfig");
+        }
         mockResourceFetching();
         mockPluginDescription();
 

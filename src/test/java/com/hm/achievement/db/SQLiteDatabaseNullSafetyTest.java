@@ -2,6 +2,7 @@ package com.hm.achievement.db;
 
 import com.hm.achievement.AdvancedAchievements;
 import org.junit.*;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import utilities.MockUtility;
@@ -23,10 +24,14 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 
+    @ClassRule
+    public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         MockUtility mockUtility = MockUtility.setUp()
                 .mockLogger()
+                .mockDataFolder(temporaryFolder.newFolder())
                 .mockPluginConfig();
         AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
@@ -44,6 +49,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
         if (db != null) {
             db.shutdown();
         }
+        temporaryFolder.delete();
     }
 
     @Test
