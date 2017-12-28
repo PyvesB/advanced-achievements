@@ -137,23 +137,21 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    public void testGetTopAchievements() throws InterruptedException {
-        long firstSave = System.currentTimeMillis();
+    public void testGetTopAchievements() {
+        long firstSave = 99L;
 
         System.out.println("Save first achievement:  " + System.currentTimeMillis());
-        registerAchievement(testUUID, testAchievement, testAchievementMsg);
+        registerAchievement(testUUID, testAchievement, testAchievementMsg, 100L);
 
-        Thread.sleep(100);
-        long secondSave = System.currentTimeMillis();
-        Thread.sleep(100);
+        long secondSave = 199L;
 
         UUID secondUUID = UUID.randomUUID();
         String secondAch = "TestAchievement2";
 
         System.out.println("Save second achievement: " + System.currentTimeMillis());
-        registerAchievement(secondUUID, testAchievement, testAchievementMsg);
+        registerAchievement(secondUUID, testAchievement, testAchievementMsg, 200L);
         System.out.println("Save third achievement:  " + System.currentTimeMillis());
-        registerAchievement(secondUUID, secondAch, testAchievementMsg);
+        registerAchievement(secondUUID, secondAch, testAchievementMsg, 200L);
 
         Map<String, Integer> expected = new LinkedHashMap<>();
         expected.put(secondUUID.toString(), 2);
@@ -162,13 +160,13 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         Map<String, Integer> topList = db.getTopList(0);
         assertEquals(expected, topList);
 
-        Map<String, Integer> topListFirst = db.getTopList(firstSave - 50L);
+        Map<String, Integer> topListFirst = db.getTopList(firstSave);
         assertEquals("Top list from first save & all top list should be the same",
                 topList, topListFirst);
 
         expected.remove(testUUID.toString());
 
-        Map<String, Integer> topListSecond = db.getTopList(secondSave - 50L);
+        Map<String, Integer> topListSecond = db.getTopList(secondSave);
         assertEquals(expected, topListSecond);
     }
 

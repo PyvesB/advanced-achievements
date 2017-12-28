@@ -28,6 +28,11 @@ public class SQLiteDatabaseTest {
         db.registerAchievement(uuid, ach, msg);
     }
 
+    void registerAchievement(UUID uuid, String ach, String msg, long date) {
+        System.out.println("Saving test achievement: " + uuid + " | " + ach + " | " + msg);
+        db.registerAchievement(uuid, ach, msg, date);
+    }
+
     void clearDatabase() {
         String sql = "DELETE FROM achievements";
 
