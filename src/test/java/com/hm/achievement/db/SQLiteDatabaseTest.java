@@ -2,17 +2,20 @@ package com.hm.achievement.db;
 
 import com.hm.achievement.exception.PluginLoadError;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class SQLiteDatabaseTest {
 
-    SQLiteDatabaseManager db;
+    static SQLiteDatabaseManager db;
 
     final UUID testUUID = UUID.randomUUID();
     final String testAchievement = "TestAchievement";
     final String testAchievementMsg = "TestMessage";
 
-    void initDB() throws PluginLoadError {
+    static void initDB() throws PluginLoadError {
         db.initialise();
         db.extractConfigurationParameters();
     }
@@ -26,10 +29,21 @@ public class SQLiteDatabaseTest {
         db.registerAchievement(uuid, ach, msg);
     }
 
-    void sleep25ms() {
+    void sleep100ms() {
         try {
-            Thread.sleep(25);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
         }
+    }
+
+    void clearDatabase() throws SQLException {
+        String sql = "DELETE FROM achievements";
+
+        ((SQLWriteOperation) () -> {
+            Connection conn = db.getSQLConnection();
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.execute();
+            }
+        }).executeOperation(db.pool, db.plugin.getLogger(), "Clearing achievements table");
     }
 }

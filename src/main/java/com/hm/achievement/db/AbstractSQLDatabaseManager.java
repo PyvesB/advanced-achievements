@@ -1,31 +1,21 @@
 package com.hm.achievement.db;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.utils.Reloadable;
+import org.apache.commons.lang3.StringUtils;
+
+import java.sql.*;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 
 /**
  * Abstract class in charge of factoring out common functionality for the database manager.
@@ -36,7 +26,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	protected final AdvancedAchievements plugin;
 	// Used to do some write operations to the database asynchronously.
-	protected final ExecutorService pool;
+	protected ExecutorService pool;
 	// Connection to the database; remains opened and shared.
 	protected final AtomicReference<Connection> sqlConnection;
 

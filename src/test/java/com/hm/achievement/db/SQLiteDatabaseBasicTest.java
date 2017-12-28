@@ -2,17 +2,19 @@ package com.hm.achievement.db;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.exception.PluginLoadError;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import utilities.MockUtility;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 
 import static org.junit.Assert.*;
 
@@ -24,18 +26,32 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
         MockUtility mockUtility = MockUtility.setUp()
                 .mockLogger()
                 .mockPluginConfig();
         AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
-        db = new SQLiteDatabaseManager(pluginMock);
+        db = new SQLiteDatabaseManager(pluginMock) {
+            @Override
+            protected void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError {
+                super.performPreliminaryTasks();
+
+                // Set Pool to a SingleThreadExecutor.
+                pool = Executors.newSingleThreadExecutor();
+            }
+        };
+        initDB();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @Before
+    public void setUp() throws Exception {
+        clearDatabase();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
         if (db != null) {
             db.shutdown();
         }
@@ -48,9 +64,8 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testGetAchievementList() throws PluginLoadError {
-        initDB();
         registerAchievement();
-        sleep25ms();
+        sleep100ms();
 
         List<String> achievements = db.getPlayerAchievementsList(testUUID);
         assertFalse("List was empty", achievements.isEmpty());
@@ -63,9 +78,9 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testAchievementCount() throws PluginLoadError {
-        initDB();
+
         registerAchievement();
-        sleep25ms();
+        sleep100ms();
 
         Map<UUID, Integer> map = db.getPlayersAchievementsAmount();
         assertFalse("Map was empty", map.isEmpty());
@@ -77,13 +92,13 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testAchievementDateRegistration() throws PluginLoadError {
-        initDB();
+
 
         String date = db.getPlayerAchievementDate(testUUID, testAchievement);
         assertNull(date);
 
         registerAchievement();
-        sleep25ms();
+        sleep100ms();
 
         date = db.getPlayerAchievementDate(testUUID, testAchievement);
         assertNotNull(date);
@@ -91,9 +106,9 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testPlayerAchievementAmount() throws PluginLoadError {
-        initDB();
+
         registerAchievement();
-        sleep25ms();
+        sleep100ms();
 
         assertEquals(1, db.getPlayerAchievementsAmount(testUUID));
     }
@@ -103,64 +118,64 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
         testPlayerAchievementAmount();
 
         db.deletePlayerAchievement(testUUID, testAchievement);
-        sleep25ms();
+        sleep100ms();
 
         assertEquals(0, db.getPlayerAchievementsAmount(testUUID));
     }
 
     @Test
     public void testDeleteAchievementQuotes() throws PluginLoadError {
-        initDB();
+
         registerAchievement(testUUID, "'" + testAchievement + "'", testAchievementMsg);
-        sleep25ms();
+        sleep100ms();
         registerAchievement(testUUID, "''" + testAchievement + "''", testAchievementMsg);
-        sleep25ms();
+        sleep100ms();
         registerAchievement(testUUID, testAchievement, testAchievementMsg);
-        sleep25ms();
+        sleep100ms();
 
         assertEquals(3, db.getPlayerAchievementsAmount(testUUID));
 
         db.deletePlayerAchievement(testUUID, "'" + testAchievement + "'");
         db.deletePlayerAchievement(testUUID, testAchievement);
-        sleep25ms();
+        sleep100ms();
 
         assertEquals(0, db.getPlayerAchievementsAmount(testUUID));
     }
 
     @Test
     public void testConnectionUpdate() throws PluginLoadError {
-        initDB();
+
 
         assertEquals(0, db.getConnectionsAmount(testUUID));
 
-        assertEquals(1, db.updateAndGetConnection(testUUID, new Date().toString()));
-        sleep25ms();
-        assertEquals(2, db.updateAndGetConnection(testUUID, new Date().toString()));
-        sleep25ms();
-        assertEquals(3, db.updateAndGetConnection(testUUID, new Date().toString()));
-        sleep25ms();
+        assertEquals(1, db.updateAndGetConnection(testUUID, createDateString()));
+        sleep100ms();
+        assertEquals(2, db.updateAndGetConnection(testUUID, createDateString()));
+        sleep100ms();
+        assertEquals(3, db.updateAndGetConnection(testUUID, createDateString()));
+        sleep100ms();
 
         assertEquals(3, db.getConnectionsAmount(testUUID));
     }
 
     @Test
     public void testGetTopAchievements() throws PluginLoadError {
-        initDB();
+
         long firstSave = System.currentTimeMillis();
 
         registerAchievement(testUUID, testAchievement, testAchievementMsg);
 
-        sleep25ms();
-        sleep25ms();
+        sleep100ms();
+        sleep100ms();
         long secondSave = System.currentTimeMillis();
 
         UUID secondUUID = UUID.randomUUID();
         String secondAch = "TestAchievement2";
 
         registerAchievement(secondUUID, testAchievement, testAchievementMsg);
-        sleep25ms();
+        sleep100ms();
         registerAchievement(secondUUID, secondAch, testAchievementMsg);
-        sleep25ms();
+        sleep100ms();
 
         Map<String, Integer> topList = db.getTopList(0);
         assertEquals(2, topList.size());
@@ -178,9 +193,9 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testGetAchievementNameList() throws PluginLoadError {
-        initDB();
+
         registerAchievement();
-        sleep25ms();
+        sleep100ms();
 
         List<String> achNames = db.getPlayerAchievementNamesList(testUUID);
         assertEquals(1, achNames.size());
@@ -189,40 +204,44 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
     @Test
     public void testHasAchievement() throws PluginLoadError {
-        initDB();
+
 
         assertFalse(db.hasPlayerAchievement(testUUID, testAchievement));
 
         registerAchievement();
-        sleep25ms();
+        sleep100ms();
 
         assertTrue(db.hasPlayerAchievement(testUUID, testAchievement));
     }
 
     @Test
     public void testGetPlayerConnectionDate() throws PluginLoadError {
-        initDB();
+
 
         assertNull(db.getPlayerConnectionDate(testUUID));
 
-        db.updateAndGetConnection(testUUID, new Date().toString());
-        sleep25ms();
+        db.updateAndGetConnection(testUUID, createDateString());
+        sleep100ms();
 
         assertNotNull(db.getPlayerConnectionDate(testUUID));
     }
 
     @Test
     public void testClearConnection() throws PluginLoadError {
-        initDB();
 
-        db.updateAndGetConnection(testUUID, new Date().toString());
-        sleep25ms();
+
+        db.updateAndGetConnection(testUUID, createDateString());
+        sleep100ms();
 
         assertNotNull(db.getPlayerConnectionDate(testUUID));
 
         db.clearConnection(testUUID);
-        sleep25ms();
+        sleep100ms();
 
         assertNull(db.getPlayerConnectionDate(testUUID));
+    }
+
+    private String createDateString() {
+        return new Date(System.currentTimeMillis()).toString();
     }
 }

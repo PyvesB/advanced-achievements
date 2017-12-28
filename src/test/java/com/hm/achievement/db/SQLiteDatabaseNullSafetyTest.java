@@ -2,8 +2,9 @@ package com.hm.achievement.db;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.exception.PluginLoadError;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -16,6 +17,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 
 import static org.junit.Assert.*;
 
@@ -27,18 +29,32 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
         MockUtility mockUtility = MockUtility.setUp()
                 .mockLogger()
                 .mockPluginConfig();
         AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
-        db = new SQLiteDatabaseManager(pluginMock);
+        db = new SQLiteDatabaseManager(pluginMock) {
+            @Override
+            protected void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError {
+                super.performPreliminaryTasks();
+
+                // Set Pool to a SingleThreadExecutor.
+                pool = Executors.newSingleThreadExecutor();
+            }
+        };
+        initDB();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @Before
+    public void setUp() throws Exception {
+        clearDatabase();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
         if (db != null) {
             db.shutdown();
         }
@@ -46,9 +62,8 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 
     @Test
     public void testRegisterNullUUID() throws PluginLoadError {
-        initDB();
         registerAchievement(null, testAchievement, testAchievementMsg);
-        sleep25ms();
+        sleep100ms();
 
         List<String> list = db.getPlayerAchievementsList(null);
         Map<UUID, Integer> map = db.getPlayersAchievementsAmount();
@@ -62,19 +77,8 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 
     @Test
     public void testGetMethodsForNullUUIDExceptions() throws PluginLoadError, SQLException {
-        initDB();
-
-        String sql = "REPLACE INTO achievements VALUES ('" + null + "',?,?,?)";
-
-        try (Connection connection = db.getSQLConnection()) {
-            try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                ps.setString(1, testAchievement);
-                ps.setString(2, testAchievementMsg);
-                ps.setDate(3, new Date(System.currentTimeMillis()));
-                ps.execute();
-            }
-        }
-        sleep25ms();
+        addNullUUIDtoDB();
+        sleep100ms();
 
         db.getPlayerAchievementsList(null);
         db.getPlayersAchievementsAmount();
@@ -83,11 +87,24 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
         db.getPlayerAchievementDate(null, testAchievement);
     }
 
+    private void addNullUUIDtoDB() throws SQLException {
+        String sql = "REPLACE INTO achievements VALUES ('" + null + "',?,?,?)";
+
+        ((SQLWriteOperation) () -> {
+            Connection conn = db.getSQLConnection();
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, testAchievement);
+                ps.setString(2, testAchievementMsg);
+                ps.setDate(3, new Date(System.currentTimeMillis()));
+                ps.execute();
+            }
+        }).executeOperation(db.pool, db.plugin.getLogger(), "registering an achievement with null UUID");
+    }
+
     @Test
     public void testRegisterNullAch() throws PluginLoadError {
-        initDB();
         registerAchievement(testUUID, null, testAchievementMsg);
-        sleep25ms();
+        sleep100ms();
 
         List<String> list = db.getPlayerAchievementsList(testUUID);
         Map<UUID, Integer> map = db.getPlayersAchievementsAmount();
@@ -102,10 +119,9 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 
     @Test
     public void testRegisterNullMsg() throws PluginLoadError {
-        initDB();
         registerAchievement(testUUID, testAchievement, null);
 
-        sleep25ms();
+        sleep100ms();
 
         List<String> list = db.getPlayerAchievementsList(testUUID);
         System.out.println("Saved Achievements: " + list);
