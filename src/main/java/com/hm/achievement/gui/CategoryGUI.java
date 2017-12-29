@@ -235,11 +235,11 @@ public class CategoryGUI extends AbstractGUI {
 	 * @param statistic
 	 * @param name
 	 * @param date
-	 * @param inelligibleSeriesItem
+	 * @param ineligibleSeriesItem
 	 * @param lore
 	 */
 	private void insertAchievement(Inventory gui, int position, long statistic, String name, String date,
-			boolean inelligibleSeriesItem, List<String> lore) {
+			boolean ineligibleSeriesItem, List<String> lore) {
 		// Display an item depending on whether the achievement was received or not, or whether progress was started.
 		// Clone in order to work with an independent set of metadata.
 		ItemStack achItem;
@@ -256,7 +256,7 @@ public class CategoryGUI extends AbstractGUI {
 		ItemMeta itemMeta = achItem.getItemMeta();
 		if (date != null) {
 			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', langListAchievementReceived + name));
-		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && inelligibleSeriesItem)) {
+		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
 			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 					langListAchievementNotReceived + "&k" + REGEX_PATTERN.matcher(name).replaceAll("")));
 		} else {
@@ -396,11 +396,11 @@ public class CategoryGUI extends AbstractGUI {
 	 * @param path
 	 * @param date
 	 * @param statistic
-	 * @param inelligibleSeriesItem
+	 * @param ineligibleSeriesItem
 	 * @return the list representing the lore of a category item
 	 */
 	private List<String> buildLore(String categoryName, String description, String path, String date, long statistic,
-			boolean inelligibleSeriesItem) {
+			boolean ineligibleSeriesItem) {
 		List<String> lore = new ArrayList<>();
 		lore.add("");
 
@@ -414,7 +414,7 @@ public class CategoryGUI extends AbstractGUI {
 		} else {
 			lore.add(langListGoal);
 			String strippedAchMessage = REGEX_PATTERN.matcher(description).replaceAll("");
-			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && inelligibleSeriesItem)) {
+			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
 				lore.add(ChatColor.translateAlternateColorCodes('&',
 						configListColorNotReceived + "&k" + strippedAchMessage));
 			} else {
