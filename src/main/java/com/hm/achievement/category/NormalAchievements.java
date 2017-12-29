@@ -53,7 +53,7 @@ public enum NormalAchievements {
 	private final String langDefault;
 	private final String configComment;
 
-	private NormalAchievements(String categoryName, String langName, String langDefault, String configComment) {
+	NormalAchievements(String categoryName, String langName, String langDefault, String configComment) {
 		this.categoryName = categoryName;
 		this.langName = langName;
 		this.langDefault = langDefault;

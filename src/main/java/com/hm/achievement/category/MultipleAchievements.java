@@ -21,8 +21,8 @@ public enum MultipleAchievements {
 	private final String configComment;
 	private final String subcategoryDBName;
 
-	private MultipleAchievements(String categoryName, String langDefault, String configComment,
-			String subcategoryName) {
+	MultipleAchievements(String categoryName, String langDefault, String configComment,
+                         String subcategoryName) {
 		this.categoryName = categoryName;
 		this.langDefault = langDefault;
 		this.configComment = configComment;

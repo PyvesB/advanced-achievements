@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 @FunctionalInterface
 public interface SQLWriteOperation {
 
-	static final int MAX_ATTEMPTS = 5;
+	int MAX_ATTEMPTS = 5;
 
 	/**
 	 * Performs a single write operation to the database.
@@ -30,7 +30,7 @@ public interface SQLWriteOperation {
 	 * @param logger
 	 * @param operationMessage
 	 */
-	public default void executeOperation(Executor executor, Logger logger, String operationMessage) {
+	default void executeOperation(Executor executor, Logger logger, String operationMessage) {
 		executor.execute(() -> attemptWrites(logger, operationMessage));
 	}
 
