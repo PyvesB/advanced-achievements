@@ -196,20 +196,20 @@ public class CategoryGUI extends AbstractGUI {
 			String achName = plugin.getPluginConfig().getString(categoryName + '.' + path + ".Name", "");
 			String receptionDate = plugin.getDatabaseManager().getPlayerAchievementDate(player.getUniqueId(), achName);
 
-			boolean inelligibleSeriesItem = true;
+			boolean ineligibleSeriesItem = true;
 			if (statistic == NO_STAT || receptionDate != null || previousItemDate != null
 					|| index == pageStart && pageStart == 0 || !previousSubcategory.equals(subcategory)) {
 				// Commands achievement OR achievement has been completed OR previous achievement has been completed OR
 				// first achievement in the category OR different subcategory.
-				inelligibleSeriesItem = false;
+				ineligibleSeriesItem = false;
 			}
 
 			String nameToDisplay = getNameToDisplay(categoryName, path, achName);
 			String descriptionToDisplay = getDescriptionToDisplay(categoryName, path, receptionDate != null);
 			List<String> lore = buildLore(categoryName, descriptionToDisplay, path, receptionDate, statistic,
-					inelligibleSeriesItem);
+					ineligibleSeriesItem);
 			insertAchievement(inventory, index - pageStart + 1, statistic, nameToDisplay, receptionDate,
-					inelligibleSeriesItem, lore);
+					ineligibleSeriesItem, lore);
 
 			previousItemDate = receptionDate;
 			previousSubcategory = subcategory;
