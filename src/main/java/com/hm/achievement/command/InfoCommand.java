@@ -9,7 +9,7 @@ import com.hm.achievement.AdvancedAchievements;
 
 /**
  * Class in charge of displaying the plugin's extra information (/aach info).
- * 
+ *
  * @author Pyves
  */
 public class InfoCommand extends AbstractCommand {
@@ -96,20 +96,23 @@ public class InfoCommand extends AbstractCommand {
 				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(placeholderAPIState));
 
 		// Display database type.
-		String databaseType;
-		if ("mysql".equalsIgnoreCase(configDatabaseType)) {
-			databaseType = "MySQL";
-		} else if ("postgresql".equalsIgnoreCase(configDatabaseType)) {
-			databaseType = "PostgreSQL";
-		} else {
-			databaseType = "SQLite";
-		}
+        String databaseType = getDatabaseType();
 		langVersionCommandDatabase = plugin.getChatHeader() + configColor
 				+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " " + ChatColor.GRAY
 				+ databaseType;
 	}
 
-	@Override
+    private String getDatabaseType() {
+        if ("mysql".equalsIgnoreCase(configDatabaseType)) {
+            return "MySQL";
+        } else if ("postgresql".equalsIgnoreCase(configDatabaseType)) {
+            return "PostgreSQL";
+        } else {
+           return "SQLite";
+        }
+    }
+
+    @Override
 	protected void executeCommand(CommandSender sender, String[] args) {
 		sender.sendMessage(header);
 		sender.sendMessage(langVersionCommandDescription);
