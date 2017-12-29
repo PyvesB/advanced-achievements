@@ -37,15 +37,8 @@ public class AchieveMilkLavaWaterListener extends AbstractRateLimitedListener {
 	public void onPlayerBucketFill(PlayerBucketFillEvent event) {
 		Player player = event.getPlayer();
 
-		NormalAchievements category;
 		Material resultBucket = event.getItemStack().getType();
-		if (resultBucket == Material.MILK_BUCKET) {
-			category = NormalAchievements.MILKS;
-		} else if (resultBucket == Material.LAVA_BUCKET) {
-			category = NormalAchievements.LAVABUCKETS;
-		} else {
-			category = NormalAchievements.WATERBUCKETS;
-		}
+		NormalAchievements category = getCategory(resultBucket);
 
 		if (plugin.getDisabledCategorySet().contains(category.toString())) {
 			return;
@@ -57,5 +50,16 @@ public class AchieveMilkLavaWaterListener extends AbstractRateLimitedListener {
 		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+	}
+
+	private NormalAchievements getCategory(Material resultBucket) {
+		switch (resultBucket) {
+			case MILK_BUCKET:
+				return NormalAchievements.MILKS;
+			case LAVA_BUCKET:
+				return NormalAchievements.LAVABUCKETS;
+			default:
+				return NormalAchievements.WATERBUCKETS;
+		}
 	}
 }
