@@ -90,7 +90,7 @@ public class StatsCommand extends AbstractCommand {
 		while (i < verticalBarsToDisplay) {
 			if (!hasDisplayedMiddleText && i >= verticalBarsToDisplay / 2) {
 				// Middle reached: append number of achievements information.
-				barDisplay.append(ChatColor.GRAY + middleText);
+				barDisplay.append(ChatColor.GRAY).append(middleText);
 				// Do not display middleText again.
 				hasDisplayedMiddleText = true;
 				// Iterate a number of times equal to the number of iterations so far to have the same number of
