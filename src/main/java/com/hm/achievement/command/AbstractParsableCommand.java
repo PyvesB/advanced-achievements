@@ -39,13 +39,15 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
+		String searchedName = args[args.length - 1];
 		Player player = Bukkit.getOnlinePlayers().stream()
-				.filter(p -> p.getName().equalsIgnoreCase(args[args.length - 1])).findFirst().orElse(null);
+				.filter(p -> p.getName().equalsIgnoreCase(searchedName))
+				.findFirst().orElse(null);
 
 		// If player not found or is offline.
 		if (player == null) {
 			sender.sendMessage(plugin.getChatHeader()
-					+ StringUtils.replaceOnce(langPlayerOffline, "PLAYER", args[args.length - 1]));
+					+ StringUtils.replaceOnce(langPlayerOffline, "PLAYER", searchedName));
 			return;
 		}
 
