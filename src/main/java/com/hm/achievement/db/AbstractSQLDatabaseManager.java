@@ -25,7 +25,7 @@ import java.util.logging.Level;
 public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	protected final AdvancedAchievements plugin;
-	// Used to do some write operations to the database asynchronously.
+	// Used to do perform the database write operations asynchronously.
 	protected ExecutorService pool;
 	// Connection to the database; remains opened and shared.
 	protected final AtomicReference<Connection> sqlConnection;
@@ -147,7 +147,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Creates a new Connection object tothe database.
+	 * Creates a new Connection object to the database.
 	 * 
 	 * @return connection object to database
 	 * @throws SQLException
@@ -209,7 +209,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Gets the date of reception of a specific achievement.
+	 * Gets the reception date of a specific achievement.
 	 * 
 	 * @param uuid
 	 * @param achName
@@ -305,8 +305,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Registers a new achievement for a player; this method will distinguish between asynchronous and synchronous
-	 * processing.
+	 * Registers a new achievement for a player with the reception time set to now.
 	 * 
 	 * @param uuid
 	 * @param achName
@@ -316,15 +315,14 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		registerAchievement(uuid, achName, achMessage, System.currentTimeMillis());
 	}
 
-    /**
-     * Registers a new achievement for a player; this method will distinguish between asynchronous and synchronous
-     * processing.
-     *
-     * @param uuid
-     * @param achName
-     * @param achMessage
-     * @param epochMs Moment the achievement was registered at.
-     */
+	/**
+	 * Registers a new achievement for a player.
+	 * 
+	 * @param uuid
+	 * @param achName
+	 * @param achMessage
+	 * @param epochMs Moment the achievement was registered at.
+	 */
 	protected void registerAchievement(UUID uuid, String achName, String achMessage, long epochMs) {
 		String sql = "REPLACE INTO " + prefix + "achievements VALUES ('" + uuid + "',?,?,?)";
 		((SQLWriteOperation) () -> {
@@ -339,7 +337,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Checks whether player has received a specific achievement. Access through PoolsManager.
+	 * Checks whether player has received a specific achievement.
 	 * 
 	 * @param uuid
 	 * @param achName
@@ -366,7 +364,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Gets the amount of a NormalAchievement statistic.
+	 * Gets a player's NormalAchievement statistic.
 	 * 
 	 * @param uuid
 	 * @param category
@@ -387,7 +385,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Gets the amount of a MultipleAchievement statistic.
+	 * Gets a player's MultipleAchievement statistic.
 	 * 
 	 * @param uuid
 	 * @param category
@@ -412,7 +410,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Returns player's number of connections on separate days (used by GUI).
+	 * Returns a player's number of connections on separate days (used by GUI).
 	 * 
 	 * @param uuid
 	 * @return connections statistic
@@ -452,7 +450,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Updates player's number of connections and last connection date and returns number of connections (used by
+	 * Updates a player's number of connections and last connection date and returns number of connections (used by
 	 * Connections listener).
 	 * 
 	 * @param uuid
@@ -511,7 +509,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Clear Connection statistics for a given player.
+	 * Clears Connection statistics for a given player.
 	 * 
 	 * @param uuid
 	 */
