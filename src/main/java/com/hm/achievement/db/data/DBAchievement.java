@@ -2,6 +2,7 @@ package com.hm.achievement.db.data;
 
 import com.hm.achievement.category.Category;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -53,5 +54,20 @@ public class DBAchievement {
 
     public boolean hasBeenAwarded() {
         return this instanceof AwardedDBAchievement;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DBAchievement that = (DBAchievement) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(message, that.message) &&
+                Objects.equals(category, that.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, message, category);
     }
 }

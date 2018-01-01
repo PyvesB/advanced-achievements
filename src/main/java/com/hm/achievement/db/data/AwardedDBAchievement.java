@@ -3,6 +3,7 @@ package com.hm.achievement.db.data;
 import com.hm.achievement.category.Category;
 
 import java.sql.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -31,5 +32,21 @@ public class AwardedDBAchievement extends DBAchievement {
 
     public Date getDateAwarded() {
         return dateAwarded;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AwardedDBAchievement that = (AwardedDBAchievement) o;
+        return Objects.equals(awardedTo, that.awardedTo) &&
+                Objects.equals(dateAwarded, that.dateAwarded);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(super.hashCode(), awardedTo, dateAwarded);
     }
 }
