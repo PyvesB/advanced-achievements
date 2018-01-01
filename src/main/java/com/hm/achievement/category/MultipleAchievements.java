@@ -1,7 +1,5 @@
 package com.hm.achievement.category;
 
-import java.lang.annotation.Documented;
-
 /**
  * List of multiple achievements, ie. with sub-categories
  *
@@ -65,7 +63,10 @@ public enum MultipleAchievements implements Category {
         return configComment;
     }
 
-    /** {@inheritDoc}
+    /**
+     * Converts to the name of the column name containing the subcategory information in the database.
+     *
+     * @return the name used for the database column
      */
     public String toSubcategoryDBName() {
         return subcategoryDBName;
