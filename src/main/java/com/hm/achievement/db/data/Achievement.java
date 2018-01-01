@@ -2,6 +2,8 @@ package com.hm.achievement.db.data;
 
 import com.hm.achievement.category.Category;
 
+import java.util.Optional;
+
 /**
  * Data container object for a single achievement.
  *
@@ -41,8 +43,8 @@ public class Achievement {
         this.message = message;
     }
 
-    public Category getCategory() {
-        return category;
+    public Optional<Category> getCategory() {
+        return Optional.ofNullable(category);
     }
 
     public void setCategory(Category category) {
