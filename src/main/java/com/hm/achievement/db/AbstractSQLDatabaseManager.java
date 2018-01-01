@@ -3,8 +3,7 @@ package com.hm.achievement.db;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.db.data.Achievement;
-import com.hm.achievement.db.data.AwardedAchievement;
+import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.utils.Reloadable;
 import org.apache.commons.lang3.StringUtils;
@@ -162,12 +161,12 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
      * @param uuid UUID of a player.
      * @return ArrayList containing all information about achievements awarded to a player.
      */
-    public List<AwardedAchievement> getCleanPlayerAchievementsList(UUID uuid) {
+    public List<AwardedDBAchievement> getCleanPlayerAchievementsList(UUID uuid) {
         // Either oldest date to newest one or newest date to oldest one.
         String sql = "SELECT * FROM " + prefix + "achievements WHERE playername = '" + uuid + "' ORDER BY date "
                 + (configBookChronologicalOrder ? "ASC" : "DESC");
-        return ((SQLReadOperation<List<AwardedAchievement>>) () -> {
-            List<AwardedAchievement> achievements = new ArrayList<>();
+        return ((SQLReadOperation<List<AwardedDBAchievement>>) () -> {
+            List<AwardedDBAchievement> achievements = new ArrayList<>();
             Connection conn = getSQLConnection();
             try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -181,7 +180,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
                     String achMsg = rs.getString(3);
                     Date dateAwarded = rs.getDate(4);
 
-                    achievements.add(new AwardedAchievement(uuid, achName, achMsg, dateAwarded));
+                    achievements.add(new AwardedDBAchievement(uuid, achName, achMsg, dateAwarded));
                 }
             }
             return achievements;
@@ -197,7 +196,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
     @Deprecated
     public List<String> getPlayerAchievementsList(UUID uuid) {
         List<String> messyList = new ArrayList<>();
-        for (AwardedAchievement achievement : getCleanPlayerAchievementsList(uuid)) {
+        for (AwardedDBAchievement achievement : getCleanPlayerAchievementsList(uuid)) {
             messyList.add(achievement.getName());
             messyList.add(achievement.getMessage());
             messyList.add(dateFormat.format(achievement.getDateAwarded()));

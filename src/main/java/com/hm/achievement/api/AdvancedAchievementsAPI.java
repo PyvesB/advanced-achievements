@@ -1,11 +1,11 @@
 package com.hm.achievement.api;
 
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Advanced Achievements API. Unless explicitly stated otherwise, implementations are expected to be thread-safe.

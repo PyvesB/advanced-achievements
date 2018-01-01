@@ -9,19 +9,19 @@ import java.util.Optional;
  *
  * The object was created to reduce "messy lists" returned by the database.
  */
-public class Achievement {
+public class DBAchievement {
 
     private String name;
     private String message;
 
     private Category category;
 
-    public Achievement(String name, String message) {
+    public DBAchievement(String name, String message) {
         this.name = name;
         this.message = message;
     }
 
-    public Achievement(String name, String message, Category category) {
+    public DBAchievement(String name, String message, Category category) {
         this.name = name;
         this.message = message;
         this.category = category;
@@ -52,6 +52,6 @@ public class Achievement {
     }
 
     public boolean hasBeenAwarded() {
-        return this instanceof AwardedAchievement;
+        return this instanceof AwardedDBAchievement;
     }
 }
