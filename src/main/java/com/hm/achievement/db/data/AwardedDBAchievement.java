@@ -46,7 +46,6 @@ public class AwardedDBAchievement extends DBAchievement {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(super.hashCode(), awardedTo, dateAwarded);
     }
 }
