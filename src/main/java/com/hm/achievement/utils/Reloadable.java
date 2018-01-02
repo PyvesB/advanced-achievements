@@ -11,6 +11,6 @@ public interface Reloadable {
 	/**
 	 * Extracts and parses configuration parameters.
 	 */
-	public void extractConfigurationParameters();
+    void extractConfigurationParameters();
 
 }

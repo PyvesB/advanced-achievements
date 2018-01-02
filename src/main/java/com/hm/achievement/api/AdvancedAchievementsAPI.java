@@ -1,11 +1,11 @@
 package com.hm.achievement.api;
 
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Advanced Achievements API. Unless explicitly stated otherwise, implementations are expected to be thread-safe.
@@ -22,7 +22,7 @@ public interface AdvancedAchievementsAPI {
 	 * @since 5.0
 	 * @return version code
 	 */
-	public int getAdvancedAchievementsVersionCode();
+    int getAdvancedAchievementsVersionCode();
 
 	/**
 	 * Checks whether player has received achievement {@code achievementName}. Implementation benefits from Advanced
@@ -33,7 +33,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml, should not be empty
 	 * @return true if player has received the achievement, false otherwise
 	 */
-	public boolean hasPlayerReceivedAchievement(UUID player, String achievementName);
+    boolean hasPlayerReceivedAchievement(UUID player, String achievementName);
 
 	/**
 	 * Retrieves all achievements received by the player.
@@ -42,7 +42,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param player should not be null
 	 * @return list of {@code Achievement} objects received by the player
 	 */
-	public List<Achievement> getPlayerAchievementsList(UUID player);
+    List<Achievement> getPlayerAchievementsList(UUID player);
 
 	/**
 	 * Retrieves the total number of achievements received by the player. Implementation benefits from Advanced
@@ -52,7 +52,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param player should not be null
 	 * @return total achievements by the player
 	 */
-	public int getPlayerTotalAchievements(UUID player);
+    int getPlayerTotalAchievements(UUID player);
 
 	/**
 	 * Retrieves the {@code Rank} object of a player over a given period.
@@ -63,7 +63,7 @@ public interface AdvancedAchievementsAPI {
 	 *            that starting point and now
 	 * @return rank of the player; if no achievements were received over the period, his rank will be Integer.MAX_VALUE
 	 */
-	public Rank getPlayerRank(UUID player, long rankingPeriodStart);
+    Rank getPlayerRank(UUID player, long rankingPeriodStart);
 
 	/**
 	 * Retrieves the players who have received the most achievements during a given period.
@@ -74,7 +74,7 @@ public interface AdvancedAchievementsAPI {
 	 *            that starting point and now
 	 * @return list of players, ordered from best to worst
 	 */
-	public List<UUID> getTopPlayers(int numOfPlayers, long rankingPeriodStart);
+    List<UUID> getTopPlayers(int numOfPlayers, long rankingPeriodStart);
 
 	/**
 	 * Retrieves a statistic for a normal category. Implementation benefits from Advanced Achievements caching when
@@ -85,7 +85,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param category should not be null
 	 * @return the statistic for the normal category
 	 */
-	public long getStatisticForNormalCategory(UUID player, NormalAchievements category);
+    long getStatisticForNormalCategory(UUID player, NormalAchievements category);
 
 	/**
 	 * Retrieves a statistic for a multiple category. Implementation benefits from Advanced Achievements caching when
@@ -97,7 +97,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param subcategory within the main multiple category
 	 * @return the statistic for the multiple category
 	 */
-	public long getStatisticForMultipleCategory(UUID player, MultipleAchievements category, String subcategory);
+    long getStatisticForMultipleCategory(UUID player, MultipleAchievements category, String subcategory);
 
 	/**
 	 * Returns the DisplayName parameter for a given achievement Name parameter. If no DisplayName was found for the
@@ -108,7 +108,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml, should not be empty
 	 * @return the DisplayName parameter of an achievement or "" or null
 	 */
-	public String getDisplayNameForName(String achievementName);
+    String getDisplayNameForName(String achievementName);
 
 	/**
 	 * Retrieves the total numbers of achievements received by every player who has at least one achievement.
@@ -116,9 +116,9 @@ public interface AdvancedAchievementsAPI {
 	 * @since 5.2
 	 * @return map containing total achievements for every player
 	 */
-	public Map<UUID, Integer> getPlayersTotalAchievements();
+    Map<UUID, Integer> getPlayersTotalAchievements();
 
-	public final class Rank {
+	final class Rank {
 
 		public final int playerRank;
 		public final int totalPlayers;
@@ -129,7 +129,7 @@ public interface AdvancedAchievementsAPI {
 		}
 	}
 
-	public final class Achievement {
+	final class Achievement {
 
 		public final String name;
 		public final String message;

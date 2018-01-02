@@ -12,7 +12,7 @@ import com.hm.achievement.utils.StatisticIncreaseHandler;
 
 /**
  * Class in charge of increase a statistic of an achievement by command.
- * 
+ *
  * @author Phoetrix
  */
 public class AddCommand extends AbstractParsableCommand {
@@ -26,7 +26,6 @@ public class AddCommand extends AbstractParsableCommand {
 	public AddCommand(AdvancedAchievements plugin) {
 		super(plugin);
 		statistic = new StatisticIncreaseHandler(plugin);
-
 	}
 
 	@Override
@@ -42,7 +41,7 @@ public class AddCommand extends AbstractParsableCommand {
 
 	@Override
 	protected void executeSpecificActions(CommandSender sender, String[] args, Player player) {
-		int value = 0;
+		int value;
 
 		if (NumberUtils.isNumber(args[1])) {
 			value = Integer.parseInt(args[1]);

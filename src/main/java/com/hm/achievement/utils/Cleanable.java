@@ -16,6 +16,6 @@ public interface Cleanable {
 	 * 
 	 * @param uuid
 	 */
-	public void cleanPlayerData(UUID uuid);
+    void cleanPlayerData(UUID uuid);
 
 }

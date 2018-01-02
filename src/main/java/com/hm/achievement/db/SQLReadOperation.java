@@ -14,7 +14,7 @@ import com.hm.achievement.exception.DatabaseReadError;
 @FunctionalInterface
 public interface SQLReadOperation<T> {
 
-	static final int MAX_ATTEMPTS = 3;
+	int MAX_ATTEMPTS = 3;
 
 	/**
 	 * Performs a single read operation on the database.
@@ -32,7 +32,7 @@ public interface SQLReadOperation<T> {
 	 * @param operationMessage
 	 * @return the result of a successful read operation
 	 */
-	public default T executeOperation(String operationMessage) {
+	default T executeOperation(String operationMessage) {
 		SQLException cause = null;
 		for (int attempt = 1; attempt <= MAX_ATTEMPTS; ++attempt) {
 			try {
