@@ -59,7 +59,6 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    @Ignore("Can be enabled later")
     public void testRegisterNullUUID() {
         registerAchievement(null, testAchievement, testAchievementMsg);
 
@@ -75,7 +74,6 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     }
 
     @Test
-    @Ignore("Can be enabled later")
     public void testGetMethodsForNullUUIDExceptions() {
         addNullUUIDtoDB();
 
@@ -87,21 +85,21 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
     }
 
     private void addNullUUIDtoDB() {
-        String sql = "REPLACE INTO achievements VALUES ('" + null + "',?,?,?)";
+        String sql = "REPLACE INTO achievements VALUES (?,?,?,?)";
 
         ((SQLWriteOperation) () -> {
             Connection conn = db.getSQLConnection();
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, testAchievement);
-                ps.setString(2, testAchievementMsg);
-                ps.setDate(3, new Date(System.currentTimeMillis()));
+            	ps.setObject(1, null);
+                ps.setString(2, testAchievement);
+                ps.setString(3, testAchievementMsg);
+                ps.setDate(4, new Date(System.currentTimeMillis()));
                 ps.execute();
             }
         }).executeOperation(db.pool, db.plugin.getLogger(), "registering an achievement with null UUID");
     }
 
     @Test
-    @Ignore("Can be enabled later")
     public void testRegisterNullAch() {
         registerAchievement(testUUID, null, testAchievementMsg);
 
@@ -111,12 +109,11 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
         System.out.println("Saved Achievements: " + list);
         System.out.println("Saved Achievements Map: " + map);
 
-        assertTrue("An achievement with name 'null' was saved", list.isEmpty());
-        assertEquals(0, (int) map.getOrDefault(testUUID, 0));
+        assertEquals(3, list.size());
+        assertEquals(1, (int) map.getOrDefault(testUUID, 0));
     }
 
     @Test
-    @Ignore("Can be enabled later")
     public void testRegisterNullMsg() {
         registerAchievement(testUUID, testAchievement, null);
 

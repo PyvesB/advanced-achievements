@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -26,7 +27,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	private final AdvancedAchievements pluginInstance;
 
-	private AdvancedAchievementsBukkitAPI(AdvancedAchievements pluginInstance) {
+	AdvancedAchievementsBukkitAPI(AdvancedAchievements pluginInstance) {
 		this.pluginInstance = pluginInstance;
 	}
 
@@ -55,6 +56,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public boolean hasPlayerReceivedAchievement(UUID player, String achievementName) {
+		validateNotNull(player, "Player");
+		validateNotEmpty(achievementName, "Achievement Name");
 		// Underlying structures do not support concurrent operations and are only used by the main server thread. Not
 		// thread-safe to modify or read them asynchronously. Do not use cached data if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
@@ -66,6 +69,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public List<Achievement> getPlayerAchievementsList(UUID player) {
+		validateNotNull(player, "Player");
 		List<String> rawList = pluginInstance.getDatabaseManager().getPlayerAchievementsList(player);
 		List<Achievement> playerAchievements = new ArrayList<>(rawList.size() / 3);
 		for (int i = 0; i < rawList.size(); i += 3) {
@@ -76,6 +80,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public int getPlayerTotalAchievements(UUID player) {
+		validateNotNull(player, "Player");
 		// Only use cached data if player is online.
 		if (isPlayerOnline(player)) {
 			return pluginInstance.getCacheManager().getPlayerTotalAchievements(player);
@@ -86,6 +91,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public Rank getPlayerRank(UUID player, long rankingPeriodStart) {
+		validateNotNull(player, "Player");
 		Map<String, Integer> rankings = pluginInstance.getDatabaseManager().getTopList(rankingPeriodStart);
 		List<Integer> achievementCounts = new ArrayList<>(rankings.values());
 		Integer achievementsCount = rankings.get(player.toString());
@@ -106,6 +112,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public long getStatisticForNormalCategory(UUID player, NormalAchievements category) {
+		validateNotNull(player, "Player");
+		validateNotNull(category, "Category");
 		// Underlying structures do not support concurrent write operations and are only modified by the main server
 		// thread. Do not use cache if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
@@ -117,6 +125,9 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public long getStatisticForMultipleCategory(UUID player, MultipleAchievements category, String subcategory) {
+		validateNotNull(player, "Player");
+		validateNotNull(category, "Category");
+		validateNotEmpty(subcategory, "Sub-category");
 		// Underlying structures do not support concurrent write operations and are only modified by the main server
 		// thread. Do not use cache if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
@@ -128,6 +139,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public String getDisplayNameForName(String achievementName) {
+		validateNotEmpty(achievementName, "Achievement Name");
 		return pluginInstance.getAchievementsAndDisplayNames().get(achievementName);
 	}
 
@@ -163,5 +175,29 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 			// Task can be cancelled when plugin disabled.
 		}
 		return playerOnline;
+	}
+
+	/**
+	 * Throws an IllegalArgumentException if the argument is null.
+	 * 
+	 * @param argument
+	 * @param argumentName
+	 */
+	private void validateNotNull(Object argument, String argumentName) {
+		if (argument == null) {
+			throw new IllegalArgumentException(argumentName + " cannot be null.");
+		}
+	}
+
+	/**
+	 * Throws an IllegalArgumentException if the string is empty (i.e. null or "").
+	 * 
+	 * @param argument
+	 * @param argumentName
+	 */
+	private void validateNotEmpty(String argument, String argumentName) {
+		if (StringUtils.isEmpty(argument)) {
+			throw new IllegalArgumentException(argumentName + " cannot be empty.");
+		}
 	}
 }
