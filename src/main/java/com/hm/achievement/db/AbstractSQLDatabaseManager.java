@@ -162,12 +162,14 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 */
 	public List<String> getPlayerAchievementsList(UUID uuid) {
 		// Either oldest date to newest one or newest date to oldest one.
-		String sql = "SELECT * FROM " + prefix + "achievements WHERE playername = '" + uuid + "' ORDER BY date "
+		String sql = "SELECT * FROM " + prefix + "achievements WHERE playername = ? ORDER BY date "
 				+ (configBookChronologicalOrder ? "ASC" : "DESC");
 		return ((SQLReadOperation<List<String>>) () -> {
 			List<String> achievementsList = new ArrayList<>();
 			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setObject(1, uuid);
+				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
 					// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing single
 					// quotes were inserted with two single quotes in the database.
@@ -193,11 +195,13 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @return array list with Name parameters
 	 */
 	public List<String> getPlayerAchievementNamesList(UUID uuid) {
-		String sql = "SELECT achievement FROM " + prefix + "achievements WHERE playername = '" + uuid + "'";
+		String sql = "SELECT achievement FROM " + prefix + "achievements WHERE playername = ?";
 		return ((SQLReadOperation<List<String>>) () -> {
 			List<String> achievementNamesList = new ArrayList<>();
 			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setObject(1, uuid);
+				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
 					// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to
 					// 3.0.2 where names containing single quotes were inserted with two single quotes in the database.
@@ -219,15 +223,16 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
 		// where names containing single quotes were inserted with two single quotes in the database.
 		String sql = achName.contains("'")
-				? "SELECT date FROM " + prefix + "achievements WHERE playername = '" + uuid
-						+ "' AND (achievement = ? OR achievement = ?)"
-				: "SELECT date FROM " + prefix + "achievements WHERE playername = '" + uuid + "' AND achievement = ?";
+				? "SELECT date FROM " + prefix
+						+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
+				: "SELECT date FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<String>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setString(1, achName);
+				ps.setObject(1, uuid);
+				ps.setString(2, achName);
 				if (achName.contains("'")) {
-					ps.setString(2, StringUtils.replace(achName, "'", "''"));
+					ps.setString(3, StringUtils.replace(achName, "'", "''"));
 				}
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
@@ -251,7 +256,10 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					achievementAmounts.put(UUID.fromString(rs.getString(1)), rs.getInt(2));
+					String uuid = rs.getString(1);
+					if (StringUtils.isNotEmpty(uuid)) {
+						achievementAmounts.put(UUID.fromString(uuid), rs.getInt(2));
+					}
 				}
 			}
 			return achievementAmounts;
@@ -265,10 +273,12 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @return number of achievements
 	 */
 	public int getPlayerAchievementsAmount(UUID uuid) {
-		String sql = "SELECT COUNT(*) FROM " + prefix + "achievements WHERE playername = '" + uuid + "'";
+		String sql = "SELECT COUNT(*) FROM " + prefix + "achievements WHERE playername = ?";
 		return ((SQLReadOperation<Integer>) () -> {
 			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setObject(1, uuid);
+				ResultSet rs = ps.executeQuery();
 				rs.next();
 				return rs.getInt(1);
 			}
@@ -324,13 +334,14 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param epochMs Moment the achievement was registered at.
 	 */
 	protected void registerAchievement(UUID uuid, String achName, String achMessage, long epochMs) {
-		String sql = "REPLACE INTO " + prefix + "achievements VALUES ('" + uuid + "',?,?,?)";
+		String sql = "REPLACE INTO " + prefix + "achievements VALUES (?,?,?,?)";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setString(1, achName);
-				ps.setString(2, achMessage);
-				ps.setDate(3, new Date(epochMs));
+				ps.setObject(1, uuid);
+				ps.setString(2, achName);
+				ps.setString(3, achMessage == null ? "" : achMessage);
+				ps.setDate(4, new Date(epochMs));
 				ps.execute();
 			}
 		}).executeOperation(pool, plugin.getLogger(), "registering an achievement");
@@ -347,16 +358,16 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
 		// where names containing single quotes were inserted with two single quotes in the database.
 		String sql = achName.contains("'")
-				? "SELECT achievement FROM " + prefix + "achievements WHERE playername = '" + uuid
-						+ "' AND (achievement = ? OR achievement = ?)"
-				: "SELECT achievement FROM " + prefix + "achievements WHERE playername = '" + uuid
-						+ "' AND achievement = ?";
+				? "SELECT achievement FROM " + prefix
+						+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
+				: "SELECT achievement FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<Boolean>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setString(1, achName);
+				ps.setObject(1, uuid);
+				ps.setString(2, achName);
 				if (achName.contains("'")) {
-					ps.setString(2, StringUtils.replace(achName, "'", "''"));
+					ps.setString(3, StringUtils.replace(achName, "'", "''"));
 				}
 				return ps.executeQuery().next();
 			}
@@ -372,10 +383,12 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 */
 	public long getNormalAchievementAmount(UUID uuid, NormalAchievements category) {
 		String dbName = category.toDBName();
-		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = '" + uuid + "'";
+		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<Long>) () -> {
 			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setObject(1, uuid);
+				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
 					return rs.getLong(dbName);
 				}
@@ -394,12 +407,13 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 */
 	public long getMultipleAchievementAmount(UUID uuid, MultipleAchievements category, String subcategory) {
 		String dbName = category.toDBName();
-		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = '" + uuid + "' AND "
+		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ? AND "
 				+ category.toSubcategoryDBName() + " = ?";
 		return ((SQLReadOperation<Long>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setString(1, subcategory);
+				ps.setObject(1, uuid);
+				ps.setString(2, subcategory);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
 					return rs.getLong(dbName);
@@ -417,10 +431,12 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 */
 	public int getConnectionsAmount(UUID uuid) {
 		String dbName = NormalAchievements.CONNECTIONS.toDBName();
-		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = '" + uuid + "'";
+		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<Integer>) () -> {
 			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setObject(1, uuid);
+				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
 					return rs.getInt(dbName);
 				}
@@ -437,10 +453,12 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 */
 	public String getPlayerConnectionDate(UUID uuid) {
 		String dbName = NormalAchievements.CONNECTIONS.toDBName();
-		String sql = "SELECT date FROM " + prefix + dbName + " WHERE playername = '" + uuid + "'";
+		String sql = "SELECT date FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<String>) () -> {
 			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setObject(1, uuid);
+				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
 					return rs.getString("date");
 				}
@@ -463,18 +481,16 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Integer>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sqlRead)) {
-				ps.setString(1, uuid.toString());
-				int connections = 1;
+				ps.setObject(1, uuid);
 				ResultSet rs = ps.executeQuery();
-				if (rs.next()) {
-					connections += rs.getInt(dbName);
-				}
-				String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES ('" + uuid + "', " + connections
-						+ ", ?)";
+				int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
+				String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES (?,?,?)";
 				((SQLWriteOperation) () -> {
 					Connection writeConn = getSQLConnection();
 					try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
-						writePrep.setString(1, date);
+						writePrep.setObject(1, uuid);
+						writePrep.setInt(2, connections);
+						writePrep.setString(3, date);
 						writePrep.execute();
 					}
 				}).executeOperation(pool, plugin.getLogger(), "updating connection date and count");
@@ -493,15 +509,15 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
 		// where names containing single quotes were inserted with two single quotes in the database.
 		String sql = achName.contains("'")
-				? "DELETE FROM " + prefix + "achievements WHERE playername = '" + uuid
-						+ "' AND (achievement = ? OR achievement = ?)"
-				: "DELETE FROM " + prefix + "achievements WHERE playername = '" + uuid + "' AND achievement = ?";
+				? "DELETE FROM " + prefix + "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
+				: "DELETE FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setString(1, achName);
+				ps.setObject(1, uuid);
+				ps.setString(2, achName);
 				if (achName.contains("'")) {
-					ps.setString(2, StringUtils.replace(achName, "'", "''"));
+					ps.setString(3, StringUtils.replace(achName, "'", "''"));
 				}
 				ps.execute();
 			}

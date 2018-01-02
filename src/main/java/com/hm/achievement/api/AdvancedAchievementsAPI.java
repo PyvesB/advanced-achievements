@@ -29,8 +29,8 @@ public interface AdvancedAchievementsAPI {
 	 * Achievements caching when player is online and if method called from server thread.
 	 * 
 	 * @since 5.0
-	 * @param player
-	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml
+	 * @param player should not be null
+	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml, should not be empty
 	 * @return true if player has received the achievement, false otherwise
 	 */
 	public boolean hasPlayerReceivedAchievement(UUID player, String achievementName);
@@ -39,7 +39,7 @@ public interface AdvancedAchievementsAPI {
 	 * Retrieves all achievements received by the player.
 	 * 
 	 * @since 5.0
-	 * @param player
+	 * @param player should not be null
 	 * @return list of {@code Achievement} objects received by the player
 	 */
 	public List<Achievement> getPlayerAchievementsList(UUID player);
@@ -49,7 +49,7 @@ public interface AdvancedAchievementsAPI {
 	 * Achievements caching when player is online.
 	 * 
 	 * @since 5.0
-	 * @param player
+	 * @param player should not be null
 	 * @return total achievements by the player
 	 */
 	public int getPlayerTotalAchievements(UUID player);
@@ -58,7 +58,7 @@ public interface AdvancedAchievementsAPI {
 	 * Retrieves the {@code Rank} object of a player over a given period.
 	 * 
 	 * @since 5.0
-	 * @param player
+	 * @param player should not be null
 	 * @param rankingPeriodStart time in millis since epoch; rank will be calculated for achievements received between
 	 *            that starting point and now
 	 * @return rank of the player; if no achievements were received over the period, his rank will be Integer.MAX_VALUE
@@ -81,8 +81,8 @@ public interface AdvancedAchievementsAPI {
 	 * player is online and if method called from server thread.
 	 * 
 	 * @since 5.0
-	 * @param player
-	 * @param category
+	 * @param player should not be null
+	 * @param category should not be null
 	 * @return the statistic for the normal category
 	 */
 	public long getStatisticForNormalCategory(UUID player, NormalAchievements category);
@@ -92,8 +92,8 @@ public interface AdvancedAchievementsAPI {
 	 * player is online and if method called from server thread.
 	 * 
 	 * @since 5.0
-	 * @param player
-	 * @param category
+	 * @param player should not be null
+	 * @param category should not be null
 	 * @param subcategory within the main multiple category
 	 * @return the statistic for the multiple category
 	 */
@@ -105,7 +105,7 @@ public interface AdvancedAchievementsAPI {
 	 * not found in Advanced Achievements's configuration, null is returned.
 	 * 
 	 * @since 5.0
-	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml
+	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml, should not be empty
 	 * @return the DisplayName parameter of an achievement or "" or null
 	 */
 	public String getDisplayNameForName(String achievementName);
