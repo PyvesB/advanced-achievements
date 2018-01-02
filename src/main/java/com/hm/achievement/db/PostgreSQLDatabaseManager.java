@@ -45,16 +45,17 @@ public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 	public void registerAchievement(UUID uuid, String achName, String achMessage) {
 		// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available
 		// for PostgreSQL 9.5+.
-		String sql = "INSERT INTO " + prefix + "achievements VALUES ('" + uuid + "',?,?,?)"
+		String sql = "INSERT INTO " + prefix + "achievements VALUES (?,?,?,?)"
 				+ " ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setString(1, achName);
-				ps.setString(2, achMessage);
-				ps.setDate(3, new Date(System.currentTimeMillis()));
-				ps.setString(4, achMessage);
-				ps.setDate(5, new Date(System.currentTimeMillis()));
+				ps.setObject(1, uuid);
+				ps.setString(2, achName);
+				ps.setString(3, achMessage);
+				ps.setDate(4, new Date(System.currentTimeMillis()));
+				ps.setString(5, achMessage);
+				ps.setDate(6, new Date(System.currentTimeMillis()));
 				ps.execute();
 			}
 		}).executeOperation(pool, plugin.getLogger(), "registering an achievement");
@@ -68,20 +69,20 @@ public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sqlRead)) {
 				ps.setString(1, uuid.toString());
-				int connections = 1;
 				ResultSet rs = ps.executeQuery();
-				if (rs.next()) {
-					connections += rs.getInt(dbName);
-				}
+				int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
 				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
 				// available for PostgreSQL 9.5+.
-				String sqlWrite = "INSERT INTO " + prefix + dbName + " VALUES ('" + uuid + "', " + connections + ", ?)"
-						+ " ON CONFLICT (playername) DO UPDATE SET (" + dbName + ",date)=('" + connections + "', ?)";
+				String sqlWrite = "INSERT INTO " + prefix + dbName + " VALUES (?,?,?)"
+						+ " ON CONFLICT (playername) DO UPDATE SET (" + dbName + ",date)=(?,?)";
 				((SQLWriteOperation) () -> {
 					Connection writeConn = getSQLConnection();
 					try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
-						writePrep.setString(1, date);
-						writePrep.setString(2, date);
+						writePrep.setObject(1, uuid);
+						writePrep.setInt(2, connections);
+						writePrep.setString(3, date);
+						writePrep.setInt(4, connections);
+						writePrep.setString(5, date);
 						writePrep.execute();
 					}
 				}).executeOperation(pool, plugin.getLogger(), "updating connection date and count");
