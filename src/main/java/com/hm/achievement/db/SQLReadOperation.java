@@ -1,15 +1,14 @@
 package com.hm.achievement.db;
 
-import java.sql.SQLException;
-
 import com.hm.achievement.exception.DatabaseReadError;
+
+import java.sql.SQLException;
 
 /**
  * Class used to perform read operations to the database and automatically retry if a SQLException is thrown.
- * 
- * @author Pyves
- * @param <T>
  *
+ * @param <T>
+ * @author Pyves
  */
 @FunctionalInterface
 public interface SQLReadOperation<T> {
@@ -18,9 +17,8 @@ public interface SQLReadOperation<T> {
 
 	/**
 	 * Performs a single read operation on the database.
-	 * 
+	 *
 	 * @return result of the read operation
-	 * 
 	 * @throws SQLException
 	 */
 	T performRead() throws SQLException;

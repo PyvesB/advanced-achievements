@@ -1,11 +1,13 @@
 package com.hm.achievement.db;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.exception.PluginLoadError;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
+import org.bukkit.Material;
+
+import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,19 +15,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-import org.bukkit.Material;
-
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.exception.PluginLoadError;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
-
 /**
  * Class used to update the database schema.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 public class DatabaseUpdater {
 
@@ -40,7 +33,7 @@ public class DatabaseUpdater {
 	/**
 	 * Renames the database tables with the prefix given in the configuration file. This method is only used and only
 	 * works if the tables had the default name. It does not support multiple successive table renamings.
-	 * 
+	 *
 	 * @param databaseAddress
 	 * @throws PluginLoadError
 	 */
@@ -85,7 +78,7 @@ public class DatabaseUpdater {
 	/**
 	 * Initialises database tables by creating non existing ones. We batch the requests to send a unique batch to the
 	 * database.
-	 * 
+	 *
 	 * @throws PluginLoadError
 	 */
 	protected void initialiseTables() throws PluginLoadError {
@@ -121,7 +114,7 @@ public class DatabaseUpdater {
 	 * Update the database tables for Breaks, Crafts and Places achievements (from int to varchar for identification
 	 * column). The tables are now using material names and no longer item IDs, which are deprecated; this also allows
 	 * to store extra data information, extending the number of items available for the user.
-	 * 
+	 *
 	 * @throws PluginLoadError
 	 */
 	protected void updateOldDBToMaterial() throws PluginLoadError {
@@ -155,14 +148,14 @@ public class DatabaseUpdater {
 
 	/**
 	 * Update the database tables for a MultipleAchievements category.
-	 * 
+	 *
 	 * @param category
 	 */
 	private void updateOldDBToMaterial(MultipleAchievements category) {
 		String tableName = sqlDatabaseManager.getPrefix() + category.toDBName();
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement();
-				PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
+			 PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
 			ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "");
 			List<String> uuids = new ArrayList<>();
 			List<Integer> ids = new ArrayList<>();

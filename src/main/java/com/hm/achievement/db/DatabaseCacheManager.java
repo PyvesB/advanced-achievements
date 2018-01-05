@@ -1,25 +1,23 @@
 package com.hm.achievement.db;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.Cleanable;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class used to provide a cache wrapper for various database statistics, in order to reduce load of database and enable
  * faster in-memory operations.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 public class DatabaseCacheManager implements Cleanable {
 
@@ -83,7 +81,7 @@ public class DatabaseCacheManager implements Cleanable {
 
 	/**
 	 * Retrieves a HashMap for a NormalAchievement based on the category.
-	 * 
+	 *
 	 * @param category
 	 * @return the map of cached statistics for a Normal category
 	 */
@@ -93,7 +91,7 @@ public class DatabaseCacheManager implements Cleanable {
 
 	/**
 	 * Retrieves a HashMap for a MultipleAchievement based on the category.
-	 * 
+	 *
 	 * @param category
 	 * @return the map of cached statistics for a Multiple category
 	 */
@@ -104,7 +102,7 @@ public class DatabaseCacheManager implements Cleanable {
 	/**
 	 * Increases the statistic for a NormalAchievement by the given value and returns the updated statistic value. Calls
 	 * the database if not found in the cache.
-	 * 
+	 *
 	 * @param category
 	 * @param player
 	 * @param value
@@ -128,7 +126,7 @@ public class DatabaseCacheManager implements Cleanable {
 	/**
 	 * Increases the statistic for a MultipleAchievement by the given value and returns the updated statistic value.
 	 * Calls the database if not found in the cache.
-	 * 
+	 *
 	 * @param category
 	 * @param subcategory
 	 * @param player
@@ -136,7 +134,7 @@ public class DatabaseCacheManager implements Cleanable {
 	 * @return the updated statistic value
 	 */
 	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player,
-			int value) {
+											   int value) {
 		CachedStatistic statistic = getHashMap(category)
 				.get(getMultipleCategoryCacheKey(category, player, subcategory));
 		if (statistic == null) {
@@ -159,7 +157,7 @@ public class DatabaseCacheManager implements Cleanable {
 
 	/**
 	 * Returns whether player has received a specific achievement.
-	 * 
+	 *
 	 * @param player
 	 * @param name
 	 * @return true if achievement received by player, false otherwise
@@ -184,7 +182,7 @@ public class DatabaseCacheManager implements Cleanable {
 	/**
 	 * Returns the total number of achievements received by a player. Can be called asynchronously by BungeeTabListPlus,
 	 * method must therefore be synchronized to avoid race conditions if a player calls /aach stats at the same time.
-	 * 
+	 *
 	 * @param player
 	 * @return the number of achievements received by the player
 	 */
@@ -200,7 +198,7 @@ public class DatabaseCacheManager implements Cleanable {
 	/**
 	 * Returns a key for the multipleAchievementsToPlayerStatistics structure. Concatenation of player UUID and
 	 * subcategory name, with removed whitespaces for PlayerCommands.
-	 * 
+	 *
 	 * @param category
 	 * @param player
 	 * @param subcategory

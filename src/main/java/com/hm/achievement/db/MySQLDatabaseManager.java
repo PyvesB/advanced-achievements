@@ -1,16 +1,15 @@
 package com.hm.achievement.db;
 
+import com.hm.achievement.AdvancedAchievements;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.hm.achievement.AdvancedAchievements;
-
 /**
  * Class used to handle a MySQL database.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 public class MySQLDatabaseManager extends AbstractSQLDatabaseManager {
 

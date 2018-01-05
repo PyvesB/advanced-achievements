@@ -1,23 +1,22 @@
 package com.hm.achievement.command;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.mcshared.particle.ParticleEffect;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.mcshared.particle.ParticleEffect;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 /**
  * Abstract class in charge of factoring out common functionality for /aach top, week and month commands.
- * 
+ *
  * @author Pyves
  */
 public abstract class AbstractRankingCommand extends AbstractCommand {
@@ -43,7 +42,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private long lastCacheUpdate = 0L;
 
 	protected AbstractRankingCommand(AdvancedAchievements plugin, String languageHeaderKey,
-			String defaultHeaderMessage) {
+									 String defaultHeaderMessage) {
 		super(plugin);
 
 		this.languageHeaderKey = languageHeaderKey;
@@ -116,7 +115,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 	/**
 	 * Returns an UTF-8 circled number based on the player's rank.
-	 * 
+	 *
 	 * @param rank
 	 * @return an UTF-8 string corresponding to the rank
 	 */
@@ -136,14 +135,14 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 	/**
 	 * Returns start time for a specific ranking period.
-	 * 
+	 *
 	 * @return time (epoch) in millis
 	 */
 	protected abstract long getRankingStartTime();
 
 	/**
 	 * Launches sound and particle effects if player is in a top list.
-	 * 
+	 *
 	 * @param player
 	 */
 	private void launchEffects(Player player) {

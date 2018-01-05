@@ -1,14 +1,8 @@
 package com.hm.achievement.gui;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -19,13 +13,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MinecraftFont;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Represents the main GUI, corresponding to more specific details about the different achievements.
- * 
+ *
  * @author Pyves
  */
 public class CategoryGUI extends AbstractGUI {
@@ -120,7 +115,7 @@ public class CategoryGUI extends AbstractGUI {
 
 	/**
 	 * Displays a category GUI, containing all the achievements from a given category.
-	 * 
+	 *
 	 * @param item
 	 * @param player
 	 * @param requestedPage
@@ -155,7 +150,7 @@ public class CategoryGUI extends AbstractGUI {
 
 	/**
 	 * Displays a category GUI page, containing up to MAX_PER_PAGE achievements from a given category.
-	 * 
+	 *
 	 * @param categoryName
 	 * @param player
 	 * @param subcategoriesToStatistics
@@ -164,7 +159,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @param achievementPaths
 	 */
 	private void displayPage(String categoryName, Player player, Map<String, Long> subcategoriesToStatistics,
-			int requestedPage, ItemStack clickedItem, List<String> achievementPaths) {
+							 int requestedPage, ItemStack clickedItem, List<String> achievementPaths) {
 		int pageToDisplay = getPageToDisplay(requestedPage, achievementPaths.size());
 		int pageStart = MAX_PER_PAGE * (pageToDisplay - 1);
 		int pageEnd = Math.min(MAX_PER_PAGE * pageToDisplay, achievementPaths.size());
@@ -229,7 +224,7 @@ public class CategoryGUI extends AbstractGUI {
 
 	/**
 	 * Creates a GUI item for a given achievement.
-	 * 
+	 *
 	 * @param gui
 	 * @param position
 	 * @param statistic
@@ -239,7 +234,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @param lore
 	 */
 	private void insertAchievement(Inventory gui, int position, long statistic, String name, String date,
-			boolean ineligibleSeriesItem, List<String> lore) {
+								   boolean ineligibleSeriesItem, List<String> lore) {
 		// Display an item depending on whether the achievement was received or not, or whether progress was started.
 		// Clone in order to work with an independent set of metadata.
 		ItemStack achItem;
@@ -274,7 +269,7 @@ public class CategoryGUI extends AbstractGUI {
 
 	/**
 	 * Gets a sorted list of paths (subcategory + threshold) for a Multiple category.
-	 * 
+	 *
 	 * @param categoryName
 	 * @return the list of paths for the Multiple category
 	 */
@@ -293,7 +288,7 @@ public class CategoryGUI extends AbstractGUI {
 
 	/**
 	 * Gets a sorted list of thresholds for a Normal category.
-	 * 
+	 *
 	 * @param categoryName
 	 * @return the list of paths for the Normal category
 	 */
@@ -304,7 +299,7 @@ public class CategoryGUI extends AbstractGUI {
 
 	/**
 	 * Gets the player's statistics for each subcategory in the Multiple category.
-	 * 
+	 *
 	 * @param category
 	 * @param player
 	 * @return the mapping from subcategory to player's statistics
@@ -322,7 +317,7 @@ public class CategoryGUI extends AbstractGUI {
 
 	/**
 	 * Gets the player's statistic for a Normal category.
-	 * 
+	 *
 	 * @param category
 	 * @param player
 	 * @return the player's statistic for the category
@@ -336,7 +331,7 @@ public class CategoryGUI extends AbstractGUI {
 
 	/**
 	 * Extracts the achievement name that should be shown in the item lore.
-	 * 
+	 *
 	 * @param category
 	 * @param path
 	 * @param achName
@@ -353,7 +348,7 @@ public class CategoryGUI extends AbstractGUI {
 
 	/**
 	 * Extracts the achievement message that should be shown in the item lore.
-	 * 
+	 *
 	 * @param category
 	 * @param path
 	 * @param completed
@@ -373,7 +368,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * Computes the page number to display given a requested page anf the total number of achievements in the category.
 	 * The returned page number must be within a meaningful range, such that there are achievements to display on the
 	 * page.
-	 * 
+	 *
 	 * @param requestedPage
 	 * @param totalAchievements
 	 * @return the page number to display (start index is 1)
@@ -390,7 +385,7 @@ public class CategoryGUI extends AbstractGUI {
 	/**
 	 * Creates the lore for the current achievement, containing information about the progress, date of reception,
 	 * description, rewards.
-	 * 
+	 *
 	 * @param categoryName
 	 * @param description
 	 * @param path
@@ -400,7 +395,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @return the list representing the lore of a category item
 	 */
 	private List<String> buildLore(String categoryName, String description, String path, String date, long statistic,
-			boolean ineligibleSeriesItem) {
+								   boolean ineligibleSeriesItem) {
 		List<String> lore = new ArrayList<>();
 		lore.add("");
 
@@ -452,7 +447,7 @@ public class CategoryGUI extends AbstractGUI {
 
 	/**
 	 * Constructs the progress bar to be displayed in an achievement's item lore.
-	 * 
+	 *
 	 * @param achMessage
 	 * @param level
 	 * @param statistic
