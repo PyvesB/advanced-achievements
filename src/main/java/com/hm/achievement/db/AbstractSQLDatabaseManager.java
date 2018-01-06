@@ -184,6 +184,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid);
+				ps.setFetchSize(1000);
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
 					// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to
@@ -237,11 +238,14 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Map<UUID, Integer>>) () -> {
 			Map<UUID, Integer> achievementAmounts = new HashMap<>();
 			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					String uuid = rs.getString(1);
-					if (StringUtils.isNotEmpty(uuid)) {
-						achievementAmounts.put(UUID.fromString(uuid), rs.getInt(2));
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setFetchSize(1000);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						String uuid = rs.getString(1);
+						if (StringUtils.isNotEmpty(uuid)) {
+							achievementAmounts.put(UUID.fromString(uuid), rs.getInt(2));
+						}
 					}
 				}
 			}
@@ -288,6 +292,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				if (start > 0L) {
 					ps.setDate(1, new Date(start));
 				}
+				ps.setFetchSize(1000);
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
 					topList.put(rs.getString(1), rs.getInt(2));
@@ -540,6 +545,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			List<AwardedDBAchievement> achievements = new ArrayList<>();
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setFetchSize(1000);
 				ps.setObject(1, uuid);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
