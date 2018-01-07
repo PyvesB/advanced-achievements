@@ -19,8 +19,9 @@ import java.util.stream.Collectors;
 
 /**
  * Underlying implementation of the AdvancedAchievementsAPI interface.
- *
+ * 
  * @author Pyves
+ * 
  */
 public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
