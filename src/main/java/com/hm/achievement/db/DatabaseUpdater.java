@@ -1,13 +1,11 @@
 package com.hm.achievement.db;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.exception.PluginLoadError;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
-import org.bukkit.Material;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,10 +13,19 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
+import org.bukkit.Material;
+
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.exception.PluginLoadError;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
+
 /**
  * Class used to update the database schema.
  *
  * @author Pyves
+ *
  */
 public class DatabaseUpdater {
 
