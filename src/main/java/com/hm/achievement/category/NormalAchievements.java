@@ -2,11 +2,10 @@ package com.hm.achievement.category;
 
 /**
  * List of standard achievements.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
-public enum NormalAchievements {
+public enum NormalAchievements implements Category {
 
 	CONNECTIONS("Connections", "list-connections", "Connections", "When a player connects during the day; statistic increases at most once per day."),
 	DEATHS("Deaths", "list-deaths", "Number of Deaths", "When the player dies."),
@@ -53,7 +52,7 @@ public enum NormalAchievements {
 	private final String langDefault;
 	private final String configComment;
 
-	private NormalAchievements(String categoryName, String langName, String langDefault, String configComment) {
+	NormalAchievements(String categoryName, String langName, String langDefault, String configComment) {
 		this.categoryName = categoryName;
 		this.langName = langName;
 		this.langDefault = langDefault;
@@ -66,46 +65,41 @@ public enum NormalAchievements {
 	}
 
 	/**
-	 * Converts to database name: name of the enum in lower case.
-	 * 
-	 * @return the name used for the database table
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toDBName() {
 		return name().toLowerCase();
 	}
 
 	/**
-	 * Converts to permission name: common prefix + name of the category in lower case.
-	 * 
-	 * @return the Bukkit permission name
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toPermName() {
 		return "achievement.count." + categoryName.toLowerCase();
 	}
 
 	/**
-	 * Converts to the key in the language file used in the list command.
-	 * 
-	 * @return the language configuration key
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangName() {
 		return langName;
 	}
 
 	/**
-	 * Converts to the default name that appears in the list command, if not found in the configuration.
-	 * 
-	 * @return the language configuration default value
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangDefault() {
 		return langDefault;
 	}
 
 	/**
-	 * Converts to the comment that is inserted about the category name in the configuration file.
-	 * 
-	 * @return the configuration comment
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toConfigComment() {
 		return configComment;
 	}

@@ -1,16 +1,15 @@
 package com.hm.achievement.command;
 
+import com.hm.achievement.AdvancedAchievements;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.AdvancedAchievements;
-
 /**
  * Abstract class in charge of factoring out common functionality for commands with more than one argument (/aach give,
  * delete and check).
- * 
+ *
  * @author Pyves
  */
 public abstract class AbstractParsableCommand extends AbstractCommand {
@@ -30,7 +29,7 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 
 	/**
 	 * Executes actions specific to the class extending this abstract class.
-	 * 
+	 *
 	 * @param sender
 	 * @param args
 	 * @param player
@@ -39,13 +38,15 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
+		String searchedName = args[args.length - 1];
 		Player player = Bukkit.getOnlinePlayers().stream()
-				.filter(p -> p.getName().equalsIgnoreCase(args[args.length - 1])).findFirst().orElse(null);
+				.filter(p -> p.getName().equalsIgnoreCase(searchedName))
+				.findFirst().orElse(null);
 
 		// If player not found or is offline.
 		if (player == null) {
 			sender.sendMessage(plugin.getChatHeader()
-					+ StringUtils.replaceOnce(langPlayerOffline, "PLAYER", args[args.length - 1]));
+					+ StringUtils.replaceOnce(langPlayerOffline, "PLAYER", searchedName));
 			return;
 		}
 
@@ -54,7 +55,7 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 
 	/**
 	 * Extracts the name of the achievement from the command line arguments.
-	 * 
+	 *
 	 * @param args
 	 * @return the achievement name
 	 */

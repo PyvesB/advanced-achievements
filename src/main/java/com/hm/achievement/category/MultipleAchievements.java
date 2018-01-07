@@ -2,11 +2,10 @@ package com.hm.achievement.category;
 
 /**
  * List of multiple achievements, ie. with sub-categories
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
-public enum MultipleAchievements {
+public enum MultipleAchievements implements Category {
 
 	PLACES("Places", "Blocks Placed", "When a specific block is placed (specify material name, lower case).", "blockid"),
 	BREAKS("Breaks", "Blocks Broken", "When a specific block is broken (specify material name, lower case).", "blockid"),
@@ -21,8 +20,8 @@ public enum MultipleAchievements {
 	private final String configComment;
 	private final String subcategoryDBName;
 
-	private MultipleAchievements(String categoryName, String langDefault, String configComment,
-			String subcategoryName) {
+	MultipleAchievements(String categoryName, String langDefault, String configComment,
+						 String subcategoryName) {
 		this.categoryName = categoryName;
 		this.langDefault = langDefault;
 		this.configComment = configComment;
@@ -35,53 +34,48 @@ public enum MultipleAchievements {
 	}
 
 	/**
-	 * Converts to database name: name of the enum in lower case.
-	 * 
-	 * @return the name used for the database table
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toDBName() {
 		return name().toLowerCase();
 	}
 
 	/**
-	 * Converts to permission name: common prefix + name of the category in lower case.
-	 * 
-	 * @return the Bukkit permission name
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toPermName() {
 		return "achievement.count." + categoryName.toLowerCase();
 	}
 
 	/**
-	 * Converts to the key in the language file used in the list command.
-	 * 
-	 * @return the language configuration key
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangName() {
 		return "list-" + name().toLowerCase();
 	}
 
 	/**
-	 * Converts to the default name that appears in the list command, if not found in the configuration.
-	 * 
-	 * @return the language configuration default value
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangDefault() {
 		return langDefault;
 	}
 
 	/**
-	 * Converts to the comment that is inserted about the category name in the configuration file.
-	 * 
-	 * @return the configuration comment
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toConfigComment() {
 		return configComment;
 	}
 
 	/**
 	 * Converts to the name of the column name containing the subcategory information in the database.
-	 * 
+	 *
 	 * @return the name used for the database column
 	 */
 	public String toSubcategoryDBName() {

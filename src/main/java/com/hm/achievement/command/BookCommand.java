@@ -1,14 +1,10 @@
 package com.hm.achievement.command;
 
-import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.data.AwardedDBAchievement;
+import com.hm.achievement.utils.Cleanable;
+import com.hm.mcshared.particle.ParticleEffect;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,10 +14,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.utils.Cleanable;
-import com.hm.mcshared.particle.ParticleEffect;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
+import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.util.*;
 
 /**
  * Class in charge of handling the /aach book command, which creates and gives a book containing the player's
@@ -122,20 +117,19 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 
 	/**
 	 * Constructs the pages of a book.
-	 * 
-	 * @param achievements
+	 *  @param achievements
 	 * @param player
 	 */
-	private void fillBook(List<String> achievements, Player player) {
+	private void fillBook(List<AwardedDBAchievement> achievements, Player player) {
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 		List<String> bookPages = new ArrayList<>(achievements.size() / 3);
 		BookMeta bookMeta = (BookMeta) book.getItemMeta();
 
 		try {
-			// Elements in the array go by groups of 3: name, description and date.
-			for (int i = 0; i < achievements.size(); i += 3) {
-				String currentAchievement = "&0" + achievements.get(i) + configBookSeparator + achievements.get(i + 1)
-						+ configBookSeparator + achievements.get(i + 2);
+			for (AwardedDBAchievement achievement : achievements) {
+				String currentAchievement = "&0" + achievement.getName() 
+						+ configBookSeparator + achievement.getMessage()
+						+ configBookSeparator + achievement.getFormattedDate();
 				currentAchievement = ChatColor.translateAlternateColorCodes('&', currentAchievement);
 				bookPages.add(currentAchievement);
 			}

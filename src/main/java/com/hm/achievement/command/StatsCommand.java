@@ -1,19 +1,18 @@
 package com.hm.achievement.command;
 
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.mcshared.particle.ParticleEffect;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.mcshared.particle.ParticleEffect;
-
 /**
  * Class in charge of handling the /aach stats command, which creates and displays a progress bar of the player's
  * achievements
- * 
+ *
  * @author Pyves
  */
 public class StatsCommand extends AbstractCommand {
@@ -90,7 +89,7 @@ public class StatsCommand extends AbstractCommand {
 		while (i < verticalBarsToDisplay) {
 			if (!hasDisplayedMiddleText && i >= verticalBarsToDisplay / 2) {
 				// Middle reached: append number of achievements information.
-				barDisplay.append(ChatColor.GRAY + middleText);
+				barDisplay.append(ChatColor.GRAY).append(middleText);
 				// Do not display middleText again.
 				hasDisplayedMiddleText = true;
 				// Iterate a number of times equal to the number of iterations so far to have the same number of

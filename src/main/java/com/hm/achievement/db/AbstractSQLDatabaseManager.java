@@ -3,6 +3,7 @@ package com.hm.achievement.db;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.utils.Reloadable;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,7 @@ import java.util.logging.Level;
 
 /**
  * Abstract class in charge of factoring out common functionality for the database manager.
- * 
+ *
  * @author Pyves
  */
 public abstract class AbstractSQLDatabaseManager implements Reloadable {
@@ -62,7 +63,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Initialises the database system by extracting settings, performing setup tasks and updating schemas if necessary.
-	 * 
+	 *
 	 * @throws PluginLoadError
 	 */
 	public void initialise() throws PluginLoadError {
@@ -94,7 +95,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Performs any needed tasks before opening a connection to the database.
-	 * 
+	 *
 	 * @throws ClassNotFoundException
 	 * @throws PluginLoadError
 	 */
@@ -127,7 +128,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Retrieves SQL connection to MySQL, PostgreSQL or SQLite database.
-	 * 
+	 *
 	 * @return the cached SQL connection or a new one
 	 */
 	protected Connection getSQLConnection() {
@@ -148,49 +149,15 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Creates a new Connection object to the database.
-	 * 
+	 *
 	 * @return connection object to database
 	 * @throws SQLException
 	 */
 	protected abstract Connection createSQLConnection() throws SQLException;
 
 	/**
-	 * Gets the list of all the achievements of a player, sorted by chronological or reverse ordering.
-	 * 
-	 * @param uuid
-	 * @return array list with groups of 3 strings: achievement name, description and date
-	 */
-	public List<String> getPlayerAchievementsList(UUID uuid) {
-		// Either oldest date to newest one or newest date to oldest one.
-		String sql = "SELECT * FROM " + prefix + "achievements WHERE playername = ? ORDER BY date "
-				+ (configBookChronologicalOrder ? "ASC" : "DESC");
-		return ((SQLReadOperation<List<String>>) () -> {
-			List<String> achievementsList = new ArrayList<>();
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
-				ResultSet rs = ps.executeQuery();
-				while (rs.next()) {
-					// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing single
-					// quotes were inserted with two single quotes in the database.
-					String achName = StringUtils.replace(rs.getString(2), "''", "'");
-					String displayName = plugin.getAchievementsAndDisplayNames().get(achName);
-					if (StringUtils.isNotBlank(displayName)) {
-						achievementsList.add(displayName);
-					} else {
-						achievementsList.add(achName);
-					}
-					achievementsList.add(rs.getString(3));
-					achievementsList.add(dateFormat.format(rs.getDate(4)));
-				}
-			}
-			return achievementsList;
-		}).executeOperation("retrieving the full data of received achievements");
-	}
-
-	/**
 	 * Gets the list of names of all the achievements of a player.
-	 * 
+	 *
 	 * @param uuid
 	 * @return array list with Name parameters
 	 */
@@ -201,6 +168,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid);
+				ps.setFetchSize(1000);
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
 					// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to
@@ -214,7 +182,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Gets the reception date of a specific achievement.
-	 * 
+	 *
 	 * @param uuid
 	 * @param achName
 	 * @return date represented as a string
@@ -224,7 +192,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		// where names containing single quotes were inserted with two single quotes in the database.
 		String sql = achName.contains("'")
 				? "SELECT date FROM " + prefix
-						+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
+				+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
 				: "SELECT date FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<String>) () -> {
 			Connection conn = getSQLConnection();
@@ -246,7 +214,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	/**
 	 * Gets the total number of achievements received by every player; this method is provided as a convenience for
 	 * other plugins.
-	 * 
+	 *
 	 * @return map containing number of achievements for every players
 	 */
 	public Map<UUID, Integer> getPlayersAchievementsAmount() {
@@ -254,11 +222,14 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Map<UUID, Integer>>) () -> {
 			Map<UUID, Integer> achievementAmounts = new HashMap<>();
 			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					String uuid = rs.getString(1);
-					if (StringUtils.isNotEmpty(uuid)) {
-						achievementAmounts.put(UUID.fromString(uuid), rs.getInt(2));
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setFetchSize(1000);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						String uuid = rs.getString(1);
+						if (StringUtils.isNotEmpty(uuid)) {
+							achievementAmounts.put(UUID.fromString(uuid), rs.getInt(2));
+						}
 					}
 				}
 			}
@@ -268,7 +239,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Gets the total number of achievements received by a player, using an UUID.
-	 * 
+	 *
 	 * @param uuid
 	 * @return number of achievements
 	 */
@@ -287,7 +258,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Constructs a mapping of players with the most achievements over a given period.
-	 * 
+	 *
 	 * @param start
 	 * @return LinkedHashMap with keys corresponding to player UUIDs and values corresponding to their achievement count
 	 */
@@ -295,9 +266,9 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		// Either consider all the achievements or only those received after the start date.
 		String sql = start == 0L
 				? "SELECT playername, COUNT(*) FROM " + prefix
-						+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
+				+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
 				: "SELECT playername, COUNT(*) FROM " + prefix
-						+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC";
+				+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC";
 		return ((SQLReadOperation<Map<String, Integer>>) () -> {
 			Map<String, Integer> topList = new LinkedHashMap<>();
 			Connection conn = getSQLConnection();
@@ -305,6 +276,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				if (start > 0L) {
 					ps.setDate(1, new Date(start));
 				}
+				ps.setFetchSize(1000);
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
 					topList.put(rs.getString(1), rs.getInt(2));
@@ -316,7 +288,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Registers a new achievement for a player with the reception time set to now.
-	 * 
+	 *
 	 * @param uuid
 	 * @param achName
 	 * @param achMessage
@@ -327,11 +299,11 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Registers a new achievement for a player.
-	 * 
+	 *
 	 * @param uuid
 	 * @param achName
 	 * @param achMessage
-	 * @param epochMs Moment the achievement was registered at.
+	 * @param epochMs    Moment the achievement was registered at.
 	 */
 	protected void registerAchievement(UUID uuid, String achName, String achMessage, long epochMs) {
 		String sql = "REPLACE INTO " + prefix + "achievements VALUES (?,?,?,?)";
@@ -349,7 +321,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Checks whether player has received a specific achievement.
-	 * 
+	 *
 	 * @param uuid
 	 * @param achName
 	 * @return true if achievement found in database, false otherwise
@@ -359,7 +331,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		// where names containing single quotes were inserted with two single quotes in the database.
 		String sql = achName.contains("'")
 				? "SELECT achievement FROM " + prefix
-						+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
+				+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
 				: "SELECT achievement FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<Boolean>) () -> {
 			Connection conn = getSQLConnection();
@@ -376,7 +348,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Gets a player's NormalAchievement statistic.
-	 * 
+	 *
 	 * @param uuid
 	 * @param category
 	 * @return statistic
@@ -399,7 +371,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Gets a player's MultipleAchievement statistic.
-	 * 
+	 *
 	 * @param uuid
 	 * @param category
 	 * @param subcategory
@@ -425,7 +397,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Returns a player's number of connections on separate days (used by GUI).
-	 * 
+	 *
 	 * @param uuid
 	 * @return connections statistic
 	 */
@@ -447,7 +419,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Gets a player's last connection date.
-	 * 
+	 *
 	 * @param uuid
 	 * @return String with date
 	 */
@@ -470,7 +442,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	/**
 	 * Updates a player's number of connections and last connection date and returns number of connections (used by
 	 * Connections listener).
-	 * 
+	 *
 	 * @param uuid
 	 * @param date
 	 * @return connections statistic
@@ -501,7 +473,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Deletes an achievement from a player.
-	 * 
+	 *
 	 * @param uuid
 	 * @param achName
 	 */
@@ -526,7 +498,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	/**
 	 * Clears Connection statistics for a given player.
-	 * 
+	 *
 	 * @param uuid
 	 */
 	public void clearConnection(UUID uuid) {
@@ -541,5 +513,41 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
 	protected String getPrefix() {
 		return prefix;
+	}
+
+	/**
+	 * Returns a list of AwardedDBAchievements get by a player.
+	 *
+	 * @param uuid UUID of a player.
+	 * @return ArrayList containing all information about achievements awarded to a player.
+	 */
+	public List<AwardedDBAchievement> getPlayerAchievementsList(UUID uuid) {
+		// Either oldest date to newest one or newest date to oldest one.
+		String sql = "SELECT * FROM " + prefix + "achievements WHERE playername = ? ORDER BY date "
+				+ (configBookChronologicalOrder ? "ASC" : "DESC");
+		return ((SQLReadOperation<List<AwardedDBAchievement>>) () -> {
+			List<AwardedDBAchievement> achievements = new ArrayList<>();
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setFetchSize(1000);
+				ps.setObject(1, uuid);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing single
+						// quotes were inserted with two single quotes in the database.
+						String achName = StringUtils.replace(rs.getString(2), "''", "'");
+						String displayName = plugin.getAchievementsAndDisplayNames().get(achName);
+						if (StringUtils.isNotBlank(displayName)) {
+							achName = displayName;
+						}
+						String achMsg = rs.getString(3);
+						Date dateAwarded = rs.getDate(4);
+
+						achievements.add(new AwardedDBAchievement(uuid, achName, achMsg, dateAwarded.getTime(), dateFormat.format(dateAwarded)));
+					}
+				}
+			}
+			return achievements;
+		}).executeOperation("retrieving the full data of received achievements");
 	}
 }

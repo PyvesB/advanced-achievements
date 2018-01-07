@@ -1,26 +1,24 @@
 package com.hm.achievement.db;
 
-import java.sql.SQLException;
-
 import com.hm.achievement.exception.DatabaseReadError;
+
+import java.sql.SQLException;
 
 /**
  * Class used to perform read operations to the database and automatically retry if a SQLException is thrown.
- * 
- * @author Pyves
- * @param <T>
  *
+ * @param <T>
+ * @author Pyves
  */
 @FunctionalInterface
 public interface SQLReadOperation<T> {
 
-	static final int MAX_ATTEMPTS = 3;
+	int MAX_ATTEMPTS = 3;
 
 	/**
 	 * Performs a single read operation on the database.
-	 * 
+	 *
 	 * @return result of the read operation
-	 * 
 	 * @throws SQLException
 	 */
 	T performRead() throws SQLException;
@@ -32,7 +30,7 @@ public interface SQLReadOperation<T> {
 	 * @param operationMessage
 	 * @return the result of a successful read operation
 	 */
-	public default T executeOperation(String operationMessage) {
+	default T executeOperation(String operationMessage) {
 		SQLException cause = null;
 		for (int attempt = 1; attempt <= MAX_ATTEMPTS; ++attempt) {
 			try {
