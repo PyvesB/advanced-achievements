@@ -117,26 +117,21 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 
 	/**
 	 * Constructs the pages of a book.
-	 *  @param achievements
+	 * 
+	 * @param achievements
 	 * @param player
 	 */
 	private void fillBook(List<AwardedDBAchievement> achievements, Player player) {
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-		List<String> bookPages = new ArrayList<>(achievements.size() / 3);
+		List<String> bookPages = new ArrayList<>(achievements.size());
 		BookMeta bookMeta = (BookMeta) book.getItemMeta();
 
-		try {
-			for (AwardedDBAchievement achievement : achievements) {
-				String currentAchievement = "&0" + achievement.getName() 
-						+ configBookSeparator + achievement.getMessage()
-						+ configBookSeparator + achievement.getFormattedDate();
-				currentAchievement = ChatColor.translateAlternateColorCodes('&', currentAchievement);
-				bookPages.add(currentAchievement);
-			}
-		} catch (Exception e) {
-			// Catch runtime exception (for instance ArrayIndexOutOfBoundsException); this should not happen unless
-			// something went wrong in the database.
-			plugin.getLogger().severe("Error while creating pages of book.");
+		for (AwardedDBAchievement achievement : achievements) {
+			String currentAchievement = "&0" + achievement.getName() 
+					+ configBookSeparator + achievement.getMessage()
+					+ configBookSeparator + achievement.getFormattedDate();
+			currentAchievement = ChatColor.translateAlternateColorCodes('&', currentAchievement);
+			bookPages.add(currentAchievement);
 		}
 
 		if (bookPages.isEmpty()) {
