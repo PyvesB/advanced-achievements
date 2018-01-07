@@ -1,11 +1,5 @@
 package com.hm.achievement.api;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +10,18 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
+
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+
 /**
  * Underlying implementation of the AdvancedAchievementsAPI interface.
  *
  * @author Pyves
+ *
  */
 public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
