@@ -1,10 +1,15 @@
 package com.hm.achievement.db;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.UUID;
+
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
-
-import java.sql.*;
-import java.util.UUID;
 
 /**
  * Class used to handle a PosgreSQL database. Note that some query methods are overriden as the SQL syntax is different
