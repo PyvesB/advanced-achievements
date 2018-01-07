@@ -559,7 +559,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 						String achMsg = rs.getString(3);
 						Date dateAwarded = rs.getDate(4);
 
-						achievements.add(new AwardedDBAchievement(uuid, achName, achMsg, dateAwarded));
+						achievements.add(new AwardedDBAchievement(uuid, achName, achMsg, dateAwarded.getTime(), dateFormat.format(dateAwarded)));
 					}
 				}
 			}
