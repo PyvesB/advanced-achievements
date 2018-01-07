@@ -67,6 +67,7 @@ public enum NormalAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toDBName() {
 		return name().toLowerCase();
 	}
@@ -74,6 +75,7 @@ public enum NormalAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toPermName() {
 		return "achievement.count." + categoryName.toLowerCase();
 	}
@@ -81,6 +83,7 @@ public enum NormalAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangName() {
 		return langName;
 	}
@@ -88,6 +91,7 @@ public enum NormalAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangDefault() {
 		return langDefault;
 	}
@@ -95,6 +99,7 @@ public enum NormalAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toConfigComment() {
 		return configComment;
 	}
