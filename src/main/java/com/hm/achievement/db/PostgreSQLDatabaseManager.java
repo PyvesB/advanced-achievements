@@ -11,6 +11,7 @@ import java.util.UUID;
  * from other database types.
  *
  * @author Pyves
+ *
  */
 public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 
