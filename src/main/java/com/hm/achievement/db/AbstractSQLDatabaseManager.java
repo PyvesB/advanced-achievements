@@ -161,6 +161,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param uuid
 	 * @return array list with groups of 3 strings: achievement name, description and date
 	 */
+	@Deprecated
 	public List<String> getPlayerAchievementsList(UUID uuid) {
 		List<String> messyList = new ArrayList<>();
 		for (AwardedDBAchievement achievement : getCleanPlayerAchievementsList(uuid)) {
