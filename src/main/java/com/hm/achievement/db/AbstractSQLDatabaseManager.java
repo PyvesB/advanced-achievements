@@ -156,23 +156,6 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	protected abstract Connection createSQLConnection() throws SQLException;
 
 	/**
-	 * Gets the list of all the achievements of a player, sorted by chronological or reverse ordering.
-	 *
-	 * @param uuid
-	 * @return array list with groups of 3 strings: achievement name, description and date
-	 */
-	@Deprecated
-	public List<String> getPlayerAchievementsList(UUID uuid) {
-		List<String> messyList = new ArrayList<>();
-		for (AwardedDBAchievement achievement : getCleanPlayerAchievementsList(uuid)) {
-			messyList.add(achievement.getName());
-			messyList.add(achievement.getMessage());
-			messyList.add(dateFormat.format(achievement.getDateAwarded()));
-		}
-		return messyList;
-	}
-
-	/**
 	 * Gets the list of names of all the achievements of a player.
 	 *
 	 * @param uuid
@@ -533,12 +516,12 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Returns a clean list of Achievements get by a player.
+	 * Returns a list of AwardedDBAchievements get by a player.
 	 *
 	 * @param uuid UUID of a player.
 	 * @return ArrayList containing all information about achievements awarded to a player.
 	 */
-	public List<AwardedDBAchievement> getCleanPlayerAchievementsList(UUID uuid) {
+	public List<AwardedDBAchievement> getPlayerAchievementsList(UUID uuid) {
 		// Either oldest date to newest one or newest date to oldest one.
 		String sql = "SELECT * FROM " + prefix + "achievements WHERE playername = ? ORDER BY date "
 				+ (configBookChronologicalOrder ? "ASC" : "DESC");

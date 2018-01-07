@@ -65,7 +65,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 	public void testGetAchievementList() {
 		registerAchievement();
 
-		List<AwardedDBAchievement> achievements = db.getCleanPlayerAchievementsList(testUUID);
+		List<AwardedDBAchievement> achievements = db.getPlayerAchievementsList(testUUID);
 		assertEquals(1, achievements.size());
 		AwardedDBAchievement found = achievements.get(0);
 		AwardedDBAchievement expected = 

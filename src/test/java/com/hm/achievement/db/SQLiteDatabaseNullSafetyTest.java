@@ -63,7 +63,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 	public void testRegisterNullUUID() {
 		registerAchievement(null, testAchievement, testAchievementMsg);
 
-		List<AwardedDBAchievement> list = db.getCleanPlayerAchievementsList(testUUID);
+		List<AwardedDBAchievement> list = db.getPlayerAchievementsList(testUUID);
 		Map<UUID, Integer> map = db.getPlayersAchievementsAmount();
 
 		System.out.println("Saved Achievements: " + list);
@@ -77,7 +77,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 	public void testGetMethodsForNullUUIDExceptions() {
 		addNullUUIDtoDB();
 
-		db.getCleanPlayerAchievementsList(null);
+		db.getPlayerAchievementsList(null);
 		db.getPlayersAchievementsAmount();
 		db.getPlayerAchievementsAmount(null);
 		db.getPlayerAchievementNamesList(null);
@@ -103,7 +103,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 	public void testRegisterNullAch() {
 		registerAchievement(testUUID, null, testAchievementMsg);
 
-		List<AwardedDBAchievement> list = db.getCleanPlayerAchievementsList(testUUID);
+		List<AwardedDBAchievement> list = db.getPlayerAchievementsList(testUUID);
 		Map<UUID, Integer> map = db.getPlayersAchievementsAmount();
 
 		System.out.println("Saved Achievements: " + list);
@@ -117,7 +117,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 	public void testRegisterNullMsg() {
 		registerAchievement(testUUID, testAchievement, null);
 
-		List<AwardedDBAchievement> list = db.getCleanPlayerAchievementsList(testUUID);
+		List<AwardedDBAchievement> list = db.getPlayerAchievementsList(testUUID);
 		System.out.println("Saved Achievements: " + list);
 
 		assertEquals(1, list.size());

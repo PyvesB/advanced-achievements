@@ -109,7 +109,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 				player.getWorld().playSound(player.getLocation(), sound, 1.0f, 0.0f);
 			}
 
-			fillBook(plugin.getDatabaseManager().getCleanPlayerAchievementsList(player.getUniqueId()), player);
+			fillBook(plugin.getDatabaseManager().getPlayerAchievementsList(player.getUniqueId()), player);
 		} else {
 			player.sendMessage(langBookDelay);
 		}

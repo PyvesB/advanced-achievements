@@ -69,7 +69,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	@Override
 	public List<Achievement> getPlayerAchievementsList(UUID player) {
 		validateNotNull(player, "Player");
-		return pluginInstance.getDatabaseManager().getCleanPlayerAchievementsList(player)
+		return pluginInstance.getDatabaseManager().getPlayerAchievementsList(player)
 				.stream().map(AwardedDBAchievement::toAPIAchievement)
 				.collect(Collectors.toList());
 	}
