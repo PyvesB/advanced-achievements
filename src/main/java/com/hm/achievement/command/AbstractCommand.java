@@ -1,13 +1,14 @@
 package com.hm.achievement.command;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.utils.Reloadable;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.utils.Reloadable;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Abstract class in charge of factoring out common functionality for commands.
