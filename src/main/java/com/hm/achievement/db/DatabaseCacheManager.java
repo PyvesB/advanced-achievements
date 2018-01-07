@@ -1,23 +1,25 @@
 package com.hm.achievement.db;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.Cleanable;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class used to provide a cache wrapper for various database statistics, in order to reduce load of database and enable
  * faster in-memory operations.
  *
  * @author Pyves
+ *
  */
 public class DatabaseCacheManager implements Cleanable {
 
