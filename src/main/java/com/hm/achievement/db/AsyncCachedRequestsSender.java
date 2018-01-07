@@ -1,10 +1,5 @@
 package com.hm.achievement.db;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import org.bukkit.Bukkit;
-
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -13,10 +8,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+
 /**
  * Class used to write the modified cached statistics to the database.
  *
  * @author Pyves
+ *
  */
 public class AsyncCachedRequestsSender implements Runnable {
 
