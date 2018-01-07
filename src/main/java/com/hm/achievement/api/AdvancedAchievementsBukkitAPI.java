@@ -150,7 +150,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	/**
 	 * Checks whether the player is online by making a call on the server's main thread of execution.
-	 *
+	 * 
 	 * @param player
 	 * @return true if player is online, false otherwise
 	 */
@@ -179,7 +179,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	/**
 	 * Throws an IllegalArgumentException if the argument is null.
-	 *
+	 * 
 	 * @param argument
 	 * @param argumentName
 	 */
@@ -191,7 +191,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	/**
 	 * Throws an IllegalArgumentException if the string is empty (i.e. null or "").
-	 *
+	 * 
 	 * @param argument
 	 * @param argumentName
 	 */

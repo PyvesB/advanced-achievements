@@ -43,7 +43,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private long lastCacheUpdate = 0L;
 
 	protected AbstractRankingCommand(AdvancedAchievements plugin, String languageHeaderKey,
-									 String defaultHeaderMessage) {
+			String defaultHeaderMessage) {
 		super(plugin);
 
 		this.languageHeaderKey = languageHeaderKey;
@@ -116,7 +116,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 	/**
 	 * Returns an UTF-8 circled number based on the player's rank.
-	 *
+	 * 
 	 * @param rank
 	 * @return an UTF-8 string corresponding to the rank
 	 */
@@ -136,14 +136,14 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 	/**
 	 * Returns start time for a specific ranking period.
-	 *
+	 * 
 	 * @return time (epoch) in millis
 	 */
 	protected abstract long getRankingStartTime();
 
 	/**
 	 * Launches sound and particle effects if player is in a top list.
-	 *
+	 * 
 	 * @param player
 	 */
 	private void launchEffects(Player player) {

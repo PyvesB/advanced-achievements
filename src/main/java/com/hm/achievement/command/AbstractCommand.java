@@ -43,7 +43,7 @@ public abstract class AbstractCommand implements Reloadable {
 
 	/**
 	 * Executes the command issued by the sender if he has the relevant permissions. If permission null, skip check.
-	 *
+	 * 
 	 * @param sender
 	 * @param args
 	 * @param permission
@@ -59,7 +59,7 @@ public abstract class AbstractCommand implements Reloadable {
 
 	/**
 	 * Executes the command issued by the sender.
-	 *
+	 * 
 	 * @param sender
 	 * @param args
 	 */
@@ -67,7 +67,7 @@ public abstract class AbstractCommand implements Reloadable {
 
 	/**
 	 * Plays a firework sound.
-	 *
+	 * 
 	 * @param player
 	 */
 	protected void playFireworkSound(Player player) {
