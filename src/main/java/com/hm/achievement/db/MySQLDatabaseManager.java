@@ -8,7 +8,7 @@ import com.hm.achievement.AdvancedAchievements;
 
 /**
  * Class used to handle a MySQL database.
- *
+ * 
  * @author Pyves
  *
  */

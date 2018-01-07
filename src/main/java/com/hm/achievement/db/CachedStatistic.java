@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Class used to provide a cache wrapper for a database statistic.
- *
+ * 
  * @author Pyves
  *
  */

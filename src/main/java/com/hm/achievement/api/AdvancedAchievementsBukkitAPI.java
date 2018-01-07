@@ -19,7 +19,7 @@ import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Underlying implementation of the AdvancedAchievementsAPI interface.
- *
+ * 
  * @author Pyves
  *
  */
@@ -34,7 +34,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	/**
 	 * Returns a ready to use API instance. The caller must previously check whether the plugin is enabled and has a
 	 * minimum version of 5.0.
-	 *
+	 * 
 	 * @return API instance
 	 */
 	public static AdvancedAchievementsAPI linkAdvancedAchievements() {

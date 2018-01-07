@@ -17,7 +17,7 @@ import com.hm.mcshared.particle.ParticleEffect;
 
 /**
  * Abstract class in charge of factoring out common functionality for /aach top, week and month commands.
- *
+ * 
  * @author Pyves
  */
 public abstract class AbstractRankingCommand extends AbstractCommand {

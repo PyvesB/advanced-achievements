@@ -12,7 +12,7 @@ import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Abstract class in charge of factoring out common functionality for commands.
- *
+ * 
  * @author Pyves
  */
 public abstract class AbstractCommand implements Reloadable {
