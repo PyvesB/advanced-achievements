@@ -1,9 +1,12 @@
 package com.hm.achievement.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.RewardLang;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.item.ItemInfo;
+import net.milkbowl.vault.item.Items;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,16 +15,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
-
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.item.ItemInfo;
-import net.milkbowl.vault.item.Items;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Class in charge of handling the rewards for achievements.
- * 
+ *
  * @author Pyves
  */
 public class RewardParser implements Reloadable {
@@ -52,15 +52,12 @@ public class RewardParser implements Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		langListRewardMoney = plugin.getPluginLang().getString("list-reward-money", "receive AMOUNT");
-		langListRewardItem = plugin.getPluginLang().getString("list-reward-item", "receive AMOUNT ITEM");
-		langListRewardCommand = plugin.getPluginLang().getString("list-reward-command", "other");
-		langListRewardExperience = plugin.getPluginLang().getString("list-reward-experience",
-				"receive AMOUNT experience");
-		langListRewardIncreaseMaxHealth = plugin.getPluginLang().getString("list-reward-increase-max-health",
-				"increase max health by AMOUNT");
-		langListRewardIncreaseMaxOxygen = plugin.getPluginLang().getString("list-reward-increase-max-oxygen",
-				"increase max oxygen by AMOUNT");
+		langListRewardMoney = Lang.get(RewardLang.MONEY, plugin);
+		langListRewardItem = Lang.get(RewardLang.ITEM, plugin);
+		langListRewardCommand = Lang.get(RewardLang.COMMAND, plugin);
+		langListRewardExperience = Lang.get(RewardLang.EXPERIENCE, plugin);
+		langListRewardIncreaseMaxHealth = Lang.get(RewardLang.INCREASE_MAX_HEALTH, plugin);
+		langListRewardIncreaseMaxOxygen = Lang.get(RewardLang.INCREASE_MAX_OXYGEN, plugin);
 	}
 
 	public Economy getEconomy() {
@@ -69,7 +66,7 @@ public class RewardParser implements Reloadable {
 
 	/**
 	 * Constructs the listing of an achievement's rewards with strings coming from language file.
-	 * 
+	 *
 	 * @param configAchievement
 	 * @return type(s) of the achievement reward as an array of strings
 	 */
@@ -89,8 +86,8 @@ public class RewardParser implements Reloadable {
 			if (name == null || name.isEmpty()) {
 				name = getItemName(getItemReward(configAchievement));
 			}
-			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
-					new String[] { Integer.toString(amount), name }));
+			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[]{"AMOUNT", "ITEM"},
+					new String[]{Integer.toString(amount), name}));
 		}
 
 		if (keyNames.contains(configAchievement + ".Reward.Experience")) {
@@ -124,7 +121,7 @@ public class RewardParser implements Reloadable {
 
 	/**
 	 * Returns name of currency depending on amount.
-	 * 
+	 *
 	 * @param amount
 	 * @return the name of the currency
 	 */
@@ -134,7 +131,7 @@ public class RewardParser implements Reloadable {
 
 	/**
 	 * Returns the name of an item reward, in a readable format.
-	 * 
+	 *
 	 * @param item
 	 * @return the item name
 	 */
@@ -153,7 +150,7 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Extracts the money, experience, increased max health or increased max oxygen rewards amount from the
 	 * configuration.
-	 * 
+	 *
 	 * @param configAchievement
 	 * @param type
 	 * @return the reward amount
@@ -166,7 +163,7 @@ public class RewardParser implements Reloadable {
 
 	/**
 	 * Returns an item reward for a given achievement (specified in configuration file).
-	 * 
+	 *
 	 * @param configAchievement
 	 * @return ItemStack object corresponding to the reward
 	 */
@@ -216,7 +213,7 @@ public class RewardParser implements Reloadable {
 
 	/**
 	 * Extracts the list of commands to be executed as rewards.
-	 * 
+	 *
 	 * @param configAchievement
 	 * @param player
 	 * @return the array containing the commands to be performed as a reward
@@ -239,9 +236,9 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Extracts custom command message from config. Might be null.
 	 *
-	 * @author tassu
 	 * @param configAchievement
 	 * @return the custom command message (null if not present)
+	 * @author tassu
 	 */
 	public String getCustomCommandMessage(String configAchievement) {
 		if (!plugin.getPluginConfig().isConfigurationSection(configAchievement + ".Reward.Command")) {
@@ -253,7 +250,7 @@ public class RewardParser implements Reloadable {
 
 	/**
 	 * Extracts the item reward amount from the configuration.
-	 * 
+	 *
 	 * @param configAchievement
 	 * @return the amount for an item reward
 	 */
