@@ -1,6 +1,8 @@
 package com.hm.achievement.lang;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lang.command.HelpLang;
@@ -50,7 +52,9 @@ public class YmlLangImplTest {
 						InfoLang.values(),
 						GuiLang.values(),
 						ListenerLang.values(),
-						RewardLang.values()
+						RewardLang.values(),
+						NormalAchievements.values(),
+						MultipleAchievements.values()
 				}
 		).flatMap(Arrays::stream).collect(Collectors.toList());
 
