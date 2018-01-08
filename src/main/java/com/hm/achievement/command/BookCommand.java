@@ -128,7 +128,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 			String currentAchievement = "&0" + achievement.getName() 
 					+ configBookSeparator + achievement.getMessage()
 					+ configBookSeparator + achievement.getFormattedDate();
-			currentAchievement = ChatColor.translateAlternateColorCodes('&', currentAchievement);
+			currentAchievement = translateColorCodes(currentAchievement);
 			bookPages.add(currentAchievement);
 		}
 

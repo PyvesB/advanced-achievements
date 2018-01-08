@@ -108,7 +108,7 @@ public class StatsCommand extends AbstractCommand {
 		}
 		// Display enriched progress bar.
 		player.sendMessage(plugin.getChatHeader() + "["
-				+ ChatColor.translateAlternateColorCodes('&', barDisplay.toString()) + ChatColor.GRAY + "]");
+				+ translateColorCodes(barDisplay.toString()) + ChatColor.GRAY + "]");
 
 		// Player has received all achievement; play special effect and sound.
 		if (achievements >= totalAchievements) {

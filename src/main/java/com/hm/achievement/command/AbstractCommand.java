@@ -75,4 +75,8 @@ public abstract class AbstractCommand implements Reloadable {
 		Sound sound = version < 9 ? Sound.valueOf("FIREWORK_BLAST") : Sound.ENTITY_FIREWORK_LARGE_BLAST;
 		player.getWorld().playSound(player.getLocation(), sound, 1, 0.7f);
 	}
+	
+	protected String translateColorCodes(String translate) {
+		return ChatColor.translateAlternateColorCodes('&', translate);
+	}
 }

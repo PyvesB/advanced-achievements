@@ -102,7 +102,7 @@ public class HelpCommand extends AbstractCommand {
 						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}
 				));
 		langCommandDeleteHover = Lang.get(HelpLang.Hover.DELETE, plugin);
-		langTip = ChatColor.GRAY + ChatColor.translateAlternateColorCodes('&', Lang.get(CmdLang.AACH_TIP, plugin));
+		langTip = ChatColor.GRAY + translateColorCodes(Lang.get(CmdLang.AACH_TIP, plugin));
 	}
 
 	private String header(String command) {
@@ -113,7 +113,7 @@ public class HelpCommand extends AbstractCommand {
 	protected void executeCommand(CommandSender sender, String[] args) {
 		// Header.
 		sender.sendMessage(configColor + "------------ " + configIcon
-				+ ChatColor.translateAlternateColorCodes('&', " &lAdvanced Achievements ") + configColor + configIcon
+				+ translateColorCodes(" &lAdvanced Achievements ") + configColor + configIcon
 				+ configColor + " ------------");
 
 		if (sender.hasPermission("achievement.list")) {
