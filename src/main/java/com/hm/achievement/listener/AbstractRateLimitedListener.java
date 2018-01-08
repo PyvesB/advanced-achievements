@@ -1,23 +1,20 @@
 package com.hm.achievement.listener;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.ListenerLang;
+import com.hm.achievement.utils.Cleanable;
+import com.hm.mcshared.particle.PacketSender;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.Cleanable;
-import com.hm.mcshared.particle.PacketSender;
+import java.util.*;
 
 /**
  * Abstract class in charge of factoring out common functionality for the listener classes with cooldown maps.
- * 
+ *
  * @author Pyves
  */
 public class AbstractRateLimitedListener extends AbstractListener implements Cleanable {
@@ -56,8 +53,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 			configCooldownActionBar = false;
 		}
 
-		langStatisticCooldown = plugin.getPluginLang().getString("statistic-cooldown",
-				"Achievements cooldown, wait TIME seconds before this action counts again.");
+		langStatisticCooldown = Lang.get(ListenerLang.STATISTIC_COOLDOWN, plugin);
 	}
 
 	@Override
@@ -68,7 +64,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	/**
 	 * Determines whether a similar event was taken into account too recently and the player is still in the cooldown
 	 * period.
-	 * 
+	 *
 	 * @param player
 	 * @param delay
 	 * @param category
@@ -81,7 +77,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	/**
 	 * Determines whether a similar event was taken into account too recently and the player is still in the cooldown
 	 * period. Stores elements in the map with prefixes to enable several distinct entries for the same player.
-	 * 
+	 *
 	 * @param player
 	 * @param prefixInMap
 	 * @param delay
@@ -89,7 +85,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * @return true if the player is still in cooldown, false otherwise
 	 */
 	protected boolean isInCooldownPeriod(Player player, String prefixInMap, boolean delay,
-			NormalAchievements category) {
+										 NormalAchievements category) {
 		List<Long> categoryThresholds = plugin.getSortedThresholds().get(category.toString());
 		long hardestAchievementThreshold = categoryThresholds.get(categoryThresholds.size() - 1);
 		long currentPlayerStatistic = plugin.getCacheManager().getAndIncrementStatisticAmount(category,
@@ -127,7 +123,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 
 	/**
 	 * Displays the cooldown action bar message.
-	 * 
+	 *
 	 * @param player
 	 * @param actionBarJsonMessage
 	 */
