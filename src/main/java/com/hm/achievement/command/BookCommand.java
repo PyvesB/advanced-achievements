@@ -2,6 +2,8 @@ package com.hm.achievement.command;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
+import com.hm.achievement.lang.CmdLang;
+import com.hm.achievement.lang.Lang;
 import com.hm.achievement.utils.Cleanable;
 import com.hm.mcshared.particle.ParticleEffect;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
@@ -63,17 +65,13 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		configAdditionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		configSound = plugin.getPluginConfig().getBoolean("Sound", true);
 
-		langBookDelay = plugin.getChatHeader() + StringUtils.replaceOnce(
-				plugin.getPluginLang().getString("book-delay",
-						"You must wait TIME seconds between each book reception!"),
-				"TIME", Integer.toString(configTimeBook / 1000));
-		langBookNotReceived = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("book-not-received", "You have not yet received any achievements.");
+		langBookDelay = plugin.getChatHeader() + Lang.getReplacedOnce(CmdLang.BOOK_DELAY, 
+				"TIME", Integer.toString(configTimeBook / 1000), plugin);
+		langBookNotReceived = Lang.getWithChatHeader(CmdLang.BOOK_NOT_RECEIVED, plugin);
 		langBookDate = ChatColor.translateAlternateColorCodes('&',
-				"&8" + plugin.getPluginLang().getString("book-date", "Book created on DATE."));
-		langBookName = plugin.getPluginLang().getString("book-name", "Achievements Book");
-		langBookReceived = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("book-received", "You received your achievements book!");
+				"&8" + Lang.get(CmdLang.BOOK_DATE, plugin));
+		langBookName = Lang.get(CmdLang.BOOK_NAME, plugin);
+		langBookReceived = Lang.getWithChatHeader(CmdLang.BOOK_RECEIVED, plugin);
 
 		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
 		dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, new Locale(localeString));
