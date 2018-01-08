@@ -1,12 +1,13 @@
 package com.hm.achievement.command;
 
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.lang.CmdLang;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 
 /**
  * Class in charge of handling the /aach give command, which gives an achievement from the Commands category.
@@ -30,12 +31,9 @@ public class GiveCommand extends AbstractParsableCommand {
 
 		configMultiCommand = plugin.getPluginConfig().getBoolean("MultiCommand", true);
 
-		langAchievementAlreadyReceived = plugin.getChatHeader() + plugin.getPluginLang()
-				.getString("achievement-already-received", "The player PLAYER has already received this achievement!");
-		langAchievementGiven = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("achievement-given", "Achievement given!");
-		langAchievementNotFound = plugin.getChatHeader() + plugin.getPluginLang().getString("achievement-not-found",
-				"The specified achievement was not found in Commands category.");
+		langAchievementAlreadyReceived = Lang.getWithChatHeader(CmdLang.ACHIEVEMENT_ALREADY_RECEIVED, plugin);
+		langAchievementGiven = Lang.getWithChatHeader(CmdLang.ACHIEVEMENT_GIVEN, plugin);
+		langAchievementNotFound = Lang.getWithChatHeader(CmdLang.ACHIEVEMENT_NOT_FOUND, plugin);
 	}
 
 	@Override
