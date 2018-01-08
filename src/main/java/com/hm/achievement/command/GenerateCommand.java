@@ -1,9 +1,10 @@
 package com.hm.achievement.command;
 
-import org.bukkit.command.CommandSender;
-
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AdvancementManager;
+import com.hm.achievement.lang.CmdLang;
+import com.hm.achievement.lang.Lang;
+import org.bukkit.command.CommandSender;
 
 /**
  * Class in charge of handling the /aach generate command, which creates advancements for the achievements defined in
@@ -30,10 +31,8 @@ public class GenerateCommand extends AbstractCommand {
 				true);
 		configHideAdvancements = plugin.getPluginConfig().getBoolean("HideAdvancements", false);
 
-		langAdvancementsGenerated = plugin.getChatHeader() + plugin.getPluginLang().getString("advancements-generated",
-				"Advancements were successfully generated.");
-		langMinecraftNotSupported = plugin.getChatHeader() + plugin.getPluginLang().getString("minecraft-not-supported",
-				"Advancements not supported in your Minecraft version. Please update to 1.12+.");
+		langAdvancementsGenerated = Lang.getWithChatHeader(CmdLang.ADVANCEMENTS_GENERATED, plugin);
+		langMinecraftNotSupported = Lang.getWithChatHeader(CmdLang.MINECRAFT_NOT_SUPPORTED, plugin);
 	}
 
 	@Override
