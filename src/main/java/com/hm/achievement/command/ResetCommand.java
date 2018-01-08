@@ -1,13 +1,14 @@
 package com.hm.achievement.command;
 
-import org.apache.commons.lang3.StringUtils;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CachedStatistic;
+import com.hm.achievement.lang.CmdLang;
+import com.hm.achievement.lang.Lang;
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * Class in charge of handling the /aach reset command, which resets the statistics for a given player and achievement
@@ -28,10 +29,8 @@ public class ResetCommand extends AbstractParsableCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langResetSuccessful = plugin.getPluginLang().getString("reset-successful",
-				" statistics were cleared for PLAYER.");
-		langCategoryDoesNotExist = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("category-does-not-exist", "The category CAT does not exist.");
+		langResetSuccessful = Lang.get(CmdLang.RESET_SUCCESSFUL, plugin);
+		langCategoryDoesNotExist = Lang.getWithChatHeader(CmdLang.CATEGORY_DOES_NOT_EXIST, plugin);
 	}
 
 	@Override
