@@ -3,6 +3,7 @@ package com.hm.achievement.utils;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.lang.Lang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import org.bukkit.configuration.InvalidConfigurationException;
 
@@ -343,6 +344,10 @@ public class FileUpdater {
 			file.set(name, value, comments);
 			updatePerformed = true;
 		}
+	}
+	
+	private void updateLang(CommentedYamlConfiguration file, Lang lang) {
+		updateSetting(file, lang.toLangKey(), lang.toLangDefault());
 	}
 
 	/**
