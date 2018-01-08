@@ -51,7 +51,8 @@ public class ReloadCommand extends AbstractCommand {
 				if (sender instanceof Player) {
 					sender.sendMessage(langServerRestartReload);
 				}
-				plugin.getLogger().warning(CmdLang.SERVER_RESTART_RELOAD.toLangDefault());
+				plugin.getLogger().warning("DisabledCategories list was modified. " +
+						"Server must be fully reloaded or restarted for your changes to take effect.");
 				plugin.getLogger().warning("Aborting plugin reload.");
 				return;
 			}
@@ -75,7 +76,7 @@ public class ReloadCommand extends AbstractCommand {
 		if (sender instanceof Player) {
 			sender.sendMessage(langConfigSuccessfullyReloaded);
 		}
-		plugin.getLogger().info(CmdLang.CONFIGURATION_SUCCESSFULLY_RELOADED.toLangDefault());
+		plugin.getLogger().info("Configuration successfully reloaded.");
 
 	}
 
