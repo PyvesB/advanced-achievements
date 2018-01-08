@@ -14,9 +14,9 @@ public enum HelpLang implements Lang {
 	RELOAD("Reload the plugin's configuration."),
 	GENERATE("Generate advancements."),
 	GIVE("Give achievement ACH to &7NAME."),
-	ADD("Increase a statistic."), 
-	RESET("Reset statistic for category CAT."), 
-	CHECK("Check if NAME has ACH."), 
+	ADD("Increase a statistic."),
+	RESET("Reset statistic for category CAT."),
+	CHECK("Check if NAME has ACH."),
 	DELETE("Delete ACH from NAME.");
 
 	private final String defaultMessage;
@@ -47,8 +47,8 @@ public enum HelpLang implements Lang {
 		RELOAD("Reload most settings in config.yml and lang.yml files."),
 		GENERATE("Potentially slow command; use with care!"),
 		GIVE("Player must be online; only Commands achievements can be used."),
-		ADD("Player must be online; mainly used for Customs achievements."), 
-		RESET("Player must be online; example: reset Places.stone DarkPyves"), 
+		ADD("Player must be online; mainly used for Customs achievements."),
+		RESET("Player must be online; example: reset Places.stone DarkPyves"),
 		CHECK("Use the Name parameter specified in the config."),
 		DELETE("Player must be online; does not reset any associated statistics.");
 

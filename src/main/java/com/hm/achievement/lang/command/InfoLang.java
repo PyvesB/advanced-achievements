@@ -3,17 +3,17 @@ package com.hm.achievement.lang.command;
 import com.hm.achievement.lang.Lang;
 
 public enum InfoLang implements Lang {
-	DESCRIPTION("Description:"), 
+	DESCRIPTION("Description:"),
 	DESCRIPTION_DETAILS("Advanced Achievements enables unique and challenging achievements. " +
-			"Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"), 
-	VERSION("Version:"), 
-	AUTHOR("Author:"), 
-	WEBSITE("Website:"), 
-	VAULT("Vault integration:"), 
-	PETMASTER("Pet Master integration:"), 
-	BTLP("BungeeTabListPlus integration:"), 
-	ESSENTIALS("Essentials integration:"), 
-	PLACEHOLDERAPI("PlaceholderAPI integration:"), 
+			"Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"),
+	VERSION("Version:"),
+	AUTHOR("Author:"),
+	WEBSITE("Website:"),
+	VAULT("Vault integration:"),
+	PETMASTER("Pet Master integration:"),
+	BTLP("BungeeTabListPlus integration:"),
+	ESSENTIALS("Essentials integration:"),
+	PLACEHOLDERAPI("PlaceholderAPI integration:"),
 	DATABASE("Database type:");
 
 	private final String defaultMessage;
@@ -21,7 +21,6 @@ public enum InfoLang implements Lang {
 	InfoLang(String defaultMessage) {
 		this.defaultMessage = defaultMessage;
 	}
-
 
 	@Override
 	public String toLangKey() {

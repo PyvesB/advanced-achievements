@@ -11,14 +11,12 @@ public enum ListenerLang implements Lang {
 	INCREASE_MAX_OXYGEN_REWARD_RECEIVED("Your max oxygen has increased by AMOUNT!"),
 	ACHIEVEMENT_NEW("New Achievement:"),
 	CUSTOM_COMMAND_REWARD("You received your reward: MESSAGE");
-
-
+	
 	private final String defaultMessage;
 
 	ListenerLang(String defaultMessage) {
 		this.defaultMessage = defaultMessage;
 	}
-
 
 	@Override
 	public String toLangKey() {

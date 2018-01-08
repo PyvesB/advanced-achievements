@@ -13,8 +13,7 @@ public enum RewardLang implements Lang {
 	RewardLang(String defaultMessage) {
 		this.defaultMessage = defaultMessage;
 	}
-
-
+	
 	@Override
 	public String toLangKey() {
 		return "list-reward-" + Lang.toPath(name());

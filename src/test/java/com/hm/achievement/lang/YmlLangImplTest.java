@@ -46,7 +46,6 @@ public class YmlLangImplTest {
 						HelpLang.values(),
 						HelpLang.Hover.values(),
 						InfoLang.values(),
-						//
 						GuiLang.values(),
 						ListenerLang.values(),
 						RewardLang.values()
