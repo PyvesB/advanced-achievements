@@ -3,6 +3,8 @@ package com.hm.achievement.command;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.lang.CmdLang;
+import com.hm.achievement.lang.Lang;
 import com.hm.mcshared.particle.ParticleEffect;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -63,8 +65,7 @@ public class StatsCommand extends AbstractCommand {
 		configAdditionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		configSound = plugin.getPluginConfig().getBoolean("Sound", true);
 
-		langNumberAchievements = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("number-achievements", "Achievements received:") + " " + configColor;
+		langNumberAchievements = Lang.getWithChatHeader(CmdLang.NUMBER_ACHIEVEMENTS, plugin) + " " + configColor;
 	}
 
 	@Override
