@@ -32,9 +32,9 @@ public class AddCommand extends AbstractParsableCommand {
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
-		langErrorValue = plugin.getChatHeader() + Lang.get(CmdLang.ERROR_VALUE, plugin);
-		langStatisticIncreased = plugin.getChatHeader() + Lang.get(CmdLang.STATISTIC_INCREASED, plugin);
-		langCategoryDoesNotExist = plugin.getChatHeader() + Lang.get(CmdLang.CATEGORY_DOES_NOT_EXIST, plugin);
+		langErrorValue = Lang.getWithChatHeader(CmdLang.ERROR_VALUE, plugin);
+		langStatisticIncreased = Lang.getWithChatHeader(CmdLang.STATISTIC_INCREASED, plugin);
+		langCategoryDoesNotExist = Lang.getWithChatHeader(CmdLang.CATEGORY_DOES_NOT_EXIST, plugin);
 	}
 
 	@Override
