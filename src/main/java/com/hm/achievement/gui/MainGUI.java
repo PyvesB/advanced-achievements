@@ -1,5 +1,11 @@
 package com.hm.achievement.gui;
 
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.lang.GuiLang;
+import com.hm.achievement.lang.Lang;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -8,14 +14,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
-
 /**
  * Represents the main GUI, corresponding to all the different available categories and their names.
- * 
+ *
  * @author Pyves
  */
 public class MainGUI extends AbstractGUI {
@@ -46,10 +47,8 @@ public class MainGUI extends AbstractGUI {
 		configHideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
 		configHideNoPermissionCategories = plugin.getPluginConfig().getBoolean("HideNoPermissionCategories", false);
 
-		langListGUITitle = ChatColor.translateAlternateColorCodes('&',
-				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List"));
-		langListCategoryNotUnlocked = ChatColor.translateAlternateColorCodes('&', "&8" + plugin.getPluginLang()
-				.getString("list-category-not-unlocked", "You have not yet unlocked this category."));
+		langListGUITitle = ChatColor.translateAlternateColorCodes('&', Lang.get(GuiLang.GUI_TITLE, plugin));
+		langListCategoryNotUnlocked = ChatColor.translateAlternateColorCodes('&', "&8" + Lang.get(GuiLang.CATEGORY_NOT_UNLOCKED, plugin));
 
 		ItemMeta itemMeta = lockedItem.getItemMeta();
 		itemMeta.setDisplayName(langListCategoryNotUnlocked);
@@ -58,7 +57,7 @@ public class MainGUI extends AbstractGUI {
 
 	/**
 	 * Displays the main GUI to a player.
-	 * 
+	 *
 	 * @param player
 	 */
 	public void displayMainGUI(Player player) {
@@ -95,7 +94,7 @@ public class MainGUI extends AbstractGUI {
 
 	/**
 	 * Determines whether the category should be displayed in the GUI.
-	 * 
+	 *
 	 * @param item
 	 * @param player
 	 * @param category
@@ -110,7 +109,7 @@ public class MainGUI extends AbstractGUI {
 
 	/**
 	 * Displays an item corresponding to a Multiple category, or a barrier if the category should be hidden.
-	 * 
+	 *
 	 * @param item
 	 * @param gui
 	 * @param player
@@ -129,7 +128,7 @@ public class MainGUI extends AbstractGUI {
 
 	/**
 	 * Displays an item corresponding to a Normal category, or a barrier if the category should be hidden.
-	 * 
+	 *
 	 * @param item
 	 * @param gui
 	 * @param player
@@ -146,7 +145,7 @@ public class MainGUI extends AbstractGUI {
 
 	/**
 	 * Determines whether the player has received at least one achievement in the category or subcategory.
-	 * 
+	 *
 	 * @param player
 	 * @param configPath
 	 * @return true if the player has received at least one achievement in the category, false otherwise
