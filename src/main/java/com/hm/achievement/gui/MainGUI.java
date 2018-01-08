@@ -7,7 +7,6 @@ import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.Lang;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -47,8 +46,8 @@ public class MainGUI extends AbstractGUI {
 		configHideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
 		configHideNoPermissionCategories = plugin.getPluginConfig().getBoolean("HideNoPermissionCategories", false);
 
-		langListGUITitle = ChatColor.translateAlternateColorCodes('&', Lang.get(GuiLang.GUI_TITLE, plugin));
-		langListCategoryNotUnlocked = ChatColor.translateAlternateColorCodes('&', "&8" + Lang.get(GuiLang.CATEGORY_NOT_UNLOCKED, plugin));
+		langListGUITitle = translateColorCodes(Lang.get(GuiLang.GUI_TITLE, plugin));
+		langListCategoryNotUnlocked = translateColorCodes("&8" + Lang.get(GuiLang.CATEGORY_NOT_UNLOCKED, plugin));
 
 		ItemMeta itemMeta = lockedItem.getItemMeta();
 		itemMeta.setDisplayName(langListCategoryNotUnlocked);

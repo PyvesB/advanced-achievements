@@ -127,7 +127,7 @@ public abstract class AbstractGUI implements Reloadable {
 		if (StringUtils.isBlank(displayName)) {
 			itemMeta.setDisplayName("");
 		} else {
-			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+			itemMeta.setDisplayName(translateColorCodes(
 					StringUtils.replaceEach(configListAchievementFormat, new String[]{"%ICON%", "%NAME%"},
 							new String[]{configIcon, "&l" + displayName + "&8"})));
 		}
@@ -141,7 +141,11 @@ public abstract class AbstractGUI implements Reloadable {
 			amountMessage = StringUtils.replaceOnce(langListAchievementInCategorySingular, "AMOUNT",
 					Integer.toString(totalAchievements));
 		}
-		itemMeta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
+		itemMeta.setLore(Arrays.asList(translateColorCodes("&8" + amountMessage)));
 		item.setItemMeta(itemMeta);
+	}
+
+	protected String translateColorCodes(String translate) {
+		return ChatColor.translateAlternateColorCodes('&', translate);
 	}
 }

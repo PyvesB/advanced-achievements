@@ -77,15 +77,15 @@ public class CategoryGUI extends AbstractGUI {
 		configListColorNotReceived = ChatColor
 				.getByChar(plugin.getPluginConfig().getString("ListColorNotReceived", "8").charAt(0));
 
-		langListGUITitle = ChatColor.translateAlternateColorCodes('&', Lang.get(GuiLang.GUI_TITLE, plugin));
+		langListGUITitle = translateColorCodes(Lang.get(GuiLang.GUI_TITLE, plugin));
 		langListAchievementReceived = StringEscapeUtils.unescapeJava(Lang.get(GuiLang.ACHIEVEMENT_RECEIVED, plugin));
 		langListAchievementNotReceived = StringEscapeUtils
 				.unescapeJava(Lang.get(GuiLang.ACHIEVEMENT_NOT_RECEIVED, plugin) + configListColorNotReceived);
-		langListDescription = ChatColor.translateAlternateColorCodes('&', "&7&l" + Lang.get(GuiLang.DESCRIPTION, plugin));
-		langListReception = ChatColor.translateAlternateColorCodes('&', "&7&l" + Lang.get(GuiLang.RECEPTION, plugin));
-		langListGoal = ChatColor.translateAlternateColorCodes('&', "&7&l" + Lang.get(GuiLang.GOAL, plugin));
-		langListProgress = ChatColor.translateAlternateColorCodes('&', "&7&l" + Lang.get(GuiLang.PROGRESS, plugin));
-		langListReward = ChatColor.translateAlternateColorCodes('&', "&7&l" + Lang.get(GuiLang.REWARD, plugin));
+		langListDescription = translateColorCodes("&7&l" + Lang.get(GuiLang.DESCRIPTION, plugin));
+		langListReception = translateColorCodes("&7&l" + Lang.get(GuiLang.RECEPTION, plugin));
+		langListGoal = translateColorCodes("&7&l" + Lang.get(GuiLang.GOAL, plugin));
+		langListProgress = translateColorCodes("&7&l" + Lang.get(GuiLang.PROGRESS, plugin));
+		langListReward = translateColorCodes("&7&l" + Lang.get(GuiLang.REWARD, plugin));
 
 		achievementNotStarted = createItemStack("AchievementNotStarted");
 		achievementStarted = createItemStack("AchievementStarted");
@@ -98,7 +98,7 @@ public class CategoryGUI extends AbstractGUI {
 	private ItemStack createButton(String category, String msg) {
 		ItemStack button = createItemStack(category);
 		ItemMeta meta = button.getItemMeta();
-		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(msg)));
+		meta.setDisplayName(translateColorCodes(StringEscapeUtils.unescapeJava(msg)));
 		button.setItemMeta(meta);
 		return button;
 	}
@@ -240,12 +240,12 @@ public class CategoryGUI extends AbstractGUI {
 		// obfuscateNotReceived and/or obfuscateProgressiveAchievements in the config.
 		ItemMeta itemMeta = achItem.getItemMeta();
 		if (date != null) {
-			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', langListAchievementReceived + name));
+			itemMeta.setDisplayName(translateColorCodes(langListAchievementReceived + name));
 		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+			itemMeta.setDisplayName(translateColorCodes(
 					langListAchievementNotReceived + "&k" + REGEX_PATTERN.matcher(name).replaceAll("")));
 		} else {
-			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', StringEscapeUtils
+			itemMeta.setDisplayName(translateColorCodes(StringEscapeUtils
 					.unescapeJava(langListAchievementNotReceived + "&o" + REGEX_PATTERN.matcher(name).replaceAll(""))));
 		}
 
@@ -391,19 +391,19 @@ public class CategoryGUI extends AbstractGUI {
 
 		if (date != null) {
 			lore.add(langListDescription);
-			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + description));
+			lore.add(translateColorCodes("&r" + description));
 			lore.add("");
 			lore.add(langListReception);
-			lore.add(ChatColor.translateAlternateColorCodes('&', "&r" + date));
+			lore.add(translateColorCodes("&r" + date));
 			lore.add("");
 		} else {
 			lore.add(langListGoal);
 			String strippedAchMessage = REGEX_PATTERN.matcher(description).replaceAll("");
 			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-				lore.add(ChatColor.translateAlternateColorCodes('&',
+				lore.add(translateColorCodes(
 						configListColorNotReceived + "&k" + strippedAchMessage));
 			} else {
-				lore.add(ChatColor.translateAlternateColorCodes('&',
+				lore.add(translateColorCodes(
 						configListColorNotReceived + "&o" + strippedAchMessage));
 			}
 			lore.add("");
@@ -412,7 +412,7 @@ public class CategoryGUI extends AbstractGUI {
 				String threshold = path.contains(".") ? path.split("\\.")[1] : path;
 				boolean timeStat = NormalAchievements.PLAYEDTIME.toString().equals(categoryName);
 				lore.add(langListProgress);
-				lore.add(ChatColor.translateAlternateColorCodes('&',
+				lore.add(translateColorCodes(
 						constructProgressBar(strippedAchMessage, threshold, statistic, timeStat)));
 				lore.add("");
 			}
@@ -429,7 +429,7 @@ public class CategoryGUI extends AbstractGUI {
 				dot = StringEscapeUtils.unescapeJava(configListColorNotReceived + "\u25CF &o");
 			}
 			for (String reward : rewards) {
-				lore.add(ChatColor.translateAlternateColorCodes('&', dot + reward));
+				lore.add(translateColorCodes(dot + reward));
 			}
 		}
 		return lore;
