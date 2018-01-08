@@ -20,7 +20,6 @@ public class HelpLangTest {
 				.map(HelpLang.Hover::name)
 				.collect(Collectors.toSet());
 		assertEquals(helpNames, hoverNames);
-		assertEquals(hoverNames, helpNames);
 	}
 	
 }
