@@ -349,19 +349,28 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * @throws PluginLoadError
 	 */
 	public CommentedYamlConfiguration loadAndBackupFile(String fileName) throws PluginLoadError {
-		CommentedYamlConfiguration configFile = null;
 		getLogger().info("Loading and backing up " + fileName + " file...");
+
+		CommentedYamlConfiguration configFile = loadFile(fileName);
+		return backupConfig(configFile);
+	}
+
+	private CommentedYamlConfiguration loadFile(String fileName) throws PluginLoadError {
+		CommentedYamlConfiguration configFile;
 		try {
 			configFile = new CommentedYamlConfiguration(fileName, this);
 		} catch (IOException | InvalidConfigurationException e) {
 			throw new PluginLoadError("Error while loading " + fileName
 					+ ".Verify its syntax on yaml-online-parser.appspot.com and use the following logs", e);
 		}
+		return configFile;
+	}
 
+	private CommentedYamlConfiguration backupConfig(CommentedYamlConfiguration configFile) {
 		try {
 			configFile.backupConfiguration();
 		} catch (IOException e) {
-			getLogger().log(Level.SEVERE, "Error while backing up " + fileName + ".", e);
+			getLogger().log(Level.SEVERE, "Error while backing up " + configFile.getName() + ".", e);
 		}
 		return configFile;
 	}
