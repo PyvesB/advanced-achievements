@@ -5,8 +5,18 @@ import org.apache.commons.lang3.StringUtils;
 
 public interface Lang {
 
+	/**
+	 * Converts to the key in the language file used in the list command.
+	 *
+	 * @return the language configuration key
+	 */
 	String toLangKey();
 
+	/**
+	 * Converts to the default message that is returned, if key is not found in the configuration.
+	 *
+	 * @return the language configuration default value
+	 */
 	String toLangDefault();
 
 	static String get(Lang lang, AdvancedAchievements plugin) {
