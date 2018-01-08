@@ -1,5 +1,12 @@
 package com.hm.achievement.api;
 
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.db.data.AwardedDBAchievement;
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,18 +17,10 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
-
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-
 /**
  * Underlying implementation of the AdvancedAchievementsAPI interface.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
@@ -34,7 +33,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	/**
 	 * Returns a ready to use API instance. The caller must previously check whether the plugin is enabled and has a
 	 * minimum version of 5.0.
-	 * 
+	 *
 	 * @return API instance
 	 */
 	public static AdvancedAchievementsAPI linkAdvancedAchievements() {
@@ -70,12 +69,9 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	@Override
 	public List<Achievement> getPlayerAchievementsList(UUID player) {
 		validateNotNull(player, "Player");
-		List<String> rawList = pluginInstance.getDatabaseManager().getPlayerAchievementsList(player);
-		List<Achievement> playerAchievements = new ArrayList<>(rawList.size() / 3);
-		for (int i = 0; i < rawList.size(); i += 3) {
-			playerAchievements.add(new Achievement(rawList.get(i), rawList.get(i + 1), rawList.get(i + 2)));
-		}
-		return playerAchievements;
+		return pluginInstance.getDatabaseManager().getPlayerAchievementsList(player)
+				.stream().map(AwardedDBAchievement::toAPIAchievement)
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -150,7 +146,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	/**
 	 * Checks whether the player is online by making a call on the server's main thread of execution.
-	 * 
+	 *
 	 * @param player
 	 * @return true if player is online, false otherwise
 	 */
@@ -179,7 +175,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	/**
 	 * Throws an IllegalArgumentException if the argument is null.
-	 * 
+	 *
 	 * @param argument
 	 * @param argumentName
 	 */
@@ -191,7 +187,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	/**
 	 * Throws an IllegalArgumentException if the string is empty (i.e. null or "").
-	 * 
+	 *
 	 * @param argument
 	 * @param argumentName
 	 */

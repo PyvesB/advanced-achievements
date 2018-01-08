@@ -1,11 +1,10 @@
 package com.hm.achievement.command;
 
+import com.hm.achievement.AdvancedAchievements;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-
-import com.hm.achievement.AdvancedAchievements;
 
 /**
  * Class in charge of displaying the plugin's extra information (/aach info).
@@ -44,7 +43,7 @@ public class InfoCommand extends AbstractCommand {
 		langVersionCommandDescription = plugin.getChatHeader() + configColor
 				+ plugin.getPluginLang().getString("version-command-description", "Description:") + " " + ChatColor.GRAY
 				+ plugin.getPluginLang().getString("version-command-description-details",
-						"Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!");
+				"Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!");
 
 		langVersionCommandVersion = plugin.getChatHeader() + configColor
 				+ plugin.getPluginLang().getString("version-command-version", "Version:") + " " + ChatColor.GRAY
@@ -96,23 +95,23 @@ public class InfoCommand extends AbstractCommand {
 				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(placeholderAPIState));
 
 		// Display database type.
-        String databaseType = getDatabaseType();
+		String databaseType = getDatabaseType();
 		langVersionCommandDatabase = plugin.getChatHeader() + configColor
 				+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " " + ChatColor.GRAY
 				+ databaseType;
 	}
 
-    private String getDatabaseType() {
-        if ("mysql".equalsIgnoreCase(configDatabaseType)) {
-            return "MySQL";
-        } else if ("postgresql".equalsIgnoreCase(configDatabaseType)) {
-            return "PostgreSQL";
-        } else {
-           return "SQLite";
-        }
-    }
+	private String getDatabaseType() {
+		if ("mysql".equalsIgnoreCase(configDatabaseType)) {
+			return "MySQL";
+		} else if ("postgresql".equalsIgnoreCase(configDatabaseType)) {
+			return "PostgreSQL";
+		} else {
+			return "SQLite";
+		}
+	}
 
-    @Override
+	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
 		sender.sendMessage(header);
 		sender.sendMessage(langVersionCommandDescription);

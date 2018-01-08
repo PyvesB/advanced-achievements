@@ -7,9 +7,8 @@ import java.util.logging.Logger;
 
 /**
  * Class used to perform write operations to the database and automatically retry if a SQLException is thrown.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 @FunctionalInterface
 public interface SQLWriteOperation {
@@ -18,14 +17,14 @@ public interface SQLWriteOperation {
 
 	/**
 	 * Performs a single write operation to the database.
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	void performWrite() throws SQLException;
 
 	/**
 	 * Performs the write operation with an Executor.
-	 * 
+	 *
 	 * @param executor
 	 * @param logger
 	 * @param operationMessage
@@ -60,7 +59,7 @@ public interface SQLWriteOperation {
 
 	/**
 	 * Sleeps during one second.
-	 * 
+	 *
 	 * @param logger
 	 */
 	default void sleepOneSecond(Logger logger) {
