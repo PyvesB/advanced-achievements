@@ -29,8 +29,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private static final int DECIMAL_CIRCLED_TWENTY_ONE = Integer.parseInt("3251", 16);
 	private static final int DECIMAL_CIRCLED_THIRTY_SIX = Integer.parseInt("32B1", 16);
 
-	private final String languageHeaderKey;
-	private final String defaultHeaderMessage;
+	private final Lang languageHeader;
 
 	private int configTopList;
 	private boolean configAdditionalEffects;
@@ -43,12 +42,10 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private List<Integer> cachedAchievementCounts;
 	private long lastCacheUpdate = 0L;
 
-	protected AbstractRankingCommand(AdvancedAchievements plugin, String languageHeaderKey,
-									 String defaultHeaderMessage) {
+	protected AbstractRankingCommand(AdvancedAchievements plugin, Lang languageHeader) {
 		super(plugin);
 
-		this.languageHeaderKey = languageHeaderKey;
-		this.defaultHeaderMessage = defaultHeaderMessage;
+		this.languageHeader = languageHeader;
 	}
 
 	@Override
@@ -59,8 +56,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		configAdditionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		configSound = plugin.getPluginConfig().getBoolean("Sound", true);
 
-		langPeriodAchievement = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString(languageHeaderKey, defaultHeaderMessage);
+		langPeriodAchievement = Lang.getWithChatHeader(languageHeader, plugin);
 		langPlayerRank = Lang.getWithChatHeader(CmdLang.PLAYER_RANK, plugin) + " " + configColor;
 		langNotRanked = Lang.getWithChatHeader(CmdLang.NOT_RANKED, plugin);
 	}

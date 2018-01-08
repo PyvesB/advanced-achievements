@@ -42,7 +42,11 @@ public enum CmdLang implements Lang {
 	NUMBER_ACHIEVEMENTS("Achievements received:"),
 	// ToggleCommand
 	TOGGLE_DISPLAYED("You will now be notified when other players get achievements."),
-	TOGGLE_HIDDEN("You will no longer be notified when other players get achievements.");
+	TOGGLE_HIDDEN("You will no longer be notified when other players get achievements."),
+	// AbstractRankingCommand
+	WEEK_ACHIEVEMENT("Weekly achievement rankings:"),
+	MONTH_ACHIEVEMENT("Monthly achievement rankings:"),
+	TOP_ACHIEVEMENT("Top achievement owners:");
 
 	private final String defaultMessage;
 
