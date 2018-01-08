@@ -1,4 +1,6 @@
-package com.hm.achievement.lang;
+package com.hm.achievement.lang.command;
+
+import com.hm.achievement.lang.Lang;
 
 public enum HelpLang implements Lang {
 	LIST("Display received and missing achievements."),

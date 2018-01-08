@@ -2,8 +2,8 @@ package com.hm.achievement.command;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AdvancementManager;
-import com.hm.achievement.lang.CmdLang;
 import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
 import org.bukkit.command.CommandSender;
 
 /**

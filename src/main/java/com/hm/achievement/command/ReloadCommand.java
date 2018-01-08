@@ -2,9 +2,9 @@ package com.hm.achievement.command;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.exception.PluginLoadError;
-import com.hm.achievement.lang.CmdLang;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.LanguageConfig;
+import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import org.bukkit.Bukkit;

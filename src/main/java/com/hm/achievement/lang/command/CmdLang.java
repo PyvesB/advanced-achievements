@@ -1,4 +1,6 @@
-package com.hm.achievement.lang;
+package com.hm.achievement.lang.command;
+
+import com.hm.achievement.lang.Lang;
 
 public enum CmdLang implements Lang {
 	NO_PERMISSIONS("You do not have the permission to do this."),

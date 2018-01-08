@@ -2,8 +2,8 @@ package com.hm.achievement.command;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
-import com.hm.achievement.lang.CmdLang;
 import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.Cleanable;
 import com.hm.mcshared.particle.ParticleEffect;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
