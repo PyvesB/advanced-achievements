@@ -1,18 +1,19 @@
 package com.hm.achievement.command;
 
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.lang.CmdLang;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.utils.Reloadable;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.utils.Reloadable;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
-
 /**
  * Abstract class in charge of factoring out common functionality for commands.
- * 
+ *
  * @author Pyves
  */
 public abstract class AbstractCommand implements Reloadable {
@@ -37,13 +38,12 @@ public abstract class AbstractCommand implements Reloadable {
 		configIcon = StringEscapeUtils.unescapeJava(plugin.getPluginConfig().getString("Icon", "\u2618"));
 		configColor = ChatColor.getByChar(plugin.getPluginConfig().getString("Color", "5").charAt(0));
 
-		langNoPermissions = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("no-permissions", "You do not have the permission to do this.");
+		langNoPermissions = Lang.getWithChatHeader(CmdLang.NO_PERMISSIONS, plugin);
 	}
 
 	/**
 	 * Executes the command issued by the sender if he has the relevant permissions. If permission null, skip check.
-	 * 
+	 *
 	 * @param sender
 	 * @param args
 	 * @param permission
@@ -59,7 +59,7 @@ public abstract class AbstractCommand implements Reloadable {
 
 	/**
 	 * Executes the command issued by the sender.
-	 * 
+	 *
 	 * @param sender
 	 * @param args
 	 */
@@ -67,7 +67,7 @@ public abstract class AbstractCommand implements Reloadable {
 
 	/**
 	 * Plays a firework sound.
-	 * 
+	 *
 	 * @param player
 	 */
 	protected void playFireworkSound(Player player) {

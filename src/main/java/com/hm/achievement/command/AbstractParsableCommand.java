@@ -1,6 +1,8 @@
 package com.hm.achievement.command;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.lang.CmdLang;
+import com.hm.achievement.lang.Lang;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -24,7 +26,7 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langPlayerOffline = plugin.getPluginLang().getString("player-offline", "The player PLAYER is offline!");
+		langPlayerOffline = Lang.get(CmdLang.PLAYER_OFFLINE, plugin);
 	}
 
 	/**
