@@ -1,8 +1,6 @@
 package utilities;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.exception.PluginLoadError;
-import com.hm.achievement.lang.LanguageConfig;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -89,13 +87,5 @@ public class MockUtility {
 
 	public AdvancedAchievements getPluginMock() {
 		return pluginMock;
-	}
-
-	public MockUtility mockLang() throws PluginLoadError {
-		if (!resourcesMocked) {
-			throw new IllegalStateException("mockResourceFetching needs to be called before mockLang");
-		}
-		LanguageConfig.load(pluginMock);
-		return this;
 	}
 }

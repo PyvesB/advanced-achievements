@@ -5,6 +5,8 @@ import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lang.command.HelpLang;
 import com.hm.achievement.lang.command.InfoLang;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -13,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import utilities.MockUtility;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,13 +36,12 @@ public class YmlLangImplTest {
 		MockUtility mockUtility = MockUtility.setUp()
 				.mockLogger()
 				.mockDataFolder(temporaryFolder.getRoot())
-				.mockPluginConfig()
-				.mockLang();
+				.mockPluginConfig();
 		plugin = mockUtility.getPluginMock();
 	}
 
 	@Test
-	public void testLangImplForWrongKeys() throws PluginLoadError {
+	public void testLangImplForWrongKeys() throws PluginLoadError, IOException, InvalidConfigurationException {
 		List<Lang> langImpl = Arrays.stream(
 				new Lang[][]{
 						CmdLang.values(),
@@ -52,12 +54,14 @@ public class YmlLangImplTest {
 				}
 		).flatMap(Arrays::stream).collect(Collectors.toList());
 
-		LanguageConfig langConfig = LanguageConfig.load(plugin);
+		String languageFileName = plugin.getPluginConfig().getString("LanguageFileName", "lang.yml");
+		CommentedYamlConfiguration langConfig = new CommentedYamlConfiguration(languageFileName, plugin);
 
 		List<String> missing = new ArrayList<>();
 		for (Lang lang : langImpl) {
-			if (!langConfig.contains(lang.toLangKey())) {
-				missing.add(lang.toLangKey() + " (" + lang + ")");
+			String key = lang.toLangKey();
+			if (!langConfig.contains(key)) {
+				missing.add(key + " (" + lang + ")");
 			}
 		}
 		assertTrue("lang.yml is missing keys for: " + missing.toString(), missing.isEmpty());

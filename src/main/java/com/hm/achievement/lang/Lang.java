@@ -20,7 +20,7 @@ public interface Lang {
 	String toLangDefault();
 
 	static String get(Lang lang, AdvancedAchievements plugin) {
-		return plugin.getPluginLang().getMsg(lang);
+		return plugin.getPluginLang().getString(lang.toLangKey(), lang.toLangDefault());
 	}
 
 	static String getWithChatHeader(Lang lang, AdvancedAchievements plugin) {
