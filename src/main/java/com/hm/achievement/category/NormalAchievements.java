@@ -2,7 +2,7 @@ package com.hm.achievement.category;
 
 /**
  * List of standard achievements.
- * 
+ *
  * @author Pyves
  */
 public enum NormalAchievements implements Category {
@@ -64,32 +64,42 @@ public enum NormalAchievements implements Category {
 		return categoryName;
 	}
 
-	/** {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toDBName() {
 		return name().toLowerCase();
 	}
 
-	/** {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toPermName() {
 		return "achievement.count." + categoryName.toLowerCase();
 	}
 
-	/** {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangName() {
 		return langName;
 	}
 
-	/** {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangDefault() {
 		return langDefault;
 	}
 
-	/** {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String toConfigComment() {
 		return configComment;
 	}

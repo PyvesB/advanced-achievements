@@ -1,21 +1,19 @@
 package com.hm.achievement.listener;
 
-import java.util.UUID;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.NormalAchievements;
+import java.util.UUID;
 
 /**
  * Listener class to deal with Milk, WaterBuckets and LavaBuckets achievements.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 public class AchieveMilkLavaWaterListener extends AbstractRateLimitedListener {
 
