@@ -8,7 +8,6 @@ import com.hm.achievement.utils.Cleanable;
 import com.hm.mcshared.particle.ParticleEffect;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -23,7 +22,7 @@ import java.util.*;
 /**
  * Class in charge of handling the /aach book command, which creates and gives a book containing the player's
  * achievements.
- * 
+ *
  * @author Pyves
  */
 public class BookCommand extends AbstractCommand implements Cleanable {
@@ -65,11 +64,10 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		configAdditionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
 		configSound = plugin.getPluginConfig().getBoolean("Sound", true);
 
-		langBookDelay = plugin.getChatHeader() + Lang.getReplacedOnce(CmdLang.BOOK_DELAY, 
+		langBookDelay = plugin.getChatHeader() + Lang.getReplacedOnce(CmdLang.BOOK_DELAY,
 				"TIME", Integer.toString(configTimeBook / 1000), plugin);
 		langBookNotReceived = Lang.getWithChatHeader(CmdLang.BOOK_NOT_RECEIVED, plugin);
-		langBookDate = ChatColor.translateAlternateColorCodes('&',
-				"&8" + Lang.get(CmdLang.BOOK_DATE, plugin));
+		langBookDate = translateColorCodes("&8" + Lang.get(CmdLang.BOOK_DATE, plugin));
 		langBookName = Lang.get(CmdLang.BOOK_NAME, plugin);
 		langBookReceived = Lang.getWithChatHeader(CmdLang.BOOK_RECEIVED, plugin);
 
@@ -115,7 +113,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 
 	/**
 	 * Constructs the pages of a book.
-	 * 
+	 *
 	 * @param achievements
 	 * @param player
 	 */
@@ -125,7 +123,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		BookMeta bookMeta = (BookMeta) book.getItemMeta();
 
 		for (AwardedDBAchievement achievement : achievements) {
-			String currentAchievement = "&0" + achievement.getName() 
+			String currentAchievement = "&0" + achievement.getName()
 					+ configBookSeparator + achievement.getMessage()
 					+ configBookSeparator + achievement.getFormattedDate();
 			currentAchievement = translateColorCodes(currentAchievement);
@@ -156,7 +154,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 
 	/**
 	 * Checks if player hasn't done a command too recently (with "too recently" being defined in configuration file).
-	 * 
+	 *
 	 * @param player
 	 * @return whether a player is authorised to perform the list command
 	 */
@@ -181,7 +179,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	 * well as title length. This function bypasses such limits and restores the original CraftBukkit behaviour. See
 	 * https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/4acd0f49e07e0912096e79494472535baf0db2ab
 	 * for more information.
-	 * 
+	 *
 	 * @param bookPages
 	 * @param bookMeta
 	 */

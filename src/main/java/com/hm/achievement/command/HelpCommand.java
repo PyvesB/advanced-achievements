@@ -76,7 +76,7 @@ public class HelpCommand extends AbstractCommand {
 		langCommandGenerate = header("/aach generate") + Lang.get(HelpLang.GENERATE, plugin);
 		langCommandGenerateHover = Lang.get(HelpLang.Hover.GENERATE, plugin);
 		langCommandGive = header("/aach give &oach player")
-				+ ChatColor.translateAlternateColorCodes('&',
+				+ translateColorCodes(
 				Lang.getEachReplaced(
 						HelpLang.GIVE, plugin,
 						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}
@@ -89,14 +89,14 @@ public class HelpCommand extends AbstractCommand {
 				+ Lang.getReplacedOnce(HelpLang.RESET, "CAT", "&ocat&7", plugin);
 		langCommandResetHover = Lang.get(HelpLang.Hover.RESET, plugin);
 		langCommandCheck = header("/aach check &oach player")
-				+ ChatColor.translateAlternateColorCodes('&',
+				+ translateColorCodes(
 				Lang.getEachReplaced(
 						HelpLang.CHECK, plugin,
 						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}
 				));
 		langCommandCheckHover = Lang.get(HelpLang.Hover.CHECK, plugin);
 		langCommandDelete = header("/aach delete &oach player")
-				+ ChatColor.translateAlternateColorCodes('&',
+				+ translateColorCodes(
 				Lang.getEachReplaced(
 						HelpLang.DELETE, plugin,
 						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}
