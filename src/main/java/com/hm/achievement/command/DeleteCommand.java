@@ -1,10 +1,11 @@
 package com.hm.achievement.command;
 
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.lang.CmdLang;
+import com.hm.achievement.lang.Lang;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.hm.achievement.AdvancedAchievements;
 
 /**
  * Class in charge of handling the /aach delete command, which deletes an achievement from a player.
@@ -24,10 +25,8 @@ public class DeleteCommand extends AbstractParsableCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langCheckAchievementFalse = plugin.getChatHeader() + plugin.getPluginLang()
-				.getString("check-achievements-false", "PLAYER has not received the achievement ACH!");
-		langDeleteAchievements = plugin.getChatHeader() + plugin.getPluginLang().getString("delete-achievements",
-				"The achievement ACH was deleted from PLAYER.");
+		langCheckAchievementFalse = Lang.getWithChatHeader(CmdLang.CHECK_ACHIEVEMENT_FALSE, plugin);
+		langDeleteAchievements = Lang.getWithChatHeader(CmdLang.DELETE_ACHIEVEMENTS, plugin);
 	}
 
 	@Override
