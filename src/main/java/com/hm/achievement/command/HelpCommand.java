@@ -1,16 +1,17 @@
 package com.hm.achievement.command;
 
-import org.apache.commons.lang3.StringUtils;
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.lang.CmdLang;
+import com.hm.achievement.lang.HelpLang;
+import com.hm.achievement.lang.Lang;
+import com.hm.mcshared.particle.PacketSender;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.mcshared.particle.PacketSender;
-
 /**
  * Class in charge of displaying the plugin's help (/aach help).
- * 
+ *
  * @author Pyves
  */
 public class HelpCommand extends AbstractCommand {
@@ -54,81 +55,58 @@ public class HelpCommand extends AbstractCommand {
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
+		langCommandList = header("/aach list") + Lang.get(HelpLang.LIST, plugin);
+		langCommandListHover = Lang.get(HelpLang.Hover.LIST, plugin);
+		langCommandTop = header("/aach top") + Lang.get(HelpLang.TOP, plugin);
+		langCommandTopHover = Lang.get(HelpLang.Hover.TOP, plugin);
+		langCommandInfo = header("/aach info") + Lang.get(HelpLang.INFO, plugin);
+		langCommandInfoHover = Lang.get(HelpLang.Hover.INFO, plugin);
+		langCommandBook = header("/aach book") + Lang.get(HelpLang.BOOK, plugin);
+		langCommandBookHover = Lang.get(HelpLang.Hover.BOOK, plugin);
+		langCommandWeek = header("/aach week") + Lang.get(HelpLang.WEEK, plugin);
+		langCommandWeekHover = Lang.get(HelpLang.Hover.WEEK, plugin);
+		langCommandStats = header("/aach stats") + Lang.get(HelpLang.STATS, plugin);
+		langCommandStatsHover = Lang.get(HelpLang.Hover.STATS, plugin);
+		langCommandMonth = header("/aach month") + Lang.get(HelpLang.MONTH, plugin);
+		langCommandMonthHover = Lang.get(HelpLang.Hover.MONTH, plugin);
+		langCommandToggle = header("/aach toggle") + Lang.get(HelpLang.TOGGLE, plugin);
+		langCommandToggleHover = Lang.get(HelpLang.Hover.TOGGLE, plugin);
+		langCommandReload = header("/aach reload") + Lang.get(HelpLang.RELOAD, plugin);
+		langCommandReloadHover = Lang.get(HelpLang.Hover.RELOAD, plugin);
+		langCommandGenerate = header("/aach generate") + Lang.get(HelpLang.GENERATE, plugin);
+		langCommandGenerateHover = Lang.get(HelpLang.Hover.GENERATE, plugin);
+		langCommandGive = header("/aach give &oach player")
+				+ ChatColor.translateAlternateColorCodes('&',
+				Lang.getEachReplaced(
+						HelpLang.GIVE, plugin,
+						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}
+				)
+		);
+		langCommandGiveHover = Lang.get(HelpLang.Hover.GIVE, plugin);
+		langCommandAdd = header("/aach add &ox cat player") + Lang.get(HelpLang.ADD, plugin);
+		langCommandAddHover = Lang.get(HelpLang.Hover.ADD, plugin);
+		langCommandReset = header("/aach reset &ocat player")
+				+ Lang.getReplacedOnce(HelpLang.RESET, "CAT", "&ocat&7", plugin);
+		langCommandResetHover = Lang.get(HelpLang.Hover.RESET, plugin);
+		langCommandCheck = header("/aach check &oach player")
+				+ ChatColor.translateAlternateColorCodes('&',
+				Lang.getEachReplaced(
+						HelpLang.CHECK, plugin,
+						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}
+				));
+		langCommandCheckHover = Lang.get(HelpLang.Hover.CHECK, plugin);
+		langCommandDelete = header("/aach delete &oach player")
+				+ ChatColor.translateAlternateColorCodes('&',
+				Lang.getEachReplaced(
+						HelpLang.DELETE, plugin,
+						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}
+				));
+		langCommandDeleteHover = Lang.get(HelpLang.Hover.DELETE, plugin);
+		langTip = ChatColor.GRAY + ChatColor.translateAlternateColorCodes('&', Lang.get(CmdLang.AACH_TIP, plugin));
+	}
 
-		langCommandList = plugin.getChatHeader() + configColor + "/aach list" + ChatColor.GRAY + " > "
-				+ plugin.getPluginLang().getString("aach-command-list", "Display received and missing achievements.");
-		langCommandListHover = plugin.getPluginLang().getString("aach-command-list-hover",
-				"Fancy GUI to get an overview of all achievements and your progress!");
-		langCommandTop = plugin.getChatHeader() + configColor + "/aach top" + ChatColor.GRAY + " > "
-				+ plugin.getPluginLang().getString("aach-command-top", "Display personal and global rankings.");
-		langCommandTopHover = plugin.getPluginLang().getString("aach-command-top-hover",
-				"Who are the server's leaders and how do you compare to them?");
-		langCommandInfo = plugin.getChatHeader() + configColor + "/aach info" + ChatColor.GRAY + " > "
-				+ plugin.getPluginLang().getString("aach-command-info", "Display information about the plugin.");
-		langCommandInfoHover = plugin.getPluginLang().getString("aach-command-info-hover",
-				"Some extra info about the plugin and its awesome author!");
-		langCommandBook = plugin.getChatHeader() + configColor + "/aach book" + ChatColor.GRAY + " > "
-				+ plugin.getPluginLang().getString("aach-command-book", "Receive your achievements book.");
-		langCommandBookHover = plugin.getPluginLang().getString("aach-command-book-hover",
-				"RP items you can collect and exchange with others! Time-based listing.");
-		langCommandWeek = plugin.getChatHeader() + configColor + "/aach week" + ChatColor.GRAY + " > "
-				+ plugin.getPluginLang().getString("aach-command-week", "Display weekly rankings.");
-		langCommandWeekHover = plugin.getPluginLang().getString("aach-command-week-hover",
-				"Best achievement hunters since the start of the week!");
-		langCommandStats = plugin.getChatHeader() + configColor + "/aach stats" + ChatColor.GRAY + " > "
-				+ plugin.getPluginLang().getString("aach-command-stats", "Display amount of received achievements.");
-		langCommandStatsHover = plugin.getPluginLang().getString("aach-command-stats-hover",
-				"Progress bar. Gotta catch 'em all!");
-		langCommandMonth = plugin.getChatHeader() + configColor + "/aach month" + ChatColor.GRAY + " > "
-				+ plugin.getPluginLang().getString("aach-command-month", "Display monthly rankings.");
-		langCommandMonthHover = plugin.getPluginLang().getString("aach-command-month-hover",
-				"Best achievement hunters since the start of the month!");
-		langCommandToggle = plugin.getChatHeader() + configColor + "/aach toggle" + ChatColor.GRAY + " > "
-				+ plugin.getPluginLang().getString("aach-command-toggle", "Toggle achievements of other players.");
-		langCommandToggleHover = plugin.getPluginLang().getString("aach-command-toggle-hover",
-				"Your choice is saved until next server restart!");
-		langCommandReload = plugin.getChatHeader() + configColor + "/aach reload" + ChatColor.GRAY + " > "
-				+ plugin.getPluginLang().getString("aach-command-reload", "Reload the plugin's configuration.");
-		langCommandReloadHover = plugin.getPluginLang().getString("aach-command-reload-hover",
-				"Reload most settings in config.yml and lang.yml files.");
-		langCommandGenerate = plugin.getChatHeader() + configColor + "/aach generate" + ChatColor.GRAY + " > "
-				+ plugin.getPluginLang().getString("aach-command-generate", "Generate advancements.");
-		langCommandGenerateHover = plugin.getPluginLang().getString("aach-command-generate-hover",
-				"Potentially slow command; use with care!");
-		langCommandGive = plugin.getChatHeader() + configColor + "/aach give &oach player" + ChatColor.GRAY + " > "
-				+ ChatColor.translateAlternateColorCodes('&',
-						StringUtils.replaceEach(
-								plugin.getPluginLang().getString("aach-command-give",
-										"Give achievement ACH to &7NAME."),
-								new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
-		langCommandGiveHover = plugin.getPluginLang().getString("aach-command-give-hover",
-				"Player must be online; only Commands achievements can be used.");
-		langCommandAdd = plugin.getChatHeader() + configColor + "/aach add &ox cat player" + ChatColor.GRAY + " > "
-				+ ChatColor.translateAlternateColorCodes('&', "Increase a statistic.");
-		langCommandAddHover = plugin.getPluginLang().getString("aach-command-add-hover",
-				"Player must be online; mainly used for Customs achievements.");
-		langCommandReset = plugin.getChatHeader() + configColor + "/aach reset &ocat player" + ChatColor.GRAY + " > "
-				+ StringUtils.replaceOnce(
-						plugin.getPluginLang().getString("aach-command-reset", "Reset statistic for category CAT."),
-						"CAT", "&ocat&7");
-		langCommandResetHover = plugin.getPluginLang().getString("aach-command-reset-hover",
-				"Player must be online; example: reset Places.stone DarkPyves");
-		langCommandCheck = plugin.getChatHeader() + configColor + "/aach check &oach player" + ChatColor.GRAY + " > "
-				+ ChatColor.translateAlternateColorCodes('&',
-						StringUtils.replaceEach(
-								plugin.getPluginLang().getString("aach-command-check", "Check if NAME has ACH."),
-								new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
-		langCommandCheckHover = plugin.getPluginLang().getString("aach-command-check-hover",
-				"Use the Name parameter specified in the config.");
-		langCommandDelete = plugin.getChatHeader() + configColor + "/aach delete &oach player" + ChatColor.GRAY + " > "
-				+ ChatColor.translateAlternateColorCodes('&',
-						StringUtils.replaceEach(
-								plugin.getPluginLang().getString("aach-command-delete", "Delete ACH from NAME."),
-								new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
-		langCommandDeleteHover = plugin.getPluginLang().getString("aach-command-delete-hover",
-				"Player must be online; does not reset any associated statistics.");
-		langTip = ChatColor.GRAY + ChatColor.translateAlternateColorCodes('&', plugin.getPluginLang()
-				.getString("aach-tip", "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!"));
+	private String header(String command) {
+		return plugin.getChatHeader() + configColor + command + ChatColor.GRAY + " > ";
 	}
 
 	@Override
@@ -179,7 +157,7 @@ public class HelpCommand extends AbstractCommand {
 		if (sender.hasPermission("achievement.give")) {
 			sendJsonClickableHoverableMessage(sender, langCommandGive, "/aach give ach name", langCommandGiveHover);
 		}
-		
+
 		if (sender.hasPermission("achievement.add")) {
 			sendJsonClickableHoverableMessage(sender, langCommandAdd, "/aach add x cat name", langCommandAddHover);
 		}
@@ -206,7 +184,7 @@ public class HelpCommand extends AbstractCommand {
 	/**
 	 * Sends a packet message to the server in order to display a clickable and hoverable message. A suggested command
 	 * is displayed in the chat when clicked on, and an additional help message appears when a command is hovered.
-	 * 
+	 *
 	 * @param sender
 	 * @param message
 	 * @param command
