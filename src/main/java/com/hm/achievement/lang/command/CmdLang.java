@@ -19,7 +19,7 @@ public enum CmdLang implements Lang {
 	BOOK_RECEIVED("You received your achievements book!"),
 	// CheckCommand
 	CHECK_ACHIEVEMENT_TRUE("PLAYER has received the achievement ACH!"),
-	CHECK_ACHIEVEMENT_FALSE("PLAYER has not received the achievement ACH!"),
+	CHECK_ACHIEVEMENTS_FALSE("PLAYER has not received the achievement ACH!"),
 	// DeleteCommand
 	DELETE_ACHIEVEMENTS("The achievement ACH was deleted from PLAYER."),
 	// GenerateCommand

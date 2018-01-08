@@ -25,7 +25,7 @@ public class DeleteCommand extends AbstractParsableCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langCheckAchievementFalse = Lang.getWithChatHeader(CmdLang.CHECK_ACHIEVEMENT_FALSE, plugin);
+		langCheckAchievementFalse = Lang.getWithChatHeader(CmdLang.CHECK_ACHIEVEMENTS_FALSE, plugin);
 		langDeleteAchievements = Lang.getWithChatHeader(CmdLang.DELETE_ACHIEVEMENTS, plugin);
 	}
 

@@ -26,7 +26,7 @@ public class CheckCommand extends AbstractParsableCommand {
 		super.extractConfigurationParameters();
 
 		langCheckAchievementTrue = Lang.getWithChatHeader(CmdLang.CHECK_ACHIEVEMENT_TRUE, plugin);
-		langCheckAchievementFalse = Lang.getWithChatHeader(CmdLang.CHECK_ACHIEVEMENT_FALSE, plugin);
+		langCheckAchievementFalse = Lang.getWithChatHeader(CmdLang.CHECK_ACHIEVEMENTS_FALSE, plugin);
 	}
 
 	@Override
