@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import com.hm.achievement.lang.LanguageConfig;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -173,7 +174,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 	// Language, configuration and GUI related.
 	private CommentedYamlConfiguration config;
-	private CommentedYamlConfiguration lang;
+	private LanguageConfig lang;
 	private CommentedYamlConfiguration gui;
 
 	// Database related.
@@ -213,7 +214,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 		try {
 			config = loadAndBackupFile("config.yml");
-			lang = loadAndBackupFile(config.getString("LanguageFileName", "lang.yml"));
+			lang = LanguageConfig.load(this);
 			gui = loadAndBackupFile("gui.yml");
 
 			// Update configurations from previous versions of the plugin; only if server reload or restart.
@@ -999,11 +1000,11 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		return null;
 	}
 
-	public CommentedYamlConfiguration getPluginLang() {
+	public LanguageConfig getPluginLang() {
 		return lang;
 	}
 
-	public void setPluginLang(CommentedYamlConfiguration lang) {
+	public void setPluginLang(LanguageConfig lang) {
 		this.lang = lang;
 	}
 

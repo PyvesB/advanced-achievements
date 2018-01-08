@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
+import com.hm.achievement.lang.LanguageConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -51,7 +52,7 @@ public class ReloadCommand extends AbstractCommand {
 			}
 
 			plugin.setPluginConfig(config);
-			plugin.setPluginLang(plugin.loadAndBackupFile(config.getString("LanguageFileName", "lang.yml")));
+			plugin.setPluginLang(LanguageConfig.load(plugin));
 			plugin.setGui(plugin.loadAndBackupFile("gui.yml"));
 		} catch (PluginLoadError e) {
 			if (sender instanceof Player) {
