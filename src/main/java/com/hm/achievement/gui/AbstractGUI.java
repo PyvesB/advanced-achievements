@@ -48,8 +48,8 @@ public abstract class AbstractGUI implements Reloadable {
 				+ plugin.getPluginConfig().getString("ListAchievementFormat", "%ICON% %NAME% %ICON%");
 		configIcon = StringEscapeUtils.unescapeJava(plugin.getPluginConfig().getString("Icon", "\u2618"));
 
-		langListAchievementsInCategoryPlural = Lang.get(GuiLang.LIST_ACHIEVEMENTS_IN_CATEGORY_PLURAL, plugin);
-		langListAchievementInCategorySingular = Lang.get(GuiLang.LIST_ACHIEVEMENTS_IN_CATEGORY_SINGULAR, plugin);
+		langListAchievementsInCategoryPlural = Lang.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_PLURAL, plugin);
+		langListAchievementInCategorySingular = Lang.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_SINGULAR, plugin);
 
 		// Prepare item stacks displayed in the GUI for Multiple achievements.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
@@ -69,14 +69,14 @@ public abstract class AbstractGUI implements Reloadable {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, plugin.getPluginLang().getString(category.toLangKey(), category.toLangDefault()),
+			buildItemLore(itemStack, Lang.get(category, plugin),
 					plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false).size());
 			normalAchievementItems.put(category, itemStack);
 		}
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
 		commandsAchievementsItem = createItemStack("Commands");
-		buildItemLore(commandsAchievementsItem, plugin.getPluginLang().getString("list-commands", "Other Achievements"),
+		buildItemLore(commandsAchievementsItem, Lang.get(GuiLang.COMMANDS, plugin),
 				plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false).size());
 	}
 
