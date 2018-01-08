@@ -13,8 +13,8 @@ public class LanguageConfig extends CommentedYamlConfiguration {
 		super(plugin.getPluginConfig().getString("LanguageFileName", "lang.yml"), plugin);
 	}
 
-	public String getMsg(Msg msg) {
-		return getString(msg.getPath(), msg.getDefaultMessage());
+	public String getMsg(Lang lang) {
+		return getString(lang.getPath(), lang.getDefaultMessage());
 	}
 
 	public static LanguageConfig load(AdvancedAchievements plugin) throws PluginLoadError {
