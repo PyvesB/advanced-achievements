@@ -51,7 +51,7 @@ public class ReloadCommand extends AbstractCommand {
 				if (sender instanceof Player) {
 					sender.sendMessage(langServerRestartReload);
 				}
-				plugin.getLogger().warning(CmdLang.SERVER_RESTART_RELOAD.getDefaultMessage());
+				plugin.getLogger().warning(CmdLang.SERVER_RESTART_RELOAD.toLangDefault());
 				plugin.getLogger().warning("Aborting plugin reload.");
 				return;
 			}
@@ -75,7 +75,7 @@ public class ReloadCommand extends AbstractCommand {
 		if (sender instanceof Player) {
 			sender.sendMessage(langConfigSuccessfullyReloaded);
 		}
-		plugin.getLogger().info(CmdLang.CONFIGURATION_SUCCESSFULLY_RELOADED.getDefaultMessage());
+		plugin.getLogger().info(CmdLang.CONFIGURATION_SUCCESSFULLY_RELOADED.toLangDefault());
 
 	}
 

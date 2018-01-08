@@ -22,12 +22,12 @@ public enum InfoLang implements Lang {
 
 
 	@Override
-	public String getPath() {
+	public String toLangKey() {
 		return "version-command-" + Lang.toPath(name());
 	}
 
 	@Override
-	public String getDefaultMessage() {
+	public String toLangDefault() {
 		return defaultMessage;
 	}
 }

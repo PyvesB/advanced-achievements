@@ -1,9 +1,11 @@
 package com.hm.achievement.category;
 
+import com.hm.achievement.lang.Lang;
+
 /**
  * Interface for Achievement Category Enums.
  */
-public interface Category {
+public interface Category extends Lang {
 
 	/**
 	 * Converts to database name: name of the enum in lower case.
@@ -24,7 +26,7 @@ public interface Category {
 	 *
 	 * @return the language configuration key
 	 */
-	String toLangName();
+	String toLangKey();
 
 	/**
 	 * Converts to the default name that appears in the list command, if not found in the configuration.

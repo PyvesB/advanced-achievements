@@ -5,9 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 
 public interface Lang {
 
-	String getPath();
+	String toLangKey();
 
-	String getDefaultMessage();
+	String toLangDefault();
 
 	static String get(Lang lang, AdvancedAchievements plugin) {
 		return plugin.getPluginLang().getMsg(lang);

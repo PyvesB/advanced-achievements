@@ -84,7 +84,7 @@ public enum NormalAchievements implements Category {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String toLangName() {
+	public String toLangKey() {
 		return langName;
 	}
 

@@ -24,12 +24,12 @@ public enum HelpLang implements Lang {
 	}
 
 	@Override
-	public String getPath() {
+	public String toLangKey() {
 		return "aach-command-" + Lang.toPath(name());
 	}
 
 	@Override
-	public String getDefaultMessage() {
+	public String toLangDefault() {
 		return defaultMessage;
 	}
 
@@ -57,12 +57,12 @@ public enum HelpLang implements Lang {
 		}
 
 		@Override
-		public String getPath() {
+		public String toLangKey() {
 			return "aach-command-" + Lang.toPath(name()) + "-hover";
 		}
 
 		@Override
-		public String getDefaultMessage() {
+		public String toLangDefault() {
 			return defaultMessage;
 		}
 	}

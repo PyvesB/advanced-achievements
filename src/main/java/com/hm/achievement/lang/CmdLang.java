@@ -1,7 +1,5 @@
 package com.hm.achievement.lang;
 
-import org.apache.commons.lang3.StringUtils;
-
 public enum CmdLang implements Lang {
 	NO_PERMISSIONS("You do not have the permission to do this."),
 	PLAYER_OFFLINE("The player PLAYER is offline!"),
@@ -51,12 +49,12 @@ public enum CmdLang implements Lang {
 	}
 
 	@Override
-	public String getPath() {
+	public String toLangKey() {
 		return Lang.toPath(name());
 	}
 
 	@Override
-	public String getDefaultMessage() {
+	public String toLangDefault() {
 		return defaultMessage;
 	}
 }

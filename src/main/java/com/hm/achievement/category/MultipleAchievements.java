@@ -53,7 +53,7 @@ public enum MultipleAchievements implements Category {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String toLangName() {
+	public String toLangKey() {
 		return "list-" + name().toLowerCase();
 	}
 

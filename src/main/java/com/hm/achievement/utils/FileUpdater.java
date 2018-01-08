@@ -1,18 +1,17 @@
 package com.hm.achievement.utils;
 
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.configuration.InvalidConfigurationException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
-import org.bukkit.configuration.InvalidConfigurationException;
-
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of updating the language and configuration files when a new version of the plugin is released.
@@ -182,14 +181,14 @@ public class FileUpdater {
 
 		// Iterate through all categories to add missing ones.
 		for (NormalAchievements category : NormalAchievements.values()) {
-			if (!lang.getKeys(false).contains(category.toLangName())) {
-				lang.set(category.toLangName(), category.toLangDefault());
+			if (!lang.getKeys(false).contains(category.toLangKey())) {
+				lang.set(category.toLangKey(), category.toLangDefault());
 				updatePerformed = true;
 			}
 		}
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			if (!lang.getKeys(false).contains(category.toLangName())) {
-				lang.set(category.toLangName(), category.toLangDefault());
+			if (!lang.getKeys(false).contains(category.toLangKey())) {
+				lang.set(category.toLangKey(), category.toLangDefault());
 				updatePerformed = true;
 			}
 		}

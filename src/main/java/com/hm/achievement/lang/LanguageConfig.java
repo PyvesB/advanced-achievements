@@ -14,7 +14,7 @@ public class LanguageConfig extends CommentedYamlConfiguration {
 	}
 
 	public String getMsg(Lang lang) {
-		return getString(lang.getPath(), lang.getDefaultMessage());
+		return getString(lang.toLangKey(), lang.toLangDefault());
 	}
 
 	public static LanguageConfig load(AdvancedAchievements plugin) throws PluginLoadError {
