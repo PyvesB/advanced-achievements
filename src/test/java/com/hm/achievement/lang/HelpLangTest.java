@@ -9,6 +9,11 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Tests that all Lang values for Help message contain a Hover value.
+ * 
+ * @author Rsl1122
+ */
 public class HelpLangTest {
 
 	@Test

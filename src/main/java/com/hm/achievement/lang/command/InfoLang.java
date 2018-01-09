@@ -2,6 +2,11 @@ package com.hm.achievement.lang.command;
 
 import com.hm.achievement.lang.Lang;
 
+/**
+ * Lang implementation for translations used in InfoCommand.
+ *
+ * @author Rsl1122
+ */
 public enum InfoLang implements Lang {
 	DESCRIPTION("Description:"),
 	DESCRIPTION_DETAILS("Advanced Achievements enables unique and challenging achievements. " +

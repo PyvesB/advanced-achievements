@@ -2,6 +2,12 @@ package com.hm.achievement.lang.command;
 
 import com.hm.achievement.lang.Lang;
 
+/**
+ * Lang implementation for translations used in HelpCommand.
+ * 
+ * @author Rsl1122
+ * @see HelpLang.Hover
+ */
 public enum HelpLang implements Lang {
 	LIST("Display received and missing achievements."),
 	TOP("Display personal and global rankings."),
@@ -35,6 +41,9 @@ public enum HelpLang implements Lang {
 		return defaultMessage;
 	}
 
+	/**
+	 * Lang implementation used for hover message translations used in HelpCommand.
+	 */
 	public enum Hover implements Lang {
 		LIST("Fancy GUI to get an overview of all achievements and your progress!"),
 		TOP("Who are the server's leaders and how do you compare to them?"),

@@ -2,6 +2,11 @@ package com.hm.achievement.lang.command;
 
 import com.hm.achievement.lang.Lang;
 
+/**
+ * Lang implementation for translations used in Command classes.
+ *
+ * @author Rsl1122
+ */
 public enum CmdLang implements Lang {
 	NO_PERMISSIONS("You do not have the permission to do this."),
 	PLAYER_OFFLINE("The player PLAYER is offline!"),

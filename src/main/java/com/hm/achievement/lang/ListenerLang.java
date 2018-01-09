@@ -1,5 +1,10 @@
 package com.hm.achievement.lang;
 
+/**
+ * Lang implementation for translations used in Listeners.
+ *
+ * @author Rsl1122
+ */
 public enum ListenerLang implements Lang {
 	STATISTIC_COOLDOWN("Achievements cooldown, wait TIME seconds before this action counts again."),
 	COMMAND_REWARD("Reward command carried out!"),
@@ -11,7 +16,7 @@ public enum ListenerLang implements Lang {
 	INCREASE_MAX_OXYGEN_REWARD_RECEIVED("Your max oxygen has increased by AMOUNT!"),
 	ACHIEVEMENT_NEW("New Achievement:"),
 	CUSTOM_COMMAND_REWARD("You received your reward: MESSAGE");
-	
+
 	private final String defaultMessage;
 
 	ListenerLang(String defaultMessage) {

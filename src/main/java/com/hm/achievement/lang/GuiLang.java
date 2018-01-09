@@ -1,5 +1,10 @@
 package com.hm.achievement.lang;
 
+/**
+ * Lang implementation for translations used in GUI classes.
+ *
+ * @author Rsl1122
+ */
 public enum GuiLang implements Lang {
 	ACHIEVEMENTS_IN_CATEGORY_SINGULAR("AMOUNT achievement"),
 	ACHIEVEMENTS_IN_CATEGORY_PLURAL("AMOUNT achievements"),
@@ -22,7 +27,7 @@ public enum GuiLang implements Lang {
 	GuiLang(String defaultMessage) {
 		this.defaultMessage = defaultMessage;
 	}
-	
+
 	@Override
 	public String toLangKey() {
 		return "list-" + Lang.toPath(name());

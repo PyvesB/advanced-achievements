@@ -1,5 +1,10 @@
 package com.hm.achievement.lang;
 
+/**
+ * Lang implementation for translations used in RewardParser.
+ *
+ * @author Rsl1122
+ */
 public enum RewardLang implements Lang {
 	MONEY("receive AMOUNT"),
 	ITEM("receive AMOUNT ITEM"),
@@ -13,7 +18,7 @@ public enum RewardLang implements Lang {
 	RewardLang(String defaultMessage) {
 		this.defaultMessage = defaultMessage;
 	}
-	
+
 	@Override
 	public String toLangKey() {
 		return "list-reward-" + Lang.toPath(name());

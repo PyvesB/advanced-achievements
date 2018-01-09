@@ -25,6 +25,11 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Tests that all keys used in Lang implementations can be found in lang.yml.
+ * 
+ * @author Rsl1122
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class LangImplementationKeyTest {
 
