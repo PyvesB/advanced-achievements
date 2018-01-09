@@ -1,18 +1,19 @@
 package com.hm.achievement.command;
 
-import java.util.Calendar;
-
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.lang.command.CmdLang;
+
+import java.util.Calendar;
 
 /**
  * Class in charge of handling the /aach week command, which displays weekly rankings.
- * 
+ *
  * @author Pyves
  */
 public class WeekCommand extends AbstractRankingCommand {
 
 	public WeekCommand(AdvancedAchievements plugin) {
-		super(plugin, "week-achievement", "Weekly achievement rankings:");
+		super(plugin, CmdLang.WEEK_ACHIEVEMENT);
 	}
 
 	@Override

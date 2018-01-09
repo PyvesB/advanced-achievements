@@ -1,6 +1,8 @@
 package com.hm.achievement.command;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.InfoLang;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -37,67 +39,61 @@ public class InfoCommand extends AbstractCommand {
 		configDatabaseType = plugin.getPluginConfig().getString("DatabaseType", "sqlite");
 
 		header = configColor + "------------ " + configIcon
-				+ ChatColor.translateAlternateColorCodes('&', " &lAdvanced Achievements ") + configColor + configIcon
+				+ translateColorCodes(" &lAdvanced Achievements ") + configColor + configIcon
 				+ configColor + " ------------";
 
 		langVersionCommandDescription = plugin.getChatHeader() + configColor
-				+ plugin.getPluginLang().getString("version-command-description", "Description:") + " " + ChatColor.GRAY
-				+ plugin.getPluginLang().getString("version-command-description-details",
-				"Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!");
+				+ Lang.get(InfoLang.DESCRIPTION, plugin) + " " + ChatColor.GRAY
+				+ Lang.get(InfoLang.DESCRIPTION_DETAILS, plugin);
 
 		langVersionCommandVersion = plugin.getChatHeader() + configColor
-				+ plugin.getPluginLang().getString("version-command-version", "Version:") + " " + ChatColor.GRAY
+				+ Lang.get(InfoLang.VERSION, plugin) + " " + ChatColor.GRAY
 				+ plugin.getDescription().getVersion();
 
 		langVersionCommandAuthor = plugin.getChatHeader() + configColor
-				+ plugin.getPluginLang().getString("version-command-author", "Author:") + " " + ChatColor.GRAY
+				+ Lang.get(InfoLang.AUTHOR, plugin) + " " + ChatColor.GRAY
 				+ plugin.getDescription().getAuthors().get(0);
 
 		langVersionCommandWebsite = plugin.getChatHeader() + configColor
-				+ plugin.getPluginLang().getString("version-command-website", "Website:") + " " + ChatColor.GRAY
+				+ Lang.get(InfoLang.WEBSITE, plugin) + " " + ChatColor.GRAY
 				+ plugin.getDescription().getWebsite();
 
 		// Display whether Advanced Achievements is linked to Vault.
 		String vaultState = plugin.getRewardParser().getEconomy() != null ? "&a\u2714" : "&4\u2718";
 		langVersionCommandVault = plugin.getChatHeader() + configColor
-				+ plugin.getPluginLang().getString("version-command-vault", "Vault integration:") + " " + ChatColor.GRAY
-				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(vaultState));
+				+ Lang.get(InfoLang.VAULT, plugin) + " " + ChatColor.GRAY
+				+ translateColorCodes(StringEscapeUtils.unescapeJava(vaultState));
 
 		// Display whether Advanced Achievements is linked to Pet Master.
 		String petMasterState = plugin.getPetMasterGiveReceiveListener() != null ? "&a\u2714" : "&4\u2718";
 		langVersionCommandPetmaster = plugin.getChatHeader() + configColor
-				+ plugin.getPluginLang().getString("version-command-petmaster", "Pet Master integration:") + " "
-				+ ChatColor.GRAY
-				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(petMasterState));
+				+ Lang.get(InfoLang.PETMASTER, plugin) + " " + ChatColor.GRAY
+				+ translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
 
 		// Display whether Advanced Achievements is linked to BungeeTabListPlus.
 		String btlpState = Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus") ? "&a\u2714" : "&4\u2718";
 		langVersionCommandBtlp = plugin.getChatHeader() + configColor
-				+ plugin.getPluginLang().getString("version-command-btlp", "BungeeTabListPlus integration:") + " "
-				+ ChatColor.GRAY
-				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(btlpState));
+				+ Lang.get(InfoLang.BTLP, plugin) + " " + ChatColor.GRAY
+				+ translateColorCodes(StringEscapeUtils.unescapeJava(btlpState));
 
 		// Display whether Advanced Achievements is linked to Essentials.
 		boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials")
 				&& plugin.getPluginConfig().getBoolean("IgnoreAFKPlayedTime", false);
 		String essentialsState = essentialsUsed ? "&a\u2714" : "&4\u2718";
 		langVersionCommandEssentials = plugin.getChatHeader() + configColor
-				+ plugin.getPluginLang().getString("version-command-essentials", "Essentials integration:") + " "
-				+ ChatColor.GRAY
-				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(essentialsState));
+				+ Lang.get(InfoLang.ESSENTIALS, plugin) + " " + ChatColor.GRAY
+				+ translateColorCodes(StringEscapeUtils.unescapeJava(essentialsState));
 
 		// Display whether Advanced Achievements is linked to PlaceholderAPI.
-		String placeholderAPIState = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "&a\u2714"
-				: "&4\u2718";
+		String placeholderAPIState = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "&a\u2714" : "&4\u2718";
 		langVersionCommandPlaceholderAPI = plugin.getChatHeader() + configColor
-				+ plugin.getPluginLang().getString("version-command-placeholderapi", "PlaceholderAPI integration:")
-				+ " " + ChatColor.GRAY
-				+ ChatColor.translateAlternateColorCodes('&', StringEscapeUtils.unescapeJava(placeholderAPIState));
+				+ Lang.get(InfoLang.PLACEHOLDERAPI, plugin) + " " + ChatColor.GRAY
+				+ translateColorCodes(StringEscapeUtils.unescapeJava(placeholderAPIState));
 
 		// Display database type.
 		String databaseType = getDatabaseType();
 		langVersionCommandDatabase = plugin.getChatHeader() + configColor
-				+ plugin.getPluginLang().getString("version-command-database", "Database type:") + " " + ChatColor.GRAY
+				+ Lang.get(InfoLang.DATABASE, plugin) + " " + ChatColor.GRAY
 				+ databaseType;
 	}
 

@@ -1,14 +1,15 @@
 package com.hm.achievement.command;
 
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.achievement.utils.StatisticIncreaseHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.StatisticIncreaseHandler;
 
 /**
  * Class in charge of increase a statistic of an achievement by command.
@@ -31,12 +32,9 @@ public class AddCommand extends AbstractParsableCommand {
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
-		langErrorValue = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("error-value", "The value VALUE must to be an integer!");
-		langStatisticIncreased = plugin.getChatHeader() + plugin.getPluginLang().getString("statistic-increased",
-				"Statistic ACH increased by AMOUNT for PLAYER!");
-		langCategoryDoesNotExist = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("category-does-not-exist", "The category CAT  does not exist.");
+		langErrorValue = Lang.getWithChatHeader(CmdLang.ERROR_VALUE, plugin);
+		langStatisticIncreased = Lang.getWithChatHeader(CmdLang.STATISTIC_INCREASED, plugin);
+		langCategoryDoesNotExist = Lang.getWithChatHeader(CmdLang.CATEGORY_DOES_NOT_EXIST, plugin);
 	}
 
 	@Override
@@ -58,7 +56,7 @@ public class AddCommand extends AbstractParsableCommand {
 						value);
 				statistic.checkThresholdsAndAchievements(player, category.toString(), amount);
 				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
-						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
+						new String[]{"ACH", "AMOUNT", "PLAYER"}, new String[]{args[2], args[1], args[3]}));
 				return;
 			}
 		}
@@ -73,7 +71,7 @@ public class AddCommand extends AbstractParsableCommand {
 							player.getUniqueId(), value);
 					statistic.checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
 					sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
-							new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
+							new String[]{"ACH", "AMOUNT", "PLAYER"}, new String[]{args[2], args[1], args[3]}));
 					return;
 				}
 			}

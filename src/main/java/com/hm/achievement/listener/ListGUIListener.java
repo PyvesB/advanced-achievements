@@ -1,9 +1,10 @@
 package com.hm.achievement.listener;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.lang.GuiLang;
+import com.hm.achievement.lang.Lang;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,15 +14,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  * Listener class to deal with the GUIs from the /aach list command.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 public class ListGUIListener extends AbstractListener {
 
@@ -41,8 +41,7 @@ public class ListGUIListener extends AbstractListener {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langListGUITitle = ChatColor.translateAlternateColorCodes('&',
-				plugin.getPluginLang().getString("list-gui-title", "&5&lAchievements List"));
+		langListGUITitle = ChatColor.translateAlternateColorCodes('&', Lang.get(GuiLang.GUI_TITLE, plugin));
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -78,7 +77,7 @@ public class ListGUIListener extends AbstractListener {
 
 	/**
 	 * Verifies whether the user has clicked on the given navigation button.
-	 * 
+	 *
 	 * @param event
 	 * @param button
 	 * @return true if the button is clicked, false otherwise
@@ -106,7 +105,7 @@ public class ListGUIListener extends AbstractListener {
 
 	/**
 	 * Gets the current page index, by parsing the inventory title.
-	 * 
+	 *
 	 * @param name
 	 * @return the current page number (start index is 1)
 	 */
@@ -120,7 +119,7 @@ public class ListGUIListener extends AbstractListener {
 
 	/**
 	 * Returns the number of items in the main GUI.
-	 * 
+	 *
 	 * @return the count of non disabled categories
 	 */
 	private int getMainGUIItemCount() {

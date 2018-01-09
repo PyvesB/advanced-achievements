@@ -1,9 +1,11 @@
 package com.hm.achievement.gui;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.lang.GuiLang;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.utils.Reloadable;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
@@ -11,16 +13,14 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.Reloadable;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Abstract class in charge of factoring out common functionality for the GUIs.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 public abstract class AbstractGUI implements Reloadable {
 
@@ -48,10 +48,8 @@ public abstract class AbstractGUI implements Reloadable {
 				+ plugin.getPluginConfig().getString("ListAchievementFormat", "%ICON% %NAME% %ICON%");
 		configIcon = StringEscapeUtils.unescapeJava(plugin.getPluginConfig().getString("Icon", "\u2618"));
 
-		langListAchievementsInCategoryPlural = plugin.getPluginLang().getString("list-achievements-in-category-plural",
-				"AMOUNT achievements");
-		langListAchievementInCategorySingular = plugin.getPluginLang()
-				.getString("list-achievements-in-category-singular", "AMOUNT achievement");
+		langListAchievementsInCategoryPlural = Lang.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_PLURAL, plugin);
+		langListAchievementInCategorySingular = Lang.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_SINGULAR, plugin);
 
 		// Prepare item stacks displayed in the GUI for Multiple achievements.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
@@ -63,8 +61,7 @@ public abstract class AbstractGUI implements Reloadable {
 						.getKeys(false).size();
 			}
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, plugin.getPluginLang().getString(category.toLangName(), category.toLangDefault()),
-					totalAchievements);
+			buildItemLore(itemStack, Lang.get(category, plugin), totalAchievements);
 			multipleAchievementItems.put(category, itemStack);
 		}
 
@@ -72,21 +69,21 @@ public abstract class AbstractGUI implements Reloadable {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, plugin.getPluginLang().getString(category.toLangName(), category.toLangDefault()),
+			buildItemLore(itemStack, Lang.get(category, plugin),
 					plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false).size());
 			normalAchievementItems.put(category, itemStack);
 		}
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
 		commandsAchievementsItem = createItemStack("Commands");
-		buildItemLore(commandsAchievementsItem, plugin.getPluginLang().getString("list-commands", "Other Achievements"),
+		buildItemLore(commandsAchievementsItem, Lang.get(GuiLang.COMMANDS, plugin),
 				plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false).size());
 	}
 
 	/**
 	 * Inventory GUIs need a number of slots that is a multiple of 9. This simple function gets the smallest multiple of
 	 * 9 greater than its input value, in order for the GUI to contain all of its elements with minimum empty space.
-	 * 
+	 *
 	 * @param value
 	 * @param maxPerPage
 	 * @return closest multiple of 9 greater than value
@@ -101,7 +98,7 @@ public abstract class AbstractGUI implements Reloadable {
 
 	/**
 	 * Creates an ItemStack based on information extracted from gui.yml.
-	 * 
+	 *
 	 * @param categoryName
 	 * @return the item for the category
 	 */
@@ -119,7 +116,7 @@ public abstract class AbstractGUI implements Reloadable {
 
 	/**
 	 * Sets the metadata of an ItemStack representing a category in the main GUI.
-	 * 
+	 *
 	 * @param item
 	 * @param displayName
 	 * @param totalAchievements
@@ -130,9 +127,9 @@ public abstract class AbstractGUI implements Reloadable {
 		if (StringUtils.isBlank(displayName)) {
 			itemMeta.setDisplayName("");
 		} else {
-			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-					StringUtils.replaceEach(configListAchievementFormat, new String[] { "%ICON%", "%NAME%" },
-							new String[] { configIcon, "&l" + displayName + "&8" })));
+			itemMeta.setDisplayName(translateColorCodes(
+					StringUtils.replaceEach(configListAchievementFormat, new String[]{"%ICON%", "%NAME%"},
+							new String[]{configIcon, "&l" + displayName + "&8"})));
 		}
 
 		// Construct lore of the category item.
@@ -144,7 +141,11 @@ public abstract class AbstractGUI implements Reloadable {
 			amountMessage = StringUtils.replaceOnce(langListAchievementInCategorySingular, "AMOUNT",
 					Integer.toString(totalAchievements));
 		}
-		itemMeta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
+		itemMeta.setLore(Arrays.asList(translateColorCodes("&8" + amountMessage)));
 		item.setItemMeta(itemMeta);
+	}
+
+	protected String translateColorCodes(String translate) {
+		return ChatColor.translateAlternateColorCodes('&', translate);
 	}
 }

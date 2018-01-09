@@ -1,9 +1,11 @@
 package com.hm.achievement.category;
 
+import com.hm.achievement.lang.Lang;
+
 /**
  * Interface for Achievement Category Enums.
  */
-public interface Category {
+public interface Category extends Lang {
 
 	/**
 	 * Converts to database name: name of the enum in lower case.
@@ -18,20 +20,6 @@ public interface Category {
 	 * @return the Bukkit permission name
 	 */
 	String toPermName();
-
-	/**
-	 * Converts to the key in the language file used in the list command.
-	 *
-	 * @return the language configuration key
-	 */
-	String toLangName();
-
-	/**
-	 * Converts to the default name that appears in the list command, if not found in the configuration.
-	 *
-	 * @return the language configuration default value
-	 */
-	String toLangDefault();
 
 	/**
 	 * Converts to the comment that is inserted about the category name in the configuration file.

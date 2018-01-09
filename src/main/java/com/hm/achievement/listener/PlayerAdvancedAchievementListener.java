@@ -1,20 +1,18 @@
 package com.hm.achievement.listener;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Level;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.advancement.AchievementAdvancement;
+import com.hm.achievement.advancement.AdvancementManager;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.ListenerLang;
+import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
+import com.hm.mcshared.particle.PacketSender;
+import com.hm.mcshared.particle.ParticleEffect;
+import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
+import org.bukkit.*;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.FireworkEffect.Type;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -25,20 +23,15 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.advancement.AchievementAdvancement;
-import com.hm.achievement.advancement.AdvancementManager;
-import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
-import com.hm.mcshared.particle.PacketSender;
-import com.hm.mcshared.particle.ParticleEffect;
-
-import net.milkbowl.vault.economy.Economy;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.logging.Level;
 
 /**
  * Listener class to deal with achievement receptions: rewards, display and database operations.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 public class PlayerAdvancedAchievementListener extends AbstractListener {
 
@@ -93,22 +86,15 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			configHoverableReceiverChatText = false;
 		}
 
-		langCommandReward = plugin.getPluginLang().getString("command-reward", "Reward command carried out!");
-		langAchievementReceived = plugin.getPluginLang().getString("achievement-received",
-				"PLAYER received the achievement:") + " " + ChatColor.WHITE;
-		langItemRewardReceived = plugin.getPluginLang().getString("item-reward-received",
-				"You received an item reward:") + " ";
-		langMoneyRewardReceived = plugin.getPluginLang().getString("money-reward-received", "You received: AMOUNT!");
-		langExperienceRewardReceived = plugin.getPluginLang().getString("experience-reward-received",
-				"You received: AMOUNT experience!");
-		langIncreaseMaxHealthRewardReceived = plugin.getPluginLang().getString("increase-max-health-reward-received",
-				"Your max health has increased by AMOUNT!");
-		langIncreaseMaxOxygenRewardReceived = plugin.getPluginLang().getString("increase-max-oxygen-reward-received",
-				"Your max oxygen has increased by AMOUNT!");
-		langAchievementNew = plugin.getChatHeader()
-				+ plugin.getPluginLang().getString("achievement-new", "New Achievement:") + " " + ChatColor.WHITE;
-		langCustomMessageCommandReward = plugin.getPluginLang().getString("custom-command-reward",
-				"You received your reward: MESSAGE");
+		langCommandReward = Lang.get(ListenerLang.COMMAND_REWARD, plugin);
+		langAchievementReceived = Lang.get(ListenerLang.ACHIEVEMENT_RECEIVED, plugin) + " " + ChatColor.WHITE;
+		langItemRewardReceived = Lang.get(ListenerLang.ITEM_REWARD_RECEIVED, plugin) + " ";
+		langMoneyRewardReceived = Lang.get(ListenerLang.MONEY_REWARD_RECEIVED, plugin);
+		langExperienceRewardReceived = Lang.get(ListenerLang.EXPERIENCE_REWARD_RECEIVED, plugin);
+		langIncreaseMaxHealthRewardReceived = Lang.get(ListenerLang.INCREASE_MAX_HEALTH_REWARD_RECEIVED, plugin);
+		langIncreaseMaxOxygenRewardReceived = Lang.get(ListenerLang.INCREASE_MAX_OXYGEN_REWARD_RECEIVED, plugin);
+		langAchievementNew = Lang.getWithChatHeader(ListenerLang.ACHIEVEMENT_NEW, plugin) + " " + ChatColor.WHITE;
+		langCustomMessageCommandReward = Lang.get(ListenerLang.CUSTOM_COMMAND_REWARD, plugin);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -158,7 +144,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	/**
 	 * Executes player command rewards.
-	 * 
+	 *
 	 * @param commands
 	 * @param message
 	 * @return the reward text to display to the player
@@ -180,7 +166,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	/**
 	 * Gives an item reward to a player.
-	 * 
+	 *
 	 * @param player
 	 * @param item
 	 * @return the reward text to display to the player
@@ -202,7 +188,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	/**
 	 * Gives a money reward to a player.
-	 * 
+	 *
 	 * @param player
 	 * @param amount
 	 * @return the reward text to display to the player
@@ -222,7 +208,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	/**
 	 * Gives an experience reward to a player.
-	 * 
+	 *
 	 * @param player
 	 * @param amount
 	 * @return the reward text to display to the player
@@ -235,7 +221,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	/**
 	 * Gives an increased max health reward to a player.
-	 * 
+	 *
 	 * @param player
 	 * @param amount
 	 * @return the reward text to display to the player
@@ -254,7 +240,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	/**
 	 * Gives an increased max oxygen reward to a player.
-	 * 
+	 *
 	 * @param player
 	 * @param amount
 	 * @return the reward text to display to the player
@@ -267,7 +253,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	/**
 	 * Displays chat messages, screen title and launches a firework when a player receives an achievement.
-	 * 
+	 *
 	 * @param player
 	 * @param name
 	 * @param displayName
@@ -275,7 +261,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * @param rewardTexts
 	 */
 	private void displayAchievement(Player player, String name, String displayName, String message,
-			List<String> rewardTexts) {
+									List<String> rewardTexts) {
 		String nameToShowUser;
 		if (StringUtils.isNotBlank(displayName)) {
 			// Display name is defined; use it.
@@ -316,14 +302,14 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	/**
 	 * Displays texts related to the achievement in the receiver's chat. This method can display a single hoverable
 	 * message or several messages one after the other.
-	 * 
+	 *
 	 * @param player
 	 * @param nameToShowUser
 	 * @param messageToShowUser
 	 * @param rewardTexts
 	 */
 	private void displayReceiverMessages(Player player, String nameToShowUser, String messageToShowUser,
-			List<String> rewardTexts) {
+										 List<String> rewardTexts) {
 		if (configHoverableReceiverChatText) {
 			StringBuilder hover = new StringBuilder(messageToShowUser + "\n");
 			rewardTexts.stream().filter(StringUtils::isNotBlank)
@@ -347,7 +333,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	/**
 	 * Displays an action bar message or chat notification to another player.
-	 * 
+	 *
 	 * @param achievementReceiver
 	 * @param nameToShowUser
 	 * @param otherPlayer
@@ -371,7 +357,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	/**
 	 * Displays title when receiving an achievement.
-	 * 
+	 *
 	 * @param player
 	 * @param nameToShowUser
 	 * @param messageToShowUser
@@ -390,7 +376,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	/**
 	 * Launches firework when receiving an achievement.
-	 * 
+	 *
 	 * @param player
 	 */
 	private void displayFirework(Player player) {
@@ -422,7 +408,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 	/**
 	 * Sets the type of the firwrok, which can either be predefined or random.
-	 * 
+	 *
 	 * @param effectBuilder
 	 */
 	private void setFireworkType(Builder effectBuilder) {
@@ -443,7 +429,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	/**
 	 * Displays a simplified particle effect and calm sound when receiving an achievement. Is used instead of
 	 * displayFirework.
-	 * 
+	 *
 	 * @param player
 	 */
 	private void displaySimplifiedReception(Player player) {

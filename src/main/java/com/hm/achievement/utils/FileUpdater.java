@@ -1,22 +1,25 @@
 package com.hm.achievement.utils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
-import org.bukkit.configuration.InvalidConfigurationException;
-
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.lang.GuiLang;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.ListenerLang;
+import com.hm.achievement.lang.RewardLang;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.achievement.lang.command.HelpLang;
+import com.hm.achievement.lang.command.InfoLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.configuration.InvalidConfigurationException;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Level;
 
 /**
  * Class in charge of updating the language and configuration files when a new version of the plugin is released.
- * 
+ *
  * @author Pyves
  */
 public class FileUpdater {
@@ -31,7 +34,7 @@ public class FileUpdater {
 	/**
 	 * Updates configuration file from older plugin versions by adding missing parameters. Upgrades from versions prior
 	 * to 2.5.2 are not supported.
-	 * 
+	 *
 	 * @param config
 	 */
 	public void updateOldConfiguration(CommentedYamlConfiguration config) {
@@ -174,7 +177,7 @@ public class FileUpdater {
 	/**
 	 * Updates language file from older plugin versions by adding missing parameters. Upgrades from versions prior to
 	 * 2.5.2 are not supported.
-	 * 
+	 *
 	 * @param lang
 	 */
 	public void updateOldLanguage(CommentedYamlConfiguration lang) {
@@ -182,99 +185,35 @@ public class FileUpdater {
 
 		// Iterate through all categories to add missing ones.
 		for (NormalAchievements category : NormalAchievements.values()) {
-			if (!lang.getKeys(false).contains(category.toLangName())) {
-				lang.set(category.toLangName(), category.toLangDefault());
+			if (!lang.getKeys(false).contains(category.toLangKey())) {
+				lang.set(category.toLangKey(), category.toLangDefault());
 				updatePerformed = true;
 			}
 		}
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			if (!lang.getKeys(false).contains(category.toLangName())) {
-				lang.set(category.toLangName(), category.toLangDefault());
+			if (!lang.getKeys(false).contains(category.toLangKey())) {
+				lang.set(category.toLangKey(), category.toLangDefault());
 				updatePerformed = true;
 			}
 		}
 
-		// Added in version 3.0:
-		updateSetting(lang, "book-date", "Book created on DATE.");
-		updateSetting(lang, "list-back-message", "&7Back");
-		updateSetting(lang, "week-achievement", "Weekly achievement rankings:");
-		updateSetting(lang, "month-achievement", "Monthly achievement rankings:");
-		updateSetting(lang, "aach-command-week", "Display weekly rankings.");
-		updateSetting(lang, "aach-command-month", "Display monthly rankings.");
-		updateSetting(lang, "not-ranked", "You are currently not ranked for this period.");
-		updateSetting(lang, "aach-command-book-hover",
-				"RP items you can collect and exchange with others! Time-based listing.");
-		updateSetting(lang, "aach-command-stats-hover", "Progress bar. Gotta catch 'em all!");
-		updateSetting(lang, "aach-command-list-hover",
-				"Fancy GUI to get an overview of all achievements and your progress!");
-		updateSetting(lang, "aach-command-top-hover", "Who are the server's leaders and how do you compare to them?");
-		updateSetting(lang, "aach-command-reload-hover",
-				"Player must be online; only Commands achievements can be used.");
-		updateSetting(lang, "aach-command-give-hover", "Reload most settings in config.yml and lang.yml files.");
-		updateSetting(lang, "aach-command-info-hover", "Some extra info about the plugin and its awesome author!");
-		updateSetting(lang, "aach-command-check-hover", "Don't forget to add the colors defined in the config file.");
-		updateSetting(lang, "aach-command-delete-hover",
-				"Player must be online; does not reset any associated statistics.");
-		updateSetting(lang, "aach-command-week-hover", "Best achievement hunters since the start of the week!");
-		updateSetting(lang, "aach-command-month-hover", "Best achievement hunters since the start of the month!");
-		updateSetting(lang, "aach-tip", "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!");
+		// Iterate through all Lang implementation keys & default values
+		Arrays.stream(
+				new Lang[][]{
+						CmdLang.values(),
+						HelpLang.values(),
+						HelpLang.Hover.values(),
+						InfoLang.values(),
+						GuiLang.values(),
+						ListenerLang.values(),
+						RewardLang.values(),
+						NormalAchievements.values(),
+						MultipleAchievements.values()
+				}
+		).flatMap(Arrays::stream)
+				.forEach(language -> updateLang(lang, language));
 
-		// Added in version 4.0:
-		updateSetting(lang, "list-achievements-in-category-singular", "AMOUNT achievement");
-		updateSetting(lang, "list-achievements-in-category-plural", "AMOUNT achievements");
-		updateSetting(lang, "server-restart-reload",
-				"DisabledCategories list was modified. Server must be fully reloaded or restarted for your changes to take effect.");
-		updateSetting(lang, "statistic-cooldown",
-				"Achievements cooldown, wait TIME seconds before this action counts again.");
-		updateSetting(lang, "version-command-petmaster", "Pet Master integration:");
-
-		// Added in version 4.1:
-		updateSetting(lang, "list-description", "Description:");
-		updateSetting(lang, "list-goal", "Goal:");
-		updateSetting(lang, "list-reception", "Reception date:");
-		updateSetting(lang, "list-progress", "Progress:");
-		updateSetting(lang, "book-not-received", "You have not yet received any achievements.");
-
-		// Added in version 4.2:
-		updateSetting(lang, "aach-command-toggle", "Toggle achievements of other players.");
-		updateSetting(lang, "aach-command-toggle-hover", "Your choice is saved until next server restart!");
-		updateSetting(lang, "toggle-displayed", "You will now be notified when other players get achievements.");
-		updateSetting(lang, "toggle-hidden", "You will no longer be notified when other players get achievements.");
-
-		// Added in version 5.0:
-		updateSetting(lang, "aach-command-reset", "Reset statistic for category CAT.");
-		updateSetting(lang, "aach-command-reset-hover", "Player must be online; example: reset Places.stone DarkPyves");
-		updateSetting(lang, "reset-successful", " statistics were cleared for PLAYER.");
-		updateSetting(lang, "category-does-not-exist", "The category CAT does not exist.");
-		updateSetting(lang, "version-command-btlp", "BungeeTabListPlus integration:");
-
-		// Added in version 5.2:
-		updateSetting(lang, "advancements-generated", "Advancements were successfully generated.");
-		updateSetting(lang, "aach-command-generate", "Generate advancements.");
-		updateSetting(lang, "aach-command-generate-hover", "Potentially slow command; use with care!");
-		updateSetting(lang, "minecraft-not-supported",
-				"Advancements not supported in your Minecraft version. Please update to 1.12+.");
-		updateSetting(lang, "experience-reward-received", "You received: AMOUNT experience!");
-		updateSetting(lang, "list-reward-experience", "receive AMOUNT experience");
-		updateSetting(lang, "increase-max-health-reward-received", "Your max health has increased by AMOUNT!");
-		updateSetting(lang, "list-reward-increase-max-health", "increase max health by AMOUNT");
-		updateSetting(lang, "increase-max-oxygen-reward-received", "Your max oxygen has increased by AMOUNT!");
-		updateSetting(lang, "list-reward-increase-max-oxygen", "increase max oxygen by AMOUNT");
-
-		// Added in version 5.3:
-		updateSetting(lang, "list-previous-message", "&7Previous");
-		updateSetting(lang, "list-next-message", "&7Next");
-
-		// Added in version 5.4:
-		updateSetting(lang, "custom-command-reward", "You received your reward: MESSAGE");
-
-		// Added in version 5.5:
-		updateSetting(lang, "version-command-essentials", "Essentials integration:");
-		updateSetting(lang, "version-command-placeholderapi", "PlaceholderAPI integration:");
-		updateSetting(lang, "error-value", "The value VALUE must to be an integer!");
-		updateSetting(lang, "statistic-increased", "Statistic ACH increased by AMOUNT for PLAYER!");
-		updateSetting(lang, "aach-command-add", "Increase a statistic.");
-		updateSetting(lang, "aach-command-add-hover", "Player must be online; mainly used for Custom Categories.");
+		// Not found in Enums (Possibly unused)
 		updateSetting(lang, "list-custom", "Custom Categories");
 
 		if (updatePerformed) {
@@ -291,7 +230,7 @@ public class FileUpdater {
 	/**
 	 * Updates GUI file from older plugin versions by adding missing parameters. New configuration file introduced in
 	 * version 5.0 of the plugin.
-	 * 
+	 *
 	 * @param gui
 	 */
 	public void updateOldGUI(CommentedYamlConfiguration gui) {
@@ -333,7 +272,7 @@ public class FileUpdater {
 	/**
 	 * Updates the configuration file to include a new setting with its default value and its comments (each comment
 	 * String corresponding to a separate line).
-	 * 
+	 *
 	 * @param file
 	 * @param name
 	 * @param value
@@ -346,9 +285,13 @@ public class FileUpdater {
 		}
 	}
 
+	private void updateLang(CommentedYamlConfiguration file, Lang lang) {
+		updateSetting(file, lang.toLangKey(), lang.toLangDefault());
+	}
+
 	/**
 	 * Adds a new category to the configuration file, and includes it in the DisabledCategories list.
-	 * 
+	 *
 	 * @param config
 	 * @param categoryName
 	 * @param categoryComment

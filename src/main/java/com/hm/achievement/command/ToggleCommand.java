@@ -1,12 +1,13 @@
 package com.hm.achievement.command;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.AdvancedAchievements;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class in charge of handling the /aach toggle command, which allows a player to override the default behaviour of the
@@ -35,10 +36,8 @@ public class ToggleCommand extends AbstractCommand {
 
 		configNotifyOtherPlayers = plugin.getPluginConfig().getBoolean("NotifyOtherPlayers", false);
 
-		langToggleDisplayed = plugin.getChatHeader() + plugin.getPluginLang().getString("toggle-displayed",
-				"You will now be notified when other players get achievements.");
-		langToggleHidden = plugin.getChatHeader() + plugin.getPluginLang().getString("toggle-hidden",
-				"You will no longer be notified when other players get achievements.");
+		langToggleDisplayed = Lang.getWithChatHeader(CmdLang.TOGGLE_DISPLAYED, plugin);
+		langToggleHidden = Lang.getWithChatHeader(CmdLang.TOGGLE_HIDDEN, plugin);
 	}
 
 	/**
