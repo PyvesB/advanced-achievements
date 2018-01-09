@@ -23,10 +23,8 @@ public class MockUtility {
 
 	private AdvancedAchievements pluginMock;
 
-	private boolean resourcesMocked;
 
 	private MockUtility() {
-		resourcesMocked = false;
 	}
 
 	public static MockUtility setUp() {
@@ -59,7 +57,6 @@ public class MockUtility {
 				System.out.println("File is missing! " + fileName + " (MockUtility.mockResourceFetching)");
 			}
 		}
-		resourcesMocked = true;
 	}
 
 	public MockUtility mockDataFolder(File folder) {
