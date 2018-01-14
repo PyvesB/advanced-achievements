@@ -163,9 +163,11 @@ public class FileUpdater {
 		updateSetting(config, "ListColorNotReceived", 8,
 				"Color used for Goals and progress bars in /aach list when an achievement is not yet received.");
 		
-		updateSetting(config, "AllAchievementsReceivedRewards.Money", 30,
-				"Awarded when a player has received all the achievements. Use the same reward pattern as with achievements.",
-				"See https://github.com/PyvesB/AdvancedAchievements/wiki/Rewards");
+		if (!config.isConfigurationSection("AllAchievementsReceivedRewards")) {
+			updateSetting(config, "AllAchievementsReceivedRewards.Money", 30,
+					"Awarded when a player has received all the achievements. Use the same reward pattern as with achievements.",
+					"See https://github.com/PyvesB/AdvancedAchievements/wiki/Rewards");
+		}
 
 		if (updatePerformed) {
 			// Changes in the configuration: save and do a fresh load.

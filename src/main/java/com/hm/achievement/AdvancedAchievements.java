@@ -749,52 +749,62 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	/**
 	 * Creates a map from achievement name (as stored in the database) to DisplayName. If multiple achievements have the
 	 * same achievement name, only the first DisplayName will be tracked. If DisplayName for an achievement is empty or
-	 * undefined, the value in the returned map will be an empty string.
+	 * undefined, the value in the returned map will be an empty string. Only contains the mapping for achievements in
+	 * non-disabled categories.
 	 */
 	private void parseAchievementsAndDisplayNames() {
 		achievementsAndDisplayNames.clear();
 
 		// Enumerate Commands achievements.
-		for (String ach : config.getConfigurationSection("Commands").getKeys(false)) {
-			String achName = config.getString("Commands." + ach + ".Name", "");
-			String displayName = config.getString("Commands." + ach + ".DisplayName", "");
+		if (!disabledCategorySet.contains("Commands")) {
+			for (String ach : config.getConfigurationSection("Commands").getKeys(false)) {
+				String achName = config.getString("Commands." + ach + ".Name", "");
+				String displayName = config.getString("Commands." + ach + ".DisplayName", "");
 
-			if (!achievementsAndDisplayNames.containsKey(achName)) {
-				achievementsAndDisplayNames.put(achName, displayName);
-			} else {
-				getLogger()
-						.warning("Duplicate achievement Name (" + achName + "), this may lead to undefined behaviour.");
+				if (!achievementsAndDisplayNames.containsKey(achName)) {
+					achievementsAndDisplayNames.put(achName, displayName);
+				} else {
+					getLogger()
+							.warning("Duplicate achievement Name (" + achName
+									+ "), this may lead to undefined behaviour.");
+				}
 			}
 		}
 
 		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
-			for (String ach : config.getConfigurationSection(category.toString()).getKeys(false)) {
-				String achName = config.getString(category + "." + ach + ".Name", "");
-				String displayName = config.getString(category + "." + ach + ".DisplayName", "");
-
-				if (!achievementsAndDisplayNames.containsKey(achName)) {
-					achievementsAndDisplayNames.put(achName, displayName);
-				} else {
-					getLogger().warning(
-							"Duplicate achievement Name (" + achName + "), this may lead to undefined behaviour.");
-				}
-			}
-		}
-
-		// Enumerate the achievements with multiple categories.
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
-				ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
-				for (String level : subcategoryConfig.getKeys(false)) {
-					String achName = config.getString(category + "." + section + '.' + level + ".Name", "");
-					String displayName = config.getString(category + "." + section + '.' + level + ".DisplayName", "");
+			if (!disabledCategorySet.contains(category.toString())) {
+				for (String ach : config.getConfigurationSection(category.toString()).getKeys(false)) {
+					String achName = config.getString(category + "." + ach + ".Name", "");
+					String displayName = config.getString(category + "." + ach + ".DisplayName", "");
 
 					if (!achievementsAndDisplayNames.containsKey(achName)) {
 						achievementsAndDisplayNames.put(achName, displayName);
 					} else {
 						getLogger().warning(
 								"Duplicate achievement Name (" + achName + "), this may lead to undefined behaviour.");
+					}
+				}
+			}
+		}
+
+		// Enumerate the achievements with multiple categories.
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			if (!disabledCategorySet.contains(category.toString())) {
+				for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
+					ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
+					for (String level : subcategoryConfig.getKeys(false)) {
+						String achName = config.getString(category + "." + section + '.' + level + ".Name", "");
+						String displayName = config.getString(category + "." + section + '.' + level + ".DisplayName",
+								"");
+
+						if (!achievementsAndDisplayNames.containsKey(achName)) {
+							achievementsAndDisplayNames.put(achName, displayName);
+						} else {
+							getLogger().warning(
+									"Duplicate achievement Name (" + achName
+											+ "), this may lead to undefined behaviour.");
+						}
 					}
 				}
 			}
