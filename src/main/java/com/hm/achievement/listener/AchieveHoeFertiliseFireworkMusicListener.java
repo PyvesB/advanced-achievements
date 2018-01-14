@@ -87,7 +87,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 				|| clickedMaterial == Material.MELON_STEM && durability < 7
 				|| clickedMaterial == Material.BROWN_MUSHROOM || clickedMaterial == Material.RED_MUSHROOM
 				|| clickedMaterial == Material.COCOA && durability < 9 || clickedMaterial == Material.LONG_GRASS
-				|| (version >= 9 && clickedMaterial == Material.BEETROOT_BLOCK && durability < 3);
+				|| (plugin.getServerVersion() >= 9 && clickedMaterial == Material.BEETROOT_BLOCK && durability < 3);
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 				break;
 		}
 
-		if (version >= 8) {
+		if (plugin.getServerVersion() >= 8) {
 			switch (clickedMaterial) {
 				case ACACIA_FENCE_GATE:
 				case BIRCH_FENCE_GATE:
@@ -159,7 +159,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 			}
 		}
 
-		if (version >= 9) {
+		if (plugin.getServerVersion() >= 9) {
 			switch (clickedMaterial) {
 				case BOAT_ACACIA:
 				case BOAT_BIRCH:
@@ -174,7 +174,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 			}
 		}
 
-		if (version >= 11) {
+		if (plugin.getServerVersion() >= 11) {
 			switch (clickedMaterial) {
 				case BLACK_SHULKER_BOX:
 				case BLUE_SHULKER_BOX:

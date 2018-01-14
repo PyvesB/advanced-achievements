@@ -62,7 +62,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * @return true if the item is a water potion, false otherwise
 	 */
 	protected boolean isWaterPotion(ItemStack item) {
-		if (version >= 9) {
+		if (plugin.getServerVersion() >= 9) {
 			// Method getBasePotionData does not exist for versions prior to Minecraft 1.9.
 			return ((PotionMeta) (item.getItemMeta())).getBasePotionData().getType() == PotionType.WATER;
 		}
@@ -88,7 +88,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 			}
 		}
 
-		ItemStack[] storageContents = version >= 9 ? player.getInventory().getStorageContents()
+		ItemStack[] storageContents = plugin.getServerVersion() >= 9 ? player.getInventory().getStorageContents()
 				: player.getInventory().getContents();
 		// Get all empty slots in the player's inventory.
 		for (ItemStack currentItemStack : storageContents) {

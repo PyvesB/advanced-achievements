@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Abstract class in charge of factoring out common functionality for classes which track statistic increases (such as
@@ -21,7 +20,6 @@ import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 public class StatisticIncreaseHandler implements Reloadable {
 
 	protected final AdvancedAchievements plugin;
-	protected final int version;
 
 	private boolean configRestrictCreative;
 	private boolean configRestrictSpectator;
@@ -30,9 +28,6 @@ public class StatisticIncreaseHandler implements Reloadable {
 
 	public StatisticIncreaseHandler(AdvancedAchievements plugin) {
 		this.plugin = plugin;
-		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
-		// versions change in the future.
-		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	@Override
@@ -41,7 +36,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 		configRestrictSpectator = plugin.getPluginConfig().getBoolean("RestrictSpectator", true);
 		configRestrictAdventure = plugin.getPluginConfig().getBoolean("RestrictAdventure", false);
 		// Spectator mode introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
-		if (configRestrictSpectator && version < 8) {
+		if (configRestrictSpectator && plugin.getServerVersion() < 8) {
 			configRestrictSpectator = false;
 		}
 		configExcludedWorlds = new HashSet<>(plugin.getPluginConfig().getList("ExcludedWorlds"));

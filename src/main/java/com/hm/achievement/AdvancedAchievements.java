@@ -134,6 +134,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 	// Various other fields and parameters.
 	private final Map<String, String> achievementsAndDisplayNames;
+	private final int version;
 	private Map<String, List<Long>> sortedThresholds;
 	private String chatHeader;
 	private Set<String> disabledCategorySet;
@@ -141,6 +142,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	public AdvancedAchievements() {
 		cacheManager = new DatabaseCacheManager(this);
 		achievementsAndDisplayNames = new HashMap<>();
+		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
+		// versions change in the future.
+		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 		sortedThresholds = new HashMap<>();
 	}
 
@@ -312,10 +316,6 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * @return the set containing the names of the disabled categories
 	 */
 	public Set<String> extractDisabledCategories(CommentedYamlConfiguration config) {
-		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
-		// versions change in the future.
-		int minecraftVersion = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
-
 		Set<String> disabledCategorySet = new HashSet<>(config.getList("DisabledCategories"));
 		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
 		if ((!disabledCategorySet.contains(NormalAchievements.PETMASTERGIVE.toString())
@@ -330,21 +330,21 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 					"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
 		}
 		// Elytras introduced in Minecraft 1.9.
-		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString()) && minecraftVersion < 9) {
+		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString()) && version < 9) {
 			disabledCategorySet.add(NormalAchievements.DISTANCEGLIDING.toString());
 			getLogger().warning("Overriding configuration: disabling DistanceGliding category.");
 			getLogger().warning(
 					"Elytra are not available in your Minecraft version, please add DistanceGliding to the DisabledCategories list in your config.");
 		}
 		// Llamas introduced in Minecraft 1.11.
-		if (!disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString()) && minecraftVersion < 11) {
+		if (!disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString()) && version < 11) {
 			disabledCategorySet.add(NormalAchievements.DISTANCELLAMA.toString());
 			getLogger().warning("Overriding configuration: disabling DistanceLlama category.");
 			getLogger().warning(
 					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in your config.");
 		}
 		// Breeding event introduced in Spigot 1319 (Minecraft 1.10.2).
-		if (!disabledCategorySet.contains(MultipleAchievements.BREEDING.toString()) && minecraftVersion < 10) {
+		if (!disabledCategorySet.contains(MultipleAchievements.BREEDING.toString()) && version < 10) {
 			disabledCategorySet.add(MultipleAchievements.BREEDING.toString());
 			getLogger().warning("Overriding configuration: disabling Breeding category.");
 			getLogger().warning(
@@ -942,5 +942,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 	public void setGui(CommentedYamlConfiguration gui) {
 		this.gui = gui;
+	}
+
+	public int getServerVersion() {
+		return version;
 	}
 }

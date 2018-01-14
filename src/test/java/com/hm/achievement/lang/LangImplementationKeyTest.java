@@ -3,12 +3,9 @@ package com.hm.achievement.lang;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lang.command.HelpLang;
 import com.hm.achievement.lang.command.InfoLang;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -17,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import utilities.MockUtility;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,14 +37,15 @@ public class LangImplementationKeyTest {
 	@Before
 	public void setUp() throws Exception {
 		MockUtility mockUtility = MockUtility.setUp()
-				.mockLogger()
-				.mockDataFolder(temporaryFolder.getRoot())
-				.mockPluginConfig();
+				.withLogger()
+				.withPluginDescription()
+				.withDataFolder(temporaryFolder.getRoot())
+				.withPluginLang();
 		plugin = mockUtility.getPluginMock();
 	}
 
 	@Test
-	public void testLangImplForWrongKeys() throws PluginLoadError, IOException, InvalidConfigurationException {
+	public void testLangImplForWrongKeys() {
 		List<Lang> langImpl = Arrays.stream(
 				new Lang[][]{
 						CmdLang.values(),
@@ -63,13 +60,10 @@ public class LangImplementationKeyTest {
 				}
 		).flatMap(Arrays::stream).collect(Collectors.toList());
 
-		String languageFileName = plugin.getPluginConfig().getString("LanguageFileName", "lang.yml");
-		CommentedYamlConfiguration langConfig = new CommentedYamlConfiguration(languageFileName, plugin);
-
 		List<String> missing = new ArrayList<>();
 		for (Lang lang : langImpl) {
 			String key = lang.toLangKey();
-			if (!langConfig.contains(key)) {
+			if (!plugin.getPluginLang().contains(key)) {
 				missing.add(key + " (" + lang + ")");
 			}
 		}

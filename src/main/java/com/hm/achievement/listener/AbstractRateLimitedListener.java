@@ -49,7 +49,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 		}
 		configCooldownActionBar = plugin.getPluginConfig().getBoolean("CooldownActionBar", true);
 		// Action bars introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
-		if (configCooldownActionBar && version < 8) {
+		if (configCooldownActionBar && plugin.getServerVersion() < 8) {
 			configCooldownActionBar = false;
 		}
 

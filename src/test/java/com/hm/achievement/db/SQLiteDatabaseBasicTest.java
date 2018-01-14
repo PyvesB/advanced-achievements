@@ -29,9 +29,10 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		MockUtility mockUtility = MockUtility.setUp()
-				.mockLogger()
-				.mockDataFolder(temporaryFolder.getRoot())
-				.mockPluginConfig();
+				.withLogger()
+				.withPluginDescription()
+				.withDataFolder(temporaryFolder.getRoot())
+				.withPluginConfig("config.yml");
 		AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
 		db = new SQLiteDatabaseManager(pluginMock) {

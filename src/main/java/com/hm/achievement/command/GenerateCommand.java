@@ -37,7 +37,7 @@ public class GenerateCommand extends AbstractCommand {
 
 	@Override
 	protected void executeCommand(CommandSender sender, String[] args) {
-		if (version >= 12) {
+		if (plugin.getServerVersion() >= 12) {
 			AdvancementManager advancementManager = new AdvancementManager(plugin,
 					configRegisterAdvancementDescriptions, configHideAdvancements);
 			advancementManager.registerAdvancements();

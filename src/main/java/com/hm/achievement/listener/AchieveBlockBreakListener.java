@@ -37,9 +37,9 @@ public class AchieveBlockBreakListener extends AbstractListener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		boolean silkTouchBreak = (version >= 9
+		boolean silkTouchBreak = (plugin.getServerVersion() >= 9
 				&& player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
-				|| version < 9 && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
+				|| plugin.getServerVersion() < 9 && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
 
 		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player) || disableSilkTouchBreaks && silkTouchBreak) {
 			return;

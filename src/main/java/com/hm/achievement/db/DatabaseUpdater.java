@@ -19,7 +19,6 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.exception.PluginLoadError;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Class used to update the database schema.
@@ -138,10 +137,7 @@ public class DatabaseUpdater {
 		// Old column type for versions prior to 2.4.1 was integer for SQLite and smallint unsigned for MySQL.
 		if ("integer".equalsIgnoreCase(type) || "smallint unsigned".equalsIgnoreCase(type)) {
 			plugin.getLogger().warning("Updating database tables with Material names, please wait...");
-			// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
-			// versions change in the future.
-			int version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
-			if (version < 13) {
+			if (plugin.getServerVersion() < 13) {
 				updateOldDBToMaterial(MultipleAchievements.BREAKS);
 				updateOldDBToMaterial(MultipleAchievements.CRAFTS);
 				updateOldDBToMaterial(MultipleAchievements.PLACES);

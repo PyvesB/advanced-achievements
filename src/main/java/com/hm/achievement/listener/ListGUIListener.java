@@ -34,7 +34,7 @@ public class ListGUIListener extends AbstractListener {
 	public ListGUIListener(AdvancedAchievements plugin) {
 		super(plugin);
 
-		lockedMaterial = version < 8 ? Material.OBSIDIAN : Material.BARRIER;
+		lockedMaterial = plugin.getServerVersion() < 8 ? Material.OBSIDIAN : Material.BARRIER;
 	}
 
 	@Override

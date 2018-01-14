@@ -4,7 +4,6 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.Reloadable;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -19,7 +18,6 @@ import org.bukkit.entity.Player;
 public abstract class AbstractCommand implements Reloadable {
 
 	protected final AdvancedAchievements plugin;
-	protected final int version;
 
 	protected String configIcon;
 	protected ChatColor configColor;
@@ -28,9 +26,6 @@ public abstract class AbstractCommand implements Reloadable {
 
 	protected AbstractCommand(AdvancedAchievements plugin) {
 		this.plugin = plugin;
-		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
-		// versions change in the future.
-		version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}
 
 	@Override
@@ -72,7 +67,8 @@ public abstract class AbstractCommand implements Reloadable {
 	 */
 	protected void playFireworkSound(Player player) {
 		// If old version, retrieving sound by name as it no longer exists in newer versions.
-		Sound sound = version < 9 ? Sound.valueOf("FIREWORK_BLAST") : Sound.ENTITY_FIREWORK_LARGE_BLAST;
+		Sound sound = plugin.getServerVersion() < 9 ? Sound.valueOf("FIREWORK_BLAST")
+				: Sound.ENTITY_FIREWORK_LARGE_BLAST;
 		player.getWorld().playSound(player.getLocation(), sound, 1, 0.7f);
 	}
 	

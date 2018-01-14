@@ -183,6 +183,12 @@ HideAdvancements: false
 # If true, PlayedTime will no longer increase when the player is AFK. Requires Essentials to work.
 IgnoreAFKPlayedTime: false
 
+# Awarded when a player has received all the achievements. Use the same reward pattern as with achievements.
+# See https://github.com/PyvesB/AdvancedAchievements/wiki/Rewards
+AllAchievementsReceivedRewards:
+  IncreaseMaxOxygen: 30
+  Experience: 100
+
 #=============================OOO=============================#
 # III-----------------------------------------------------III #
 # |                    Database settings                    | #

@@ -150,7 +150,7 @@ public class HelpCommand extends AbstractCommand {
 			sendJsonClickableHoverableMessage(sender, langCommandReload, "/aach reload", langCommandReloadHover);
 		}
 
-		if (version >= 12 && sender.hasPermission("achievement.generate")) {
+		if (plugin.getServerVersion() >= 12 && sender.hasPermission("achievement.generate")) {
 			sendJsonClickableHoverableMessage(sender, langCommandGenerate, "/aach generate", langCommandGenerateHover);
 		}
 
@@ -192,7 +192,7 @@ public class HelpCommand extends AbstractCommand {
 	 */
 	private void sendJsonClickableHoverableMessage(CommandSender sender, String message, String command, String hover) {
 		// Send clickable and hoverable message if sender is a player and if supported by the Minecraft version.
-		if (sender instanceof Player && version > 7) {
+		if (sender instanceof Player && plugin.getServerVersion() > 7) {
 			// Build the json format string.
 			String json = "{\"text\":\"" + message + "\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\""
 					+ command + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[{\"text\":\"" + hover

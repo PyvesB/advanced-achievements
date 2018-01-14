@@ -15,7 +15,8 @@ public enum ListenerLang implements Lang {
 	INCREASE_MAX_HEALTH_REWARD_RECEIVED("Your max health has increased by AMOUNT!"),
 	INCREASE_MAX_OXYGEN_REWARD_RECEIVED("Your max oxygen has increased by AMOUNT!"),
 	ACHIEVEMENT_NEW("New Achievement:"),
-	CUSTOM_COMMAND_REWARD("You received your reward: MESSAGE");
+	CUSTOM_COMMAND_REWARD("You received your reward: MESSAGE"),
+	ALL_ACHIEVEMENTS_RECEIVED("Congratulations, you have received all the achievements!");
 
 	private final String defaultMessage;
 

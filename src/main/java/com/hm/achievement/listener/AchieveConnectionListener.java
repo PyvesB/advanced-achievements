@@ -94,7 +94,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 						return;
 					}
 
-					if (version >= 12) {
+					if (plugin.getServerVersion() >= 12) {
 						awardAdvancements(player);
 					}
 					handleConnectionAchievements(player);

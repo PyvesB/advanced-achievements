@@ -101,7 +101,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 			// Play special sound when receiving the book.
 			if (configSound) {
 				// If old version, retrieving sound by name as it no longer exists in newer versions.
-				Sound sound = version < 9 ? Sound.valueOf("LEVEL_UP") : Sound.ENTITY_PLAYER_LEVELUP;
+				Sound sound = plugin.getServerVersion() < 9 ? Sound.valueOf("LEVEL_UP") : Sound.ENTITY_PLAYER_LEVELUP;
 				player.getWorld().playSound(player.getLocation(), sound, 1.0f, 0.0f);
 			}
 
@@ -185,7 +185,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	 */
 	@SuppressWarnings("unchecked")
 	private void setBookPages(List<String> bookPages, BookMeta bookMeta) {
-		if (version >= 11) {
+		if (plugin.getServerVersion() >= 11) {
 			try {
 				// Code we're trying to execute: this.pages.add(CraftChatMessage.fromString(page, true)[0]); in
 				// CraftMetaBook.java.

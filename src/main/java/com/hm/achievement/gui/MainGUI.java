@@ -5,7 +5,6 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.Lang;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,10 +32,7 @@ public class MainGUI extends AbstractGUI {
 	public MainGUI(AdvancedAchievements plugin) {
 		super(plugin);
 
-		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
-		// versions change in the future.
-		int version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
-		lockedItem = new ItemStack(version < 8 ? Material.OBSIDIAN : Material.BARRIER);
+		lockedItem = new ItemStack(plugin.getServerVersion() < 8 ? Material.OBSIDIAN : Material.BARRIER);
 	}
 
 	@Override

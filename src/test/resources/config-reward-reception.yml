@@ -1,0 +1,10 @@
+# Set to true to activate firework effects when a player receives an achievement.
+Firework: false
+
+# Display achievement Name and Message as screen titles. No effect if using Minecraft 1.7.9 or 1.7.10.
+TitleScreen: false
+
+# Awarded when a player has received all the achievements. Use the same reward pattern as with achievements.
+# See https://github.com/PyvesB/AdvancedAchievements/wiki/Rewards
+AllAchievementsReceivedRewards:
+  IncreaseMaxOxygen: 30

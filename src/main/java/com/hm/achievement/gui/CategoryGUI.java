@@ -418,7 +418,7 @@ public class CategoryGUI extends AbstractGUI {
 			}
 		}
 
-		List<String> rewards = plugin.getRewardParser().getRewardListing(categoryName + '.' + path);
+		List<String> rewards = plugin.getRewardParser().getRewardListing(categoryName + '.' + path + ".Reward");
 		// Add the rewards information.
 		if (!rewards.isEmpty() && !configHideRewardDisplayInList) {
 			lore.add(langListReward);

@@ -41,7 +41,7 @@ public class RewardParser implements Reloadable {
 		this.plugin = plugin;
 
 		// Try to retrieve an Economy instance from Vault.
-		if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
+		if (plugin.getServer().getPluginManager().getPlugin("Vault") != null) {
 			RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager()
 					.getRegistration(Economy.class);
 			if (rsp != null) {
@@ -67,50 +67,50 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Constructs the listing of an achievement's rewards with strings coming from language file.
 	 *
-	 * @param configAchievement
+	 * @param path
 	 * @return type(s) of the achievement reward as an array of strings
 	 */
-	public List<String> getRewardListing(String configAchievement) {
+	public List<String> getRewardListing(String path) {
 		List<String> rewardTypes = new ArrayList<>();
 		Set<String> keyNames = plugin.getPluginConfig().getKeys(true);
 
-		if (economy != null && keyNames.contains(configAchievement + ".Reward.Money")) {
-			int amount = getRewardAmount(configAchievement, "Money");
+		if (economy != null && keyNames.contains(path + ".Money")) {
+			int amount = getRewardAmount(path, "Money");
 			rewardTypes.add(
 					StringUtils.replaceOnce(langListRewardMoney, "AMOUNT", amount + " " + getCurrencyName(amount)));
 		}
 
-		if (keyNames.contains(configAchievement + ".Reward.Item")) {
-			int amount = getItemAmount(configAchievement);
-			String name = getItemName(configAchievement);
+		if (keyNames.contains(path + ".Item")) {
+			int amount = getItemAmount(path);
+			String name = getItemName(path);
 			if (name == null || name.isEmpty()) {
-				name = getItemName(getItemReward(configAchievement));
+				name = getItemName(getItemReward(path));
 			}
 			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[]{"AMOUNT", "ITEM"},
 					new String[]{Integer.toString(amount), name}));
 		}
 
-		if (keyNames.contains(configAchievement + ".Reward.Experience")) {
-			int amount = getRewardAmount(configAchievement, "Experience");
+		if (keyNames.contains(path + ".Experience")) {
+			int amount = getRewardAmount(path, "Experience");
 			rewardTypes.add(StringUtils.replaceOnce(langListRewardExperience, "AMOUNT", Integer.toString(amount)));
 		}
 
-		if (keyNames.contains(configAchievement + ".Reward.IncreaseMaxHealth")) {
-			int amount = getRewardAmount(configAchievement, "IncreaseMaxHealth");
+		if (keyNames.contains(path + ".IncreaseMaxHealth")) {
+			int amount = getRewardAmount(path, "IncreaseMaxHealth");
 			rewardTypes
 					.add(StringUtils.replaceOnce(langListRewardIncreaseMaxHealth, "AMOUNT", Integer.toString(amount)));
 		}
 
-		if (keyNames.contains(configAchievement + ".Reward.IncreaseMaxOxygen")) {
-			int amount = getRewardAmount(configAchievement, "IncreaseMaxOxygen");
+		if (keyNames.contains(path + ".IncreaseMaxOxygen")) {
+			int amount = getRewardAmount(path, "IncreaseMaxOxygen");
 			rewardTypes
 					.add(StringUtils.replaceOnce(langListRewardIncreaseMaxOxygen, "AMOUNT", Integer.toString(amount)));
 		}
 
-		if (keyNames.contains(configAchievement + ".Reward.Command")) {
-			if (plugin.getPluginConfig().isConfigurationSection(configAchievement + ".Reward.Command")
-					&& keyNames.contains(configAchievement + ".Reward.Command.Display")) {
-				String message = getCustomCommandMessage(configAchievement);
+		if (keyNames.contains(path + ".Command")) {
+			if (plugin.getPluginConfig().isConfigurationSection(path + ".Command")
+					&& keyNames.contains(path + ".Command.Display")) {
+				String message = getCustomCommandMessage(path);
 				rewardTypes.add(message);
 			} else {
 				rewardTypes.add(langListRewardCommand);
@@ -151,42 +151,42 @@ public class RewardParser implements Reloadable {
 	 * Extracts the money, experience, increased max health or increased max oxygen rewards amount from the
 	 * configuration.
 	 *
-	 * @param configAchievement
+	 * @param path
 	 * @param type
 	 * @return the reward amount
 	 */
-	public int getRewardAmount(String configAchievement, String type) {
+	public int getRewardAmount(String path, String type) {
 		// Supports both old and new plugin syntax (Amount used to be a separate sub-category).
-		return Math.max(plugin.getPluginConfig().getInt(configAchievement + ".Reward." + type, 0),
-				plugin.getPluginConfig().getInt(configAchievement + ".Reward." + type + ".Amount", 0));
+		return Math.max(plugin.getPluginConfig().getInt(path + "." + type, 0),
+				plugin.getPluginConfig().getInt(path + "." + type + ".Amount", 0));
 	}
 
 	/**
 	 * Returns an item reward for a given achievement (specified in configuration file).
 	 *
-	 * @param configAchievement
+	 * @param path
 	 * @return ItemStack object corresponding to the reward
 	 */
-	public ItemStack getItemReward(String configAchievement) {
-		int amount = getItemAmount(configAchievement);
-		String name = getItemName(configAchievement);
+	public ItemStack getItemReward(String path) {
+		int amount = getItemAmount(path);
+		String name = getItemName(path);
 		if (amount <= 0) {
 			return null;
 		}
 
 		ItemStack item = null;
 		CommentedYamlConfiguration config = plugin.getPluginConfig();
-		if (config.getKeys(true).contains(configAchievement + ".Reward.Item.Type")) {
+		if (config.getKeys(true).contains(path + ".Item.Type")) {
 			// Old config syntax (type of item separated in a additional subcategory).
 			Material rewardMaterial = Material
-					.getMaterial(config.getString(configAchievement + ".Reward.Item.Type", "stone").toUpperCase());
+					.getMaterial(config.getString(path + ".Item.Type", "stone").toUpperCase());
 			if (rewardMaterial != null) {
 				item = new ItemStack(rewardMaterial, amount);
 			}
 		} else {
 			// New config syntax. Reward is of the form: "Item: coal 5 Christmas Coal"
 			// The amount has already been parsed out and is provided by parameter amount.
-			String materialNameAndQty = config.getString(configAchievement + ".Reward.Item", "stone");
+			String materialNameAndQty = config.getString(path + ".Item", "stone");
 			int spaceIndex = materialNameAndQty.indexOf(' ');
 
 			String materialName = spaceIndex > 0 ? materialNameAndQty.toUpperCase().substring(0, spaceIndex)
@@ -205,8 +205,8 @@ public class RewardParser implements Reloadable {
 			}
 		}
 		if (item == null) {
-			plugin.getLogger().warning("Invalid item reward for achievement \""
-					+ config.getString(configAchievement + ".Name") + "\". Please specify a valid Material name.");
+			plugin.getLogger().warning("Invalid item reward for achievement with path \"" + path
+					+ "\". Please specify a valid Material name.");
 		}
 		return item;
 	}
@@ -214,13 +214,13 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Extracts the list of commands to be executed as rewards.
 	 *
-	 * @param configAchievement
+	 * @param path
 	 * @param player
 	 * @return the array containing the commands to be performed as a reward
 	 */
-	public String[] getCommandRewards(String configAchievement, Player player) {
-		String searchFrom = configAchievement + ".Reward.Command";
-		if (plugin.getPluginConfig().isConfigurationSection(configAchievement + ".Reward.Command")) {
+	public String[] getCommandRewards(String path, Player player) {
+		String searchFrom = path + ".Command";
+		if (plugin.getPluginConfig().isConfigurationSection(path + ".Command")) {
 			searchFrom += ".Execute";
 		}
 
@@ -236,33 +236,33 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Extracts custom command message from config. Might be null.
 	 *
-	 * @param configAchievement
+	 * @param path
 	 * @return the custom command message (null if not present)
 	 * @author tassu
 	 */
-	public String getCustomCommandMessage(String configAchievement) {
-		if (!plugin.getPluginConfig().isConfigurationSection(configAchievement + ".Reward.Command")) {
+	public String getCustomCommandMessage(String path) {
+		if (!plugin.getPluginConfig().isConfigurationSection(path + ".Command")) {
 			return null;
 		}
 
-		return plugin.getPluginConfig().getString(configAchievement + ".Reward.Command.Display");
+		return plugin.getPluginConfig().getString(path + ".Command.Display");
 	}
 
 	/**
 	 * Extracts the item reward amount from the configuration.
 	 *
-	 * @param configAchievement
+	 * @param path
 	 * @return the amount for an item reward
 	 */
-	private int getItemAmount(String configAchievement) {
+	private int getItemAmount(String path) {
 		CommentedYamlConfiguration config = plugin.getPluginConfig();
 		int itemAmount = 0;
-		if (config.getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
+		if (config.getKeys(true).contains(path + ".Item.Amount")) {
 			// Old config syntax.
-			itemAmount = config.getInt(configAchievement + ".Reward.Item.Amount", 0);
-		} else if (config.getKeys(true).contains(configAchievement + ".Reward.Item")) {
+			itemAmount = config.getInt(path + ".Item.Amount", 0);
+		} else if (config.getKeys(true).contains(path + ".Item")) {
 			// New config syntax. Name of item and quantity are on the same line, separated by a space.
-			String materialAndQty = config.getString(configAchievement + ".Reward.Item", "");
+			String materialAndQty = config.getString(path + ".Item", "");
 			int indexOfAmount = materialAndQty.indexOf(' ');
 			if (indexOfAmount != -1) {
 				String intString = materialAndQty.substring(indexOfAmount + 1).trim();
@@ -280,14 +280,14 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Extracts the item reward custom name from the configuration.
 	 *
-	 * @param configAchievement
+	 * @param path
 	 * @return the custom name for an item reward
 	 */
-	private String getItemName(String configAchievement) {
+	private String getItemName(String path) {
 		String itemName = null;
 		// Old config syntax does not support item reward names
-		if (!plugin.getPluginConfig().getKeys(true).contains(configAchievement + ".Reward.Item.Amount")) {
-			String configString = plugin.getPluginConfig().getString(configAchievement + ".Reward.Item", "");
+		if (!plugin.getPluginConfig().getKeys(true).contains(path + ".Item.Amount")) {
+			String configString = plugin.getPluginConfig().getString(path + ".Item", "");
 			String[] splittedString = configString.split(" ");
 			if (splittedString.length >= 2) {
 				StringBuilder builder = new StringBuilder();

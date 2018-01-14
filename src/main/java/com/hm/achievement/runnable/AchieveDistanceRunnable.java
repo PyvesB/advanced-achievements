@@ -95,11 +95,11 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 			updateDistance(difference, player, NormalAchievements.DISTANCEMINECART);
 		} else if (player.getVehicle() instanceof Boat) {
 			updateDistance(difference, player, NormalAchievements.DISTANCEBOAT);
-		} else if (version >= 11 && player.getVehicle() instanceof Llama) {
+		} else if (plugin.getServerVersion() >= 11 && player.getVehicle() instanceof Llama) {
 			updateDistance(difference, player, NormalAchievements.DISTANCELLAMA);
-		} else if (!player.isFlying() && (version < 9 || !player.isGliding())) {
+		} else if (!player.isFlying() && (plugin.getServerVersion() < 9 || !player.isGliding())) {
 			updateDistance(difference, player, NormalAchievements.DISTANCEFOOT);
-		} else if (version >= 9 && player.isGliding()) {
+		} else if (plugin.getServerVersion() >= 9 && player.isGliding()) {
 			updateDistance(difference, player, NormalAchievements.DISTANCEGLIDING);
 		}
 	}

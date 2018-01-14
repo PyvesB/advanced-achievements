@@ -48,55 +48,55 @@ public class AdvancedAchievementsBukkitAPINullSafetyTest {
 	}
 
 	@Test
-	public void testAchievementListForNullPlayer() {
+	public void itShouldThrowExceptionWhenGettingAchievementListWithNullPlayer() {
 		expectIllegalArgumentExceptionWithMessage("Player cannot be null.");
 		underTest.getPlayerAchievementsList(null);
 	}
 
 	@Test
-	public void testTotalAchievementsForNullPlayer() {
+	public void itShouldThrowExceptionWhenGettingTotalAchievementsWithNullPlayer() {
 		expectIllegalArgumentExceptionWithMessage("Player cannot be null.");
 		underTest.getPlayerTotalAchievements(null);
 	}
 
 	@Test
-	public void testRankForNullPlayer() {
+	public void itShouldThrowExceptionWhenGettingRankWithNullPlayer() {
 		expectIllegalArgumentExceptionWithMessage("Player cannot be null.");
 		underTest.getPlayerRank(null, 0);
 	}
 
 	@Test
-	public void testNormalStatisticForNullPlayer() {
+	public void itShouldThrowExceptionWhenGettingNormalStatisticWithNullPlayer() {
 		expectIllegalArgumentExceptionWithMessage("Player cannot be null.");
 		underTest.getStatisticForNormalCategory(null, NormalAchievements.ARROWS);
 	}
 
 	@Test
-	public void testNormalStatisticForNullCategory() {
+	public void itShouldThrowExceptionWhenGettingNormalStatisticWithNullCategory() {
 		expectIllegalArgumentExceptionWithMessage("Category cannot be null.");
 		underTest.getStatisticForNormalCategory(UUID.randomUUID(), null);
 	}
 
 	@Test
-	public void testMultipleStatisticForNullPlayer() {
+	public void itShouldThrowExceptionWhenGettingMultipleStatisticWithNullPlayer() {
 		expectIllegalArgumentExceptionWithMessage("Player cannot be null.");
 		underTest.getStatisticForMultipleCategory(null, MultipleAchievements.KILLS, "skeleton");
 	}
 
 	@Test
-	public void testMultipleStatisticForNullCategory() {
+	public void itShouldThrowExceptionWhenGettingMultipleStatisticWithNullCategory() {
 		expectIllegalArgumentExceptionWithMessage("Category cannot be null.");
 		underTest.getStatisticForMultipleCategory(UUID.randomUUID(), null, "skeleton");
 	}
 
 	@Test
-	public void testMultipleStatisticForEmptySubcategory() {
+	public void itShouldThrowExceptionWhenGettingMultipleStatisticWithEmptySubcategory() {
 		expectIllegalArgumentExceptionWithMessage("Sub-category cannot be empty.");
 		underTest.getStatisticForMultipleCategory(UUID.randomUUID(), MultipleAchievements.KILLS, "");
 	}
 
 	@Test
-	public void testAchievementDisplayName() {
+	public void itShouldThrowExceptionWhenGettingDisplayNameWithEmptyName() {
 		expectIllegalArgumentExceptionWithMessage("Achievement Name cannot be empty.");
 		underTest.getDisplayNameForName("");
 	}
