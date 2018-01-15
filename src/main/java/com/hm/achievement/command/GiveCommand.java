@@ -38,29 +38,30 @@ public class GiveCommand extends AbstractParsableCommand {
 
 	@Override
 	protected void executeSpecificActions(CommandSender sender, String[] args, Player player) {
-		String configAchievement = "Commands." + args[1];
+		String achievementPath = "Commands." + args[1];
 
-		if (plugin.getPluginConfig().getString(configAchievement + ".Message", null) != null) {
+		if (plugin.getPluginConfig().getString(achievementPath + ".Message", null) != null) {
 			// Check whether player has already received achievement and cannot receive it again.
-			String achievementName = plugin.getPluginConfig().getString(configAchievement + ".Name");
+			String achievementName = plugin.getPluginConfig().getString(achievementPath + ".Name");
 			if (!configMultiCommand
 					&& plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 				sender.sendMessage(StringUtils.replaceOnce(langAchievementAlreadyReceived, "PLAYER", args[2]));
 				return;
 			}
 
+			String rewardPath = achievementPath + ".Reward";
 			// Fire achievement event.
 			PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
 					.player(player).name(achievementName)
-					.displayName(plugin.getPluginConfig().getString(configAchievement + ".DisplayName"))
-					.message(plugin.getPluginConfig().getString(configAchievement + ".Message"))
-					.commandRewards(plugin.getRewardParser().getCommandRewards(configAchievement, player))
-					.commandMessage(plugin.getRewardParser().getCustomCommandMessage(configAchievement))
-					.itemReward(plugin.getRewardParser().getItemReward(configAchievement))
-					.moneyReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Money"))
-					.experienceReward(plugin.getRewardParser().getRewardAmount(configAchievement, "Experience"))
-					.maxHealthReward(plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxHealth"))
-					.maxOxygenReward(plugin.getRewardParser().getRewardAmount(configAchievement, "IncreaseMaxOxygen"));
+					.displayName(plugin.getPluginConfig().getString(achievementPath + ".DisplayName"))
+					.message(plugin.getPluginConfig().getString(achievementPath + ".Message"))
+					.commandRewards(plugin.getRewardParser().getCommandRewards(rewardPath, player))
+					.commandMessage(plugin.getRewardParser().getCustomCommandMessage(rewardPath))
+					.itemReward(plugin.getRewardParser().getItemReward(rewardPath))
+					.moneyReward(plugin.getRewardParser().getRewardAmount(rewardPath, "Money"))
+					.experienceReward(plugin.getRewardParser().getRewardAmount(rewardPath, "Experience"))
+					.maxHealthReward(plugin.getRewardParser().getRewardAmount(rewardPath, "IncreaseMaxHealth"))
+					.maxOxygenReward(plugin.getRewardParser().getRewardAmount(rewardPath, "IncreaseMaxOxygen"));
 
 			Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 
