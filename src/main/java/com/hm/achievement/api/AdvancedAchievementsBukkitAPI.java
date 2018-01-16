@@ -162,11 +162,11 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		try {
 			playerOnline = onlineCheckFuture.get();
 		} catch (InterruptedException e) {
-			pluginInstance.getLogger().log(Level.SEVERE, "Thead interrupted while checking whether player online.", e);
+			pluginInstance.getLogger().log(Level.SEVERE, "Thread interrupted while checking whether player online:", e);
 			Thread.currentThread().interrupt();
 		} catch (ExecutionException e) {
 			pluginInstance.getLogger().log(Level.SEVERE,
-					"Unexpected execution exception while checking whether player online.", e);
+					"Unexpected execution exception while checking whether player online:", e);
 		} catch (CancellationException ignored) {
 			// Task can be cancelled when plugin disabled.
 		}

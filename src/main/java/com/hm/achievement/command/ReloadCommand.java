@@ -65,7 +65,7 @@ public class ReloadCommand extends AbstractCommand {
 				sender.sendMessage(langConfigReloadFailed);
 			}
 			plugin.getLogger().log(Level.SEVERE,
-					"A non recoverable error was encountered while reloading the plugin, disabling it.", e);
+					"A non recoverable error was encountered while reloading the plugin, disabling it:", e);
 			Bukkit.getServer().getPluginManager().disablePlugin(plugin);
 			return;
 		}

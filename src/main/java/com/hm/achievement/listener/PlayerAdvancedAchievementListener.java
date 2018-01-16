@@ -27,7 +27,6 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
 
 /**
  * Listener class to deal with achievement receptions: rewards, display and database operations.
@@ -351,7 +350,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 				return;
 			} catch (Exception e) {
 				plugin.getLogger().warning(
-						"Errors while trying to display hoverable message for achievement reception. Displaying standard messages instead.");
+						"Failed to display hoverable message for achievement reception. Displaying standard messages instead.");
 			}
 		}
 		player.sendMessage(langAchievementNew + nameToShowUser);
@@ -375,7 +374,8 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			try {
 				PacketSender.sendActionBarPacket(otherPlayer, actionBarJsonMessage);
 			} catch (Exception e) {
-				plugin.getLogger().warning("Errors while trying to display action bar message for notifications.");
+				plugin.getLogger()
+						.warning("Failed to display action bar message for achievement reception notification.");
 			}
 		} else {
 			otherPlayer.sendMessage(plugin.getChatHeader()
@@ -398,8 +398,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 					"{\"text\":\"" + StringUtils.replace(nameToShowUser, "\"", "\\\"") + "\"}",
 					"{\"text\":\"" + StringUtils.replace(messageToShowUser, "\"", "\\\"") + "\"}");
 		} catch (Exception e) {
-			plugin.getLogger().log(Level.SEVERE,
-					"Errors while trying to display achievement screen title. Is your server up-to-date? ", e);
+			plugin.getLogger().warning("Failed to display achievement screen title.");
 		}
 	}
 
@@ -450,7 +449,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			} catch (Exception e) {
 				effectBuilder.with(Type.BALL_LARGE);
 				plugin.getLogger().warning(
-						"Error while loading FireworkStyle. Please use one of the following: BALL_LARGE, BALL, BURST, CREEPER or STAR.");
+						"Failed to load FireworkStyle. Please use one of the following: BALL_LARGE, BALL, BURST, CREEPER or STAR.");
 			}
 		}
 	}

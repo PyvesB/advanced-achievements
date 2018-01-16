@@ -76,7 +76,7 @@ public class DatabaseUpdater {
 					st.executeBatch();
 				}
 			} catch (SQLException e) {
-				throw new PluginLoadError("Error while attempting to set prefix of database tables.", e);
+				throw new PluginLoadError("Error while setting prefix of database tables.", e);
 			}
 		}
 	}
@@ -131,19 +131,19 @@ public class DatabaseUpdater {
 					+ MultipleAchievements.BREAKS.toDBName() + " LIMIT 1");
 			type = rs.getMetaData().getColumnTypeName(1);
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old DB: ", e);
+			plugin.getLogger().log(Level.SEVERE, "Database error while checking if Material upgrade is needed:", e);
 		}
 
 		// Old column type for versions prior to 2.4.1 was integer for SQLite and smallint unsigned for MySQL.
 		if ("integer".equalsIgnoreCase(type) || "smallint unsigned".equalsIgnoreCase(type)) {
-			plugin.getLogger().warning("Updating database tables with Material names, please wait...");
+			plugin.getLogger().info("Updating database tables with Material names, please wait...");
 			if (plugin.getServerVersion() < 13) {
 				updateOldDBToMaterial(MultipleAchievements.BREAKS);
 				updateOldDBToMaterial(MultipleAchievements.CRAFTS);
 				updateOldDBToMaterial(MultipleAchievements.PLACES);
 			} else {
 				throw new PluginLoadError("The database must be updated using tools no longer available in Bukkit. "
-						+ "Start this plugin build once using a Minecraft version prior to 1.13. "
+						+ "Start this plugin build once with a Minecraft version prior to 1.13. "
 						+ "You can then happily use Advanced Achievements with Minecraft 1.13+!");
 			}
 		}
@@ -203,7 +203,7 @@ public class DatabaseUpdater {
 			conn.commit();
 			conn.setAutoCommit(true);
 		} catch (Exception e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while updating old DB (ids to material): ", e);
+			plugin.getLogger().log(Level.SEVERE, "Database error while updating old table to remove Minecraft IDs:", e);
 		}
 	}
 
@@ -222,7 +222,7 @@ public class DatabaseUpdater {
 			// in case a user imports another database into PostgreSQL without doing the table upgrade beforehand).
 			if ("text".equalsIgnoreCase(type) || "char".equalsIgnoreCase(type) || "varchar".equalsIgnoreCase(type)) {
 				plugin.getLogger()
-						.warning("Updating database table with date datatype for achievements, please wait...");
+						.info("Updating database table with date datatype for achievements, please wait...");
 				try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?,?);")) {
 					// Early versions of the plugin added colors to the date. We have to get rid of them by using a
 					// regex pattern, else parsing will fail.
@@ -254,7 +254,7 @@ public class DatabaseUpdater {
 									new Date(oldFormat.parse(regexPattern.matcher(date).replaceAll("")).getTime()));
 						}
 					} catch (ParseException e) {
-						plugin.getLogger().log(Level.SEVERE, "Error while parsing dates: ", e);
+						plugin.getLogger().log(Level.SEVERE, "Database error while parsing dates:", e);
 					}
 					// Prevent from doing any commits before entire transaction is ready.
 					conn.setAutoCommit(false);
@@ -283,7 +283,7 @@ public class DatabaseUpdater {
 				}
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "SQL error while updating old DB (strings to dates): ", e);
+			plugin.getLogger().log(Level.SEVERE, "Database error while updating old connections table:", e);
 		}
 	}
 
@@ -302,7 +302,7 @@ public class DatabaseUpdater {
 				size = rs.getMetaData().getPrecision(1);
 				// Old kills table prior to version 4.2.1 contained a capacity of only 32 chars.
 				if (size == 32) {
-					plugin.getLogger().warning("Updating database table with extended mobname column, please wait...");
+					plugin.getLogger().info("Updating kills database table with new mobname column, please wait...");
 					// Increase size of table.
 					if (plugin.getDatabaseManager() instanceof PostgreSQLDatabaseManager) {
 						st.execute("ALTER TABLE " + sqlDatabaseManager.getPrefix()
@@ -313,7 +313,7 @@ public class DatabaseUpdater {
 					}
 				}
 			} catch (SQLException e) {
-				plugin.getLogger().log(Level.SEVERE, "SQL error while trying to update old kills table: ", e);
+				plugin.getLogger().log(Level.SEVERE, "Database error while updating old kills table:", e);
 			}
 		}
 	}

@@ -209,8 +209,8 @@ public class AdvancementManager {
 				.getMaterial(plugin.getPluginGui().getString(categoryName + ".Item", "bedrock").toUpperCase());
 		if (material == null) {
 			material = Material.BOOK;
-			plugin.getLogger().warning("GUI material for category " + categoryName
-					+ " was not found. Have you spelt the name correctly or is it available for your Minecraft version?");
+			plugin.getLogger().warning("GUI material for category " + categoryName + " was not found. "
+					+ "Have you spelt the name correctly and is it available for your Minecraft version?");
 		}
 		return material;
 	}
@@ -234,7 +234,7 @@ public class AdvancementManager {
 			return (String) PackageType.MINECRAFT_SERVER.getClass(CLASS_MINECRAFT_KEY).getMethod(METHOD_GET_KEY)
 					.invoke(minecraftKey);
 		} catch (Exception e) {
-			plugin.getLogger().warning("Error getting internal item name for advancements. Registering as book.");
+			plugin.getLogger().warning("Failed to get internal item name for advancement icon. Using book instead.");
 			return "book";
 		}
 	}

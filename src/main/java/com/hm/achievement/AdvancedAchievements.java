@@ -173,7 +173,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			selectAndInitialiseDatabaseManager();
 		} catch (PluginLoadError e) {
 			getLogger().log(Level.SEVERE,
-					"A non recoverable error was encountered while loading the plugin, disabling it.", e);
+					"A non recoverable error was encountered while loading the plugin, disabling it:", e);
 			Bukkit.getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
@@ -216,7 +216,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			databaseManager.shutdown();
 		}
 
-		getLogger().info("Remaining requests sent to database, plugin disabled.");
+		getLogger().info("Remaining requests sent to the database, plugin successfully disabled.");
 	}
 
 	@Override
@@ -297,13 +297,13 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		try {
 			configFile = new CommentedYamlConfiguration(fileName, this);
 		} catch (IOException | InvalidConfigurationException e) {
-			throw new PluginLoadError("Error while loading " + fileName
-					+ ".Verify its syntax on yaml-online-parser.appspot.com and use the following logs", e);
+			throw new PluginLoadError("Failed to load " + fileName
+					+ ". Verify its syntax on yaml-online-parser.appspot.com and use the following logs.", e);
 		}
 		try {
 			configFile.backupConfiguration();
 		} catch (IOException e) {
-			getLogger().log(Level.SEVERE, "Error while backing up " + configFile.getName() + ".", e);
+			getLogger().log(Level.SEVERE, "Error while backing up " + configFile.getName() + ":", e);
 		}
 		return configFile;
 	}
@@ -327,28 +327,28 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			disabledCategorySet.add(NormalAchievements.PETMASTERRECEIVE.toString());
 			getLogger().warning("Overriding configuration: disabling PetMasterGive and PetMasterReceive categories.");
 			getLogger().warning(
-					"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in your config.");
+					"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in config.yml.");
 		}
 		// Elytras introduced in Minecraft 1.9.
 		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString()) && version < 9) {
 			disabledCategorySet.add(NormalAchievements.DISTANCEGLIDING.toString());
 			getLogger().warning("Overriding configuration: disabling DistanceGliding category.");
 			getLogger().warning(
-					"Elytra are not available in your Minecraft version, please add DistanceGliding to the DisabledCategories list in your config.");
+					"Elytra are not available in your Minecraft version, please add DistanceGliding to the DisabledCategories list in config.yml.");
 		}
 		// Llamas introduced in Minecraft 1.11.
 		if (!disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString()) && version < 11) {
 			disabledCategorySet.add(NormalAchievements.DISTANCELLAMA.toString());
 			getLogger().warning("Overriding configuration: disabling DistanceLlama category.");
 			getLogger().warning(
-					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in your config.");
+					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in config.yml.");
 		}
 		// Breeding event introduced in Spigot 1319 (Minecraft 1.10.2).
 		if (!disabledCategorySet.contains(MultipleAchievements.BREEDING.toString()) && version < 10) {
 			disabledCategorySet.add(MultipleAchievements.BREEDING.toString());
 			getLogger().warning("Overriding configuration: disabling Breeding category.");
 			getLogger().warning(
-					"The breeding event is not available in your server version, please add Breeding to the DisabledCategories list in your config.");
+					"The breeding event is not available in your server version, please add Breeding to the DisabledCategories list in config.yml.");
 		}
 
 		return disabledCategorySet;
@@ -624,7 +624,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 * Initialises the plugin's main and category GUIs.
 	 */
 	private void initialiseGUIs() {
-		getLogger().info("Setting up graphical interfaces...");
+		getLogger().info("Setting up GUIs for the list command...");
 		mainGUI = new MainGUI(this);
 		categoryGUI = new CategoryGUI(this);
 	}
@@ -699,7 +699,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				}
 			}
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			getLogger().severe("Unexpected error while registering Reloadables.");
+			getLogger().severe("Unexpected error while registering Reloadable classes.");
 		}
 	}
 
@@ -715,7 +715,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				}
 			}
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			getLogger().severe("Unexpected error while registering Cleanables.");
+			getLogger().severe("Unexpected error while registering Cleanable classes..");
 		}
 	}
 
@@ -764,9 +764,8 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				if (!achievementsAndDisplayNames.containsKey(achName)) {
 					achievementsAndDisplayNames.put(achName, displayName);
 				} else {
-					getLogger()
-							.warning("Duplicate achievement Name (" + achName
-									+ "), this may lead to undefined behaviour.");
+					getLogger().warning("Duplicate achievement Name (" + achName
+							+ "). Please ensure each Name is unique in config.yml.");
 				}
 			}
 		}
@@ -781,8 +780,8 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 					if (!achievementsAndDisplayNames.containsKey(achName)) {
 						achievementsAndDisplayNames.put(achName, displayName);
 					} else {
-						getLogger().warning(
-								"Duplicate achievement Name (" + achName + "), this may lead to undefined behaviour.");
+						getLogger().warning("Duplicate achievement Name (" + achName
+								+ "). Please ensure each Name is unique in config.yml.");
 					}
 				}
 			}
@@ -801,9 +800,8 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 						if (!achievementsAndDisplayNames.containsKey(achName)) {
 							achievementsAndDisplayNames.put(achName, displayName);
 						} else {
-							getLogger().warning(
-									"Duplicate achievement Name (" + achName
-											+ "), this may lead to undefined behaviour.");
+							getLogger().warning("Duplicate achievement Name (" + achName
+									+ "). Please ensure each Name is unique in config.yml.");
 						}
 					}
 				}

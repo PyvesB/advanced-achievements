@@ -201,7 +201,7 @@ public class HelpCommand extends AbstractCommand {
 				PacketSender.sendChatMessagePacket((Player) sender, json);
 			} catch (Exception e) {
 				plugin.getLogger().warning(
-						"Errors while trying to display clickable and hoverable message in /aach help command. Displaying standard message instead.");
+						"Failed to display clickable and hoverable message in /aach help command. Displaying standard message instead.");
 				sender.sendMessage(message);
 			}
 		} else {

@@ -83,7 +83,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 				sender.sendMessage(
 						color + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue());
 			} else {
-				plugin.getLogger().warning("Ranking command: name corresponding to UUID not found.");
+				plugin.getLogger().warning("Ranking command: could not find player's name using a database UUID.");
 			}
 			++currentRank;
 			if (currentRank > configTopList) {
@@ -147,7 +147,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 			try {
 				ParticleEffect.PORTAL.display(0, 1, 0, 0.5f, 1000, player.getLocation(), 1);
 			} catch (Exception e) {
-				plugin.getLogger().severe("Error while displaying additional particle effects.");
+				plugin.getLogger().warning("Failed to display additional particle effects for rankings.");
 			}
 		}
 

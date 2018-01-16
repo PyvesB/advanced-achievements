@@ -48,7 +48,7 @@ public interface SQLWriteOperation {
 			} catch (SQLException e) {
 				if (attempt == MAX_ATTEMPTS) {
 					// Final attempt: log error.
-					logger.log(Level.SEVERE, "SQL write error while " + operationMessage, e);
+					logger.log(Level.SEVERE, "Database write error while " + operationMessage + ":", e);
 				} else {
 					// Sleep before next attempt.
 					sleepOneSecond(logger);
@@ -66,7 +66,7 @@ public interface SQLWriteOperation {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			logger.log(Level.SEVERE, "Thead interrupted while sleeping.", e);
+			logger.log(Level.SEVERE, "Thead interrupted while sleeping:", e);
 			Thread.currentThread().interrupt();
 		}
 	}

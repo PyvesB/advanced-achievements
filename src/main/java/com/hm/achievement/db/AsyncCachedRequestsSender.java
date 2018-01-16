@@ -63,7 +63,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 				}
 				st.executeBatch();
 			}
-		}).attemptWrites(plugin.getLogger(), "SQL error while batching statistic updates.");
+		}).attemptWrites(plugin.getLogger(), "batching statistic updates");
 	}
 
 	/**

@@ -94,7 +94,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 				try {
 					ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 100);
 				} catch (Exception e) {
-					plugin.getLogger().severe("Error while displaying additional particle effects for books.");
+					plugin.getLogger().warning("Failed to display additional particle effects for books.");
 				}
 			}
 

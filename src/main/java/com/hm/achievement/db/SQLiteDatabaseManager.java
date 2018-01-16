@@ -45,7 +45,7 @@ public class SQLiteDatabaseManager extends AbstractSQLDatabaseManager {
 					FileManager fileManager = new FileManager("achievements.db", plugin);
 					fileManager.backupFile();
 				} catch (IOException e) {
-					plugin.getLogger().log(Level.SEVERE, "Error while backing up database file.", e);
+					plugin.getLogger().log(Level.SEVERE, "Error while backing up database file:", e);
 				}
 			}
 		}
@@ -53,7 +53,7 @@ public class SQLiteDatabaseManager extends AbstractSQLDatabaseManager {
 		File dbfile = new File(plugin.getDataFolder(), "achievements.db");
 		try {
 			if (dbfile.createNewFile()) {
-				plugin.getLogger().info("Successfully created database file.");
+				plugin.getLogger().info("Successfully created new SQLite database file.");
 			}
 		} catch (IOException e) {
 			throw new PluginLoadError("Error while creating database file.", e);

@@ -175,7 +175,7 @@ public class FileUpdater {
 				config.saveConfiguration();
 				config.loadConfiguration();
 			} catch (IOException | InvalidConfigurationException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the configuration file.", e);
+				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the configuration file:", e);
 			}
 		}
 	}
@@ -228,7 +228,7 @@ public class FileUpdater {
 				lang.saveConfiguration();
 				lang.loadConfiguration();
 			} catch (IOException | InvalidConfigurationException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the language file.", e);
+				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the language file:", e);
 			}
 		}
 	}
@@ -270,7 +270,7 @@ public class FileUpdater {
 				gui.saveConfiguration();
 				gui.loadConfiguration();
 			} catch (IOException | InvalidConfigurationException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the gui file.", e);
+				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the gui file:", e);
 			}
 		}
 	}

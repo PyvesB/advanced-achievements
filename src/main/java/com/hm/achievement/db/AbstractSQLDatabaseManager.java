@@ -67,7 +67,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @throws PluginLoadError
 	 */
 	public void initialise() throws PluginLoadError {
-		plugin.getLogger().info("Initialising database... ");
+		plugin.getLogger().info("Initialising database...");
 
 		prefix = plugin.getPluginConfig().getString("TablePrefix", "");
 		additionalConnectionOptions = plugin.getPluginConfig().getString("AdditionalConnectionOptions", "");
@@ -82,7 +82,8 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		Connection conn = getSQLConnection();
 
 		if (conn == null) {
-			throw new PluginLoadError("Could not establish SQL connection. Please verify your settings in config.yml.");
+			throw new PluginLoadError(
+					"Failed to establish database connection. Please verify your settings in config.yml.");
 		}
 
 		DatabaseUpdater databaseUpdater = new DatabaseUpdater(plugin, this);
@@ -109,10 +110,11 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		try {
 			// Wait a few seconds for remaining tasks to execute.
 			if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
-				plugin.getLogger().warning("Some write operations were not sent to the database.");
+				plugin.getLogger()
+						.warning("Some write operations could not be sent to the database during plugin shutdown.");
 			}
 		} catch (InterruptedException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error awaiting for pool to terminate its tasks.", e);
+			plugin.getLogger().log(Level.SEVERE, "Error while waiting for database write operations to complete:", e);
 			Thread.currentThread().interrupt();
 		} finally {
 			try {
@@ -121,7 +123,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 					connection.close();
 				}
 			} catch (SQLException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while closing connection to database.", e);
+				plugin.getLogger().log(Level.SEVERE, "Error while closing connection to the database:", e);
 			}
 		}
 	}
@@ -142,7 +144,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while attempting to retrieve connection to database.", e);
+			plugin.getLogger().log(Level.SEVERE, "Error while attempting to retrieve a connection to the database:", e);
 		}
 		return sqlConnection.get();
 	}

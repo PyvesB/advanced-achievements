@@ -131,7 +131,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 		try {
 			PacketSender.sendActionBarPacket(player, actionBarJsonMessage);
 		} catch (Exception e) {
-			plugin.getLogger().warning("Errors while trying to display action bar message for cooldown.");
+			plugin.getLogger().warning("Failed to display action bar message for cooldown.");
 		}
 	}
 }

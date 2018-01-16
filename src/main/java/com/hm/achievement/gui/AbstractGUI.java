@@ -108,8 +108,8 @@ public abstract class AbstractGUI implements Reloadable {
 		short metadata = (short) plugin.getPluginGui().getInt(categoryName + ".Metadata", 0);
 		if (material == null) {
 			material = Material.BEDROCK;
-			plugin.getLogger().warning("GUI material for category " + categoryName
-					+ " was not found. Have you spelt the name correctly or is it available for your Minecraft version?");
+			plugin.getLogger().warning("GUI material for category " + categoryName + " was not found. "
+					+ "Have you spelt the name correctly and is it available for your Minecraft version?");
 		}
 		return new ItemStack(material, 1, metadata);
 	}

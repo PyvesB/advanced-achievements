@@ -117,7 +117,7 @@ public class StatsCommand extends AbstractCommand {
 					// Play special effect.
 					ParticleEffect.SPELL_WITCH.display(0, 1, 0, 0.5f, 400, player.getLocation(), 1);
 				} catch (Exception e) {
-					plugin.getLogger().severe("Error while displaying additional particle effects.");
+					plugin.getLogger().warning("Failed to display additional particle effects for stats command.");
 				}
 			}
 

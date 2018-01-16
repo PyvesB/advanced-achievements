@@ -39,6 +39,6 @@ public interface SQLReadOperation<T> {
 				cause = e;
 			}
 		}
-		throw new DatabaseReadError("SQL read error while " + operationMessage, cause);
+		throw new DatabaseReadError("Database read error while " + operationMessage + ".", cause);
 	}
 }
