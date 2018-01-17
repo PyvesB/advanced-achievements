@@ -39,6 +39,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 		AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
 		db = new SQLiteDatabaseManager(pluginMock) {
+
 			@Override
 			public void extractConfigurationParameters() {
 				super.extractConfigurationParameters();

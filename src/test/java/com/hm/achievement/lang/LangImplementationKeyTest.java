@@ -47,7 +47,7 @@ public class LangImplementationKeyTest {
 	@Test
 	public void testLangImplForWrongKeys() {
 		List<Lang> langImpl = Arrays.stream(
-				new Lang[][]{
+				new Lang[][] {
 						CmdLang.values(),
 						HelpLang.values(),
 						HelpLang.Hover.values(),
@@ -57,8 +57,7 @@ public class LangImplementationKeyTest {
 						RewardLang.values(),
 						NormalAchievements.values(),
 						MultipleAchievements.values()
-				}
-		).flatMap(Arrays::stream).collect(Collectors.toList());
+				}).flatMap(Arrays::stream).collect(Collectors.toList());
 
 		List<String> missing = new ArrayList<>();
 		for (Lang lang : langImpl) {

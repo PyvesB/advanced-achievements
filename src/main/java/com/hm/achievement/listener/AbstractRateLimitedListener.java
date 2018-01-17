@@ -85,7 +85,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * @return true if the player is still in cooldown, false otherwise
 	 */
 	protected boolean isInCooldownPeriod(Player player, String prefixInMap, boolean delay,
-										 NormalAchievements category) {
+			NormalAchievements category) {
 		List<Long> categoryThresholds = plugin.getSortedThresholds().get(category.toString());
 		long hardestAchievementThreshold = categoryThresholds.get(categoryThresholds.size() - 1);
 		long currentPlayerStatistic = plugin.getCacheManager().getAndIncrementStatisticAmount(category,

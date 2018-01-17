@@ -9,13 +9,13 @@ import com.hm.achievement.category.NormalAchievements;
 import me.clip.placeholderapi.external.EZPlaceholderHook;
 
 /**
- * Class enabling usage of placeholder with PlaceholderAPI to get achievements
- * stats in others plugins.
+ * Class enabling usage of placeholder with PlaceholderAPI to get achievements stats in others plugins.
  * 
  * @author Phoetrix
  *
  */
 public class AchievementPlaceholderHook extends EZPlaceholderHook {
+
 	private final AdvancedAchievements plugin;
 
 	public AchievementPlaceholderHook(AdvancedAchievements plugin) {

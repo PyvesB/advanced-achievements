@@ -86,8 +86,8 @@ public class RewardParser implements Reloadable {
 			if (name == null || name.isEmpty()) {
 				name = getItemName(getItemReward(path));
 			}
-			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[]{"AMOUNT", "ITEM"},
-					new String[]{Integer.toString(amount), name}));
+			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
+					new String[] { Integer.toString(amount), name }));
 		}
 
 		if (keyNames.contains(path + ".Experience")) {

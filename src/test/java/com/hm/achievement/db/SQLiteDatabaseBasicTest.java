@@ -36,6 +36,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 		AdvancedAchievements pluginMock = mockUtility.getPluginMock();
 
 		db = new SQLiteDatabaseManager(pluginMock) {
+
 			@Override
 			public void extractConfigurationParameters() {
 				super.extractConfigurationParameters();
@@ -69,15 +70,14 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 		List<AwardedDBAchievement> achievements = db.getPlayerAchievementsList(testUUID);
 		assertEquals(1, achievements.size());
 		AwardedDBAchievement found = achievements.get(0);
-		AwardedDBAchievement expected = 
-				new AwardedDBAchievement(testUUID, testAchievement, testAchievementMsg, found.getDateAwarded(), found.getFormattedDate());
+		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, testAchievement, testAchievementMsg,
+				found.getDateAwarded(), found.getFormattedDate());
 		assertEquals(expected, found);
 	}
 
 	@Test
 	public void testAchievementCount() {
 		registerAchievement();
-
 
 		Map<UUID, Integer> expected = Collections.singletonMap(testUUID, 1);
 

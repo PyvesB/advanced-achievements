@@ -194,7 +194,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		// where names containing single quotes were inserted with two single quotes in the database.
 		String sql = achName.contains("'")
 				? "SELECT date FROM " + prefix
-				+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
+						+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
 				: "SELECT date FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<String>) () -> {
 			Connection conn = getSQLConnection();
@@ -268,9 +268,9 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		// Either consider all the achievements or only those received after the start date.
 		String sql = start == 0L
 				? "SELECT playername, COUNT(*) FROM " + prefix
-				+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
+						+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
 				: "SELECT playername, COUNT(*) FROM " + prefix
-				+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC";
+						+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC";
 		return ((SQLReadOperation<Map<String, Integer>>) () -> {
 			Map<String, Integer> topList = new LinkedHashMap<>();
 			Connection conn = getSQLConnection();
@@ -305,7 +305,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param uuid
 	 * @param achName
 	 * @param achMessage
-	 * @param epochMs    Moment the achievement was registered at.
+	 * @param epochMs Moment the achievement was registered at.
 	 */
 	protected void registerAchievement(UUID uuid, String achName, String achMessage, long epochMs) {
 		String sql = "REPLACE INTO " + prefix + "achievements VALUES (?,?,?,?)";
@@ -333,7 +333,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		// where names containing single quotes were inserted with two single quotes in the database.
 		String sql = achName.contains("'")
 				? "SELECT achievement FROM " + prefix
-				+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
+						+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
 				: "SELECT achievement FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<Boolean>) () -> {
 			Connection conn = getSQLConnection();
@@ -535,7 +535,8 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				ps.setObject(1, uuid);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
-						// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing single
+						// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing
+						// single
 						// quotes were inserted with two single quotes in the database.
 						String achName = StringUtils.replace(rs.getString(2), "''", "'");
 						String displayName = plugin.getAchievementsAndDisplayNames().get(achName);
@@ -545,7 +546,8 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 						String achMsg = rs.getString(3);
 						Date dateAwarded = rs.getDate(4);
 
-						achievements.add(new AwardedDBAchievement(uuid, achName, achMsg, dateAwarded.getTime(), dateFormat.format(dateAwarded)));
+						achievements.add(new AwardedDBAchievement(uuid, achName, achMsg, dateAwarded.getTime(),
+								dateFormat.format(dateAwarded)));
 					}
 				}
 			}

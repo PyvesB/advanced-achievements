@@ -77,11 +77,9 @@ public class HelpCommand extends AbstractCommand {
 		langCommandGenerateHover = Lang.get(HelpLang.Hover.GENERATE, plugin);
 		langCommandGive = header("/aach give &oach player")
 				+ translateColorCodes(
-				Lang.getEachReplaced(
-						HelpLang.GIVE, plugin,
-						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}
-				)
-		);
+						Lang.getEachReplaced(
+								HelpLang.GIVE, plugin,
+								new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
 		langCommandGiveHover = Lang.get(HelpLang.Hover.GIVE, plugin);
 		langCommandAdd = header("/aach add &ox cat player") + Lang.get(HelpLang.ADD, plugin);
 		langCommandAddHover = Lang.get(HelpLang.Hover.ADD, plugin);
@@ -90,17 +88,15 @@ public class HelpCommand extends AbstractCommand {
 		langCommandResetHover = Lang.get(HelpLang.Hover.RESET, plugin);
 		langCommandCheck = header("/aach check &oach player")
 				+ translateColorCodes(
-				Lang.getEachReplaced(
-						HelpLang.CHECK, plugin,
-						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}
-				));
+						Lang.getEachReplaced(
+								HelpLang.CHECK, plugin,
+								new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
 		langCommandCheckHover = Lang.get(HelpLang.Hover.CHECK, plugin);
 		langCommandDelete = header("/aach delete &oach player")
 				+ translateColorCodes(
-				Lang.getEachReplaced(
-						HelpLang.DELETE, plugin,
-						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}
-				));
+						Lang.getEachReplaced(
+								HelpLang.DELETE, plugin,
+								new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
 		langCommandDeleteHover = Lang.get(HelpLang.Hover.DELETE, plugin);
 		langTip = ChatColor.GRAY + translateColorCodes(Lang.get(CmdLang.AACH_TIP, plugin));
 	}

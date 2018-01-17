@@ -26,5 +26,5 @@ public class HelpLangTest {
 				.collect(Collectors.toSet());
 		assertEquals(helpNames, hoverNames);
 	}
-	
+
 }

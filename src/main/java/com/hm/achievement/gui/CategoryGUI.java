@@ -149,7 +149,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @param achievementPaths
 	 */
 	private void displayPage(String categoryName, Player player, Map<String, Long> subcategoriesToStatistics,
-							 int requestedPage, ItemStack clickedItem, List<String> achievementPaths) {
+			int requestedPage, ItemStack clickedItem, List<String> achievementPaths) {
 		int pageToDisplay = getPageToDisplay(requestedPage, achievementPaths.size());
 		int pageStart = MAX_PER_PAGE * (pageToDisplay - 1);
 		int pageEnd = Math.min(MAX_PER_PAGE * pageToDisplay, achievementPaths.size());
@@ -224,7 +224,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @param lore
 	 */
 	private void insertAchievement(Inventory gui, int position, long statistic, String name, String date,
-								   boolean ineligibleSeriesItem, List<String> lore) {
+			boolean ineligibleSeriesItem, List<String> lore) {
 		// Display an item depending on whether the achievement was received or not, or whether progress was started.
 		// Clone in order to work with an independent set of metadata.
 		ItemStack achItem;
@@ -385,7 +385,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @return the list representing the lore of a category item
 	 */
 	private List<String> buildLore(String categoryName, String description, String path, String date, long statistic,
-								   boolean ineligibleSeriesItem) {
+			boolean ineligibleSeriesItem) {
 		List<String> lore = new ArrayList<>();
 		lore.add("");
 

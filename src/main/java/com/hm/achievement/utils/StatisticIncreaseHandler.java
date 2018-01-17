@@ -41,7 +41,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 		}
 		configExcludedWorlds = new HashSet<>(plugin.getPluginConfig().getList("ExcludedWorlds"));
 	}
-	
+
 	/**
 	 * Compares the current value to the achievement thresholds. If a threshold is reached, awards the achievement if it
 	 * wasn't previously received.

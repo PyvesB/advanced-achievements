@@ -128,8 +128,8 @@ public abstract class AbstractGUI implements Reloadable {
 			itemMeta.setDisplayName("");
 		} else {
 			itemMeta.setDisplayName(translateColorCodes(
-					StringUtils.replaceEach(configListAchievementFormat, new String[]{"%ICON%", "%NAME%"},
-							new String[]{configIcon, "&l" + displayName + "&8"})));
+					StringUtils.replaceEach(configListAchievementFormat, new String[] { "%ICON%", "%NAME%" },
+							new String[] { configIcon, "&l" + displayName + "&8" })));
 		}
 
 		// Construct lore of the category item.

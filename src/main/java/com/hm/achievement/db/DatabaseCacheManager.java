@@ -135,8 +135,8 @@ public class DatabaseCacheManager implements Cleanable {
 	 * @param value
 	 * @return the updated statistic value
 	 */
-	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player, 
-					int value) {
+	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player,
+			int value) {
 		CachedStatistic statistic = getHashMap(category)
 				.get(getMultipleCategoryCacheKey(category, player, subcategory));
 		if (statistic == null) {

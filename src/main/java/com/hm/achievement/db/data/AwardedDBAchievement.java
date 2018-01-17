@@ -22,7 +22,8 @@ public class AwardedDBAchievement extends DBAchievement {
 		this.formattedDate = formattedDate;
 	}
 
-	public AwardedDBAchievement(UUID awardedTo, String name, String message, long dateAwarded, String formattedDate, Category category) {
+	public AwardedDBAchievement(UUID awardedTo, String name, String message, long dateAwarded, String formattedDate,
+			Category category) {
 		super(name, message, category);
 		this.awardedTo = awardedTo;
 		this.dateAwarded = dateAwarded;
@@ -43,9 +44,12 @@ public class AwardedDBAchievement extends DBAchievement {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		if (!super.equals(o))
+			return false;
 		AwardedDBAchievement that = (AwardedDBAchievement) o;
 		return Objects.equals(awardedTo, that.awardedTo) &&
 				Objects.equals(dateAwarded, that.dateAwarded);

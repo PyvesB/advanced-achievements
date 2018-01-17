@@ -56,7 +56,7 @@ public class AddCommand extends AbstractParsableCommand {
 						value);
 				statistic.checkThresholdsAndAchievements(player, category.toString(), amount);
 				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
-						new String[]{"ACH", "AMOUNT", "PLAYER"}, new String[]{args[2], args[1], args[3]}));
+						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
 				return;
 			}
 		}
@@ -71,7 +71,7 @@ public class AddCommand extends AbstractParsableCommand {
 							player.getUniqueId(), value);
 					statistic.checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
 					sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
-							new String[]{"ACH", "AMOUNT", "PLAYER"}, new String[]{args[2], args[1], args[3]}));
+							new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
 					return;
 				}
 			}

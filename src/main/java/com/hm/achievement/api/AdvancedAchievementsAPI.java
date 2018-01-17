@@ -27,7 +27,7 @@ public interface AdvancedAchievementsAPI {
 	 * Checks whether player has received achievement {@code achievementName}. Implementation benefits from Advanced
 	 * Achievements caching when player is online and if method called from server thread.
 	 *
-	 * @param player          should not be null
+	 * @param player should not be null
 	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml, should not be empty
 	 * @return true if player has received the achievement, false otherwise
 	 * @since 5.0
@@ -56,9 +56,9 @@ public interface AdvancedAchievementsAPI {
 	/**
 	 * Retrieves the {@code Rank} object of a player over a given period.
 	 *
-	 * @param player             should not be null
+	 * @param player should not be null
 	 * @param rankingPeriodStart time in millis since epoch; rank will be calculated for achievements received between
-	 *                           that starting point and now
+	 *            that starting point and now
 	 * @return rank of the player; if no achievements were received over the period, his rank will be Integer.MAX_VALUE
 	 * @since 5.0
 	 */
@@ -67,9 +67,9 @@ public interface AdvancedAchievementsAPI {
 	/**
 	 * Retrieves the players who have received the most achievements during a given period.
 	 *
-	 * @param numOfPlayers       to return in the list
+	 * @param numOfPlayers to return in the list
 	 * @param rankingPeriodStart time in millis since epoch; ranks will be calculated for achievements received between
-	 *                           that starting point and now
+	 *            that starting point and now
 	 * @return list of players, ordered from best to worst
 	 * @since 5.0
 	 */
@@ -79,7 +79,7 @@ public interface AdvancedAchievementsAPI {
 	 * Retrieves a statistic for a normal category. Implementation benefits from Advanced Achievements caching when
 	 * player is online and if method called from server thread.
 	 *
-	 * @param player   should not be null
+	 * @param player should not be null
 	 * @param category should not be null
 	 * @return the statistic for the normal category
 	 * @since 5.0
@@ -90,8 +90,8 @@ public interface AdvancedAchievementsAPI {
 	 * Retrieves a statistic for a multiple category. Implementation benefits from Advanced Achievements caching when
 	 * player is online and if method called from server thread.
 	 *
-	 * @param player      should not be null
-	 * @param category    should not be null
+	 * @param player should not be null
+	 * @param category should not be null
 	 * @param subcategory within the main multiple category
 	 * @return the statistic for the multiple category
 	 * @since 5.0

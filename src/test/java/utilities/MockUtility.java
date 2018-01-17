@@ -54,7 +54,7 @@ public class MockUtility {
 		when(pluginMock.getDataFolder()).thenReturn(folder);
 		return this;
 	}
-	
+
 	public MockUtility withPluginDescription() {
 		try {
 			File pluginYml = new File(getClass().getResource("/plugin.yml").getPath());

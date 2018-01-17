@@ -162,7 +162,7 @@ public class FileUpdater {
 		// Added in version 5.5:
 		updateSetting(config, "ListColorNotReceived", 8,
 				"Color used for Goals and progress bars in /aach list when an achievement is not yet received.");
-		
+
 		if (!config.isConfigurationSection("AllAchievementsReceivedRewards")) {
 			updateSetting(config, "AllAchievementsReceivedRewards.Money", 30,
 					"Awarded when a player has received all the achievements. Use the same reward pattern as with achievements.",
@@ -205,7 +205,7 @@ public class FileUpdater {
 
 		// Iterate through all Lang implementation keys & default values
 		Arrays.stream(
-				new Lang[][]{
+				new Lang[][] {
 						CmdLang.values(),
 						HelpLang.values(),
 						HelpLang.Hover.values(),
@@ -215,8 +215,7 @@ public class FileUpdater {
 						RewardLang.values(),
 						NormalAchievements.values(),
 						MultipleAchievements.values()
-				}
-		).flatMap(Arrays::stream)
+				}).flatMap(Arrays::stream)
 				.forEach(language -> updateLang(lang, language));
 
 		// Not found in Enums (Possibly unused)

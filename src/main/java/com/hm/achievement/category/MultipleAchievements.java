@@ -21,7 +21,7 @@ public enum MultipleAchievements implements Category {
 	private final String subcategoryDBName;
 
 	MultipleAchievements(String categoryName, String langDefault, String configComment,
-						 String subcategoryName) {
+			String subcategoryName) {
 		this.categoryName = categoryName;
 		this.langDefault = langDefault;
 		this.configComment = configComment;
