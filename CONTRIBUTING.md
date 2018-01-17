@@ -16,4 +16,4 @@ Want to make Advanced Achievements better, faster, stronger? Contributions are m
 2. Go through the [Developers](https://github.com/PyvesB/AdvancedAchievements/wiki/Developers) guide to get the project up and running and learn how to interact with the plugin.
 3. If you are unsure about how to do something, simply ask by tagging @PyvesB!
 4. Historically the plugin has had poor test coverage, so don't worry too much if you can't add any tests with your pull request. Nevertheless if you want improve maintainability and practice your unit testing skills, please do!
-5. Before submitting your pull request, verify that your code style is somewhat consistent with the rest of the project. You should be good to go! :+1:
+5. Run `mvn formatter:format` to make sure that your code style is consistent with the rest of the project. Your pull request should be ready for submission! :+1:
