@@ -163,6 +163,7 @@ public class FileUpdater {
 		updateSetting(config, "ListColorNotReceived", 8,
 				"Color used for Goals and progress bars in /aach list when an achievement is not yet received.");
 
+		// Added in version 5.6:
 		if (!config.isConfigurationSection("AllAchievementsReceivedRewards")) {
 			updateSetting(config, "AllAchievementsReceivedRewards.Money", 30,
 					"Awarded when a player has received all the achievements. Use the same reward pattern as with achievements.",

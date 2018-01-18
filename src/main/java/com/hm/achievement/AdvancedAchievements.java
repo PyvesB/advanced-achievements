@@ -50,7 +50,7 @@ import java.util.logging.Level;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 5.5
+ * @version 5.6
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin implements Reloadable {
