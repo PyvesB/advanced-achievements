@@ -1,22 +1,33 @@
 package com.hm.achievement.db;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.utils.Reloadable;
-import org.apache.commons.lang3.StringUtils;
-
-import java.sql.*;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
 
 /**
  * Abstract class in charge of factoring out common functionality for the database manager.
@@ -169,7 +180,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			List<String> achievementNamesList = new ArrayList<>();
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ps.setFetchSize(1000);
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
@@ -199,7 +210,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<String>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				if (achName.contains("'")) {
 					ps.setString(3, StringUtils.replace(achName, "'", "''"));
@@ -250,7 +261,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Integer>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				rs.next();
 				return rs.getInt(1);
@@ -312,7 +323,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				ps.setString(3, achMessage == null ? "" : achMessage);
 				ps.setDate(4, new Date(epochMs));
@@ -338,7 +349,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Boolean>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				if (achName.contains("'")) {
 					ps.setString(3, StringUtils.replace(achName, "'", "''"));
@@ -361,7 +372,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Long>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
 					return rs.getLong(dbName);
@@ -386,7 +397,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Long>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, subcategory);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
@@ -409,7 +420,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Integer>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
 					return rs.getInt(dbName);
@@ -431,7 +442,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<String>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
 					return rs.getString("date");
@@ -455,14 +466,14 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Integer>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sqlRead)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
 				String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES (?,?,?)";
 				((SQLWriteOperation) () -> {
 					Connection writeConn = getSQLConnection();
 					try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
-						writePrep.setObject(1, uuid);
+						writePrep.setObject(1, uuid, Types.CHAR);
 						writePrep.setInt(2, connections);
 						writePrep.setString(3, date);
 						writePrep.execute();
@@ -488,7 +499,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				if (achName.contains("'")) {
 					ps.setString(3, StringUtils.replace(achName, "'", "''"));
@@ -532,12 +543,11 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setFetchSize(1000);
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
 						// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing
-						// single
-						// quotes were inserted with two single quotes in the database.
+						// single quotes were inserted with two single quotes in the database.
 						String achName = StringUtils.replace(rs.getString(2), "''", "'");
 						String displayName = plugin.getAchievementsAndDisplayNames().get(achName);
 						if (StringUtils.isNotBlank(displayName)) {

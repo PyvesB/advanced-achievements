@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.UUID;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -50,7 +51,7 @@ public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid);
+				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				ps.setString(3, achMessage);
 				ps.setDate(4, new Date(System.currentTimeMillis()));
@@ -78,7 +79,7 @@ public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 				((SQLWriteOperation) () -> {
 					Connection writeConn = getSQLConnection();
 					try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
-						writePrep.setObject(1, uuid);
+						writePrep.setObject(1, uuid, Types.CHAR);
 						writePrep.setInt(2, connections);
 						writePrep.setString(3, date);
 						writePrep.setInt(4, connections);
