@@ -89,6 +89,12 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		Player player = (Player) sender;
 
 		if (!isInCooldownPeriod(player)) {
+			List<AwardedDBAchievement> playerAchievementsList = plugin.getDatabaseManager()
+					.getPlayerAchievementsList(player.getUniqueId());
+			if (playerAchievementsList.isEmpty()) {
+				player.sendMessage(langBookNotReceived);
+				return;
+			}
 			// Play special particle effect when receiving the book.
 			if (configAdditionalEffects) {
 				try {
@@ -105,7 +111,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 				player.getWorld().playSound(player.getLocation(), sound, 1.0f, 0.0f);
 			}
 
-			fillBook(plugin.getDatabaseManager().getPlayerAchievementsList(player.getUniqueId()), player);
+			fillBook(playerAchievementsList, player);
 		} else {
 			player.sendMessage(langBookDelay);
 		}
@@ -128,11 +134,6 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 					+ configBookSeparator + achievement.getFormattedDate();
 			currentAchievement = translateColorCodes(currentAchievement);
 			bookPages.add(currentAchievement);
-		}
-
-		if (bookPages.isEmpty()) {
-			player.sendMessage(langBookNotReceived);
-			return;
 		}
 
 		// Set the pages and other elements of the book (author, title and date of reception).
