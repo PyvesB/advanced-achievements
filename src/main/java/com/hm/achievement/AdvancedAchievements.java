@@ -1,20 +1,15 @@
 package com.hm.achievement;
 
-import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.*;
-import com.hm.achievement.db.*;
-import com.hm.achievement.exception.PluginLoadError;
-import com.hm.achievement.gui.CategoryGUI;
-import com.hm.achievement.gui.MainGUI;
-import com.hm.achievement.listener.*;
-import com.hm.achievement.runnable.AchieveDistanceRunnable;
-import com.hm.achievement.runnable.AchievePlayTimeRunnable;
-import com.hm.achievement.utils.*;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
-import com.hm.mcshared.update.UpdateChecker;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -31,10 +26,77 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.logging.Level;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.AddCommand;
+import com.hm.achievement.command.BookCommand;
+import com.hm.achievement.command.CheckCommand;
+import com.hm.achievement.command.CommandTabCompleter;
+import com.hm.achievement.command.DeleteCommand;
+import com.hm.achievement.command.EasterEggCommand;
+import com.hm.achievement.command.GenerateCommand;
+import com.hm.achievement.command.GiveCommand;
+import com.hm.achievement.command.HelpCommand;
+import com.hm.achievement.command.InfoCommand;
+import com.hm.achievement.command.ListCommand;
+import com.hm.achievement.command.MonthCommand;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.command.ResetCommand;
+import com.hm.achievement.command.StatsCommand;
+import com.hm.achievement.command.ToggleCommand;
+import com.hm.achievement.command.TopCommand;
+import com.hm.achievement.command.WeekCommand;
+import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.AsyncCachedRequestsSender;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.MySQLDatabaseManager;
+import com.hm.achievement.db.PostgreSQLDatabaseManager;
+import com.hm.achievement.db.SQLiteDatabaseManager;
+import com.hm.achievement.exception.PluginLoadError;
+import com.hm.achievement.gui.CategoryGUI;
+import com.hm.achievement.gui.MainGUI;
+import com.hm.achievement.listener.AchieveArrowListener;
+import com.hm.achievement.listener.AchieveBedListener;
+import com.hm.achievement.listener.AchieveBlockBreakListener;
+import com.hm.achievement.listener.AchieveBlockPlaceListener;
+import com.hm.achievement.listener.AchieveBreedListener;
+import com.hm.achievement.listener.AchieveConnectionListener;
+import com.hm.achievement.listener.AchieveConsumeListener;
+import com.hm.achievement.listener.AchieveCraftListener;
+import com.hm.achievement.listener.AchieveDeathListener;
+import com.hm.achievement.listener.AchieveDropListener;
+import com.hm.achievement.listener.AchieveEnchantListener;
+import com.hm.achievement.listener.AchieveFishListener;
+import com.hm.achievement.listener.AchieveHoeFertiliseFireworkMusicListener;
+import com.hm.achievement.listener.AchieveItemBreakListener;
+import com.hm.achievement.listener.AchieveKillListener;
+import com.hm.achievement.listener.AchieveMilkLavaWaterListener;
+import com.hm.achievement.listener.AchievePetMasterGiveReceiveListener;
+import com.hm.achievement.listener.AchievePickupListener;
+import com.hm.achievement.listener.AchievePlayerCommandListener;
+import com.hm.achievement.listener.AchieveShearListener;
+import com.hm.achievement.listener.AchieveSnowballEggListener;
+import com.hm.achievement.listener.AchieveTameListener;
+import com.hm.achievement.listener.AchieveTeleportRespawnListener;
+import com.hm.achievement.listener.AchieveTradeAnvilBrewSmeltListener;
+import com.hm.achievement.listener.AchieveXPListener;
+import com.hm.achievement.listener.FireworkListener;
+import com.hm.achievement.listener.ListGUIListener;
+import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
+import com.hm.achievement.listener.QuitListener;
+import com.hm.achievement.runnable.AchieveDistanceRunnable;
+import com.hm.achievement.runnable.AchievePlayTimeRunnable;
+import com.hm.achievement.utils.AchievementCountBungeeTabListPlusVariable;
+import com.hm.achievement.utils.AchievementPlaceholderHook;
+import com.hm.achievement.utils.Cleanable;
+import com.hm.achievement.utils.FileUpdater;
+import com.hm.achievement.utils.Reloadable;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
+import com.hm.mcshared.update.UpdateChecker;
+
+import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
 
 /**
  * Advanced Achievements enables unique and challenging achievements on your server. Try to collect as many as you can,
@@ -50,7 +112,7 @@ import java.util.logging.Level;
  * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
  * 
  * @since April 2015
- * @version 5.6
+ * @version 5.6.1
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin implements Reloadable {
