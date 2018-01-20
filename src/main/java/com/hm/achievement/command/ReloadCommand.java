@@ -31,7 +31,10 @@ public class ReloadCommand extends AbstractCommand {
 		super(plugin);
 
 		reloadableObservers = new ArrayList<>();
+	}
 
+	@Override
+	public void extractConfigurationParameters() {
 		langServerRestartReload = Lang.getWithChatHeader(CmdLang.SERVER_RESTART_RELOAD, plugin);
 		langConfigReloadFailed = Lang.getWithChatHeader(CmdLang.CONFIGURATION_RELOAD_FAILED, plugin);
 		langConfigSuccessfullyReloaded = Lang.getWithChatHeader(CmdLang.CONFIGURATION_SUCCESSFULLY_RELOADED, plugin);
