@@ -1,5 +1,6 @@
 package com.hm.achievement.db;
 
+import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -62,6 +63,9 @@ public class AsyncCachedRequestsSender implements Runnable {
 					st.addBatch(request);
 				}
 				st.executeBatch();
+			} catch (BatchUpdateException e) { // Attempt to solve issue #309.
+				conn.close();
+				throw e;
 			}
 		}).attemptWrites(plugin.getLogger(), "batching statistic updates");
 	}
