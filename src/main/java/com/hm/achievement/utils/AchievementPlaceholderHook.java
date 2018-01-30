@@ -9,7 +9,8 @@ import com.hm.achievement.category.NormalAchievements;
 import me.clip.placeholderapi.external.EZPlaceholderHook;
 
 /**
- * Class enabling usage of placeholder with PlaceholderAPI to get achievements stats in others plugins.
+ * Class enabling usage of placeholder with PlaceholderAPI to get achievements
+ * stats in others plugins.
  * 
  * @author Phoetrix
  *
@@ -25,6 +26,21 @@ public class AchievementPlaceholderHook extends EZPlaceholderHook {
 
 	@Override
 	public String onPlaceholderRequest(Player p, String identifier) {
+
+		if (identifier.equalsIgnoreCase("achievements")) {
+			return String.valueOf(plugin.getCacheManager().getPlayerTotalAchievements(p.getUniqueId()));
+		}
+
+		if (identifier.equalsIgnoreCase("achievements_percentage")) {
+			return String.format("%.1f%%",
+					100 * (double) plugin.getCacheManager().getPlayerTotalAchievements(p.getUniqueId())
+							/ plugin.getAchievementsAndDisplayNames().size());
+		}
+
+		if (identifier.equalsIgnoreCase("total_achievements")) {
+			return String.valueOf(plugin.getAchievementsAndDisplayNames().size());
+		}
+
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
 
@@ -37,6 +53,10 @@ public class AchievementPlaceholderHook extends EZPlaceholderHook {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
 
+			if (plugin.getDisabledCategorySet().contains(categoryName)) {
+				continue;
+			}
+
 			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
 				String categoryPath = categoryName + "_" + subcategory;
 
@@ -46,7 +66,6 @@ public class AchievementPlaceholderHook extends EZPlaceholderHook {
 				}
 			}
 		}
-
 		return null;
 	}
 }
