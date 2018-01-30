@@ -32,10 +32,9 @@ public class AchievementPlaceholderHook extends EZPlaceholderHook {
 		}
 
 		if (identifier.equalsIgnoreCase("achievements_percentage")) {
-			return String.format("%.1f",
+			return String.format("%.1f%%",
 					100 * (double) plugin.getCacheManager().getPlayerTotalAchievements(p.getUniqueId())
-							/ plugin.getAchievementsAndDisplayNames().size())
-					+ "%";
+							/ plugin.getAchievementsAndDisplayNames().size());
 		}
 
 		if (identifier.equalsIgnoreCase("total_achievements")) {
