@@ -4,7 +4,7 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lang.command.HelpLang;
-import com.hm.mcshared.particle.PacketSender;
+import com.hm.mcshared.particle.FancyMessageSender;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -189,12 +189,9 @@ public class HelpCommand extends AbstractCommand {
 	private void sendJsonClickableHoverableMessage(CommandSender sender, String message, String command, String hover) {
 		// Send clickable and hoverable message if sender is a player and if supported by the Minecraft version.
 		if (sender instanceof Player && plugin.getServerVersion() > 7) {
-			// Build the json format string.
-			String json = "{\"text\":\"" + message + "\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\""
-					+ command + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[{\"text\":\"" + hover
-					+ "\",\"color\":\"" + configColor.name().toLowerCase() + "\"}]}}";
 			try {
-				PacketSender.sendChatMessagePacket((Player) sender, json);
+				FancyMessageSender.sendHoverableCommandMessage((Player) sender, message, command, hover,
+						configColor.name().toLowerCase());
 			} catch (Exception e) {
 				plugin.getLogger().warning(
 						"Failed to display clickable and hoverable message in /aach help command. Displaying standard message instead.");

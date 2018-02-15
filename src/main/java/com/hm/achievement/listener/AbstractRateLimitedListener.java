@@ -5,7 +5,8 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.ListenerLang;
 import com.hm.achievement.utils.Cleanable;
-import com.hm.mcshared.particle.PacketSender;
+import com.hm.mcshared.particle.FancyMessageSender;
+
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -103,16 +104,16 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 		long timeToWait = lastEventTime + configStatisticCooldown.get(category.toString()) - System.currentTimeMillis();
 		if (timeToWait > 0) {
 			if (configCooldownActionBar) {
-				String actionBarJsonMessage = "{\"text\":\"&o" + StringUtils.replaceOnce(langStatisticCooldown, "TIME",
-						String.format("%.1f", (double) timeToWait / 1000)) + "\"}";
+				String message = "&o" + StringUtils.replaceOnce(langStatisticCooldown, "TIME",
+						String.format("%.1f", (double) timeToWait / 1000));
 				if (delay) {
 					// Display message with a delay to avoid it being overwritten by another message (typically disc
 					// name).
 					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 							Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()),
-							() -> displayActionBarMessage(player, actionBarJsonMessage), 20);
+							() -> displayActionBarMessage(player, message), 20);
 				} else {
-					displayActionBarMessage(player, actionBarJsonMessage);
+					displayActionBarMessage(player, message);
 				}
 			}
 			return true;
@@ -125,11 +126,11 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * Displays the cooldown action bar message.
 	 *
 	 * @param player
-	 * @param actionBarJsonMessage
+	 * @param message
 	 */
-	private void displayActionBarMessage(Player player, String actionBarJsonMessage) {
+	private void displayActionBarMessage(Player player, String message) {
 		try {
-			PacketSender.sendActionBarPacket(player, actionBarJsonMessage);
+			FancyMessageSender.sendActionBarMessage(player, message);
 		} catch (Exception e) {
 			plugin.getLogger().warning("Failed to display action bar message for cooldown.");
 		}

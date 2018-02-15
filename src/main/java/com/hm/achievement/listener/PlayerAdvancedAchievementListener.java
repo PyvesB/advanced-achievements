@@ -7,7 +7,7 @@ import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.ListenerLang;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.particle.PacketSender;
+import com.hm.mcshared.particle.FancyMessageSender;
 import com.hm.mcshared.particle.ParticleEffect;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang3.StringUtils;
@@ -342,11 +342,9 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			StringBuilder hover = new StringBuilder(messageToShowUser + "\n");
 			rewardTexts.stream().filter(StringUtils::isNotBlank)
 					.forEach(t -> hover.append(ChatColor.translateAlternateColorCodes('&', t)).append("\n"));
-			String json = "{\"text\":\"" + langAchievementNew + nameToShowUser
-					+ "\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":[{\"text\":\""
-					+ hover.substring(0, hover.length() - 1) + "\"}]}}";
 			try {
-				PacketSender.sendChatMessagePacket(player, json);
+				FancyMessageSender.sendHoverableMessage(player, langAchievementNew + nameToShowUser,
+						hover.substring(0, hover.length() - 1), "white");
 				return;
 			} catch (Exception e) {
 				plugin.getLogger().warning(
@@ -368,11 +366,10 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 */
 	private void displayNotification(Player achievementReceiver, String nameToShowUser, Player otherPlayer) {
 		if (configActionBarNotify) {
-			String actionBarJsonMessage = "{\"text\":\"&o"
-					+ StringUtils.replaceOnce(langAchievementReceived, "PLAYER", achievementReceiver.getName())
-					+ nameToShowUser + "\"}";
 			try {
-				PacketSender.sendActionBarPacket(otherPlayer, actionBarJsonMessage);
+				FancyMessageSender.sendActionBarMessage(otherPlayer,
+						"&o" + StringUtils.replaceOnce(langAchievementReceived, "PLAYER", achievementReceiver.getName())
+								+ nameToShowUser);
 			} catch (Exception e) {
 				plugin.getLogger()
 						.warning("Failed to display action bar message for achievement reception notification.");
@@ -393,10 +390,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 */
 	private void displayTitle(Player player, String nameToShowUser, String messageToShowUser) {
 		try {
-			// Escape quotations in case quotations are used in config.yml.
-			PacketSender.sendTitlePacket(player,
-					"{\"text\":\"" + StringUtils.replace(nameToShowUser, "\"", "\\\"") + "\"}",
-					"{\"text\":\"" + StringUtils.replace(messageToShowUser, "\"", "\\\"") + "\"}");
+			FancyMessageSender.sendTitle(player, nameToShowUser, messageToShowUser);
 		} catch (Exception e) {
 			plugin.getLogger().warning("Failed to display achievement screen title.");
 		}
