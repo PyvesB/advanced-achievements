@@ -1,6 +1,6 @@
 package com.hm.achievement.command;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -72,9 +72,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 			return getPartialList(plugin.getAchievementsAndDisplayNames().keySet(), args[1]);
 		}
 		// No completion.
-		List<String> list = new ArrayList<>(1);
-		list.add("");
-		return list;
+		return Collections.singletonList("");
 	}
 
 	/**

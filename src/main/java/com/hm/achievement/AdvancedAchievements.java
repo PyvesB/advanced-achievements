@@ -231,16 +231,15 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			initialiseTabCompleter();
 			initialiseGUIs();
 			selectAndInitialiseDatabaseManager();
+			launchScheduledTasks();
 			loadAndRegisterReloadables();
+			registerCleanables();
 		} catch (PluginLoadError e) {
 			getLogger().log(Level.SEVERE,
 					"A non recoverable error was encountered while loading the plugin, disabling it:", e);
 			Bukkit.getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
-
-		launchScheduledTasks();
-		registerCleanables();
 
 		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
 			BungeeTabListPlusBukkitAPI.registerVariable(this, new AchievementCountBungeeTabListPlusVariable(this));
