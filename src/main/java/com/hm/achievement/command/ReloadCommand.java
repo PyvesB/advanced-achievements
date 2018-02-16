@@ -63,6 +63,10 @@ public class ReloadCommand extends AbstractCommand {
 			String langFileName = plugin.getPluginConfig().getString("LanguageFileName", "lang.yml");
 			plugin.setPluginLang(plugin.loadAndBackupFile(langFileName));
 			plugin.setGui(plugin.loadAndBackupFile("gui.yml"));
+			// Reload all observers.
+			for (Reloadable reloadable : reloadableObservers) {
+				reloadable.extractConfigurationParameters();
+			}
 		} catch (PluginLoadError e) {
 			if (sender instanceof Player) {
 				sender.sendMessage(langConfigReloadFailed);
@@ -72,9 +76,6 @@ public class ReloadCommand extends AbstractCommand {
 			Bukkit.getServer().getPluginManager().disablePlugin(plugin);
 			return;
 		}
-
-		// Reload all observers.
-		reloadableObservers.forEach(Reloadable::extractConfigurationParameters);
 
 		if (sender instanceof Player) {
 			sender.sendMessage(langConfigSuccessfullyReloaded);

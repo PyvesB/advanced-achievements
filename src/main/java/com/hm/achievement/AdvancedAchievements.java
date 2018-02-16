@@ -16,7 +16,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -227,12 +226,12 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 			fileUpdater.updateOldGUI(gui);
 
 			disabledCategorySet = extractDisabledCategories(config);
-			logAchievementStats();
 			initialiseCommands();
 			registerListeners();
 			initialiseTabCompleter();
 			initialiseGUIs();
 			selectAndInitialiseDatabaseManager();
+			loadAndRegisterReloadables();
 		} catch (PluginLoadError e) {
 			getLogger().log(Level.SEVERE,
 					"A non recoverable error was encountered while loading the plugin, disabling it:", e);
@@ -241,7 +240,6 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		}
 
 		launchScheduledTasks();
-		loadAndRegisterReloadables();
 		registerCleanables();
 
 		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
@@ -330,10 +328,9 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	}
 
 	@Override
-	public void extractConfigurationParameters() {
+	public void extractConfigurationParameters() throws PluginLoadError {
 		parseHeader();
-		parseAchievementsAndDisplayNames();
-		parseAchievementThresholds();
+		parseAchievements();
 		registerPermissions();
 
 		// If user switched config parameter to false, unregister UpdateChecker; if user switched config pameter to
@@ -414,74 +411,6 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		}
 
 		return disabledCategorySet;
-	}
-
-	/**
-	 * Logs number of achievements and disabled categories.
-	 */
-	private void logAchievementStats() {
-		int totalAchievements = 0;
-		int categoriesInUse = 0;
-
-		// Enumerate Commands achievements.
-		if (!disabledCategorySet.contains("Commands")) {
-			int keyCount = config.getConfigurationSection("Commands").getKeys(false).size();
-			if (keyCount > 0) {
-				categoriesInUse += 1;
-				totalAchievements += keyCount;
-			}
-		}
-
-		// Enumerate the normal achievements.
-		for (NormalAchievements category : NormalAchievements.values()) {
-			if (disabledCategorySet.contains(category.toString())) {
-				continue;
-			}
-
-			int keyCount = config.getConfigurationSection(category.toString()).getKeys(false).size();
-			if (keyCount > 0) {
-				++categoriesInUse;
-				totalAchievements += keyCount;
-			}
-		}
-
-		// Enumerate the achievements with multiple categories.
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			if (disabledCategorySet.contains(category.toString())) {
-				continue;
-			}
-
-			Set<String> categorySections = config.getConfigurationSection(category.toString()).getKeys(false);
-
-			if (categorySections.isEmpty()) {
-				continue;
-			}
-
-			++categoriesInUse;
-
-			// Enumerate the subcategories.
-			for (String section : categorySections) {
-				int achievementCount = config.getConfigurationSection(category + "." + section).getKeys(false).size();
-				if (achievementCount > 0) {
-					totalAchievements += achievementCount;
-				}
-			}
-		}
-		getLogger().info("Loaded " + totalAchievements + " achievements in " + categoriesInUse + " categories.");
-
-		if (!disabledCategorySet.isEmpty()) {
-			String disabledCategories;
-
-			if (disabledCategorySet.size() == 1) {
-				disabledCategories = disabledCategorySet.size() + " disabled category: "
-						+ disabledCategorySet.toString();
-			} else {
-				disabledCategories = disabledCategorySet.size() + " disabled categories: "
-						+ disabledCategorySet.toString();
-			}
-
-			getLogger().info(disabledCategories);
-		}
 	}
 
 	/**
@@ -747,8 +676,10 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 	/**
 	 * Performs an initial load of all the Reloadable fields. Registers them as observers of the ReloadCommand.
+	 * 
+	 * @throws PluginLoadError
 	 */
-	private void loadAndRegisterReloadables() {
+	private void loadAndRegisterReloadables() throws PluginLoadError {
 		extractConfigurationParameters();
 		reloadCommand.registerReloadable(this);
 		try {
@@ -808,96 +739,81 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	}
 
 	/**
-	 * Creates a map from achievement name (as stored in the database) to DisplayName. If multiple achievements have the
-	 * same achievement name, only the first DisplayName will be tracked. If DisplayName for an achievement is empty or
-	 * undefined, the value in the returned map will be an empty string. Only contains the mapping for achievements in
-	 * non-disabled categories.
+	 * Goes through all the achievements for non-disabled categories. Populates relevant data structures and performs
+	 * basic validation. Logs some statistics.
+	 * 
+	 * @throws PluginLoadError
 	 */
-	private void parseAchievementsAndDisplayNames() {
+	private void parseAchievements() throws PluginLoadError {
 		achievementsAndDisplayNames.clear();
+		sortedThresholds.clear();
 
 		// Enumerate Commands achievements.
 		if (!disabledCategorySet.contains("Commands")) {
 			for (String ach : config.getConfigurationSection("Commands").getKeys(false)) {
-				String achName = config.getString("Commands." + ach + ".Name", "");
-				String displayName = config.getString("Commands." + ach + ".DisplayName", "");
-
-				if (!achievementsAndDisplayNames.containsKey(achName)) {
-					achievementsAndDisplayNames.put(achName, displayName);
-				} else {
-					getLogger().warning("Duplicate achievement Name (" + achName
-							+ "). Please ensure each Name is unique in config.yml.");
-				}
+				parseAchievement("Commands." + ach);
 			}
 		}
 
 		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
-			if (!disabledCategorySet.contains(category.toString())) {
-				for (String ach : config.getConfigurationSection(category.toString()).getKeys(false)) {
-					String achName = config.getString(category + "." + ach + ".Name", "");
-					String displayName = config.getString(category + "." + ach + ".DisplayName", "");
-
-					if (!achievementsAndDisplayNames.containsKey(achName)) {
-						achievementsAndDisplayNames.put(achName, displayName);
-					} else {
-						getLogger().warning("Duplicate achievement Name (" + achName
-								+ "). Please ensure each Name is unique in config.yml.");
-					}
-				}
+			String categoryName = category.toString();
+			if (!disabledCategorySet.contains(categoryName)) {
+				parseAchievements(categoryName);
 			}
 		}
 
 		// Enumerate the achievements with multiple categories.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			if (!disabledCategorySet.contains(category.toString())) {
-				for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
-					ConfigurationSection subcategoryConfig = config.getConfigurationSection(category + "." + section);
-					for (String level : subcategoryConfig.getKeys(false)) {
-						String achName = config.getString(category + "." + section + '.' + level + ".Name", "");
-						String displayName = config.getString(category + "." + section + '.' + level + ".DisplayName",
-								"");
-
-						if (!achievementsAndDisplayNames.containsKey(achName)) {
-							achievementsAndDisplayNames.put(achName, displayName);
-						} else {
-							getLogger().warning("Duplicate achievement Name (" + achName
-									+ "). Please ensure each Name is unique in config.yml.");
-						}
-					}
+			String categoryName = category.toString();
+			if (!disabledCategorySet.contains(categoryName)) {
+				for (String section : config.getConfigurationSection(categoryName).getKeys(false)) {
+					parseAchievements(categoryName + '.' + section);
 				}
 			}
+		}
+
+		int categories = NormalAchievements.values().length + MultipleAchievements.values().length + 1
+				- disabledCategorySet.size();
+		getLogger().info("Loaded " + achievementsAndDisplayNames.size() + " achievements in " + categories + " categories.");
+		if (disabledCategorySet.size() == 1) {
+			getLogger().info(disabledCategorySet.size() + " disabled category: " + disabledCategorySet.toString());
+		} else if (!disabledCategorySet.isEmpty()) {
+			getLogger().info(disabledCategorySet.size() + " disabled categories: " + disabledCategorySet.toString());
 		}
 	}
 
 	/**
-	 * Creates a map from categories (or categories + subcategories) to lists of sorted thresholds.
+	 * Parses all achievements for a given category or category + subcategory. Populates the sortedThresholds map.
+	 * 
+	 * @param path
+	 * @throws PluginLoadError
 	 */
-	private void parseAchievementThresholds() {
-		sortedThresholds.clear();
-
-		// Enumerate the normal achievements.
-		for (NormalAchievements category : NormalAchievements.values()) {
-			List<Long> thresholds = new ArrayList<>();
-			String categoryName = category.toString();
-			for (String threshold : config.getConfigurationSection(categoryName).getKeys(false)) {
-				thresholds.add(Long.valueOf(threshold));
-			}
-			thresholds.sort(null);
-			sortedThresholds.put(categoryName, thresholds);
+	private void parseAchievements(String path) throws PluginLoadError {
+		List<Long> thresholds = new ArrayList<>();
+		for (String threshold : config.getConfigurationSection(path).getKeys(false)) {
+			parseAchievement(path + "." + threshold);
+			thresholds.add(Long.valueOf(threshold));
 		}
+		thresholds.sort(null);
+		sortedThresholds.put(path, thresholds);
+	}
 
-		// Enumerate the achievements with multiple categories.
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			String categoryName = category.toString();
-			for (String section : config.getConfigurationSection(categoryName).getKeys(false)) {
-				List<Long> thresholds = new ArrayList<>();
-				for (String threshold : config.getConfigurationSection(categoryName + "." + section).getKeys(false)) {
-					thresholds.add(Long.valueOf(threshold));
-				}
-				thresholds.sort(null);
-				sortedThresholds.put(categoryName + "." + section, thresholds);
-			}
+	/**
+	 * Performs validation for a single achievement and populates an entry in the achievementsAndDisplayNames map.
+	 * 
+	 * @param path
+	 * @throws PluginLoadError
+	 */
+	private void parseAchievement(String path) throws PluginLoadError {
+		String achName = config.getString(path + ".Name");
+		if (achName == null) {
+			throw new PluginLoadError("Achievement with path (" + path + ") is missing its Name parameter in config.yml.");
+		} else if (achievementsAndDisplayNames.containsKey(achName)) {
+			throw new PluginLoadError("Duplicate achievement Name (" + achName + "). "
+					+ "Please ensure each Name is unique in config.yml.");
+		} else {
+			achievementsAndDisplayNames.put(achName, config.getString(path + ".DisplayName", ""));
 		}
 	}
 
