@@ -77,6 +77,6 @@ public class ResetCommand extends AbstractParsableCommand {
 			}
 		}
 
-		sender.sendMessage(StringUtils.replaceOnce(langCategoryDoesNotExist, "CAT", args[2]));
+		sender.sendMessage(StringUtils.replaceOnce(langCategoryDoesNotExist, "CAT", args[1]));
 	}
 }
