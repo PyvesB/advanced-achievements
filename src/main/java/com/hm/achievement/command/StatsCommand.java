@@ -1,15 +1,14 @@
 package com.hm.achievement.command;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.command.CmdLang;
-import com.hm.mcshared.particle.ParticleEffect;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
+
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.mcshared.particle.ParticleEffect;
 
 /**
  * Class in charge of handling the /aach stats command, which creates and displays a progress bar of the player's
@@ -25,7 +24,6 @@ public class StatsCommand extends AbstractCommand {
 	private boolean configAdditionalEffects;
 	private boolean configSound;
 	private String langNumberAchievements;
-	private int totalAchievements;
 
 	public StatsCommand(AdvancedAchievements plugin) {
 		super(plugin);
@@ -34,32 +32,6 @@ public class StatsCommand extends AbstractCommand {
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
-
-		totalAchievements = 0;
-		// Calculate the total number of achievements in the config file.
-		for (NormalAchievements category : NormalAchievements.values()) {
-			String categoryName = category.toString();
-			if (plugin.getDisabledCategorySet().contains(categoryName)) {
-				// Ignore this type.
-				continue;
-			}
-			totalAchievements += plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false).size();
-		}
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			String categoryName = category.toString();
-			if (plugin.getDisabledCategorySet().contains(categoryName)) {
-				// Ignore this type.
-				continue;
-			}
-			for (String section : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
-				totalAchievements += plugin.getPluginConfig().getConfigurationSection(categoryName + '.' + section)
-						.getKeys(false).size();
-			}
-		}
-
-		if (!plugin.getDisabledCategorySet().contains("Commands")) {
-			totalAchievements += plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false).size();
-		}
 
 		// Load configuration parameters.
 		configAdditionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
@@ -76,13 +48,13 @@ public class StatsCommand extends AbstractCommand {
 
 		Player player = (Player) sender;
 
-		// Retrieve total number of achievements received by the player.
-		int achievements = plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId());
+		int playerAchievements = plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId());
+		int totalAchievements = plugin.getAchievementsAndDisplayNames().size();
 
 		player.sendMessage(
-				langNumberAchievements + String.format("%.1f", 100 * (double) achievements / totalAchievements) + "%");
+				langNumberAchievements + String.format("%.1f", 100 * (double) playerAchievements / totalAchievements) + "%");
 
-		String middleText = " " + achievements + "/" + totalAchievements + " ";
+		String middleText = " " + playerAchievements + "/" + totalAchievements + " ";
 		int verticalBarsToDisplay = 150 - configIcon.length() - FONT.getWidth(middleText);
 		boolean hasDisplayedMiddleText = false;
 		StringBuilder barDisplay = new StringBuilder();
@@ -96,7 +68,7 @@ public class StatsCommand extends AbstractCommand {
 				// Iterate a number of times equal to the number of iterations so far to have the same number of
 				// vertical bars left and right from the middle text.
 				i = verticalBarsToDisplay - i;
-			} else if (i < ((verticalBarsToDisplay - 1) * achievements) / totalAchievements) {
+			} else if (i < ((verticalBarsToDisplay - 1) * playerAchievements) / totalAchievements) {
 				// Color: progress by user.
 				barDisplay.append(configColor).append('|');
 				i++;
@@ -111,7 +83,7 @@ public class StatsCommand extends AbstractCommand {
 				+ translateColorCodes(barDisplay.toString()) + ChatColor.GRAY + "]");
 
 		// Player has received all achievement; play special effect and sound.
-		if (achievements >= totalAchievements) {
+		if (playerAchievements >= totalAchievements) {
 			if (configAdditionalEffects) {
 				try {
 					// Play special effect.
