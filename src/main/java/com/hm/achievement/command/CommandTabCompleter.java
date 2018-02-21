@@ -27,13 +27,20 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	private static final int MAX_LIST_LENGTH = 50;
 
-	private final Set<String> enabledCategoriesWithSubcategories;
 	private final AdvancedAchievements plugin;
+	private final Set<String> enabledCategoriesWithSubcategories = new HashSet<>();
 
 	private Set<String> configCommandsKeys;
 
 	public CommandTabCompleter(AdvancedAchievements plugin) {
-		enabledCategoriesWithSubcategories = new HashSet<>();
+		this.plugin = plugin;
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		configCommandsKeys = plugin.getPluginConfig().getShallowKeys("Commands");
+		
+		enabledCategoriesWithSubcategories.clear();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			for (String subcategory : plugin.getPluginConfig().getShallowKeys(category.toString())) {
 				enabledCategoriesWithSubcategories.add(category + "." + StringUtils.deleteWhitespace(subcategory));
@@ -45,13 +52,6 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 		enabledCategoriesWithSubcategories.add("Commands");
 		// Only auto-complete with non-disabled categories.
 		enabledCategoriesWithSubcategories.removeAll(plugin.getDisabledCategorySet());
-
-		this.plugin = plugin;
-	}
-
-	@Override
-	public void extractConfigurationParameters() {
-		configCommandsKeys = plugin.getPluginConfig().getShallowKeys("Commands");
 	}
 
 	@Override
