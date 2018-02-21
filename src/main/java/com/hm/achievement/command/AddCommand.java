@@ -64,7 +64,7 @@ public class AddCommand extends AbstractParsableCommand {
 			String categoryName = category.toString();
 
 			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
-				String categoryPath = categoryName + "." + StringUtils.replace(subcategory, " ", "");
+				String categoryPath = categoryName + "." + StringUtils.deleteWhitespace(subcategory);
 
 				if (args[2].equalsIgnoreCase(categoryPath)) {
 					long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, subcategory,

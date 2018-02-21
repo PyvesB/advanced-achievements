@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -45,7 +46,7 @@ public class DatabaseUpdater {
 	 */
 	protected void renameExistingTables(String databaseAddress) throws PluginLoadError {
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
-		if (!"".equals(sqlDatabaseManager.getPrefix())) {
+		if (StringUtils.isNotBlank(sqlDatabaseManager.getPrefix())) {
 			Connection conn = sqlDatabaseManager.getSQLConnection();
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs;

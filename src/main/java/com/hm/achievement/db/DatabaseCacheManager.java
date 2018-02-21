@@ -142,7 +142,7 @@ public class DatabaseCacheManager implements Cleanable {
 		if (statistic == null) {
 			String subcategoryDBName = subcategory;
 			if (category == MultipleAchievements.PLAYERCOMMANDS) {
-				subcategoryDBName = StringUtils.replace(subcategory, " ", "");
+				subcategoryDBName = StringUtils.deleteWhitespace(subcategory);
 			}
 			statistic = new CachedStatistic(
 					plugin.getDatabaseManager().getMultipleAchievementAmount(player, category, subcategoryDBName),
@@ -208,7 +208,7 @@ public class DatabaseCacheManager implements Cleanable {
 	 */
 	public String getMultipleCategoryCacheKey(MultipleAchievements category, UUID player, String subcategory) {
 		if (category == MultipleAchievements.PLAYERCOMMANDS) {
-			return player.toString() + StringUtils.replace(subcategory, " ", "");
+			return player.toString() + StringUtils.deleteWhitespace(subcategory);
 		}
 		return player.toString() + subcategory;
 	}

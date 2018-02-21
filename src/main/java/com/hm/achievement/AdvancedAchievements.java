@@ -833,7 +833,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 				}
 				if (category == MultipleAchievements.PLAYERCOMMANDS) {
 					// Permissions don't take spaces into account for this category.
-					section = StringUtils.replace(section, " ", "");
+					section = StringUtils.deleteWhitespace(section);
 				}
 
 				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when

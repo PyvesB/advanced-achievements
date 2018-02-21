@@ -37,8 +37,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(category.toString())
 					.getKeys(false)) {
-				enabledCategoriesWithSubcategories
-						.add(category.toString() + '.' + StringUtils.replace(subcategory, " ", ""));
+				enabledCategoriesWithSubcategories.add(category + "." + StringUtils.deleteWhitespace(subcategory));
 			}
 		}
 		for (NormalAchievements category : NormalAchievements.values()) {

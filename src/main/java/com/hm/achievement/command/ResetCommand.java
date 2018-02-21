@@ -58,7 +58,7 @@ public class ResetCommand extends AbstractParsableCommand {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(category.toString())
 					.getKeys(false)) {
-				String categoryPath = category.toString() + "." + StringUtils.replace(subcategory, " ", "");
+				String categoryPath = category.toString() + "." + StringUtils.deleteWhitespace(subcategory);
 				if (categoryPath.equalsIgnoreCase(args[1])) {
 					CachedStatistic statistic = plugin.getCacheManager().getHashMap(category)
 							.get(plugin.getCacheManager().getMultipleCategoryCacheKey(category, player.getUniqueId(),

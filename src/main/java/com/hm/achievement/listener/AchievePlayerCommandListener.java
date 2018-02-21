@@ -34,7 +34,7 @@ public class AchievePlayerCommandListener extends AbstractListener {
 		for (String prefix : plugin.getPluginConfig().getConfigurationSection(category.toString()).getKeys(false)) {
 			for (String equivalentCommand : equivalentCommands) {
 				if (equivalentCommand.startsWith(prefix)) {
-					if (player.hasPermission(category.toPermName() + '.' + StringUtils.replace(prefix, " ", ""))) {
+					if (player.hasPermission(category.toPermName() + '.' + StringUtils.deleteWhitespace(prefix))) {
 						updateStatisticAndAwardAchievementsIfAvailable(player, category, prefix, 1);
 					}
 					return;
