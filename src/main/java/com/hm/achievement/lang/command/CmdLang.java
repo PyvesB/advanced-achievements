@@ -15,7 +15,7 @@ public enum CmdLang implements Lang {
 	// AddCommand
 	ERROR_VALUE("The value VALUE must to be an integer!"),
 	STATISTIC_INCREASED("Statistic ACH increased by AMOUNT for PLAYER!"),
-	CATEGORY_DOES_NOT_EXIST("The category CAT does not exist."),
+	CATEGORY_DOES_NOT_EXIST("The category and/or sub-category CAT does not exist."),
 	// BookCommand
 	BOOK_DELAY("You must wait TIME seconds between each book reception!"),
 	BOOK_NOT_RECEIVED("You have not yet received any achievements."),
