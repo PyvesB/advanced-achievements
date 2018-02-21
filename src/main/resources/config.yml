@@ -242,16 +242,10 @@ PooledRequestsTaskInterval: 10
 
 #============================OOOOO============================#
 # V---------------------------------------------------------V #
-# |                  Action  achievements                   | #
+# |              Multiple action achievements               | #
+# |       These require sub-categories and thresholds       | #
 # 5---------------------------------------------------------5 #
 #============================ooooo============================#
-
-# When a player connects during the day; statistic increases at most once per day.
-Connections:
-  1:
-    Message: You connected to our server for the first time!
-    Name: connect_1
-    DisplayName: Good Choice
 
 # When a specific block is placed (specify material name, lower case).
 Places:  
@@ -332,7 +326,43 @@ Crafts:
       DisplayName: Blacksmith Apprentice
       Reward:
         Money: 2
-      
+        
+# When a player enters a specific command (specify command prefixes in lower case without initial slash).
+# For instance a command /awf add world from the AntiWorldFly plugin matches with subcategory 'awf add'.
+# Aliases of a given command will also be taken into account.
+PlayerCommands:
+  aach stats:
+    10:
+      Message: Run the stats command 10 times!
+      Name: playercommand_aachstats_10
+      DisplayName: Statistician
+      Rewards:
+        Commands:
+          Execute: "say §cALERT: §7PLAYER is now a statistician"
+          Display: Broadcast
+          
+# When animals breed (specify an entity name, lower case).
+Breeding:
+  sheep:
+    100:
+      Message: You bred your first animal!
+      Name: breeding_1
+      DisplayName: Breeder
+
+#===========================OOO=OOO===========================#
+# VI-------------------------------------------------------VI #
+# |               Normal action achievements                | #
+# |          These are simply based on thresholds           | #
+# 6---------------------------------------------------------6 #
+#===========================ooo=ooo===========================#
+
+# When a player connects during the day; statistic increases at most once per day.
+Connections:
+  1:
+    Message: You connected to our server for the first time!
+    Name: connect_1
+    DisplayName: Good Choice
+
 # When the player dies.
 Deaths:
   1:
@@ -562,14 +592,6 @@ Taming:
     Name: taming_1
     DisplayName: Tamer
 
-# When animals breed (specify an entity name, lower case).
-Breeding:
-  sheep:
-    100:
-      Message: You bred your first animal!
-      Name: breeding_1
-      DisplayName: Breeder
-
 # When a potion is brewed.
 Brewing:
   1:
@@ -620,26 +642,12 @@ Smelting:
     Message: 250 items smelt in a furnace!
     Name: smeltitems_250
     DisplayName: The Smelter
-    
-# When a player enters a specific command (specify command prefixes in lower case without initial slash).
-# For instance a command /awf add world from the AntiWorldFly plugin matches with subcategory 'awf add'.
-# Aliases of a given command will also be taken into account.
-PlayerCommands:
-  aach stats:
-    10:
-      Message: Run the stats command 10 times!
-      Name: playercommand_aachstats_10
-      DisplayName: Statistician
-      Rewards:
-        Commands:
-          Execute: "say §cALERT: §7PLAYER is now a statistician"
-          Display: Broadcast
           
-#===========================OOO=OOO===========================#
-# VI-------------------------------------------------------VI #
+#===========================OOOOOOO===========================#
+# VII-----------------------------------------------------VII #
 # |               Command-based achievements                | #
-# 6---------------------------------------------------------6 #
-#===========================ooo=ooo===========================#
+# 7---------------------------------------------------------7 #
+#===========================ooooooo===========================#
     
 # Let achievement commands be given several times.
 MultiCommand: true
@@ -662,8 +670,8 @@ Custom:
       Reward:
         Money: 5
     
-#===========================OOOOOOO===========================#
-# VII-----------------------------------------------------VII #
-# | Parameters in future plugin versions will  appear here  | #
-# 7---------------------------------------------------------7 #
-#===========================ooooooo===========================#
+#==========================OOOO=OOOO==========================#
+# VIII---------------------------------------------------VIII #
+# |  Parameters in future plugin versions will appear here  | #
+# 8---------------------------------------------------------8 #
+#==========================oooo=oooo==========================#
