@@ -35,8 +35,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 	public CommandTabCompleter(AdvancedAchievements plugin) {
 		enabledCategoriesWithSubcategories = new HashSet<>();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(category.toString())
-					.getKeys(false)) {
+			for (String subcategory : plugin.getPluginConfig().getShallowKeys(category.toString())) {
 				enabledCategoriesWithSubcategories.add(category + "." + StringUtils.deleteWhitespace(subcategory));
 			}
 		}
@@ -52,7 +51,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		configCommandsKeys = plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false);
+		configCommandsKeys = plugin.getPluginConfig().getShallowKeys("Commands");
 	}
 
 	@Override

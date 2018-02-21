@@ -63,7 +63,7 @@ public class AddCommand extends AbstractParsableCommand {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
 
-			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
+			for (String subcategory : plugin.getPluginConfig().getShallowKeys(categoryName)) {
 				String categoryPath = categoryName + "." + StringUtils.deleteWhitespace(subcategory);
 
 				if (args[2].equalsIgnoreCase(categoryPath)) {

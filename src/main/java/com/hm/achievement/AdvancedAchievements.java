@@ -749,7 +749,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 		// Enumerate Commands achievements.
 		if (!disabledCategorySet.contains("Commands")) {
-			for (String ach : config.getConfigurationSection("Commands").getKeys(false)) {
+			for (String ach : config.getShallowKeys("Commands")) {
 				parseAchievement("Commands." + ach);
 			}
 		}
@@ -766,7 +766,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
 			if (!disabledCategorySet.contains(categoryName)) {
-				for (String section : config.getConfigurationSection(categoryName).getKeys(false)) {
+				for (String section : config.getShallowKeys(categoryName)) {
 					parseAchievements(categoryName + '.' + section);
 				}
 			}
@@ -790,7 +790,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 	 */
 	private void parseAchievements(String path) throws PluginLoadError {
 		List<Long> thresholds = new ArrayList<>();
-		for (String threshold : config.getConfigurationSection(path).getKeys(false)) {
+		for (String threshold : config.getShallowKeys(path)) {
 			parseAchievement(path + "." + threshold);
 			thresholds.add(Long.valueOf(threshold));
 		}
@@ -825,7 +825,7 @@ public class AdvancedAchievements extends JavaPlugin implements Reloadable {
 
 		PluginManager pluginManager = getServer().getPluginManager();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			for (String section : config.getConfigurationSection(category.toString()).getKeys(false)) {
+			for (String section : config.getShallowKeys(category.toString())) {
 				int startOfMetadata = section.indexOf(':');
 				if (startOfMetadata > -1) {
 					// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories.

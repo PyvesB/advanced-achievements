@@ -56,7 +56,7 @@ public class AchievementPlaceholderHook extends EZPlaceholderHook {
 				continue;
 			}
 
-			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
+			for (String subcategory : plugin.getPluginConfig().getShallowKeys(categoryName)) {
 				String categoryPath = categoryName + "_" + subcategory;
 
 				if (identifier.equalsIgnoreCase(categoryPath)) {

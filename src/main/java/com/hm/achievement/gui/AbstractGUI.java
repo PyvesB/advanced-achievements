@@ -56,9 +56,8 @@ public abstract class AbstractGUI implements Reloadable {
 			String categoryName = category.toString();
 			// Sum all achievements in the sub-categories of this category.
 			int totalAchievements = 0;
-			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
-				totalAchievements += plugin.getPluginConfig().getConfigurationSection(categoryName + '.' + subcategory)
-						.getKeys(false).size();
+			for (String subcategory : plugin.getPluginConfig().getShallowKeys(categoryName)) {
+				totalAchievements += plugin.getPluginConfig().getShallowKeys(categoryName + '.' + subcategory).size();
 			}
 			ItemStack itemStack = createItemStack(categoryName);
 			buildItemLore(itemStack, Lang.get(category, plugin), totalAchievements);
@@ -70,14 +69,14 @@ public abstract class AbstractGUI implements Reloadable {
 			String categoryName = category.toString();
 			ItemStack itemStack = createItemStack(categoryName);
 			buildItemLore(itemStack, Lang.get(category, plugin),
-					plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false).size());
+					plugin.getPluginConfig().getShallowKeys(categoryName).size());
 			normalAchievementItems.put(category, itemStack);
 		}
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
 		commandsAchievementsItem = createItemStack("Commands");
 		buildItemLore(commandsAchievementsItem, Lang.get(GuiLang.COMMANDS, plugin),
-				plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false).size());
+				plugin.getPluginConfig().getShallowKeys("Commands").size());
 	}
 
 	/**

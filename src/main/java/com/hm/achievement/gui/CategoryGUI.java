@@ -132,8 +132,7 @@ public class CategoryGUI extends AbstractGUI {
 				return;
 			}
 		}
-		List<String> achievementPaths = new ArrayList<>(
-				plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false));
+		List<String> achievementPaths = new ArrayList<>(plugin.getPluginConfig().getShallowKeys("Commands"));
 		displayPage("Commands", player, Collections.singletonMap(NO_SUBCATEGORY, NO_STAT), requestedPage, item,
 				achievementPaths);
 	}
@@ -266,7 +265,7 @@ public class CategoryGUI extends AbstractGUI {
 	public List<String> getSortedMultipleAchievementPaths(String categoryName) {
 		List<String> paths = new ArrayList<>();
 		// Populate the achievements from all the sub-categories in the category.
-		for (String subcategory : plugin.getPluginConfig().getConfigurationSection(categoryName).getKeys(false)) {
+		for (String subcategory : plugin.getPluginConfig().getShallowKeys(categoryName)) {
 			List<String> subcategoryAchievements = new ArrayList<>();
 			for (long threshold : plugin.getSortedThresholds().get(categoryName + "." + subcategory)) {
 				subcategoryAchievements.add(subcategory + "." + threshold);
@@ -296,8 +295,7 @@ public class CategoryGUI extends AbstractGUI {
 	 */
 	public Map<String, Long> getMultipleStatisticsMapping(MultipleAchievements category, Player player) {
 		Map<String, Long> subcategoriesToStatistics = new HashMap<>();
-		for (String subcategory : plugin.getPluginConfig().getConfigurationSection(category.toString())
-				.getKeys(false)) {
+		for (String subcategory : plugin.getPluginConfig().getShallowKeys(category.toString())) {
 			long statistic = plugin.getCacheManager().getAndIncrementStatisticAmount(category, subcategory,
 					player.getUniqueId(), 0);
 			subcategoriesToStatistics.put(subcategory, statistic);

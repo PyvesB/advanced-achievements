@@ -31,7 +31,7 @@ public class AchievePlayerCommandListener extends AbstractListener {
 		MultipleAchievements category = MultipleAchievements.PLAYERCOMMANDS;
 
 		List<String> equivalentCommands = getEquivalentCommands(event.getMessage());
-		for (String prefix : plugin.getPluginConfig().getConfigurationSection(category.toString()).getKeys(false)) {
+		for (String prefix : plugin.getPluginConfig().getShallowKeys(category.toString())) {
 			for (String equivalentCommand : equivalentCommands) {
 				if (equivalentCommand.startsWith(prefix)) {
 					if (player.hasPermission(category.toPermName() + '.' + StringUtils.deleteWhitespace(prefix))) {

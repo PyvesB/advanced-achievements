@@ -65,8 +65,7 @@ public class DatabaseCacheManager implements Cleanable {
 		// Indicate to the relevant cached statistics that the player has disconnected.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Map<String, CachedStatistic> categoryMap = getHashMap(category);
-			for (String subcategory : plugin.getPluginConfig().getConfigurationSection(category.toString())
-					.getKeys(false)) {
+			for (String subcategory : plugin.getPluginConfig().getShallowKeys(category.toString())) {
 				CachedStatistic statistic = categoryMap.get(getMultipleCategoryCacheKey(category, uuid, subcategory));
 				if (statistic != null) {
 					statistic.signalPlayerDisconnection();

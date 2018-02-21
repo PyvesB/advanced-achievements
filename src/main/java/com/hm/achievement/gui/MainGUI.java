@@ -112,7 +112,7 @@ public class MainGUI extends AbstractGUI {
 	 * @param position
 	 */
 	private void displayMultipleCategory(ItemStack item, Inventory gui, Player player, String category, int position) {
-		for (String subcategory : plugin.getPluginConfig().getConfigurationSection(category).getKeys(false)) {
+		for (String subcategory : plugin.getPluginConfig().getShallowKeys(category)) {
 			if (!configHideNotReceivedCategories || hasReceivedInCategory(player, category + "." + subcategory)) {
 				gui.setItem(position, item);
 				return;
@@ -146,7 +146,7 @@ public class MainGUI extends AbstractGUI {
 	 * @return true if the player has received at least one achievement in the category, false otherwise
 	 */
 	private boolean hasReceivedInCategory(Player player, String configPath) {
-		for (String threshold : plugin.getPluginConfig().getConfigurationSection(configPath).getKeys(false)) {
+		for (String threshold : plugin.getPluginConfig().getShallowKeys(configPath)) {
 			if (plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(),
 					plugin.getPluginConfig().getString(configPath + '.' + threshold + ".Name", ""))) {
 				// At least one achievement was received in the current category: it is unlocked.
