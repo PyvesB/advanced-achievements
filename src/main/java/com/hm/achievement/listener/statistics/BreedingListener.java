@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -24,10 +24,10 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * Listener class to deal with Breeding achievements.
  */
 @Singleton
-public class AchieveBreedListener extends AbstractListener {
+public class BreedingListener extends AbstractListener {
 
 	@Inject
-	public AchieveBreedListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public BreedingListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand) {
 		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);

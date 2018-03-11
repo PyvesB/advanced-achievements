@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityTameEvent;
+import org.bukkit.event.player.PlayerLevelChangeEvent;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
@@ -19,33 +19,36 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with Taming achievements.
+ * Listener class to deal with MaxLevel achievements.
  * 
  * @author Pyves
  *
  */
 @Singleton
-public class AchieveTameListener extends AbstractListener {
+public class LevelsListener extends AbstractListener {
 
 	@Inject
-	public AchieveTameListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public LevelsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand) {
 		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerTame(EntityTameEvent event) {
-		if (!(event.getOwner() instanceof Player)) {
-			return;
-		}
+	public void onPlayerExpChange(PlayerLevelChangeEvent event) {
+		Player player = event.getPlayer();
 
-		Player player = (Player) event.getOwner();
-		NormalAchievements category = NormalAchievements.TAMES;
+		NormalAchievements category = NormalAchievements.LEVELS;
 		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+		int previousMaxLevel = (int) databaseCacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
+
+		if (event.getNewLevel() <= previousMaxLevel) {
+			return;
+		}
+
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, event.getNewLevel() - previousMaxLevel);
 	}
 }

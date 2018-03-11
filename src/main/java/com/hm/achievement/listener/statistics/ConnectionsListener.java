@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,6 +31,7 @@ import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.db.AbstractSQLDatabaseManager;
 import com.hm.achievement.db.DatabaseCacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
+import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -42,7 +43,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  *
  */
 @Singleton
-public class AchieveConnectionListener extends AbstractListener implements Cleanable {
+public class ConnectionsListener extends AbstractListener implements Cleanable {
 
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -52,7 +53,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	private final AbstractSQLDatabaseManager sqlDatabaseManager;
 
 	@Inject
-	public AchieveConnectionListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public ConnectionsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand, AdvancedAchievements advancedAchievements,
 			AbstractSQLDatabaseManager sqlDatabaseManager, QuitListener quitListener) {

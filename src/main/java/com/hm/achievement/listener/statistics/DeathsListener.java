@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
@@ -19,27 +19,29 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with ItemPickups achievements. Keep PlayerPickupItemEvent for now, as it was only introduced
- * in late Minecraft 1.12 versions.
+ * Listener class to deal with Deaths achievements.
  * 
  * @author Pyves
  *
  */
-@SuppressWarnings("deprecation")
 @Singleton
-public class AchievePickupListener extends AbstractListener {
+public class DeathsListener extends AbstractListener {
 
 	@Inject
-	public AchievePickupListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public DeathsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand) {
 		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
-		Player player = event.getPlayer();
-		NormalAchievements category = NormalAchievements.PICKUPS;
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		Player player = event.getEntity();
+		if (player == null) {
+			return;
+		}
+
+		NormalAchievements category = NormalAchievements.DEATHS;
 		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}

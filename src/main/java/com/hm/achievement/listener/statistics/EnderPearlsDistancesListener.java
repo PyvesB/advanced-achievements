@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -28,13 +28,13 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  *
  */
 @Singleton
-public class AchieveTeleportRespawnListener extends AbstractListener {
+public class EnderPearlsDistancesListener extends AbstractListener {
 
 	private final Set<String> disabledCategories;
 	private final AchieveDistanceRunnable distanceRunnable;
 
 	@Inject
-	public AchieveTeleportRespawnListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public EnderPearlsDistancesListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand, Set<String> disabledCategories, AchieveDistanceRunnable distanceRunnable) {
 		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);

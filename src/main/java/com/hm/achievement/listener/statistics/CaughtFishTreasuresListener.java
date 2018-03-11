@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -8,12 +8,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bukkit.entity.Egg;
+import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
@@ -22,38 +22,37 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with Snowballs and Eggs achievements.
+ * Listener class to deal with Fish and Treasure achievements.
  * 
  * @author Pyves
  *
  */
 @Singleton
-public class AchieveSnowballEggListener extends AbstractListener {
+public class CaughtFishTreasuresListener extends AbstractListener {
 
 	private final Set<String> disabledCategories;
 
 	@Inject
-	public AchieveSnowballEggListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public CaughtFishTreasuresListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
-			ReloadCommand reloadCommand, Set<String> disabledCategories) {
+			Set<String> disabledCategories, ReloadCommand reloadCommand) {
 		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
 		this.disabledCategories = disabledCategories;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onProjectileLaunch(ProjectileLaunchEvent event) {
-		if (!(event.getEntity().getShooter() instanceof Player)) {
+	public void onPlayerFish(PlayerFishEvent event) {
+		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) {
 			return;
 		}
 
-		Player player = (Player) event.getEntity().getShooter();
+		Player player = event.getPlayer();
 		NormalAchievements category;
-		if (event.getEntity() instanceof Snowball) {
-			category = NormalAchievements.SNOWBALLS;
-		} else if (event.getEntity() instanceof Egg) {
-			category = NormalAchievements.EGGS;
+		Item caughtItem = (Item) event.getCaught();
+		if (caughtItem.getItemStack().getType() == Material.RAW_FISH) {
+			category = NormalAchievements.FISH;
 		} else {
-			return;
+			category = NormalAchievements.TREASURES;
 		}
 
 		if (disabledCategories.contains(category.toString())) {

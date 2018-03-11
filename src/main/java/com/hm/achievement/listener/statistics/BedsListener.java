@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -26,10 +27,10 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  *
  */
 @Singleton
-public class AchieveBedListener extends AbstractRateLimitedListener {
+public class BedsListener extends AbstractRateLimitedListener {
 
 	@Inject
-	public AchieveBedListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public BedsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
 			QuitListener quitListener) {

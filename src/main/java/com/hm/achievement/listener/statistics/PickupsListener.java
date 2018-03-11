@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -8,10 +8,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
@@ -20,29 +19,27 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with Shear achievements (only sheep are taken into account).
+ * Listener class to deal with ItemPickups achievements. Keep PlayerPickupItemEvent for now, as it was only introduced
+ * in late Minecraft 1.12 versions.
  * 
  * @author Pyves
  *
  */
+@SuppressWarnings("deprecation")
 @Singleton
-public class AchieveShearListener extends AbstractListener {
+public class PickupsListener extends AbstractListener {
 
 	@Inject
-	public AchieveShearListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public PickupsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand) {
 		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerShearEntity(PlayerShearEntityEvent event) {
-		if (!(event.getEntity() instanceof Sheep)) {
-			return;
-		}
-
+	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		Player player = event.getPlayer();
-		NormalAchievements category = NormalAchievements.SHEARS;
+		NormalAchievements category = NormalAchievements.PICKUPS;
 		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}

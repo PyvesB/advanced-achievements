@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,6 +17,7 @@ import com.hm.achievement.db.DatabaseCacheManager;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.ListenerLang;
 import com.hm.achievement.lifecycle.Cleanable;
+import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.FancyMessageSender;

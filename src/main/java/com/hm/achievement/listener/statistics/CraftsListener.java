@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -29,10 +29,10 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  *
  */
 @Singleton
-public class AchieveCraftListener extends AbstractListener {
+public class CraftsListener extends AbstractListener {
 
 	@Inject
-	public AchieveCraftListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public CraftsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand) {
 		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);

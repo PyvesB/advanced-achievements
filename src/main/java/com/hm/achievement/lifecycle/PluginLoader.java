@@ -32,35 +32,35 @@ import com.hm.achievement.config.ConfigurationParser;
 import com.hm.achievement.db.AbstractSQLDatabaseManager;
 import com.hm.achievement.db.AsyncCachedRequestsSender;
 import com.hm.achievement.exception.PluginLoadError;
-import com.hm.achievement.listener.AchieveArrowListener;
-import com.hm.achievement.listener.AchieveBedListener;
-import com.hm.achievement.listener.AchieveBlockBreakListener;
-import com.hm.achievement.listener.AchieveBlockPlaceListener;
-import com.hm.achievement.listener.AchieveBreedListener;
-import com.hm.achievement.listener.AchieveConnectionListener;
-import com.hm.achievement.listener.AchieveConsumeListener;
-import com.hm.achievement.listener.AchieveCraftListener;
-import com.hm.achievement.listener.AchieveDeathListener;
-import com.hm.achievement.listener.AchieveDropListener;
-import com.hm.achievement.listener.AchieveEnchantListener;
-import com.hm.achievement.listener.AchieveFishListener;
-import com.hm.achievement.listener.AchieveHoeFertiliseFireworkMusicListener;
-import com.hm.achievement.listener.AchieveItemBreakListener;
-import com.hm.achievement.listener.AchieveKillListener;
-import com.hm.achievement.listener.AchieveMilkLavaWaterListener;
-import com.hm.achievement.listener.AchievePetMasterGiveReceiveListener;
-import com.hm.achievement.listener.AchievePickupListener;
-import com.hm.achievement.listener.AchievePlayerCommandListener;
-import com.hm.achievement.listener.AchieveShearListener;
-import com.hm.achievement.listener.AchieveSnowballEggListener;
-import com.hm.achievement.listener.AchieveTameListener;
-import com.hm.achievement.listener.AchieveTeleportRespawnListener;
-import com.hm.achievement.listener.AchieveTradeAnvilBrewSmeltListener;
-import com.hm.achievement.listener.AchieveXPListener;
 import com.hm.achievement.listener.FireworkListener;
 import com.hm.achievement.listener.ListGUIListener;
 import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
 import com.hm.achievement.listener.QuitListener;
+import com.hm.achievement.listener.statistics.ArrowsListener;
+import com.hm.achievement.listener.statistics.BedsListener;
+import com.hm.achievement.listener.statistics.BreaksListener;
+import com.hm.achievement.listener.statistics.BreedingListener;
+import com.hm.achievement.listener.statistics.CaughtFishTreasuresListener;
+import com.hm.achievement.listener.statistics.ConnectionsListener;
+import com.hm.achievement.listener.statistics.ConsumedPotionsEatenItemsListener;
+import com.hm.achievement.listener.statistics.CraftsListener;
+import com.hm.achievement.listener.statistics.DeathsListener;
+import com.hm.achievement.listener.statistics.DropsListener;
+import com.hm.achievement.listener.statistics.EnchantmentsListener;
+import com.hm.achievement.listener.statistics.EnderPearlsDistancesListener;
+import com.hm.achievement.listener.statistics.PlowingFertilisingFireworksMusicDiscsListener;
+import com.hm.achievement.listener.statistics.ItemBreaksListener;
+import com.hm.achievement.listener.statistics.KillsListener;
+import com.hm.achievement.listener.statistics.LevelsListener;
+import com.hm.achievement.listener.statistics.MilksLavaWaterBucketsListener;
+import com.hm.achievement.listener.statistics.PetMasterGiveReceiveListener;
+import com.hm.achievement.listener.statistics.PickupsListener;
+import com.hm.achievement.listener.statistics.PlacesListener;
+import com.hm.achievement.listener.statistics.PlayerCommandsListener;
+import com.hm.achievement.listener.statistics.ShearsListener;
+import com.hm.achievement.listener.statistics.SnowballsEggsListener;
+import com.hm.achievement.listener.statistics.TamesListener;
+import com.hm.achievement.listener.statistics.TradesAnvilsBrewingSmeltingListener;
 import com.hm.achievement.placeholder.AchievementCountBungeeTabListPlusVariable;
 import com.hm.achievement.placeholder.AchievementPlaceholderHook;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
@@ -85,34 +85,34 @@ public class PluginLoader {
 	private final ReloadCommand reloadCommand;
 
 	// Listeners, to monitor events and manage stats.
-	private final AchieveConnectionListener connectionListener;
-	private final AchieveDeathListener deathListener;
-	private final AchieveArrowListener arrowListener;
-	private final AchieveSnowballEggListener snowballEggListener;
-	private final AchieveFishListener fishListener;
-	private final AchieveItemBreakListener itemBreakListener;
-	private final AchieveConsumeListener consumeListener;
-	private final AchieveShearListener shearListener;
-	private final AchieveMilkLavaWaterListener milkLavaWaterListener;
-	private final AchieveTradeAnvilBrewSmeltListener tradeAnvilBrewSmeltListener;
-	private final AchieveEnchantListener enchantmentListener;
-	private final AchieveBedListener bedListener;
-	private final AchieveXPListener xpListener;
-	private final AchieveDropListener dropListener;
-	private final AchievePickupListener pickupListener;
-	private final AchieveHoeFertiliseFireworkMusicListener hoeFertiliseFireworkMusicListener;
-	private final AchieveTameListener tameListener;
-	private final AchieveBreedListener breedListener;
-	private final AchieveBlockPlaceListener blockPlaceListener;
-	private final AchieveBlockBreakListener blockBreakListener;
-	private final AchieveKillListener killListener;
-	private final AchieveCraftListener craftListener;
-	private final AchievePlayerCommandListener playerCommandListener;
-	private final AchieveTeleportRespawnListener teleportRespawnListener;
-	private final AchievePetMasterGiveReceiveListener petMasterGiveReceiveListener;
+	private final ConnectionsListener connectionsListener;
+	private final DeathsListener deathsListener;
+	private final ArrowsListener arrowsListener;
+	private final SnowballsEggsListener snowballsEggsListener;
+	private final CaughtFishTreasuresListener caughtFishTreasuresListener;
+	private final ItemBreaksListener itemBreaksListener;
+	private final ConsumedPotionsEatenItemsListener consumedPotionsEatenItemsListener;
+	private final ShearsListener shearsListener;
+	private final MilksLavaWaterBucketsListener milksLavaWaterBucketsListener;
+	private final LevelsListener levelsListener;
+	private final TradesAnvilsBrewingSmeltingListener tradesAnvilsBrewingSmeltingListener;
+	private final BedsListener bedsListener;
+	private final EnchantmentsListener enchantmentsListener;
+	private final DropsListener dropsListener;
+	private final PickupsListener pickupsListener;
+	private final PlowingFertilisingFireworksMusicDiscsListener plowingFertilisingFireworksMusicDiscsListener;
+	private final TamesListener tamesListener;
+	private final BreedingListener breedingListener;
+	private final PlacesListener placesListener;
+	private final BreaksListener breaksListener;
+	private final KillsListener killsListener;
+	private final CraftsListener craftsListener;
+	private final PlayerCommandsListener playerCommandsListener;
+	private final EnderPearlsDistancesListener enderPearlsDistancesListener;
+	private final PetMasterGiveReceiveListener petMasterGiveReceiveListener;
+	private final FireworkListener fireworkListener;
 	private final QuitListener quitListener;
 	private final ListGUIListener listGUIListener;
-	private final FireworkListener fireworkListener;
 	private final PlayerAdvancedAchievementListener playerAdvancedAchievementListener;
 
 	// Integrations with other plugins. Use lazy injection as these may or may not be used depending on runtime
@@ -141,21 +141,19 @@ public class PluginLoader {
 	private BukkitTask distanceTask;
 
 	@Inject
-	public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger,
-			AchieveConnectionListener connectionListener, AchieveDeathListener deathListener,
-			AchieveArrowListener arrowListener, AchieveSnowballEggListener snowballEggListener,
-			AchieveFishListener fishListener, AchieveItemBreakListener itemBreakListener,
-			AchieveConsumeListener consumeListener, AchieveShearListener shearListener,
-			AchieveMilkLavaWaterListener milkLavaWaterListener,
-			AchieveTradeAnvilBrewSmeltListener tradeAnvilBrewSmeltListener, AchieveEnchantListener enchantmentListener,
-			AchieveBedListener bedListener, AchieveXPListener xpListener, AchieveDropListener dropListener,
-			AchievePickupListener pickupListener, AchieveHoeFertiliseFireworkMusicListener hoeFertiliseFireworkMusicListener,
-			AchieveTameListener tameListener, AchieveBreedListener breedListener,
-			AchieveBlockPlaceListener blockPlaceListener, AchieveBlockBreakListener blockBreakListener,
-			AchieveKillListener killListener, AchieveCraftListener craftListener,
-			AchievePlayerCommandListener playerCommandListener, AchieveTeleportRespawnListener teleportRespawnListener,
-			AchievePetMasterGiveReceiveListener petMasterGiveReceiveListener, QuitListener quitListener,
-			ListGUIListener listGUIListener, FireworkListener fireworkListener,
+	public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger, ConnectionsListener connectionsListener,
+			DeathsListener deathsListener, ArrowsListener arrowsListener, SnowballsEggsListener snowballsEggsListener,
+			CaughtFishTreasuresListener caughtFishTreasuresListener, ItemBreaksListener itemBreaksListener,
+			ConsumedPotionsEatenItemsListener consumedPotionsEatenItemsListener, ShearsListener shearsListener,
+			MilksLavaWaterBucketsListener milksLavaWaterBucketsListener, LevelsListener levelsListener,
+			TradesAnvilsBrewingSmeltingListener tradesAnvilsBrewingSmeltingListener, BedsListener bedsListener,
+			EnchantmentsListener enchantmentsListener, DropsListener dropsListener, PickupsListener pickupsListener,
+			PlowingFertilisingFireworksMusicDiscsListener plowingFertilisingFireworksMusicDiscsListener,
+			TamesListener tamesListener, BreedingListener breedingListener, PlacesListener placesListener,
+			BreaksListener breaksListener, KillsListener killsListener, CraftsListener craftsListener,
+			PlayerCommandsListener playerCommandsListener, EnderPearlsDistancesListener enderPearlsDistancesListener,
+			PetMasterGiveReceiveListener petMasterGiveReceiveListener, FireworkListener fireworkListener,
+			QuitListener quitListener, ListGUIListener listGUIListener,
 			PlayerAdvancedAchievementListener playerAdvancedAchievementListener,
 			Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
 			Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
@@ -166,34 +164,34 @@ public class PluginLoader {
 			AchievePlayTimeRunnable playTimeRunnable, UpdateChecker updateChecker, ReloadCommand reloadCommand) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
-		this.connectionListener = connectionListener;
-		this.deathListener = deathListener;
-		this.arrowListener = arrowListener;
-		this.snowballEggListener = snowballEggListener;
-		this.fishListener = fishListener;
-		this.itemBreakListener = itemBreakListener;
-		this.consumeListener = consumeListener;
-		this.shearListener = shearListener;
-		this.milkLavaWaterListener = milkLavaWaterListener;
-		this.tradeAnvilBrewSmeltListener = tradeAnvilBrewSmeltListener;
-		this.enchantmentListener = enchantmentListener;
-		this.bedListener = bedListener;
-		this.xpListener = xpListener;
-		this.dropListener = dropListener;
-		this.pickupListener = pickupListener;
-		this.hoeFertiliseFireworkMusicListener = hoeFertiliseFireworkMusicListener;
-		this.tameListener = tameListener;
-		this.breedListener = breedListener;
-		this.blockPlaceListener = blockPlaceListener;
-		this.blockBreakListener = blockBreakListener;
-		this.killListener = killListener;
-		this.craftListener = craftListener;
-		this.playerCommandListener = playerCommandListener;
-		this.teleportRespawnListener = teleportRespawnListener;
+		this.connectionsListener = connectionsListener;
+		this.deathsListener = deathsListener;
+		this.arrowsListener = arrowsListener;
+		this.snowballsEggsListener = snowballsEggsListener;
+		this.caughtFishTreasuresListener = caughtFishTreasuresListener;
+		this.itemBreaksListener = itemBreaksListener;
+		this.consumedPotionsEatenItemsListener = consumedPotionsEatenItemsListener;
+		this.shearsListener = shearsListener;
+		this.milksLavaWaterBucketsListener = milksLavaWaterBucketsListener;
+		this.levelsListener = levelsListener;
+		this.tradesAnvilsBrewingSmeltingListener = tradesAnvilsBrewingSmeltingListener;
+		this.bedsListener = bedsListener;
+		this.enchantmentsListener = enchantmentsListener;
+		this.dropsListener = dropsListener;
+		this.pickupsListener = pickupsListener;
+		this.plowingFertilisingFireworksMusicDiscsListener = plowingFertilisingFireworksMusicDiscsListener;
+		this.tamesListener = tamesListener;
+		this.breedingListener = breedingListener;
+		this.placesListener = placesListener;
+		this.breaksListener = breaksListener;
+		this.killsListener = killsListener;
+		this.craftsListener = craftsListener;
+		this.playerCommandsListener = playerCommandsListener;
+		this.enderPearlsDistancesListener = enderPearlsDistancesListener;
 		this.petMasterGiveReceiveListener = petMasterGiveReceiveListener;
+		this.fireworkListener = fireworkListener;
 		this.quitListener = quitListener;
 		this.listGUIListener = listGUIListener;
-		this.fireworkListener = fireworkListener;
 		this.playerAdvancedAchievementListener = playerAdvancedAchievementListener;
 		this.achievementPlaceholderHook = achievementPlaceholderHook;
 		this.achievementCountBungeeTabListPlusVariable = achievementCountBungeeTabListPlusVariable;
@@ -261,37 +259,38 @@ public class PluginLoader {
 	private void registerListeners() {
 		logger.info("Registering event listeners...");
 
-		registerListener(blockPlaceListener, MultipleAchievements.PLACES);
-		registerListener(blockBreakListener, MultipleAchievements.BREAKS);
-		registerListener(killListener, MultipleAchievements.KILLS);
-		registerListener(craftListener, MultipleAchievements.CRAFTS);
-		registerListener(playerCommandListener, MultipleAchievements.PLAYERCOMMANDS);
-		registerListener(breedListener, MultipleAchievements.BREEDING);
-		registerListener(deathListener, NormalAchievements.DEATHS);
-		registerListener(arrowListener, NormalAchievements.ARROWS);
-		registerListener(snowballEggListener, NormalAchievements.SNOWBALLS, NormalAchievements.EGGS);
-		registerListener(fishListener, NormalAchievements.FISH, NormalAchievements.TREASURES);
-		registerListener(itemBreakListener, NormalAchievements.ITEMBREAKS);
-		registerListener(consumeListener, NormalAchievements.CONSUMEDPOTIONS, NormalAchievements.EATENITEMS);
-		registerListener(shearListener, NormalAchievements.SHEARS);
-		registerListener(milkLavaWaterListener, NormalAchievements.MILKS, NormalAchievements.LAVABUCKETS,
+		registerListener(placesListener, MultipleAchievements.PLACES);
+		registerListener(breaksListener, MultipleAchievements.BREAKS);
+		registerListener(killsListener, MultipleAchievements.KILLS);
+		registerListener(craftsListener, MultipleAchievements.CRAFTS);
+		registerListener(playerCommandsListener, MultipleAchievements.PLAYERCOMMANDS);
+		registerListener(breedingListener, MultipleAchievements.BREEDING);
+		registerListener(deathsListener, NormalAchievements.DEATHS);
+		registerListener(arrowsListener, NormalAchievements.ARROWS);
+		registerListener(snowballsEggsListener, NormalAchievements.SNOWBALLS, NormalAchievements.EGGS);
+		registerListener(caughtFishTreasuresListener, NormalAchievements.FISH, NormalAchievements.TREASURES);
+		registerListener(itemBreaksListener, NormalAchievements.ITEMBREAKS);
+		registerListener(consumedPotionsEatenItemsListener, NormalAchievements.CONSUMEDPOTIONS,
+				NormalAchievements.EATENITEMS);
+		registerListener(shearsListener, NormalAchievements.SHEARS);
+		registerListener(milksLavaWaterBucketsListener, NormalAchievements.MILKS, NormalAchievements.LAVABUCKETS,
 				NormalAchievements.WATERBUCKETS);
-		registerListener(tradeAnvilBrewSmeltListener, NormalAchievements.TRADES, NormalAchievements.ANVILS,
+		registerListener(tradesAnvilsBrewingSmeltingListener, NormalAchievements.TRADES, NormalAchievements.ANVILS,
 				NormalAchievements.BREWING, NormalAchievements.SMELTING);
-		registerListener(enchantmentListener, NormalAchievements.ENCHANTMENTS);
-		registerListener(xpListener, NormalAchievements.LEVELS);
-		registerListener(bedListener, NormalAchievements.BEDS);
-		registerListener(dropListener, NormalAchievements.DROPS);
-		registerListener(pickupListener, NormalAchievements.PICKUPS);
-		registerListener(tameListener, NormalAchievements.TAMES);
-		registerListener(hoeFertiliseFireworkMusicListener, NormalAchievements.HOEPLOWING, NormalAchievements.FERTILISING,
-				NormalAchievements.FIREWORKS, NormalAchievements.MUSICDISCS);
-		registerListener(teleportRespawnListener, NormalAchievements.DISTANCEFOOT, NormalAchievements.DISTANCEPIG,
+		registerListener(enchantmentsListener, NormalAchievements.ENCHANTMENTS);
+		registerListener(levelsListener, NormalAchievements.LEVELS);
+		registerListener(bedsListener, NormalAchievements.BEDS);
+		registerListener(dropsListener, NormalAchievements.DROPS);
+		registerListener(pickupsListener, NormalAchievements.PICKUPS);
+		registerListener(tamesListener, NormalAchievements.TAMES);
+		registerListener(plowingFertilisingFireworksMusicDiscsListener, NormalAchievements.HOEPLOWING,
+				NormalAchievements.FERTILISING, NormalAchievements.FIREWORKS, NormalAchievements.MUSICDISCS);
+		registerListener(enderPearlsDistancesListener, NormalAchievements.DISTANCEFOOT, NormalAchievements.DISTANCEPIG,
 				NormalAchievements.DISTANCEHORSE, NormalAchievements.DISTANCEMINECART, NormalAchievements.DISTANCEBOAT,
 				NormalAchievements.DISTANCEGLIDING, NormalAchievements.DISTANCELLAMA, NormalAchievements.ENDERPEARLS);
 		registerListener(petMasterGiveReceiveListener, NormalAchievements.PETMASTERGIVE,
 				NormalAchievements.PETMASTERRECEIVE);
-		registerListener(connectionListener);
+		registerListener(connectionsListener);
 		registerListener(quitListener);
 		registerListener(listGUIListener);
 		registerListener(fireworkListener);

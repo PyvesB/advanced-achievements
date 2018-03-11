@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +22,7 @@ import org.bukkit.event.inventory.InventoryType;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -32,12 +33,12 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  *
  */
 @Singleton
-public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListener {
+public class TradesAnvilsBrewingSmeltingListener extends AbstractRateLimitedListener {
 
 	private final Set<String> disabledCategories;
 
 	@Inject
-	public AchieveTradeAnvilBrewSmeltListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public TradesAnvilsBrewingSmeltingListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
 			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger, ReloadCommand reloadCommand,
 			QuitListener quitListener, Set<String> disabledCategories) {

@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -26,12 +26,12 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  *
  */
 @Singleton
-public class AchievePetMasterGiveReceiveListener extends AbstractListener {
+public class PetMasterGiveReceiveListener extends AbstractListener {
 
 	private final Set<String> disabledCategories;
 
 	@Inject
-	public AchievePetMasterGiveReceiveListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public PetMasterGiveReceiveListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand, Set<String> disabledCategories) {
 		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);

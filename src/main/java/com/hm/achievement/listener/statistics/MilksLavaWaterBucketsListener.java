@@ -1,4 +1,4 @@
-package com.hm.achievement.listener;
+package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -28,12 +29,12 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
-public class AchieveMilkLavaWaterListener extends AbstractRateLimitedListener {
+public class MilksLavaWaterBucketsListener extends AbstractRateLimitedListener {
 
 	private final Set<String> disabledCategories;
 
 	@Inject
-	public AchieveMilkLavaWaterListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public MilksLavaWaterBucketsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
 			QuitListener quitListener, Set<String> disabledCategories) {
