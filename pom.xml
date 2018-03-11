@@ -16,7 +16,7 @@
 	</properties>
 
 	<build>
-		<finalName>${project.artifactId}</finalName>
+		<finalName>original-${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -38,19 +38,58 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.1.0</version>
-				<configuration>
-					<relocations>
-						<relocation>
-							<pattern>com.hm.mcshared</pattern>
-							<shadedPattern>com.hm.achievement</shadedPattern>
-							<excludes>
-								<exclude>com.hm.mcshared.event.*</exclude>
-							</excludes>
-						</relocation>
-					</relocations>
-				</configuration>
 				<executions>
 					<execution>
+						<id>shade-main</id>
+						<configuration>
+							<finalName>${project.artifactId}</finalName>
+							<artifactSet>
+								<!-- Minecraft 1.8+ ships fairly recent versions of Guava and Commons. -->
+								<!-- Exclude these dependencies from the produced jar. -->
+								<excludes>
+									<exclude>com.google.guava:*</exclude>
+									<exclude>org.apache.commons:*</exclude>
+								</excludes>
+							</artifactSet>
+							<minimizeJar>true</minimizeJar>
+							<relocations>
+								<relocation>
+									<pattern>com.hm.mcshared</pattern>
+									<shadedPattern>com.hm.achievement</shadedPattern>
+									<excludes>
+										<exclude>com.hm.mcshared.event.*</exclude>
+									</excludes>
+								</relocation>
+							</relocations>
+						</configuration>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>shade-mc-1.7</id>
+						<configuration>
+							<finalName>${project.artifactId}-1.7.9-1.7.10</finalName>
+							<minimizeJar>true</minimizeJar>
+							<relocations>
+								<relocation>
+									<pattern>com.hm.mcshared</pattern>
+									<shadedPattern>com.hm.achievement</shadedPattern>
+									<excludes>
+										<exclude>com.hm.mcshared.event.*</exclude>
+									</excludes>
+								</relocation>
+								<relocation>
+									<pattern>com.google</pattern>
+									<shadedPattern>com.hm</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>org.apache.commons</pattern>
+									<shadedPattern>org.apache.commons</shadedPattern>
+								</relocation>
+							</relocations>
+						</configuration>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
@@ -129,13 +168,13 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>20.0</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.3.2</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
