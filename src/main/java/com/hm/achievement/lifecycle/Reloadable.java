@@ -1,4 +1,4 @@
-package com.hm.achievement.utils;
+package com.hm.achievement.lifecycle;
 
 import com.hm.achievement.exception.PluginLoadError;
 

@@ -5,14 +5,19 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.Cleanable;
+import com.hm.achievement.lifecycle.Cleanable;
+import com.hm.achievement.listener.QuitListener;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class used to provide a cache wrapper for various database statistics, in order to reduce load of database and enable
@@ -21,9 +26,11 @@ import com.hm.achievement.utils.Cleanable;
  * @author Pyves
  *
  */
+@Singleton
 public class DatabaseCacheManager implements Cleanable {
 
-	private final AdvancedAchievements plugin;
+	private final CommentedYamlConfiguration mainConfig;
+	private final AbstractSQLDatabaseManager sqlDatabaseManager;
 	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
 	private final Map<NormalAchievements, Map<String, CachedStatistic>> normalAchievementsToPlayerStatistics;
 	// Statistics of the different players for multiple achievements; keys in the inner maps correspond to concatenated
@@ -35,8 +42,12 @@ public class DatabaseCacheManager implements Cleanable {
 	// Map corresponding to the total amount of achievements received by each player.
 	private final Map<String, Integer> totalPlayerAchievementsCache;
 
-	public DatabaseCacheManager(AdvancedAchievements plugin) {
-		this.plugin = plugin;
+	@Inject
+	public DatabaseCacheManager(@Named("main") CommentedYamlConfiguration mainConfig,
+			AbstractSQLDatabaseManager sqlDatabaseManager, QuitListener quitListener) {
+		this.mainConfig = mainConfig;
+		this.sqlDatabaseManager = sqlDatabaseManager;
+		quitListener.addObserver(this);
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
 		receivedAchievementsCache = MultimapBuilder.hashKeys().hashSetValues().build();
@@ -44,8 +55,7 @@ public class DatabaseCacheManager implements Cleanable {
 
 		// ConcurrentHashMaps are necessary to guarantee thread safety.
 		for (NormalAchievements normalAchievement : NormalAchievements.values()) {
-			normalAchievementsToPlayerStatistics.put(normalAchievement,
-					new ConcurrentHashMap<String, CachedStatistic>());
+			normalAchievementsToPlayerStatistics.put(normalAchievement, new ConcurrentHashMap<String, CachedStatistic>());
 		}
 		for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
 			multipleAchievementsToPlayerStatistics.put(multipleAchievement,
@@ -65,7 +75,7 @@ public class DatabaseCacheManager implements Cleanable {
 		// Indicate to the relevant cached statistics that the player has disconnected.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Map<String, CachedStatistic> categoryMap = getHashMap(category);
-			for (String subcategory : plugin.getPluginConfig().getShallowKeys(category.toString())) {
+			for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
 				CachedStatistic statistic = categoryMap.get(getMultipleCategoryCacheKey(category, uuid, subcategory));
 				if (statistic != null) {
 					statistic.signalPlayerDisconnection();
@@ -112,8 +122,7 @@ public class DatabaseCacheManager implements Cleanable {
 	public long getAndIncrementStatisticAmount(NormalAchievements category, UUID player, int value) {
 		CachedStatistic statistic = getHashMap(category).get(player.toString());
 		if (statistic == null) {
-			statistic = new CachedStatistic(plugin.getDatabaseManager().getNormalAchievementAmount(player, category),
-					true);
+			statistic = new CachedStatistic(sqlDatabaseManager.getNormalAchievementAmount(player, category), true);
 			getHashMap(category).put(player.toString(), statistic);
 		}
 		if (value > 0) {
@@ -134,18 +143,15 @@ public class DatabaseCacheManager implements Cleanable {
 	 * @param value
 	 * @return the updated statistic value
 	 */
-	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player,
-			int value) {
-		CachedStatistic statistic = getHashMap(category)
-				.get(getMultipleCategoryCacheKey(category, player, subcategory));
+	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player, int value) {
+		CachedStatistic statistic = getHashMap(category).get(getMultipleCategoryCacheKey(category, player, subcategory));
 		if (statistic == null) {
 			String subcategoryDBName = subcategory;
 			if (category == MultipleAchievements.PLAYERCOMMANDS) {
 				subcategoryDBName = StringUtils.deleteWhitespace(subcategory);
 			}
 			statistic = new CachedStatistic(
-					plugin.getDatabaseManager().getMultipleAchievementAmount(player, category, subcategoryDBName),
-					true);
+					sqlDatabaseManager.getMultipleAchievementAmount(player, category, subcategoryDBName), true);
 			getHashMap(category).put(getMultipleCategoryCacheKey(category, player, subcategory), statistic);
 		}
 		if (value > 0) {
@@ -171,7 +177,7 @@ public class DatabaseCacheManager implements Cleanable {
 			return false;
 		}
 
-		boolean received = plugin.getDatabaseManager().hasPlayerAchievement(player, name);
+		boolean received = sqlDatabaseManager.hasPlayerAchievement(player, name);
 		if (received) {
 			receivedAchievementsCache.put(player.toString(), name);
 		} else {
@@ -190,7 +196,7 @@ public class DatabaseCacheManager implements Cleanable {
 	public synchronized int getPlayerTotalAchievements(UUID player) {
 		Integer totalAchievements = totalPlayerAchievementsCache.get(player.toString());
 		if (totalAchievements == null) {
-			totalAchievements = plugin.getDatabaseManager().getPlayerAchievementsAmount(player);
+			totalAchievements = sqlDatabaseManager.getPlayerAchievementsAmount(player);
 			totalPlayerAchievementsCache.put(player.toString(), totalAchievements);
 		}
 		return totalAchievements;

@@ -1,13 +1,9 @@
 package com.hm.achievement.db;
 
-import com.google.common.util.concurrent.MoreExecutors;
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.data.AwardedDBAchievement;
-import org.junit.*;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import utilities.MockUtility;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -16,7 +12,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.hm.achievement.db.data.AwardedDBAchievement;
+
+import utilities.MockUtility;
 
 /**
  * Class for testing SQLite Database.
@@ -32,21 +39,11 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		MockUtility mockUtility = MockUtility.setUp()
-				.withLogger()
 				.withPluginDescription()
+				.withLogger()
 				.withDataFolder(temporaryFolder.getRoot())
-				.withPluginConfig("config.yml");
-		AdvancedAchievements pluginMock = mockUtility.getPluginMock();
-
-		db = new SQLiteDatabaseManager(pluginMock) {
-
-			@Override
-			public void extractConfigurationParameters() {
-				super.extractConfigurationParameters();
-				pool = MoreExecutors.newDirectExecutorService();
-			}
-		};
-		initDB();
+				.withPluginFile("config.yml");
+		initDB(mockUtility);
 	}
 
 	@Before
@@ -98,7 +95,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 				ps.setDate(4, new Date(System.currentTimeMillis()));
 				ps.execute();
 			}
-		}).executeOperation(db.pool, db.plugin.getLogger(), "registering an achievement with null UUID");
+		}).executeOperation(db.pool, null, "registering an achievement with null UUID");
 	}
 
 	@Test

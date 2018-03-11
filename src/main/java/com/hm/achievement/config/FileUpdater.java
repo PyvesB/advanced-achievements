@@ -1,6 +1,19 @@
-package com.hm.achievement.utils;
+package com.hm.achievement.config;
 
-import com.hm.achievement.AdvancedAchievements;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.bukkit.configuration.InvalidConfigurationException;
+
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lang.GuiLang;
@@ -11,24 +24,22 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lang.command.HelpLang;
 import com.hm.achievement.lang.command.InfoLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
-import org.bukkit.configuration.InvalidConfigurationException;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.logging.Level;
 
 /**
  * Class in charge of updating the language and configuration files when a new version of the plugin is released.
  *
  * @author Pyves
  */
+@Singleton
 public class FileUpdater {
 
-	private AdvancedAchievements plugin;
+	private final Logger logger;
+
 	private boolean updatePerformed;
 
-	public FileUpdater(AdvancedAchievements plugin) {
-		this.plugin = plugin;
+	@Inject
+	public FileUpdater(Logger logger) {
+		this.logger = logger;
 	}
 
 	/**
@@ -119,8 +130,7 @@ public class FileUpdater {
 				"Ignored if Firework parameter is set to true.");
 
 		// Added in version 5.1:
-		updateSetting(config, "NotifyOtherPlayers", false,
-				"Notify other connected players when an achievement is received.",
+		updateSetting(config, "NotifyOtherPlayers", false, "Notify other connected players when an achievement is received.",
 				"Default behaviour, a player can override what he sees by using /aach toggle.");
 		updateSetting(config, "ActionBarNotify", true,
 				"When NotifyOtherPlayers is enabled, notifications are done using action bars when ActionBarNotify is true.",
@@ -176,7 +186,7 @@ public class FileUpdater {
 				config.saveConfiguration();
 				config.loadConfiguration();
 			} catch (IOException | InvalidConfigurationException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the configuration file:", e);
+				logger.log(Level.SEVERE, "Error while saving changes to the configuration file:", e);
 			}
 		}
 	}
@@ -205,19 +215,9 @@ public class FileUpdater {
 		}
 
 		// Iterate through all Lang implementation keys & default values
-		Arrays.stream(
-				new Lang[][] {
-						CmdLang.values(),
-						HelpLang.values(),
-						HelpLang.Hover.values(),
-						InfoLang.values(),
-						GuiLang.values(),
-						ListenerLang.values(),
-						RewardLang.values(),
-						NormalAchievements.values(),
-						MultipleAchievements.values()
-				}).flatMap(Arrays::stream)
-				.forEach(language -> updateLang(lang, language));
+		Arrays.stream(new Lang[][] { CmdLang.values(), HelpLang.values(), HelpLang.Hover.values(), InfoLang.values(),
+				GuiLang.values(), ListenerLang.values(), RewardLang.values(), NormalAchievements.values(),
+				MultipleAchievements.values() }).flatMap(Arrays::stream).forEach(language -> updateLang(lang, language));
 
 		// Not found in Enums (Possibly unused)
 		updateSetting(lang, "list-custom", "Custom Categories");
@@ -228,7 +228,7 @@ public class FileUpdater {
 				lang.saveConfiguration();
 				lang.loadConfiguration();
 			} catch (IOException | InvalidConfigurationException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the language file:", e);
+				logger.log(Level.SEVERE, "Error while saving changes to the language file:", e);
 			}
 		}
 	}
@@ -270,7 +270,7 @@ public class FileUpdater {
 				gui.saveConfiguration();
 				gui.loadConfiguration();
 			} catch (IOException | InvalidConfigurationException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while saving changes to the gui file:", e);
+				logger.log(Level.SEVERE, "Error while saving changes to the gui file:", e);
 			}
 		}
 	}

@@ -1,10 +1,17 @@
 package com.hm.achievement.db;
 
-import com.hm.achievement.exception.PluginLoadError;
+import static org.mockito.Mockito.mock;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.Collections;
 import java.util.UUID;
+import java.util.logging.Logger;
+
+import com.google.common.util.concurrent.MoreExecutors;
+import com.hm.achievement.command.ReloadCommand;
+
+import utilities.MockUtility;
 
 public class SQLiteDatabaseTest {
 
@@ -14,7 +21,17 @@ public class SQLiteDatabaseTest {
 	final String testAchievement = "TestAchievement";
 	final String testAchievementMsg = "TestMessage";
 
-	static void initDB() throws PluginLoadError {
+	static void initDB(MockUtility mockUtility) throws Exception {
+		Logger logger = Logger.getLogger("DBTestLogger");
+		db = new SQLiteDatabaseManager(mockUtility.getLoadedConfig("config.yml"), logger, Collections.emptyMap(),
+				new DatabaseUpdater(logger, 11), mock(ReloadCommand.class), mockUtility.getPluginMock()) {
+
+			@Override
+			public void extractConfigurationParameters() {
+				super.extractConfigurationParameters();
+				pool = MoreExecutors.newDirectExecutorService();
+			}
+		};
 		db.initialise();
 		db.extractConfigurationParameters();
 	}
@@ -41,6 +58,6 @@ public class SQLiteDatabaseTest {
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.execute();
 			}
-		}).executeOperation(db.pool, db.plugin.getLogger(), "Clearing achievements table");
+		}).executeOperation(db.pool, null, "Clearing achievements table");
 	}
 }

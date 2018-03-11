@@ -15,7 +15,6 @@ category-does-not-exist: "Ez a kategória CAT nem létezik."
 # Related to /aach reload.
 configuration-successfully-reloaded: "A konfiguráció sikeresen újratöltve."
 configuration-reload-failed: "Hiba történt a konfiguráció újratöltése közben. Kérjük, nézze meg a naplókat további részletekért."
-server-restart-reload: "A letiltott kategóriák listája módosult. A szerver teljes újra kell töltenie vagy újra kell indítani, hogy a módosítások érvénybe lépjenek."
 
 # Related to /aach top week and month.
 top-achievement: "Top küldetés tulajdonosok:"

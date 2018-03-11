@@ -1,19 +1,35 @@
 package com.hm.achievement.command;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.command.InfoLang;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.InfoLang;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of displaying the plugin's extra information (/aach info).
  *
  * @author Pyves
  */
+@Singleton
 public class InfoCommand extends AbstractCommand {
+
+	private final AdvancedAchievements advancedAchievements;
+	private final RewardParser rewardParser;
+
+	private ChatColor configColor;
+	private String configIcon;
+	private String configDatabaseType;
+	private String header;
 
 	private String langVersionCommandDescription;
 	private String langVersionCommandAuthor;
@@ -24,77 +40,72 @@ public class InfoCommand extends AbstractCommand {
 	private String langVersionCommandBtlp;
 	private String langVersionCommandEssentials;
 	private String langVersionCommandPlaceholderAPI;
-	private String configDatabaseType;
 	private String langVersionCommandDatabase;
-	private String header;
 
-	public InfoCommand(AdvancedAchievements plugin) {
-		super(plugin);
+	@Inject
+	public InfoCommand(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
+			AdvancedAchievements advancedAchievements, RewardParser rewardParser) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		this.advancedAchievements = advancedAchievements;
+		this.rewardParser = rewardParser;
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configDatabaseType = plugin.getPluginConfig().getString("DatabaseType", "sqlite");
+		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0));
+		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
+		configDatabaseType = mainConfig.getString("DatabaseType", "sqlite");
 
-		header = configColor + "------------ " + configIcon
-				+ translateColorCodes(" &lAdvanced Achievements ") + configColor + configIcon
-				+ configColor + " ------------";
+		header = configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ") + configColor
+				+ configIcon + configColor + " ------------";
 
-		langVersionCommandDescription = plugin.getChatHeader() + configColor
-				+ Lang.get(InfoLang.DESCRIPTION, plugin) + " " + ChatColor.GRAY
-				+ Lang.get(InfoLang.DESCRIPTION_DETAILS, plugin);
+		langVersionCommandDescription = pluginHeader.toString() + configColor + Lang.get(InfoLang.DESCRIPTION, langConfig)
+				+ " " + ChatColor.GRAY + Lang.get(InfoLang.DESCRIPTION_DETAILS, langConfig);
 
-		langVersionCommandVersion = plugin.getChatHeader() + configColor
-				+ Lang.get(InfoLang.VERSION, plugin) + " " + ChatColor.GRAY
-				+ plugin.getDescription().getVersion();
+		langVersionCommandVersion = pluginHeader.toString() + configColor + Lang.get(InfoLang.VERSION, langConfig) + " "
+				+ ChatColor.GRAY + advancedAchievements.getDescription().getVersion();
 
-		langVersionCommandAuthor = plugin.getChatHeader() + configColor
-				+ Lang.get(InfoLang.AUTHOR, plugin) + " " + ChatColor.GRAY
-				+ plugin.getDescription().getAuthors().get(0);
+		langVersionCommandAuthor = pluginHeader.toString() + configColor + Lang.get(InfoLang.AUTHOR, langConfig) + " "
+				+ ChatColor.GRAY + advancedAchievements.getDescription().getAuthors().get(0);
 
-		langVersionCommandWebsite = plugin.getChatHeader() + configColor
-				+ Lang.get(InfoLang.WEBSITE, plugin) + " " + ChatColor.GRAY
-				+ plugin.getDescription().getWebsite();
+		langVersionCommandWebsite = pluginHeader.toString() + configColor + Lang.get(InfoLang.WEBSITE, langConfig) + " "
+				+ ChatColor.GRAY + advancedAchievements.getDescription().getWebsite();
 
 		// Display whether Advanced Achievements is linked to Vault.
-		String vaultState = plugin.getRewardParser().getEconomy() != null ? "&a\u2714" : "&4\u2718";
-		langVersionCommandVault = plugin.getChatHeader() + configColor
-				+ Lang.get(InfoLang.VAULT, plugin) + " " + ChatColor.GRAY
-				+ translateColorCodes(StringEscapeUtils.unescapeJava(vaultState));
+		String vaultState = rewardParser.getEconomy() != null ? "&a\u2714" : "&4\u2718";
+		langVersionCommandVault = pluginHeader.toString() + configColor + Lang.get(InfoLang.VAULT, langConfig) + " "
+				+ ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(vaultState));
 
 		// Display whether Advanced Achievements is linked to Pet Master.
-		String petMasterState = plugin.getPetMasterGiveReceiveListener() != null ? "&a\u2714" : "&4\u2718";
-		langVersionCommandPetmaster = plugin.getChatHeader() + configColor
-				+ Lang.get(InfoLang.PETMASTER, plugin) + " " + ChatColor.GRAY
-				+ translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
+		String petMasterState = Bukkit.getPluginManager().isPluginEnabled("PetMaster") ? "&a\u2714" : "&4\u2718";
+		langVersionCommandPetmaster = pluginHeader.toString() + configColor + Lang.get(InfoLang.PETMASTER, langConfig) + " "
+				+ ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
 
 		// Display whether Advanced Achievements is linked to BungeeTabListPlus.
 		String btlpState = Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus") ? "&a\u2714" : "&4\u2718";
-		langVersionCommandBtlp = plugin.getChatHeader() + configColor
-				+ Lang.get(InfoLang.BTLP, plugin) + " " + ChatColor.GRAY
-				+ translateColorCodes(StringEscapeUtils.unescapeJava(btlpState));
+		langVersionCommandBtlp = pluginHeader.toString() + configColor + Lang.get(InfoLang.BTLP, langConfig) + " "
+				+ ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(btlpState));
 
 		// Display whether Advanced Achievements is linked to Essentials.
 		boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials")
-				&& plugin.getPluginConfig().getBoolean("IgnoreAFKPlayedTime", false);
+				&& mainConfig.getBoolean("IgnoreAFKPlayedTime", false);
 		String essentialsState = essentialsUsed ? "&a\u2714" : "&4\u2718";
-		langVersionCommandEssentials = plugin.getChatHeader() + configColor
-				+ Lang.get(InfoLang.ESSENTIALS, plugin) + " " + ChatColor.GRAY
-				+ translateColorCodes(StringEscapeUtils.unescapeJava(essentialsState));
+		langVersionCommandEssentials = pluginHeader.toString() + configColor + Lang.get(InfoLang.ESSENTIALS, langConfig)
+				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(essentialsState));
 
 		// Display whether Advanced Achievements is linked to PlaceholderAPI.
 		String placeholderAPIState = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "&a\u2714" : "&4\u2718";
-		langVersionCommandPlaceholderAPI = plugin.getChatHeader() + configColor
-				+ Lang.get(InfoLang.PLACEHOLDERAPI, plugin) + " " + ChatColor.GRAY
+		langVersionCommandPlaceholderAPI = pluginHeader.toString() + configColor
+				+ Lang.get(InfoLang.PLACEHOLDERAPI, langConfig) + " " + ChatColor.GRAY
 				+ translateColorCodes(StringEscapeUtils.unescapeJava(placeholderAPIState));
 
 		// Display database type.
 		String databaseType = getDatabaseType();
-		langVersionCommandDatabase = plugin.getChatHeader() + configColor
-				+ Lang.get(InfoLang.DATABASE, plugin) + " " + ChatColor.GRAY
-				+ databaseType;
+		langVersionCommandDatabase = pluginHeader.toString() + configColor + Lang.get(InfoLang.DATABASE, langConfig) + " "
+				+ ChatColor.GRAY + databaseType;
 	}
 
 	private String getDatabaseType() {
@@ -108,7 +119,7 @@ public class InfoCommand extends AbstractCommand {
 	}
 
 	@Override
-	protected void executeCommand(CommandSender sender, String[] args) {
+	void executeCommand(CommandSender sender, String[] args) {
 		sender.sendMessage(header);
 		sender.sendMessage(langVersionCommandDescription);
 		sender.sendMessage(langVersionCommandVersion);

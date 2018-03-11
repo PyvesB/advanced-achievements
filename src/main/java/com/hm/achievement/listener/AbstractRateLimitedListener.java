@@ -1,17 +1,25 @@
 package com.hm.achievement.listener;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.ListenerLang;
-import com.hm.achievement.utils.Cleanable;
-import com.hm.mcshared.particle.FancyMessageSender;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.ListenerLang;
+import com.hm.achievement.lifecycle.Cleanable;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.mcshared.particle.FancyMessageSender;
 
 /**
  * Abstract class in charge of factoring out common functionality for the listener classes with cooldown maps.
@@ -20,16 +28,23 @@ import java.util.*;
  */
 public class AbstractRateLimitedListener extends AbstractListener implements Cleanable {
 
-	protected final Map<String, Long> cooldownMap;
+	final Map<String, Long> cooldownMap = new HashMap<>();
+
+	private final CommentedYamlConfiguration langConfig;
+	private final Logger logger;
 
 	private Map<String, Integer> configStatisticCooldown;
 	private boolean configCooldownActionBar;
+
 	private String langStatisticCooldown;
 
-	protected AbstractRateLimitedListener(AdvancedAchievements plugin) {
-		super(plugin);
-
-		cooldownMap = new HashMap<>();
+	AbstractRateLimitedListener(CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			ReloadCommand reloadCommand, CommentedYamlConfiguration langConfig, Logger logger, QuitListener quitListener) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
+		this.langConfig = langConfig;
+		this.logger = logger;
+		quitListener.addObserver(this);
 	}
 
 	@Override
@@ -39,22 +54,21 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 		configStatisticCooldown = new HashMap<>();
 		for (String cooldownCategory : Arrays.asList("LavaBuckets", "WaterBuckets", "Milk", "Beds", "Brewing",
 				"MusicDiscs")) {
-			if (plugin.getPluginConfig().isInt("StatisticCooldown")) {
+			if (mainConfig.isInt("StatisticCooldown")) {
 				// Old configuration style for plugin versions up to version 5.4.
-				configStatisticCooldown.put(cooldownCategory,
-						plugin.getPluginConfig().getInt("StatisticCooldown", 10) * 1000);
+				configStatisticCooldown.put(cooldownCategory, mainConfig.getInt("StatisticCooldown", 10) * 1000);
 			} else {
 				configStatisticCooldown.put(cooldownCategory,
-						plugin.getPluginConfig().getInt("StatisticCooldown." + cooldownCategory, 10) * 1000);
+						mainConfig.getInt("StatisticCooldown." + cooldownCategory, 10) * 1000);
 			}
 		}
-		configCooldownActionBar = plugin.getPluginConfig().getBoolean("CooldownActionBar", true);
+		configCooldownActionBar = mainConfig.getBoolean("CooldownActionBar", true);
 		// Action bars introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
-		if (configCooldownActionBar && plugin.getServerVersion() < 8) {
+		if (configCooldownActionBar && serverVersion < 8) {
 			configCooldownActionBar = false;
 		}
 
-		langStatisticCooldown = Lang.get(ListenerLang.STATISTIC_COOLDOWN, plugin);
+		langStatisticCooldown = Lang.get(ListenerLang.STATISTIC_COOLDOWN, langConfig);
 	}
 
 	@Override
@@ -71,7 +85,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * @param category
 	 * @return true if the player is still in cooldown, false otherwise
 	 */
-	protected boolean isInCooldownPeriod(Player player, boolean delay, NormalAchievements category) {
+	boolean isInCooldownPeriod(Player player, boolean delay, NormalAchievements category) {
 		return isInCooldownPeriod(player, "", delay, category);
 	}
 
@@ -85,12 +99,10 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * @param category
 	 * @return true if the player is still in cooldown, false otherwise
 	 */
-	protected boolean isInCooldownPeriod(Player player, String prefixInMap, boolean delay,
-			NormalAchievements category) {
-		List<Long> categoryThresholds = plugin.getSortedThresholds().get(category.toString());
+	boolean isInCooldownPeriod(Player player, String prefixInMap, boolean delay, NormalAchievements category) {
+		List<Long> categoryThresholds = sortedThresholds.get(category.toString());
 		long hardestAchievementThreshold = categoryThresholds.get(categoryThresholds.size() - 1);
-		long currentPlayerStatistic = plugin.getCacheManager().getAndIncrementStatisticAmount(category,
-				player.getUniqueId(), 0);
+		long currentPlayerStatistic = databaseCacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
 		// Ignore cooldown if player has received all achievements in the category.
 		if (currentPlayerStatistic >= hardestAchievementThreshold) {
 			return false;
@@ -110,7 +122,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 					// Display message with a delay to avoid it being overwritten by another message (typically disc
 					// name).
 					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-							Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()),
+							Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
 							() -> displayActionBarMessage(player, message), 20);
 				} else {
 					displayActionBarMessage(player, message);
@@ -132,7 +144,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 		try {
 			FancyMessageSender.sendActionBarMessage(player, message);
 		} catch (Exception e) {
-			plugin.getLogger().warning("Failed to display action bar message for cooldown.");
+			logger.warning("Failed to display action bar message for cooldown.");
 		}
 	}
 }

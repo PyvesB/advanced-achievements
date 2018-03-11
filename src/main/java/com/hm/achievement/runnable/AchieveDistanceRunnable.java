@@ -1,8 +1,14 @@
 package com.hm.achievement.runnable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,10 +20,14 @@ import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.Cleanable;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.lifecycle.Cleanable;
+import com.hm.achievement.listener.QuitListener;
+import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class used to monitor distances travelled by players for the different available categories.
@@ -25,23 +35,28 @@ import com.hm.achievement.utils.StatisticIncreaseHandler;
  * @author Pyves
  *
  */
+@Singleton
 public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements Cleanable, Runnable {
 
-	private final Map<String, Location> playerLocations;
+	private final Map<String, Location> playerLocations = new HashMap<>();
+	private final Set<String> disabledCategories;
 
 	private boolean configIgnoreVerticalDistance;
 
-	public AchieveDistanceRunnable(AdvancedAchievements plugin) {
-		super(plugin);
-
-		playerLocations = new HashMap<>();
+	@Inject
+	public AchieveDistanceRunnable(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			Set<String> disabledCategories, ReloadCommand reloadCommand, QuitListener quitListener) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
+		this.disabledCategories = disabledCategories;
+		quitListener.addObserver(this);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configIgnoreVerticalDistance = plugin.getPluginConfig().getBoolean("IgnoreVerticalDistance", false);
+		configIgnoreVerticalDistance = mainConfig.getBoolean("IgnoreVerticalDistance", false);
 	}
 
 	@Override
@@ -95,11 +110,11 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 			updateDistance(difference, player, NormalAchievements.DISTANCEMINECART);
 		} else if (player.getVehicle() instanceof Boat) {
 			updateDistance(difference, player, NormalAchievements.DISTANCEBOAT);
-		} else if (plugin.getServerVersion() >= 11 && player.getVehicle() instanceof Llama) {
+		} else if (serverVersion >= 11 && player.getVehicle() instanceof Llama) {
 			updateDistance(difference, player, NormalAchievements.DISTANCELLAMA);
-		} else if (!player.isFlying() && (plugin.getServerVersion() < 9 || !player.isGliding())) {
+		} else if (!player.isFlying() && (serverVersion < 9 || !player.isGliding())) {
 			updateDistance(difference, player, NormalAchievements.DISTANCEFOOT);
-		} else if (plugin.getServerVersion() >= 9 && player.isGliding()) {
+		} else if (serverVersion >= 9 && player.isGliding()) {
 			updateDistance(difference, player, NormalAchievements.DISTANCEGLIDING);
 		}
 	}
@@ -131,13 +146,11 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	 * @param category
 	 */
 	private void updateDistance(int difference, Player player, NormalAchievements category) {
-		if (!player.hasPermission(category.toPermName())
-				|| plugin.getDisabledCategorySet().contains(category.toString())) {
+		if (!player.hasPermission(category.toPermName()) || disabledCategories.contains(category.toString())) {
 			return;
 		}
 
-		long distance = plugin.getCacheManager().getAndIncrementStatisticAmount(category, player.getUniqueId(),
-				difference);
+		long distance = databaseCacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), difference);
 		checkThresholdsAndAchievements(player, category.toString(), distance);
 	}
 }

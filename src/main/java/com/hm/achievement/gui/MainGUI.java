@@ -1,10 +1,12 @@
 package com.hm.achievement.gui;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.lang.GuiLang;
-import com.hm.achievement.lang.Lang;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,15 +14,25 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.lang.GuiLang;
+import com.hm.achievement.lang.Lang;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+
 /**
  * Represents the main GUI, corresponding to all the different available categories and their names.
  *
  * @author Pyves
  */
+@Singleton
 public class MainGUI extends AbstractGUI {
 
 	private static final int MAX_PER_PAGE = 54;
 
+	private final Set<String> disabledCategories;
 	private final ItemStack lockedItem;
 
 	private boolean configHideNotReceivedCategories;
@@ -29,21 +41,25 @@ public class MainGUI extends AbstractGUI {
 	private String langListGUITitle;
 	private String langListCategoryNotUnlocked;
 
-	public MainGUI(AdvancedAchievements plugin) {
-		super(plugin);
-
-		lockedItem = new ItemStack(plugin.getServerVersion() < 8 ? Material.OBSIDIAN : Material.BARRIER);
+	@Inject
+	public MainGUI(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
+			Logger logger, DatabaseCacheManager databaseCacheManager, int serverVersion, Set<String> disabledCategories,
+			ReloadCommand reloadCommand) {
+		super(mainConfig, langConfig, guiConfig, logger, databaseCacheManager, reloadCommand);
+		this.disabledCategories = disabledCategories;
+		lockedItem = new ItemStack(serverVersion < 8 ? Material.OBSIDIAN : Material.BARRIER);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configHideNotReceivedCategories = plugin.getPluginConfig().getBoolean("HideNotReceivedCategories", false);
-		configHideNoPermissionCategories = plugin.getPluginConfig().getBoolean("HideNoPermissionCategories", false);
+		configHideNotReceivedCategories = mainConfig.getBoolean("HideNotReceivedCategories", false);
+		configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories", false);
 
-		langListGUITitle = translateColorCodes(Lang.get(GuiLang.GUI_TITLE, plugin));
-		langListCategoryNotUnlocked = translateColorCodes("&8" + Lang.get(GuiLang.CATEGORY_NOT_UNLOCKED, plugin));
+		langListGUITitle = translateColorCodes(Lang.get(GuiLang.GUI_TITLE, langConfig));
+		langListCategoryNotUnlocked = translateColorCodes("&8" + Lang.get(GuiLang.CATEGORY_NOT_UNLOCKED, langConfig));
 
 		ItemMeta itemMeta = lockedItem.getItemMeta();
 		itemMeta.setDisplayName(langListCategoryNotUnlocked);
@@ -57,7 +73,7 @@ public class MainGUI extends AbstractGUI {
 	 */
 	public void displayMainGUI(Player player) {
 		int totalNonDisabledCategories = MultipleAchievements.values().length + NormalAchievements.values().length + 1
-				- plugin.getDisabledCategorySet().size();
+				- disabledCategories.size();
 		Inventory mainGUI = Bukkit.createInventory(null, nextMultipleOf9(totalNonDisabledCategories, MAX_PER_PAGE),
 				langListGUITitle);
 
@@ -98,7 +114,7 @@ public class MainGUI extends AbstractGUI {
 	 */
 	private boolean shouldDisplayCategory(ItemStack item, Player player, String category, String permName) {
 		// Hide category if an empty name is defined for it, if it's disabled or if the player is missing permissions.
-		return item.getItemMeta().getDisplayName().length() > 0 && !plugin.getDisabledCategorySet().contains(category)
+		return item.getItemMeta().getDisplayName().length() > 0 && !disabledCategories.contains(category)
 				&& (!configHideNoPermissionCategories || permName == null || player.hasPermission(permName));
 	}
 
@@ -112,7 +128,7 @@ public class MainGUI extends AbstractGUI {
 	 * @param position
 	 */
 	private void displayMultipleCategory(ItemStack item, Inventory gui, Player player, String category, int position) {
-		for (String subcategory : plugin.getPluginConfig().getShallowKeys(category)) {
+		for (String subcategory : mainConfig.getShallowKeys(category)) {
 			if (!configHideNotReceivedCategories || hasReceivedInCategory(player, category + "." + subcategory)) {
 				gui.setItem(position, item);
 				return;
@@ -146,9 +162,9 @@ public class MainGUI extends AbstractGUI {
 	 * @return true if the player has received at least one achievement in the category, false otherwise
 	 */
 	private boolean hasReceivedInCategory(Player player, String configPath) {
-		for (String threshold : plugin.getPluginConfig().getShallowKeys(configPath)) {
-			if (plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(),
-					plugin.getPluginConfig().getString(configPath + '.' + threshold + ".Name", ""))) {
+		for (String threshold : mainConfig.getShallowKeys(configPath)) {
+			if (databaseCacheManager.hasPlayerAchievement(player.getUniqueId(),
+					mainConfig.getString(configPath + '.' + threshold + ".Name", ""))) {
 				// At least one achievement was received in the current category: it is unlocked.
 				return true;
 			}

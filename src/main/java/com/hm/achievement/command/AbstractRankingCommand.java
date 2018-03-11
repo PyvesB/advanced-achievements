@@ -1,20 +1,24 @@
 package com.hm.achievement.command;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.command.CmdLang;
-import com.hm.mcshared.particle.ParticleEffect;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.logging.Logger;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.mcshared.particle.ParticleEffect;
 
 /**
  * Abstract class in charge of factoring out common functionality for /aach top, week and month commands.
@@ -29,8 +33,12 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private static final int DECIMAL_CIRCLED_TWENTY_ONE = Integer.parseInt("3251", 16);
 	private static final int DECIMAL_CIRCLED_THIRTY_SIX = Integer.parseInt("32B1", 16);
 
+	private final Logger logger;
+	private final int serverVersion;
 	private final Lang languageHeader;
+	private final AbstractSQLDatabaseManager sqlDatabaseManager;
 
+	private ChatColor configColor;
 	private int configTopList;
 	private boolean configAdditionalEffects;
 	private boolean configSound;
@@ -42,30 +50,35 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private List<Integer> cachedAchievementCounts;
 	private long lastCacheUpdate = 0L;
 
-	protected AbstractRankingCommand(AdvancedAchievements plugin, Lang languageHeader) {
-		super(plugin);
-
+	AbstractRankingCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
+			StringBuilder pluginHeader, ReloadCommand reloadCommand, Logger logger, int serverVersion, Lang languageHeader,
+			AbstractSQLDatabaseManager sqlDatabaseManager) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		this.logger = logger;
+		this.serverVersion = serverVersion;
 		this.languageHeader = languageHeader;
+		this.sqlDatabaseManager = sqlDatabaseManager;
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configTopList = plugin.getPluginConfig().getInt("TopList", 5);
-		configAdditionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
-		configSound = plugin.getPluginConfig().getBoolean("Sound", true);
+		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0));
+		configTopList = mainConfig.getInt("TopList", 5);
+		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects", true);
+		configSound = mainConfig.getBoolean("Sound", true);
 
-		langPeriodAchievement = Lang.getWithChatHeader(languageHeader, plugin);
-		langPlayerRank = Lang.getWithChatHeader(CmdLang.PLAYER_RANK, plugin) + " " + configColor;
-		langNotRanked = Lang.getWithChatHeader(CmdLang.NOT_RANKED, plugin);
+		langPeriodAchievement = pluginHeader + Lang.get(languageHeader, langConfig);
+		langPlayerRank = pluginHeader + Lang.get(CmdLang.PLAYER_RANK, langConfig) + " " + configColor;
+		langNotRanked = pluginHeader + Lang.get(CmdLang.NOT_RANKED, langConfig);
 	}
 
 	@Override
 	public void executeCommand(CommandSender sender, String[] args) {
 		if (System.currentTimeMillis() - lastCacheUpdate >= CACHE_EXPIRATION_DELAY) {
 			// Update cached data structures.
-			cachedSortedRankings = plugin.getDatabaseManager().getTopList(getRankingStartTime());
+			cachedSortedRankings = sqlDatabaseManager.getTopList(getRankingStartTime());
 			cachedAchievementCounts = new ArrayList<>(cachedSortedRankings.values());
 			lastCacheUpdate = System.currentTimeMillis();
 		}
@@ -80,10 +93,9 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 				if (sender instanceof Player && playerName.equals(((Player) sender).getName())) {
 					color += configColor.toString();
 				}
-				sender.sendMessage(
-						color + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue());
+				sender.sendMessage(color + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue());
 			} else {
-				plugin.getLogger().warning("Ranking command: could not find player's name using a database UUID.");
+				logger.warning("Ranking command: could not find player's name using a database UUID.");
 			}
 			++currentRank;
 			if (currentRank > configTopList) {
@@ -134,7 +146,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	 *
 	 * @return time (epoch) in millis
 	 */
-	protected abstract long getRankingStartTime();
+	abstract long getRankingStartTime();
 
 	/**
 	 * Launches sound and particle effects if player is in a top list.
@@ -147,13 +159,15 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 			try {
 				ParticleEffect.PORTAL.display(0, 1, 0, 0.5f, 1000, player.getLocation(), 1);
 			} catch (Exception e) {
-				plugin.getLogger().warning("Failed to display additional particle effects for rankings.");
+				logger.warning("Failed to display additional particle effects for rankings.");
 			}
 		}
 
 		// Play special sound when in top list.
 		if (configSound) {
-			playFireworkSound(player);
+			// If old version, retrieving sound by name as it no longer exists in newer versions.
+			Sound sound = serverVersion < 9 ? Sound.valueOf("FIREWORK_BLAST") : Sound.ENTITY_FIREWORK_LARGE_BLAST;
+			player.getWorld().playSound(player.getLocation(), sound, 1, 0.7f);
 		}
 	}
 }

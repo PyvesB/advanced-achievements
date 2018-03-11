@@ -13,7 +13,6 @@ statistic-cooldown: "Erfolgs-Abklingzeit: Warte TIME Sekunde/n bis diese Aktion 
 # Related to /aach reload.
 configuration-successfully-reloaded: "Die Konfiguration wurde neu geladen!"
 configuration-reload-failed: "Es wurden Fehler gefunden! Bitte schaue in den Logs nach!"
-server-restart-reload: "Die Liste der deaktivierten Kategorien wurde geändert. Server muss vollständig neu geladen oder neu gestartet werden, damit Ihre Änderungen wirksam werden."
 
 # Related to /aach top week and month.
 top-achievement: "Meiste Erfolge:"

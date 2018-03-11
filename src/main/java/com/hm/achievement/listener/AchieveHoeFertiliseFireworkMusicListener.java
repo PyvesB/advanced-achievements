@@ -1,5 +1,14 @@
 package com.hm.achievement.listener;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -10,8 +19,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with HoePlowings, Fertilising, Fireworks and MusicDiscs achievements.
@@ -19,10 +31,19 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
+@Singleton
 public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimitedListener {
 
-	public AchieveHoeFertiliseFireworkMusicListener(AdvancedAchievements plugin) {
-		super(plugin);
+	private final Set<String> disabledCategories;
+
+	@Inject
+	public AchieveHoeFertiliseFireworkMusicListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			ReloadCommand reloadCommand, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
+			QuitListener quitListener, Set<String> disabledCategories) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand, langConfig,
+				logger, quitListener);
+		this.disabledCategories = disabledCategories;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -50,7 +71,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 			return;
 		}
 
-		if (plugin.getDisabledCategorySet().contains(category.toString())) {
+		if (disabledCategories.contains(category.toString())) {
 			return;
 		}
 
@@ -84,10 +105,10 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 				|| clickedMaterial == Material.CARROT && durability < 7
 				|| clickedMaterial == Material.CROPS && durability < 7
 				|| clickedMaterial == Material.PUMPKIN_STEM && durability < 7
-				|| clickedMaterial == Material.MELON_STEM && durability < 7
-				|| clickedMaterial == Material.BROWN_MUSHROOM || clickedMaterial == Material.RED_MUSHROOM
-				|| clickedMaterial == Material.COCOA && durability < 9 || clickedMaterial == Material.LONG_GRASS
-				|| (plugin.getServerVersion() >= 9 && clickedMaterial == Material.BEETROOT_BLOCK && durability < 3);
+				|| clickedMaterial == Material.MELON_STEM && durability < 7 || clickedMaterial == Material.BROWN_MUSHROOM
+				|| clickedMaterial == Material.RED_MUSHROOM || clickedMaterial == Material.COCOA && durability < 9
+				|| clickedMaterial == Material.LONG_GRASS
+				|| (serverVersion >= 9 && clickedMaterial == Material.BEETROOT_BLOCK && durability < 3);
 	}
 
 	/**
@@ -140,7 +161,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 				break;
 		}
 
-		if (plugin.getServerVersion() >= 8) {
+		if (serverVersion >= 8) {
 			switch (clickedMaterial) {
 				case ACACIA_FENCE_GATE:
 				case BIRCH_FENCE_GATE:
@@ -159,7 +180,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 			}
 		}
 
-		if (plugin.getServerVersion() >= 9) {
+		if (serverVersion >= 9) {
 			switch (clickedMaterial) {
 				case BOAT_ACACIA:
 				case BOAT_BIRCH:
@@ -174,7 +195,7 @@ public class AchieveHoeFertiliseFireworkMusicListener extends AbstractRateLimite
 			}
 		}
 
-		if (plugin.getServerVersion() >= 11) {
+		if (serverVersion >= 11) {
 			switch (clickedMaterial) {
 				case BLACK_SHULKER_BOX:
 				case BLUE_SHULKER_BOX:

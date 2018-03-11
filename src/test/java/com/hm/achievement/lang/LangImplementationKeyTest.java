@@ -1,25 +1,27 @@
 package com.hm.achievement.lang;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.lang.command.CmdLang;
-import com.hm.achievement.lang.command.HelpLang;
-import com.hm.achievement.lang.command.InfoLang;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import utilities.MockUtility;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.achievement.lang.command.HelpLang;
+import com.hm.achievement.lang.command.InfoLang;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+
+import utilities.MockUtility;
 
 /**
  * Tests that all keys used in Lang implementations can be found in lang.yml.
@@ -32,20 +34,20 @@ public class LangImplementationKeyTest {
 	@ClassRule
 	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private AdvancedAchievements plugin;
+	private CommentedYamlConfiguration langConfig;
 
 	@Before
 	public void setUp() throws Exception {
 		MockUtility mockUtility = MockUtility.setUp()
-				.withLogger()
 				.withPluginDescription()
+				.withLogger()
 				.withDataFolder(temporaryFolder.getRoot())
-				.withPluginLang();
-		plugin = mockUtility.getPluginMock();
+				.withPluginFile("lang.yml");
+		langConfig = mockUtility.getLoadedConfig("lang.yml");
 	}
 
 	@Test
-	public void testLangImplForWrongKeys() {
+	public void testLangImplForWrongKeys() throws Exception {
 		List<Lang> langImpl = Arrays.stream(
 				new Lang[][] {
 						CmdLang.values(),
@@ -62,7 +64,7 @@ public class LangImplementationKeyTest {
 		List<String> missing = new ArrayList<>();
 		for (Lang lang : langImpl) {
 			String key = lang.toLangKey();
-			if (!plugin.getPluginLang().contains(key)) {
+			if (!langConfig.contains(key)) {
 				missing.add(key + " (" + lang + ")");
 			}
 		}

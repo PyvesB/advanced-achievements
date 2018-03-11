@@ -13,7 +13,6 @@ statistic-cooldown: "Başarım Bekleme Süresi: Lütfen TIME saniye bekleyin ve 
 # Related to /aach reload.
 configuration-successfully-reloaded: "Eklenti Başarıyla Yeniden Yüklendi."
 configuration-reload-failed: "Yenilemede Sorun Oluştu. Lütfen Kayıt Geçmişinden Kontrol Edin."
-server-restart-reload: "DisabledCategories istesi değiştirildi. Değişikliklerin Geçerli Olması İçin Sunucuyu Yeniden Başlatmanız Gerekli."
 
 # Related to /aach top week and month.
 top-achievement: "En İyi Başarı Sahipleri:"

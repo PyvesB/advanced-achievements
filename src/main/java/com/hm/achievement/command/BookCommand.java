@@ -1,12 +1,19 @@
 package com.hm.achievement.command;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.data.AwardedDBAchievement;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.command.CmdLang;
-import com.hm.achievement.utils.Cleanable;
-import com.hm.mcshared.particle.ParticleEffect;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
+import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -15,9 +22,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.util.*;
+import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.data.AwardedDBAchievement;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.achievement.lifecycle.Cleanable;
+import com.hm.achievement.listener.QuitListener;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.mcshared.particle.ParticleEffect;
+import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Class in charge of handling the /aach book command, which creates and gives a book containing the player's
@@ -25,6 +38,7 @@ import java.util.*;
  *
  * @author Pyves
  */
+@Singleton
 public class BookCommand extends AbstractCommand implements Cleanable {
 
 	// Strings related to Reflection.
@@ -36,7 +50,10 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	private static final String METHOD_FROM_STRING = "fromString";
 
 	// Corresponds to times at which players have received their books. Cooldown structure.
-	private final HashMap<String, Long> playersBookTime;
+	private final HashMap<String, Long> playersBookTime = new HashMap<>();
+	private final Logger logger;
+	private final int serverVersion;
+	private final AbstractSQLDatabaseManager sqlDatabaseManager;
 
 	private int configTimeBook;
 	private String configBookSeparator;
@@ -49,29 +66,34 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	private String langBookReceived;
 	private DateFormat dateFormat;
 
-	public BookCommand(AdvancedAchievements plugin) {
-		super(plugin);
-
-		playersBookTime = new HashMap<>();
+	@Inject
+	public BookCommand(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
+			Logger logger, int serverVersion, AbstractSQLDatabaseManager sqlDatabaseManager, QuitListener quitListener) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		this.logger = logger;
+		this.serverVersion = serverVersion;
+		this.sqlDatabaseManager = sqlDatabaseManager;
+		quitListener.addObserver(this);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configTimeBook = plugin.getPluginConfig().getInt("TimeBook", 0) * 1000;
-		configBookSeparator = "\n&r" + plugin.getPluginConfig().getString("BookSeparator", "") + "\n&r";
-		configAdditionalEffects = plugin.getPluginConfig().getBoolean("AdditionalEffects", true);
-		configSound = plugin.getPluginConfig().getBoolean("Sound", true);
+		configTimeBook = mainConfig.getInt("TimeBook", 0) * 1000;
+		configBookSeparator = "\n&r" + mainConfig.getString("BookSeparator", "") + "\n&r";
+		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects", true);
+		configSound = mainConfig.getBoolean("Sound", true);
 
-		langBookDelay = plugin.getChatHeader() + Lang.getReplacedOnce(CmdLang.BOOK_DELAY,
-				"TIME", Integer.toString(configTimeBook / 1000), plugin);
-		langBookNotReceived = Lang.getWithChatHeader(CmdLang.BOOK_NOT_RECEIVED, plugin);
-		langBookDate = translateColorCodes("&8" + Lang.get(CmdLang.BOOK_DATE, plugin));
-		langBookName = Lang.get(CmdLang.BOOK_NAME, plugin);
-		langBookReceived = Lang.getWithChatHeader(CmdLang.BOOK_RECEIVED, plugin);
+		langBookDelay = pluginHeader
+				+ Lang.getReplacedOnce(CmdLang.BOOK_DELAY, "TIME", Integer.toString(configTimeBook / 1000), langConfig);
+		langBookNotReceived = pluginHeader + Lang.get(CmdLang.BOOK_NOT_RECEIVED, langConfig);
+		langBookDate = translateColorCodes("&8" + Lang.get(CmdLang.BOOK_DATE, langConfig));
+		langBookName = Lang.get(CmdLang.BOOK_NAME, langConfig);
+		langBookReceived = pluginHeader + Lang.get(CmdLang.BOOK_RECEIVED, langConfig);
 
-		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
+		String localeString = mainConfig.getString("DateLocale", "en");
 		dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, new Locale(localeString));
 	}
 
@@ -81,7 +103,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	}
 
 	@Override
-	protected void executeCommand(CommandSender sender, String[] args) {
+	void executeCommand(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player)) {
 			return;
 		}
@@ -89,7 +111,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		Player player = (Player) sender;
 
 		if (!isInCooldownPeriod(player)) {
-			List<AwardedDBAchievement> playerAchievementsList = plugin.getDatabaseManager()
+			List<AwardedDBAchievement> playerAchievementsList = sqlDatabaseManager
 					.getPlayerAchievementsList(player.getUniqueId());
 			if (playerAchievementsList.isEmpty()) {
 				player.sendMessage(langBookNotReceived);
@@ -100,14 +122,14 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 				try {
 					ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 100);
 				} catch (Exception e) {
-					plugin.getLogger().warning("Failed to display additional particle effects for books.");
+					logger.warning("Failed to display additional particle effects for books.");
 				}
 			}
 
 			// Play special sound when receiving the book.
 			if (configSound) {
 				// If old version, retrieving sound by name as it no longer exists in newer versions.
-				Sound sound = plugin.getServerVersion() < 9 ? Sound.valueOf("LEVEL_UP") : Sound.ENTITY_PLAYER_LEVELUP;
+				Sound sound = serverVersion < 9 ? Sound.valueOf("LEVEL_UP") : Sound.ENTITY_PLAYER_LEVELUP;
 				player.getWorld().playSound(player.getLocation(), sound, 1.0f, 0.0f);
 			}
 
@@ -129,8 +151,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		BookMeta bookMeta = (BookMeta) book.getItemMeta();
 
 		for (AwardedDBAchievement achievement : achievements) {
-			String currentAchievement = "&0" + achievement.getName()
-					+ configBookSeparator + achievement.getMessage()
+			String currentAchievement = "&0" + achievement.getName() + configBookSeparator + achievement.getMessage()
 					+ configBookSeparator + achievement.getFormattedDate();
 			currentAchievement = translateColorCodes(currentAchievement);
 			bookPages.add(currentAchievement);
@@ -140,8 +161,8 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		setBookPages(bookPages, bookMeta);
 		bookMeta.setAuthor(player.getName());
 		bookMeta.setTitle(langBookName);
-		bookMeta.setLore(Arrays
-				.asList(StringUtils.replaceOnce(langBookDate, "DATE", dateFormat.format(System.currentTimeMillis()))));
+		bookMeta.setLore(
+				Arrays.asList(StringUtils.replaceOnce(langBookDate, "DATE", dateFormat.format(System.currentTimeMillis()))));
 		book.setItemMeta(bookMeta);
 
 		// Check whether player has room in his inventory, else drop book on the ground.
@@ -186,7 +207,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	 */
 	@SuppressWarnings("unchecked")
 	private void setBookPages(List<String> bookPages, BookMeta bookMeta) {
-		if (plugin.getServerVersion() >= 11) {
+		if (serverVersion >= 11) {
 			try {
 				// Code we're trying to execute: this.pages.add(CraftChatMessage.fromString(page, true)[0]); in
 				// CraftMetaBook.java.
@@ -194,15 +215,13 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 						.getClass(PACKAGE_INVENTORY + "." + CLASS_CRAFT_META_BOOK);
 				List<Object> pages = (List<Object>) craftMetaBookClass.getField(FIELD_PAGES)
 						.get(craftMetaBookClass.cast(bookMeta));
-				Method fromStringMethod = PackageType.CRAFTBUKKIT
-						.getClass(PACKAGE_UTIL + "." + CLASS_CRAFT_CHAT_MESSAGE)
+				Method fromStringMethod = PackageType.CRAFTBUKKIT.getClass(PACKAGE_UTIL + "." + CLASS_CRAFT_CHAT_MESSAGE)
 						.getMethod(METHOD_FROM_STRING, String.class, boolean.class);
 				for (String bookPage : bookPages) {
 					pages.add(((Object[]) fromStringMethod.invoke(null, bookPage, true))[0]);
 				}
 			} catch (Exception e) {
-				plugin.getLogger().warning(
-						"Error while creating book pages. Your achievements book may be trimmed down to 50 pages.");
+				logger.warning("Error while creating book pages. Your achievements book may be trimmed down to 50 pages.");
 				bookMeta.setPages(bookPages);
 			}
 		} else {

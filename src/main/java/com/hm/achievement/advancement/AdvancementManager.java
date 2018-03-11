@@ -2,7 +2,14 @@ package com.hm.achievement.advancement;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -16,6 +23,9 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancementBuilder;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
@@ -24,14 +34,14 @@ import com.hm.mcshared.particle.ReflectionUtils.PackageType;
  * @author Pyves
  */
 @SuppressWarnings("deprecation")
-public class AdvancementManager {
+@Singleton
+public class AdvancementManager implements Reloadable {
 
 	public static final String ADVANCED_ACHIEVEMENTS_PARENT = "advanced_achievements_parent";
 	// Pattern to produce keys for advancements.
 	private static final Pattern REGEX_PATTERN_KEYS = Pattern.compile("[^A-Za-z0-9|_]");
 	// Pattern to delete colours as the advancement interface does not support them.
 	private static final Pattern REGEX_PATTERN_COLOURS = Pattern.compile("&([a-f]|[0-9]){1}");
-
 	// Strings related to Reflection.
 	private static final String PACKAGE_INVENTORY = "inventory";
 	private static final String CLASS_CRAFT_ITEM_STACK = "CraftItemStack";
@@ -45,20 +55,37 @@ public class AdvancementManager {
 	private static final String METHOD_GET_KEY = "getKey";
 	private static final String METHOD_B = "b";
 
-	private final AdvancedAchievements plugin;
+	private final CommentedYamlConfiguration mainConfig;
+	private final CommentedYamlConfiguration guiConfig;
+	private final AdvancedAchievements advancedAchievements;
+	private final Logger logger;
+	private final Map<String, List<Long>> sortedThresholds;
+	private final Set<String> disabledCategories;
 	private final UnsafeValues unsafeValues;
-	private final boolean configRegisterAdvancementDescriptions;
-	private final boolean configHideAdvancements;
 
+	private boolean configRegisterAdvancementDescriptions;
+	private boolean configHideAdvancements;
 	private int generatedAdvancements;
 
-	public AdvancementManager(AdvancedAchievements plugin, boolean configRegisterAdvancementDescriptions,
-			boolean configHideAdvancements) {
-		this.plugin = plugin;
+	@Inject
+	public AdvancementManager(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("gui") CommentedYamlConfiguration guiConfig, AdvancedAchievements advancedAchievements, Logger logger,
+			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories, ReloadCommand reloadCommand) {
+		this.mainConfig = mainConfig;
+		this.guiConfig = guiConfig;
+		this.advancedAchievements = advancedAchievements;
+		this.logger = logger;
+		this.sortedThresholds = sortedThresholds;
+		this.disabledCategories = disabledCategories;
+		reloadCommand.addObserver(this);
 		unsafeValues = Bukkit.getUnsafe();
-		this.configRegisterAdvancementDescriptions = configRegisterAdvancementDescriptions;
-		this.configHideAdvancements = configHideAdvancements;
 		generatedAdvancements = 0;
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		configRegisterAdvancementDescriptions = mainConfig.getBoolean("RegisterAdvancementDescriptions", true);
+		configHideAdvancements = mainConfig.getBoolean("HideAdvancements", false);
 	}
 
 	public static String getKey(String achName) {
@@ -89,7 +116,7 @@ public class AdvancementManager {
 			}
 		}
 		Bukkit.getServer().reloadData();
-		plugin.getLogger().info("Cleaned " + achievementsCleaned + " old advancements.");
+		logger.info("Cleaned " + achievementsCleaned + " old advancements.");
 	}
 
 	/**
@@ -100,7 +127,7 @@ public class AdvancementManager {
 		AchievementAdvancementBuilder achievementAdvancementBuilder = new AchievementAdvancementBuilder()
 				.iconItem("minecraft:" + getInternalName(new ItemStack(Material.BOOK, 1, (short) 0)))
 				.iconData(Integer.toString(0)).title("Advanced Achievements").description("");
-		NamespacedKey namespacedKey = new NamespacedKey(plugin, ADVANCED_ACHIEVEMENTS_PARENT);
+		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_PARENT);
 		if (Bukkit.getServer().getAdvancement(namespacedKey) == null) {
 			unsafeValues.loadAdvancement(namespacedKey,
 					achievementAdvancementBuilder.buildGoal().toParentJson(configHideAdvancements));
@@ -111,9 +138,9 @@ public class AdvancementManager {
 	 * Registers all non parent advancements.
 	 */
 	private void registerOtherAdvancements() {
-		if (!plugin.getDisabledCategorySet().contains("Commands")) {
+		if (!disabledCategories.contains("Commands")) {
 			String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
-			for (String ach : plugin.getPluginConfig().getConfigurationSection("Commands").getKeys(false)) {
+			for (String ach : mainConfig.getConfigurationSection("Commands").getKeys(false)) {
 				parentKey = registerAdvancement("Commands", "Commands." + ach, parentKey, true);
 			}
 		}
@@ -123,13 +150,12 @@ public class AdvancementManager {
 		}
 
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			for (String section : plugin.getPluginConfig().getConfigurationSection(category.toString())
-					.getKeys(false)) {
+			for (String section : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
 				registerCategoryAdvancements(category.toString(), "." + section);
 			}
 		}
 		Bukkit.getServer().reloadData();
-		plugin.getLogger().info("Generated " + generatedAdvancements + " new advancements.");
+		logger.info("Generated " + generatedAdvancements + " new advancements.");
 	}
 
 	/**
@@ -139,13 +165,13 @@ public class AdvancementManager {
 	 * @param subcategory
 	 */
 	private void registerCategoryAdvancements(String categoryName, String subcategory) {
-		if (plugin.getDisabledCategorySet().contains(categoryName)) {
+		if (disabledCategories.contains(categoryName)) {
 			// Ignore this type.
 			return;
 		}
 
-		List<Long> orderedThresholds = subcategory.isEmpty() ? plugin.getSortedThresholds().get(categoryName)
-				: plugin.getSortedThresholds().get(categoryName + subcategory);
+		List<Long> orderedThresholds = subcategory.isEmpty() ? sortedThresholds.get(categoryName)
+				: sortedThresholds.get(categoryName + subcategory);
 		String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
 		// Advancements are registered as a branch with increasing threshold values.
 		for (long threshold : orderedThresholds) {
@@ -165,8 +191,8 @@ public class AdvancementManager {
 	 */
 	private String registerAdvancement(String categoryName, String configAchievement, String parentKey,
 			boolean lastAchievement) {
-		String achName = plugin.getPluginConfig().getString(configAchievement + ".Name", "");
-		String achDisplayName = plugin.getPluginConfig().getString(configAchievement + ".DisplayName", "");
+		String achName = mainConfig.getString(configAchievement + ".Name", "");
+		String achDisplayName = mainConfig.getString(configAchievement + ".DisplayName", "");
 		if (StringUtils.isEmpty(achDisplayName)) {
 			achDisplayName = achName;
 		}
@@ -174,14 +200,14 @@ public class AdvancementManager {
 		achDisplayName = REGEX_PATTERN_COLOURS.matcher(achDisplayName).replaceAll("");
 
 		String achKey = getKey(achName);
-		NamespacedKey namespacedKey = new NamespacedKey(plugin, achKey);
-		int metadata = plugin.getPluginGui().getInt(categoryName + ".Metadata", 0);
+		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, achKey);
+		int metadata = guiConfig.getInt(categoryName + ".Metadata", 0);
 		String description = "";
 		if (configRegisterAdvancementDescriptions) {
 			// Give priority to the goal to stick with Vanilla naming of advancements.
-			description = plugin.getPluginConfig().getString(configAchievement + ".Goal", "");
+			description = mainConfig.getString(configAchievement + ".Goal", "");
 			if (!StringUtils.isNotBlank(description)) {
-				description = plugin.getPluginConfig().getString(configAchievement + ".Message", "");
+				description = mainConfig.getString(configAchievement + ".Message", "");
 			}
 			description = REGEX_PATTERN_COLOURS.matcher(description).replaceAll("");
 		}
@@ -205,11 +231,10 @@ public class AdvancementManager {
 	 * @return the material for that category
 	 */
 	private Material getMaterial(String categoryName) {
-		Material material = Material
-				.getMaterial(plugin.getPluginGui().getString(categoryName + ".Item", "bedrock").toUpperCase());
+		Material material = Material.getMaterial(guiConfig.getString(categoryName + ".Item", "bedrock").toUpperCase());
 		if (material == null) {
 			material = Material.BOOK;
-			plugin.getLogger().warning("GUI material for category " + categoryName + " was not found. "
+			logger.warning("GUI material for category " + categoryName + " was not found. "
 					+ "Have you spelt the name correctly and is it available for your Minecraft version?");
 		}
 		return material;
@@ -234,7 +259,7 @@ public class AdvancementManager {
 			return (String) PackageType.MINECRAFT_SERVER.getClass(CLASS_MINECRAFT_KEY).getMethod(METHOD_GET_KEY)
 					.invoke(minecraftKey);
 		} catch (Exception e) {
-			plugin.getLogger().warning("Failed to get internal item name for advancement icon. Using book instead.");
+			logger.warning("Failed to get internal item name for advancement icon. Using book instead.");
 			return "book";
 		}
 	}

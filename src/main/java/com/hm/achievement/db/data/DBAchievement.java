@@ -12,10 +12,10 @@ import java.util.Optional;
  */
 public class DBAchievement {
 
-	protected String name;
-	protected String message;
+	String name;
+	String message;
 
-	protected Category category;
+	Category category;
 
 	public DBAchievement(String name, String message) {
 		this.name = name;

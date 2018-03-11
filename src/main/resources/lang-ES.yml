@@ -15,7 +15,6 @@ statistic-cooldown: 'Reutilización de logros: espere TIME segundos antes de que
 # Related to /aach reload.
 configuration-successfully-reloaded: La configuración se recargó con éxito.
 configuration-reload-failed: Errores al volver a cargar la configuración. Por favor, vea los registros para más detalles.
-server-restart-reload: La lista DisabledCategories fue modificada. El servidor se debe volver a cargar o reiniciar completamente para que los cambios surtan efecto.
 
 # Related to /aach top week and month.
 top-achievement: 'Los mejores propietarios de logros:'

@@ -1,5 +1,12 @@
 package com.hm.achievement.listener;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -7,8 +14,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Breaks achievements.
@@ -16,30 +26,34 @@ import com.hm.achievement.category.MultipleAchievements;
  * @author Pyves
  *
  */
+@Singleton
 public class AchieveBlockBreakListener extends AbstractListener {
 
 	private boolean disableSilkTouchBreaks;
 	private boolean disableSilkTouchOreBreaks;
 
-	public AchieveBlockBreakListener(AdvancedAchievements plugin) {
-		super(plugin);
+	@Inject
+	public AchieveBlockBreakListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			ReloadCommand reloadCommand) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		disableSilkTouchBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchBreaks", false);
-		disableSilkTouchOreBreaks = plugin.getPluginConfig().getBoolean("DisableSilkTouchOreBreaks", false);
+		disableSilkTouchBreaks = mainConfig.getBoolean("DisableSilkTouchBreaks", false);
+		disableSilkTouchOreBreaks = mainConfig.getBoolean("DisableSilkTouchOreBreaks", false);
 	}
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		boolean silkTouchBreak = (plugin.getServerVersion() >= 9
+		boolean silkTouchBreak = (serverVersion >= 9
 				&& player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
-				|| plugin.getServerVersion() < 9 && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
+				|| serverVersion < 9 && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
 
 		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player) || disableSilkTouchBreaks && silkTouchBreak) {
 			return;
@@ -67,10 +81,10 @@ public class AchieveBlockBreakListener extends AbstractListener {
 		if (!player.hasPermission(category.toPermName() + '.' + blockName)) {
 			return;
 		}
-		if (plugin.getPluginConfig().isConfigurationSection(
+		if (mainConfig.isConfigurationSection(
 				category + "." + blockName + ':' + block.getState().getData().toItemStack().getDurability())) {
 			blockName += ":" + block.getState().getData().toItemStack().getDurability();
-		} else if (!plugin.getPluginConfig().isConfigurationSection(category + "." + blockName)) {
+		} else if (!mainConfig.isConfigurationSection(category + "." + blockName)) {
 			return;
 		}
 

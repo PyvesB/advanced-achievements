@@ -1,12 +1,23 @@
 package com.hm.achievement.listener;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.event.PlayerChangeAnimalOwnershipEvent;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with PetMasterGive and PetMasterReceive achievements.
@@ -14,10 +25,17 @@ import com.hm.mcshared.event.PlayerChangeAnimalOwnershipEvent;
  * @author Pyves
  *
  */
+@Singleton
 public class AchievePetMasterGiveReceiveListener extends AbstractListener {
 
-	public AchievePetMasterGiveReceiveListener(AdvancedAchievements plugin) {
-		super(plugin);
+	private final Set<String> disabledCategories;
+
+	@Inject
+	public AchievePetMasterGiveReceiveListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			ReloadCommand reloadCommand, Set<String> disabledCategories) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
+		this.disabledCategories = disabledCategories;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -33,7 +51,7 @@ public class AchievePetMasterGiveReceiveListener extends AbstractListener {
 			return;
 		}
 
-		if (!plugin.getDisabledCategorySet().contains(categoryReceive.toString())) {
+		if (!disabledCategories.contains(categoryReceive.toString())) {
 			updateStatisticAndAwardAchievementsIfAvailable(receiverPlayer, categoryReceive, 1);
 		}
 
@@ -43,7 +61,7 @@ public class AchievePetMasterGiveReceiveListener extends AbstractListener {
 			return;
 		}
 
-		if (!plugin.getDisabledCategorySet().contains(categoryGive.toString())) {
+		if (!disabledCategories.contains(categoryGive.toString())) {
 			updateStatisticAndAwardAchievementsIfAvailable(giverPlayer, categoryGive, 1);
 		}
 	}

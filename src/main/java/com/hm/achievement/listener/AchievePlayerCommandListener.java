@@ -3,21 +3,34 @@ package com.hm.achievement.listener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
+@Singleton
 public class AchievePlayerCommandListener extends AbstractListener {
 
-	public AchievePlayerCommandListener(AdvancedAchievements plugin) {
-		super(plugin);
+	@Inject
+	public AchievePlayerCommandListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			ReloadCommand reloadCommand) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -31,7 +44,7 @@ public class AchievePlayerCommandListener extends AbstractListener {
 		MultipleAchievements category = MultipleAchievements.PLAYERCOMMANDS;
 
 		List<String> equivalentCommands = getEquivalentCommands(event.getMessage());
-		for (String prefix : plugin.getPluginConfig().getShallowKeys(category.toString())) {
+		for (String prefix : mainConfig.getShallowKeys(category.toString())) {
 			for (String equivalentCommand : equivalentCommands) {
 				if (equivalentCommand.startsWith(prefix)) {
 					if (player.hasPermission(category.toPermName() + '.' + StringUtils.deleteWhitespace(prefix))) {
@@ -63,7 +76,7 @@ public class AchievePlayerCommandListener extends AbstractListener {
 			commandParameters = "";
 		}
 
-		PluginCommand pluginCommand = plugin.getServer().getPluginCommand(commandName);
+		PluginCommand pluginCommand = Bukkit.getPluginCommand(commandName);
 		if (pluginCommand == null || pluginCommand.getAliases() == null) {
 			return Arrays.asList(commandName.toLowerCase() + commandParameters);
 		}

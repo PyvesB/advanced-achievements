@@ -1,12 +1,5 @@
 package com.hm.achievement.api;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.db.data.AwardedDBAchievement;
-import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,19 +8,45 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
+
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.data.AwardedDBAchievement;
 
 /**
  * Underlying implementation of the AdvancedAchievementsAPI interface.
  *
  * @author Pyves
  */
+@Singleton
 public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
-	private final AdvancedAchievements pluginInstance;
+	private final AdvancedAchievements advancedAchievements;
+	private final DatabaseCacheManager databaseCacheManager;
+	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final Map<String, String> achievementsAndDisplayNames;
+	private final Logger logger;
 
-	AdvancedAchievementsBukkitAPI(AdvancedAchievements pluginInstance) {
-		this.pluginInstance = pluginInstance;
+	@Inject
+	AdvancedAchievementsBukkitAPI(AdvancedAchievements advancedAchievements, Logger logger,
+			DatabaseCacheManager databaseCacheManager, AbstractSQLDatabaseManager sqlDatabaseManager,
+			Map<String, String> achievementsAndDisplayNames) {
+		this.advancedAchievements = advancedAchievements;
+		this.logger = logger;
+		this.databaseCacheManager = databaseCacheManager;
+		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
 	}
 
 	/**
@@ -37,18 +56,19 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	 * @return API instance
 	 */
 	public static AdvancedAchievementsAPI linkAdvancedAchievements() {
-		return new AdvancedAchievementsBukkitAPI(
-				(AdvancedAchievements) Bukkit.getPluginManager().getPlugin("AdvancedAchievements"));
+		return ((AdvancedAchievements) Bukkit.getPluginManager().getPlugin("AdvancedAchievements"))
+				.getAdvancedAchievementsAPI();
 	}
 
 	@Override
 	public int getAdvancedAchievementsVersionCode() {
-		String version = pluginInstance.getDescription().getVersion();
+		String version = advancedAchievements.getDescription().getVersion();
 		int versionCode = 100
-				* Integer.parseInt(Character.toString(pluginInstance.getDescription().getVersion().charAt(0)))
-				+ 10 * Integer.parseInt(Character.toString(pluginInstance.getDescription().getVersion().charAt(2)));
+				* Integer.parseInt(Character.toString(advancedAchievements.getDescription().getVersion().charAt(0)))
+				+ 10 * Integer.parseInt(Character.toString(advancedAchievements.getDescription().getVersion().charAt(2)));
 		if (version.length() > 4) {
-			versionCode += Integer.parseInt(Character.toString(pluginInstance.getDescription().getVersion().charAt(4)));
+			versionCode += Integer
+					.parseInt(Character.toString(advancedAchievements.getDescription().getVersion().charAt(4)));
 		}
 		return versionCode;
 	}
@@ -60,17 +80,16 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		// Underlying structures do not support concurrent operations and are only used by the main server thread. Not
 		// thread-safe to modify or read them asynchronously. Do not use cached data if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
-			return pluginInstance.getCacheManager().hasPlayerAchievement(player, achievementName);
+			return databaseCacheManager.hasPlayerAchievement(player, achievementName);
 		} else {
-			return pluginInstance.getDatabaseManager().hasPlayerAchievement(player, achievementName);
+			return sqlDatabaseManager.hasPlayerAchievement(player, achievementName);
 		}
 	}
 
 	@Override
 	public List<Achievement> getPlayerAchievementsList(UUID player) {
 		validateNotNull(player, "Player");
-		return pluginInstance.getDatabaseManager().getPlayerAchievementsList(player)
-				.stream().map(AwardedDBAchievement::toAPIAchievement)
+		return sqlDatabaseManager.getPlayerAchievementsList(player).stream().map(AwardedDBAchievement::toAPIAchievement)
 				.collect(Collectors.toList());
 	}
 
@@ -79,16 +98,16 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		validateNotNull(player, "Player");
 		// Only use cached data if player is online.
 		if (isPlayerOnline(player)) {
-			return pluginInstance.getCacheManager().getPlayerTotalAchievements(player);
+			return databaseCacheManager.getPlayerTotalAchievements(player);
 		} else {
-			return pluginInstance.getDatabaseManager().getPlayerAchievementsAmount(player);
+			return sqlDatabaseManager.getPlayerAchievementsAmount(player);
 		}
 	}
 
 	@Override
 	public Rank getPlayerRank(UUID player, long rankingPeriodStart) {
 		validateNotNull(player, "Player");
-		Map<String, Integer> rankings = pluginInstance.getDatabaseManager().getTopList(rankingPeriodStart);
+		Map<String, Integer> rankings = sqlDatabaseManager.getTopList(rankingPeriodStart);
 		List<Integer> achievementCounts = new ArrayList<>(rankings.values());
 		Integer achievementsCount = rankings.get(player.toString());
 		if (achievementsCount != null) {
@@ -102,8 +121,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public List<UUID> getTopPlayers(int numOfPlayers, long rankingPeriodStart) {
-		return pluginInstance.getDatabaseManager().getTopList(rankingPeriodStart).keySet().stream().limit(numOfPlayers)
-				.map(UUID::fromString).collect(Collectors.toList());
+		return sqlDatabaseManager.getTopList(rankingPeriodStart).keySet().stream().limit(numOfPlayers).map(UUID::fromString)
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -113,9 +132,9 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		// Underlying structures do not support concurrent write operations and are only modified by the main server
 		// thread. Do not use cache if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
-			return pluginInstance.getCacheManager().getAndIncrementStatisticAmount(category, player, 0);
+			return databaseCacheManager.getAndIncrementStatisticAmount(category, player, 0);
 		} else {
-			return pluginInstance.getDatabaseManager().getNormalAchievementAmount(player, category);
+			return sqlDatabaseManager.getNormalAchievementAmount(player, category);
 		}
 	}
 
@@ -127,21 +146,21 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		// Underlying structures do not support concurrent write operations and are only modified by the main server
 		// thread. Do not use cache if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
-			return pluginInstance.getCacheManager().getAndIncrementStatisticAmount(category, subcategory, player, 0);
+			return databaseCacheManager.getAndIncrementStatisticAmount(category, subcategory, player, 0);
 		} else {
-			return pluginInstance.getDatabaseManager().getMultipleAchievementAmount(player, category, subcategory);
+			return sqlDatabaseManager.getMultipleAchievementAmount(player, category, subcategory);
 		}
 	}
 
 	@Override
 	public String getDisplayNameForName(String achievementName) {
 		validateNotEmpty(achievementName, "Achievement Name");
-		return pluginInstance.getAchievementsAndDisplayNames().get(achievementName);
+		return achievementsAndDisplayNames.get(achievementName);
 	}
 
 	@Override
 	public Map<UUID, Integer> getPlayersTotalAchievements() {
-		return pluginInstance.getDatabaseManager().getPlayersAchievementsAmount();
+		return sqlDatabaseManager.getPlayersAchievementsAmount();
 	}
 
 	/**
@@ -155,18 +174,17 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 			return Bukkit.getPlayer(player) != null;
 		}
 		// Called asynchronously. To ensure thread safety we must issue a call on the server's main thread of execution.
-		Future<Boolean> onlineCheckFuture = Bukkit.getScheduler().callSyncMethod(pluginInstance,
+		Future<Boolean> onlineCheckFuture = Bukkit.getScheduler().callSyncMethod(advancedAchievements,
 				() -> Bukkit.getPlayer(player) != null);
 
 		boolean playerOnline = true;
 		try {
 			playerOnline = onlineCheckFuture.get();
 		} catch (InterruptedException e) {
-			pluginInstance.getLogger().log(Level.SEVERE, "Thread interrupted while checking whether player online:", e);
+			logger.log(Level.SEVERE, "Thread interrupted while checking whether player online:", e);
 			Thread.currentThread().interrupt();
 		} catch (ExecutionException e) {
-			pluginInstance.getLogger().log(Level.SEVERE,
-					"Unexpected execution exception while checking whether player online:", e);
+			logger.log(Level.SEVERE, "Unexpected execution exception while checking whether player online:", e);
 		} catch (CancellationException ignored) {
 			// Task can be cancelled when plugin disabled.
 		}

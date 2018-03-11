@@ -3,18 +3,23 @@ package com.hm.achievement.command;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.Reloadable;
+import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling auto-completion for achievements and categories when using /aach check, /aach reset,
@@ -23,26 +28,34 @@ import com.hm.achievement.utils.Reloadable;
  * @author Pyves
  *
  */
+@Singleton
 public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	private static final int MAX_LIST_LENGTH = 50;
 
-	private final AdvancedAchievements plugin;
 	private final Set<String> enabledCategoriesWithSubcategories = new HashSet<>();
+	private final CommentedYamlConfiguration mainConfig;
+	private final Map<String, String> achievementsAndDisplayNames;
+	private final Set<String> disabledCategories;
 
 	private Set<String> configCommandsKeys;
 
-	public CommandTabCompleter(AdvancedAchievements plugin) {
-		this.plugin = plugin;
+	@Inject
+	public CommandTabCompleter(@Named("main") CommentedYamlConfiguration mainConfig,
+			Map<String, String> achievementsAndDisplayNames, Set<String> disabledCategories, ReloadCommand reloadCommand) {
+		this.mainConfig = mainConfig;
+		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
+		this.disabledCategories = disabledCategories;
+		reloadCommand.addObserver(this);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
-		configCommandsKeys = plugin.getPluginConfig().getShallowKeys("Commands");
-		
+		configCommandsKeys = mainConfig.getShallowKeys("Commands");
+
 		enabledCategoriesWithSubcategories.clear();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			for (String subcategory : plugin.getPluginConfig().getShallowKeys(category.toString())) {
+			for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
 				enabledCategoriesWithSubcategories.add(category + "." + StringUtils.deleteWhitespace(subcategory));
 			}
 		}
@@ -51,7 +64,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 		}
 		enabledCategoriesWithSubcategories.add("Commands");
 		// Only auto-complete with non-disabled categories.
-		enabledCategoriesWithSubcategories.removeAll(plugin.getDisabledCategorySet());
+		enabledCategoriesWithSubcategories.removeAll(disabledCategories);
 	}
 
 	@Override
@@ -67,7 +80,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 		} else if (args.length == 2 && "give".equalsIgnoreCase(args[0])) {
 			return getPartialList(configCommandsKeys, args[1]);
 		} else if (args.length == 2 && ("delete".equalsIgnoreCase(args[0]) || "check".equalsIgnoreCase(args[0]))) {
-			return getPartialList(plugin.getAchievementsAndDisplayNames().keySet(), args[1]);
+			return getPartialList(achievementsAndDisplayNames.keySet(), args[1]);
 		}
 		// No completion.
 		return Collections.singletonList("");

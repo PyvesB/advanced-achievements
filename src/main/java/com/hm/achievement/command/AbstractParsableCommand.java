@@ -1,12 +1,13 @@
 package com.hm.achievement.command;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.command.CmdLang;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Abstract class in charge of factoring out common functionality for commands with more than one argument (/aach give,
@@ -18,15 +19,16 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 
 	private String langPlayerOffline;
 
-	protected AbstractParsableCommand(AdvancedAchievements plugin) {
-		super(plugin);
+	AbstractParsableCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
+			StringBuilder pluginHeader, ReloadCommand reloadCommand) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langPlayerOffline = Lang.get(CmdLang.PLAYER_OFFLINE, plugin);
+		langPlayerOffline = Lang.get(CmdLang.PLAYER_OFFLINE, langConfig);
 	}
 
 	/**
@@ -36,19 +38,17 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	 * @param args
 	 * @param player
 	 */
-	protected abstract void executeSpecificActions(CommandSender sender, String[] args, Player player);
+	abstract void executeSpecificActions(CommandSender sender, String[] args, Player player);
 
 	@Override
-	protected void executeCommand(CommandSender sender, String[] args) {
+	void executeCommand(CommandSender sender, String[] args) {
 		String searchedName = args[args.length - 1];
-		Player player = Bukkit.getOnlinePlayers().stream()
-				.filter(p -> p.getName().equalsIgnoreCase(searchedName))
+		Player player = Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().equalsIgnoreCase(searchedName))
 				.findFirst().orElse(null);
 
 		// If player not found or is offline.
 		if (player == null) {
-			sender.sendMessage(plugin.getChatHeader()
-					+ StringUtils.replaceOnce(langPlayerOffline, "PLAYER", searchedName));
+			sender.sendMessage(pluginHeader + StringUtils.replaceOnce(langPlayerOffline, "PLAYER", searchedName));
 			return;
 		}
 
@@ -61,7 +61,7 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	 * @param args
 	 * @return the achievement name
 	 */
-	protected String parseAchievementName(String[] args) {
+	String parseAchievementName(String[] args) {
 		StringBuilder achievementName = new StringBuilder();
 		// Rebuild name of achievement by concatenating elements in the string array. The name of the player is last.
 		for (int i = 1; i < args.length - 1; i++) {

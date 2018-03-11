@@ -1,19 +1,30 @@
 package com.hm.achievement.db;
 
-import com.google.common.util.concurrent.MoreExecutors;
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.db.data.AwardedDBAchievement;
-import com.hm.achievement.exception.PluginLoadError;
-import org.junit.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.sql.Date;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import com.hm.achievement.db.data.AwardedDBAchievement;
+
 import utilities.MockUtility;
-
-import java.sql.Date;
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 /**
  * Class for testing SQLite Database.
@@ -29,21 +40,11 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		MockUtility mockUtility = MockUtility.setUp()
-				.withLogger()
 				.withPluginDescription()
+				.withLogger()
 				.withDataFolder(temporaryFolder.getRoot())
-				.withPluginConfig("config.yml");
-		AdvancedAchievements pluginMock = mockUtility.getPluginMock();
-
-		db = new SQLiteDatabaseManager(pluginMock) {
-
-			@Override
-			public void extractConfigurationParameters() {
-				super.extractConfigurationParameters();
-				pool = MoreExecutors.newDirectExecutorService();
-			}
-		};
-		initDB();
+				.withPluginFile("config.yml");
+		initDB(mockUtility);
 	}
 
 	@Before
@@ -56,11 +57,6 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 		if (db != null) {
 			db.shutdown();
 		}
-	}
-
-	@Test
-	public void testInitialization() throws PluginLoadError {
-		initDB();
 	}
 
 	@Test

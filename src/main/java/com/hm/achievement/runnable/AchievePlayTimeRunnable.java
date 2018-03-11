@@ -1,13 +1,23 @@
 package com.hm.achievement.runnable;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class used to monitor players' played times.
@@ -15,6 +25,7 @@ import com.hm.achievement.utils.StatisticIncreaseHandler;
  * @author Pyves
  *
  */
+@Singleton
 public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements Runnable {
 
 	private Essentials essentials;
@@ -22,8 +33,11 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 
 	private boolean configIgnoreAFKPlayedTime;
 
-	public AchievePlayTimeRunnable(AdvancedAchievements plugin) {
-		super(plugin);
+	@Inject
+	public AchievePlayTimeRunnable(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			ReloadCommand reloadCommand) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
 
 		if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
 			essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
@@ -37,7 +51,7 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 		super.extractConfigurationParameters();
 
 		if (essentials != null) {
-			configIgnoreAFKPlayedTime = plugin.getPluginConfig().getBoolean("IgnoreAFKPlayedTime", false);
+			configIgnoreAFKPlayedTime = mainConfig.getBoolean("IgnoreAFKPlayedTime", false);
 		} else {
 			configIgnoreAFKPlayedTime = false;
 		}
@@ -74,7 +88,7 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 			return;
 		}
 
-		long playedTime = plugin.getCacheManager().getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME,
+		long playedTime = databaseCacheManager.getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME,
 				player.getUniqueId(), (int) (System.currentTimeMillis() - previousRunMillis));
 		checkThresholdsAndAchievements(player, NormalAchievements.PLAYEDTIME.toString(), playedTime);
 	}

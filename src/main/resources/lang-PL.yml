@@ -13,7 +13,6 @@ statistic-cooldown: "Poczekaj TIME sek, by ponownie uzyc tej komendy."
 # Related to /aach reload.
 configuration-successfully-reloaded: "Pliki konfiguracyje zostaly pomyslnie przeladowane."
 configuration-reload-failed: "Wystapil blad podczas przeladowywania plików konfiguracyjnych. Szczególy znajdziesz w logach."
-server-restart-reload: "Wylaczone Kategorie zostaly zmodyfikowane. Konieczny jest pelen restart serwera, by wprowadzone przez Ciebie opcje zaczely dzialac."
 
 # Related to /aach top week and month.
 top-achievement: "Calkowity ranking osiagniec:"

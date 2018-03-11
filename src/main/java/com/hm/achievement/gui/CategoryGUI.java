@@ -1,10 +1,19 @@
 package com.hm.achievement.gui;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.lang.GuiLang;
-import com.hm.achievement.lang.Lang;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -15,16 +24,22 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MinecraftFont;
 
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.lang.GuiLang;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Represents the main GUI, corresponding to more specific details about the different achievements.
  *
  * @author Pyves
  */
+@Singleton
 public class CategoryGUI extends AbstractGUI {
 
 	private static final int MAX_PER_PAGE = 50;
@@ -34,6 +49,10 @@ public class CategoryGUI extends AbstractGUI {
 	private static final Pattern REGEX_PATTERN = Pattern.compile("&([a-f]|[0-9]){1}");
 	// Minecraft font, used to get size information in the progress bar.
 	private static final MinecraftFont FONT = MinecraftFont.Font;
+
+	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final Map<String, List<Long>> sortedThresholds;
+	private final RewardParser rewardParser;
 
 	private boolean configObfuscateNotReceived;
 	private boolean configObfuscateProgressiveAchievements;
@@ -59,40 +78,45 @@ public class CategoryGUI extends AbstractGUI {
 	private ItemStack achievementStarted;
 	private ItemStack achievementReceived;
 
-	public CategoryGUI(AdvancedAchievements plugin) {
-		super(plugin);
+	@Inject
+	public CategoryGUI(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
+			Logger logger, DatabaseCacheManager databaseCacheManager, AbstractSQLDatabaseManager sqlDatabaseManager,
+			Map<String, List<Long>> sortedThresholds, RewardParser rewardParser, ReloadCommand reloadCommand) {
+		super(mainConfig, langConfig, guiConfig, logger, databaseCacheManager, reloadCommand);
+		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.sortedThresholds = sortedThresholds;
+		this.rewardParser = rewardParser;
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configObfuscateNotReceived = plugin.getPluginConfig().getBoolean("ObfuscateNotReceived", true);
-		configObfuscateProgressiveAchievements = plugin.getPluginConfig().getBoolean("ObfuscateProgressiveAchievements",
-				false);
-		configHideRewardDisplayInList = plugin.getPluginConfig().getBoolean("HideRewardDisplayInList", false);
-		configEnrichedProgressBars = plugin.getPluginConfig().getBoolean("EnrichedListProgressBars", true);
-		configNumberedItemsInList = plugin.getPluginConfig().getBoolean("NumberedItemsInList", false);
-		configColor = ChatColor.getByChar(plugin.getPluginConfig().getString("Color", "5").charAt(0));
-		configListColorNotReceived = ChatColor
-				.getByChar(plugin.getPluginConfig().getString("ListColorNotReceived", "8").charAt(0));
+		configObfuscateNotReceived = mainConfig.getBoolean("ObfuscateNotReceived", true);
+		configObfuscateProgressiveAchievements = mainConfig.getBoolean("ObfuscateProgressiveAchievements", false);
+		configHideRewardDisplayInList = mainConfig.getBoolean("HideRewardDisplayInList", false);
+		configEnrichedProgressBars = mainConfig.getBoolean("EnrichedListProgressBars", true);
+		configNumberedItemsInList = mainConfig.getBoolean("NumberedItemsInList", false);
+		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0));
+		configListColorNotReceived = ChatColor.getByChar(mainConfig.getString("ListColorNotReceived", "8").charAt(0));
 
-		langListGUITitle = translateColorCodes(Lang.get(GuiLang.GUI_TITLE, plugin));
-		langListAchievementReceived = StringEscapeUtils.unescapeJava(Lang.get(GuiLang.ACHIEVEMENT_RECEIVED, plugin));
+		langListGUITitle = translateColorCodes(Lang.get(GuiLang.GUI_TITLE, langConfig));
+		langListAchievementReceived = StringEscapeUtils.unescapeJava(Lang.get(GuiLang.ACHIEVEMENT_RECEIVED, langConfig));
 		langListAchievementNotReceived = StringEscapeUtils
-				.unescapeJava(Lang.get(GuiLang.ACHIEVEMENT_NOT_RECEIVED, plugin) + configListColorNotReceived);
-		langListDescription = translateColorCodes("&7&l" + Lang.get(GuiLang.DESCRIPTION, plugin));
-		langListReception = translateColorCodes("&7&l" + Lang.get(GuiLang.RECEPTION, plugin));
-		langListGoal = translateColorCodes("&7&l" + Lang.get(GuiLang.GOAL, plugin));
-		langListProgress = translateColorCodes("&7&l" + Lang.get(GuiLang.PROGRESS, plugin));
-		langListReward = translateColorCodes("&7&l" + Lang.get(GuiLang.REWARD, plugin));
+				.unescapeJava(Lang.get(GuiLang.ACHIEVEMENT_NOT_RECEIVED, langConfig) + configListColorNotReceived);
+		langListDescription = translateColorCodes("&7&l" + Lang.get(GuiLang.DESCRIPTION, langConfig));
+		langListReception = translateColorCodes("&7&l" + Lang.get(GuiLang.RECEPTION, langConfig));
+		langListGoal = translateColorCodes("&7&l" + Lang.get(GuiLang.GOAL, langConfig));
+		langListProgress = translateColorCodes("&7&l" + Lang.get(GuiLang.PROGRESS, langConfig));
+		langListReward = translateColorCodes("&7&l" + Lang.get(GuiLang.REWARD, langConfig));
 
 		achievementNotStarted = createItemStack("AchievementNotStarted");
 		achievementStarted = createItemStack("AchievementStarted");
 		achievementReceived = createItemStack("AchievementReceived");
-		previousButton = createButton("PreviousButton", Lang.get(GuiLang.PREVIOUS_MESSAGE, plugin));
-		nextButton = createButton("NextButton", Lang.get(GuiLang.NEXT_MESSAGE, plugin));
-		backButton = createButton("BackButton", Lang.get(GuiLang.BACK_MESSAGE, plugin));
+		previousButton = createButton("PreviousButton", Lang.get(GuiLang.PREVIOUS_MESSAGE, langConfig));
+		nextButton = createButton("NextButton", Lang.get(GuiLang.NEXT_MESSAGE, langConfig));
+		backButton = createButton("BackButton", Lang.get(GuiLang.BACK_MESSAGE, langConfig));
 	}
 
 	private ItemStack createButton(String category, String msg) {
@@ -112,8 +136,7 @@ public class CategoryGUI extends AbstractGUI {
 	 */
 	public void displayCategoryGUI(ItemStack item, Player player, int requestedPage) {
 		for (Entry<MultipleAchievements, ItemStack> entry : multipleAchievementItems.entrySet()) {
-			if (entry.getValue().getType() == item.getType()
-					&& entry.getValue().getDurability() == item.getDurability()) {
+			if (entry.getValue().getType() == item.getType() && entry.getValue().getDurability() == item.getDurability()) {
 				String categoryName = entry.getKey().toString();
 				List<String> achievementPaths = getSortedMultipleAchievementPaths(categoryName);
 				Map<String, Long> subcategoriesToStatistics = getMultipleStatisticsMapping(entry.getKey(), player);
@@ -122,17 +145,16 @@ public class CategoryGUI extends AbstractGUI {
 			}
 		}
 		for (Entry<NormalAchievements, ItemStack> entry : normalAchievementItems.entrySet()) {
-			if (entry.getValue().getType() == item.getType()
-					&& entry.getValue().getDurability() == item.getDurability()) {
+			if (entry.getValue().getType() == item.getType() && entry.getValue().getDurability() == item.getDurability()) {
 				String categoryName = entry.getKey().toString();
 				List<String> achievementThresholds = getSortedNormalAchievementThresholds(categoryName);
 				long statistic = getNormalStatistic(entry.getKey(), player);
-				displayPage(categoryName, player, Collections.singletonMap(NO_SUBCATEGORY, statistic), requestedPage,
-						item, achievementThresholds);
+				displayPage(categoryName, player, Collections.singletonMap(NO_SUBCATEGORY, statistic), requestedPage, item,
+						achievementThresholds);
 				return;
 			}
 		}
-		List<String> achievementPaths = new ArrayList<>(plugin.getPluginConfig().getShallowKeys("Commands"));
+		List<String> achievementPaths = new ArrayList<>(mainConfig.getShallowKeys("Commands"));
 		displayPage("Commands", player, Collections.singletonMap(NO_SUBCATEGORY, NO_STAT), requestedPage, item,
 				achievementPaths);
 	}
@@ -165,8 +187,8 @@ public class CategoryGUI extends AbstractGUI {
 		String previousSubcategory = NO_SUBCATEGORY;
 		if (pageStart > 0) {
 			String previousAchievement = achievementPaths.get(pageStart - 1);
-			String achName = plugin.getPluginConfig().getString(categoryName + '.' + previousAchievement + ".Name", "");
-			previousItemDate = plugin.getDatabaseManager().getPlayerAchievementDate(player.getUniqueId(), achName);
+			String achName = mainConfig.getString(categoryName + '.' + previousAchievement + ".Name", "");
+			previousItemDate = sqlDatabaseManager.getPlayerAchievementDate(player.getUniqueId(), achName);
 			if (previousAchievement.contains(".")) {
 				previousSubcategory = previousAchievement.split("\\.")[0];
 			}
@@ -177,8 +199,8 @@ public class CategoryGUI extends AbstractGUI {
 			String path = achievementPaths.get(index);
 			String subcategory = path.contains(".") ? path.split("\\.")[0] : NO_SUBCATEGORY;
 			long statistic = subcategoriesToStatistics.get(subcategory);
-			String achName = plugin.getPluginConfig().getString(categoryName + '.' + path + ".Name", "");
-			String receptionDate = plugin.getDatabaseManager().getPlayerAchievementDate(player.getUniqueId(), achName);
+			String achName = mainConfig.getString(categoryName + '.' + path + ".Name", "");
+			String receptionDate = sqlDatabaseManager.getPlayerAchievementDate(player.getUniqueId(), achName);
 
 			boolean ineligibleSeriesItem = true;
 			if (statistic == NO_STAT || receptionDate != null || previousItemDate != null
@@ -241,8 +263,8 @@ public class CategoryGUI extends AbstractGUI {
 		if (date != null) {
 			itemMeta.setDisplayName(translateColorCodes(langListAchievementReceived + name));
 		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-			itemMeta.setDisplayName(translateColorCodes(
-					langListAchievementNotReceived + "&k" + REGEX_PATTERN.matcher(name).replaceAll("")));
+			itemMeta.setDisplayName(
+					translateColorCodes(langListAchievementNotReceived + "&k" + REGEX_PATTERN.matcher(name).replaceAll("")));
 		} else {
 			itemMeta.setDisplayName(translateColorCodes(StringEscapeUtils
 					.unescapeJava(langListAchievementNotReceived + "&o" + REGEX_PATTERN.matcher(name).replaceAll(""))));
@@ -265,9 +287,9 @@ public class CategoryGUI extends AbstractGUI {
 	public List<String> getSortedMultipleAchievementPaths(String categoryName) {
 		List<String> paths = new ArrayList<>();
 		// Populate the achievements from all the sub-categories in the category.
-		for (String subcategory : plugin.getPluginConfig().getShallowKeys(categoryName)) {
+		for (String subcategory : mainConfig.getShallowKeys(categoryName)) {
 			List<String> subcategoryAchievements = new ArrayList<>();
-			for (long threshold : plugin.getSortedThresholds().get(categoryName + "." + subcategory)) {
+			for (long threshold : sortedThresholds.get(categoryName + "." + subcategory)) {
 				subcategoryAchievements.add(subcategory + "." + threshold);
 			}
 			paths.addAll(subcategoryAchievements);
@@ -282,8 +304,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @return the list of paths for the Normal category
 	 */
 	public List<String> getSortedNormalAchievementThresholds(String categoryName) {
-		return plugin.getSortedThresholds().get(categoryName).stream().map(i -> Long.toString(i))
-				.collect(Collectors.toList());
+		return sortedThresholds.get(categoryName).stream().map(i -> Long.toString(i)).collect(Collectors.toList());
 	}
 
 	/**
@@ -295,9 +316,9 @@ public class CategoryGUI extends AbstractGUI {
 	 */
 	public Map<String, Long> getMultipleStatisticsMapping(MultipleAchievements category, Player player) {
 		Map<String, Long> subcategoriesToStatistics = new HashMap<>();
-		for (String subcategory : plugin.getPluginConfig().getShallowKeys(category.toString())) {
-			long statistic = plugin.getCacheManager().getAndIncrementStatisticAmount(category, subcategory,
-					player.getUniqueId(), 0);
+		for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
+			long statistic = databaseCacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
+					0);
 			subcategoriesToStatistics.put(subcategory, statistic);
 		}
 		return subcategoriesToStatistics;
@@ -312,9 +333,9 @@ public class CategoryGUI extends AbstractGUI {
 	 */
 	public long getNormalStatistic(NormalAchievements category, Player player) {
 		if (category == NormalAchievements.CONNECTIONS) {
-			return plugin.getDatabaseManager().getConnectionsAmount(player.getUniqueId());
+			return sqlDatabaseManager.getConnectionsAmount(player.getUniqueId());
 		}
-		return plugin.getCacheManager().getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
+		return databaseCacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
 	}
 
 	/**
@@ -326,7 +347,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @return the name to display in the GUI
 	 */
 	private String getNameToDisplay(String category, String path, String achName) {
-		String displayName = plugin.getPluginConfig().getString(category + '.' + path + ".DisplayName", "");
+		String displayName = mainConfig.getString(category + '.' + path + ".DisplayName", "");
 		if (StringUtils.isNotBlank(displayName)) {
 			// Display name is defined; use it.
 			return displayName;
@@ -343,13 +364,13 @@ public class CategoryGUI extends AbstractGUI {
 	 * @return the description to display in the GUI
 	 */
 	private String getDescriptionToDisplay(String category, String path, boolean completed) {
-		String goal = plugin.getPluginConfig().getString(category + '.' + path + ".Goal", "");
+		String goal = mainConfig.getString(category + '.' + path + ".Goal", "");
 		if (StringUtils.isNotBlank(goal) && !completed) {
 			// Show the goal below the achievement name.
 			return goal;
 		}
 		// Show the achievement message below the achievement name.
-		return plugin.getPluginConfig().getString(category + '.' + path + ".Message", "");
+		return mainConfig.getString(category + '.' + path + ".Message", "");
 	}
 
 	/**
@@ -398,11 +419,9 @@ public class CategoryGUI extends AbstractGUI {
 			lore.add(langListGoal);
 			String strippedAchMessage = REGEX_PATTERN.matcher(description).replaceAll("");
 			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-				lore.add(translateColorCodes(
-						configListColorNotReceived + "&k" + strippedAchMessage));
+				lore.add(translateColorCodes(configListColorNotReceived + "&k" + strippedAchMessage));
 			} else {
-				lore.add(translateColorCodes(
-						configListColorNotReceived + "&o" + strippedAchMessage));
+				lore.add(translateColorCodes(configListColorNotReceived + "&o" + strippedAchMessage));
 			}
 			lore.add("");
 			// Display progress if not COmmands category.
@@ -410,13 +429,12 @@ public class CategoryGUI extends AbstractGUI {
 				String threshold = path.contains(".") ? path.split("\\.")[1] : path;
 				boolean timeStat = NormalAchievements.PLAYEDTIME.toString().equals(categoryName);
 				lore.add(langListProgress);
-				lore.add(translateColorCodes(
-						constructProgressBar(strippedAchMessage, threshold, statistic, timeStat)));
+				lore.add(translateColorCodes(constructProgressBar(strippedAchMessage, threshold, statistic, timeStat)));
 				lore.add("");
 			}
 		}
 
-		List<String> rewards = plugin.getRewardParser().getRewardListing(categoryName + '.' + path + ".Reward");
+		List<String> rewards = rewardParser.getRewardListing(categoryName + '.' + path + ".Reward");
 		// Add the rewards information.
 		if (!rewards.isEmpty() && !configHideRewardDisplayInList) {
 			lore.add(langListReward);

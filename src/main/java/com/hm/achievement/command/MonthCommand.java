@@ -1,23 +1,34 @@
 package com.hm.achievement.command;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.lang.command.CmdLang;
-
 import java.util.Calendar;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach month command, which displays monthly rankings.
  *
  * @author Pyves
  */
+@Singleton
 public class MonthCommand extends AbstractRankingCommand {
 
-	public MonthCommand(AdvancedAchievements plugin) {
-		super(plugin, CmdLang.MONTH_ACHIEVEMENT);
+	@Inject
+	public MonthCommand(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
+			Logger logger, int serverVersion, AbstractSQLDatabaseManager sqlDatabaseManager) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, logger, serverVersion, CmdLang.MONTH_ACHIEVEMENT,
+				sqlDatabaseManager);
 	}
 
 	@Override
-	protected long getRankingStartTime() {
+	long getRankingStartTime() {
 		Calendar c = Calendar.getInstance();
 		// Set calendar to the first day of the month.
 		c.set(Calendar.DAY_OF_MONTH, 1);

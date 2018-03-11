@@ -1,13 +1,18 @@
 package com.hm.achievement.command;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.command.CmdLang;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach toggle command, which allows a player to override the default behaviour of the
@@ -15,29 +20,30 @@ import java.util.Set;
  * 
  * @author Pyves
  */
+@Singleton
 public class ToggleCommand extends AbstractCommand {
 
 	// Indicates whether a player has used toggle since last server restart.
-	private final Set<String> toggledPlayers;
+	private final Set<String> toggledPlayers = new HashSet<>();
 
 	private boolean configNotifyOtherPlayers;
 	private String langToggleDisplayed;
 	private String langToggleHidden;
 
-	public ToggleCommand(AdvancedAchievements plugin) {
-		super(plugin);
-
-		toggledPlayers = new HashSet<>();
+	@Inject
+	public ToggleCommand(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configNotifyOtherPlayers = plugin.getPluginConfig().getBoolean("NotifyOtherPlayers", false);
+		configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers", false);
 
-		langToggleDisplayed = Lang.getWithChatHeader(CmdLang.TOGGLE_DISPLAYED, plugin);
-		langToggleHidden = Lang.getWithChatHeader(CmdLang.TOGGLE_HIDDEN, plugin);
+		langToggleDisplayed = pluginHeader + Lang.get(CmdLang.TOGGLE_DISPLAYED, langConfig);
+		langToggleHidden = pluginHeader + Lang.get(CmdLang.TOGGLE_HIDDEN, langConfig);
 	}
 
 	/**
@@ -51,7 +57,7 @@ public class ToggleCommand extends AbstractCommand {
 	}
 
 	@Override
-	protected void executeCommand(CommandSender sender, String[] args) {
+	void executeCommand(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player)) {
 			return;
 		}

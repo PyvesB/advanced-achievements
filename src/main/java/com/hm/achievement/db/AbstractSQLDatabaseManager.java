@@ -19,15 +19,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.exception.PluginLoadError;
-import com.hm.achievement.utils.Reloadable;
+import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Abstract class in charge of factoring out common functionality for the database manager.
@@ -36,34 +38,42 @@ import com.hm.achievement.utils.Reloadable;
  */
 public abstract class AbstractSQLDatabaseManager implements Reloadable {
 
-	protected final AdvancedAchievements plugin;
 	// Used to do perform the database write operations asynchronously.
-	protected ExecutorService pool;
+	ExecutorService pool;
 	// Connection to the database; remains opened and shared.
-	protected final AtomicReference<Connection> sqlConnection;
+	final AtomicReference<Connection> sqlConnection = new AtomicReference<>();
+	final CommentedYamlConfiguration mainConfig;
+	final Logger logger;
 
-	protected volatile String databaseAddress;
-	protected volatile String databaseUser;
-	protected volatile String databasePassword;
-	protected volatile String additionalConnectionOptions;
-	protected volatile String prefix;
+	volatile String databaseAddress;
+	volatile String databaseUser;
+	volatile String databasePassword;
+	volatile String additionalConnectionOptions;
+	volatile String prefix;
+
+	private final Map<String, String> achievementsAndDisplayNames;
+	private final DatabaseUpdater databaseUpdater;
 
 	private DateFormat dateFormat;
 	private boolean configBookChronologicalOrder;
 
-	public AbstractSQLDatabaseManager(AdvancedAchievements plugin) {
-		this.plugin = plugin;
+	public AbstractSQLDatabaseManager(CommentedYamlConfiguration mainConfig, Logger logger,
+			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater, ReloadCommand reloadCommand) {
+		this.mainConfig = mainConfig;
+		this.logger = logger;
+		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
+		this.databaseUpdater = databaseUpdater;
+		reloadCommand.addObserver(this);
 		// We expect to execute many short writes to the database. The pool can grow dynamically under high load and
 		// allows to reuse threads.
 		pool = Executors.newCachedThreadPool();
-		sqlConnection = new AtomicReference<>();
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
-		configBookChronologicalOrder = plugin.getPluginConfig().getBoolean("BookChronologicalOrder", true);
-		String localeString = plugin.getPluginConfig().getString("DateLocale", "en");
-		boolean dateDisplayTime = plugin.getPluginConfig().getBoolean("DateDisplayTime", false);
+		configBookChronologicalOrder = mainConfig.getBoolean("BookChronologicalOrder", true);
+		String localeString = mainConfig.getString("DateLocale", "en");
+		boolean dateDisplayTime = mainConfig.getBoolean("DateDisplayTime", false);
 		Locale locale = new Locale(localeString);
 		if (dateDisplayTime) {
 			dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
@@ -78,31 +88,29 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @throws PluginLoadError
 	 */
 	public void initialise() throws PluginLoadError {
-		plugin.getLogger().info("Initialising database...");
+		logger.info("Initialising database...");
 
-		prefix = plugin.getPluginConfig().getString("TablePrefix", "");
-		additionalConnectionOptions = plugin.getPluginConfig().getString("AdditionalConnectionOptions", "");
+		prefix = mainConfig.getString("TablePrefix", "");
+		additionalConnectionOptions = mainConfig.getString("AdditionalConnectionOptions", "");
 
 		try {
 			performPreliminaryTasks();
 		} catch (ClassNotFoundException e) {
-			plugin.getLogger().severe("The JBDC driver for the chosen database type was not found.");
+			logger.severe("The JBDC driver for the chosen database type was not found.");
 		}
 
 		// Try to establish connection with database; stays opened until explicitly closed by the plugin.
 		Connection conn = getSQLConnection();
 
 		if (conn == null) {
-			throw new PluginLoadError(
-					"Failed to establish database connection. Please verify your settings in config.yml.");
+			throw new PluginLoadError("Failed to establish database connection. Please verify your settings in config.yml.");
 		}
 
-		DatabaseUpdater databaseUpdater = new DatabaseUpdater(plugin, this);
-		databaseUpdater.renameExistingTables(databaseAddress);
-		databaseUpdater.initialiseTables();
-		databaseUpdater.updateOldDBToMaterial();
-		databaseUpdater.updateOldDBToDates();
-		databaseUpdater.updateOldDBMobnameSize();
+		databaseUpdater.renameExistingTables(this, databaseAddress);
+		databaseUpdater.initialiseTables(this);
+		databaseUpdater.updateOldDBToMaterial(this);
+		databaseUpdater.updateOldDBToDates(this);
+		databaseUpdater.updateOldDBMobnameSize(this);
 	}
 
 	/**
@@ -111,7 +119,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @throws ClassNotFoundException
 	 * @throws PluginLoadError
 	 */
-	protected abstract void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError;
+	abstract void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError;
 
 	/**
 	 * Shuts the thread pool down and closes connection to database.
@@ -121,11 +129,10 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		try {
 			// Wait a few seconds for remaining tasks to execute.
 			if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
-				plugin.getLogger()
-						.warning("Some write operations could not be sent to the database during plugin shutdown.");
+				logger.warning("Some write operations could not be sent to the database during plugin shutdown.");
 			}
 		} catch (InterruptedException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while waiting for database write operations to complete:", e);
+			logger.log(Level.SEVERE, "Error while waiting for database write operations to complete:", e);
 			Thread.currentThread().interrupt();
 		} finally {
 			try {
@@ -134,7 +141,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 					connection.close();
 				}
 			} catch (SQLException e) {
-				plugin.getLogger().log(Level.SEVERE, "Error while closing connection to the database:", e);
+				logger.log(Level.SEVERE, "Error while closing connection to the database:", e);
 			}
 		}
 	}
@@ -144,7 +151,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 *
 	 * @return the cached SQL connection or a new one
 	 */
-	protected Connection getSQLConnection() {
+	Connection getSQLConnection() {
 		Connection oldConnection = sqlConnection.get();
 		try {
 			// Check if Connection was not previously closed.
@@ -155,7 +162,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 			}
 		} catch (SQLException e) {
-			plugin.getLogger().log(Level.SEVERE, "Error while attempting to retrieve a connection to the database:", e);
+			logger.log(Level.SEVERE, "Error while attempting to retrieve a connection to the database:", e);
 		}
 		return sqlConnection.get();
 	}
@@ -166,7 +173,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @return connection object to database
 	 * @throws SQLException
 	 */
-	protected abstract Connection createSQLConnection() throws SQLException;
+	abstract Connection createSQLConnection() throws SQLException;
 
 	/**
 	 * Gets the list of names of all the achievements of a player.
@@ -204,8 +211,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 		// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
 		// where names containing single quotes were inserted with two single quotes in the database.
 		String sql = achName.contains("'")
-				? "SELECT date FROM " + prefix
-						+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
+				? "SELECT date FROM " + prefix + "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
 				: "SELECT date FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<String>) () -> {
 			Connection conn = getSQLConnection();
@@ -278,8 +284,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	public Map<String, Integer> getTopList(long start) {
 		// Either consider all the achievements or only those received after the start date.
 		String sql = start == 0L
-				? "SELECT playername, COUNT(*) FROM " + prefix
-						+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
+				? "SELECT playername, COUNT(*) FROM " + prefix + "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
 				: "SELECT playername, COUNT(*) FROM " + prefix
 						+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC";
 		return ((SQLReadOperation<Map<String, Integer>>) () -> {
@@ -318,7 +323,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	 * @param achMessage
 	 * @param epochMs Moment the achievement was registered at.
 	 */
-	protected void registerAchievement(UUID uuid, String achName, String achMessage, long epochMs) {
+	void registerAchievement(UUID uuid, String achName, String achMessage, long epochMs) {
 		String sql = "REPLACE INTO " + prefix + "achievements VALUES (?,?,?,?)";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
@@ -329,7 +334,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				ps.setDate(4, new Date(epochMs));
 				ps.execute();
 			}
-		}).executeOperation(pool, plugin.getLogger(), "registering an achievement");
+		}).executeOperation(pool, logger, "registering an achievement");
 	}
 
 	/**
@@ -478,7 +483,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 						writePrep.setString(3, date);
 						writePrep.execute();
 					}
-				}).executeOperation(pool, plugin.getLogger(), "updating connection date and count");
+				}).executeOperation(pool, logger, "updating connection date and count");
 				return connections;
 			}
 		}).executeOperation("handling connection event");
@@ -506,7 +511,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 				}
 				ps.execute();
 			}
-		}).executeOperation(pool, plugin.getLogger(), "deleting an achievement");
+		}).executeOperation(pool, logger, "deleting an achievement");
 	}
 
 	/**
@@ -521,10 +526,10 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.execute();
 			}
-		}).executeOperation(pool, plugin.getLogger(), "clearing connection statistics");
+		}).executeOperation(pool, logger, "clearing connection statistics");
 	}
 
-	protected String getPrefix() {
+	String getPrefix() {
 		return prefix;
 	}
 
@@ -549,7 +554,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 						// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing
 						// single quotes were inserted with two single quotes in the database.
 						String achName = StringUtils.replace(rs.getString(2), "''", "'");
-						String displayName = plugin.getAchievementsAndDisplayNames().get(achName);
+						String displayName = achievementsAndDisplayNames.get(achName);
 						if (StringUtils.isNotBlank(displayName)) {
 							achName = displayName;
 						}

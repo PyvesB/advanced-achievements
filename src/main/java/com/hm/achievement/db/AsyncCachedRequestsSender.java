@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
 
@@ -21,12 +25,21 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
+@Singleton
 public class AsyncCachedRequestsSender implements Runnable {
 
-	private final AdvancedAchievements plugin;
+	private final AdvancedAchievements advancedAchievements;
+	private final Logger logger;
+	private final DatabaseCacheManager databaseCacheManager;
+	private final AbstractSQLDatabaseManager sqlDatabaseManager;
 
-	public AsyncCachedRequestsSender(AdvancedAchievements plugin) {
-		this.plugin = plugin;
+	@Inject
+	public AsyncCachedRequestsSender(AdvancedAchievements advancedAchievements, Logger logger,
+			DatabaseCacheManager databaseCacheManager, AbstractSQLDatabaseManager sqlDatabaseManager) {
+		this.advancedAchievements = advancedAchievements;
+		this.logger = logger;
+		this.databaseCacheManager = databaseCacheManager;
+		this.sqlDatabaseManager = sqlDatabaseManager;
 	}
 
 	/**
@@ -57,7 +70,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 		}
 
 		((SQLWriteOperation) () -> {
-			Connection conn = plugin.getDatabaseManager().getSQLConnection();
+			Connection conn = sqlDatabaseManager.getSQLConnection();
 			try (Statement st = conn.createStatement()) {
 				for (String request : batchedRequests) {
 					st.addBatch(request);
@@ -67,7 +80,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 				conn.close();
 				throw e;
 			}
-		}).attemptWrites(plugin.getLogger(), "batching statistic updates");
+		}).attemptWrites(logger, "batching statistic updates");
 	}
 
 	/**
@@ -80,21 +93,20 @@ public class AsyncCachedRequestsSender implements Runnable {
 	 * @param category
 	 */
 	private void addRequestsForMultipleCategory(List<String> batchedRequests, MultipleAchievements category) {
-		Map<String, CachedStatistic> categoryMap = plugin.getCacheManager().getHashMap(category);
+		Map<String, CachedStatistic> categoryMap = databaseCacheManager.getHashMap(category);
 		for (Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
 			if (!entry.getValue().isDatabaseConsistent()) {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
 				entry.getValue().prepareDatabaseWrite();
-				if (plugin.getDatabaseManager() instanceof PostgreSQLDatabaseManager) {
-					batchedRequests.add("INSERT INTO " + plugin.getDatabaseManager().getPrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36)
-							+ "', " + entry.getValue().getValue() + ") ON CONFLICT (playername, "
-							+ category.toSubcategoryDBName() + ") DO UPDATE SET (" + category.toDBName() + ")=("
-							+ entry.getValue().getValue() + ")");
+				if (sqlDatabaseManager instanceof PostgreSQLDatabaseManager) {
+					batchedRequests.add("INSERT INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue().getValue() + ") ON CONFLICT (playername, " + category.toSubcategoryDBName()
+							+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue().getValue() + ")");
 				} else {
-					batchedRequests.add("REPLACE INTO " + plugin.getDatabaseManager().getPrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36)
-							+ "', " + entry.getValue().getValue() + ")");
+					batchedRequests.add("REPLACE INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue().getValue() + ")");
 				}
 			}
 		}
@@ -110,19 +122,19 @@ public class AsyncCachedRequestsSender implements Runnable {
 	 * @param category
 	 */
 	private void addRequestsForNormalCategory(List<String> batchedRequests, NormalAchievements category) {
-		Map<String, CachedStatistic> categoryMap = plugin.getCacheManager().getHashMap(category);
+		Map<String, CachedStatistic> categoryMap = databaseCacheManager.getHashMap(category);
 		for (Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
 			if (!entry.getValue().isDatabaseConsistent()) {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
 				entry.getValue().prepareDatabaseWrite();
-				if (plugin.getDatabaseManager() instanceof PostgreSQLDatabaseManager) {
-					batchedRequests.add("INSERT INTO " + plugin.getDatabaseManager().getPrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue().getValue()
+				if (sqlDatabaseManager instanceof PostgreSQLDatabaseManager) {
+					batchedRequests.add("INSERT INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue().getValue()
 							+ ") ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
 							+ entry.getValue().getValue() + ")");
 				} else {
-					batchedRequests.add("REPLACE INTO " + plugin.getDatabaseManager().getPrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue().getValue() + ")");
+					batchedRequests.add("REPLACE INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue().getValue() + ")");
 				}
 			}
 		}
@@ -134,11 +146,11 @@ public class AsyncCachedRequestsSender implements Runnable {
 	 */
 	private void cleanUpCaches() {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			Map<String, CachedStatistic> categoryMap = plugin.getCacheManager().getHashMap(category);
+			Map<String, CachedStatistic> categoryMap = databaseCacheManager.getHashMap(category);
 			cleanUpCache(categoryMap);
 		}
 		for (NormalAchievements category : NormalAchievements.values()) {
-			Map<String, CachedStatistic> categoryMap = plugin.getCacheManager().getHashMap(category);
+			Map<String, CachedStatistic> categoryMap = databaseCacheManager.getHashMap(category);
 			cleanUpCache(categoryMap);
 		}
 	}
@@ -153,7 +165,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 			if (entry.getValue().didPlayerDisconnect() && entry.getValue().isDatabaseConsistent()) {
 				// Player was disconnected at some point in the recent past. Hand over the cleaning to the main server
 				// thread.
-				Bukkit.getScheduler().callSyncMethod(plugin, () -> {
+				Bukkit.getScheduler().callSyncMethod(advancedAchievements, () -> {
 					// Check again whether statistic has been written to the database. This is necessary to cover
 					// cases where the player may have reconnected in the meantime.
 					if (entry.getValue().isDatabaseConsistent()) {

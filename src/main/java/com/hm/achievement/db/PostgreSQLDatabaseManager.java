@@ -7,10 +7,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 
-import com.hm.achievement.AdvancedAchievements;
+import javax.inject.Named;
+
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class used to handle a PosgreSQL database. Note that some query methods are overriden as the SQL syntax is different
@@ -21,25 +26,26 @@ import com.hm.achievement.category.NormalAchievements;
  */
 public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 
-	public PostgreSQLDatabaseManager(AdvancedAchievements plugin) {
-		super(plugin);
+	public PostgreSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
+			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater,
+			ReloadCommand reloadCommand) {
+		super(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater, reloadCommand);
 	}
 
 	@Override
-	protected void performPreliminaryTasks() throws ClassNotFoundException {
+	void performPreliminaryTasks() throws ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 
 		// Get parameters from the PostgreSQL config category.
-		databaseAddress = plugin.getPluginConfig().getString("POSTGRESQL.Database",
-				"jdbc:postgresql://localhost:5432/minecraft");
-		databaseUser = plugin.getPluginConfig().getString("POSTGRESQL.User", "root");
-		databasePassword = plugin.getPluginConfig().getString("POSTGRESQL.Password", "root");
+		databaseAddress = mainConfig.getString("POSTGRESQL.Database", "jdbc:postgresql://localhost:5432/minecraft");
+		databaseUser = mainConfig.getString("POSTGRESQL.User", "root");
+		databasePassword = mainConfig.getString("POSTGRESQL.Password", "root");
 	}
 
 	@Override
-	protected Connection createSQLConnection() throws SQLException {
-		return DriverManager.getConnection(databaseAddress + "?autoReconnect=true" + additionalConnectionOptions
-				+ "&user=" + databaseUser + "&password=" + databasePassword);
+	Connection createSQLConnection() throws SQLException {
+		return DriverManager.getConnection(databaseAddress + "?autoReconnect=true" + additionalConnectionOptions + "&user="
+				+ databaseUser + "&password=" + databasePassword);
 	}
 
 	@Override
@@ -59,7 +65,7 @@ public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 				ps.setDate(6, new Date(System.currentTimeMillis()));
 				ps.execute();
 			}
-		}).executeOperation(pool, plugin.getLogger(), "registering an achievement");
+		}).executeOperation(pool, logger, "registering an achievement");
 	}
 
 	@Override
@@ -86,7 +92,7 @@ public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
 						writePrep.setString(5, date);
 						writePrep.execute();
 					}
-				}).executeOperation(pool, plugin.getLogger(), "updating connection date and count");
+				}).executeOperation(pool, logger, "updating connection date and count");
 				return connections;
 			}
 		}).executeOperation("handling connection event");

@@ -3,8 +3,13 @@ package com.hm.achievement.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.logging.Logger;
 
-import com.hm.achievement.AdvancedAchievements;
+import javax.inject.Named;
+
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class used to handle a MySQL database.
@@ -14,23 +19,24 @@ import com.hm.achievement.AdvancedAchievements;
  */
 public class MySQLDatabaseManager extends AbstractSQLDatabaseManager {
 
-	public MySQLDatabaseManager(AdvancedAchievements plugin) {
-		super(plugin);
+	public MySQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
+			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater, ReloadCommand reloadCommand) {
+		super(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater, reloadCommand);
 	}
 
 	@Override
-	protected void performPreliminaryTasks() throws ClassNotFoundException {
+	void performPreliminaryTasks() throws ClassNotFoundException {
 		Class.forName("com.mysql.jdbc.Driver");
 
 		// Get parameters from the MySQL config category.
-		databaseAddress = plugin.getPluginConfig().getString("MYSQL.Database", "jdbc:mysql://localhost:3306/minecraft");
-		databaseUser = plugin.getPluginConfig().getString("MYSQL.User", "root");
-		databasePassword = plugin.getPluginConfig().getString("MYSQL.Password", "root");
+		databaseAddress = mainConfig.getString("MYSQL.Database", "jdbc:mysql://localhost:3306/minecraft");
+		databaseUser = mainConfig.getString("MYSQL.User", "root");
+		databasePassword = mainConfig.getString("MYSQL.Password", "root");
 	}
 
 	@Override
-	protected Connection createSQLConnection() throws SQLException {
-		return DriverManager.getConnection(databaseAddress + "?useSSL=false&autoReconnect=true"
-				+ additionalConnectionOptions + "&user=" + databaseUser + "&password=" + databasePassword);
+	Connection createSQLConnection() throws SQLException {
+		return DriverManager.getConnection(databaseAddress + "?useSSL=false&autoReconnect=true" + additionalConnectionOptions
+				+ "&user=" + databaseUser + "&password=" + databasePassword);
 	}
 }

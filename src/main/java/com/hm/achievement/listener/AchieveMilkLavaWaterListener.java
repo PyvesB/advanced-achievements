@@ -1,24 +1,45 @@
 package com.hm.achievement.listener;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.NormalAchievements;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 
-import java.util.UUID;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Milk, WaterBuckets and LavaBuckets achievements.
  *
  * @author Pyves
  */
+@Singleton
 public class AchieveMilkLavaWaterListener extends AbstractRateLimitedListener {
 
-	public AchieveMilkLavaWaterListener(AdvancedAchievements plugin) {
-		super(plugin);
+	private final Set<String> disabledCategories;
+
+	@Inject
+	public AchieveMilkLavaWaterListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			ReloadCommand reloadCommand, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
+			QuitListener quitListener, Set<String> disabledCategories) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand, langConfig,
+				logger, quitListener);
+		this.disabledCategories = disabledCategories;
 	}
 
 	@Override
@@ -38,7 +59,7 @@ public class AchieveMilkLavaWaterListener extends AbstractRateLimitedListener {
 		Material resultBucket = event.getItemStack().getType();
 		NormalAchievements category = getCategory(resultBucket);
 
-		if (plugin.getDisabledCategorySet().contains(category.toString())) {
+		if (disabledCategories.contains(category.toString())) {
 			return;
 		}
 

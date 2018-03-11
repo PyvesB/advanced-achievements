@@ -1,19 +1,25 @@
 package com.hm.achievement.listener;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.advancement.AchievementAdvancement;
-import com.hm.achievement.advancement.AdvancementManager;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.ListenerLang;
-import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
-import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.particle.FancyMessageSender;
-import com.hm.mcshared.particle.ParticleEffect;
-import net.milkbowl.vault.economy.Economy;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -21,21 +27,50 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.advancement.AchievementAdvancement;
+import com.hm.achievement.advancement.AdvancementManager;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.command.ToggleCommand;
+import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.ListenerLang;
+import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.mcshared.particle.FancyMessageSender;
+import com.hm.mcshared.particle.ParticleEffect;
+
+import net.milkbowl.vault.economy.Economy;
 
 /**
  * Listener class to deal with achievement receptions: rewards, display and database operations.
  *
  * @author Pyves
  */
-public class PlayerAdvancedAchievementListener extends AbstractListener {
+@Singleton
+public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 	private static final Random RANDOM = new Random();
+
+	private final CommentedYamlConfiguration mainConfig;
+	private final CommentedYamlConfiguration langConfig;
+	private final int serverVersion;
+	private final Logger logger;
+	private final StringBuilder pluginHeader;
+	private final DatabaseCacheManager databaseCacheManager;
+	private final AdvancedAchievements advancedAchievements;
+	private final RewardParser rewardParser;
+	private final Map<String, String> achievementsAndDisplayNames;
+	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final ToggleCommand toggleCommand;
+	private final FireworkListener fireworkListener;
 
 	private boolean configRewardCommandNotif;
 	private String configFireworkStyle;
@@ -45,6 +80,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	private boolean configNotifyOtherPlayers;
 	private boolean configActionBarNotify;
 	private boolean configHoverableReceiverChatText;
+
 	private String langCommandReward;
 	private String langAchievementReceived;
 	private String langItemRewardReceived;
@@ -56,47 +92,63 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	private String langCustomMessageCommandReward;
 	private String langAllAchievementsReceived;
 
-	public PlayerAdvancedAchievementListener(AdvancedAchievements plugin) {
-		super(plugin);
+	@Inject
+	public PlayerAdvancedAchievementListener(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig, int serverVersion, Logger logger,
+			StringBuilder pluginHeader, DatabaseCacheManager databaseCacheManager, AdvancedAchievements advancedAchievements,
+			RewardParser rewardParser, Map<String, String> achievementsAndDisplayNames,
+			AbstractSQLDatabaseManager sqlDatabaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener,
+			ReloadCommand reloadCommand) {
+		this.mainConfig = mainConfig;
+		this.langConfig = langConfig;
+		this.serverVersion = serverVersion;
+		this.logger = logger;
+		this.pluginHeader = pluginHeader;
+		this.databaseCacheManager = databaseCacheManager;
+		this.advancedAchievements = advancedAchievements;
+		this.rewardParser = rewardParser;
+		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
+		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.toggleCommand = toggleCommand;
+		this.fireworkListener = fireworkListener;
+		reloadCommand.addObserver(this);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
-		super.extractConfigurationParameters();
-
-		configFireworkStyle = plugin.getPluginConfig().getString("FireworkStyle", "BALL_LARGE");
-		configFirework = plugin.getPluginConfig().getBoolean("Firework", true);
-		configSimplifiedReception = plugin.getPluginConfig().getBoolean("SimplifiedReception", false);
-		configTitleScreen = plugin.getPluginConfig().getBoolean("TitleScreen", true);
+		configFireworkStyle = mainConfig.getString("FireworkStyle", "BALL_LARGE");
+		configFirework = mainConfig.getBoolean("Firework", true);
+		configSimplifiedReception = mainConfig.getBoolean("SimplifiedReception", false);
+		configTitleScreen = mainConfig.getBoolean("TitleScreen", true);
 		// Title screens introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
-		if (configTitleScreen && plugin.getServerVersion() < 8) {
+		if (configTitleScreen && serverVersion < 8) {
 			configTitleScreen = false;
 		}
-		configNotifyOtherPlayers = plugin.getPluginConfig().getBoolean("NotifyOtherPlayers", false);
-		configActionBarNotify = plugin.getPluginConfig().getBoolean("ActionBarNotify", false);
+		configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers", false);
+		configActionBarNotify = mainConfig.getBoolean("ActionBarNotify", false);
 		// Action bars introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
-		if (configActionBarNotify && plugin.getServerVersion() < 8) {
+		if (configActionBarNotify && serverVersion < 8) {
 			configActionBarNotify = false;
 		}
 		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
 		// a player is notified in case of a command reward.
-		configRewardCommandNotif = plugin.getPluginConfig().getBoolean("RewardCommandNotif", true);
-		configHoverableReceiverChatText = plugin.getPluginConfig().getBoolean("HoverableReceiverChatText", false);
+		configRewardCommandNotif = mainConfig.getBoolean("RewardCommandNotif", true);
+		configHoverableReceiverChatText = mainConfig.getBoolean("HoverableReceiverChatText", false);
 		// Hoverable chat messages introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
-		if (configHoverableReceiverChatText && plugin.getServerVersion() < 8) {
+		if (configHoverableReceiverChatText && serverVersion < 8) {
 			configHoverableReceiverChatText = false;
 		}
 
-		langCommandReward = Lang.get(ListenerLang.COMMAND_REWARD, plugin);
-		langAchievementReceived = Lang.get(ListenerLang.ACHIEVEMENT_RECEIVED, plugin) + " " + ChatColor.WHITE;
-		langItemRewardReceived = Lang.get(ListenerLang.ITEM_REWARD_RECEIVED, plugin) + " ";
-		langMoneyRewardReceived = Lang.get(ListenerLang.MONEY_REWARD_RECEIVED, plugin);
-		langExperienceRewardReceived = Lang.get(ListenerLang.EXPERIENCE_REWARD_RECEIVED, plugin);
-		langIncreaseMaxHealthRewardReceived = Lang.get(ListenerLang.INCREASE_MAX_HEALTH_REWARD_RECEIVED, plugin);
-		langIncreaseMaxOxygenRewardReceived = Lang.get(ListenerLang.INCREASE_MAX_OXYGEN_REWARD_RECEIVED, plugin);
-		langAchievementNew = Lang.getWithChatHeader(ListenerLang.ACHIEVEMENT_NEW, plugin) + " " + ChatColor.WHITE;
-		langCustomMessageCommandReward = Lang.get(ListenerLang.CUSTOM_COMMAND_REWARD, plugin);
-		langAllAchievementsReceived = Lang.getWithChatHeader(ListenerLang.ALL_ACHIEVEMENTS_RECEIVED, plugin);
+		langCommandReward = Lang.get(ListenerLang.COMMAND_REWARD, langConfig);
+		langAchievementReceived = Lang.get(ListenerLang.ACHIEVEMENT_RECEIVED, langConfig) + " " + ChatColor.WHITE;
+		langItemRewardReceived = Lang.get(ListenerLang.ITEM_REWARD_RECEIVED, langConfig) + " ";
+		langMoneyRewardReceived = Lang.get(ListenerLang.MONEY_REWARD_RECEIVED, langConfig);
+		langExperienceRewardReceived = Lang.get(ListenerLang.EXPERIENCE_REWARD_RECEIVED, langConfig);
+		langIncreaseMaxHealthRewardReceived = Lang.get(ListenerLang.INCREASE_MAX_HEALTH_REWARD_RECEIVED, langConfig);
+		langIncreaseMaxOxygenRewardReceived = Lang.get(ListenerLang.INCREASE_MAX_OXYGEN_REWARD_RECEIVED, langConfig);
+		langAchievementNew = pluginHeader + Lang.get(ListenerLang.ACHIEVEMENT_NEW, langConfig) + " " + ChatColor.WHITE;
+		langCustomMessageCommandReward = Lang.get(ListenerLang.CUSTOM_COMMAND_REWARD, langConfig);
+		langAllAchievementsReceived = pluginHeader + Lang.get(ListenerLang.ALL_ACHIEVEMENTS_RECEIVED, langConfig);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -105,30 +157,29 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		String uuid = player.getUniqueId().toString();
 		// Check before updating caches; achievement could have already been received if MultiCommand is set to true in
 		// the configuration.
-		if (!plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), event.getName())) {
-			plugin.getCacheManager().getReceivedAchievementsCache().put(uuid, event.getName());
-			plugin.getCacheManager().getNotReceivedAchievementsCache().remove(uuid, event.getName());
-			plugin.getCacheManager().getTotalPlayerAchievementsCache().put(uuid,
-					plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId()) + 1);
+		if (!databaseCacheManager.hasPlayerAchievement(player.getUniqueId(), event.getName())) {
+			databaseCacheManager.getReceivedAchievementsCache().put(uuid, event.getName());
+			databaseCacheManager.getNotReceivedAchievementsCache().remove(uuid, event.getName());
+			databaseCacheManager.getTotalPlayerAchievementsCache().put(uuid,
+					databaseCacheManager.getPlayerTotalAchievements(player.getUniqueId()) + 1);
 
-			if (plugin.getServerVersion() >= 12) {
+			if (serverVersion >= 12) {
 				Advancement advancement = Bukkit.getServer()
-						.getAdvancement(new NamespacedKey(plugin, AdvancementManager.getKey(event.getName())));
+						.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.getKey(event.getName())));
 				// Matching advancement might not exist if user has not called /aach generate.
 				if (advancement != null) {
 					player.getAdvancementProgress(advancement).awardCriteria(AchievementAdvancement.CRITERIA_NAME);
 				}
 			}
 		}
-		plugin.getDatabaseManager().registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
+		sqlDatabaseManager.registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 
-		List<String> rewardTexts = giveRewardsAndPrepareTexts(player, event.getCommandRewards(),
-				event.getCommandMessage(), event.getItemReward(), event.getMoneyReward(), event.getExperienceReward(),
-				event.getMaxHealthReward(), event.getMaxOxygenReward());
+		List<String> rewardTexts = giveRewardsAndPrepareTexts(player, event.getCommandRewards(), event.getCommandMessage(),
+				event.getItemReward(), event.getMoneyReward(), event.getExperienceReward(), event.getMaxHealthReward(),
+				event.getMaxOxygenReward());
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage(), rewardTexts);
 
-		if (plugin.getCacheManager().getPlayerTotalAchievements(player.getUniqueId()) == plugin
-				.getAchievementsAndDisplayNames().size()) {
+		if (databaseCacheManager.getPlayerTotalAchievements(player.getUniqueId()) == achievementsAndDisplayNames.size()) {
 			handleAllAchievementsReceived(player);
 		}
 	}
@@ -146,8 +197,8 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * @param oxygen
 	 * @return all the reward texts to be displayed to the user
 	 */
-	private List<String> giveRewardsAndPrepareTexts(Player player, String[] commands, String commandMessage,
-			ItemStack item, int money, int experience, int health, int oxygen) {
+	private List<String> giveRewardsAndPrepareTexts(Player player, String[] commands, String commandMessage, ItemStack item,
+			int money, int experience, int health, int oxygen) {
 		List<String> rewardTexts = new ArrayList<>();
 		if (commands != null && commands.length > 0) {
 			rewardTexts.add(rewardCommands(commands, commandMessage));
@@ -179,7 +230,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 */
 	private String rewardCommands(String[] commands, String message) {
 		for (String command : commands) {
-			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
+			advancedAchievements.getServer().dispatchCommand(advancedAchievements.getServer().getConsoleSender(), command);
 		}
 		if (!configRewardCommandNotif || langCommandReward.length() == 0) {
 			return "";
@@ -208,7 +259,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 
 		String name = item.getItemMeta().getDisplayName();
 		if (name == null || name.isEmpty()) {
-			name = plugin.getRewardParser().getItemName(item);
+			name = rewardParser.getItemName(item);
 		}
 
 		return langItemRewardReceived + name;
@@ -222,15 +273,15 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * @return the reward text to display to the player
 	 */
 	private String rewardMoney(Player player, int amount) {
-		Economy economy = plugin.getRewardParser().getEconomy();
+		Economy economy = rewardParser.getEconomy();
 		if (economy != null) {
 			economy.depositPlayer(player, amount);
 
-			String currencyName = plugin.getRewardParser().getCurrencyName(amount);
+			String currencyName = rewardParser.getCurrencyName(amount);
 			return ChatColor.translateAlternateColorCodes('&',
 					StringUtils.replaceOnce(langMoneyRewardReceived, "AMOUNT", amount + " " + currencyName));
 		}
-		plugin.getLogger().warning("You have specified a money reward but Vault was not linked successfully.");
+		logger.warning("You have specified a money reward but Vault was not linked successfully.");
 		return "";
 	}
 
@@ -256,7 +307,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 */
 	@SuppressWarnings("deprecation")
 	private String rewardMaxHealth(Player player, int amount) {
-		if (plugin.getServerVersion() >= 9) {
+		if (serverVersion >= 9) {
 			AttributeInstance playerAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
 			playerAttribute.setBaseValue(playerAttribute.getBaseValue() + amount);
 		} else {
@@ -294,12 +345,11 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		if (StringUtils.isNotBlank(displayName)) {
 			// Display name is defined; use it.
 			nameToShowUser = ChatColor.translateAlternateColorCodes('&', displayName);
-			plugin.getLogger().info(
-					"Player " + player.getName() + " received the achievement: " + name + " (" + displayName + ")");
+			logger.info("Player " + player.getName() + " received the achievement: " + name + " (" + displayName + ")");
 		} else {
 			// Use the achievement key name (this name is used in the achievements table in the database).
 			nameToShowUser = ChatColor.translateAlternateColorCodes('&', name);
-			plugin.getLogger().info("Player " + player.getName() + " received the achievement: " + name);
+			logger.info("Player " + player.getName() + " received the achievement: " + name);
 
 		}
 		String messageToShowUser = ChatColor.translateAlternateColorCodes('&', message);
@@ -307,11 +357,10 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		displayReceiverMessages(player, nameToShowUser, messageToShowUser, rewardTexts);
 
 		// Notify other online players that the player has received an achievement.
-		for (Player p : plugin.getServer().getOnlinePlayers()) {
+		for (Player p : advancedAchievements.getServer().getOnlinePlayers()) {
 			// Notify other players only if NotifyOtherPlayers is enabled and player has not used /aach toggle, or if
 			// NotifyOtherPlayers is disabled and player has used /aach toggle.
-			if (!p.getName().equals(player.getName())
-					&& (configNotifyOtherPlayers ^ plugin.getToggleCommand().isPlayerToggled(p))) {
+			if (!p.getName().equals(player.getName()) && (configNotifyOtherPlayers ^ toggleCommand.isPlayerToggled(p))) {
 				displayNotification(player, nameToShowUser, p);
 			}
 		}
@@ -347,14 +396,14 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 						hover.substring(0, hover.length() - 1), "white");
 				return;
 			} catch (Exception e) {
-				plugin.getLogger().warning(
+				logger.warning(
 						"Failed to display hoverable message for achievement reception. Displaying standard messages instead.");
 			}
 		}
 		player.sendMessage(langAchievementNew + nameToShowUser);
-		player.sendMessage(plugin.getChatHeader() + ChatColor.WHITE + messageToShowUser);
-		rewardTexts.stream().filter(StringUtils::isNotBlank).forEach(
-				t -> player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&', t)));
+		player.sendMessage(pluginHeader.toString() + ChatColor.WHITE + messageToShowUser);
+		rewardTexts.stream().filter(StringUtils::isNotBlank)
+				.forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
 	}
 
 	/**
@@ -371,13 +420,12 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 						"&o" + StringUtils.replaceOnce(langAchievementReceived, "PLAYER", achievementReceiver.getName())
 								+ nameToShowUser);
 			} catch (Exception e) {
-				plugin.getLogger()
-						.warning("Failed to display action bar message for achievement reception notification.");
+				logger.warning("Failed to display action bar message for achievement reception notification.");
 			}
 		} else {
-			otherPlayer.sendMessage(plugin.getChatHeader()
-					+ StringUtils.replaceOnce(langAchievementReceived, "PLAYER", achievementReceiver.getName())
-					+ nameToShowUser);
+			otherPlayer.sendMessage(
+					pluginHeader + StringUtils.replaceOnce(langAchievementReceived, "PLAYER", achievementReceiver.getName())
+							+ nameToShowUser);
 		}
 	}
 
@@ -392,7 +440,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 		try {
 			FancyMessageSender.sendTitle(player, nameToShowUser, messageToShowUser);
 		} catch (Exception e) {
-			plugin.getLogger().warning("Failed to display achievement screen title.");
+			logger.warning("Failed to display achievement screen title.");
 		}
 	}
 
@@ -417,7 +465,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 			firework.setFireworkMeta(fireworkMeta);
 
 			// Firework launched by plugin: damage will later be cancelled out.
-			plugin.getFireworkListener().addFirework(firework);
+			fireworkListener.addFirework(firework);
 		} catch (Exception e) {
 			// Particle effect workaround to handle various bugs in early Spigot 1.9 and 1.11 releases. We try to
 			// simulate a firework.
@@ -442,7 +490,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 				effectBuilder.with(Type.valueOf(configFireworkStyle.toUpperCase()));
 			} catch (Exception e) {
 				effectBuilder.with(Type.BALL_LARGE);
-				plugin.getLogger().warning(
+				logger.warning(
 						"Failed to load FireworkStyle. Please use one of the following: BALL_LARGE, BALL, BURST, CREEPER or STAR.");
 			}
 		}
@@ -457,7 +505,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	private void displaySimplifiedReception(Player player) {
 		Location location = player.getLocation();
 		// If old version, retrieving sound by name as it no longer exists in newer versions.
-		Sound sound = plugin.getServerVersion() < 9 ? Sound.valueOf("LEVEL_UP") : Sound.ENTITY_PLAYER_LEVELUP;
+		Sound sound = serverVersion < 9 ? Sound.valueOf("LEVEL_UP") : Sound.ENTITY_PLAYER_LEVELUP;
 		player.getWorld().playSound(location, sound, 1, 0.9f);
 		ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, location, 1);
 	}
@@ -468,7 +516,6 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 	 * @param player
 	 */
 	private void handleAllAchievementsReceived(Player player) {
-		RewardParser rewardParser = plugin.getRewardParser();
 		List<String> rewardTexts = giveRewardsAndPrepareTexts(player,
 				rewardParser.getCommandRewards("AllAchievementsReceivedRewards", player),
 				rewardParser.getCustomCommandMessage("AllAchievementsReceivedRewards"),
@@ -478,7 +525,7 @@ public class PlayerAdvancedAchievementListener extends AbstractListener {
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "IncreaseMaxHealth"),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "IncreaseMaxOxygen"));
 		player.sendMessage(langAllAchievementsReceived);
-		rewardTexts.stream().filter(StringUtils::isNotBlank).forEach(
-				t -> player.sendMessage(plugin.getChatHeader() + ChatColor.translateAlternateColorCodes('&', t)));
+		rewardTexts.stream().filter(StringUtils::isNotBlank)
+				.forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
 	}
 }

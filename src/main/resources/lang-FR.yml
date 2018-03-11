@@ -13,7 +13,6 @@ statistic-cooldown: "Achievements: attendre TIME secondes avant que cette action
 # Related to /aach reload.
 configuration-successfully-reloaded: "Configuration rechargée avec succès."
 configuration-reload-failed: "Erreur(s) lors du rechargement des configurations. Merci de consulter les logs détaillés pour plus d'informations."
-server-restart-reload: "La liste DisabledCategories a été modifiée. Le serveur doit être reload ou redémarré pour que vos modifications prennent effet."
 
 # Related to /aach top week and month.
 top-achievement: "Joueurs ayant obtenu le plus de succès :"

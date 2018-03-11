@@ -1,5 +1,7 @@
-package com.hm.achievement.utils;
+package com.hm.achievement.lifecycle;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.UUID;
 
 /**
@@ -9,7 +11,12 @@ import java.util.UUID;
  *
  * @author Pyves
  */
-public interface Cleanable {
+public interface Cleanable extends Observer {
+
+	@Override
+	default void update(Observable o, Object arg) {
+		cleanPlayerData((UUID) arg);
+	}
 
 	/**
 	 * Cleans data for a specific player that has disconnected recently.

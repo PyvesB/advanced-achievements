@@ -1,20 +1,35 @@
 package com.hm.achievement.command;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.command.CmdLang;
-import com.hm.achievement.lang.command.HelpLang;
-import com.hm.mcshared.particle.FancyMessageSender;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.achievement.lang.command.HelpLang;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.mcshared.particle.FancyMessageSender;
 
 /**
  * Class in charge of displaying the plugin's help (/aach help).
  *
  * @author Pyves
  */
+@Singleton
 public class HelpCommand extends AbstractCommand {
+
+	private final int serverVersion;
+	private final Logger logger;
+
+	private ChatColor configColor;
+	private String configIcon;
 
 	private String langCommandList;
 	private String langCommandListHover;
@@ -48,69 +63,68 @@ public class HelpCommand extends AbstractCommand {
 	private String langCommandDeleteHover;
 	private String langTip;
 
-	public HelpCommand(AdvancedAchievements plugin) {
-		super(plugin);
+	@Inject
+	public HelpCommand(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
+			int serverVersion, Logger logger) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		this.serverVersion = serverVersion;
+		this.logger = logger;
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
-		langCommandList = header("/aach list") + Lang.get(HelpLang.LIST, plugin);
-		langCommandListHover = Lang.get(HelpLang.Hover.LIST, plugin);
-		langCommandTop = header("/aach top") + Lang.get(HelpLang.TOP, plugin);
-		langCommandTopHover = Lang.get(HelpLang.Hover.TOP, plugin);
-		langCommandInfo = header("/aach info") + Lang.get(HelpLang.INFO, plugin);
-		langCommandInfoHover = Lang.get(HelpLang.Hover.INFO, plugin);
-		langCommandBook = header("/aach book") + Lang.get(HelpLang.BOOK, plugin);
-		langCommandBookHover = Lang.get(HelpLang.Hover.BOOK, plugin);
-		langCommandWeek = header("/aach week") + Lang.get(HelpLang.WEEK, plugin);
-		langCommandWeekHover = Lang.get(HelpLang.Hover.WEEK, plugin);
-		langCommandStats = header("/aach stats") + Lang.get(HelpLang.STATS, plugin);
-		langCommandStatsHover = Lang.get(HelpLang.Hover.STATS, plugin);
-		langCommandMonth = header("/aach month") + Lang.get(HelpLang.MONTH, plugin);
-		langCommandMonthHover = Lang.get(HelpLang.Hover.MONTH, plugin);
-		langCommandToggle = header("/aach toggle") + Lang.get(HelpLang.TOGGLE, plugin);
-		langCommandToggleHover = Lang.get(HelpLang.Hover.TOGGLE, plugin);
-		langCommandReload = header("/aach reload") + Lang.get(HelpLang.RELOAD, plugin);
-		langCommandReloadHover = Lang.get(HelpLang.Hover.RELOAD, plugin);
-		langCommandGenerate = header("/aach generate") + Lang.get(HelpLang.GENERATE, plugin);
-		langCommandGenerateHover = Lang.get(HelpLang.Hover.GENERATE, plugin);
-		langCommandGive = header("/aach give &oach player")
-				+ translateColorCodes(
-						Lang.getEachReplaced(
-								HelpLang.GIVE, plugin,
-								new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
-		langCommandGiveHover = Lang.get(HelpLang.Hover.GIVE, plugin);
-		langCommandAdd = header("/aach add &ox cat player") + Lang.get(HelpLang.ADD, plugin);
-		langCommandAddHover = Lang.get(HelpLang.Hover.ADD, plugin);
+
+		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0));
+		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
+
+		langCommandList = header("/aach list") + Lang.get(HelpLang.LIST, langConfig);
+		langCommandListHover = Lang.get(HelpLang.Hover.LIST, langConfig);
+		langCommandTop = header("/aach top") + Lang.get(HelpLang.TOP, langConfig);
+		langCommandTopHover = Lang.get(HelpLang.Hover.TOP, langConfig);
+		langCommandInfo = header("/aach info") + Lang.get(HelpLang.INFO, langConfig);
+		langCommandInfoHover = Lang.get(HelpLang.Hover.INFO, langConfig);
+		langCommandBook = header("/aach book") + Lang.get(HelpLang.BOOK, langConfig);
+		langCommandBookHover = Lang.get(HelpLang.Hover.BOOK, langConfig);
+		langCommandWeek = header("/aach week") + Lang.get(HelpLang.WEEK, langConfig);
+		langCommandWeekHover = Lang.get(HelpLang.Hover.WEEK, langConfig);
+		langCommandStats = header("/aach stats") + Lang.get(HelpLang.STATS, langConfig);
+		langCommandStatsHover = Lang.get(HelpLang.Hover.STATS, langConfig);
+		langCommandMonth = header("/aach month") + Lang.get(HelpLang.MONTH, langConfig);
+		langCommandMonthHover = Lang.get(HelpLang.Hover.MONTH, langConfig);
+		langCommandToggle = header("/aach toggle") + Lang.get(HelpLang.TOGGLE, langConfig);
+		langCommandToggleHover = Lang.get(HelpLang.Hover.TOGGLE, langConfig);
+		langCommandReload = header("/aach reload") + Lang.get(HelpLang.RELOAD, langConfig);
+		langCommandReloadHover = Lang.get(HelpLang.Hover.RELOAD, langConfig);
+		langCommandGenerate = header("/aach generate") + Lang.get(HelpLang.GENERATE, langConfig);
+		langCommandGenerateHover = Lang.get(HelpLang.Hover.GENERATE, langConfig);
+		langCommandGive = header("/aach give &oach player") + translateColorCodes(Lang.getEachReplaced(HelpLang.GIVE,
+				langConfig, new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
+		langCommandGiveHover = Lang.get(HelpLang.Hover.GIVE, langConfig);
+		langCommandAdd = header("/aach add &ox cat player") + Lang.get(HelpLang.ADD, langConfig);
+		langCommandAddHover = Lang.get(HelpLang.Hover.ADD, langConfig);
 		langCommandReset = header("/aach reset &ocat player")
-				+ Lang.getReplacedOnce(HelpLang.RESET, "CAT", "&ocat&7", plugin);
-		langCommandResetHover = Lang.get(HelpLang.Hover.RESET, plugin);
-		langCommandCheck = header("/aach check &oach player")
-				+ translateColorCodes(
-						Lang.getEachReplaced(
-								HelpLang.CHECK, plugin,
-								new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
-		langCommandCheckHover = Lang.get(HelpLang.Hover.CHECK, plugin);
-		langCommandDelete = header("/aach delete &oach player")
-				+ translateColorCodes(
-						Lang.getEachReplaced(
-								HelpLang.DELETE, plugin,
-								new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
-		langCommandDeleteHover = Lang.get(HelpLang.Hover.DELETE, plugin);
-		langTip = ChatColor.GRAY + translateColorCodes(Lang.get(CmdLang.AACH_TIP, plugin));
+				+ Lang.getReplacedOnce(HelpLang.RESET, "CAT", "&ocat&7", langConfig);
+		langCommandResetHover = Lang.get(HelpLang.Hover.RESET, langConfig);
+		langCommandCheck = header("/aach check &oach player") + translateColorCodes(Lang.getEachReplaced(HelpLang.CHECK,
+				langConfig, new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
+		langCommandCheckHover = Lang.get(HelpLang.Hover.CHECK, langConfig);
+		langCommandDelete = header("/aach delete &oach player") + translateColorCodes(Lang.getEachReplaced(HelpLang.DELETE,
+				langConfig, new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
+		langCommandDeleteHover = Lang.get(HelpLang.Hover.DELETE, langConfig);
+		langTip = ChatColor.GRAY + translateColorCodes(Lang.get(CmdLang.AACH_TIP, langConfig));
 	}
 
 	private String header(String command) {
-		return plugin.getChatHeader() + configColor + command + ChatColor.GRAY + " > ";
+		return pluginHeader.toString() + configColor + command + ChatColor.GRAY + " > ";
 	}
 
 	@Override
-	protected void executeCommand(CommandSender sender, String[] args) {
+	void executeCommand(CommandSender sender, String[] args) {
 		// Header.
-		sender.sendMessage(configColor + "------------ " + configIcon
-				+ translateColorCodes(" &lAdvanced Achievements ") + configColor + configIcon
-				+ configColor + " ------------");
+		sender.sendMessage(configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ")
+				+ configColor + configIcon + configColor + " ------------");
 
 		if (sender.hasPermission("achievement.list")) {
 			sendJsonClickableHoverableMessage(sender, langCommandList, "/aach list", langCommandListHover);
@@ -146,7 +160,7 @@ public class HelpCommand extends AbstractCommand {
 			sendJsonClickableHoverableMessage(sender, langCommandReload, "/aach reload", langCommandReloadHover);
 		}
 
-		if (plugin.getServerVersion() >= 12 && sender.hasPermission("achievement.generate")) {
+		if (serverVersion >= 12 && sender.hasPermission("achievement.generate")) {
 			sendJsonClickableHoverableMessage(sender, langCommandGenerate, "/aach generate", langCommandGenerateHover);
 		}
 
@@ -167,8 +181,7 @@ public class HelpCommand extends AbstractCommand {
 		}
 
 		if (sender.hasPermission("achievement.delete")) {
-			sendJsonClickableHoverableMessage(sender, langCommandDelete, "/aach delete ach name",
-					langCommandDeleteHover);
+			sendJsonClickableHoverableMessage(sender, langCommandDelete, "/aach delete ach name", langCommandDeleteHover);
 		}
 
 		// Empty line.
@@ -188,12 +201,12 @@ public class HelpCommand extends AbstractCommand {
 	 */
 	private void sendJsonClickableHoverableMessage(CommandSender sender, String message, String command, String hover) {
 		// Send clickable and hoverable message if sender is a player and if supported by the Minecraft version.
-		if (sender instanceof Player && plugin.getServerVersion() > 7) {
+		if (sender instanceof Player && serverVersion > 7) {
 			try {
 				FancyMessageSender.sendHoverableCommandMessage((Player) sender, message, command, hover,
 						configColor.name().toLowerCase());
 			} catch (Exception e) {
-				plugin.getLogger().warning(
+				logger.warning(
 						"Failed to display clickable and hoverable message in /aach help command. Displaying standard message instead.");
 				sender.sendMessage(message);
 			}

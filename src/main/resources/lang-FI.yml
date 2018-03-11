@@ -14,7 +14,6 @@ category-does-not-exist: "Kategoriaa CAT ei ole olemassa."
 # Related to /aach reload.
 configuration-successfully-reloaded: "Asetukset ladattu uudelleen."
 configuration-reload-failed: "Ladatessa asetuksia tapahtui virhe. Tarkista loki mahdollisia tietoja varten."
-server-restart-reload: "Käytöstä poistettujen kategorioiden listaa muutettiin. Käynnistä palvelin uudelleen jotta muutokset tulevat voimaan."
 
 # Related to /aach top week and month.
 top-achievement: "Parhaat saavuttajat:"

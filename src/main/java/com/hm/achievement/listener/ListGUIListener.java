@@ -1,47 +1,66 @@
 package com.hm.achievement.listener;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.lang.GuiLang;
-import com.hm.achievement.lang.Lang;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.gui.CategoryGUI;
+import com.hm.achievement.gui.MainGUI;
+import com.hm.achievement.lang.GuiLang;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with the GUIs from the /aach list command.
  *
  * @author Pyves
  */
-public class ListGUIListener extends AbstractListener {
+@Singleton
+public class ListGUIListener implements Listener, Reloadable {
 
 	private static final int MAIN_GUI_PAGE = 0;
 
+	private final CommentedYamlConfiguration langConfig;
+	private final Set<String> disabledCategories;
+	private final MainGUI mainGUI;
+	private final CategoryGUI categoryGUI;
 	private final Material lockedMaterial;
 
 	private String langListGUITitle;
 
-	public ListGUIListener(AdvancedAchievements plugin) {
-		super(plugin);
-
-		lockedMaterial = plugin.getServerVersion() < 8 ? Material.OBSIDIAN : Material.BARRIER;
+	@Inject
+	public ListGUIListener(@Named("lang") CommentedYamlConfiguration langConfig, int serverVersion,
+			Set<String> disabledCategories, MainGUI mainGUI, CategoryGUI categoryGUI, ReloadCommand reloadCommand) {
+		this.langConfig = langConfig;
+		this.disabledCategories = disabledCategories;
+		this.mainGUI = mainGUI;
+		this.categoryGUI = categoryGUI;
+		lockedMaterial = serverVersion < 8 ? Material.OBSIDIAN : Material.BARRIER;
+		reloadCommand.addObserver(this);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
-		super.extractConfigurationParameters();
-
-		langListGUITitle = ChatColor.translateAlternateColorCodes('&', Lang.get(GuiLang.GUI_TITLE, plugin));
+		langListGUITitle = ChatColor.translateAlternateColorCodes('&', Lang.get(GuiLang.GUI_TITLE, langConfig));
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -59,19 +78,19 @@ public class ListGUIListener extends AbstractListener {
 		if (page == MAIN_GUI_PAGE) {
 			// Main GUI, check whether player can interact with the selected item.
 			if (event.getCurrentItem().getType() != lockedMaterial && event.getRawSlot() < getMainGUIItemCount()) {
-				plugin.getCategoryGUI().displayCategoryGUI(event.getCurrentItem(), player, 1);
+				categoryGUI.displayCategoryGUI(event.getCurrentItem(), player, 1);
 			}
 			return;
 		}
 
 		ItemStack categoryItem = event.getInventory().getItem(0);
 		// Check whether a navigation button was clicked in a category GUI.
-		if (isButtonClicked(event, plugin.getCategoryGUI().getBackButton())) {
-			plugin.getMainGUI().displayMainGUI(player);
-		} else if (isButtonClicked(event, plugin.getCategoryGUI().getPreviousButton())) {
-			plugin.getCategoryGUI().displayCategoryGUI(categoryItem, player, page - 1);
-		} else if (isButtonClicked(event, plugin.getCategoryGUI().getNextButton())) {
-			plugin.getCategoryGUI().displayCategoryGUI(categoryItem, player, page + 1);
+		if (isButtonClicked(event, categoryGUI.getBackButton())) {
+			mainGUI.displayMainGUI(player);
+		} else if (isButtonClicked(event, categoryGUI.getPreviousButton())) {
+			categoryGUI.displayCategoryGUI(categoryItem, player, page - 1);
+		} else if (isButtonClicked(event, categoryGUI.getNextButton())) {
+			categoryGUI.displayCategoryGUI(categoryItem, player, page + 1);
 		}
 	}
 
@@ -123,7 +142,6 @@ public class ListGUIListener extends AbstractListener {
 	 * @return the count of non disabled categories
 	 */
 	private int getMainGUIItemCount() {
-		return NormalAchievements.values().length + MultipleAchievements.values().length
-				- plugin.getDisabledCategorySet().size() + 1;
+		return NormalAchievements.values().length + MultipleAchievements.values().length - disabledCategories.size() + 1;
 	}
 }

@@ -2,18 +2,15 @@ package com.hm.achievement.api;
 
 import java.util.UUID;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-
-import utilities.MockUtility;
 
 /**
  * Class for testing the Bukkit API (null safety).
@@ -23,17 +20,11 @@ import utilities.MockUtility;
 @RunWith(MockitoJUnitRunner.class)
 public class AdvancedAchievementsBukkitAPINullSafetyTest {
 
+	@InjectMocks
 	private AdvancedAchievementsBukkitAPI underTest;
 
 	@Rule
 	public final ExpectedException expectedException = ExpectedException.none();
-
-	@Before
-	public void setUp() {
-		AdvancedAchievements pluginMock = MockUtility.setUp().getPluginMock();
-
-		underTest = new AdvancedAchievementsBukkitAPI(pluginMock);
-	}
 
 	@Test
 	public void itShouldThrowExceptionWhenCheckingForAchievementWithNullPlayer() {

@@ -1,5 +1,13 @@
 package com.hm.achievement.listener;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -7,8 +15,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerFishEvent;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Fish and Treasure achievements.
@@ -16,10 +27,17 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
+@Singleton
 public class AchieveFishListener extends AbstractListener {
 
-	public AchieveFishListener(AdvancedAchievements plugin) {
-		super(plugin);
+	private final Set<String> disabledCategories;
+
+	@Inject
+	public AchieveFishListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			Set<String> disabledCategories, ReloadCommand reloadCommand) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
+		this.disabledCategories = disabledCategories;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -37,7 +55,7 @@ public class AchieveFishListener extends AbstractListener {
 			category = NormalAchievements.TREASURES;
 		}
 
-		if (plugin.getDisabledCategorySet().contains(category.toString())) {
+		if (disabledCategories.contains(category.toString())) {
 			return;
 		}
 

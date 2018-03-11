@@ -101,7 +101,6 @@ IgnoreVerticalDistance: false
 
 # Don't show these categories in the achievement GUI or in the stats output (delete the [] before adding values).
 # Also prevent obtaining achievements for these categories and prevent stats from increasing.
-# If changed, do a full server restart, and not just /aach reload.
 DisabledCategories: []
 #  - PetMasterGive
 #  - PetMasterReceive
@@ -230,14 +229,13 @@ POSTGRESQL:
 #============================oo=oo============================#
 
 # DO NOT CHANGE THE FOLLOWING UNLESS YOU ARE AN EXPERIENCED USER. The intervals are in seconds. 
-# If any of the performance settings are changed, do a full server restart, and not just /aach reload.
 # Frequency of play time checks for players. Smaller values give more precision but more CPU usage.
 PlaytimeTaskInterval: 60
 
 # Calculates distance traveled by players. Smaller values give more precision but more CPU usage.
 DistanceTaskInterval: 5
 
-# Frequency of some statistics writes to the database.
+# Frequency of some statistics writes to the database. Do a full server restart, and not just /aach reload.
 PooledRequestsTaskInterval: 10
 
 #============================OOOOO============================#

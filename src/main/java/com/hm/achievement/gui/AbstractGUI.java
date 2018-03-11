@@ -1,11 +1,10 @@
 package com.hm.achievement.gui;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.lang.GuiLang;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.utils.Reloadable;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
@@ -13,9 +12,14 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.lang.GuiLang;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Abstract class in charge of factoring out common functionality for the GUIs.
@@ -24,10 +28,16 @@ import java.util.Map;
  */
 public abstract class AbstractGUI implements Reloadable {
 
-	protected final AdvancedAchievements plugin;
-	protected final Map<MultipleAchievements, ItemStack> multipleAchievementItems;
-	protected final Map<NormalAchievements, ItemStack> normalAchievementItems;
-	protected ItemStack commandsAchievementsItem;
+	final Map<MultipleAchievements, ItemStack> multipleAchievementItems = new EnumMap<>(MultipleAchievements.class);
+	final Map<NormalAchievements, ItemStack> normalAchievementItems = new EnumMap<>(NormalAchievements.class);
+	final CommentedYamlConfiguration mainConfig;
+	final CommentedYamlConfiguration langConfig;
+	final DatabaseCacheManager databaseCacheManager;
+
+	ItemStack commandsAchievementsItem;
+
+	private final CommentedYamlConfiguration guiConfig;
+	private final Logger logger;
 
 	private String configListAchievementFormat;
 	private String configIcon;
@@ -35,32 +45,35 @@ public abstract class AbstractGUI implements Reloadable {
 	private String langListAchievementsInCategoryPlural;
 	private String langListAchievementInCategorySingular;
 
-	protected AbstractGUI(AdvancedAchievements plugin) {
-		this.plugin = plugin;
-
-		multipleAchievementItems = new EnumMap<>(MultipleAchievements.class);
-		normalAchievementItems = new EnumMap<>(NormalAchievements.class);
+	AbstractGUI(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
+			CommentedYamlConfiguration guiConfig, Logger logger, DatabaseCacheManager databaseCacheManager,
+			ReloadCommand reloadCommand) {
+		this.mainConfig = mainConfig;
+		this.langConfig = langConfig;
+		this.guiConfig = guiConfig;
+		this.logger = logger;
+		this.databaseCacheManager = databaseCacheManager;
+		reloadCommand.addObserver(this);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
-		configListAchievementFormat = "&8"
-				+ plugin.getPluginConfig().getString("ListAchievementFormat", "%ICON% %NAME% %ICON%");
-		configIcon = StringEscapeUtils.unescapeJava(plugin.getPluginConfig().getString("Icon", "\u2618"));
+		configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%");
+		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
 
-		langListAchievementsInCategoryPlural = Lang.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_PLURAL, plugin);
-		langListAchievementInCategorySingular = Lang.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_SINGULAR, plugin);
+		langListAchievementsInCategoryPlural = Lang.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_PLURAL, langConfig);
+		langListAchievementInCategorySingular = Lang.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_SINGULAR, langConfig);
 
 		// Prepare item stacks displayed in the GUI for Multiple achievements.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
 			// Sum all achievements in the sub-categories of this category.
 			int totalAchievements = 0;
-			for (String subcategory : plugin.getPluginConfig().getShallowKeys(categoryName)) {
-				totalAchievements += plugin.getPluginConfig().getShallowKeys(categoryName + '.' + subcategory).size();
+			for (String subcategory : mainConfig.getShallowKeys(categoryName)) {
+				totalAchievements += mainConfig.getShallowKeys(categoryName + '.' + subcategory).size();
 			}
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, Lang.get(category, plugin), totalAchievements);
+			buildItemLore(itemStack, Lang.get(category, langConfig), totalAchievements);
 			multipleAchievementItems.put(category, itemStack);
 		}
 
@@ -68,15 +81,14 @@ public abstract class AbstractGUI implements Reloadable {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, Lang.get(category, plugin),
-					plugin.getPluginConfig().getShallowKeys(categoryName).size());
+			buildItemLore(itemStack, Lang.get(category, langConfig), mainConfig.getShallowKeys(categoryName).size());
 			normalAchievementItems.put(category, itemStack);
 		}
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
 		commandsAchievementsItem = createItemStack("Commands");
-		buildItemLore(commandsAchievementsItem, Lang.get(GuiLang.COMMANDS, plugin),
-				plugin.getPluginConfig().getShallowKeys("Commands").size());
+		buildItemLore(commandsAchievementsItem, Lang.get(GuiLang.COMMANDS, langConfig),
+				mainConfig.getShallowKeys("Commands").size());
 	}
 
 	/**
@@ -87,7 +99,7 @@ public abstract class AbstractGUI implements Reloadable {
 	 * @param maxPerPage
 	 * @return closest multiple of 9 greater than value
 	 */
-	protected int nextMultipleOf9(int value, int maxPerPage) {
+	int nextMultipleOf9(int value, int maxPerPage) {
 		int multipleOfNine = 9;
 		while (multipleOfNine < value && multipleOfNine <= maxPerPage) {
 			multipleOfNine += 9;
@@ -101,13 +113,12 @@ public abstract class AbstractGUI implements Reloadable {
 	 * @param categoryName
 	 * @return the item for the category
 	 */
-	protected ItemStack createItemStack(String categoryName) {
-		Material material = Material
-				.getMaterial(plugin.getPluginGui().getString(categoryName + ".Item", "bedrock").toUpperCase());
-		short metadata = (short) plugin.getPluginGui().getInt(categoryName + ".Metadata", 0);
+	ItemStack createItemStack(String categoryName) {
+		Material material = Material.getMaterial(guiConfig.getString(categoryName + ".Item", "bedrock").toUpperCase());
+		short metadata = (short) guiConfig.getInt(categoryName + ".Metadata", 0);
 		if (material == null) {
 			material = Material.BEDROCK;
-			plugin.getLogger().warning("GUI material for category " + categoryName + " was not found. "
+			logger.warning("GUI material for category " + categoryName + " was not found. "
 					+ "Have you spelt the name correctly and is it available for your Minecraft version?");
 		}
 		return new ItemStack(material, 1, metadata);
@@ -126,9 +137,8 @@ public abstract class AbstractGUI implements Reloadable {
 		if (StringUtils.isBlank(displayName)) {
 			itemMeta.setDisplayName("");
 		} else {
-			itemMeta.setDisplayName(translateColorCodes(
-					StringUtils.replaceEach(configListAchievementFormat, new String[] { "%ICON%", "%NAME%" },
-							new String[] { configIcon, "&l" + displayName + "&8" })));
+			itemMeta.setDisplayName(translateColorCodes(StringUtils.replaceEach(configListAchievementFormat,
+					new String[] { "%ICON%", "%NAME%" }, new String[] { configIcon, "&l" + displayName + "&8" })));
 		}
 
 		// Construct lore of the category item.
@@ -144,7 +154,7 @@ public abstract class AbstractGUI implements Reloadable {
 		item.setItemMeta(itemMeta);
 	}
 
-	protected String translateColorCodes(String translate) {
+	String translateColorCodes(String translate) {
 		return ChatColor.translateAlternateColorCodes('&', translate);
 	}
 }

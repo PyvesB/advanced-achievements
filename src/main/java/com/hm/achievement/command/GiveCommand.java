@@ -1,50 +1,65 @@
 package com.hm.achievement.command;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.command.CmdLang;
-import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach give command, which gives an achievement from the Commands category.
  * 
  * @author Pyves
  */
+@Singleton
 public class GiveCommand extends AbstractParsableCommand {
+
+	private final DatabaseCacheManager databaseCacheManager;
+	private final RewardParser rewardParser;
 
 	private boolean configMultiCommand;
 	private String langAchievementAlreadyReceived;
 	private String langAchievementGiven;
 	private String langAchievementNotFound;
 
-	public GiveCommand(AdvancedAchievements plugin) {
-		super(plugin);
+	@Inject
+	public GiveCommand(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
+			DatabaseCacheManager databaseCacheManager, RewardParser rewardParser) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		this.databaseCacheManager = databaseCacheManager;
+		this.rewardParser = rewardParser;
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configMultiCommand = plugin.getPluginConfig().getBoolean("MultiCommand", true);
+		configMultiCommand = mainConfig.getBoolean("MultiCommand", true);
 
-		langAchievementAlreadyReceived = Lang.getWithChatHeader(CmdLang.ACHIEVEMENT_ALREADY_RECEIVED, plugin);
-		langAchievementGiven = Lang.getWithChatHeader(CmdLang.ACHIEVEMENT_GIVEN, plugin);
-		langAchievementNotFound = Lang.getWithChatHeader(CmdLang.ACHIEVEMENT_NOT_FOUND, plugin);
+		langAchievementAlreadyReceived = pluginHeader + Lang.get(CmdLang.ACHIEVEMENT_ALREADY_RECEIVED, langConfig);
+		langAchievementGiven = pluginHeader + Lang.get(CmdLang.ACHIEVEMENT_GIVEN, langConfig);
+		langAchievementNotFound = pluginHeader + Lang.get(CmdLang.ACHIEVEMENT_NOT_FOUND, langConfig);
 	}
 
 	@Override
-	protected void executeSpecificActions(CommandSender sender, String[] args, Player player) {
+	void executeSpecificActions(CommandSender sender, String[] args, Player player) {
 		String achievementPath = "Commands." + args[1];
 
-		if (plugin.getPluginConfig().getString(achievementPath + ".Message", null) != null) {
+		if (mainConfig.getString(achievementPath + ".Message", null) != null) {
 			// Check whether player has already received achievement and cannot receive it again.
-			String achievementName = plugin.getPluginConfig().getString(achievementPath + ".Name");
-			if (!configMultiCommand
-					&& plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
+			String achievementName = mainConfig.getString(achievementPath + ".Name");
+			if (!configMultiCommand && databaseCacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 				sender.sendMessage(StringUtils.replaceOnce(langAchievementAlreadyReceived, "PLAYER", args[2]));
 				return;
 			}
@@ -52,16 +67,15 @@ public class GiveCommand extends AbstractParsableCommand {
 			String rewardPath = achievementPath + ".Reward";
 			// Fire achievement event.
 			PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
-					.player(player).name(achievementName)
-					.displayName(plugin.getPluginConfig().getString(achievementPath + ".DisplayName"))
-					.message(plugin.getPluginConfig().getString(achievementPath + ".Message"))
-					.commandRewards(plugin.getRewardParser().getCommandRewards(rewardPath, player))
-					.commandMessage(plugin.getRewardParser().getCustomCommandMessage(rewardPath))
-					.itemReward(plugin.getRewardParser().getItemReward(rewardPath))
-					.moneyReward(plugin.getRewardParser().getRewardAmount(rewardPath, "Money"))
-					.experienceReward(plugin.getRewardParser().getRewardAmount(rewardPath, "Experience"))
-					.maxHealthReward(plugin.getRewardParser().getRewardAmount(rewardPath, "IncreaseMaxHealth"))
-					.maxOxygenReward(plugin.getRewardParser().getRewardAmount(rewardPath, "IncreaseMaxOxygen"));
+					.player(player).name(achievementName).displayName(mainConfig.getString(achievementPath + ".DisplayName"))
+					.message(mainConfig.getString(achievementPath + ".Message"))
+					.commandRewards(rewardParser.getCommandRewards(rewardPath, player))
+					.commandMessage(rewardParser.getCustomCommandMessage(rewardPath))
+					.itemReward(rewardParser.getItemReward(rewardPath))
+					.moneyReward(rewardParser.getRewardAmount(rewardPath, "Money"))
+					.experienceReward(rewardParser.getRewardAmount(rewardPath, "Experience"))
+					.maxHealthReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxHealth"))
+					.maxOxygenReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxOxygen"));
 
 			Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 

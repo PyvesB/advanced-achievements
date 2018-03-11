@@ -1,6 +1,8 @@
 package com.hm.achievement.listener;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -8,10 +10,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Abstract class in charge of factoring out common functionality for the listener classes.
@@ -20,8 +25,9 @@ import com.hm.achievement.utils.StatisticIncreaseHandler;
  */
 public abstract class AbstractListener extends StatisticIncreaseHandler implements Listener {
 
-	protected AbstractListener(AdvancedAchievements plugin) {
-		super(plugin);
+	AbstractListener(CommentedYamlConfiguration mainConfig, int serverVersion, Map<String, List<Long>> sortedThresholds,
+			DatabaseCacheManager databaseCacheManager, RewardParser rewardParser, ReloadCommand reloadCommand) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
 	}
 
 	/**
@@ -32,10 +38,8 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * @param category
 	 * @param incrementValue
 	 */
-	protected void updateStatisticAndAwardAchievementsIfAvailable(Player player, NormalAchievements category,
-			int incrementValue) {
-		long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, player.getUniqueId(),
-				incrementValue);
+	void updateStatisticAndAwardAchievementsIfAvailable(Player player, NormalAchievements category, int incrementValue) {
+		long amount = databaseCacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), incrementValue);
 		checkThresholdsAndAchievements(player, category.toString(), amount);
 	}
 
@@ -48,10 +52,10 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * @param subcategory
 	 * @param incrementValue
 	 */
-	protected void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category,
-			String subcategory, int incrementValue) {
-		long amount = plugin.getCacheManager().getAndIncrementStatisticAmount(category, subcategory,
-				player.getUniqueId(), incrementValue);
+	void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category, String subcategory,
+			int incrementValue) {
+		long amount = databaseCacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
+				incrementValue);
 		checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
 	}
 
@@ -61,8 +65,8 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * @param item
 	 * @return true if the item is a water potion, false otherwise
 	 */
-	protected boolean isWaterPotion(ItemStack item) {
-		if (plugin.getServerVersion() >= 9) {
+	boolean isWaterPotion(ItemStack item) {
+		if (serverVersion >= 9) {
 			// Method getBasePotionData does not exist for versions prior to Minecraft 1.9.
 			return ((PotionMeta) (item.getItemMeta())).getBasePotionData().getType() == PotionType.WATER;
 		}
@@ -77,7 +81,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * @param newItemStack
 	 * @return the available space for the item
 	 */
-	protected int getInventoryAvailableSpace(Player player, ItemStack newItemStack) {
+	int getInventoryAvailableSpace(Player player, ItemStack newItemStack) {
 		int availableSpace = 0;
 		// Get all similar item stacks with a similar material in the player's inventory.
 		HashMap<Integer, ? extends ItemStack> inventoryItemStackMap = player.getInventory().all(newItemStack.getType());
@@ -88,7 +92,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 			}
 		}
 
-		ItemStack[] storageContents = plugin.getServerVersion() >= 9 ? player.getInventory().getStorageContents()
+		ItemStack[] storageContents = serverVersion >= 9 ? player.getInventory().getStorageContents()
 				: player.getInventory().getContents();
 		// Get all empty slots in the player's inventory.
 		for (ItemStack currentItemStack : storageContents) {

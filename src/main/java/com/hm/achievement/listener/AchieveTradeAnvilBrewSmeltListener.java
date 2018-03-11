@@ -1,6 +1,14 @@
 package com.hm.achievement.listener;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,8 +19,11 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Trades, AnvilsUsed, Smelting and Brewing achievements.
@@ -20,10 +31,19 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
+@Singleton
 public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListener {
 
-	public AchieveTradeAnvilBrewSmeltListener(AdvancedAchievements plugin) {
-		super(plugin);
+	private final Set<String> disabledCategories;
+
+	@Inject
+	public AchieveTradeAnvilBrewSmeltListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger, ReloadCommand reloadCommand,
+			QuitListener quitListener, Set<String> disabledCategories) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand, langConfig,
+				logger, quitListener);
+		this.disabledCategories = disabledCategories;
 	}
 
 	@Override
@@ -40,8 +60,7 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListe
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (event.getRawSlot() < 0 || event.getRawSlot() > 2 || event.getCurrentItem() == null
 				|| event.getCurrentItem().getType() == Material.AIR || event.getAction() == InventoryAction.NOTHING
-				|| event.getClick() == ClickType.NUMBER_KEY
-						&& event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
+				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
 			return;
 		}
 
@@ -54,7 +73,7 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListe
 			category = NormalAchievements.ANVILS;
 		} else if (inventoryType == InventoryType.BREWING
 				&& (event.getCurrentItem().getType() == Material.POTION
-						|| plugin.getServerVersion() >= 9 && event.getCurrentItem().getType() == Material.SPLASH_POTION)
+						|| serverVersion >= 9 && event.getCurrentItem().getType() == Material.SPLASH_POTION)
 				&& !isWaterPotion(event.getCurrentItem())) {
 			category = NormalAchievements.BREWING;
 		} else if (event.getRawSlot() == 2 && inventoryType == InventoryType.FURNACE) {
@@ -63,8 +82,8 @@ public class AchieveTradeAnvilBrewSmeltListener extends AbstractRateLimitedListe
 			return;
 		}
 
-		if (plugin.getDisabledCategorySet().contains(category.toString())
-				|| !shouldIncreaseBeTakenIntoAccount(player, category) || category == NormalAchievements.BREWING
+		if (disabledCategories.contains(category.toString()) || !shouldIncreaseBeTakenIntoAccount(player, category)
+				|| category == NormalAchievements.BREWING
 						&& isInCooldownPeriod(player, Integer.toString(event.getRawSlot()), false, category)) {
 			return;
 		}

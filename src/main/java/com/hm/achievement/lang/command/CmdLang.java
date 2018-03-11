@@ -36,9 +36,6 @@ public enum CmdLang implements Lang {
 	ACHIEVEMENT_NOT_FOUND("The specified achievement was not found in Commands category."),
 	// HelpCommand, check out HelpLang for more.
 	AACH_TIP("&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!"),
-	// ReloadCommand
-	SERVER_RESTART_RELOAD("DisabledCategories list was modified. " +
-			"Server must be fully reloaded or restarted for your changes to take effect."),
 	CONFIGURATION_RELOAD_FAILED("Errors while reloading configuration. Please view logs for more details."),
 	CONFIGURATION_SUCCESSFULLY_RELOADED("Configuration successfully reloaded."),
 	// ResetCommand

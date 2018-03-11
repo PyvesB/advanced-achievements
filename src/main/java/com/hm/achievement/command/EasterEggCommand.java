@@ -1,9 +1,13 @@
 package com.hm.achievement.command;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.command.CommandSender;
 
-import com.hm.achievement.AdvancedAchievements;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach hcaa command, which displays a small easter egg in the in-game chat. Run it and
@@ -11,14 +15,17 @@ import com.hm.achievement.AdvancedAchievements;
  * 
  * @author Pyves
  */
+@Singleton
 public class EasterEggCommand extends AbstractCommand {
 
-	public EasterEggCommand(AdvancedAchievements plugin) {
-		super(plugin);
+	@Inject
+	public EasterEggCommand(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 	}
 
 	@Override
-	protected void executeCommand(CommandSender sender, String[] args) {
+	void executeCommand(CommandSender sender, String[] args) {
 		sender.sendMessage(StringEscapeUtils.unescapeJava(
 				"§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§0\u2592§0\u2592§0\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§7\u2592§r"));
 		sender.sendMessage(StringEscapeUtils.unescapeJava(

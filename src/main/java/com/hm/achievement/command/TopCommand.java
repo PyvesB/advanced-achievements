@@ -1,21 +1,33 @@
 package com.hm.achievement.command;
 
-import com.hm.achievement.AdvancedAchievements;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import com.hm.achievement.db.AbstractSQLDatabaseManager;
 import com.hm.achievement.lang.command.CmdLang;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach top command, which displays global rankings.
  *
  * @author Pyves
  */
+@Singleton
 public class TopCommand extends AbstractRankingCommand {
 
-	public TopCommand(AdvancedAchievements plugin) {
-		super(plugin, CmdLang.TOP_ACHIEVEMENT);
+	@Inject
+	public TopCommand(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
+			Logger logger, int serverVersion, AbstractSQLDatabaseManager sqlDatabaseManager) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, logger, serverVersion, CmdLang.TOP_ACHIEVEMENT,
+				sqlDatabaseManager);
 	}
 
 	@Override
-	protected long getRankingStartTime() {
+	long getRankingStartTime() {
 		// All time ranking, no time start.
 		return 0L;
 	}

@@ -1,15 +1,24 @@
 package com.hm.achievement.utils;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Abstract class in charge of factoring out common functionality for classes which track statistic increases (such as
@@ -17,29 +26,42 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAch
  * 
  * @author Pyves
  */
+@Singleton
 public class StatisticIncreaseHandler implements Reloadable {
 
-	protected final AdvancedAchievements plugin;
+	protected final CommentedYamlConfiguration mainConfig;
+	protected final int serverVersion;
+	protected final Map<String, List<Long>> sortedThresholds;
+	protected final DatabaseCacheManager databaseCacheManager;
+	protected final RewardParser rewardParser;
 
 	private boolean configRestrictCreative;
 	private boolean configRestrictSpectator;
 	private boolean configRestrictAdventure;
 	private Set<String> configExcludedWorlds;
 
-	public StatisticIncreaseHandler(AdvancedAchievements plugin) {
-		this.plugin = plugin;
+	@Inject
+	public StatisticIncreaseHandler(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			ReloadCommand reloadCommand) {
+		this.mainConfig = mainConfig;
+		this.serverVersion = serverVersion;
+		this.sortedThresholds = sortedThresholds;
+		this.databaseCacheManager = databaseCacheManager;
+		this.rewardParser = rewardParser;
+		reloadCommand.addObserver(this);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
-		configRestrictCreative = plugin.getPluginConfig().getBoolean("RestrictCreative", false);
-		configRestrictSpectator = plugin.getPluginConfig().getBoolean("RestrictSpectator", true);
-		configRestrictAdventure = plugin.getPluginConfig().getBoolean("RestrictAdventure", false);
+		configRestrictCreative = mainConfig.getBoolean("RestrictCreative", false);
+		configRestrictSpectator = mainConfig.getBoolean("RestrictSpectator", true);
+		configRestrictAdventure = mainConfig.getBoolean("RestrictAdventure", false);
 		// Spectator mode introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
-		if (configRestrictSpectator && plugin.getServerVersion() < 8) {
+		if (configRestrictSpectator && serverVersion < 8) {
 			configRestrictSpectator = false;
 		}
-		configExcludedWorlds = new HashSet<>(plugin.getPluginConfig().getList("ExcludedWorlds"));
+		configExcludedWorlds = new HashSet<>(mainConfig.getList("ExcludedWorlds"));
 	}
 
 	/**
@@ -52,27 +74,27 @@ public class StatisticIncreaseHandler implements Reloadable {
 	 */
 	public void checkThresholdsAndAchievements(Player player, String categorySubcategory, long currentValue) {
 		// Iterate through all the different thresholds.
-		for (long threshold : plugin.getSortedThresholds().get(categorySubcategory)) {
+		for (long threshold : sortedThresholds.get(categorySubcategory)) {
 			// Check whether player has met the threshold; convert from hours to millis if played time.
 			if (currentValue >= threshold && !"PlayedTime".equals(categorySubcategory)
 					|| currentValue >= 3600000L * threshold) {
 				String achievementPath = categorySubcategory + "." + threshold;
-				String achievementName = plugin.getPluginConfig().getString(achievementPath + ".Name");
+				String achievementName = mainConfig.getString(achievementPath + ".Name");
 				// Check whether player has received the achievement.
-				if (!plugin.getCacheManager().hasPlayerAchievement(player.getUniqueId(), achievementName)) {
+				if (!databaseCacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 					String rewardPath = achievementPath + ".Reward";
 					// Fire achievement event.
 					PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
 							.player(player).name(achievementName)
-							.displayName(plugin.getPluginConfig().getString(achievementPath + ".DisplayName"))
-							.message(plugin.getPluginConfig().getString(achievementPath + ".Message"))
-							.commandRewards(plugin.getRewardParser().getCommandRewards(rewardPath, player))
-							.commandMessage(plugin.getRewardParser().getCustomCommandMessage(rewardPath))
-							.itemReward(plugin.getRewardParser().getItemReward(rewardPath))
-							.moneyReward(plugin.getRewardParser().getRewardAmount(rewardPath, "Money"))
-							.experienceReward(plugin.getRewardParser().getRewardAmount(rewardPath, "Experience"))
-							.maxHealthReward(plugin.getRewardParser().getRewardAmount(rewardPath, "IncreaseMaxHealth"))
-							.maxOxygenReward(plugin.getRewardParser().getRewardAmount(rewardPath, "IncreaseMaxOxygen"));
+							.displayName(mainConfig.getString(achievementPath + ".DisplayName"))
+							.message(mainConfig.getString(achievementPath + ".Message"))
+							.commandRewards(rewardParser.getCommandRewards(rewardPath, player))
+							.commandMessage(rewardParser.getCustomCommandMessage(rewardPath))
+							.itemReward(rewardParser.getItemReward(rewardPath))
+							.moneyReward(rewardParser.getRewardAmount(rewardPath, "Money"))
+							.experienceReward(rewardParser.getRewardAmount(rewardPath, "Experience"))
+							.maxHealthReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxHealth"))
+							.maxOxygenReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxOxygen"));
 
 					Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 				}
@@ -98,8 +120,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 		boolean restrictedAdventure = configRestrictAdventure && player.getGameMode() == GameMode.ADVENTURE;
 		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
 
-		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !restrictedAdventure
-				&& !excludedWorld;
+		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !restrictedAdventure && !excludedWorld;
 	}
 
 	/**

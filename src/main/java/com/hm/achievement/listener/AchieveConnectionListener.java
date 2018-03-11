@@ -3,8 +3,14 @@ package com.hm.achievement.listener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -21,8 +27,13 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.utils.Cleanable;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Connections achievements and advancements for Minecraft 1.12+.
@@ -30,17 +41,25 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAch
  * @author Pyves
  *
  */
+@Singleton
 public class AchieveConnectionListener extends AbstractListener implements Cleanable {
 
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
-	private final Set<String> playersProcessingRan;
+	private final Set<String> playersProcessingRan = new HashSet<>();
+	private final AdvancedAchievements advancedAchievements;
+	private final AbstractSQLDatabaseManager sqlDatabaseManager;
 
-	public AchieveConnectionListener(AdvancedAchievements plugin) {
-		super(plugin);
-
-		playersProcessingRan = new HashSet<>();
+	@Inject
+	public AchieveConnectionListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			ReloadCommand reloadCommand, AdvancedAchievements advancedAchievements,
+			AbstractSQLDatabaseManager sqlDatabaseManager, QuitListener quitListener) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
+		this.advancedAchievements = advancedAchievements;
+		this.sqlDatabaseManager = sqlDatabaseManager;
+		quitListener.addObserver(this);
 	}
 
 	@Override
@@ -80,11 +99,10 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 		// Schedule delayed task to check if player should receive a Connections achievement or advancements he is
 		// missing. This processing is delayed to avoid spamming a barely connected player.
 		Bukkit.getServer().getScheduler()
-				.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin(plugin.getDescription().getName()), () -> {
+				.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), () -> {
 					// Check reception conditions and whether player is still connected, as he could have left in
 					// the meantime.
-					if (!player.isOnline()
-							|| !shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
+					if (!player.isOnline() || !shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
 						return;
 					}
 
@@ -94,7 +112,7 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 						return;
 					}
 
-					if (plugin.getServerVersion() >= 12) {
+					if (serverVersion >= 12) {
 						awardAdvancements(player);
 					}
 					handleConnectionAchievements(player);
@@ -111,23 +129,23 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	 */
 	private void handleConnectionAchievements(Player player) {
 		String dateString = LocalDate.now().format(DATE_TIME_FORMATTER);
-		if (!dateString.equals(plugin.getDatabaseManager().getPlayerConnectionDate(player.getUniqueId()))) {
-			int connections = plugin.getDatabaseManager().updateAndGetConnection(player.getUniqueId(), dateString);
+		if (!dateString.equals(sqlDatabaseManager.getPlayerConnectionDate(player.getUniqueId()))) {
+			int connections = sqlDatabaseManager.updateAndGetConnection(player.getUniqueId(), dateString);
 			String achievementPath = NormalAchievements.CONNECTIONS + "." + connections;
 			String rewardPath = achievementPath + ".Reward";
-			if (plugin.getPluginConfig().getString(achievementPath + ".Message", null) != null) {
+			if (mainConfig.getString(achievementPath + ".Message", null) != null) {
 				// Fire achievement event.
 				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
-						.player(player).name(plugin.getPluginConfig().getString(achievementPath + ".Name"))
-						.displayName(plugin.getPluginConfig().getString(achievementPath + ".DisplayName"))
-						.message(plugin.getPluginConfig().getString(achievementPath + ".Message"))
-						.commandRewards(plugin.getRewardParser().getCommandRewards(rewardPath, player))
-						.commandMessage(plugin.getRewardParser().getCustomCommandMessage(rewardPath))
-						.itemReward(plugin.getRewardParser().getItemReward(rewardPath))
-						.moneyReward(plugin.getRewardParser().getRewardAmount(rewardPath, "Money"))
-						.experienceReward(plugin.getRewardParser().getRewardAmount(rewardPath, "Experience"))
-						.maxHealthReward(plugin.getRewardParser().getRewardAmount(rewardPath, "IncreaseMaxHealth"))
-						.maxOxygenReward(plugin.getRewardParser().getRewardAmount(rewardPath, "IncreaseMaxOxygen"));
+						.player(player).name(mainConfig.getString(achievementPath + ".Name"))
+						.displayName(mainConfig.getString(achievementPath + ".DisplayName"))
+						.message(mainConfig.getString(achievementPath + ".Message"))
+						.commandRewards(rewardParser.getCommandRewards(rewardPath, player))
+						.commandMessage(rewardParser.getCustomCommandMessage(rewardPath))
+						.itemReward(rewardParser.getItemReward(rewardPath))
+						.moneyReward(rewardParser.getRewardAmount(rewardPath, "Money"))
+						.experienceReward(rewardParser.getRewardAmount(rewardPath, "Experience"))
+						.maxHealthReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxHealth"))
+						.maxOxygenReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxOxygen"));
 
 				Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 			}
@@ -142,16 +160,16 @@ public class AchieveConnectionListener extends AbstractListener implements Clean
 	 */
 	private void awardAdvancements(Player player) {
 		Advancement advancement = Bukkit.getServer()
-				.getAdvancement(new NamespacedKey(plugin, AdvancementManager.ADVANCED_ACHIEVEMENTS_PARENT));
+				.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.ADVANCED_ACHIEVEMENTS_PARENT));
 		// If no parent, user has not used /aach generate, do not do anything.
 		if (advancement != null) {
 			AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
 			if (!advancementProgress.isDone()) {
 				advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
 			}
-			for (String achName : plugin.getDatabaseManager().getPlayerAchievementNamesList(player.getUniqueId())) {
+			for (String achName : sqlDatabaseManager.getPlayerAchievementNamesList(player.getUniqueId())) {
 				advancement = Bukkit.getServer()
-						.getAdvancement(new NamespacedKey(plugin, AdvancementManager.getKey(achName)));
+						.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.getKey(achName)));
 				// Matching advancement might not exist if user has not called /aach generate.
 				if (advancement != null) {
 					advancementProgress = player.getAdvancementProgress(advancement);

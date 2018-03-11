@@ -1,13 +1,25 @@
 package com.hm.achievement.listener;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.runnable.AchieveDistanceRunnable;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with EnderPearls achievements and update Distances.
@@ -15,17 +27,26 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
+@Singleton
 public class AchieveTeleportRespawnListener extends AbstractListener {
 
-	public AchieveTeleportRespawnListener(AdvancedAchievements plugin) {
-		super(plugin);
+	private final Set<String> disabledCategories;
+	private final AchieveDistanceRunnable distanceRunnable;
+
+	@Inject
+	public AchieveTeleportRespawnListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			ReloadCommand reloadCommand, Set<String> disabledCategories, AchieveDistanceRunnable distanceRunnable) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
+		this.disabledCategories = disabledCategories;
+		this.distanceRunnable = distanceRunnable;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		// Update location of player if he respawns after dying.
-		if (plugin.getDistanceRunnable() != null) {
-			plugin.getDistanceRunnable().getPlayerLocations().put(event.getPlayer().getUniqueId().toString(),
+		if (distanceRunnable != null) {
+			distanceRunnable.getPlayerLocations().put(event.getPlayer().getUniqueId().toString(),
 					event.getRespawnLocation());
 		}
 	}
@@ -43,14 +64,14 @@ public class AchieveTeleportRespawnListener extends AbstractListener {
 		}
 
 		// Update location of player if he teleports somewhere else.
-		if (plugin.getDistanceRunnable() != null) {
-			plugin.getDistanceRunnable().getPlayerLocations().put(player.getUniqueId().toString(), event.getTo());
+		if (distanceRunnable != null) {
+			distanceRunnable.getPlayerLocations().put(player.getUniqueId().toString(), event.getTo());
 		}
 
 		NormalAchievements category = NormalAchievements.ENDERPEARLS;
 
 		if (event.getCause() != PlayerTeleportEvent.TeleportCause.ENDER_PEARL
-				|| plugin.getDisabledCategorySet().contains(category.toString())) {
+				|| disabledCategories.contains(category.toString())) {
 			return;
 		}
 

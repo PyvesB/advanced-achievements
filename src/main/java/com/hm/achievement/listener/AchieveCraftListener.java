@@ -1,5 +1,12 @@
 package com.hm.achievement.listener;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,8 +16,11 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Crafts achievements.
@@ -18,17 +28,20 @@ import com.hm.achievement.category.MultipleAchievements;
  * @author Pyves
  *
  */
+@Singleton
 public class AchieveCraftListener extends AbstractListener {
 
-	public AchieveCraftListener(AdvancedAchievements plugin) {
-		super(plugin);
+	@Inject
+	public AchieveCraftListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			ReloadCommand reloadCommand) {
+		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(CraftItemEvent event) {
 		if (!(event.getWhoClicked() instanceof Player) || event.getAction() == InventoryAction.NOTHING
-				|| event.getClick() == ClickType.NUMBER_KEY
-						&& event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
+				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
 			return;
 		}
 
@@ -44,9 +57,9 @@ public class AchieveCraftListener extends AbstractListener {
 		if (!player.hasPermission(category.toPermName() + '.' + craftName)) {
 			return;
 		}
-		if (plugin.getPluginConfig().isConfigurationSection(category + "." + craftName + ':' + item.getDurability())) {
+		if (mainConfig.isConfigurationSection(category + "." + craftName + ':' + item.getDurability())) {
 			craftName += ":" + item.getDurability();
-		} else if (!plugin.getPluginConfig().isConfigurationSection(category + "." + craftName)) {
+		} else if (!mainConfig.isConfigurationSection(category + "." + craftName)) {
 			return;
 		}
 

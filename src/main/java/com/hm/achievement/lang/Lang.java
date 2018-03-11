@@ -1,7 +1,8 @@
 package com.hm.achievement.lang;
 
-import com.hm.achievement.AdvancedAchievements;
 import org.apache.commons.lang3.StringUtils;
+
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Interface for cleaner translation implementation.
@@ -31,22 +32,11 @@ public interface Lang {
 	 * Get the value in language file (with key) or default if not found.
 	 *
 	 * @param lang Lang implementation
-	 * @param plugin AdvancedAchievements so that lang file can be accessed.
+	 * @param langConfig Language file configuration
 	 * @return value in lang file or default value in Lang impl.
 	 */
-	static String get(Lang lang, AdvancedAchievements plugin) {
-		return plugin.getPluginLang().getString(lang.toLangKey(), lang.toLangDefault());
-	}
-
-	/**
-	 * Get the value in language file (with key) or default if not found with chat header in front.
-	 *
-	 * @param lang Lang implementation
-	 * @param plugin AdvancedAchievements so that lang file can be accessed.
-	 * @return chat header + value in lang file or default value in Lang impl.
-	 */
-	static String getWithChatHeader(Lang lang, AdvancedAchievements plugin) {
-		return plugin.getChatHeader() + get(lang, plugin);
+	static String get(Lang lang, CommentedYamlConfiguration langConfig) {
+		return langConfig.getString(lang.toLangKey(), lang.toLangDefault());
 	}
 
 	/**
@@ -55,11 +45,11 @@ public interface Lang {
 	 * @param lang Lang implementation
 	 * @param replace Replace a string in return value once
 	 * @param with Replace with this string
-	 * @param plugin AdvancedAchievements so that lang file can be accessed.
+	 * @param langConfig Language file configuration
 	 * @return value in lang file or default value in Lang impl.
 	 */
-	static String getReplacedOnce(Lang lang, String replace, String with, AdvancedAchievements plugin) {
-		return StringUtils.replaceOnce(get(lang, plugin), replace, with);
+	static String getReplacedOnce(Lang lang, String replace, String with, CommentedYamlConfiguration langConfig) {
+		return StringUtils.replaceOnce(get(lang, langConfig), replace, with);
 	}
 
 	/**
@@ -68,11 +58,11 @@ public interface Lang {
 	 * @param lang Lang implementation
 	 * @param replace Replace strings in return value once
 	 * @param with Replace with these string
-	 * @param plugin AdvancedAchievements so that lang file can be accessed.
+	 * @param langConfig Language file configuration
 	 * @return value in lang file or default value in Lang impl.
 	 */
-	static String getEachReplaced(Lang lang, AdvancedAchievements plugin, String[] replace, String[] with) {
-		return StringUtils.replaceEach(get(lang, plugin), replace, with);
+	static String getEachReplaced(Lang lang, CommentedYamlConfiguration langConfig, String[] replace, String[] with) {
+		return StringUtils.replaceEach(get(lang, langConfig), replace, with);
 	}
 
 	/**
