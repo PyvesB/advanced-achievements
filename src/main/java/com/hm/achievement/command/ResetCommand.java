@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CachedStatistic;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -26,8 +26,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class ResetCommand extends AbstractParsableCommand {
 
-	private final DatabaseCacheManager databaseCacheManager;
-	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final CacheManager cacheManager;
+	private final AbstractDatabaseManager sqlDatabaseManager;
 
 	private String langResetSuccessful;
 	private String langCategoryDoesNotExist;
@@ -35,9 +35,9 @@ public class ResetCommand extends AbstractParsableCommand {
 	@Inject
 	public ResetCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			DatabaseCacheManager databaseCacheManager, AbstractSQLDatabaseManager sqlDatabaseManager) {
+			CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager) {
 		super(mainConfig, langConfig, pluginHeader, reloadCommand);
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 	}
 
@@ -58,9 +58,9 @@ public class ResetCommand extends AbstractParsableCommand {
 					// Not handled by a database cache.
 					sqlDatabaseManager.clearConnection(player.getUniqueId());
 				} else {
-					CachedStatistic statistic = databaseCacheManager.getHashMap(category).get(uuid);
+					CachedStatistic statistic = cacheManager.getHashMap(category).get(uuid);
 					if (statistic == null) {
-						databaseCacheManager.getHashMap(category).put(uuid, new CachedStatistic(0L, false));
+						cacheManager.getHashMap(category).put(uuid, new CachedStatistic(0L, false));
 					} else {
 						statistic.setValue(0L);
 					}
@@ -75,11 +75,12 @@ public class ResetCommand extends AbstractParsableCommand {
 			for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
 				String categoryPath = category.toString() + "." + StringUtils.deleteWhitespace(subcategory);
 				if (categoryPath.equalsIgnoreCase(args[1])) {
-					CachedStatistic statistic = databaseCacheManager.getHashMap(category).get(
-							databaseCacheManager.getMultipleCategoryCacheKey(category, player.getUniqueId(), subcategory));
+					CachedStatistic statistic = cacheManager.getHashMap(category)
+							.get(cacheManager.getMultipleCategoryCacheKey(category, player.getUniqueId(), subcategory));
 					if (statistic == null) {
-						databaseCacheManager.getHashMap(category).put(databaseCacheManager.getMultipleCategoryCacheKey(
-								category, player.getUniqueId(), subcategory), new CachedStatistic(0L, false));
+						cacheManager.getHashMap(category).put(
+								cacheManager.getMultipleCategoryCacheKey(category, player.getUniqueId(), subcategory),
+								new CachedStatistic(0L, false));
 					} else {
 						statistic.setValue(0L);
 					}

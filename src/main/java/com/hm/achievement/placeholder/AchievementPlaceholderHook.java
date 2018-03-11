@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 import me.clip.placeholderapi.external.EZPlaceholderHook;
@@ -27,17 +27,17 @@ import me.clip.placeholderapi.external.EZPlaceholderHook;
 public class AchievementPlaceholderHook extends EZPlaceholderHook {
 
 	private final CommentedYamlConfiguration mainConfig;
-	private final DatabaseCacheManager databaseCacheManager;
+	private final CacheManager cacheManager;
 	private final Set<String> disabledCategories;
 	private final Map<String, String> achievementsAndDisplayNames;
 
 	@Inject
 	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements,
-			@Named("main") CommentedYamlConfiguration mainConfig, DatabaseCacheManager databaseCacheManager,
-			Set<String> disabledCategories, Map<String, String> achievementsAndDisplayNames) {
+			@Named("main") CommentedYamlConfiguration mainConfig, CacheManager cacheManager, Set<String> disabledCategories,
+			Map<String, String> achievementsAndDisplayNames) {
 		super(advancedAchievements, "aach");
 		this.mainConfig = mainConfig;
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 		this.disabledCategories = disabledCategories;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
 	}
@@ -46,11 +46,11 @@ public class AchievementPlaceholderHook extends EZPlaceholderHook {
 	public String onPlaceholderRequest(Player p, String identifier) {
 
 		if ("achievements".equalsIgnoreCase(identifier)) {
-			return String.valueOf(databaseCacheManager.getPlayerTotalAchievements(p.getUniqueId()));
+			return String.valueOf(cacheManager.getPlayerTotalAchievements(p.getUniqueId()));
 		}
 
 		if ("achievements_percentage".equalsIgnoreCase(identifier)) {
-			return String.format("%.1f%%", 100 * (double) databaseCacheManager.getPlayerTotalAchievements(p.getUniqueId())
+			return String.format("%.1f%%", 100 * (double) cacheManager.getPlayerTotalAchievements(p.getUniqueId())
 					/ achievementsAndDisplayNames.size());
 		}
 
@@ -62,7 +62,7 @@ public class AchievementPlaceholderHook extends EZPlaceholderHook {
 			String categoryName = category.toString();
 
 			if (identifier.equalsIgnoreCase(categoryName)) {
-				return String.valueOf(databaseCacheManager.getAndIncrementStatisticAmount(category, p.getUniqueId(), 0));
+				return String.valueOf(cacheManager.getAndIncrementStatisticAmount(category, p.getUniqueId(), 0));
 			}
 		}
 
@@ -77,8 +77,8 @@ public class AchievementPlaceholderHook extends EZPlaceholderHook {
 				String categoryPath = categoryName + "_" + subcategory;
 
 				if (identifier.equalsIgnoreCase(categoryPath)) {
-					return String.valueOf(
-							databaseCacheManager.getAndIncrementStatisticAmount(category, subcategory, p.getUniqueId(), 0));
+					return String
+							.valueOf(cacheManager.getAndIncrementStatisticAmount(category, subcategory, p.getUniqueId(), 0));
 				}
 			}
 		}

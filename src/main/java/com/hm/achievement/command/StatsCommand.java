@@ -14,7 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
 
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -34,7 +34,7 @@ public class StatsCommand extends AbstractCommand {
 
 	private final Logger logger;
 	private final int serverVersion;
-	private final DatabaseCacheManager databaseCacheManager;
+	private final CacheManager cacheManager;
 	private final Map<String, String> achievementsAndDisplayNames;
 
 	private ChatColor configColor;
@@ -47,12 +47,11 @@ public class StatsCommand extends AbstractCommand {
 	@Inject
 	public StatsCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			Logger logger, int serverVersion, DatabaseCacheManager databaseCacheManager,
-			Map<String, String> achievementsAndDisplayNames) {
+			Logger logger, int serverVersion, CacheManager cacheManager, Map<String, String> achievementsAndDisplayNames) {
 		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.serverVersion = serverVersion;
 		this.logger = logger;
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
 	}
 
@@ -77,7 +76,7 @@ public class StatsCommand extends AbstractCommand {
 
 		Player player = (Player) sender;
 
-		int playerAchievements = databaseCacheManager.getPlayerTotalAchievements(player.getUniqueId());
+		int playerAchievements = cacheManager.getPlayerTotalAchievements(player.getUniqueId());
 		int totalAchievements = achievementsAndDisplayNames.size();
 
 		player.sendMessage(

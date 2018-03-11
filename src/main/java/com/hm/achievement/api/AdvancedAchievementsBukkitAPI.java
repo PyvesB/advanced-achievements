@@ -20,8 +20,8 @@ import org.bukkit.Bukkit;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.db.AbstractSQLDatabaseManager;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 
 /**
@@ -33,18 +33,17 @@ import com.hm.achievement.db.data.AwardedDBAchievement;
 public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	private final AdvancedAchievements advancedAchievements;
-	private final DatabaseCacheManager databaseCacheManager;
-	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final CacheManager cacheManager;
+	private final AbstractDatabaseManager sqlDatabaseManager;
 	private final Map<String, String> achievementsAndDisplayNames;
 	private final Logger logger;
 
 	@Inject
-	AdvancedAchievementsBukkitAPI(AdvancedAchievements advancedAchievements, Logger logger,
-			DatabaseCacheManager databaseCacheManager, AbstractSQLDatabaseManager sqlDatabaseManager,
-			Map<String, String> achievementsAndDisplayNames) {
+	AdvancedAchievementsBukkitAPI(AdvancedAchievements advancedAchievements, Logger logger, CacheManager cacheManager,
+			AbstractDatabaseManager sqlDatabaseManager, Map<String, String> achievementsAndDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
 	}
@@ -80,7 +79,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		// Underlying structures do not support concurrent operations and are only used by the main server thread. Not
 		// thread-safe to modify or read them asynchronously. Do not use cached data if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
-			return databaseCacheManager.hasPlayerAchievement(player, achievementName);
+			return cacheManager.hasPlayerAchievement(player, achievementName);
 		} else {
 			return sqlDatabaseManager.hasPlayerAchievement(player, achievementName);
 		}
@@ -98,7 +97,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		validateNotNull(player, "Player");
 		// Only use cached data if player is online.
 		if (isPlayerOnline(player)) {
-			return databaseCacheManager.getPlayerTotalAchievements(player);
+			return cacheManager.getPlayerTotalAchievements(player);
 		} else {
 			return sqlDatabaseManager.getPlayerAchievementsAmount(player);
 		}
@@ -132,7 +131,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		// Underlying structures do not support concurrent write operations and are only modified by the main server
 		// thread. Do not use cache if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
-			return databaseCacheManager.getAndIncrementStatisticAmount(category, player, 0);
+			return cacheManager.getAndIncrementStatisticAmount(category, player, 0);
 		} else {
 			return sqlDatabaseManager.getNormalAchievementAmount(player, category);
 		}
@@ -146,7 +145,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		// Underlying structures do not support concurrent write operations and are only modified by the main server
 		// thread. Do not use cache if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
-			return databaseCacheManager.getAndIncrementStatisticAmount(category, subcategory, player, 0);
+			return cacheManager.getAndIncrementStatisticAmount(category, subcategory, player, 0);
 		} else {
 			return sqlDatabaseManager.getMultipleAchievementAmount(player, category, subcategory);
 		}

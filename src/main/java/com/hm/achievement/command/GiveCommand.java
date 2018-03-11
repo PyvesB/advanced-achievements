@@ -9,7 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
@@ -24,7 +24,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class GiveCommand extends AbstractParsableCommand {
 
-	private final DatabaseCacheManager databaseCacheManager;
+	private final CacheManager cacheManager;
 	private final RewardParser rewardParser;
 
 	private boolean configMultiCommand;
@@ -35,9 +35,9 @@ public class GiveCommand extends AbstractParsableCommand {
 	@Inject
 	public GiveCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			DatabaseCacheManager databaseCacheManager, RewardParser rewardParser) {
+			CacheManager cacheManager, RewardParser rewardParser) {
 		super(mainConfig, langConfig, pluginHeader, reloadCommand);
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 		this.rewardParser = rewardParser;
 	}
 
@@ -59,7 +59,7 @@ public class GiveCommand extends AbstractParsableCommand {
 		if (mainConfig.getString(achievementPath + ".Message", null) != null) {
 			// Check whether player has already received achievement and cannot receive it again.
 			String achievementName = mainConfig.getString(achievementPath + ".Name");
-			if (!configMultiCommand && databaseCacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
+			if (!configMultiCommand && cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 				sender.sendMessage(StringUtils.replaceOnce(langAchievementAlreadyReceived, "PLAYER", args[2]));
 				return;
 			}

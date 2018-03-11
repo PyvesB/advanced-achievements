@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -21,7 +21,7 @@ public class TopCommand extends AbstractRankingCommand {
 	@Inject
 	public TopCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			Logger logger, int serverVersion, AbstractSQLDatabaseManager sqlDatabaseManager) {
+			Logger logger, int serverVersion, AbstractDatabaseManager sqlDatabaseManager) {
 		super(mainConfig, langConfig, pluginHeader, reloadCommand, logger, serverVersion, CmdLang.TOP_ACHIEVEMENT,
 				sqlDatabaseManager);
 	}

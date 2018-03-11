@@ -23,7 +23,7 @@ import com.hm.mcshared.file.FileManager;
  * @author Pyves
  *
  */
-public class SQLiteDatabaseManager extends AbstractSQLDatabaseManager {
+public class SQLiteDatabaseManager extends AbstractDatabaseManager {
 
 	private final AdvancedAchievements advancedAchievements;
 	private boolean configDatabaseBackup;

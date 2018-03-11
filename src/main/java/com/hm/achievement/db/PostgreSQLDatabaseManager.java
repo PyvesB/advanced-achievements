@@ -24,11 +24,10 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  *
  */
-public class PostgreSQLDatabaseManager extends AbstractSQLDatabaseManager {
+public class PostgreSQLDatabaseManager extends AbstractDatabaseManager {
 
 	public PostgreSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
-			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater,
-			ReloadCommand reloadCommand) {
+			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater, ReloadCommand reloadCommand) {
 		super(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater, reloadCommand);
 	}
 

@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -32,7 +32,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 	protected final CommentedYamlConfiguration mainConfig;
 	protected final int serverVersion;
 	protected final Map<String, List<Long>> sortedThresholds;
-	protected final DatabaseCacheManager databaseCacheManager;
+	protected final CacheManager cacheManager;
 	protected final RewardParser rewardParser;
 
 	private boolean configRestrictCreative;
@@ -42,12 +42,12 @@ public class StatisticIncreaseHandler implements Reloadable {
 
 	@Inject
 	public StatisticIncreaseHandler(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand) {
 		this.mainConfig = mainConfig;
 		this.serverVersion = serverVersion;
 		this.sortedThresholds = sortedThresholds;
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 		this.rewardParser = rewardParser;
 		reloadCommand.addObserver(this);
 	}
@@ -81,7 +81,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 				String achievementPath = categorySubcategory + "." + threshold;
 				String achievementName = mainConfig.getString(achievementPath + ".Name");
 				// Check whether player has received the achievement.
-				if (!databaseCacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
+				if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 					String rewardPath = achievementPath + ".Reward";
 					// Fire achievement event.
 					PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()

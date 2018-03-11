@@ -14,7 +14,7 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -35,9 +35,9 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 
 	@Inject
 	public AchievePlayTimeRunnable(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand) {
-		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
 
 		if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
 			essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
@@ -88,8 +88,8 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 			return;
 		}
 
-		long playedTime = databaseCacheManager.getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME,
-				player.getUniqueId(), (int) (System.currentTimeMillis() - previousRunMillis));
+		long playedTime = cacheManager.getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME, player.getUniqueId(),
+				(int) (System.currentTimeMillis() - previousRunMillis));
 		checkThresholdsAndAchievements(player, NormalAchievements.PLAYEDTIME.toString(), playedTime);
 	}
 }

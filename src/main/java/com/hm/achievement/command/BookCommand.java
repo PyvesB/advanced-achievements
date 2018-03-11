@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.command.CmdLang;
@@ -53,7 +53,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	private final HashMap<String, Long> playersBookTime = new HashMap<>();
 	private final Logger logger;
 	private final int serverVersion;
-	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager sqlDatabaseManager;
 
 	private int configTimeBook;
 	private String configBookSeparator;
@@ -69,7 +69,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	@Inject
 	public BookCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			Logger logger, int serverVersion, AbstractSQLDatabaseManager sqlDatabaseManager, QuitListener quitListener) {
+			Logger logger, int serverVersion, AbstractDatabaseManager sqlDatabaseManager, QuitListener quitListener) {
 		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.logger = logger;
 		this.serverVersion = serverVersion;

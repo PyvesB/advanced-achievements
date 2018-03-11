@@ -22,8 +22,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.command.ReloadCommand;
-import com.hm.achievement.db.AbstractSQLDatabaseManager;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.ListenerLang;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
@@ -49,7 +49,7 @@ public class PlayerAdvancedAchievementListenerTest {
 	@Mock
 	private Player player;
 	@Mock
-	private AbstractSQLDatabaseManager abstractSQLDatabaseManager;
+	private AbstractDatabaseManager abstractDatabaseManager;
 	@Mock
 	private RewardParser rewardParser;
 
@@ -75,8 +75,8 @@ public class PlayerAdvancedAchievementListenerTest {
 		CommentedYamlConfiguration mainConfig = mockUtility.getLoadedConfig("config-reward-reception.yml");
 		underTest = new PlayerAdvancedAchievementListener(mainConfig,
 				mockUtility.getLoadedConfig("lang.yml"), 11, mock(Logger.class), new StringBuilder(PLUGIN_HEADER),
-				new DatabaseCacheManager(mainConfig, abstractSQLDatabaseManager, new QuitListener()), plugin, rewardParser,
-				achievementsAndDisplayNames, abstractSQLDatabaseManager, null, null, mock(ReloadCommand.class));
+				new CacheManager(mainConfig, abstractDatabaseManager, new QuitListener()), plugin, rewardParser,
+				achievementsAndDisplayNames, abstractDatabaseManager, null, null, mock(ReloadCommand.class));
 		underTest.extractConfigurationParameters();
 		when(player.getUniqueId()).thenReturn(PLAYER_UUID);
 		when(player.getName()).thenReturn("DarkPyves");
@@ -84,7 +84,7 @@ public class PlayerAdvancedAchievementListenerTest {
 
 	@Test
 	public void itShouldGiveSpecialRewardWhenPlayerHasReceivedAllAchievements() {
-		when(abstractSQLDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(1);
+		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(1);
 		when(rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "IncreaseMaxOxygen")).thenReturn(30);
 		when(player.getMaximumAir()).thenReturn(100);
 
@@ -103,7 +103,7 @@ public class PlayerAdvancedAchievementListenerTest {
 
 	@Test
 	public void itShouldNotGiveSpecialRewardWhenPlayerIsMissingSomeAchievements() {
-		when(abstractSQLDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(0);
+		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(0);
 
 		PlayerAdvancedAchievementEvent event = new PlayerAdvancedAchievementEventBuilder().player(player)
 				.name("connect_1").displayName("Good Choice").message("Connected for the first time!")

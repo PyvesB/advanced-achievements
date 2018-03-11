@@ -30,8 +30,8 @@ public class AchievementAdvancement {
 	public String toJson() {
 		return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
 				+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]], " + "\"display\": " + "{\"icon\": {\"item\": \""
-				+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", "
-				+ "\"description\": \"" + description + "\", \"frame\": \"" + frame
+				+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", " + "\"description\": \""
+				+ description + "\", \"frame\": \"" + frame
 				+ "\", \"announce_to_chat\": false}, \"parent\": \"advancedachievements:" + parent + "\"}";
 	}
 
@@ -43,8 +43,8 @@ public class AchievementAdvancement {
 		}
 		return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
 				+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]], " + "\"display\": " + "{\"icon\": {\"item\": \""
-				+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", "
-				+ "\"description\": \"" + description + "\", \"frame\": \"" + frame
+				+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", " + "\"description\": \""
+				+ description + "\", \"frame\": \"" + frame
 				+ "\", \"background\": \"minecraft:textures/items/book_enchanted.png\", \"announce_to_chat\": false}}";
 	}
 

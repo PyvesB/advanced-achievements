@@ -36,7 +36,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  *
  * @author Pyves
  */
-public abstract class AbstractSQLDatabaseManager implements Reloadable {
+public abstract class AbstractDatabaseManager implements Reloadable {
 
 	// Used to do perform the database write operations asynchronously.
 	ExecutorService pool;
@@ -57,7 +57,7 @@ public abstract class AbstractSQLDatabaseManager implements Reloadable {
 	private DateFormat dateFormat;
 	private boolean configBookChronologicalOrder;
 
-	public AbstractSQLDatabaseManager(CommentedYamlConfiguration mainConfig, Logger logger,
+	public AbstractDatabaseManager(CommentedYamlConfiguration mainConfig, Logger logger,
 			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater, ReloadCommand reloadCommand) {
 		this.mainConfig = mainConfig;
 		this.logger = logger;

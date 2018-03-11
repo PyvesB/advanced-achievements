@@ -29,7 +29,7 @@ import com.hm.achievement.command.CommandTabCompleter;
 import com.hm.achievement.command.PluginCommandExecutor;
 import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.config.ConfigurationParser;
-import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.AsyncCachedRequestsSender;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.listener.FireworkListener;
@@ -121,7 +121,7 @@ public class PluginLoader {
 	private final Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable;
 
 	// Database related.
-	private final AbstractSQLDatabaseManager databaseManager;
+	private final AbstractDatabaseManager databaseManager;
 	private final AsyncCachedRequestsSender asyncCachedRequestsSender;
 
 	// Various other fields and parameters.
@@ -157,7 +157,7 @@ public class PluginLoader {
 			PlayerAdvancedAchievementListener playerAdvancedAchievementListener,
 			Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
 			Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
-			AbstractSQLDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
+			AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
 			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
 			Set<String> disabledCategorySet, @Named("main") CommentedYamlConfiguration mainConfig,
 			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,

@@ -51,8 +51,7 @@ public class AwardedDBAchievement extends DBAchievement {
 		if (!super.equals(o))
 			return false;
 		AwardedDBAchievement that = (AwardedDBAchievement) o;
-		return Objects.equals(awardedTo, that.awardedTo) &&
-				Objects.equals(dateAwarded, that.dateAwarded);
+		return Objects.equals(awardedTo, that.awardedTo) && Objects.equals(dateAwarded, that.dateAwarded);
 	}
 
 	@Override

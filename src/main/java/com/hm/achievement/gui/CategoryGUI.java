@@ -27,8 +27,8 @@ import org.bukkit.map.MinecraftFont;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
-import com.hm.achievement.db.AbstractSQLDatabaseManager;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.utils.RewardParser;
@@ -50,7 +50,7 @@ public class CategoryGUI extends AbstractGUI {
 	// Minecraft font, used to get size information in the progress bar.
 	private static final MinecraftFont FONT = MinecraftFont.Font;
 
-	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager sqlDatabaseManager;
 	private final Map<String, List<Long>> sortedThresholds;
 	private final RewardParser rewardParser;
 
@@ -81,9 +81,9 @@ public class CategoryGUI extends AbstractGUI {
 	@Inject
 	public CategoryGUI(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			Logger logger, DatabaseCacheManager databaseCacheManager, AbstractSQLDatabaseManager sqlDatabaseManager,
+			Logger logger, CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager,
 			Map<String, List<Long>> sortedThresholds, RewardParser rewardParser, ReloadCommand reloadCommand) {
-		super(mainConfig, langConfig, guiConfig, logger, databaseCacheManager, reloadCommand);
+		super(mainConfig, langConfig, guiConfig, logger, cacheManager, reloadCommand);
 		this.sqlDatabaseManager = sqlDatabaseManager;
 		this.sortedThresholds = sortedThresholds;
 		this.rewardParser = rewardParser;
@@ -317,8 +317,7 @@ public class CategoryGUI extends AbstractGUI {
 	public Map<String, Long> getMultipleStatisticsMapping(MultipleAchievements category, Player player) {
 		Map<String, Long> subcategoriesToStatistics = new HashMap<>();
 		for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
-			long statistic = databaseCacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
-					0);
+			long statistic = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(), 0);
 			subcategoriesToStatistics.put(subcategory, statistic);
 		}
 		return subcategoriesToStatistics;
@@ -335,7 +334,7 @@ public class CategoryGUI extends AbstractGUI {
 		if (category == NormalAchievements.CONNECTIONS) {
 			return sqlDatabaseManager.getConnectionsAmount(player.getUniqueId());
 		}
-		return databaseCacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
+		return cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
 	}
 
 	/**

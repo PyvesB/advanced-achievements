@@ -22,7 +22,7 @@ import org.bukkit.util.NumberConversions;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.utils.RewardParser;
@@ -45,9 +45,9 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 
 	@Inject
 	public AchieveDistanceRunnable(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
 			Set<String> disabledCategories, ReloadCommand reloadCommand, QuitListener quitListener) {
-		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
 		this.disabledCategories = disabledCategories;
 		quitListener.addObserver(this);
 	}
@@ -150,7 +150,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 			return;
 		}
 
-		long distance = databaseCacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), difference);
+		long distance = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), difference);
 		checkThresholdsAndAchievements(player, category.toString(), distance);
 	}
 }

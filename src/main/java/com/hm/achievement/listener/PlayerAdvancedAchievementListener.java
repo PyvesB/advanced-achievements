@@ -36,8 +36,8 @@ import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.command.ToggleCommand;
-import com.hm.achievement.db.AbstractSQLDatabaseManager;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.ListenerLang;
 import com.hm.achievement.lifecycle.Reloadable;
@@ -64,11 +64,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private final int serverVersion;
 	private final Logger logger;
 	private final StringBuilder pluginHeader;
-	private final DatabaseCacheManager databaseCacheManager;
+	private final CacheManager cacheManager;
 	private final AdvancedAchievements advancedAchievements;
 	private final RewardParser rewardParser;
 	private final Map<String, String> achievementsAndDisplayNames;
-	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager sqlDatabaseManager;
 	private final ToggleCommand toggleCommand;
 	private final FireworkListener fireworkListener;
 
@@ -95,16 +95,16 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	@Inject
 	public PlayerAdvancedAchievementListener(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, int serverVersion, Logger logger,
-			StringBuilder pluginHeader, DatabaseCacheManager databaseCacheManager, AdvancedAchievements advancedAchievements,
+			StringBuilder pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements,
 			RewardParser rewardParser, Map<String, String> achievementsAndDisplayNames,
-			AbstractSQLDatabaseManager sqlDatabaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener,
+			AbstractDatabaseManager sqlDatabaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener,
 			ReloadCommand reloadCommand) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.serverVersion = serverVersion;
 		this.logger = logger;
 		this.pluginHeader = pluginHeader;
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 		this.advancedAchievements = advancedAchievements;
 		this.rewardParser = rewardParser;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
@@ -157,11 +157,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		String uuid = player.getUniqueId().toString();
 		// Check before updating caches; achievement could have already been received if MultiCommand is set to true in
 		// the configuration.
-		if (!databaseCacheManager.hasPlayerAchievement(player.getUniqueId(), event.getName())) {
-			databaseCacheManager.getReceivedAchievementsCache().put(uuid, event.getName());
-			databaseCacheManager.getNotReceivedAchievementsCache().remove(uuid, event.getName());
-			databaseCacheManager.getTotalPlayerAchievementsCache().put(uuid,
-					databaseCacheManager.getPlayerTotalAchievements(player.getUniqueId()) + 1);
+		if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), event.getName())) {
+			cacheManager.getReceivedAchievementsCache().put(uuid, event.getName());
+			cacheManager.getNotReceivedAchievementsCache().remove(uuid, event.getName());
+			cacheManager.getTotalPlayerAchievementsCache().put(uuid,
+					cacheManager.getPlayerTotalAchievements(player.getUniqueId()) + 1);
 
 			if (serverVersion >= 12) {
 				Advancement advancement = Bukkit.getServer()
@@ -179,7 +179,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 				event.getMaxOxygenReward());
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage(), rewardTexts);
 
-		if (databaseCacheManager.getPlayerTotalAchievements(player.getUniqueId()) == achievementsAndDisplayNames.size()) {
+		if (cacheManager.getPlayerTotalAchievements(player.getUniqueId()) == achievementsAndDisplayNames.size()) {
 			handleAllAchievementsReceived(player);
 		}
 	}

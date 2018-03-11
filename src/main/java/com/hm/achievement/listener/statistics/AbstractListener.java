@@ -13,7 +13,7 @@ import org.bukkit.potion.PotionType;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -26,8 +26,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public abstract class AbstractListener extends StatisticIncreaseHandler implements Listener {
 
 	AbstractListener(CommentedYamlConfiguration mainConfig, int serverVersion, Map<String, List<Long>> sortedThresholds,
-			DatabaseCacheManager databaseCacheManager, RewardParser rewardParser, ReloadCommand reloadCommand) {
-		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
+			CacheManager cacheManager, RewardParser rewardParser, ReloadCommand reloadCommand) {
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
 	}
 
 	/**
@@ -39,7 +39,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * @param incrementValue
 	 */
 	void updateStatisticAndAwardAchievementsIfAvailable(Player player, NormalAchievements category, int incrementValue) {
-		long amount = databaseCacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), incrementValue);
+		long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), incrementValue);
 		checkThresholdsAndAchievements(player, category.toString(), amount);
 	}
 
@@ -54,7 +54,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 */
 	void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category, String subcategory,
 			int incrementValue) {
-		long amount = databaseCacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
+		long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
 				incrementValue);
 		checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
 	}

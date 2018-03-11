@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.command.ReloadCommand;
-import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.DatabaseUpdater;
 import com.hm.achievement.db.MySQLDatabaseManager;
 import com.hm.achievement.db.PostgreSQLDatabaseManager;
@@ -23,7 +23,7 @@ public class DatabaseModule {
 
 	@Provides
 	@Singleton
-	AbstractSQLDatabaseManager provideSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
+	AbstractDatabaseManager provideSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater, ReloadCommand reloadCommand,
 			AdvancedAchievements advancedAchievements) {
 		String dataHandler = mainConfig.getString("DatabaseType", "sqlite");

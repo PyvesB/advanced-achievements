@@ -30,15 +30,15 @@ public class AsyncCachedRequestsSender implements Runnable {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final Logger logger;
-	private final DatabaseCacheManager databaseCacheManager;
-	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final CacheManager cacheManager;
+	private final AbstractDatabaseManager sqlDatabaseManager;
 
 	@Inject
-	public AsyncCachedRequestsSender(AdvancedAchievements advancedAchievements, Logger logger,
-			DatabaseCacheManager databaseCacheManager, AbstractSQLDatabaseManager sqlDatabaseManager) {
+	public AsyncCachedRequestsSender(AdvancedAchievements advancedAchievements, Logger logger, CacheManager cacheManager,
+			AbstractDatabaseManager sqlDatabaseManager) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 	}
 
@@ -93,7 +93,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 	 * @param category
 	 */
 	private void addRequestsForMultipleCategory(List<String> batchedRequests, MultipleAchievements category) {
-		Map<String, CachedStatistic> categoryMap = databaseCacheManager.getHashMap(category);
+		Map<String, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
 		for (Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
 			if (!entry.getValue().isDatabaseConsistent()) {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
@@ -122,7 +122,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 	 * @param category
 	 */
 	private void addRequestsForNormalCategory(List<String> batchedRequests, NormalAchievements category) {
-		Map<String, CachedStatistic> categoryMap = databaseCacheManager.getHashMap(category);
+		Map<String, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
 		for (Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
 			if (!entry.getValue().isDatabaseConsistent()) {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
@@ -146,11 +146,11 @@ public class AsyncCachedRequestsSender implements Runnable {
 	 */
 	private void cleanUpCaches() {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			Map<String, CachedStatistic> categoryMap = databaseCacheManager.getHashMap(category);
+			Map<String, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
 			cleanUpCache(categoryMap);
 		}
 		for (NormalAchievements category : NormalAchievements.values()) {
-			Map<String, CachedStatistic> categoryMap = databaseCacheManager.getHashMap(category);
+			Map<String, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
 			cleanUpCache(categoryMap);
 		}
 	}

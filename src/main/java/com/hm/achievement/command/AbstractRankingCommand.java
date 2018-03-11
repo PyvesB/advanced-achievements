@@ -14,7 +14,7 @@ import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.db.AbstractSQLDatabaseManager;
+import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -36,7 +36,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private final Logger logger;
 	private final int serverVersion;
 	private final Lang languageHeader;
-	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager sqlDatabaseManager;
 
 	private ChatColor configColor;
 	private int configTopList;
@@ -52,7 +52,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 	AbstractRankingCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
 			StringBuilder pluginHeader, ReloadCommand reloadCommand, Logger logger, int serverVersion, Lang languageHeader,
-			AbstractSQLDatabaseManager sqlDatabaseManager) {
+			AbstractDatabaseManager sqlDatabaseManager) {
 		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.logger = logger;
 		this.serverVersion = serverVersion;

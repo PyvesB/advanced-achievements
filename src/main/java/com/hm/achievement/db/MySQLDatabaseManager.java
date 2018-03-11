@@ -17,7 +17,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  *
  */
-public class MySQLDatabaseManager extends AbstractSQLDatabaseManager {
+public class MySQLDatabaseManager extends AbstractDatabaseManager {
 
 	public MySQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater, ReloadCommand reloadCommand) {

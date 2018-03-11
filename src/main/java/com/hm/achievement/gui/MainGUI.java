@@ -17,7 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.Lang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -44,9 +44,9 @@ public class MainGUI extends AbstractGUI {
 	@Inject
 	public MainGUI(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			Logger logger, DatabaseCacheManager databaseCacheManager, int serverVersion, Set<String> disabledCategories,
+			Logger logger, CacheManager cacheManager, int serverVersion, Set<String> disabledCategories,
 			ReloadCommand reloadCommand) {
-		super(mainConfig, langConfig, guiConfig, logger, databaseCacheManager, reloadCommand);
+		super(mainConfig, langConfig, guiConfig, logger, cacheManager, reloadCommand);
 		this.disabledCategories = disabledCategories;
 		lockedItem = new ItemStack(serverVersion < 8 ? Material.OBSIDIAN : Material.BARRIER);
 	}
@@ -163,7 +163,7 @@ public class MainGUI extends AbstractGUI {
 	 */
 	private boolean hasReceivedInCategory(Player player, String configPath) {
 		for (String threshold : mainConfig.getShallowKeys(configPath)) {
-			if (databaseCacheManager.hasPlayerAchievement(player.getUniqueId(),
+			if (cacheManager.hasPlayerAchievement(player.getUniqueId(),
 					mainConfig.getString(configPath + '.' + threshold + ".Name", ""))) {
 				// At least one achievement was received in the current category: it is unlocked.
 				return true;

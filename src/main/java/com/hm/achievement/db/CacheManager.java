@@ -27,10 +27,10 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  *
  */
 @Singleton
-public class DatabaseCacheManager implements Cleanable {
+public class CacheManager implements Cleanable {
 
 	private final CommentedYamlConfiguration mainConfig;
-	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager sqlDatabaseManager;
 	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
 	private final Map<NormalAchievements, Map<String, CachedStatistic>> normalAchievementsToPlayerStatistics;
 	// Statistics of the different players for multiple achievements; keys in the inner maps correspond to concatenated
@@ -43,8 +43,8 @@ public class DatabaseCacheManager implements Cleanable {
 	private final Map<String, Integer> totalPlayerAchievementsCache;
 
 	@Inject
-	public DatabaseCacheManager(@Named("main") CommentedYamlConfiguration mainConfig,
-			AbstractSQLDatabaseManager sqlDatabaseManager, QuitListener quitListener) {
+	public CacheManager(@Named("main") CommentedYamlConfiguration mainConfig, AbstractDatabaseManager sqlDatabaseManager,
+			QuitListener quitListener) {
 		this.mainConfig = mainConfig;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 		quitListener.addObserver(this);

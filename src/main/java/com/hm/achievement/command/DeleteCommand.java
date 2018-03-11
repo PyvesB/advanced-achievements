@@ -8,8 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.db.AbstractSQLDatabaseManager;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -22,8 +22,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class DeleteCommand extends AbstractParsableCommand {
 
-	private final DatabaseCacheManager databaseCacheManager;
-	private final AbstractSQLDatabaseManager sqlDatabaseManager;
+	private final CacheManager cacheManager;
+	private final AbstractDatabaseManager sqlDatabaseManager;
 
 	private String langCheckAchievementFalse;
 	private String langDeleteAchievements;
@@ -31,9 +31,9 @@ public class DeleteCommand extends AbstractParsableCommand {
 	@Inject
 	public DeleteCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			DatabaseCacheManager databaseCacheManager, AbstractSQLDatabaseManager sqlDatabaseManager) {
+			CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager) {
 		super(mainConfig, langConfig, pluginHeader, reloadCommand);
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 	}
 
@@ -50,15 +50,15 @@ public class DeleteCommand extends AbstractParsableCommand {
 		String achievementName = parseAchievementName(args);
 
 		// Check if achievement exists in database and display message accordingly; if received, delete it.
-		if (!databaseCacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
+		if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementFalse, new String[] { "PLAYER", "ACH" },
 					new String[] { args[args.length - 1], achievementName }));
 		} else {
 			String uuid = player.getUniqueId().toString();
-			databaseCacheManager.getReceivedAchievementsCache().remove(uuid, achievementName);
-			databaseCacheManager.getNotReceivedAchievementsCache().put(uuid, achievementName);
-			databaseCacheManager.getTotalPlayerAchievementsCache().put(uuid,
-					databaseCacheManager.getPlayerTotalAchievements(player.getUniqueId()) - 1);
+			cacheManager.getReceivedAchievementsCache().remove(uuid, achievementName);
+			cacheManager.getNotReceivedAchievementsCache().put(uuid, achievementName);
+			cacheManager.getTotalPlayerAchievementsCache().put(uuid,
+					cacheManager.getPlayerTotalAchievements(player.getUniqueId()) - 1);
 			sqlDatabaseManager.deletePlayerAchievement(player.getUniqueId(), achievementName);
 
 			sender.sendMessage(StringUtils.replaceEach(langDeleteAchievements, new String[] { "PLAYER", "ACH" },

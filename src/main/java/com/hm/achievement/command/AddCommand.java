@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
@@ -25,7 +25,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class AddCommand extends AbstractParsableCommand {
 
-	private final DatabaseCacheManager databaseCacheManager;
+	private final CacheManager cacheManager;
 	private final StatisticIncreaseHandler statisticIncreaseHandler;
 
 	private String langErrorValue;
@@ -35,9 +35,9 @@ public class AddCommand extends AbstractParsableCommand {
 	@Inject
 	public AddCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			DatabaseCacheManager databaseCacheManager, StatisticIncreaseHandler statisticIncreaseHandler) {
+			CacheManager cacheManager, StatisticIncreaseHandler statisticIncreaseHandler) {
 		super(mainConfig, langConfig, pluginHeader, reloadCommand);
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 		this.statisticIncreaseHandler = statisticIncreaseHandler;
 	}
 
@@ -65,7 +65,7 @@ public class AddCommand extends AbstractParsableCommand {
 			String categoryName = category.toString();
 
 			if (args[2].equalsIgnoreCase(categoryName) && category != NormalAchievements.CONNECTIONS) {
-				long amount = databaseCacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), value);
+				long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), value);
 				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category.toString(), amount);
 				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
 						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
@@ -79,8 +79,8 @@ public class AddCommand extends AbstractParsableCommand {
 				String categoryPath = categoryName + "." + StringUtils.deleteWhitespace(subcategory);
 
 				if (args[2].equalsIgnoreCase(categoryPath)) {
-					long amount = databaseCacheManager.getAndIncrementStatisticAmount(category, subcategory,
-							player.getUniqueId(), value);
+					long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
+							value);
 					statisticIncreaseHandler.checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
 					sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
 							new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));

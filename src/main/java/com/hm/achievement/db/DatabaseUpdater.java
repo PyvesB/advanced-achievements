@@ -50,7 +50,7 @@ public class DatabaseUpdater {
 	 * @param databaseAddress
 	 * @throws PluginLoadError
 	 */
-	void renameExistingTables(AbstractSQLDatabaseManager sqlDatabaseManager, String databaseAddress) throws PluginLoadError {
+	void renameExistingTables(AbstractDatabaseManager sqlDatabaseManager, String databaseAddress) throws PluginLoadError {
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
 		if (StringUtils.isNotBlank(sqlDatabaseManager.getPrefix())) {
 			Connection conn = sqlDatabaseManager.getSQLConnection();
@@ -94,7 +94,7 @@ public class DatabaseUpdater {
 	 * @param sqlDatabaseManager
 	 * @throws PluginLoadError
 	 */
-	void initialiseTables(AbstractSQLDatabaseManager sqlDatabaseManager) throws PluginLoadError {
+	void initialiseTables(AbstractDatabaseManager sqlDatabaseManager) throws PluginLoadError {
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getPrefix()
@@ -130,7 +130,7 @@ public class DatabaseUpdater {
 	 * @param sqlDatabaseManager
 	 * @throws PluginLoadError
 	 */
-	void updateOldDBToMaterial(AbstractSQLDatabaseManager sqlDatabaseManager) throws PluginLoadError {
+	void updateOldDBToMaterial(AbstractDatabaseManager sqlDatabaseManager) throws PluginLoadError {
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		String type = "";
 		try (Statement st = conn.createStatement()) {
@@ -162,7 +162,7 @@ public class DatabaseUpdater {
 	 * @param sqlDatabaseManager
 	 * @param category
 	 */
-	private void updateOldDBToMaterial(AbstractSQLDatabaseManager sqlDatabaseManager, MultipleAchievements category) {
+	private void updateOldDBToMaterial(AbstractDatabaseManager sqlDatabaseManager, MultipleAchievements category) {
 		String tableName = sqlDatabaseManager.getPrefix() + category.toDBName();
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement();
@@ -221,7 +221,7 @@ public class DatabaseUpdater {
 	 * 
 	 * @param sqlDatabaseManager
 	 */
-	void updateOldDBToDates(AbstractSQLDatabaseManager sqlDatabaseManager) {
+	void updateOldDBToDates(AbstractDatabaseManager sqlDatabaseManager) {
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT date FROM " + sqlDatabaseManager.getPrefix() + "achievements LIMIT 1");
@@ -300,7 +300,7 @@ public class DatabaseUpdater {
 	 * 
 	 * @param sqlDatabaseManager
 	 */
-	void updateOldDBMobnameSize(AbstractSQLDatabaseManager sqlDatabaseManager) {
+	void updateOldDBMobnameSize(AbstractDatabaseManager sqlDatabaseManager) {
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		// SQLite ignores size for varchar datatype.
 		if (!(sqlDatabaseManager instanceof SQLiteDatabaseManager)) {

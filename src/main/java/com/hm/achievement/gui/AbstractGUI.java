@@ -15,7 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lifecycle.Reloadable;
@@ -32,7 +32,7 @@ public abstract class AbstractGUI implements Reloadable {
 	final Map<NormalAchievements, ItemStack> normalAchievementItems = new EnumMap<>(NormalAchievements.class);
 	final CommentedYamlConfiguration mainConfig;
 	final CommentedYamlConfiguration langConfig;
-	final DatabaseCacheManager databaseCacheManager;
+	final CacheManager cacheManager;
 
 	ItemStack commandsAchievementsItem;
 
@@ -46,13 +46,12 @@ public abstract class AbstractGUI implements Reloadable {
 	private String langListAchievementInCategorySingular;
 
 	AbstractGUI(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
-			CommentedYamlConfiguration guiConfig, Logger logger, DatabaseCacheManager databaseCacheManager,
-			ReloadCommand reloadCommand) {
+			CommentedYamlConfiguration guiConfig, Logger logger, CacheManager cacheManager, ReloadCommand reloadCommand) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
 		this.logger = logger;
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 		reloadCommand.addObserver(this);
 	}
 

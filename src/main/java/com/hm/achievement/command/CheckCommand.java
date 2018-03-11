@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -21,7 +21,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class CheckCommand extends AbstractParsableCommand {
 
-	private final DatabaseCacheManager databaseCacheManager;
+	private final CacheManager cacheManager;
 
 	private String langCheckAchievementTrue;
 	private String langCheckAchievementFalse;
@@ -29,9 +29,9 @@ public class CheckCommand extends AbstractParsableCommand {
 	@Inject
 	public CheckCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			DatabaseCacheManager databaseCacheManager) {
+			CacheManager cacheManager) {
 		super(mainConfig, langConfig, pluginHeader, reloadCommand);
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class CheckCommand extends AbstractParsableCommand {
 		String achievementName = parseAchievementName(args);
 
 		// Check if achievement exists in database and display message accordingly.
-		if (databaseCacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
+		if (cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementTrue, new String[] { "PLAYER", "ACH" },
 					new String[] { args[args.length - 1], achievementName }));
 		} else {

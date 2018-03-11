@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 
 import codecrafter47.bungeetablistplus.api.bukkit.Variable;
 
@@ -18,16 +18,16 @@ import codecrafter47.bungeetablistplus.api.bukkit.Variable;
 @Singleton
 public class AchievementCountBungeeTabListPlusVariable extends Variable {
 
-	private final DatabaseCacheManager databaseCacheManager;
+	private final CacheManager cacheManager;
 
 	@Inject
-	public AchievementCountBungeeTabListPlusVariable(DatabaseCacheManager databaseCacheManager) {
+	public AchievementCountBungeeTabListPlusVariable(CacheManager cacheManager) {
 		super("achievement_count");
-		this.databaseCacheManager = databaseCacheManager;
+		this.cacheManager = cacheManager;
 	}
 
 	@Override
 	public String getReplacement(Player player) {
-		return Integer.toString(databaseCacheManager.getPlayerTotalAchievements(player.getUniqueId()));
+		return Integer.toString(cacheManager.getPlayerTotalAchievements(player.getUniqueId()));
 	}
 }

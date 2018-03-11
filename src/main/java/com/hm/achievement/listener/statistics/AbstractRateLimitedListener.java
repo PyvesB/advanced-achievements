@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
-import com.hm.achievement.db.DatabaseCacheManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.ListenerLang;
 import com.hm.achievement.lifecycle.Cleanable;
@@ -40,9 +40,9 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	private String langStatisticCooldown;
 
 	AbstractRateLimitedListener(CommentedYamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, DatabaseCacheManager databaseCacheManager, RewardParser rewardParser,
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
 			ReloadCommand reloadCommand, CommentedYamlConfiguration langConfig, Logger logger, QuitListener quitListener) {
-		super(mainConfig, serverVersion, sortedThresholds, databaseCacheManager, rewardParser, reloadCommand);
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
 		this.langConfig = langConfig;
 		this.logger = logger;
 		quitListener.addObserver(this);
@@ -103,7 +103,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	boolean isInCooldownPeriod(Player player, String prefixInMap, boolean delay, NormalAchievements category) {
 		List<Long> categoryThresholds = sortedThresholds.get(category.toString());
 		long hardestAchievementThreshold = categoryThresholds.get(categoryThresholds.size() - 1);
-		long currentPlayerStatistic = databaseCacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
+		long currentPlayerStatistic = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
 		// Ignore cooldown if player has received all achievements in the category.
 		if (currentPlayerStatistic >= hardestAchievementThreshold) {
 			return false;

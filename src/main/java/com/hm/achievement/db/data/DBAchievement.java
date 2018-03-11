@@ -63,9 +63,8 @@ public class DBAchievement {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		DBAchievement that = (DBAchievement) o;
-		return Objects.equals(name, that.name) &&
-				Objects.equals(message, that.message) &&
-				Objects.equals(category, that.category);
+		return Objects.equals(name, that.name) && Objects.equals(message, that.message)
+				&& Objects.equals(category, that.category);
 	}
 
 	@Override
