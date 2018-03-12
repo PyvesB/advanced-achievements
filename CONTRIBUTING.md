@@ -15,6 +15,6 @@ Want to make Advanced Achievements better, faster, stronger? Contributions are m
 1. Feel free to open an [issue](https://github.com/PyvesB/AdvancedAchievements/issues) to get advice or discuss your change beforehand!
 2. Go through the [Developers](https://github.com/PyvesB/AdvancedAchievements/wiki/Developers) guide to get the project up and running and learn how to interact with the plugin.
 3. We use [Dagger](https://github.com/google/dagger), a popular dependency injection tool which will hopefully make your life easier. Have a browse through the code or take a look at the [docs](https://google.github.io/dagger/users-guide), you should quickly get a hang of how it works!
-3. If you are unsure about how to do something, simply ask by tagging @PyvesB!
-4. Historically the plugin has had poor test coverage, so don't worry too much if you can't add any tests with your pull request. Nevertheless if you want improve maintainability and practice your unit testing skills, please do!
-5. Run `mvn formatter:format` to make sure that your code style is consistent with the rest of the project. Your pull request should be ready for submission! :+1:
+4. If you are unsure about how to do something, simply ask by tagging @PyvesB!
+5. Historically the plugin has had poor test coverage, so don't worry too much if you can't add any tests with your pull request. Nevertheless if you want improve maintainability and practice your unit testing skills, please do!
+6. Run `mvn formatter:format` to make sure that your code style is consistent with the rest of the project. Your pull request should be ready for submission! :+1:
