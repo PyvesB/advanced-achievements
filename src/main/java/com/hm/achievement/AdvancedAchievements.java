@@ -21,20 +21,10 @@ import dagger.BindsInstance;
 import dagger.Component;
 
 /**
- * Advanced Achievements enables unique and challenging achievements on your server. Try to collect as many as you can,
- * earn rewards, climb the rankings and receive RP books!
+ * Bukkit instantiates an instance of this class and calls the onEnable and onDisable methods when relevant. This class
+ * is the root of the dependency graph constructed with Dagger and is used to bind the instance created by Bukkit with
+ * the rest of the plugin modules. It delegates the actual enabling and disabling operations to the PluginLoader class.
  * 
- * AdvancedAchievements is under GNU General Public License version 3. Please visit the plugin's GitHub for more
- * information : https://github.com/PyvesB/AdvancedAchievements
- * 
- * Official plugin's server: hellominecraft.fr
- * 
- * Bukkit project page: dev.bukkit.org/bukkit-plugins/advanced-achievements
- * 
- * Spigot project page: spigotmc.org/resources/advanced-achievements.6239
- * 
- * @since April 2015
- * @version 5.6.5
  * @author Pyves
  */
 public class AdvancedAchievements extends JavaPlugin {
