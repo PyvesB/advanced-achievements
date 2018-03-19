@@ -26,10 +26,10 @@ public class DatabaseModule {
 	AbstractDatabaseManager provideSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater, ReloadCommand reloadCommand,
 			AdvancedAchievements advancedAchievements) {
-		String dataHandler = mainConfig.getString("DatabaseType", "sqlite");
-		if ("mysql".equalsIgnoreCase(dataHandler)) {
+		String databaseType = advancedAchievements.getConfig().getString("DatabaseType", "sqlite");
+		if ("mysql".equalsIgnoreCase(databaseType)) {
 			return new MySQLDatabaseManager(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater, reloadCommand);
-		} else if ("postgresql".equalsIgnoreCase(dataHandler)) {
+		} else if ("postgresql".equalsIgnoreCase(databaseType)) {
 			return new PostgreSQLDatabaseManager(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater,
 					reloadCommand);
 		} else {
