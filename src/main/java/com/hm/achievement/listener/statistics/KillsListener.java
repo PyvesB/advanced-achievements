@@ -2,11 +2,13 @@ package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.collect.Sets;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -67,19 +69,19 @@ public class KillsListener extends AbstractListener {
 
 		MultipleAchievements category = MultipleAchievements.KILLS;
 
-		if (mainConfig.isConfigurationSection(category + "." + mobName)
-				&& player.hasPermission(category.toPermName() + '.' + mobName)) {
-			updateStatisticAndAwardAchievementsIfAvailable(player, category, mobName, 1);
+		Set<String> foundAchievements = Sets.newHashSet();
+
+		if (player.hasPermission(category.toPermName() + '.' + mobName)) {
+			foundAchievements.addAll(findAdvancementsByCategoryAndName(category, mobName));
 		}
 
 		if (entity instanceof Player) {
-			String specificPlayer = "specificplayer-" + ((Player) entity).getUniqueId().toString().toLowerCase();
-			if (!mainConfig.isConfigurationSection(category + "." + specificPlayer)
-					|| !player.hasPermission(category.toPermName() + '.' + specificPlayer)) {
-				return;
+			String specificPlayer = "specificplayer-" + entity.getUniqueId().toString().toLowerCase();
+			if (player.hasPermission(category.toPermName() + '.' + specificPlayer)) {
+				foundAchievements.addAll(findAdvancementsByCategoryAndName(category, specificPlayer));
 			}
-
-			updateStatisticAndAwardAchievementsIfAvailable(player, category, specificPlayer, 1);
 		}
+
+		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category, achievement, 1));
 	}
 }

@@ -2,6 +2,7 @@ package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -50,13 +51,10 @@ public class PlacesListener extends AbstractListener {
 		if (!player.hasPermission(category.toPermName() + '.' + blockName)) {
 			return;
 		}
-		if (mainConfig.isConfigurationSection(
-				category + "." + blockName + ':' + block.getState().getData().toItemStack(0).getDurability())) {
-			blockName += ":" + block.getState().getData().toItemStack(0).getDurability();
-		} else if (!mainConfig.isConfigurationSection(category + "." + blockName)) {
-			return;
-		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, blockName, 1);
+		Set<String> foundAchievements = findAdvancementsByCategoryAndName(
+				category, blockName + ':' + block.getState().getData().toItemStack(0).getDurability());
+		foundAchievements.addAll(findAdvancementsByCategoryAndName(category, blockName));
+		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category, achievement, 1));
 	}
 }
