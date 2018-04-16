@@ -284,6 +284,11 @@ Breaks:
       Message: "&cYou have collected 10 red sand blocks!"
       Name: break_10_sand1
       DisplayName: Red Sand Fan
+  "[sand|sand:1]":
+    32:
+      Message: "&cYou have collected half a stack of any sand! Woo!"
+      Name: break_32_sand_any
+      DisplayName: "Sand Dude"
   stone:
     1:
       Message: "&1The first time you went mining!"

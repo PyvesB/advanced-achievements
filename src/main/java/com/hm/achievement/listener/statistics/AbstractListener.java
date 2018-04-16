@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Sets;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -108,11 +109,16 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 		return availableSpace;
 	}
 
-	Set<String> findAdvancementsByCategoryAndName(MultipleAchievements category, String identifierStr) {
-		Pattern identifier = Pattern.compile(String.format("%s.%s", category, identifierStr));
-		return mainConfig.getKeys(false).stream()
-				.filter(key -> identifier.matcher(key).find())
-				.map(string -> string.replaceFirst(String.format("%s.", category), ""))
+	Set<String> findAdvancementsByCategoryAndName(MultipleAchievements category, String identifier) {
+		if (!mainConfig.isConfigurationSection(category.toString())) return Sets.newHashSet();
+
+		return mainConfig.getConfigurationSection(category.toString()).getKeys(false).stream()
+				.filter(key -> {
+					Pattern pattern = Pattern.compile(key, Pattern.CASE_INSENSITIVE);
+					//System.out.println("id: \"" + identifier + "\"; key: " + key + "; pattern: "
+					//		+ pattern.toString() +  "; matcher status: " + pattern.matcher(identifier).find());
+					return pattern.matcher(identifier).find();
+				})
 				.collect(Collectors.toSet());
 	}
 
