@@ -2,6 +2,7 @@ package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,7 +52,7 @@ public class BreedingListener extends AbstractListener {
 
 		Entity entity = event.getMother();
 
-		if (!(entity instanceof LivingEntity)) {
+		if (entity == null) {
 			return;
 		}
 
@@ -59,9 +60,11 @@ public class BreedingListener extends AbstractListener {
 
 		MultipleAchievements category = MultipleAchievements.BREEDING;
 
-		if (mainConfig.isConfigurationSection(category + "." + mobName)
-				&& player.hasPermission(category.toPermName() + '.' + mobName)) {
-			updateStatisticAndAwardAchievementsIfAvailable(player, category, mobName, 1);
+		if (!player.hasPermission(category.toPermName() + '.' + mobName)) {
+			return;
 		}
+
+		Set<String> foundAchievements = findAdvancementsByCategoryAndName(category, mobName);
+		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category, achievement, 1));
 	}
 }

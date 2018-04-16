@@ -3,7 +3,11 @@ package com.hm.achievement.listener.statistics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -103,4 +107,13 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 
 		return availableSpace;
 	}
+
+	Set<String> findAdvancementsByCategoryAndName(MultipleAchievements category, String identifierStr) {
+		Pattern identifier = Pattern.compile(String.format("%s.%s", category, identifierStr));
+		return mainConfig.getKeys(false).stream()
+				.filter(key -> identifier.matcher(key).find())
+				.map(string -> string.replaceFirst(String.format("%s.", category), ""))
+				.collect(Collectors.toSet());
+	}
+
 }
