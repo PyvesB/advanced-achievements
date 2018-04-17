@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -113,12 +115,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 		if (!mainConfig.isConfigurationSection(category.toString())) return Sets.newHashSet();
 
 		return mainConfig.getConfigurationSection(category.toString()).getKeys(false).stream()
-				.filter(key -> {
-					Pattern pattern = Pattern.compile(key, Pattern.CASE_INSENSITIVE);
-					//System.out.println("id: \"" + identifier + "\"; key: " + key + "; pattern: "
-					//		+ pattern.toString() +  "; matcher status: " + pattern.matcher(identifier).find());
-					return pattern.matcher(identifier).find();
-				})
+				.filter(keys -> ArrayUtils.contains(StringUtils.split(keys, '|'), identifier))
 				.collect(Collectors.toSet());
 	}
 
