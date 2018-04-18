@@ -83,9 +83,10 @@ public class BreaksListener extends AbstractListener {
 			return;
 		}
 
-		Set<String> foundAchievements = findAdvancementsByCategoryAndName(
+		Set<String> foundAchievements = findAchievementsByCategoryAndName(
 				category, blockName + ':' + block.getState().getData().toItemStack().getDurability());
-		foundAchievements.addAll(findAdvancementsByCategoryAndName(category, blockName));
-		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category, achievement, 1));
+		foundAchievements.addAll(findAchievementsByCategoryAndName(category, blockName));
+		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
+				achievement, 1));
 	}
 }

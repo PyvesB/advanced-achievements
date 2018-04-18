@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -48,7 +49,9 @@ public class PlayerCommandsListener extends AbstractListener {
 			for (String equivalentCommand : equivalentCommands) {
 				if (equivalentCommand.startsWith(prefix)) {
 					if (player.hasPermission(category.toPermName() + '.' + StringUtils.deleteWhitespace(prefix))) {
-						updateStatisticAndAwardAchievementsIfAvailable(player, category, prefix, 1);
+						Set<String> foundAchievements = findAchievementsByCategoryAndName(category, prefix);
+						foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player,
+								category, prefix, 1));
 					}
 					return;
 				}
