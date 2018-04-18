@@ -67,6 +67,9 @@ public class FileUpdater {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			addNewCategory(config, category.toString(), category.toConfigComment());
 		}
+		addNewCategory(config, "Commands",
+				"A player with achievement.give (or the console) can use /aach give yourAch1 PLAYER to give",
+				"yourAch1 achievement to PLAYER. The /aach give command does NOT work with other achievements.");
 
 		// Added in version 3.0:
 		updateSetting(config, "TablePrefix", "",
@@ -300,12 +303,12 @@ public class FileUpdater {
 	 *
 	 * @param config
 	 * @param categoryName
-	 * @param categoryComment
+	 * @param categoryComments
 	 */
-	private void addNewCategory(CommentedYamlConfiguration config, String categoryName, String categoryComment) {
+	private void addNewCategory(CommentedYamlConfiguration config, String categoryName, String... categoryComments) {
 		if (!config.getKeys(false).contains(categoryName)) {
 			Map<Object, Object> emptyMap = new HashMap<>();
-			config.set(categoryName, emptyMap, categoryComment);
+			config.set(categoryName, emptyMap, categoryComments);
 			// As no achievements are set, we initially disable this new category.
 			List<String> disabledCategories = config.getList("DisabledCategories");
 			disabledCategories.add(categoryName);
