@@ -1,25 +1,21 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityBreedEvent;
-
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityBreedEvent;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Listener class to deal with Breeding achievements.
@@ -50,13 +46,7 @@ public class BreedingListener extends AbstractListener {
 			return;
 		}
 
-		Entity entity = event.getMother();
-
-		if (entity == null) {
-			return;
-		}
-
-		String mobName = entity.getType().name().toLowerCase();
+		String mobName = event.getMother().getType().name().toLowerCase();
 
 		MultipleAchievements category = MultipleAchievements.BREEDING;
 

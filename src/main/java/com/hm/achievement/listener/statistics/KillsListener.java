@@ -1,27 +1,24 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import com.google.common.collect.Sets;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDeathEvent;
-
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityDeathEvent;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Listener class to deal with Kills achievements.
@@ -53,10 +50,6 @@ public class KillsListener extends AbstractListener {
 
 		Entity entity = event.getEntity();
 
-		if (!(entity instanceof LivingEntity)) {
-			return;
-		}
-
 		String mobName;
 		if (entity instanceof Player) {
 			mobName = "player";
@@ -69,7 +62,7 @@ public class KillsListener extends AbstractListener {
 
 		MultipleAchievements category = MultipleAchievements.KILLS;
 
-		Set<String> foundAchievements = Sets.newHashSet();
+		Set<String> foundAchievements = new HashSet<>();
 
 		if (player.hasPermission(category.toPermName() + '.' + mobName)) {
 			foundAchievements.addAll(findAdvancementsByCategoryAndName(category, mobName));
