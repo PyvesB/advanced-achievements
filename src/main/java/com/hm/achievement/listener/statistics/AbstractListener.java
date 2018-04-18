@@ -1,15 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionType;
-
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.ReloadCommand;
@@ -17,6 +7,19 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionType;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Abstract class in charge of factoring out common functionality for the listener classes.
@@ -103,4 +106,18 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 
 		return availableSpace;
 	}
+
+	/**
+	 * Returns all achievements that match the provided identifier.
+	 * @param category the category to search from
+	 * @param identifier the identifier to match
+	 * @return all matched achievements
+	 * @author tassu
+	 */
+	Set<String> findAdvancementsByCategoryAndName(MultipleAchievements category, String identifier) {
+		return mainConfig.getShallowKeys(category.toString()).stream()
+				.filter(keys -> ArrayUtils.contains(StringUtils.split(keys, '|'), identifier))
+				.collect(Collectors.toSet());
+	}
+
 }

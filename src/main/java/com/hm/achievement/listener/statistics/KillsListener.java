@@ -1,25 +1,24 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDeathEvent;
-
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.command.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityDeathEvent;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Listener class to deal with Kills achievements.
@@ -51,10 +50,6 @@ public class KillsListener extends AbstractListener {
 
 		Entity entity = event.getEntity();
 
-		if (!(entity instanceof LivingEntity)) {
-			return;
-		}
-
 		String mobName;
 		if (entity instanceof Player) {
 			mobName = "player";
@@ -67,19 +62,19 @@ public class KillsListener extends AbstractListener {
 
 		MultipleAchievements category = MultipleAchievements.KILLS;
 
-		if (mainConfig.isConfigurationSection(category + "." + mobName)
-				&& player.hasPermission(category.toPermName() + '.' + mobName)) {
-			updateStatisticAndAwardAchievementsIfAvailable(player, category, mobName, 1);
+		Set<String> foundAchievements = new HashSet<>();
+
+		if (player.hasPermission(category.toPermName() + '.' + mobName)) {
+			foundAchievements.addAll(findAdvancementsByCategoryAndName(category, mobName));
 		}
 
 		if (entity instanceof Player) {
-			String specificPlayer = "specificplayer-" + ((Player) entity).getUniqueId().toString().toLowerCase();
-			if (!mainConfig.isConfigurationSection(category + "." + specificPlayer)
-					|| !player.hasPermission(category.toPermName() + '.' + specificPlayer)) {
-				return;
+			String specificPlayer = "specificplayer-" + entity.getUniqueId().toString().toLowerCase();
+			if (player.hasPermission(category.toPermName() + '.' + specificPlayer)) {
+				foundAchievements.addAll(findAdvancementsByCategoryAndName(category, specificPlayer));
 			}
-
-			updateStatisticAndAwardAchievementsIfAvailable(player, category, specificPlayer, 1);
 		}
+
+		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category, achievement, 1));
 	}
 }
