@@ -109,12 +109,13 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 
 	/**
 	 * Returns all achievements that match the provided identifier.
+	 * 
 	 * @param category the category to search from
 	 * @param identifier the identifier to match
 	 * @return all matched achievements
 	 * @author tassu
 	 */
-	Set<String> findAdvancementsByCategoryAndName(MultipleAchievements category, String identifier) {
+	Set<String> findAchievementsByCategoryAndName(MultipleAchievements category, String identifier) {
 		return mainConfig.getShallowKeys(category.toString()).stream()
 				.filter(keys -> ArrayUtils.contains(StringUtils.split(keys, '|'), identifier))
 				.collect(Collectors.toSet());

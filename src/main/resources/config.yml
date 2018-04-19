@@ -284,6 +284,8 @@ Breaks:
       Message: "&cYou have collected 10 red sand blocks!"
       Name: break_10_sand1
       DisplayName: Red Sand Fan
+  # Use the following construct to track multiple types. Note that if ever you add/remove a type grouped to others with |,
+  # progress for this sub-category group will start back at 0.
   sand|sand:1:
     32:
       Message: "&cYou have collected half a stack of any sand! Woo!"

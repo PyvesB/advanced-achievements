@@ -2,6 +2,7 @@ package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -57,11 +58,9 @@ public class CraftsListener extends AbstractListener {
 		if (!player.hasPermission(category.toPermName() + '.' + craftName)) {
 			return;
 		}
-		if (mainConfig.isConfigurationSection(category + "." + craftName + ':' + item.getDurability())) {
-			craftName += ":" + item.getDurability();
-		} else if (!mainConfig.isConfigurationSection(category + "." + craftName)) {
-			return;
-		}
+
+		Set<String> foundAchievements = findAchievementsByCategoryAndName(category, craftName + ":" + item.getDurability());
+		foundAchievements.addAll(findAchievementsByCategoryAndName(category, craftName));
 
 		int eventAmount = event.getCurrentItem().getAmount();
 		if (event.isShiftClick()) {
@@ -82,6 +81,8 @@ public class CraftsListener extends AbstractListener {
 			}
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, craftName, eventAmount);
+		int incrementValue = eventAmount; // Effectively final variable needed.
+		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
+				craftName, incrementValue));
 	}
 }
