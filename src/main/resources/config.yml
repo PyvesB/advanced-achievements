@@ -290,7 +290,7 @@ Breaks:
     32:
       Message: "&cYou have collected half a stack of any sand! Woo!"
       Name: break_32_sand_any
-      DisplayName: "Sand Dude"
+      DisplayName: Sand Dude
   stone:
     1:
       Message: "&1The first time you went mining!"
