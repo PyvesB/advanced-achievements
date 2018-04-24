@@ -11,17 +11,17 @@ import static org.junit.Assert.assertEquals;
 
 public class CommandPaginationTest {
 
+	private final List<String> toPaginate = Arrays.asList(
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+	);
+
 	@Test
 	public void testPagination() {
-		List<String> toPaginate = Arrays.asList(
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
-		);
-
 		CommandPagination pagination = new CommandPagination(toPaginate);
 
 		List<String> expected = Arrays.asList(
@@ -39,15 +39,6 @@ public class CommandPaginationTest {
 
 	@Test
 	public void testPaginationPage2() {
-		List<String> toPaginate = Arrays.asList(
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
-		);
-
 		CommandPagination pagination = new CommandPagination(toPaginate);
 
 		List<String> expected = Arrays.asList(
@@ -65,15 +56,6 @@ public class CommandPaginationTest {
 
 	@Test
 	public void testPaginationPage3() {
-		List<String> toPaginate = Arrays.asList(
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
-		);
-
 		CommandPagination pagination = new CommandPagination(toPaginate);
 
 		List<String> expected = Arrays.asList(
@@ -91,15 +73,6 @@ public class CommandPaginationTest {
 
 	@Test
 	public void testPaginationPage4() {
-		List<String> toPaginate = Arrays.asList(
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
-		);
-
 		CommandPagination pagination = new CommandPagination(toPaginate);
 
 		List<String> expected = Arrays.asList(
@@ -116,15 +89,6 @@ public class CommandPaginationTest {
 
 	@Test
 	public void testPaginationPage5WhenOnly4Pages() {
-		List<String> toPaginate = Arrays.asList(
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
-		);
-
 		CommandPagination pagination = new CommandPagination(toPaginate);
 
 		List<String> expected = Arrays.asList(
@@ -141,9 +105,7 @@ public class CommandPaginationTest {
 
 	@Test
 	public void testEmptyPagination() {
-		List<String> toPaginate = Collections.emptyList();
-
-		CommandPagination pagination = new CommandPagination(toPaginate);
+		CommandPagination pagination = new CommandPagination(Collections.emptyList());
 
 		List<String> expected = Arrays.asList(
 				"§7> §5Page 0/0",
