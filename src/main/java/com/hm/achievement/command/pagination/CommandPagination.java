@@ -48,7 +48,8 @@ public class CommandPagination {
 				Lang.getEachReplaced(CmdLang.PAGINATION_HEADER, langConfig,
 						new String[] { "PAGE", "MAX" },
 						new String[] { Integer.toString(pageToSend), Integer.toString(maxPage) }));
-		String footer = Lang.get(CmdLang.PAGINATION_FOOTER, langConfig);
+		String footer = ChatColor.translateAlternateColorCodes('&',
+				Lang.get(CmdLang.PAGINATION_FOOTER, langConfig));
 
 		to.call(header);
 

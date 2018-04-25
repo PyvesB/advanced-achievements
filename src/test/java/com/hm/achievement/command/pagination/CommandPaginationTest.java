@@ -138,12 +138,12 @@ public class CommandPaginationTest {
 		return ChatColor.translateAlternateColorCodes('&',
 				Lang.getEachReplaced(CmdLang.PAGINATION_HEADER, langConfig,
 						new String[] { "PAGE", "MAX" },
-						new String[] { Integer.toString(page), Integer.toString(max) })
-		);
+						new String[] { Integer.toString(page), Integer.toString(max) }));
 	}
 
 	private String getPaginationFooter() {
-		return Lang.get(CmdLang.PAGINATION_FOOTER, langConfig);
+		return ChatColor.translateAlternateColorCodes('&',
+				Lang.get(CmdLang.PAGINATION_FOOTER, langConfig));
 	}
 
 }

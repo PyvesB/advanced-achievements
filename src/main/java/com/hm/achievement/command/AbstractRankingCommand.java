@@ -7,6 +7,7 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ParticleEffect;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -87,13 +88,14 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 		List<String> rankingMessages = getRankingMessages(sender);
 
-		// If config has top set at less than one page, don't use pagination.
 		// 16 per page since two other messages are sent.
-		if (configTopList < 16) {
+		int perPage = 16;
+		// If config has top set at less than one page, don't use pagination.
+		if (configTopList < perPage) {
 			rankingMessages.forEach(sender::sendMessage);
 		} else {
 			int page = getPage(args);
-			CommandPagination pagination = new CommandPagination(rankingMessages, 16, langConfig);
+			CommandPagination pagination = new CommandPagination(rankingMessages, perPage, langConfig);
 			pagination.sendPage(page, sender);
 		}
 
@@ -116,15 +118,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	}
 
 	private int getPage(String[] args) {
-		int page = 1;
-		if (args.length > 0) {
-			try {
-				page = Integer.parseInt(args[0]);
-			} catch (NumberFormatException ignored) {
-				/* Ignore, use 1 instead. */
-			}
-		}
-		return page;
+		return args.length > 1 && NumberUtils.isDigits(args[1]) ? Integer.parseInt(args[1]) : 1;
 	}
 
 	private List<String> getRankingMessages(CommandSender sender) {
