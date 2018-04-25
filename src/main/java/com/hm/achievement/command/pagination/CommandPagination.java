@@ -3,6 +3,7 @@ package com.hm.achievement.command.pagination;
 import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -43,9 +44,10 @@ public class CommandPagination {
 	public void sendPage(int page, MethodRef<String> to) {
 		int pageToSend = page > maxPage ? maxPage : page;
 
-		String header = Lang.getEachReplaced(CmdLang.PAGINATION_HEADER, langConfig,
-				new String[] { "PAGE", "MAX" },
-				new String[] { Integer.toString(pageToSend), Integer.toString(maxPage) });
+		String header = ChatColor.translateAlternateColorCodes('&',
+				Lang.getEachReplaced(CmdLang.PAGINATION_HEADER, langConfig,
+						new String[] { "PAGE", "MAX" },
+						new String[] { Integer.toString(pageToSend), Integer.toString(maxPage) }));
 		String footer = Lang.get(CmdLang.PAGINATION_FOOTER, langConfig);
 
 		to.call(header);

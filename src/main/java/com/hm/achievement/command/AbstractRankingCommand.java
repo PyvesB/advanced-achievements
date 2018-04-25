@@ -142,6 +142,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 			} else {
 				logger.warning("Ranking command: could not find player's name using a database UUID.");
 			}
+
 			++currentRank;
 			if (currentRank > configTopList) {
 				break;
