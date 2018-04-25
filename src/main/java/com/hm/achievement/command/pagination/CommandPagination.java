@@ -10,11 +10,11 @@ import java.util.List;
 /**
  * Utility for paginating command messages.
  * <p>
- * Ignores length of given items,
- * user of this utility needs to make sure the items are not too long to wrap in the chat box.
+ * Ignores length of given items, user of this utility needs to make sure the items are not too long to wrap in the chat
+ * box.
  * <p>
- * Wrapping in the chat box is difficult to calculate since the Minecraft font is not monospaced
- * so 'w' and 'i' are different width, as well as unicode characters which are their own special category.
+ * Wrapping in the chat box is difficult to calculate since the Minecraft font is not monospaced so 'w' and 'i' are
+ * different width, as well as unicode characters which are their own special category.
  *
  * @author Rsl1122
  */
@@ -44,7 +44,8 @@ public class CommandPagination {
 		int pageToSend = page > maxPage ? maxPage : page;
 
 		String header = Lang.getEachReplaced(CmdLang.PAGINATION_HEADER, langConfig,
-				new String[]{"PAGE", "MAX"}, new String[]{Integer.toString(pageToSend), Integer.toString(maxPage)});
+				new String[] { "PAGE", "MAX" },
+				new String[] { Integer.toString(pageToSend), Integer.toString(maxPage) });
 		String footer = header.substring(0, header.lastIndexOf("§5"));
 
 		to.call(header);
@@ -62,6 +63,7 @@ public class CommandPagination {
 	}
 
 	interface MethodRef<T> {
+
 		void call(T value);
 	}
 }

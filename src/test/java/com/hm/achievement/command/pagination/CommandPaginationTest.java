@@ -22,8 +22,7 @@ public class CommandPaginationTest {
 			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
-	);
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
 
 	@ClassRule
 	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -48,8 +47,7 @@ public class CommandPaginationTest {
 				"§7> §5Page 1/4",
 				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 				"1", "2", "3", "4", "5", "6", "7", "8",
-				"§7> "
-		);
+				"§7> ");
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(1, result::add);
@@ -65,8 +63,7 @@ public class CommandPaginationTest {
 				"§7> §5Page 2/4",
 				"9", "10", "1", "2", "3", "4", "5", "6", "7", "8",
 				"9", "10", "1", "2", "3", "4", "5", "6",
-				"§7> "
-		);
+				"§7> ");
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(2, result::add);
@@ -82,8 +79,7 @@ public class CommandPaginationTest {
 				"§7> §5Page 3/4",
 				"7", "8", "9", "10", "1", "2", "3", "4", "5", "6",
 				"7", "8", "9", "10", "1", "2", "3", "4",
-				"§7> "
-		);
+				"§7> ");
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(3, result::add);
@@ -98,8 +94,7 @@ public class CommandPaginationTest {
 		List<String> expected = Arrays.asList(
 				"§7> §5Page 4/4",
 				"5", "6", "7", "8", "9", "10",
-				"§7> "
-		);
+				"§7> ");
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(4, result::add);
@@ -114,8 +109,7 @@ public class CommandPaginationTest {
 		List<String> expected = Arrays.asList(
 				"§7> §5Page 4/4",
 				"5", "6", "7", "8", "9", "10",
-				"§7> "
-		);
+				"§7> ");
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(5, result::add);
@@ -129,14 +123,12 @@ public class CommandPaginationTest {
 
 		List<String> expected = Arrays.asList(
 				"§7> §5Page 0/0",
-				"§7> "
-		);
+				"§7> ");
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(1, result::add);
 
 		assertEquals(expected, result);
 	}
-
 
 }
