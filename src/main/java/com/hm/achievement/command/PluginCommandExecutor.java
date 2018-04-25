@@ -62,42 +62,41 @@ public class PluginCommandExecutor implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		// Map to an Advanced Achievements command.
-		String commandName = args[0];
-		if ((args.length == 1) && !"help".equalsIgnoreCase(commandName)) {
-			if ("book".equalsIgnoreCase(commandName)) {
+		if ((args.length == 1) && !"help".equalsIgnoreCase(args[0])) {
+			if ("book".equalsIgnoreCase(args[0])) {
 				bookCommand.executeCommand(sender, null, "book");
-			} else if ("hcaa".equalsIgnoreCase(commandName)) {
+			} else if ("hcaa".equalsIgnoreCase(args[0])) {
 				easterEggCommand.executeCommand(sender, null, "easteregg");
-			} else if ("reload".equalsIgnoreCase(commandName)) {
+			} else if ("reload".equalsIgnoreCase(args[0])) {
 				reloadCommand.executeCommand(sender, null, "reload");
-			} else if ("generate".equalsIgnoreCase(commandName)) {
+			} else if ("generate".equalsIgnoreCase(args[0])) {
 				generateCommand.executeCommand(sender, null, "generate");
-			} else if ("stats".equalsIgnoreCase(commandName)) {
+			} else if ("stats".equalsIgnoreCase(args[0])) {
 				statsCommand.executeCommand(sender, null, "stats");
-			} else if ("list".equalsIgnoreCase(commandName)) {
+			} else if ("list".equalsIgnoreCase(args[0])) {
 				listCommand.executeCommand(sender, null, "list");
-			} else if ("top".equalsIgnoreCase(commandName)) {
+			} else if ("top".equalsIgnoreCase(args[0])) {
 				topCommand.executeCommand(sender, args, "top");
-			} else if ("week".equalsIgnoreCase(commandName)) {
+			} else if ("week".equalsIgnoreCase(args[0])) {
 				weekCommand.executeCommand(sender, args, "week");
-			} else if ("month".equalsIgnoreCase(commandName)) {
+			} else if ("month".equalsIgnoreCase(args[0])) {
 				monthCommand.executeCommand(sender, args, "month");
-			} else if ("info".equalsIgnoreCase(commandName)) {
+			} else if ("info".equalsIgnoreCase(args[0])) {
 				infoCommand.executeCommand(sender, null, null);
-			} else if ("toggle".equalsIgnoreCase(commandName)) {
+			} else if ("toggle".equalsIgnoreCase(args[0])) {
 				toggleCommand.executeCommand(sender, null, "toggle");
 			} else {
 				helpCommand.executeCommand(sender, args, null);
 			}
-		} else if ((args.length == 3) && "reset".equalsIgnoreCase(commandName)) {
+		} else if ((args.length == 3) && "reset".equalsIgnoreCase(args[0])) {
 			resetCommand.executeCommand(sender, args, "reset");
-		} else if ((args.length == 3) && "give".equalsIgnoreCase(commandName)) {
+		} else if ((args.length == 3) && "give".equalsIgnoreCase(args[0])) {
 			giveCommand.executeCommand(sender, args, "give");
-		} else if ((args.length >= 3) && "check".equalsIgnoreCase(commandName)) {
+		} else if ((args.length >= 3) && "check".equalsIgnoreCase(args[0])) {
 			checkCommand.executeCommand(sender, args, "check");
-		} else if ((args.length >= 3) && "delete".equalsIgnoreCase(commandName)) {
+		} else if ((args.length >= 3) && "delete".equalsIgnoreCase(args[0])) {
 			deleteCommand.executeCommand(sender, args, "delete");
-		} else if ((args.length == 4) && "add".equalsIgnoreCase(commandName)) {
+		} else if ((args.length == 4) && "add".equalsIgnoreCase(args[0])) {
 			addCommand.executeCommand(sender, args, "add");
 		} else {
 			helpCommand.executeCommand(sender, args, null);
