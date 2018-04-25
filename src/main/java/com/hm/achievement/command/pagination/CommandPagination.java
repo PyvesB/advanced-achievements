@@ -46,7 +46,7 @@ public class CommandPagination {
 		String header = Lang.getEachReplaced(CmdLang.PAGINATION_HEADER, langConfig,
 				new String[] { "PAGE", "MAX" },
 				new String[] { Integer.toString(pageToSend), Integer.toString(maxPage) });
-		String footer = header.substring(0, header.lastIndexOf("§5"));
+		String footer = Lang.get(CmdLang.PAGINATION_FOOTER, langConfig);
 
 		to.call(header);
 

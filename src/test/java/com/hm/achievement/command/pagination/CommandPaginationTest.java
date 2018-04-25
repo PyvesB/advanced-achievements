@@ -1,5 +1,7 @@
 package com.hm.achievement.command.pagination;
 
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -44,10 +46,10 @@ public class CommandPaginationTest {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
 		List<String> expected = Arrays.asList(
-				"§7> §5Page 1/4",
+				getPaginationHeader(1, 4),
 				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 				"1", "2", "3", "4", "5", "6", "7", "8",
-				"§7> ");
+				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(1, result::add);
@@ -60,10 +62,10 @@ public class CommandPaginationTest {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
 		List<String> expected = Arrays.asList(
-				"§7> §5Page 2/4",
+				getPaginationHeader(2, 4),
 				"9", "10", "1", "2", "3", "4", "5", "6", "7", "8",
 				"9", "10", "1", "2", "3", "4", "5", "6",
-				"§7> ");
+				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(2, result::add);
@@ -76,10 +78,10 @@ public class CommandPaginationTest {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
 		List<String> expected = Arrays.asList(
-				"§7> §5Page 3/4",
+				getPaginationHeader(3, 4),
 				"7", "8", "9", "10", "1", "2", "3", "4", "5", "6",
 				"7", "8", "9", "10", "1", "2", "3", "4",
-				"§7> ");
+				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(3, result::add);
@@ -92,9 +94,9 @@ public class CommandPaginationTest {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
 		List<String> expected = Arrays.asList(
-				"§7> §5Page 4/4",
+				getPaginationHeader(4, 4),
 				"5", "6", "7", "8", "9", "10",
-				"§7> ");
+				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(4, result::add);
@@ -107,9 +109,9 @@ public class CommandPaginationTest {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
 		List<String> expected = Arrays.asList(
-				"§7> §5Page 4/4",
+				getPaginationHeader(4, 4),
 				"5", "6", "7", "8", "9", "10",
-				"§7> ");
+				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(5, result::add);
@@ -122,13 +124,23 @@ public class CommandPaginationTest {
 		CommandPagination pagination = new CommandPagination(Collections.emptyList(), 18, langConfig);
 
 		List<String> expected = Arrays.asList(
-				"§7> §5Page 0/0",
-				"§7> ");
+				getPaginationHeader(0, 0),
+				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(1, result::add);
 
 		assertEquals(expected, result);
+	}
+
+	private String getPaginationHeader(int page, int max) {
+		return Lang.getEachReplaced(CmdLang.PAGINATION_HEADER, langConfig,
+				new String[]{"PAGE", "MAX"},
+				new String[]{Integer.toString(page), Integer.toString(max)});
+	}
+
+	private String getPaginationFooter() {
+		return Lang.get(CmdLang.PAGINATION_FOOTER, langConfig);
 	}
 
 }

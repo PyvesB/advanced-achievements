@@ -120,7 +120,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		if (args.length > 0) {
 			try {
 				page = Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
+			} catch (NumberFormatException ignored) {
 				/* Ignore, use 1 instead. */
 			}
 		}
