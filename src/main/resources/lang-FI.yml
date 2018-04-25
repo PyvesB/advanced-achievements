@@ -21,6 +21,7 @@ player-rank: "Nykyinen luokitus:"
 week-achievement: "Viikon luokitukset:"
 month-achievement: "Kuukauden luokitukset:"
 not-ranked: "Et ole luokituslistalla tälle ajalle."
+pagination-header: "§7> §5Sivu PAGE/MAX"
 
 # Related to /aach stats.
 number-achievements: "Avattuja Saavutuksia:"

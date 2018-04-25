@@ -1,12 +1,11 @@
 package com.hm.achievement.command;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.logging.Logger;
-
+import com.hm.achievement.command.pagination.CommandPagination;
+import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.lang.Lang;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.mcshared.particle.ParticleEffect;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,11 +13,12 @@ import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.db.AbstractDatabaseManager;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.command.CmdLang;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
-import com.hm.mcshared.particle.ParticleEffect;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.logging.Logger;
 
 /**
  * Abstract class in charge of factoring out common functionality for /aach top, week and month commands.
@@ -84,23 +84,17 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		}
 
 		sender.sendMessage(langPeriodAchievement);
-		int currentRank = 1;
-		for (Entry<String, Integer> ranking : cachedSortedRankings.entrySet()) {
-			String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(ranking.getKey())).getName();
-			if (playerName != null) {
-				// Color the name of the player if he is in the top list.
-				String color = ChatColor.GRAY + " ";
-				if (sender instanceof Player && playerName.equals(((Player) sender).getName())) {
-					color += configColor.toString();
-				}
-				sender.sendMessage(color + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue());
-			} else {
-				logger.warning("Ranking command: could not find player's name using a database UUID.");
-			}
-			++currentRank;
-			if (currentRank > configTopList) {
-				break;
-			}
+
+		List<String> rankingMessages = getRankingMessages(sender);
+
+		// If config has top set at less than one page, don't use pagination.
+		// 16 per page since two other messages are sent.
+		if (configTopList < 16) {
+			rankingMessages.forEach(sender::sendMessage);
+		} else {
+			int page = getPage(args);
+			CommandPagination pagination = new CommandPagination(rankingMessages, 16, langConfig);
+			pagination.sendPage(page, sender);
 		}
 
 		if (sender instanceof Player) {
@@ -119,6 +113,41 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 						langPlayerRank + playerRank + ChatColor.GRAY + "/" + configColor + cachedSortedRankings.size());
 			}
 		}
+	}
+
+	private int getPage(String[] args) {
+		int page = 1;
+		if (args.length > 0) {
+			try {
+				page = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				/* Ignore, use 1 instead. */
+			}
+		}
+		return page;
+	}
+
+	private List<String> getRankingMessages(CommandSender sender) {
+		List<String> rankingMessages = new ArrayList<>();
+		int currentRank = 1;
+		for (Entry<String, Integer> ranking : cachedSortedRankings.entrySet()) {
+			String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(ranking.getKey())).getName();
+			if (playerName != null) {
+				// Color the name of the player if he is in the top list.
+				String color = ChatColor.GRAY + " ";
+				if (sender instanceof Player && playerName.equals(sender.getName())) {
+					color += configColor.toString();
+				}
+				rankingMessages.add(color + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue());
+			} else {
+				logger.warning("Ranking command: could not find player's name using a database UUID.");
+			}
+			++currentRank;
+			if (currentRank > configTopList) {
+				break;
+			}
+		}
+		return rankingMessages;
 	}
 
 	/**
