@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;

@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import com.hm.achievement.command.pagination.CommandPagination;
 import com.hm.achievement.db.AbstractDatabaseManager;
@@ -52,9 +52,9 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private long lastCacheUpdate = 0L;
 
 	AbstractRankingCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
-			StringBuilder pluginHeader, ReloadCommand reloadCommand, Logger logger, int serverVersion, Lang languageHeader,
-			AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			StringBuilder pluginHeader, ReloadCommand reloadCommand, String permission, Logger logger, int serverVersion,
+			Lang languageHeader, AbstractDatabaseManager sqlDatabaseManager) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, permission);
 		this.logger = logger;
 		this.serverVersion = serverVersion;
 		this.languageHeader = languageHeader;
@@ -76,7 +76,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	}
 
 	@Override
-	public void executeCommand(CommandSender sender, String[] args) {
+	public void onExecute(CommandSender sender, String[] args) {
 		if (System.currentTimeMillis() - lastCacheUpdate >= CACHE_EXPIRATION_DELAY) {
 			// Update cached data structures.
 			cachedSortedRankings = sqlDatabaseManager.getTopList(getRankingStartTime());

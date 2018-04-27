@@ -17,6 +17,11 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Class for testing the command pagination utility.
+ * 
+ * @author Rsl1122
+ */
 public class CommandPaginationTest {
 
 	private final List<String> toPaginate = Arrays.asList(

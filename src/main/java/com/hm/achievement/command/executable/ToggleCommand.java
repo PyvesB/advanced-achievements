@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +33,7 @@ public class ToggleCommand extends AbstractCommand {
 	@Inject
 	public ToggleCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, "toggle");
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class ToggleCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player)) {
 			return;
 		}

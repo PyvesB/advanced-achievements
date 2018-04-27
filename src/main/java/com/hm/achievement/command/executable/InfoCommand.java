@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,7 +46,7 @@ public class InfoCommand extends AbstractCommand {
 	public InfoCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			AdvancedAchievements advancedAchievements, RewardParser rewardParser) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, null);
 		this.advancedAchievements = advancedAchievements;
 		this.rewardParser = rewardParser;
 	}
@@ -119,7 +119,7 @@ public class InfoCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		sender.sendMessage(header);
 		sender.sendMessage(langVersionCommandDescription);
 		sender.sendMessage(langVersionCommandVersion);

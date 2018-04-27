@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import java.util.Calendar;
 import java.util.logging.Logger;
@@ -23,7 +23,7 @@ public class MonthCommand extends AbstractRankingCommand {
 	public MonthCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			Logger logger, int serverVersion, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, logger, serverVersion, CmdLang.MONTH_ACHIEVEMENT,
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, "month", logger, serverVersion, CmdLang.MONTH_ACHIEVEMENT,
 				sqlDatabaseManager);
 	}
 

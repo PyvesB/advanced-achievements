@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,7 +30,7 @@ public class CheckCommand extends AbstractParsableCommand {
 	public CheckCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			CacheManager cacheManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, "check");
 		this.cacheManager = cacheManager;
 	}
 
@@ -43,7 +43,7 @@ public class CheckCommand extends AbstractParsableCommand {
 	}
 
 	@Override
-	void executeSpecificActions(CommandSender sender, String[] args, Player player) {
+	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		String achievementName = parseAchievementName(args);
 
 		// Check if achievement exists in database and display message accordingly.

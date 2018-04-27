@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,7 +30,7 @@ public class GenerateCommand extends AbstractCommand {
 	public GenerateCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, int serverVersion,
 			ReloadCommand reloadCommand, AdvancementManager advancementManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, "generate");
 		this.serverVersion = serverVersion;
 		this.advancementManager = advancementManager;
 	}
@@ -44,7 +44,7 @@ public class GenerateCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		if (serverVersion >= 12) {
 			advancementManager.registerAdvancements();
 

@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class ReloadCommand extends AbstractCommand {
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
 			StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, Lazy<PluginLoader> pluginLoader,
 			Logger logger) {
-		super(mainConfig, langConfig, pluginHeader);
+		super(mainConfig, langConfig, pluginHeader, "reload");
 		this.guiConfig = guiConfig;
 		this.advancedAchievements = advancedAchievements;
 		this.pluginLoader = pluginLoader;
@@ -82,7 +82,7 @@ public class ReloadCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		advancedAchievements.reloadConfig();
 
 		try {

@@ -1,5 +1,6 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
+import java.util.Calendar;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -11,24 +12,26 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling the /aach top command, which displays global rankings.
+ * Class in charge of handling the /aach week command, which displays weekly rankings.
  *
  * @author Pyves
  */
 @Singleton
-public class TopCommand extends AbstractRankingCommand {
+public class WeekCommand extends AbstractRankingCommand {
 
 	@Inject
-	public TopCommand(@Named("main") CommentedYamlConfiguration mainConfig,
+	public WeekCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			Logger logger, int serverVersion, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, logger, serverVersion, CmdLang.TOP_ACHIEVEMENT,
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, "week", logger, serverVersion, CmdLang.WEEK_ACHIEVEMENT,
 				sqlDatabaseManager);
 	}
 
 	@Override
 	long getRankingStartTime() {
-		// All time ranking, no time start.
-		return 0L;
+		Calendar c = Calendar.getInstance();
+		// Set calendar to the first day of the week.
+		c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
+		return c.getTimeInMillis();
 	}
 }

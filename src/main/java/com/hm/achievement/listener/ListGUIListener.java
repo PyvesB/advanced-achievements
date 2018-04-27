@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.gui.CategoryGUI;
 import com.hm.achievement.gui.MainGUI;
 import com.hm.achievement.lang.GuiLang;

@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +36,7 @@ public class GiveCommand extends AbstractParsableCommand {
 	public GiveCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, "give");
 		this.cacheManager = cacheManager;
 		this.rewardParser = rewardParser;
 	}
@@ -53,7 +53,7 @@ public class GiveCommand extends AbstractParsableCommand {
 	}
 
 	@Override
-	void executeSpecificActions(CommandSender sender, String[] args, Player player) {
+	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		String achievementPath = "Commands." + args[1];
 
 		if (mainConfig.getString(achievementPath + ".Message", null) != null) {

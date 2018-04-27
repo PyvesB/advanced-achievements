@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,7 +32,7 @@ public class DeleteCommand extends AbstractParsableCommand {
 	public DeleteCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, "delete");
 		this.cacheManager = cacheManager;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 	}
@@ -46,7 +46,7 @@ public class DeleteCommand extends AbstractParsableCommand {
 	}
 
 	@Override
-	void executeSpecificActions(CommandSender sender, String[] args, Player player) {
+	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		String achievementName = parseAchievementName(args);
 
 		// Check if achievement exists in database and display message accordingly; if received, delete it.

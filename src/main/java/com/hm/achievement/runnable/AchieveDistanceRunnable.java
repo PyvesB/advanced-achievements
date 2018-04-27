@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.listener.QuitListener;

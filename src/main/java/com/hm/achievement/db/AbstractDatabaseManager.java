@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.Reloadable;

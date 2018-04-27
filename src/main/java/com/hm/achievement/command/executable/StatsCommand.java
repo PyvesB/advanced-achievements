@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -48,7 +48,7 @@ public class StatsCommand extends AbstractCommand {
 	public StatsCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			Logger logger, int serverVersion, CacheManager cacheManager, Map<String, String> achievementsAndDisplayNames) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, "stats");
 		this.serverVersion = serverVersion;
 		this.logger = logger;
 		this.cacheManager = cacheManager;
@@ -69,7 +69,7 @@ public class StatsCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player)) {
 			return;
 		}

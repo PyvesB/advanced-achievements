@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +36,7 @@ public class AddCommand extends AbstractParsableCommand {
 	public AddCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			CacheManager cacheManager, StatisticIncreaseHandler statisticIncreaseHandler) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, "add");
 		this.cacheManager = cacheManager;
 		this.statisticIncreaseHandler = statisticIncreaseHandler;
 	}
@@ -51,7 +51,7 @@ public class AddCommand extends AbstractParsableCommand {
 	}
 
 	@Override
-	void executeSpecificActions(CommandSender sender, String[] args, Player player) {
+	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		int value;
 
 		if (NumberUtils.isNumber(args[1])) {

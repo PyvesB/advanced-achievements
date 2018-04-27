@@ -14,7 +14,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;

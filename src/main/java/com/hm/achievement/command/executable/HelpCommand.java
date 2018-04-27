@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import java.util.logging.Logger;
 
@@ -67,7 +67,7 @@ public class HelpCommand extends AbstractCommand {
 	public HelpCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			int serverVersion, Logger logger) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, null);
 		this.serverVersion = serverVersion;
 		this.logger = logger;
 	}
@@ -121,7 +121,7 @@ public class HelpCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		// Header.
 		sender.sendMessage(configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ")
 				+ configColor + configIcon + configColor + " ------------");
