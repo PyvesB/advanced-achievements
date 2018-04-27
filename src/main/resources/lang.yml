@@ -22,6 +22,8 @@ player-rank: "Current rank:"
 week-achievement: "Weekly achievement rankings:"
 month-achievement: "Monthly achievement rankings:"
 not-ranked: "You are currently not ranked for this period."
+pagination-header: "&7> &5Page PAGE/MAX"
+pagination-footer: "&7>"
 
 # Related to /aach stats.
 number-achievements: "Achievements received:"

@@ -48,7 +48,9 @@ public enum CmdLang implements Lang {
 	// AbstractRankingCommand
 	WEEK_ACHIEVEMENT("Weekly achievement rankings:"),
 	MONTH_ACHIEVEMENT("Monthly achievement rankings:"),
-	TOP_ACHIEVEMENT("Top achievement owners:");
+	TOP_ACHIEVEMENT("Top achievement owners:"),
+	PAGINATION_HEADER("&7> &5Page PAGE/MAX"),
+	PAGINATION_FOOTER("&7>");
 
 	private final String defaultMessage;
 
