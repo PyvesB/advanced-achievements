@@ -26,8 +26,6 @@ public class InfoCommand extends AbstractCommand {
 	private final AdvancedAchievements advancedAchievements;
 	private final RewardParser rewardParser;
 
-	private ChatColor configColor;
-	private String configIcon;
 	private String configDatabaseType;
 	private String header;
 
@@ -55,8 +53,8 @@ public class InfoCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0));
-		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
+		ChatColor configColor = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0));
+		String configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
 		configDatabaseType = mainConfig.getString("DatabaseType", "sqlite");
 
 		header = configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ") + configColor
