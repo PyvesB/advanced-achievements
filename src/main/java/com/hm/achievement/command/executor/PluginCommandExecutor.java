@@ -46,7 +46,7 @@ public class PluginCommandExecutor implements CommandExecutor {
 	 */
 	private boolean shouldExecute(AbstractCommand command, String[] args) {
 		CommandSpec annotation = command.getClass().getAnnotation(CommandSpec.class);
-		return args.length >= annotation.minArgs() && args.length <= annotation.maxArgs()
+		return args.length >= Math.max(1, annotation.minArgs()) && args.length <= annotation.maxArgs()
 				&& annotation.name().equalsIgnoreCase(args[0]);
 	}
 }
