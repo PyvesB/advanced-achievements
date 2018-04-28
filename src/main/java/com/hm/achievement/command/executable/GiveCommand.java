@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,6 +22,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "give", permission = "give", minArgs = 3, maxArgs = 3)
 public class GiveCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
@@ -53,7 +54,7 @@ public class GiveCommand extends AbstractParsableCommand {
 	}
 
 	@Override
-	void executeSpecificActions(CommandSender sender, String[] args, Player player) {
+	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		String achievementPath = "Commands." + args[1];
 
 		if (mainConfig.getString(achievementPath + ".Message", null) != null) {

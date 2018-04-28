@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,6 +23,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Phoetrix
  */
 @Singleton
+@CommandSpec(name = "add", permission = "add", minArgs = 4, maxArgs = 4)
 public class AddCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
@@ -51,7 +52,7 @@ public class AddCommand extends AbstractParsableCommand {
 	}
 
 	@Override
-	void executeSpecificActions(CommandSender sender, String[] args, Player player) {
+	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		int value;
 
 		if (NumberUtils.isNumber(args[1])) {

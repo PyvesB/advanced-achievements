@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import java.lang.reflect.Method;
 import java.text.DateFormat;
@@ -39,6 +39,7 @@ import com.hm.mcshared.particle.ReflectionUtils.PackageType;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "book", permission = "book", minArgs = 1, maxArgs = 1)
 public class BookCommand extends AbstractCommand implements Cleanable {
 
 	// Strings related to Reflection.
@@ -103,7 +104,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player)) {
 			return;
 		}

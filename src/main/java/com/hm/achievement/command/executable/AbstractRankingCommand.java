@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import com.hm.achievement.command.pagination.CommandPagination;
 import com.hm.achievement.db.AbstractDatabaseManager;
@@ -33,6 +33,8 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private static final int DECIMAL_CIRCLED_ELEVEN = Integer.parseInt("246A", 16);
 	private static final int DECIMAL_CIRCLED_TWENTY_ONE = Integer.parseInt("3251", 16);
 	private static final int DECIMAL_CIRCLED_THIRTY_SIX = Integer.parseInt("32B1", 16);
+	// 16 per page since two other messages are sent.
+	private static final int PER_PAGE = 16;
 
 	private final Logger logger;
 	private final int serverVersion;
@@ -76,7 +78,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	}
 
 	@Override
-	public void executeCommand(CommandSender sender, String[] args) {
+	public void onExecute(CommandSender sender, String[] args) {
 		if (System.currentTimeMillis() - lastCacheUpdate >= CACHE_EXPIRATION_DELAY) {
 			// Update cached data structures.
 			cachedSortedRankings = sqlDatabaseManager.getTopList(getRankingStartTime());
@@ -88,14 +90,12 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 		List<String> rankingMessages = getRankingMessages(sender);
 
-		// 16 per page since two other messages are sent.
-		int perPage = 16;
 		// If config has top set at less than one page, don't use pagination.
-		if (configTopList < perPage) {
+		if (configTopList < PER_PAGE) {
 			rankingMessages.forEach(sender::sendMessage);
 		} else {
 			int page = getPage(args);
-			CommandPagination pagination = new CommandPagination(rankingMessages, perPage, langConfig);
+			CommandPagination pagination = new CommandPagination(rankingMessages, PER_PAGE, langConfig);
 			pagination.sendPage(page, sender);
 		}
 

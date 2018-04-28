@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -27,6 +27,7 @@ import com.hm.mcshared.particle.ParticleEffect;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "stats", permission = "stats", minArgs = 1, maxArgs = 1)
 public class StatsCommand extends AbstractCommand {
 
 	// Minecraft font, used to get size information in the progress bar.
@@ -69,7 +70,7 @@ public class StatsCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player)) {
 			return;
 		}

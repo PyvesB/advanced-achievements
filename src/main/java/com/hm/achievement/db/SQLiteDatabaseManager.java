@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import javax.inject.Named;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.file.FileManager;

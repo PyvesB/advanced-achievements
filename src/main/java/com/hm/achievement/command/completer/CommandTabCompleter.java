@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.completer;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -18,6 +18,7 @@ import org.bukkit.command.TabCompleter;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 

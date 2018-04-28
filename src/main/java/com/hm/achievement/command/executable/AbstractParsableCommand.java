@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -38,10 +38,10 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	 * @param args
 	 * @param player
 	 */
-	abstract void executeSpecificActions(CommandSender sender, String[] args, Player player);
+	abstract void onExecuteForPlayer(CommandSender sender, String[] args, Player player);
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		String searchedName = args[args.length - 1];
 		Player player = Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().equalsIgnoreCase(searchedName))
 				.findFirst().orElse(null);
@@ -52,7 +52,7 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 			return;
 		}
 
-		executeSpecificActions(sender, args, player);
+		onExecuteForPlayer(sender, args, player);
 	}
 
 	/**

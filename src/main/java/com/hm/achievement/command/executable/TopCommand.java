@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import java.util.logging.Logger;
 
@@ -16,6 +16,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "top", permission = "top", minArgs = 1, maxArgs = 2)
 public class TopCommand extends AbstractRankingCommand {
 
 	@Inject

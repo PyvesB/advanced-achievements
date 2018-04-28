@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,13 +21,12 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "info", permission = "", minArgs = 1, maxArgs = 1)
 public class InfoCommand extends AbstractCommand {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final RewardParser rewardParser;
 
-	private ChatColor configColor;
-	private String configIcon;
 	private String configDatabaseType;
 	private String header;
 
@@ -55,8 +54,8 @@ public class InfoCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0));
-		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
+		ChatColor configColor = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0));
+		String configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
 		configDatabaseType = mainConfig.getString("DatabaseType", "sqlite");
 
 		header = configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ") + configColor
@@ -119,7 +118,7 @@ public class InfoCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		sender.sendMessage(header);
 		sender.sendMessage(langVersionCommandDescription);
 		sender.sendMessage(langVersionCommandVersion);

@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import java.util.logging.Logger;
 
@@ -23,6 +23,7 @@ import com.hm.mcshared.particle.FancyMessageSender;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "help", permission = "", minArgs = 1, maxArgs = Integer.MAX_VALUE)
 public class HelpCommand extends AbstractCommand {
 
 	private final int serverVersion;
@@ -121,7 +122,7 @@ public class HelpCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		// Header.
 		sender.sendMessage(configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ")
 				+ configColor + configIcon + configColor + " ------------");

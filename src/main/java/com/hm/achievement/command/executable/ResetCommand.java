@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -24,6 +24,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "reset", permission = "reset", minArgs = 3, maxArgs = 3)
 public class ResetCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
@@ -50,7 +51,7 @@ public class ResetCommand extends AbstractParsableCommand {
 	}
 
 	@Override
-	void executeSpecificActions(CommandSender sender, String[] args, Player player) {
+	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		String uuid = player.getUniqueId().toString();
 		for (NormalAchievements category : NormalAchievements.values()) {
 			if (category.toString().equalsIgnoreCase(args[1])) {

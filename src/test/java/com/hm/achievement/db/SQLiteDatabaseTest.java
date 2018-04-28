@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import com.google.common.util.concurrent.MoreExecutors;
-import com.hm.achievement.command.ReloadCommand;
+import com.hm.achievement.command.executable.ReloadCommand;
 
 import utilities.MockUtility;
 

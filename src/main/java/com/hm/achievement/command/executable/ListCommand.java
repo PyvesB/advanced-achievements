@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,6 +16,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "list", permission = "list", minArgs = 1, maxArgs = 1)
 public class ListCommand extends AbstractCommand {
 
 	private final MainGUI mainGUI;
@@ -29,7 +30,7 @@ public class ListCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player)) {
 			return;
 		}

@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +31,7 @@ import dagger.Lazy;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "reload", permission = "reload", minArgs = 1, maxArgs = 1)
 public class ReloadCommand extends AbstractCommand {
 
 	private final List<Reloadable> reloadableObservers = new ArrayList<>();
@@ -82,7 +83,7 @@ public class ReloadCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		advancedAchievements.reloadConfig();
 
 		try {

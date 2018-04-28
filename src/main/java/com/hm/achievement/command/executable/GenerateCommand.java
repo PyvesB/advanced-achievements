@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -18,6 +18,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "generate", permission = "generate", minArgs = 1, maxArgs = 1)
 public class GenerateCommand extends AbstractCommand {
 
 	private final int serverVersion;
@@ -44,7 +45,7 @@ public class GenerateCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		if (serverVersion >= 12) {
 			advancementManager.registerAdvancements();
 

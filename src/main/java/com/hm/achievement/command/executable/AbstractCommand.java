@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -46,24 +46,24 @@ public abstract class AbstractCommand implements Reloadable {
 	 *
 	 * @param sender
 	 * @param args
-	 * @param permission
 	 */
-	public void executeCommand(CommandSender sender, String[] args, String permission) {
-		if (permission != null && !sender.hasPermission("achievement." + permission)) {
+	public void execute(CommandSender sender, String[] args) {
+		String permission = getClass().getAnnotation(CommandSpec.class).permission();
+		if (!permission.isEmpty() && !sender.hasPermission("achievement." + permission)) {
 			sender.sendMessage(langNoPermissions);
 			return;
 		}
 
-		executeCommand(sender, args);
+		onExecute(sender, args);
 	}
 
 	/**
-	 * Executes the command issued by the sender.
+	 * Executes behaviour specific to the implementing command.
 	 *
 	 * @param sender
 	 * @param args
 	 */
-	abstract void executeCommand(CommandSender sender, String[] args);
+	abstract void onExecute(CommandSender sender, String[] args);
 
 	String translateColorCodes(String translate) {
 		return ChatColor.translateAlternateColorCodes('&', translate);

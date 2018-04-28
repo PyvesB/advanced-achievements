@@ -1,4 +1,4 @@
-package com.hm.achievement.command;
+package com.hm.achievement.command.executable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +21,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "toggle", permission = "toggle", minArgs = 1, maxArgs = 1)
 public class ToggleCommand extends AbstractCommand {
 
 	// Indicates whether a player has used toggle since last server restart.
@@ -57,7 +58,7 @@ public class ToggleCommand extends AbstractCommand {
 	}
 
 	@Override
-	void executeCommand(CommandSender sender, String[] args) {
+	void onExecute(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player)) {
 			return;
 		}
