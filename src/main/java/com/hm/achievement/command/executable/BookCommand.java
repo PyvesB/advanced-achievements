@@ -39,6 +39,7 @@ import com.hm.mcshared.particle.ReflectionUtils.PackageType;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "book", permission = "book", minArgs = 1, maxArgs = 1)
 public class BookCommand extends AbstractCommand implements Cleanable {
 
 	// Strings related to Reflection.
@@ -70,7 +71,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	public BookCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			Logger logger, int serverVersion, AbstractDatabaseManager sqlDatabaseManager, QuitListener quitListener) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "book");
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.logger = logger;
 		this.serverVersion = serverVersion;
 		this.sqlDatabaseManager = sqlDatabaseManager;

@@ -19,6 +19,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "check", permission = "check", minArgs = 3, maxArgs = Integer.MAX_VALUE)
 public class CheckCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
@@ -30,7 +31,7 @@ public class CheckCommand extends AbstractParsableCommand {
 	public CheckCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			CacheManager cacheManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "check");
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.cacheManager = cacheManager;
 	}
 

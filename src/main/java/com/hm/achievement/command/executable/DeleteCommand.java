@@ -20,6 +20,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "delete", permission = "delete", minArgs = 3, maxArgs = Integer.MAX_VALUE)
 public class DeleteCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
@@ -32,7 +33,7 @@ public class DeleteCommand extends AbstractParsableCommand {
 	public DeleteCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "delete");
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.cacheManager = cacheManager;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 	}

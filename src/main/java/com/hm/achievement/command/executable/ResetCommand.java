@@ -24,6 +24,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "reset", permission = "reset", minArgs = 3, maxArgs = 3)
 public class ResetCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
@@ -36,7 +37,7 @@ public class ResetCommand extends AbstractParsableCommand {
 	public ResetCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "reset");
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.cacheManager = cacheManager;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 	}

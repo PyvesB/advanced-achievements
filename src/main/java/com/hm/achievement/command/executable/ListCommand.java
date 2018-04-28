@@ -16,6 +16,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "list", permission = "list", minArgs = 1, maxArgs = 1)
 public class ListCommand extends AbstractCommand {
 
 	private final MainGUI mainGUI;
@@ -24,7 +25,7 @@ public class ListCommand extends AbstractCommand {
 	public ListCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			MainGUI mainGUI) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "list");
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.mainGUI = mainGUI;
 	}
 

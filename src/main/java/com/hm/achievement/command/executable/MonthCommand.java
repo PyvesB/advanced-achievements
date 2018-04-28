@@ -17,13 +17,14 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "month", permission = "month", minArgs = 1, maxArgs = 2)
 public class MonthCommand extends AbstractRankingCommand {
 
 	@Inject
 	public MonthCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			Logger logger, int serverVersion, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "month", logger, serverVersion, CmdLang.MONTH_ACHIEVEMENT,
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, logger, serverVersion, CmdLang.MONTH_ACHIEVEMENT,
 				sqlDatabaseManager);
 	}
 

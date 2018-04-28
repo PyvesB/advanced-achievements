@@ -54,9 +54,9 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private long lastCacheUpdate = 0L;
 
 	AbstractRankingCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
-			StringBuilder pluginHeader, ReloadCommand reloadCommand, String permission, Logger logger, int serverVersion,
-			Lang languageHeader, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, permission);
+			StringBuilder pluginHeader, ReloadCommand reloadCommand, Logger logger, int serverVersion, Lang languageHeader,
+			AbstractDatabaseManager sqlDatabaseManager) {
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.logger = logger;
 		this.serverVersion = serverVersion;
 		this.languageHeader = languageHeader;

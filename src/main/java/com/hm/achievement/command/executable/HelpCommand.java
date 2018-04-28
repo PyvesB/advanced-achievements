@@ -23,6 +23,7 @@ import com.hm.mcshared.particle.FancyMessageSender;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "help", permission = "", minArgs = 1, maxArgs = Integer.MAX_VALUE)
 public class HelpCommand extends AbstractCommand {
 
 	private final int serverVersion;
@@ -67,7 +68,7 @@ public class HelpCommand extends AbstractCommand {
 	public HelpCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			int serverVersion, Logger logger) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, null);
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.serverVersion = serverVersion;
 		this.logger = logger;
 	}

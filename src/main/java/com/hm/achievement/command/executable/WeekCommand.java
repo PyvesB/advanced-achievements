@@ -17,13 +17,14 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "week", permission = "week", minArgs = 1, maxArgs = 2)
 public class WeekCommand extends AbstractRankingCommand {
 
 	@Inject
 	public WeekCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			Logger logger, int serverVersion, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "week", logger, serverVersion, CmdLang.WEEK_ACHIEVEMENT,
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, logger, serverVersion, CmdLang.WEEK_ACHIEVEMENT,
 				sqlDatabaseManager);
 	}
 

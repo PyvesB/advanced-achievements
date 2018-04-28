@@ -27,6 +27,7 @@ import com.hm.mcshared.particle.ParticleEffect;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "stats", permission = "stats", minArgs = 1, maxArgs = 1)
 public class StatsCommand extends AbstractCommand {
 
 	// Minecraft font, used to get size information in the progress bar.
@@ -48,7 +49,7 @@ public class StatsCommand extends AbstractCommand {
 	public StatsCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			Logger logger, int serverVersion, CacheManager cacheManager, Map<String, String> achievementsAndDisplayNames) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "stats");
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.serverVersion = serverVersion;
 		this.logger = logger;
 		this.cacheManager = cacheManager;

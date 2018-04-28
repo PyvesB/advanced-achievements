@@ -16,13 +16,14 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "top", permission = "top", minArgs = 1, maxArgs = 2)
 public class TopCommand extends AbstractRankingCommand {
 
 	@Inject
 	public TopCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			Logger logger, int serverVersion, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "top", logger, serverVersion, CmdLang.TOP_ACHIEVEMENT,
+		super(mainConfig, langConfig, pluginHeader, reloadCommand, logger, serverVersion, CmdLang.TOP_ACHIEVEMENT,
 				sqlDatabaseManager);
 	}
 

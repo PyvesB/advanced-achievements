@@ -16,12 +16,13 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "hcaa", permission = "easteregg", minArgs = 1, maxArgs = 1)
 public class EasterEggCommand extends AbstractCommand {
 
 	@Inject
 	public EasterEggCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "easteregg");
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 	}
 
 	@Override

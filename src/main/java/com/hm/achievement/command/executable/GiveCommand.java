@@ -22,6 +22,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "give", permission = "give", minArgs = 3, maxArgs = 3)
 public class GiveCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
@@ -36,7 +37,7 @@ public class GiveCommand extends AbstractParsableCommand {
 	public GiveCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "give");
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.cacheManager = cacheManager;
 		this.rewardParser = rewardParser;
 	}

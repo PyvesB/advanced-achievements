@@ -21,6 +21,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "toggle", permission = "toggle", minArgs = 1, maxArgs = 1)
 public class ToggleCommand extends AbstractCommand {
 
 	// Indicates whether a player has used toggle since last server restart.
@@ -33,7 +34,7 @@ public class ToggleCommand extends AbstractCommand {
 	@Inject
 	public ToggleCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "toggle");
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 	}
 
 	@Override

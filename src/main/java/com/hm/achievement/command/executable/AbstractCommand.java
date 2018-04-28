@@ -19,24 +19,21 @@ public abstract class AbstractCommand implements Reloadable {
 	final CommentedYamlConfiguration langConfig;
 	final StringBuilder pluginHeader;
 
-	private final String permission;
 	private String langNoPermissions;
 
 	AbstractCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
-			ReloadCommand reloadCommand, String permission) {
+			ReloadCommand reloadCommand) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.pluginHeader = pluginHeader;
-		this.permission = permission;
 		reloadCommand.addObserver(this);
 	}
 
 	AbstractCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
-			StringBuilder pluginHeader, String permission) {
+			StringBuilder pluginHeader) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.pluginHeader = pluginHeader;
-		this.permission = permission;
 	}
 
 	@Override
@@ -51,7 +48,8 @@ public abstract class AbstractCommand implements Reloadable {
 	 * @param args
 	 */
 	public void execute(CommandSender sender, String[] args) {
-		if (permission != null && !sender.hasPermission("achievement." + permission)) {
+		String permission = getClass().getAnnotation(CommandSpec.class).permission();
+		if (!permission.isEmpty() && !sender.hasPermission("achievement." + permission)) {
 			sender.sendMessage(langNoPermissions);
 			return;
 		}

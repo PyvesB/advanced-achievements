@@ -23,6 +23,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Phoetrix
  */
 @Singleton
+@CommandSpec(name = "add", permission = "add", minArgs = 4, maxArgs = 4)
 public class AddCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
@@ -36,7 +37,7 @@ public class AddCommand extends AbstractParsableCommand {
 	public AddCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			CacheManager cacheManager, StatisticIncreaseHandler statisticIncreaseHandler) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "add");
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.cacheManager = cacheManager;
 		this.statisticIncreaseHandler = statisticIncreaseHandler;
 	}

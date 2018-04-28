@@ -18,6 +18,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "generate", permission = "generate", minArgs = 1, maxArgs = 1)
 public class GenerateCommand extends AbstractCommand {
 
 	private final int serverVersion;
@@ -30,7 +31,7 @@ public class GenerateCommand extends AbstractCommand {
 	public GenerateCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, int serverVersion,
 			ReloadCommand reloadCommand, AdvancementManager advancementManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, "generate");
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.serverVersion = serverVersion;
 		this.advancementManager = advancementManager;
 	}

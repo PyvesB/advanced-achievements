@@ -21,6 +21,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "info", permission = "", minArgs = 1, maxArgs = 1)
 public class InfoCommand extends AbstractCommand {
 
 	private final AdvancedAchievements advancedAchievements;
@@ -44,7 +45,7 @@ public class InfoCommand extends AbstractCommand {
 	public InfoCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
 			AdvancedAchievements advancedAchievements, RewardParser rewardParser) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand, null);
+		super(mainConfig, langConfig, pluginHeader, reloadCommand);
 		this.advancedAchievements = advancedAchievements;
 		this.rewardParser = rewardParser;
 	}

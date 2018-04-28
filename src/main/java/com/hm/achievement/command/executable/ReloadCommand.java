@@ -31,6 +31,7 @@ import dagger.Lazy;
  * @author Pyves
  */
 @Singleton
+@CommandSpec(name = "reload", permission = "reload", minArgs = 1, maxArgs = 1)
 public class ReloadCommand extends AbstractCommand {
 
 	private final List<Reloadable> reloadableObservers = new ArrayList<>();
@@ -47,7 +48,7 @@ public class ReloadCommand extends AbstractCommand {
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
 			StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, Lazy<PluginLoader> pluginLoader,
 			Logger logger) {
-		super(mainConfig, langConfig, pluginHeader, "reload");
+		super(mainConfig, langConfig, pluginHeader);
 		this.guiConfig = guiConfig;
 		this.advancedAchievements = advancedAchievements;
 		this.pluginLoader = pluginLoader;
