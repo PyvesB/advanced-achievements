@@ -128,11 +128,9 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 			String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(ranking.getKey())).getName();
 			if (playerName != null) {
 				// Color the name of the player if he is in the top list.
-				String color = ChatColor.GRAY + " ";
-				if (sender instanceof Player && playerName.equals(sender.getName())) {
-					color += configColor.toString();
-				}
-				rankingMessages.add(color + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue());
+				ChatColor color = playerName.equals(sender.getName()) ? configColor : ChatColor.GRAY;
+				rankingMessages.add(color + " " + getRankingSymbol(currentRank) + " " + playerName + " - "
+						+ ranking.getValue());
 			} else {
 				logger.warning("Ranking command: could not find player's name using a database UUID.");
 			}

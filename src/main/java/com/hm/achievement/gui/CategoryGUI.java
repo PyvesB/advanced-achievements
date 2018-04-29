@@ -304,7 +304,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @return the list of paths for the Normal category
 	 */
 	public List<String> getSortedNormalAchievementThresholds(String categoryName) {
-		return sortedThresholds.get(categoryName).stream().map(i -> Long.toString(i)).collect(Collectors.toList());
+		return sortedThresholds.get(categoryName).stream().map(String::valueOf).collect(Collectors.toList());
 	}
 
 	/**

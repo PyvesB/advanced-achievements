@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class PlayerAdvancedAchievementEvent extends Event implements Cancellable {
 
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList HANDLERS = new HandlerList();
 
 	private final Player player;
 	private final String name;
@@ -49,24 +49,20 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 
 	@Override
 	public HandlerList getHandlers() {
-
-		return handlers;
+		return HANDLERS;
 	}
 
 	public static HandlerList getHandlerList() {
-
-		return handlers;
+		return HANDLERS;
 	}
 
 	@Override
 	public boolean isCancelled() {
-
 		return cancelled;
 	}
 
 	@Override
 	public void setCancelled(boolean cancel) {
-
 		cancelled = cancel;
 	}
 

@@ -55,7 +55,7 @@ public class AddCommand extends AbstractParsableCommand {
 	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		int value;
 
-		if (NumberUtils.isNumber(args[1])) {
+		if (NumberUtils.isDigits(args[1])) {
 			value = Integer.parseInt(args[1]);
 		} else {
 			sender.sendMessage(StringUtils.replaceOnce(langErrorValue, "VALUE", args[1]));

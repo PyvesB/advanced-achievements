@@ -24,74 +24,74 @@ import dagger.Module;
 import dagger.multibindings.IntoSet;
 
 @Module
-public abstract class CommandModule {
+public interface CommandModule {
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindHelpCommand(HelpCommand helpCommand);
+	abstract AbstractCommand bindHelpCommand(HelpCommand helpCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindBookCommand(BookCommand bookCommand);
+	abstract AbstractCommand bindBookCommand(BookCommand bookCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindInfoCommand(InfoCommand infoCommand);
+	abstract AbstractCommand bindInfoCommand(InfoCommand infoCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindListCommand(ListCommand listCommand);
+	abstract AbstractCommand bindListCommand(ListCommand listCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindStatsCommand(StatsCommand statsCommand);
+	abstract AbstractCommand bindStatsCommand(StatsCommand statsCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindReloadCommand(ReloadCommand reloadCommand);
+	abstract AbstractCommand bindReloadCommand(ReloadCommand reloadCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindToggleCommand(ToggleCommand toggleCommand);
+	abstract AbstractCommand bindToggleCommand(ToggleCommand toggleCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindGenerateCommand(GenerateCommand generateCommand);
+	abstract AbstractCommand bindGenerateCommand(GenerateCommand generateCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindEasterEggCommand(EasterEggCommand easterEggCommand);
+	abstract AbstractCommand bindEasterEggCommand(EasterEggCommand easterEggCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindTopCommand(TopCommand topCommand);
+	abstract AbstractCommand bindTopCommand(TopCommand topCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindWeekCommand(WeekCommand weekCommand);
+	abstract AbstractCommand bindWeekCommand(WeekCommand weekCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindMonthCommand(MonthCommand monthCommand);
+	abstract AbstractCommand bindMonthCommand(MonthCommand monthCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindGiveCommand(GiveCommand giveCommand);
+	abstract AbstractCommand bindGiveCommand(GiveCommand giveCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindResetCommand(ResetCommand resetCommand);
+	abstract AbstractCommand bindResetCommand(ResetCommand resetCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindCheckCommand(CheckCommand checkCommand);
+	abstract AbstractCommand bindCheckCommand(CheckCommand checkCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindDeleteCommand(DeleteCommand deleteCommand);
+	abstract AbstractCommand bindDeleteCommand(DeleteCommand deleteCommand);
 
 	@Binds
 	@IntoSet
-	public abstract AbstractCommand bindAddCommand(AddCommand addCommand);
+	abstract AbstractCommand bindAddCommand(AddCommand addCommand);
 
 }

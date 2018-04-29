@@ -39,7 +39,6 @@ public class MainGUI extends AbstractGUI {
 	private boolean configHideNoPermissionCategories;
 
 	private String langListGUITitle;
-	private String langListCategoryNotUnlocked;
 
 	@Inject
 	public MainGUI(@Named("main") CommentedYamlConfiguration mainConfig,
@@ -59,10 +58,9 @@ public class MainGUI extends AbstractGUI {
 		configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories", false);
 
 		langListGUITitle = translateColorCodes(Lang.get(GuiLang.GUI_TITLE, langConfig));
-		langListCategoryNotUnlocked = translateColorCodes("&8" + Lang.get(GuiLang.CATEGORY_NOT_UNLOCKED, langConfig));
 
 		ItemMeta itemMeta = lockedItem.getItemMeta();
-		itemMeta.setDisplayName(langListCategoryNotUnlocked);
+		itemMeta.setDisplayName(translateColorCodes("&8" + Lang.get(GuiLang.CATEGORY_NOT_UNLOCKED, langConfig)));
 		lockedItem.setItemMeta(itemMeta);
 	}
 
