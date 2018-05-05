@@ -1,8 +1,8 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
-# | Advanced Achievements Hungarian translation by          | #
-# |                    montlikadani                         | #
-# |             ~ Valid as of version 5.5 ~                 | #
+# |             Advanced Achievements Hungarian             | #
+# |               translation by montlikadani               | #
+# |             ~ Valid as of version 5.7.2 ~               | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
@@ -10,7 +10,8 @@
 
 no-permissions: "Nincs jogod erre."
 statistic-cooldown: "Küldetés várakozás: várj TIME másodpercet, mielőtt ez a művelet újra számítana."
-category-does-not-exist: "Ez a kategória CAT nem létezik."
+category-does-not-exist: "Ez a kategória és/vagy alkategória CAT nem létezik."
+all-achievements-received: "Gratulálok, minden küldetést megnyertél!"
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "A konfiguráció sikeresen újratöltve."
@@ -22,6 +23,8 @@ player-rank: "Jelenlegi rang:"
 week-achievement: "Heti küldetés rangsor:"
 month-achievement: "Havi küldetés rangsor:"
 not-ranked: "Jelenleg nem vagy rangsorolva ebben az időszakban."
+pagination-header: "&7> &5Oldal PAGE/MAX"
+pagination-footer: "&7>"
 
 # Related to /aach stats.
 number-achievements: "Elért küldetések:"
@@ -60,7 +63,8 @@ money-reward-received: "Kaptál: AMOUNT!"
 command-reward: "A jutalom parancs végrehajtása!"
 custom-command-reward: "Megkaptad a jutalmadat: MESSAGE"
 experience-reward-received: "Kaptál: AMOUNT tapasztalatot!"
-increase-max-health-reward-received: "A max életed megnőtt AMOUNT!"
+increase-max-health-reward-received: "A max életerőd értéke emelkedett: AMOUNT!"
+increase-max-oxygen-reward-received: "A max oxigén értéke emelkedett: AMOUNT!"
 
 # Related to /aach help.
 aach-command-book: "Ad egy küldetés könyvet."
@@ -79,9 +83,9 @@ aach-command-reload: "Újratölti a plugin konfigurációt."
 aach-command-reload-hover: "Újratölti a legtöbb beállítást a config.yml, a gui.yml és a lang.yml fájlokban."
 aach-command-info: "A bővítményre vonatkozó információk megjelenítése."
 aach-command-info-hover: "Néhány extra információ a pluginról és annak félelmetes szerzőjéről!"
-aach-command-check: "Ellenörzi NAME van ACH."
+aach-command-check: "Ellenőrzi NAME van ACH."
 aach-command-check-hover: "Használja a konfigurációban megadott Név paramétert."
-aach-command-delete: "Törli az ACH NAME."
+aach-command-delete: "Törli a(z) ACH NAME."
 aach-command-delete-hover: "A játékosnak elérhetőnek kell lennie; nem kapcsol vissza semmilyen kapcsolódó statisztikát."
 aach-command-week: "A heti rangsor megjelenítése."
 aach-command-week-hover: "Legjobb vadászok a hét kezdete óta!"
@@ -93,7 +97,7 @@ aach-command-reset: "A kategória statisztikájának visszaállítása CAT."
 aach-command-reset-hover: "A játékosnak elérhetőnek kell lennie; az alkategóriákkal rendelkező kategóriák esetében mindegyikre visszaáll!"
 aach-command-generate: "Létrehoz küldetéseket."
 aach-command-generate-hover: "Lehetséges lassú parancs; használd gondosan!"
-aach-tip: "&lCÉLZÁS &8Tudsz &7&n&olebegő &8vagy &7&n&okattintható &8a parancsokban!"
+aach-tip: "&lTIPP &8Tudsz &7&n&olebegő &8vagy &7&n&okattintható &8a parancsokban!"
 
 # Related to /aach info.
 version-command-version: "Verzió:"
@@ -120,7 +124,8 @@ list-reward-money: "kap AMOUNT"
 list-reward-item: "kap AMOUNT ITEM"
 list-reward-command: "other"
 list-reward-experience: "kap AMOUNT tapasztalatot"
-list-reward-increase-max-health: "növeli a max életet AMOUNT"
+list-reward-increase-max-health: "növeli a max életet AMOUNT értékkel"
+list-reward-increase-max-oxygen: "növeli a max oxigént AMOUNT értékkel"
 list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "
 list-category-not-unlocked: "Még nem nyitottad ki ezt a kategóriát."
@@ -162,7 +167,7 @@ list-distance-pig: "Távolságmegtétel malac hátom"
 list-distance-horse: "Távolságmegtétel lóháton"
 list-distance-minecart: "Távolságmegtétel csillével"
 list-distance-boat: "Távolságmegtétel csónakkal"
-list-distance-gliding: "Távolságmegtétel Elytrával"
+list-distance-gliding: "Távolságmegtétel szárnnyal"
 list-distance-llama: "Távolság utazott lámán"
 list-itemdrops: "Tárgyak eldobása"
 list-itempickups: "Tárgyak felvétele"
@@ -178,13 +183,14 @@ list-petmastergive: "A másik játékosnak adott háziállatok"
 list-petmasterreceive: "A többi játékostól kapott háziállatok"
 list-smelting: "Tárgy égetés"
 list-commands: "Más küldetések"
+list-custom: "Egyedi kategóriák"
 
 # Related to /aach toggle.
-toggle-displayed: "Most értesítést kap, ha más játékosok kapnak küldetéseket."
-toggle-hidden: "Nem kap több értesítést, ha más játékosok kapnak küldetéseket."
+toggle-displayed: "Most értesítést kapsz, ha más játékosok szereznek küldetéseket."
+toggle-hidden: "Nem kapsz több értesítést, amikor más játékosok szereznek küldetéseket."
 
 # Related to /aach reset.
-reset-successful: " a statisztikák törölve PLAYER."
+reset-successful: " a statisztikák törölve PLAYER játékostól."
 
 # Related to /aach generate.
 advancements-generated: "A küldetések sikeresen létrehozva."
