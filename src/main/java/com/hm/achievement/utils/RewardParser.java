@@ -257,7 +257,6 @@ public class RewardParser implements Reloadable {
 			return mainConfig.getStringList(path + ".Command.Display");
 		}
 
-
 		return Collections.singletonList(mainConfig.getString(path + ".Command.Display"));
 	}
 

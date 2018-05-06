@@ -10,9 +10,8 @@ import java.util.List;
 
 /**
  * Class representing an event fired when a player receives an achievement.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 public class PlayerAdvancedAchievementEvent extends Event implements Cancellable {
 
