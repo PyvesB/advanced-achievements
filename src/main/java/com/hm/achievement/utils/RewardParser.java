@@ -1,6 +1,7 @@
 package com.hm.achievement.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -81,7 +82,7 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Constructs the listing of an achievement's rewards with strings coming from language file.
 	 *
-	 * @param path
+	 * @param path achievement path
 	 * @return type(s) of the achievement reward as an array of strings
 	 */
 	public List<String> getRewardListing(String path) {
@@ -120,8 +121,8 @@ public class RewardParser implements Reloadable {
 
 		if (keyNames.contains(path + ".Command")) {
 			if (mainConfig.isConfigurationSection(path + ".Command") && keyNames.contains(path + ".Command.Display")) {
-				String message = getCustomCommandMessage(path);
-				rewardTypes.add(message);
+				List<String> messages = getCustomCommandMessage(path);
+				rewardTypes.addAll(messages);
 			} else {
 				rewardTypes.add(langListRewardCommand);
 			}
@@ -132,7 +133,7 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Returns name of currency depending on amount.
 	 *
-	 * @param amount
+	 * @param amount achievement configuration path
 	 * @return the name of the currency
 	 */
 	public String getCurrencyName(int amount) {
@@ -142,7 +143,7 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Returns the name of an item reward, in a readable format.
 	 *
-	 * @param item
+	 * @param item the item reward
 	 * @return the item name
 	 */
 	public String getItemName(ItemStack item) {
@@ -161,8 +162,8 @@ public class RewardParser implements Reloadable {
 	 * Extracts the money, experience, increased max health or increased max oxygen rewards amount from the
 	 * configuration.
 	 *
-	 * @param path
-	 * @param type
+	 * @param path achievement configuration path
+	 * @param type reward type
 	 * @return the reward amount
 	 */
 	public int getRewardAmount(String path, String type) {
@@ -173,7 +174,7 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Returns an item reward for a given achievement (specified in configuration file).
 	 *
-	 * @param path
+	 * @param path achievement configuration path
 	 * @return ItemStack object corresponding to the reward
 	 */
 	public ItemStack getItemReward(String path) {
@@ -221,8 +222,8 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Extracts the list of commands to be executed as rewards.
 	 *
-	 * @param path
-	 * @param player
+	 * @param path achievement configuration path
+	 * @param player the player to parse commands for
 	 * @return the array containing the commands to be performed as a reward
 	 */
 	public String[] getCommandRewards(String path, Player player) {
@@ -243,22 +244,27 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Extracts custom command message from config. Might be null.
 	 *
-	 * @param path
+	 * @param path achievement configuration path
 	 * @return the custom command message (null if not present)
 	 * @author tassu
 	 */
-	public String getCustomCommandMessage(String path) {
+	public List<String> getCustomCommandMessage(String path) {
 		if (!mainConfig.isConfigurationSection(path + ".Command")) {
 			return null;
 		}
 
-		return mainConfig.getString(path + ".Command.Display");
+		if (mainConfig.isList(path + ".Command.Display")) {
+			return mainConfig.getStringList(path + ".Command.Display");
+		}
+
+
+		return Collections.singletonList(mainConfig.getString(path + ".Command.Display"));
 	}
 
 	/**
 	 * Extracts the item reward amount from the configuration.
 	 *
-	 * @param path
+	 * @param path achievement configuration path
 	 * @return the amount for an item reward
 	 */
 	private int getItemAmount(String path) {
@@ -286,7 +292,7 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Extracts the item reward custom name from the configuration.
 	 *
-	 * @param path
+	 * @param path achievement configuration path
 	 * @return the custom name for an item reward
 	 */
 	private String getItemName(String path) {

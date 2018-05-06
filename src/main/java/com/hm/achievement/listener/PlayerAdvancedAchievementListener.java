@@ -1,10 +1,8 @@
 package com.hm.achievement.listener;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -197,11 +195,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @param oxygen
 	 * @return all the reward texts to be displayed to the user
 	 */
-	private List<String> giveRewardsAndPrepareTexts(Player player, String[] commands, String commandMessage, ItemStack item,
+	private List<String> giveRewardsAndPrepareTexts(Player player, String[] commands, List<String> commandMessage, ItemStack item,
 			int money, int experience, int health, int oxygen) {
 		List<String> rewardTexts = new ArrayList<>();
 		if (commands != null && commands.length > 0) {
-			rewardTexts.add(rewardCommands(commands, commandMessage));
+			rewardTexts.addAll(rewardCommands(commands, commandMessage));
 		}
 		if (item != null) {
 			rewardTexts.add(rewardItem(player, item));
@@ -225,22 +223,22 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * Executes player command rewards.
 	 *
 	 * @param commands
-	 * @param message
+	 * @param messages
 	 * @return the reward text to display to the player
 	 */
-	private String rewardCommands(String[] commands, String message) {
+	private List<String> rewardCommands(String[] commands, List<String> messages) {
 		for (String command : commands) {
 			advancedAchievements.getServer().dispatchCommand(advancedAchievements.getServer().getConsoleSender(), command);
 		}
 		if (!configRewardCommandNotif || langCommandReward.length() == 0) {
-			return "";
+			return new ArrayList<>();
 		}
 
-		if (message != null) {
-			return StringUtils.replace(langCustomMessageCommandReward, "MESSAGE", message);
+		if (messages != null) {
+			return messages.stream().map(message -> StringUtils.replace(langCustomMessageCommandReward, "MESSAGE", message)).collect(Collectors.toList());
 		}
 
-		return langCommandReward;
+		return Collections.singletonList(langCommandReward);
 	}
 
 	/**

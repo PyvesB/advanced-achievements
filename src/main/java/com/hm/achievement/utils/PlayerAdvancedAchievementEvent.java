@@ -6,6 +6,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 /**
  * Class representing an event fired when a player receives an achievement.
  * 
@@ -20,7 +22,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private final String name;
 	private final String displayName;
 	private final String message;
-	private final String commandMessage;
+	private final List<String> commandMessage;
 	private final String[] commandRewards;
 	private final ItemStack itemReward;
 	private final int moneyReward;
@@ -31,8 +33,8 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private boolean cancelled;
 
 	private PlayerAdvancedAchievementEvent(Player receiver, String name, String displayName, String message,
-			String commandMessage, String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward,
-			int maxHealthReward, int maxOxygenReward) {
+	                                       List<String> commandMessage, String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward,
+	                                       int maxHealthReward, int maxOxygenReward) {
 		player = receiver;
 		this.name = name;
 		this.displayName = displayName;
@@ -82,7 +84,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		return message;
 	}
 
-	public String getCommandMessage() {
+	public List<String> getCommandMessage() {
 		return commandMessage;
 	}
 
@@ -116,7 +118,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		private String name;
 		private String displayName;
 		private String message;
-		private String commandMessage;
+		private List<String> commandMessage;
 		private String[] commandRewards;
 		private ItemStack itemReward;
 		private int moneyReward;
@@ -144,7 +146,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 			return this;
 		}
 
-		public PlayerAdvancedAchievementEventBuilder commandMessage(String commandMessage) {
+		public PlayerAdvancedAchievementEventBuilder commandMessage(List<String> commandMessage) {
 			this.commandMessage = commandMessage;
 			return this;
 		}
