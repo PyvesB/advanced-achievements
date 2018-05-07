@@ -1,11 +1,13 @@
 package com.hm.achievement.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,7 +23,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private final String name;
 	private final String displayName;
 	private final String message;
-	private final List<String> commandMessage;
+	private final List<String> commandMessages;
 	private final String[] commandRewards;
 	private final ItemStack itemReward;
 	private final int moneyReward;
@@ -32,13 +34,13 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private boolean cancelled;
 
 	private PlayerAdvancedAchievementEvent(Player receiver, String name, String displayName, String message,
-	                                       List<String> commandMessage, String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward,
+	                                       List<String> commandMessages, String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward,
 	                                       int maxHealthReward, int maxOxygenReward) {
 		player = receiver;
 		this.name = name;
 		this.displayName = displayName;
 		this.message = message;
-		this.commandMessage = commandMessage;
+		this.commandMessages = commandMessages;
 		this.commandRewards = commandRewards;
 		this.itemReward = itemReward;
 		this.moneyReward = moneyReward;
@@ -83,8 +85,16 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		return message;
 	}
 
-	public List<String> getCommandMessage() {
-		return commandMessage;
+	/**
+	 * @deprecated use {@link #getCommandMessages()} instead
+	 */
+	@Deprecated
+	public String getCommandMessage() {
+		return StringUtils.join(commandMessages, ' ');
+	}
+
+	public List<String> getCommandMessages() {
+		return commandMessages;
 	}
 
 	public String[] getCommandRewards() {
@@ -142,6 +152,15 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 
 		public PlayerAdvancedAchievementEventBuilder message(String message) {
 			this.message = message;
+			return this;
+		}
+
+		/**
+		 * @deprecated use {@link #commandMessage(List)} instead
+		 */
+		@Deprecated
+		public PlayerAdvancedAchievementEventBuilder commandMessage(String commandMessage) {
+			this.commandMessage = Collections.singletonList(commandMessage);
 			return this;
 		}
 

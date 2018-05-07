@@ -1,6 +1,10 @@
 package com.hm.achievement.listener;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -172,7 +176,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		}
 		sqlDatabaseManager.registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 
-		List<String> rewardTexts = giveRewardsAndPrepareTexts(player, event.getCommandRewards(), event.getCommandMessage(),
+		List<String> rewardTexts = giveRewardsAndPrepareTexts(player, event.getCommandRewards(), event.getCommandMessages(),
 				event.getItemReward(), event.getMoneyReward(), event.getExperienceReward(), event.getMaxHealthReward(),
 				event.getMaxOxygenReward());
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage(), rewardTexts);
