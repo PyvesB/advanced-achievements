@@ -199,8 +199,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @param oxygen
 	 * @return all the reward texts to be displayed to the user
 	 */
-	private List<String> giveRewardsAndPrepareTexts(Player player, String[] commands, List<String> commandMessage, ItemStack item,
-			int money, int experience, int health, int oxygen) {
+	private List<String> giveRewardsAndPrepareTexts(Player player, String[] commands, List<String> commandMessage,
+			ItemStack item, int money, int experience, int health, int oxygen) {
 		List<String> rewardTexts = new ArrayList<>();
 		if (commands != null && commands.length > 0) {
 			rewardTexts.addAll(rewardCommands(commands, commandMessage));
@@ -239,7 +239,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		}
 
 		if (messages != null) {
-			return messages.stream().map(message -> StringUtils.replace(langCustomMessageCommandReward, "MESSAGE", message)).collect(Collectors.toList());
+			return messages.stream().map(message -> StringUtils.replace(langCustomMessageCommandReward, "MESSAGE", message))
+					.collect(Collectors.toList());
 		}
 
 		return Collections.singletonList(langCommandReward);

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -90,8 +91,8 @@ public class PlayerAdvancedAchievementListenerTest {
 
 		PlayerAdvancedAchievementEvent event = new PlayerAdvancedAchievementEventBuilder().player(player)
 				.name("connect_1").displayName("Good Choice").message("Connected for the first time!")
-				.commandRewards(new String[0]).commandMessage(null).itemReward(null).moneyReward(0).experienceReward(0)
-				.maxHealthReward(0).maxOxygenReward(0).build();
+				.commandRewards(new String[0]).commandMessage(Collections.emptyList()).itemReward(null)
+				.moneyReward(0).experienceReward(0).maxHealthReward(0).maxOxygenReward(0).build();
 
 		underTest.onPlayerAdvancedAchievementReception(event);
 
@@ -107,8 +108,8 @@ public class PlayerAdvancedAchievementListenerTest {
 
 		PlayerAdvancedAchievementEvent event = new PlayerAdvancedAchievementEventBuilder().player(player)
 				.name("connect_1").displayName("Good Choice").message("Connected for the first time!")
-				.commandRewards(new String[0]).commandMessage(null).itemReward(null).moneyReward(0).experienceReward(0)
-				.maxHealthReward(0).maxOxygenReward(0).build();
+				.commandRewards(new String[0]).commandMessage(Collections.emptyList()).itemReward(null)
+				.moneyReward(0).experienceReward(0).maxHealthReward(0).maxOxygenReward(0).build();
 
 		underTest.onPlayerAdvancedAchievementReception(event);
 

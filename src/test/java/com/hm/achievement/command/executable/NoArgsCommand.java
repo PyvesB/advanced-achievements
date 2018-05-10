@@ -18,6 +18,7 @@ public class NoArgsCommand extends AbstractCommand {
 	}
 
 	@Override
-	void onExecute(CommandSender sender, String[] args) {}
+	void onExecute(CommandSender sender, String[] args) {
+	}
 
 }

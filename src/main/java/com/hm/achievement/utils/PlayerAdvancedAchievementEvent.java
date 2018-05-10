@@ -34,8 +34,8 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private boolean cancelled;
 
 	private PlayerAdvancedAchievementEvent(Player receiver, String name, String displayName, String message,
-	                                       List<String> commandMessages, String[] commandRewards, ItemStack itemReward, int moneyReward, int experienceReward,
-	                                       int maxHealthReward, int maxOxygenReward) {
+			List<String> commandMessages, String[] commandRewards, ItemStack itemReward, int moneyReward,
+			int experienceReward, int maxHealthReward, int maxOxygenReward) {
 		player = receiver;
 		this.name = name;
 		this.displayName = displayName;

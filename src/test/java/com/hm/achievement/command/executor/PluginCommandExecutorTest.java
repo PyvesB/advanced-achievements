@@ -25,7 +25,7 @@ import com.hm.achievement.command.executable.NoArgsCommand;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class PluginCommandExecutorTest {
-	
+
 	@Mock
 	private CommandSender sender;
 
@@ -34,7 +34,7 @@ public class PluginCommandExecutorTest {
 
 	@Mock
 	private ListCommand listCommand;
-	
+
 	@Mock
 	private NoArgsCommand noArgsCommand;
 
@@ -66,7 +66,7 @@ public class PluginCommandExecutorTest {
 		verify(helpCommand).execute(sender, args);
 		verifyNoMoreInteractions(listCommand, helpCommand, noArgsCommand);
 	}
-	
+
 	@Test
 	public void itShouldFallBackToHelpCommandIfArgsEmpty() {
 		String[] noArgs = new String[0];
