@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Utility for paginating command messages.
@@ -41,7 +42,7 @@ public class CommandPagination {
 		sendPage(page, to::sendMessage);
 	}
 
-	public void sendPage(int page, MethodRef<String> to) {
+	public void sendPage(int page, Consumer<String> to) {
 		int pageToSend = page > maxPage ? maxPage : page;
 
 		String header = ChatColor.translateAlternateColorCodes('&',
@@ -51,7 +52,7 @@ public class CommandPagination {
 		String footer = ChatColor.translateAlternateColorCodes('&',
 				Lang.get(CmdLang.PAGINATION_FOOTER, langConfig));
 
-		to.call(header);
+		to.accept(header);
 
 		int index = pageToSend - 1;
 		// Handling case where empty list is given to CommandPagination
@@ -59,14 +60,9 @@ public class CommandPagination {
 		int nextPageStart = pageToSend * perPage;
 
 		for (int i = pageStart; i < Math.min(nextPageStart, size); i++) {
-			to.call(toPaginate.get(i));
+			to.accept(toPaginate.get(i));
 		}
 
-		to.call(footer);
-	}
-
-	interface MethodRef<T> {
-
-		void call(T value);
+		to.accept(footer);
 	}
 }
