@@ -70,10 +70,12 @@ public class MainGUI extends AbstractGUI {
 	 * @param player
 	 */
 	public void displayMainGUI(Player player) {
-		int totalNonDisabledCategories = MultipleAchievements.values().length + NormalAchievements.values().length + 1
+		int totalEnabledCategories = MultipleAchievements.values().length + NormalAchievements.values().length + 1
 				- disabledCategories.size();
-		Inventory mainGUI = Bukkit.createInventory(null, nextMultipleOf9(totalNonDisabledCategories, MAX_PER_PAGE),
+		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder();
+		Inventory mainGUI = Bukkit.createInventory(inventoryHolder, nextMultipleOf9(totalEnabledCategories, MAX_PER_PAGE),
 				langListGUITitle);
+		inventoryHolder.setInventory(mainGUI);
 
 		int displayedSoFar = 0;
 		// Display Multiple categories in the GUI.

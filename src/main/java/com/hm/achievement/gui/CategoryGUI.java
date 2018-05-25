@@ -165,21 +165,23 @@ public class CategoryGUI extends AbstractGUI {
 	 * @param categoryName
 	 * @param player
 	 * @param subcategoriesToStatistics
-	 * @param requestedPage
+	 * @param requestedIndex
 	 * @param clickedItem
 	 * @param achievementPaths
 	 */
 	private void displayPage(String categoryName, Player player, Map<String, Long> subcategoriesToStatistics,
-			int requestedPage, ItemStack clickedItem, List<String> achievementPaths) {
-		int pageToDisplay = getPageToDisplay(requestedPage, achievementPaths.size());
-		int pageStart = MAX_PER_PAGE * (pageToDisplay - 1);
-		int pageEnd = Math.min(MAX_PER_PAGE * pageToDisplay, achievementPaths.size());
+			int requestedIndex, ItemStack clickedItem, List<String> achievementPaths) {
+		int pageIndex = getPageIndex(requestedIndex, achievementPaths.size());
+		int pageStart = MAX_PER_PAGE * pageIndex;
+		int pageEnd = Math.min(MAX_PER_PAGE * (pageIndex + 1), achievementPaths.size());
 		int navigationItems = achievementPaths.size() > MAX_PER_PAGE ? 3 : 1;
 
 		// Create a new chest-like inventory as small as possible whilst still containing the category item, all page
 		// achievements and the navigation items.
 		int guiSize = nextMultipleOf9(achievementPaths.size() + navigationItems + 1, MAX_PER_PAGE);
-		Inventory inventory = Bukkit.createInventory(null, guiSize, langListGUITitle + " " + pageToDisplay);
+		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder(pageIndex);
+		Inventory inventory = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
+		inventoryHolder.setInventory(inventory);
 		// Persist clicked item (ie. category's item in the main GUI) as first item in the category GUI.
 		inventory.setItem(0, clickedItem);
 
@@ -373,19 +375,19 @@ public class CategoryGUI extends AbstractGUI {
 	}
 
 	/**
-	 * Computes the page number to display given a requested page anf the total number of achievements in the category.
-	 * The returned page number must be within a meaningful range, such that there are achievements to display on the
+	 * Computes the page index to display given a requested page and the total number of achievements in the category.
+	 * The returned page index must be within a meaningful range, such that there are achievements to display on the
 	 * page.
 	 *
 	 * @param requestedPage
 	 * @param totalAchievements
-	 * @return the page number to display (start index is 1)
+	 * @return the page index to display (start index is 0)
 	 */
-	private int getPageToDisplay(int requestedPage, int totalAchievements) {
-		if (totalAchievements <= MAX_PER_PAGE * (requestedPage - 1)) {
+	private int getPageIndex(int requestedPage, int totalAchievements) {
+		if (totalAchievements <= MAX_PER_PAGE * requestedPage) {
 			return requestedPage - 1;
-		} else if (requestedPage < 1) {
-			return 1;
+		} else if (requestedPage < 0) {
+			return 0;
 		}
 		return requestedPage;
 	}
