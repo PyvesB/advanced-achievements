@@ -2,6 +2,7 @@ package com.hm.achievement.listener;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
@@ -26,8 +27,7 @@ import com.hm.achievement.AdvancedAchievements;
 @Singleton
 public class FireworkListener implements Listener {
 
-	private final Set<String> fireworksLaunchedByPlugin = Collections
-			.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+	private final Set<UUID> fireworksLaunchedByPlugin = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
 	private final AdvancedAchievements advancedAchievements;
 
 	@Inject
@@ -35,20 +35,19 @@ public class FireworkListener implements Listener {
 		this.advancedAchievements = advancedAchievements;
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
 		Entity damager = event.getDamager();
-		if (damager != null && fireworksLaunchedByPlugin.contains(damager.getUniqueId().toString())) {
+		if (damager != null && fireworksLaunchedByPlugin.contains(damager.getUniqueId())) {
 			event.setCancelled(true);
 		}
 	}
 
 	public void addFirework(Firework firework) {
-		String uuid = firework.getUniqueId().toString();
-		fireworksLaunchedByPlugin.add(uuid);
+		fireworksLaunchedByPlugin.add(firework.getUniqueId());
 
 		// Schedule for removal to avoid creating memory leaks.
 		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(advancedAchievements,
-				() -> fireworksLaunchedByPlugin.remove(uuid), 100);
+				() -> fireworksLaunchedByPlugin.remove(firework.getUniqueId()), 100);
 	}
 }
