@@ -1,7 +1,10 @@
 package com.hm.achievement.db;
 
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,8 +14,6 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lifecycle.Cleanable;
@@ -37,10 +38,10 @@ public class CacheManager implements Cleanable {
 	// UUIDs and block/entity/command identifiers.
 	private final Map<MultipleAchievements, Map<String, CachedStatistic>> multipleAchievementsToPlayerStatistics;
 	// Multimaps corresponding to the different achievements received by the players.
-	private final Multimap<String, String> receivedAchievementsCache;
-	private final Multimap<String, String> notReceivedAchievementsCache;
+	private final Map<UUID, Set<String>> receivedAchievementsCache;
+	private final Map<UUID, Set<String>> notReceivedAchievementsCache;
 	// Map corresponding to the total amount of achievements received by each player.
-	private final Map<String, Integer> totalPlayerAchievementsCache;
+	private final Map<UUID, Integer> totalPlayerAchievementsCache;
 
 	@Inject
 	public CacheManager(@Named("main") CommentedYamlConfiguration mainConfig, AbstractDatabaseManager sqlDatabaseManager,
@@ -50,8 +51,8 @@ public class CacheManager implements Cleanable {
 		quitListener.addObserver(this);
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
-		receivedAchievementsCache = MultimapBuilder.hashKeys().hashSetValues().build();
-		notReceivedAchievementsCache = MultimapBuilder.hashKeys().hashSetValues().build();
+		receivedAchievementsCache = new HashMap<>();
+		notReceivedAchievementsCache = new HashMap<>();
 
 		// ConcurrentHashMaps are necessary to guarantee thread safety.
 		for (NormalAchievements normalAchievement : NormalAchievements.values()) {
@@ -67,10 +68,9 @@ public class CacheManager implements Cleanable {
 	@Override
 	public void cleanPlayerData(UUID uuid) {
 		// Clear achievements caches.
-		String uuidString = uuid.toString();
-		receivedAchievementsCache.removeAll(uuidString);
-		notReceivedAchievementsCache.removeAll(uuidString);
-		totalPlayerAchievementsCache.remove(uuidString);
+		receivedAchievementsCache.remove(uuid);
+		notReceivedAchievementsCache.remove(uuid);
+		totalPlayerAchievementsCache.remove(uuid);
 
 		// Indicate to the relevant cached statistics that the player has disconnected.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
@@ -170,18 +170,20 @@ public class CacheManager implements Cleanable {
 	 * @return true if achievement received by player, false otherwise
 	 */
 	public boolean hasPlayerAchievement(UUID player, String name) {
-		if (receivedAchievementsCache.containsEntry(player.toString(), name)) {
+		Set<String> playerReceived = receivedAchievementsCache.computeIfAbsent(player, s -> new HashSet<>());
+		if (playerReceived.contains(name)) {
 			return true;
 		}
-		if (notReceivedAchievementsCache.containsEntry(player.toString(), name)) {
+		Set<String> playerNotReceived = notReceivedAchievementsCache.computeIfAbsent(player, s -> new HashSet<>());
+		if (playerNotReceived.contains(name)) {
 			return false;
 		}
 
 		boolean received = sqlDatabaseManager.hasPlayerAchievement(player, name);
 		if (received) {
-			receivedAchievementsCache.put(player.toString(), name);
+			playerReceived.add(name);
 		} else {
-			notReceivedAchievementsCache.put(player.toString(), name);
+			playerNotReceived.add(name);
 		}
 		return received;
 	}
@@ -194,10 +196,10 @@ public class CacheManager implements Cleanable {
 	 * @return the number of achievements received by the player
 	 */
 	public synchronized int getPlayerTotalAchievements(UUID player) {
-		Integer totalAchievements = totalPlayerAchievementsCache.get(player.toString());
+		Integer totalAchievements = totalPlayerAchievementsCache.get(player);
 		if (totalAchievements == null) {
 			totalAchievements = sqlDatabaseManager.getPlayerAchievementsAmount(player);
-			totalPlayerAchievementsCache.put(player.toString(), totalAchievements);
+			totalPlayerAchievementsCache.put(player, totalAchievements);
 		}
 		return totalAchievements;
 	}
@@ -218,15 +220,30 @@ public class CacheManager implements Cleanable {
 		return player.toString() + subcategory;
 	}
 
-	public Multimap<String, String> getReceivedAchievementsCache() {
-		return receivedAchievementsCache;
+	/**
+	 * Adds an achievement to the achievement received cache and removes it from the not received cache. A call to
+	 * {@link #hasPlayerAchievement(UUID, String)} is expected to have been made made beforehand for the same player.
+	 * 
+	 * @param player
+	 * @param achievementName
+	 */
+	public void registerNewlyReceivedAchievement(UUID player, String achievementName) {
+		receivedAchievementsCache.get(player).add(achievementName);
+		notReceivedAchievementsCache.get(player).remove(achievementName);
+		totalPlayerAchievementsCache.put(player, getPlayerTotalAchievements(player) + 1);
 	}
 
-	public Multimap<String, String> getNotReceivedAchievementsCache() {
-		return notReceivedAchievementsCache;
+	/**
+	 * Removes an achievement from the achievement received cache and adds it to the not received cache. A call to
+	 * {@link #hasPlayerAchievement(UUID, String)} is expected to have been made made beforehand for the same player.
+	 * 
+	 * @param player
+	 * @param achievementName
+	 */
+	public void removePreviouslyReceivedAchievement(UUID player, String achievementName) {
+		receivedAchievementsCache.get(player).remove(achievementName);
+		notReceivedAchievementsCache.get(player).add(achievementName);
+		totalPlayerAchievementsCache.put(player, getPlayerTotalAchievements(player) - 1);
 	}
 
-	public Map<String, Integer> getTotalPlayerAchievementsCache() {
-		return totalPlayerAchievementsCache;
-	}
 }

@@ -44,10 +44,9 @@
 						<configuration>
 							<finalName>${project.artifactId}</finalName>
 							<artifactSet>
-								<!-- Minecraft 1.8+ ships fairly recent versions of Guava and Commons. -->
+								<!-- Minecraft 1.8+ ships fairly recent versions of Commons. -->
 								<!-- Exclude these dependencies from the produced jar. -->
 								<excludes>
-									<exclude>com.google.guava:*</exclude>
 									<exclude>org.apache.commons:*</exclude>
 								</excludes>
 							</artifactSet>
@@ -81,7 +80,6 @@
 									</excludes>
 								</relocation>
 								<relocation>
-									<pattern>com.google</pattern>
 									<shadedPattern>com.hm</shadedPattern>
 								</relocation>
 								<relocation>
@@ -162,12 +160,6 @@
 			<groupId>com.google.dagger</groupId>
 			<artifactId>dagger</artifactId>
 			<version>2.15</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>20.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

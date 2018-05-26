@@ -55,11 +55,7 @@ public class DeleteCommand extends AbstractParsableCommand {
 			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementFalse, new String[] { "PLAYER", "ACH" },
 					new String[] { args[args.length - 1], achievementName }));
 		} else {
-			String uuid = player.getUniqueId().toString();
-			cacheManager.getReceivedAchievementsCache().remove(uuid, achievementName);
-			cacheManager.getNotReceivedAchievementsCache().put(uuid, achievementName);
-			cacheManager.getTotalPlayerAchievementsCache().put(uuid,
-					cacheManager.getPlayerTotalAchievements(player.getUniqueId()) - 1);
+			cacheManager.removePreviouslyReceivedAchievement(player.getUniqueId(), achievementName);
 			sqlDatabaseManager.deletePlayerAchievement(player.getUniqueId(), achievementName);
 
 			sender.sendMessage(StringUtils.replaceEach(langDeleteAchievements, new String[] { "PLAYER", "ACH" },

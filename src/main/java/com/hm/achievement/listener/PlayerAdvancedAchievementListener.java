@@ -156,14 +156,9 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerAdvancedAchievementReception(PlayerAdvancedAchievementEvent event) {
 		Player player = event.getPlayer();
-		String uuid = player.getUniqueId().toString();
-		// Check before updating caches; achievement could have already been received if MultiCommand is set to true in
-		// the configuration.
+		// Achievement could have already been received if MultiCommand is set to true in the configuration.
 		if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), event.getName())) {
-			cacheManager.getReceivedAchievementsCache().put(uuid, event.getName());
-			cacheManager.getNotReceivedAchievementsCache().remove(uuid, event.getName());
-			cacheManager.getTotalPlayerAchievementsCache().put(uuid,
-					cacheManager.getPlayerTotalAchievements(player.getUniqueId()) + 1);
+			cacheManager.registerNewlyReceivedAchievement(player.getUniqueId(), event.getName());
 
 			if (serverVersion >= 12) {
 				Advancement advancement = Bukkit.getServer()
