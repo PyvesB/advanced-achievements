@@ -16,10 +16,10 @@ public interface AdvancedAchievementsAPI {
 
 	/**
 	 * Formats Advanced Achievements's version as an integer. The version is computed as follows: 100 * major + 10 *
-	 * minor + micro. For instance plugin version 5.0 will return 500; plugin version 5.1.2 will return 512.
+	 * minor + micro. For instance plugin version 5.5.0 will return 550; plugin version 5.1.2 will return 512.
 	 *
 	 * @return version code
-	 * @since 5.0
+	 * @since 1.0.0
 	 */
 	int getAdvancedAchievementsVersionCode();
 
@@ -30,7 +30,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param player should not be null
 	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml, should not be empty
 	 * @return true if player has received the achievement, false otherwise
-	 * @since 5.0
+	 * @since 1.0.0
 	 */
 	boolean hasPlayerReceivedAchievement(UUID player, String achievementName);
 
@@ -39,7 +39,7 @@ public interface AdvancedAchievementsAPI {
 	 *
 	 * @param player should not be null
 	 * @return list of {@code Achievement} objects received by the player
-	 * @since 5.0
+	 * @since 1.0.0
 	 */
 	List<Achievement> getPlayerAchievementsList(UUID player);
 
@@ -49,7 +49,7 @@ public interface AdvancedAchievementsAPI {
 	 *
 	 * @param player should not be null
 	 * @return total achievements by the player
-	 * @since 5.0
+	 * @since 1.0.0
 	 */
 	int getPlayerTotalAchievements(UUID player);
 
@@ -60,7 +60,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param rankingPeriodStart time in millis since epoch; rank will be calculated for achievements received between
 	 *            that starting point and now
 	 * @return rank of the player; if no achievements were received over the period, his rank will be Integer.MAX_VALUE
-	 * @since 5.0
+	 * @since 1.0.0
 	 */
 	Rank getPlayerRank(UUID player, long rankingPeriodStart);
 
@@ -71,7 +71,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param rankingPeriodStart time in millis since epoch; ranks will be calculated for achievements received between
 	 *            that starting point and now
 	 * @return list of players, ordered from best to worst
-	 * @since 5.0
+	 * @since 1.0.0
 	 */
 	List<UUID> getTopPlayers(int numOfPlayers, long rankingPeriodStart);
 
@@ -82,7 +82,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param player should not be null
 	 * @param category should not be null
 	 * @return the statistic for the normal category
-	 * @since 5.0
+	 * @since 1.0.0
 	 */
 	long getStatisticForNormalCategory(UUID player, NormalAchievements category);
 
@@ -94,7 +94,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param category should not be null
 	 * @param subcategory within the main multiple category
 	 * @return the statistic for the multiple category
-	 * @since 5.0
+	 * @since 1.0.0
 	 */
 	long getStatisticForMultipleCategory(UUID player, MultipleAchievements category, String subcategory);
 
@@ -105,7 +105,7 @@ public interface AdvancedAchievementsAPI {
 	 *
 	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml, should not be empty
 	 * @return the DisplayName parameter of an achievement or "" or null
-	 * @since 5.0
+	 * @since 1.0.0
 	 */
 	String getDisplayNameForName(String achievementName);
 
@@ -113,7 +113,7 @@ public interface AdvancedAchievementsAPI {
 	 * Retrieves the total numbers of achievements received by every player who has at least one achievement.
 	 *
 	 * @return map containing total achievements for every player
-	 * @since 5.2
+	 * @since 1.0.0
 	 */
 	Map<UUID, Integer> getPlayersTotalAchievements();
 

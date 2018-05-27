@@ -53,7 +53,9 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	 * minimum version of 5.0.
 	 *
 	 * @return API instance
+	 * @deprecated use the AdvancedAchievementsAPIFetcher class in the public API
 	 */
+	@Deprecated
 	public static AdvancedAchievementsAPI linkAdvancedAchievements() {
 		return ((AdvancedAchievements) Bukkit.getPluginManager().getPlugin("AdvancedAchievements"))
 				.getAdvancedAchievementsAPI();
