@@ -51,7 +51,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	private static final String METHOD_FROM_STRING = "fromString";
 
 	// Corresponds to times at which players have received their books. Cooldown structure.
-	private final HashMap<String, Long> playersBookTime = new HashMap<>();
+	private final HashMap<UUID, Long> playersBookTime = new HashMap<>();
 	private final Logger logger;
 	private final int serverVersion;
 	private final AbstractDatabaseManager sqlDatabaseManager;
@@ -100,7 +100,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 
 	@Override
 	public void cleanPlayerData(UUID uuid) {
-		playersBookTime.remove(uuid.toString());
+		playersBookTime.remove(uuid);
 	}
 
 	@Override
@@ -187,10 +187,9 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 			return false;
 		}
 		long currentTime = System.currentTimeMillis();
-		String uuid = player.getUniqueId().toString();
-		Long lastListTime = playersBookTime.get(uuid);
+		Long lastListTime = playersBookTime.get(player.getUniqueId());
 		if (lastListTime == null || currentTime - lastListTime > configTimeBook) {
-			playersBookTime.put(uuid, currentTime);
+			playersBookTime.put(player.getUniqueId(), currentTime);
 			return false;
 		}
 		return true;

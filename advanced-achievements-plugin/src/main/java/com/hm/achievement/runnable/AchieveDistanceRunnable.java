@@ -38,7 +38,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements Cleanable, Runnable {
 
-	private final Map<String, Location> playerLocations = new HashMap<>();
+	private final Map<UUID, Location> playerLocations = new HashMap<>();
 	private final Set<String> disabledCategories;
 
 	private boolean configIgnoreVerticalDistance;
@@ -61,7 +61,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 
 	@Override
 	public void cleanPlayerData(UUID uuid) {
-		playerLocations.remove(uuid.toString());
+		playerLocations.remove(uuid);
 	}
 
 	@Override
@@ -69,8 +69,8 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 		Bukkit.getServer().getOnlinePlayers().stream().forEach(this::validateMovementAndUpdateDistance);
 	}
 
-	public Map<String, Location> getPlayerLocations() {
-		return playerLocations;
+	public void updateLocation(UUID uuid, Location location) {
+		playerLocations.put(uuid, location);
 	}
 
 	/**
@@ -79,11 +79,10 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	 * @param player
 	 */
 	private void validateMovementAndUpdateDistance(Player player) {
-		String uuid = player.getUniqueId().toString();
-		Location previousLocation = playerLocations.get(uuid);
+		Location previousLocation = playerLocations.get(player.getUniqueId());
 
 		// Update new location.
-		playerLocations.put(uuid, player.getLocation());
+		playerLocations.put(player.getUniqueId(), player.getLocation());
 
 		// If player location not found or if player has changed world, ignore previous location.
 		// Evaluating distance would give an exception.

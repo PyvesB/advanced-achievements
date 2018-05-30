@@ -48,7 +48,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
-	private final Set<String> playersProcessingRan = new HashSet<>();
+	private final Set<UUID> playersProcessingRan = new HashSet<>();
 	private final AdvancedAchievements advancedAchievements;
 	private final AbstractDatabaseManager sqlDatabaseManager;
 
@@ -65,7 +65,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 
 	@Override
 	public void cleanPlayerData(UUID uuid) {
-		playersProcessingRan.remove(uuid.toString());
+		playersProcessingRan.remove(uuid);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -75,7 +75,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onWorldChanged(PlayerChangedWorldEvent event) {
-		if (playersProcessingRan.contains(event.getPlayer().getUniqueId().toString())) {
+		if (playersProcessingRan.contains(event.getPlayer().getUniqueId())) {
 			return;
 		}
 
@@ -84,7 +84,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameModeChange(PlayerGameModeChangeEvent event) {
-		if (playersProcessingRan.contains(event.getPlayer().getUniqueId().toString())) {
+		if (playersProcessingRan.contains(event.getPlayer().getUniqueId())) {
 			return;
 		}
 
@@ -109,7 +109,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 
 					// Check whether another runnable has already done the work (even though this method is intended
 					// to run once per player per connection instance, it might happen with some server settings).
-					if (playersProcessingRan.contains(player.getUniqueId().toString())) {
+					if (playersProcessingRan.contains(player.getUniqueId())) {
 						return;
 					}
 
@@ -119,7 +119,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 					handleConnectionAchievements(player);
 
 					// Ran successfully to completion: no need to re-run while player is connected.
-					playersProcessingRan.add(player.getUniqueId().toString());
+					playersProcessingRan.add(player.getUniqueId());
 				}, 100);
 	}
 

@@ -46,8 +46,7 @@ public class EnderPearlsDistancesListener extends AbstractListener {
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		// Update location of player if he respawns after dying.
 		if (distanceRunnable != null) {
-			distanceRunnable.getPlayerLocations().put(event.getPlayer().getUniqueId().toString(),
-					event.getRespawnLocation());
+			distanceRunnable.updateLocation(event.getPlayer().getUniqueId(), event.getRespawnLocation());
 		}
 	}
 
@@ -65,7 +64,7 @@ public class EnderPearlsDistancesListener extends AbstractListener {
 
 		// Update location of player if he teleports somewhere else.
 		if (distanceRunnable != null) {
-			distanceRunnable.getPlayerLocations().put(player.getUniqueId().toString(), event.getTo());
+			distanceRunnable.updateLocation(player.getUniqueId(), event.getTo());
 		}
 
 		NormalAchievements category = NormalAchievements.ENDERPEARLS;

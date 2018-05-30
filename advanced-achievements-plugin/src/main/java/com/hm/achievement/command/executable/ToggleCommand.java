@@ -2,6 +2,7 @@ package com.hm.achievement.command.executable;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,7 +26,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class ToggleCommand extends AbstractCommand {
 
 	// Indicates whether a player has used toggle since last server restart.
-	private final Set<String> toggledPlayers = new HashSet<>();
+	private final Set<UUID> toggledPlayers = new HashSet<>();
 
 	private boolean configNotifyOtherPlayers;
 	private String langToggleDisplayed;
@@ -54,7 +55,7 @@ public class ToggleCommand extends AbstractCommand {
 	 * @return true if player has used the toggle command, false otherwise
 	 */
 	public boolean isPlayerToggled(Player player) {
-		return toggledPlayers.contains(player.getUniqueId().toString());
+		return toggledPlayers.contains(player.getUniqueId());
 	}
 
 	@Override
@@ -64,12 +65,11 @@ public class ToggleCommand extends AbstractCommand {
 		}
 
 		Player player = (Player) sender;
-		String uuid = player.getUniqueId().toString();
-		if (toggledPlayers.contains(uuid)) {
-			toggledPlayers.remove(uuid);
+		if (toggledPlayers.contains(player.getUniqueId())) {
+			toggledPlayers.remove(player.getUniqueId());
 			displayChatMessage(player, configNotifyOtherPlayers);
 		} else {
-			toggledPlayers.add(uuid);
+			toggledPlayers.add(player.getUniqueId());
 			displayChatMessage(player, !configNotifyOtherPlayers);
 		}
 	}
