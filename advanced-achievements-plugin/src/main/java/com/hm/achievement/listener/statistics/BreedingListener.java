@@ -37,11 +37,6 @@ public class BreedingListener extends AbstractListener {
 		}
 
 		Player player = (Player) event.getBreeder();
-
-		if (player == null) {
-			return;
-		}
-
 		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
 			return;
 		}
