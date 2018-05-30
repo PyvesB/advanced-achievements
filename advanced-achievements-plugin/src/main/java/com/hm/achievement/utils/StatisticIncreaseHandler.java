@@ -75,9 +75,8 @@ public class StatisticIncreaseHandler implements Reloadable {
 	public void checkThresholdsAndAchievements(Player player, String categorySubcategory, long currentValue) {
 		// Iterate through all the different thresholds.
 		for (long threshold : sortedThresholds.get(categorySubcategory)) {
-			// Check whether player has met the threshold; convert from hours to millis if played time.
-			if (currentValue >= threshold && !"PlayedTime".equals(categorySubcategory)
-					|| currentValue >= 3600000L * threshold) {
+			// Check whether player has met the threshold.
+			if (currentValue >= threshold) {
 				String achievementPath = categorySubcategory + "." + threshold;
 				String achievementName = mainConfig.getString(achievementPath + ".Name");
 				// Check whether player has received the achievement.

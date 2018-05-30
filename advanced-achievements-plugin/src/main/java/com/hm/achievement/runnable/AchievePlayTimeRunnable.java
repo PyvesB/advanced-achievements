@@ -2,6 +2,7 @@ package com.hm.achievement.runnable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,6 +29,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements Runnable {
 
+	private static final long MILLIS_PER_HOUR = TimeUnit.HOURS.toMillis(1);
+
 	private Essentials essentials;
 	private long previousRunMillis;
 
@@ -50,11 +53,7 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		if (essentials != null) {
-			configIgnoreAFKPlayedTime = mainConfig.getBoolean("IgnoreAFKPlayedTime", false);
-		} else {
-			configIgnoreAFKPlayedTime = false;
-		}
+		configIgnoreAFKPlayedTime = essentials == null ? false : mainConfig.getBoolean("IgnoreAFKPlayedTime", false);
 	}
 
 	@Override
@@ -70,8 +69,7 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 	 * @param player
 	 */
 	private void updateTime(Player player) {
-		// If player is in restricted game mode or is in a blocked world, don't update played time.
-		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
+		if (!shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.PLAYEDTIME)) {
 			return;
 		}
 
@@ -83,13 +81,10 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 			}
 		}
 
-		// Do not register any times if player does not have permission.
-		if (!player.hasPermission(NormalAchievements.PLAYEDTIME.toPermName())) {
-			return;
-		}
-
-		long playedTime = cacheManager.getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME, player.getUniqueId(),
-				(int) (System.currentTimeMillis() - previousRunMillis));
-		checkThresholdsAndAchievements(player, NormalAchievements.PLAYEDTIME.toString(), playedTime);
+		int millisSinceLastRun = (int) (System.currentTimeMillis() - previousRunMillis);
+		long totalMillis = cacheManager.getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME, player.getUniqueId(),
+				millisSinceLastRun);
+		// Thresholds in the configuration are in hours.
+		checkThresholdsAndAchievements(player, NormalAchievements.PLAYEDTIME.toString(), totalMillis / MILLIS_PER_HOUR);
 	}
 }
