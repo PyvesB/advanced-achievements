@@ -1,9 +1,10 @@
-
+#============================================================#
 # +--------------------------------------------------------+ #
 # |    Advanced Achievements 3.0 Vietnamese language file  | #
 # |                      By anhcraft                       | #
 # +--------------------------------------------------------+ #
 #============================================================#
+
 no-permissions: Bạn không có quyền để dùng lệnh này.
 statistic-cooldown: 'Cooldown: Chờ TIME giây trước khi hành động này được đếm trở
   lại.'
@@ -12,7 +13,7 @@ all-achievements-received: Xin chúc mừng, bạn đã nhận được tất c�
 
 # Related to /aach reload.
 configuration-successfully-reloaded: Cài đặt tải lại thành công.
-configuration-reload-failed: Lỗi tải lại cài đặt.
+configuration-reload-failed: Lỗi khi tải lại cài đặt.
 
 # Related to /aach top week and month.
 top-achievement: 'Người sở hữu top thành tích:'
@@ -243,7 +244,7 @@ aach-command-reset: "Đặt lại thống kê cho danh mục CAT."
 aach-command-reset-hover: "Người chơi phải trực tuyến; ví dụ: reset Places.stone DarkPyves"
 aach-command-generate: "Tạo tiến bộ."
 aach-command-generate-hover: "Lệnh có khả năng làm chậm; sử dụng cẩn thận!"
-aach-tip: "&lHINT&r &8Bạn có thể &7&n&orê chuột &r &8hoặc &7&n&onhấn chuột&r &8lên các câu lệnh!"
+aach-tip: "&lHINT&r &8Bạn có thể &7&n&orê chuột&r &8hoặc &7&n&onhấn chuột&r &8lên các câu lệnh!"
 
 # Related to /aach info.
 version-command-version: "Phiên bản:"
