@@ -1,12 +1,14 @@
 ﻿#============================================================#
 # +--------------------------------------------------------+ #
 # |    Advanced Achievements 3.0 Vietnamese language file  | #
-# |                      By Anh Craft                      | #
-# |                  http://ecraftvn.tk/                   | #
+# |                      By anhcraft                       | #
 # +--------------------------------------------------------+ #
 #============================================================#
 
 no-permissions: "Bạn không có quyền để dùng lệnh này."
+statistic-cooldown: "Cooldown: Chờ TIME giây trước khi hành động này được đếm trở lại."
+category-does-not-exist: "Danh mục CAT không tồn tại."
+all-achievements-received: "Xin chúc mừng, bạn đã nhận được tất cả thành tích!"
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "Cài đặt tải lại thành công."
@@ -17,7 +19,9 @@ top-achievement: "Người sở hữu top thành tích:"
 player-rank: "Rank hiện tại:"
 week-achievement: "Bảng xếp hạng thành tích hàng tuần:"
 month-achievement: "Bảng xếp hạng thành tích hàng tháng:"
-not-ranked: "Bạn không được xếp hạng trong thời gian này."
+not-ranked: "Bạn chưa được xếp hạng trong thời gian này."
+pagination-header: "&7> &5Trang PAGE/MAX"
+pagination-footer: "&7>"
 
 # Related to /aach stats.
 number-achievements: "Thành tựu nhận được:"
@@ -27,12 +31,17 @@ book-received: "Nhận được sách thành tựu của bạn!"
 book-delay: "Bạn phải chờ TIME giây mỗi lần lấy sách!"
 book-name: "Sách thành tựu"
 book-date: "Sách tạo vào ngày DATE."
+book-not-received: "Bạn chưa nhận được bất kỳ thành tích nào."
 
 # Related to /aach give.
 player-offline: "Người chơi PLAYER chưa online!"
 achievement-already-received: "Người chơi PLAYER đã đạt thành tựu này!"
 achievement-not-found: "Các thành tích quy định không được tìm thấy trong mục Commands."
 achievement-given: "Đã trao hành tựu!"
+
+# Related to /aach add.
+error-value: "Giá trị VALUE phải là số nguyên!"
+statistic-increased: "Thống kê ACH đã tăng lên AMOUNT cho PLAYER!"
 
 # Related to achievement reception.
 achievement-received: "PLAYER nhận được thành tựu:"
@@ -49,6 +58,10 @@ delete-achievements: "Thành tựu ACH đã được xóa từ người chơi PL
 item-reward-received: "Bạn nhận được vật phẩm là:"
 money-reward-received: "Bạn nhận được số tiền là: AMOUNT !"
 command-reward: "Lệnh thưởng thực hiện!"
+custom-command-reward: "Bạn đã nhận phẩn thưởng của bạn: MESSAGE"
+experience-reward-received: "Bạn đã nhận: AMOUNT kinh nghiệm!"
+increase-max-health-reward-received: "Sức khỏe tối đa của bạn đã tăng lên AMOUNT!"
+increase-max-oxygen-reward-received: "Lượng khí oxy tối đa của bạn đã tăng lên AMOUNT!"
 
 # Related to /aach help.
 aach-command-book: "Nhận sách thành tựu."
@@ -61,6 +74,8 @@ aach-command-top: "Hiển thị bảng xấp hạng cá nhân và toàn cầu."
 aach-command-top-hover: "Các nhà lãnh đạo là ai và làm gì để so sánh?"
 aach-command-give: "Trao thành tích ACH cho NAME."
 aach-command-give-hover: "Người chơi cần online; chỉ thành tựu Commands có thể dùng."
+aach-command-add: "Tăng một thống kê."
+aach-command-add-hover: "Người chơi phải trực tuyến; thường sử dụng cho danh mục tự tạo."
 aach-command-reload: "Tải lại cài đặt của plugin."
 aach-command-reload-hover: "Tải lại đa số thiết lập trong file config.yml và lang.yml."
 aach-command-info: "Hiển thị thông tin về plugin này."
@@ -73,16 +88,25 @@ aach-command-week: "Hiển thị bảng xấp hạng hàng tuần."
 aach-command-week-hover: "Người nhận thành tích tốt nhất kể từ đầu tuần!"
 aach-command-month: "Hiển thị bảng xếp hạng hàng tháng."
 aach-command-month-hover: "Người nhận thành tích tốt nhất kể từ đầu thàng!"
+aach-command-toggle: "Chuyển đổi thành tích của người chơi khác."
+aach-command-toggle-hover: "Lựa chọn của bạn được lưu cho đến khi lần khởi động lại tiếp theo của máy chủ!"
+aach-command-reset: "Đặt lại thống kê cho danh mục CAT."
+aach-command-reset-hover: "Người chơi phải trực tuyến; ví dụ: reset Places.stone DarkPyves"
+aach-command-generate: "Tạo tiến bộ."
+aach-command-generate-hover: "Lệnh có khả năng làm chậm; sử dụng cẩn thận!"
 aach-tip: "&lHINT&r &8Bạn có thể &7&n&orê chuột &r &8hoặc &7&n&onhấn chuột&r &8lên các câu lệnh!"
 
 # Related to /aach info.
-version-command-name: "Tên:"
 version-command-version: "Phiên bản:"
 version-command-website: "Trang web:"
 version-command-author: "Tác giả:"
 version-command-description: "Miêu tả:"
 version-command-description-details: "Thành tựu tiên tiến cho phép tạo ra những thành tựu độc đáo và đầy thử thách. Hãy cố gắng thu thập càng nhiều như bạn có thể, kiếm được phần thưởng, leo lên các bảng xếp hạng và nhận sách RP!"
-version-command-vault: "Vault:"
+version-command-vault: "Tích hợp Vault:"
+version-command-petmaster: "Tích hợp Pet Master:"
+version-command-btlp: "Tích hợp BungeeTabListPlus:"
+version-command-essentials: "Tích hợp Essentials:"
+version-command-placeholderapi: "Tích hợp PlaceholderAPI:"
 version-command-database: "Kiểu CSDL:"
 
 # Related to /aach list.
@@ -92,13 +116,17 @@ list-reward: "Phần thưởng: "
 list-reward-money: "tiền"
 list-reward-item: "vật phẩm"
 list-reward-command: "khác"
-list-amount: "Cấp độ: "
+list-reward-experience: "nhận AMOUNT kinh nghiệm"
+list-reward-increase-max-health: "tăng sức khỏe tối đa lên AMOUNT"
+list-reward-increase-max-oxygen: "tăng lượng oxy tối đa lên AMOUNT"
 list-achievement-received: "&5\u2713&f "
 list-achievement-not-received: "&4\u2717&8 "
-list-category-not-unlocked: "Bạn chưa mở khóa thể loại này."
+list-category-not-unlocked: "Bạn chưa mở khóa danh mục này."
 list-back-message: "&7Trở về"
-list-achievements-in-category-singular: "AMOUNT achievement"
-list-achievements-in-category-plural: "AMOUNT achievements"
+list-previous-message: "&7Quay lại"
+list-next-message: "&7Tiếp theo"
+list-achievements-in-category-singular: "AMOUNT thành tựu"
+list-achievements-in-category-plural: "AMOUNT thành tựu"
 
 # Related to category names in /aach list.
 list-connections: "Kết nối"
@@ -128,6 +156,7 @@ list-distance-horse: "Khoảng cách di chuyển bằng ngựa"
 list-distance-minecart: "Khoảng cách di chuyển bằng xe mỏ"
 list-distance-boat: "Khoảng cách di chuyển bằng thuyền"
 list-distance-gliding: "Khoảng cách di chuyển bằng elytra"
+list-distance-llama: "Khoảng cách di chuyển bằng lạc đà Llama"
 list-itemdrops: "Ném vật phẩm"
 list-hoeplowings: "Cày bề mặt"
 list-fertilising: "Làm phong phú thực vật"
@@ -138,9 +167,20 @@ list-musicdiscs: "Chơi đĩa nhạc"
 list-enderpearls: "Dịch chuyển với mắt Ender"
 list-petmastergive: "Pets Given to Another Player"
 list-petmasterreceive: "Pets Received from Another Player"
-list-smelting: "Items Smelt"
+list-smelting: "Nung vật phẩm"
+list-commands: "thành tựu khác"
+list-custom: "Danh mục tự tạo"
 
-list-commands: "Thành tựu khác"
+# Related to /aach toggle.
+toggle-displayed: "Từ bây giờ bạn sẽ được thông báo khi người chơi khác có được thành tích."
+toggle-hidden: "Bạn sẽ không còn được thông báo khi người chơi khác có được thành tích."
+
+# Related to /aach reset.
+reset-successful: " thống kê đã được xoá cho PLAYER."
+
+# Related to /aach generate.
+advancements-generated: "Các tiến bộ đã được tạo thành công."
+minecraft-not-supported: "Các cải tiến không được hỗ trợ trong phiên bản Minecraft của bạn. Vui lòng cập nhật lên 1.12+."
 
 #============================================================#
 # +--------------------------------------------------------+ #
