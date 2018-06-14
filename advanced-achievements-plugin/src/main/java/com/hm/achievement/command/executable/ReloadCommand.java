@@ -81,9 +81,7 @@ public class ReloadCommand extends AbstractCommand {
 			mainConfig.loadConfiguration();
 			langConfig.loadConfiguration();
 			guiConfig.loadConfiguration();
-
 			pluginLoader.get().loadAdvancedAchievements(false);
-			notifyObservers();
 		} catch (PluginLoadError | IOException | InvalidConfigurationException e) {
 			if (sender instanceof Player) {
 				sender.sendMessage(langConfigReloadFailed);
