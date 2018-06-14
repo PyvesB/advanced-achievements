@@ -46,7 +46,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-	private final Set<UUID> playersProcessingRan = new HashSet<>();
+	private final Set<UUID> playersConnectionProcessed = new HashSet<>();
 	private final AdvancedAchievements advancedAchievements;
 	private final Set<String> disabledCategories;
 	private final AbstractDatabaseManager sqlDatabaseManager;
@@ -64,7 +64,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 
 	@Override
 	public void cleanPlayerData(UUID uuid) {
-		playersProcessingRan.remove(uuid);
+		playersConnectionProcessed.remove(uuid);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -91,22 +91,18 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	 * @param player
 	 */
 	private void scheduleAwardConnection(Player player) {
-		if (!playersProcessingRan.contains(player.getUniqueId())) {
+		if (!disabledCategories.contains(NormalAchievements.CONNECTIONS.toString())
+				&& !playersConnectionProcessed.contains(player.getUniqueId())) {
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> {
 				// In addition to the usual reception conditions, check that the player is still connected and that
 				// another runnable hasn't already done the work (even though this method is intended to run once per
 				// player per connection instance, it might happen with some server settings).
-				if (!shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS) || !player.isOnline()
-						|| playersProcessingRan.contains(player.getUniqueId())) {
-					return;
-				}
-
-				if (!disabledCategories.contains(NormalAchievements.CONNECTIONS.toString())) {
+				if (shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)  && player.isOnline()
+						&& !playersConnectionProcessed.contains(player.getUniqueId())) {
 					handleConnectionAchievements(player);
+					// Ran successfully to completion: no need to re-run while player is connected.
+					playersConnectionProcessed.add(player.getUniqueId());
 				}
-
-				// Ran successfully to completion: no need to re-run while player is connected.
-				playersProcessingRan.add(player.getUniqueId());
 			}, 100);
 		}
 	}
