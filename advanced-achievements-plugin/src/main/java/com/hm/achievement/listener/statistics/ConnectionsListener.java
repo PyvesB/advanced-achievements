@@ -37,7 +37,8 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with Connections achievements and advancements for Minecraft 1.12+.
+ * Listener class to deal with Connections achievements and advancements for Minecraft 1.12+. This class uses delays
+ * processing of tasks to avoid spamming a barely connected player.
  * 
  * @author Pyves
  *
@@ -47,7 +48,6 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
 	private final Set<UUID> playersProcessingRan = new HashSet<>();
 	private final AdvancedAchievements advancedAchievements;
 	private final Set<String> disabledCategories;
@@ -72,25 +72,20 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		scheduleTask(event.getPlayer());
+		if (serverVersion >= 12) {
+			scheduleAwardAdvancements(event.getPlayer());
+		}
+		scheduleAwardConnection(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onWorldChanged(PlayerChangedWorldEvent event) {
-		if (playersProcessingRan.contains(event.getPlayer().getUniqueId())) {
-			return;
-		}
-
-		scheduleTask(event.getPlayer());
+		scheduleAwardConnection(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onGameModeChange(PlayerGameModeChangeEvent event) {
-		if (playersProcessingRan.contains(event.getPlayer().getUniqueId())) {
-			return;
-		}
-
-		scheduleTask(event.getPlayer());
+		scheduleAwardConnection(event.getPlayer());
 	}
 
 	/**
@@ -98,29 +93,26 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	 * 
 	 * @param player
 	 */
-	private void scheduleTask(Player player) {
-		// Schedule delayed task to check if player should receive a Connections achievement or advancements he is
-		// missing. This processing is delayed to avoid spamming a barely connected player.
-		Bukkit.getServer().getScheduler()
-				.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), () -> {
-					// In addition to the usual reception conditions, check that the player is still connected and that
-					// another runnable hasn't already done the work (even though this method is intended to run once
-					// per player per connection instance, it might happen with some server settings).
-					if (!shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS) || !player.isOnline()
-							|| playersProcessingRan.contains(player.getUniqueId())) {
-						return;
-					}
+	private void scheduleAwardConnection(Player player) {
+		if (!playersProcessingRan.contains(player.getUniqueId())) {
+			Bukkit.getServer().getScheduler()
+					.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), () -> {
+						// In addition to the usual reception conditions, check that the player is still connected and
+						// that another runnable hasn't already done the work (even though this method is intended to
+						// run once per player per connection instance, it might happen with some server settings).
+						if (!shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS) || !player.isOnline()
+								|| playersProcessingRan.contains(player.getUniqueId())) {
+							return;
+						}
 
-					if (serverVersion >= 12) {
-						awardAdvancements(player);
-					}
-					if (!disabledCategories.contains(NormalAchievements.CONNECTIONS.toString())) {
-						handleConnectionAchievements(player);
-					}
+						if (!disabledCategories.contains(NormalAchievements.CONNECTIONS.toString())) {
+							handleConnectionAchievements(player);
+						}
 
-					// Ran successfully to completion: no need to re-run while player is connected.
-					playersProcessingRan.add(player.getUniqueId());
-				}, 100);
+						// Ran successfully to completion: no need to re-run while player is connected.
+						playersProcessingRan.add(player.getUniqueId());
+					}, 100);
+		}
 	}
 
 	/**
@@ -154,31 +146,40 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	}
 
 	/**
-	 * Awards advancements created by Advanced Achievements. This method can be seen as a synchronisation to give
-	 * advancements which were generated after the corresponding achievement was received for a given player.
+	 * Schedules a delayed task to award advancements created by Advanced Achievements. This method can be seen as a
+	 * synchronisation to give advancements which were generated after the corresponding achievement was received for a
+	 * given player.
 	 * 
 	 * @param player
 	 */
-	private void awardAdvancements(Player player) {
-		Advancement advancement = Bukkit.getServer()
-				.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.ADVANCED_ACHIEVEMENTS_PARENT));
-		// If no parent, user has not used /aach generate, do not do anything.
-		if (advancement != null) {
-			AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
-			if (!advancementProgress.isDone()) {
-				advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
-			}
-			for (String achName : sqlDatabaseManager.getPlayerAchievementNamesList(player.getUniqueId())) {
-				advancement = Bukkit.getServer()
-						.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.getKey(achName)));
-				// Matching advancement might not exist if user has not called /aach generate.
-				if (advancement != null) {
-					advancementProgress = player.getAdvancementProgress(advancement);
-					if (!advancementProgress.isDone()) {
-						advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
+	private void scheduleAwardAdvancements(Player player) {
+		Bukkit.getServer().getScheduler()
+				.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), () -> {
+					// Check that the player is still connected.
+					if (!player.isOnline()) {
+						return;
 					}
-				}
-			}
-		}
+					Advancement advancement = Bukkit.getServer().getAdvancement(new NamespacedKey(advancedAchievements,
+							AdvancementManager.ADVANCED_ACHIEVEMENTS_PARENT));
+					// If no parent, user has not used /aach generate, do not do anything.
+					if (advancement != null) {
+						AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
+						if (!advancementProgress.isDone()) {
+							advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
+						}
+						for (String achName : sqlDatabaseManager.getPlayerAchievementNamesList(player.getUniqueId())) {
+							advancement = Bukkit.getServer()
+									.getAdvancement(
+											new NamespacedKey(advancedAchievements, AdvancementManager.getKey(achName)));
+							// Matching advancement might not exist if user has not called /aach generate.
+							if (advancement != null) {
+								advancementProgress = player.getAdvancementProgress(advancement);
+								if (!advancementProgress.isDone()) {
+									advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
+								}
+							}
+						}
+					}
+				}, 200);
 	}
 }
