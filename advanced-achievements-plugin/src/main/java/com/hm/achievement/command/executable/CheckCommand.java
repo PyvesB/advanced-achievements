@@ -29,9 +29,8 @@ public class CheckCommand extends AbstractParsableCommand {
 
 	@Inject
 	public CheckCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			CacheManager cacheManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager) {
+		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 	}
 

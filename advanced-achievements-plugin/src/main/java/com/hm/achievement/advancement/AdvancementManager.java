@@ -23,7 +23,6 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancementBuilder;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
@@ -70,14 +69,13 @@ public class AdvancementManager implements Reloadable {
 	@Inject
 	public AdvancementManager(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("gui") CommentedYamlConfiguration guiConfig, AdvancedAchievements advancedAchievements, Logger logger,
-			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories, ReloadCommand reloadCommand) {
+			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories) {
 		this.mainConfig = mainConfig;
 		this.guiConfig = guiConfig;
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.sortedThresholds = sortedThresholds;
 		this.disabledCategories = disabledCategories;
-		reloadCommand.addObserver(this);
 		unsafeValues = Bukkit.getUnsafe();
 		generatedAdvancements = 0;
 	}

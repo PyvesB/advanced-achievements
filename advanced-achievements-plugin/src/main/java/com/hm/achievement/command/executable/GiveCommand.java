@@ -35,9 +35,9 @@ public class GiveCommand extends AbstractParsableCommand {
 
 	@Inject
 	public GiveCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
+			RewardParser rewardParser) {
+		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.rewardParser = rewardParser;
 	}

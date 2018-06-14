@@ -1,7 +1,5 @@
 package com.hm.achievement.db;
 
-import static org.mockito.Mockito.mock;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Collections;
@@ -9,7 +7,6 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import com.google.common.util.concurrent.MoreExecutors;
-import com.hm.achievement.command.executable.ReloadCommand;
 
 import utilities.MockUtility;
 
@@ -24,7 +21,7 @@ public class SQLiteDatabaseTest {
 	static void initDB(MockUtility mockUtility) throws Exception {
 		Logger logger = Logger.getLogger("DBTestLogger");
 		db = new SQLiteDatabaseManager(mockUtility.getLoadedConfig("config.yml"), logger, Collections.emptyMap(),
-				new DatabaseUpdater(logger, 11), mock(ReloadCommand.class), mockUtility.getPluginMock()) {
+				new DatabaseUpdater(logger, 11), mockUtility.getPluginMock()) {
 
 			@Override
 			public void extractConfigurationParameters() {

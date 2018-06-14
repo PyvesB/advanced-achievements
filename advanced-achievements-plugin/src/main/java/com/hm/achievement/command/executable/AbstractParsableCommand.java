@@ -20,8 +20,8 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	private String langPlayerOffline;
 
 	AbstractParsableCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
-			StringBuilder pluginHeader, ReloadCommand reloadCommand) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			StringBuilder pluginHeader) {
+		super(mainConfig, langConfig, pluginHeader);
 	}
 
 	@Override

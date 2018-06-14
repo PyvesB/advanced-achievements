@@ -15,9 +15,7 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -33,10 +31,9 @@ public class BedsListener extends AbstractRateLimitedListener {
 	@Inject
 	public BedsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			ReloadCommand reloadCommand, AdvancedAchievements advancedAchievements,
-			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger, QuitListener quitListener) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand, advancedAchievements,
-				langConfig, logger, quitListener);
+			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger) {
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, advancedAchievements, langConfig,
+				logger);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

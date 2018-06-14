@@ -15,7 +15,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -31,9 +30,8 @@ public class PlacesListener extends AbstractListener {
 
 	@Inject
 	public PlacesListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			ReloadCommand reloadCommand) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

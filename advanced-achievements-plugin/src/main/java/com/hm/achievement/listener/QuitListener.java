@@ -1,7 +1,6 @@
 package com.hm.achievement.listener;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -25,16 +24,18 @@ import com.hm.achievement.lifecycle.Cleanable;
 @Singleton
 public class QuitListener implements Listener {
 
-	private final List<Cleanable> cleanableObservers = new ArrayList<>();
 	private final AdvancedAchievements advancedAchievements;
+	private final Set<Cleanable> cleanables;
 
 	@Inject
-	public QuitListener(AdvancedAchievements advancedAchievements) {
+	public QuitListener(AdvancedAchievements advancedAchievements, Set<Cleanable> cleanables) {
 		this.advancedAchievements = advancedAchievements;
+		this.cleanables = cleanables;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerQuit(PlayerQuitEvent event) {
+		System.out.println(cleanables.size());
 		UUID uuid = event.getPlayer().getUniqueId();
 
 		// Delay cleaning up to avoid invalidating data immediately: players frequently disconnect and reconnect just
@@ -46,16 +47,7 @@ public class QuitListener implements Listener {
 			}
 
 			// Notify all observers.
-			cleanableObservers.stream().forEach(cleanable -> cleanable.cleanPlayerData(uuid));
+			cleanables.stream().forEach(cleanable -> cleanable.cleanPlayerData(uuid));
 		}, 200);
-	}
-
-	/**
-	 * Adds a new Cleanable object that will be notified when a player has disconnected from the server.
-	 * 
-	 * @param cleanable
-	 */
-	public void addObserver(Cleanable cleanable) {
-		cleanableObservers.add(cleanable);
 	}
 }

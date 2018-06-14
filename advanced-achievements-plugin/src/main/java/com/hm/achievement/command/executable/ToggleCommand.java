@@ -34,8 +34,8 @@ public class ToggleCommand extends AbstractCommand {
 
 	@Inject
 	public ToggleCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader) {
+		super(mainConfig, langConfig, pluginHeader);
 	}
 
 	@Override

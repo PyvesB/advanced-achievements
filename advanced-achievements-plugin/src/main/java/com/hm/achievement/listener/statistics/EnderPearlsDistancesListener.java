@@ -15,7 +15,6 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.utils.RewardParser;
@@ -36,8 +35,8 @@ public class EnderPearlsDistancesListener extends AbstractListener {
 	@Inject
 	public EnderPearlsDistancesListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			ReloadCommand reloadCommand, Set<String> disabledCategories, AchieveDistanceRunnable distanceRunnable) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
+			Set<String> disabledCategories, AchieveDistanceRunnable distanceRunnable) {
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.disabledCategories = disabledCategories;
 		this.distanceRunnable = distanceRunnable;
 	}

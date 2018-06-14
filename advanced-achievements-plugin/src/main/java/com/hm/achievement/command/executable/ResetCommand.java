@@ -35,9 +35,9 @@ public class ResetCommand extends AbstractParsableCommand {
 
 	@Inject
 	public ResetCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
+			AbstractDatabaseManager sqlDatabaseManager) {
+		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 	}

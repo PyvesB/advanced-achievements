@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
@@ -38,9 +37,8 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 
 	@Inject
 	public AchievePlayTimeRunnable(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			ReloadCommand reloadCommand) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 
 		if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
 			essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");

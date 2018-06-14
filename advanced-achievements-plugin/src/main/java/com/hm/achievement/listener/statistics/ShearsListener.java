@@ -14,7 +14,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -30,9 +29,8 @@ public class ShearsListener extends AbstractListener {
 
 	@Inject
 	public ShearsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			ReloadCommand reloadCommand) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

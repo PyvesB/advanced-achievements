@@ -36,7 +36,6 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.command.executable.ToggleCommand;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
@@ -99,8 +98,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			@Named("lang") CommentedYamlConfiguration langConfig, int serverVersion, Logger logger,
 			StringBuilder pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements,
 			RewardParser rewardParser, Map<String, String> achievementsAndDisplayNames,
-			AbstractDatabaseManager sqlDatabaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener,
-			ReloadCommand reloadCommand) {
+			AbstractDatabaseManager sqlDatabaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.serverVersion = serverVersion;
@@ -113,7 +111,6 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		this.sqlDatabaseManager = sqlDatabaseManager;
 		this.toggleCommand = toggleCommand;
 		this.fireworkListener = fireworkListener;
-		reloadCommand.addObserver(this);
 	}
 
 	@Override

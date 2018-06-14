@@ -17,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lifecycle.Cleanable;
-import com.hm.achievement.listener.QuitListener;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -44,11 +43,9 @@ public class CacheManager implements Cleanable {
 	private final Map<UUID, Integer> totalPlayerAchievementsCache;
 
 	@Inject
-	public CacheManager(@Named("main") CommentedYamlConfiguration mainConfig, AbstractDatabaseManager sqlDatabaseManager,
-			QuitListener quitListener) {
+	public CacheManager(@Named("main") CommentedYamlConfiguration mainConfig, AbstractDatabaseManager sqlDatabaseManager) {
 		this.mainConfig = mainConfig;
 		this.sqlDatabaseManager = sqlDatabaseManager;
-		quitListener.addObserver(this);
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
 		receivedAchievementsCache = new HashMap<>();

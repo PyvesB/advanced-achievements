@@ -27,7 +27,6 @@ import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lifecycle.Cleanable;
-import com.hm.achievement.listener.QuitListener;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ParticleEffect;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
@@ -69,13 +68,12 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 
 	@Inject
 	public BookCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			Logger logger, int serverVersion, AbstractDatabaseManager sqlDatabaseManager, QuitListener quitListener) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger,
+			int serverVersion, AbstractDatabaseManager sqlDatabaseManager) {
+		super(mainConfig, langConfig, pluginHeader);
 		this.logger = logger;
 		this.serverVersion = serverVersion;
 		this.sqlDatabaseManager = sqlDatabaseManager;
-		quitListener.addObserver(this);
 	}
 
 	@Override

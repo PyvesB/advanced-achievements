@@ -43,9 +43,9 @@ public class InfoCommand extends AbstractCommand {
 
 	@Inject
 	public InfoCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
 			AdvancedAchievements advancedAchievements, RewardParser rewardParser) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+		super(mainConfig, langConfig, pluginHeader);
 		this.advancedAchievements = advancedAchievements;
 		this.rewardParser = rewardParser;
 	}
@@ -61,16 +61,19 @@ public class InfoCommand extends AbstractCommand {
 		header = configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ") + configColor
 				+ configIcon + configColor + " ------------";
 
-		langVersionCommandDescription = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.DESCRIPTION, langConfig)
+		langVersionCommandDescription = pluginHeader.toString() + configColor
+				+ LangHelper.get(InfoLang.DESCRIPTION, langConfig)
 				+ " " + ChatColor.GRAY + LangHelper.get(InfoLang.DESCRIPTION_DETAILS, langConfig);
 
-		langVersionCommandVersion = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.VERSION, langConfig) + " "
+		langVersionCommandVersion = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.VERSION, langConfig)
+				+ " "
 				+ ChatColor.GRAY + advancedAchievements.getDescription().getVersion();
 
 		langVersionCommandAuthor = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.AUTHOR, langConfig) + " "
 				+ ChatColor.GRAY + advancedAchievements.getDescription().getAuthors().get(0);
 
-		langVersionCommandWebsite = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.WEBSITE, langConfig) + " "
+		langVersionCommandWebsite = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.WEBSITE, langConfig)
+				+ " "
 				+ ChatColor.GRAY + advancedAchievements.getDescription().getWebsite();
 
 		// Display whether Advanced Achievements is linked to Vault.
@@ -80,7 +83,8 @@ public class InfoCommand extends AbstractCommand {
 
 		// Display whether Advanced Achievements is linked to Pet Master.
 		String petMasterState = Bukkit.getPluginManager().isPluginEnabled("PetMaster") ? "&a\u2714" : "&4\u2718";
-		langVersionCommandPetmaster = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.PETMASTER, langConfig) + " "
+		langVersionCommandPetmaster = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.PETMASTER, langConfig)
+				+ " "
 				+ ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
 
 		// Display whether Advanced Achievements is linked to BungeeTabListPlus.
@@ -92,7 +96,8 @@ public class InfoCommand extends AbstractCommand {
 		boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials")
 				&& mainConfig.getBoolean("IgnoreAFKPlayedTime", false);
 		String essentialsState = essentialsUsed ? "&a\u2714" : "&4\u2718";
-		langVersionCommandEssentials = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.ESSENTIALS, langConfig)
+		langVersionCommandEssentials = pluginHeader.toString() + configColor
+				+ LangHelper.get(InfoLang.ESSENTIALS, langConfig)
 				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(essentialsState));
 
 		// Display whether Advanced Achievements is linked to PlaceholderAPI.
@@ -103,7 +108,8 @@ public class InfoCommand extends AbstractCommand {
 
 		// Display database type.
 		String databaseType = getDatabaseType();
-		langVersionCommandDatabase = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.DATABASE, langConfig) + " "
+		langVersionCommandDatabase = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.DATABASE, langConfig)
+				+ " "
 				+ ChatColor.GRAY + databaseType;
 	}
 

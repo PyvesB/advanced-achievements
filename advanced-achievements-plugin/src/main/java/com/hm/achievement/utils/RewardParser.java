@@ -18,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.RewardLang;
 import com.hm.achievement.lifecycle.Reloadable;
@@ -51,11 +50,10 @@ public class RewardParser implements Reloadable {
 
 	@Inject
 	public RewardParser(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger, ReloadCommand reloadCommand) {
+			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.logger = logger;
-		reloadCommand.addObserver(this);
 		// Try to retrieve an Economy instance from Vault.
 		if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
 			RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);

@@ -18,7 +18,6 @@ import org.bukkit.command.TabCompleter;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -43,11 +42,10 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	@Inject
 	public CommandTabCompleter(@Named("main") CommentedYamlConfiguration mainConfig,
-			Map<String, String> achievementsAndDisplayNames, Set<String> disabledCategories, ReloadCommand reloadCommand) {
+			Map<String, String> achievementsAndDisplayNames, Set<String> disabledCategories) {
 		this.mainConfig = mainConfig;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
 		this.disabledCategories = disabledCategories;
-		reloadCommand.addObserver(this);
 	}
 
 	@Override

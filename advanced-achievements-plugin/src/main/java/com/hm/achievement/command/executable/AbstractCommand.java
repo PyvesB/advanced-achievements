@@ -21,14 +21,6 @@ public abstract class AbstractCommand implements Reloadable {
 
 	private String langNoPermissions;
 
-	AbstractCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
-			ReloadCommand reloadCommand) {
-		this.mainConfig = mainConfig;
-		this.langConfig = langConfig;
-		this.pluginHeader = pluginHeader;
-		reloadCommand.addObserver(this);
-	}
-
 	AbstractCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
 			StringBuilder pluginHeader) {
 		this.mainConfig = mainConfig;

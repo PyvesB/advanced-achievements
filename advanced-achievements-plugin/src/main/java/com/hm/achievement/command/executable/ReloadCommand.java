@@ -1,8 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,11 +33,11 @@ import dagger.Lazy;
 @CommandSpec(name = "reload", permission = "reload", minArgs = 1, maxArgs = 1)
 public class ReloadCommand extends AbstractCommand {
 
-	private final List<Reloadable> reloadableObservers = new ArrayList<>();
 	private final CommentedYamlConfiguration guiConfig;
 	private final AdvancedAchievements advancedAchievements;
-	private final Lazy<PluginLoader> pluginLoader;
 	private final Logger logger;
+	private final Lazy<PluginLoader> pluginLoader;
+	private final Lazy<Set<Reloadable>> reloadables;
 
 	private String langConfigReloadFailed;
 	private String langConfigSuccessfullyReloaded;
@@ -46,29 +45,21 @@ public class ReloadCommand extends AbstractCommand {
 	@Inject
 	public ReloadCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, Lazy<PluginLoader> pluginLoader,
-			Logger logger) {
+			StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, Logger logger,
+			Lazy<PluginLoader> pluginLoader, Lazy<Set<Reloadable>> reloadables) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.guiConfig = guiConfig;
 		this.advancedAchievements = advancedAchievements;
-		this.pluginLoader = pluginLoader;
 		this.logger = logger;
-		reloadableObservers.add(this);
+		this.pluginLoader = pluginLoader;
+		this.reloadables = reloadables;
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		langConfigReloadFailed = pluginHeader + LangHelper.get(CmdLang.CONFIGURATION_RELOAD_FAILED, langConfig);
-		langConfigSuccessfullyReloaded = pluginHeader + LangHelper.get(CmdLang.CONFIGURATION_SUCCESSFULLY_RELOADED, langConfig);
-	}
-
-	/**
-	 * Adds a new Reloadable observer that will be notified when the plugin is loaded/reloaded.
-	 * 
-	 * @param relodable
-	 */
-	public void addObserver(Reloadable relodable) {
-		reloadableObservers.add(relodable);
+		langConfigSuccessfullyReloaded = pluginHeader
+				+ LangHelper.get(CmdLang.CONFIGURATION_SUCCESSFULLY_RELOADED, langConfig);
 	}
 
 	/**
@@ -77,7 +68,7 @@ public class ReloadCommand extends AbstractCommand {
 	 * @throws PluginLoadError
 	 */
 	public void notifyObservers() throws PluginLoadError {
-		for (Reloadable reloadable : reloadableObservers) {
+		for (Reloadable reloadable : reloadables.get()) {
 			reloadable.extractConfigurationParameters();
 		}
 	}
@@ -106,6 +97,5 @@ public class ReloadCommand extends AbstractCommand {
 			sender.sendMessage(langConfigSuccessfullyReloaded);
 		}
 		logger.info("Configuration successfully reloaded.");
-
 	}
 }

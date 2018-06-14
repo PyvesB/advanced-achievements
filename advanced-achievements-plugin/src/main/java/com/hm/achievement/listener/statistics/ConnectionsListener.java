@@ -27,11 +27,9 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
-import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -56,13 +54,12 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	@Inject
 	public ConnectionsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			ReloadCommand reloadCommand, AdvancedAchievements advancedAchievements, Set<String> disabledCategories,
-			AbstractDatabaseManager sqlDatabaseManager, QuitListener quitListener) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
+			AdvancedAchievements advancedAchievements, Set<String> disabledCategories,
+			AbstractDatabaseManager sqlDatabaseManager) {
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.advancedAchievements = advancedAchievements;
 		this.disabledCategories = disabledCategories;
 		this.sqlDatabaseManager = sqlDatabaseManager;
-		quitListener.addObserver(this);
 	}
 
 	@Override

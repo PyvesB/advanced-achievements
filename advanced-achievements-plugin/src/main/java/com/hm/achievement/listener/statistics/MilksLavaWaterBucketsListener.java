@@ -18,9 +18,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -37,11 +35,10 @@ public class MilksLavaWaterBucketsListener extends AbstractRateLimitedListener {
 	@Inject
 	public MilksLavaWaterBucketsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			ReloadCommand reloadCommand, AdvancedAchievements advancedAchievements,
-			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
-			QuitListener quitListener, Set<String> disabledCategories) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand, advancedAchievements,
-				langConfig, logger, quitListener);
+			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
+			Set<String> disabledCategories) {
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, advancedAchievements, langConfig,
+				logger);
 		this.disabledCategories = disabledCategories;
 	}
 

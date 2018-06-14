@@ -35,9 +35,9 @@ public class AddCommand extends AbstractParsableCommand {
 
 	@Inject
 	public AddCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			CacheManager cacheManager, StatisticIncreaseHandler statisticIncreaseHandler) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
+			StatisticIncreaseHandler statisticIncreaseHandler) {
+		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.statisticIncreaseHandler = statisticIncreaseHandler;
 	}

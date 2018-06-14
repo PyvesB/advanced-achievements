@@ -26,7 +26,6 @@ import org.bukkit.map.MinecraftFont;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
@@ -82,8 +81,8 @@ public class CategoryGUI extends AbstractGUI {
 	public CategoryGUI(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
 			Logger logger, CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager,
-			Map<String, List<Long>> sortedThresholds, RewardParser rewardParser, ReloadCommand reloadCommand) {
-		super(mainConfig, langConfig, guiConfig, logger, cacheManager, reloadCommand);
+			Map<String, List<Long>> sortedThresholds, RewardParser rewardParser) {
+		super(mainConfig, langConfig, guiConfig, logger, cacheManager);
 		this.sqlDatabaseManager = sqlDatabaseManager;
 		this.sortedThresholds = sortedThresholds;
 		this.rewardParser = rewardParser;

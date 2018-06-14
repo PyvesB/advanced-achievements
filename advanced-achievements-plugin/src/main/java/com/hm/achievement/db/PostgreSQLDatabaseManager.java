@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import javax.inject.Named;
 
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -27,8 +26,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class PostgreSQLDatabaseManager extends AbstractDatabaseManager {
 
 	public PostgreSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
-			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater, ReloadCommand reloadCommand) {
-		super(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater, reloadCommand);
+			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater) {
+		super(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater);
 	}
 
 	@Override

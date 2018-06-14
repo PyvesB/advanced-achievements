@@ -16,7 +16,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
@@ -43,9 +42,8 @@ public class MainGUI extends AbstractGUI {
 	@Inject
 	public MainGUI(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			Logger logger, CacheManager cacheManager, int serverVersion, Set<String> disabledCategories,
-			ReloadCommand reloadCommand) {
-		super(mainConfig, langConfig, guiConfig, logger, cacheManager, reloadCommand);
+			Logger logger, CacheManager cacheManager, int serverVersion, Set<String> disabledCategories) {
+		super(mainConfig, langConfig, guiConfig, logger, cacheManager);
 		this.disabledCategories = disabledCategories;
 		lockedItem = new ItemStack(serverVersion < 8 ? Material.OBSIDIAN : Material.BARRIER);
 	}

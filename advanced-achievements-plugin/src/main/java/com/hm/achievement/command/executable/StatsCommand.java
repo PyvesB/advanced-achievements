@@ -47,9 +47,9 @@ public class StatsCommand extends AbstractCommand {
 
 	@Inject
 	public StatsCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			Logger logger, int serverVersion, CacheManager cacheManager, Map<String, String> achievementsAndDisplayNames) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger,
+			int serverVersion, CacheManager cacheManager, Map<String, String> achievementsAndDisplayNames) {
+		super(mainConfig, langConfig, pluginHeader);
 		this.serverVersion = serverVersion;
 		this.logger = logger;
 		this.cacheManager = cacheManager;

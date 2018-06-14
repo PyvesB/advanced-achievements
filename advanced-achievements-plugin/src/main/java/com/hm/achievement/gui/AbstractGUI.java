@@ -14,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
@@ -46,13 +45,12 @@ public abstract class AbstractGUI implements Reloadable {
 	private String langListAchievementInCategorySingular;
 
 	AbstractGUI(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
-			CommentedYamlConfiguration guiConfig, Logger logger, CacheManager cacheManager, ReloadCommand reloadCommand) {
+			CommentedYamlConfiguration guiConfig, Logger logger, CacheManager cacheManager) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
 		this.logger = logger;
 		this.cacheManager = cacheManager;
-		reloadCommand.addObserver(this);
 	}
 
 	@Override

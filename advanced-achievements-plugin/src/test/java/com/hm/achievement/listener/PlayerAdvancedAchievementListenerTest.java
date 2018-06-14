@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.ListenerLang;
@@ -74,10 +73,9 @@ public class PlayerAdvancedAchievementListenerTest {
 		plugin = mockUtility.getPluginMock();
 
 		CommentedYamlConfiguration mainConfig = mockUtility.getLoadedConfig("config-reward-reception.yml");
-		underTest = new PlayerAdvancedAchievementListener(mainConfig,
-				mockUtility.getLoadedConfig("lang.yml"), 11, mock(Logger.class), new StringBuilder(PLUGIN_HEADER),
-				new CacheManager(mainConfig, abstractDatabaseManager, new QuitListener(plugin)), plugin, rewardParser,
-				achievementsAndDisplayNames, abstractDatabaseManager, null, null, mock(ReloadCommand.class));
+		underTest = new PlayerAdvancedAchievementListener(mainConfig, mockUtility.getLoadedConfig("lang.yml"), 11,
+				mock(Logger.class), new StringBuilder(PLUGIN_HEADER), new CacheManager(mainConfig, abstractDatabaseManager),
+				plugin, rewardParser, achievementsAndDisplayNames, abstractDatabaseManager, null, null);
 		underTest.extractConfigurationParameters();
 		when(player.getUniqueId()).thenReturn(PLAYER_UUID);
 		when(player.getName()).thenReturn("DarkPyves");

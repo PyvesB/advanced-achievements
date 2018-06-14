@@ -23,9 +23,8 @@ public class ListCommand extends AbstractCommand {
 
 	@Inject
 	public ListCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			MainGUI mainGUI) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, MainGUI mainGUI) {
+		super(mainConfig, langConfig, pluginHeader);
 		this.mainGUI = mainGUI;
 	}
 

@@ -66,9 +66,9 @@ public class HelpCommand extends AbstractCommand {
 
 	@Inject
 	public HelpCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			int serverVersion, Logger logger) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, int serverVersion,
+			Logger logger) {
+		super(mainConfig, langConfig, pluginHeader);
 		this.serverVersion = serverVersion;
 		this.logger = logger;
 	}

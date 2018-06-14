@@ -21,8 +21,8 @@ public class EasterEggCommand extends AbstractCommand {
 
 	@Inject
 	public EasterEggCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader) {
+		super(mainConfig, langConfig, pluginHeader);
 	}
 
 	@Override

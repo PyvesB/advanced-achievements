@@ -21,10 +21,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
-import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -46,10 +44,9 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	@Inject
 	public AchieveDistanceRunnable(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			Set<String> disabledCategories, ReloadCommand reloadCommand, QuitListener quitListener) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
+			Set<String> disabledCategories) {
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.disabledCategories = disabledCategories;
-		quitListener.addObserver(this);
 	}
 
 	@Override

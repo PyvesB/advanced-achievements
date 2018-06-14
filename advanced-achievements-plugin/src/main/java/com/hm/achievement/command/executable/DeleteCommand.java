@@ -31,9 +31,9 @@ public class DeleteCommand extends AbstractParsableCommand {
 
 	@Inject
 	public DeleteCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, ReloadCommand reloadCommand,
-			CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, reloadCommand);
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
+			AbstractDatabaseManager sqlDatabaseManager) {
+		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 	}

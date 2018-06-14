@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.Reloadable;
@@ -58,12 +57,11 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	private boolean configBookChronologicalOrder;
 
 	public AbstractDatabaseManager(CommentedYamlConfiguration mainConfig, Logger logger,
-			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater, ReloadCommand reloadCommand) {
+			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater) {
 		this.mainConfig = mainConfig;
 		this.logger = logger;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
 		this.databaseUpdater = databaseUpdater;
-		reloadCommand.addObserver(this);
 		// We expect to execute many short writes to the database. The pool can grow dynamically under high load and
 		// allows to reuse threads.
 		pool = Executors.newCachedThreadPool();

@@ -12,9 +12,11 @@ import com.hm.achievement.api.AdvancedAchievementsAPI;
 import com.hm.achievement.api.AdvancedAchievementsBukkitAPI;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.PluginLoader;
+import com.hm.achievement.module.CleanableModule;
 import com.hm.achievement.module.CommandModule;
 import com.hm.achievement.module.ConfigModule;
 import com.hm.achievement.module.DatabaseModule;
+import com.hm.achievement.module.ReloadableModule;
 import com.hm.achievement.module.ServerVersionModule;
 import com.hm.achievement.module.UpdateCheckerModule;
 
@@ -69,9 +71,11 @@ public class AdvancedAchievements extends JavaPlugin {
 
 @Singleton
 @Component(modules = {
+		CleanableModule.class,
 		CommandModule.class,
 		ConfigModule.class,
 		DatabaseModule.class,
+		ReloadableModule.class,
 		ServerVersionModule.class,
 		UpdateCheckerModule.class
 })

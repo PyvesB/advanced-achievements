@@ -14,7 +14,6 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
@@ -42,14 +41,12 @@ public class StatisticIncreaseHandler implements Reloadable {
 
 	@Inject
 	public StatisticIncreaseHandler(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			ReloadCommand reloadCommand) {
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		this.mainConfig = mainConfig;
 		this.serverVersion = serverVersion;
 		this.sortedThresholds = sortedThresholds;
 		this.cacheManager = cacheManager;
 		this.rewardParser = rewardParser;
-		reloadCommand.addObserver(this);
 	}
 
 	@Override
