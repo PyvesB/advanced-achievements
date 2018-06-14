@@ -50,15 +50,17 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	// Contains UUIDs of players for which a AchieveConnectionRunnable ran successfully without returning.
 	private final Set<UUID> playersProcessingRan = new HashSet<>();
 	private final AdvancedAchievements advancedAchievements;
+	private final Set<String> disabledCategories;
 	private final AbstractDatabaseManager sqlDatabaseManager;
 
 	@Inject
 	public ConnectionsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			ReloadCommand reloadCommand, AdvancedAchievements advancedAchievements,
+			ReloadCommand reloadCommand, AdvancedAchievements advancedAchievements, Set<String> disabledCategories,
 			AbstractDatabaseManager sqlDatabaseManager, QuitListener quitListener) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
 		this.advancedAchievements = advancedAchievements;
+		this.disabledCategories = disabledCategories;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 		quitListener.addObserver(this);
 	}
@@ -101,22 +103,20 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 		// missing. This processing is delayed to avoid spamming a barely connected player.
 		Bukkit.getServer().getScheduler()
 				.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), () -> {
-					// Check reception conditions and whether player is still connected, as he could have left in
-					// the meantime.
-					if (!player.isOnline() || !shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)) {
-						return;
-					}
-
-					// Check whether another runnable has already done the work (even though this method is intended
-					// to run once per player per connection instance, it might happen with some server settings).
-					if (playersProcessingRan.contains(player.getUniqueId())) {
+					// In addition to the usual reception conditions, check that the player is still connected and that
+					// another runnable hasn't already done the work (even though this method is intended to run once
+					// per player per connection instance, it might happen with some server settings).
+					if (!shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS) || !player.isOnline()
+							|| playersProcessingRan.contains(player.getUniqueId())) {
 						return;
 					}
 
 					if (serverVersion >= 12) {
 						awardAdvancements(player);
 					}
-					handleConnectionAchievements(player);
+					if (!disabledCategories.contains(NormalAchievements.CONNECTIONS.toString())) {
+						handleConnectionAchievements(player);
+					}
 
 					// Ran successfully to completion: no need to re-run while player is connected.
 					playersProcessingRan.add(player.getUniqueId());
