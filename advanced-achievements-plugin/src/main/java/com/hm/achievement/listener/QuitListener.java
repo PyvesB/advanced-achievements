@@ -13,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.lifecycle.Cleanable;
 
 /**
@@ -25,9 +26,11 @@ import com.hm.achievement.lifecycle.Cleanable;
 public class QuitListener implements Listener {
 
 	private final List<Cleanable> cleanableObservers = new ArrayList<>();
+	private final AdvancedAchievements advancedAchievements;
 
 	@Inject
-	public QuitListener() {
+	public QuitListener(AdvancedAchievements advancedAchievements) {
+		this.advancedAchievements = advancedAchievements;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -36,16 +39,15 @@ public class QuitListener implements Listener {
 
 		// Delay cleaning up to avoid invalidating data immediately: players frequently disconnect and reconnect just
 		// after. This also avoids players taking advantage of the reset of cooldowns.
-		Bukkit.getServer().getScheduler()
-				.scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("AdvancedAchievements"), () -> {
-					if (Bukkit.getPlayer(uuid) != null) {
-						// Player reconnected.
-						return;
-					}
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> {
+			if (Bukkit.getPlayer(uuid) != null) {
+				// Player reconnected.
+				return;
+			}
 
-					// Notify all observers.
-					cleanableObservers.stream().forEach(cleanable -> cleanable.cleanPlayerData(uuid));
-				}, 200);
+			// Notify all observers.
+			cleanableObservers.stream().forEach(cleanable -> cleanable.cleanPlayerData(uuid));
+		}, 200);
 	}
 
 	/**

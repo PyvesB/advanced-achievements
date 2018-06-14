@@ -19,6 +19,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
@@ -40,10 +41,11 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 	@Inject
 	public PlowingFertilisingFireworksMusicDiscsListener(@Named("main") CommentedYamlConfiguration mainConfig,
 			int serverVersion, Map<String, List<Long>> sortedThresholds, CacheManager cacheManager,
-			RewardParser rewardParser, ReloadCommand reloadCommand, @Named("lang") CommentedYamlConfiguration langConfig,
+			RewardParser rewardParser, ReloadCommand reloadCommand, AdvancedAchievements advancedAchievements,
+			@Named("lang") CommentedYamlConfiguration langConfig,
 			Logger logger, QuitListener quitListener, Set<String> disabledCategories) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand, langConfig, logger,
-				quitListener);
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand, advancedAchievements,
+				langConfig, logger, quitListener);
 		this.disabledCategories = disabledCategories;
 	}
 

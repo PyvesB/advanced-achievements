@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
@@ -31,6 +32,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 
 	final Map<String, Long> cooldownMap = new HashMap<>();
 
+	private final AdvancedAchievements advancedAchievements;
 	private final CommentedYamlConfiguration langConfig;
 	private final Logger logger;
 
@@ -41,8 +43,10 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 
 	AbstractRateLimitedListener(CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			ReloadCommand reloadCommand, CommentedYamlConfiguration langConfig, Logger logger, QuitListener quitListener) {
+			ReloadCommand reloadCommand, AdvancedAchievements advancedAchievements, CommentedYamlConfiguration langConfig,
+			Logger logger, QuitListener quitListener) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand);
+		this.advancedAchievements = advancedAchievements;
 		this.langConfig = langConfig;
 		this.logger = logger;
 		quitListener.addObserver(this);
@@ -122,8 +126,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 				if (delay) {
 					// Display message with a delay to avoid it being overwritten by another message (typically disc
 					// name).
-					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-							Bukkit.getPluginManager().getPlugin("AdvancedAchievements"),
+					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(advancedAchievements,
 							() -> displayActionBarMessage(player, message), 20);
 				} else {
 					displayActionBarMessage(player, message);

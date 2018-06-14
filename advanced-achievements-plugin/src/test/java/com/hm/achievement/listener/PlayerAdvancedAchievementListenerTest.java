@@ -76,7 +76,7 @@ public class PlayerAdvancedAchievementListenerTest {
 		CommentedYamlConfiguration mainConfig = mockUtility.getLoadedConfig("config-reward-reception.yml");
 		underTest = new PlayerAdvancedAchievementListener(mainConfig,
 				mockUtility.getLoadedConfig("lang.yml"), 11, mock(Logger.class), new StringBuilder(PLUGIN_HEADER),
-				new CacheManager(mainConfig, abstractDatabaseManager, new QuitListener()), plugin, rewardParser,
+				new CacheManager(mainConfig, abstractDatabaseManager, new QuitListener(plugin)), plugin, rewardParser,
 				achievementsAndDisplayNames, abstractDatabaseManager, null, null, mock(ReloadCommand.class));
 		underTest.extractConfigurationParameters();
 		when(player.getUniqueId()).thenReturn(PLAYER_UUID);

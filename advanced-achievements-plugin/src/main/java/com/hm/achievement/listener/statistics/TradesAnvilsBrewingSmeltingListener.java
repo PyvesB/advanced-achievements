@@ -19,6 +19,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 
+import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.db.CacheManager;
@@ -40,10 +41,10 @@ public class TradesAnvilsBrewingSmeltingListener extends AbstractRateLimitedList
 	@Inject
 	public TradesAnvilsBrewingSmeltingListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger, ReloadCommand reloadCommand,
-			QuitListener quitListener, Set<String> disabledCategories) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand, langConfig, logger,
-				quitListener);
+			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
+			ReloadCommand reloadCommand, QuitListener quitListener, Set<String> disabledCategories) {
+		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, reloadCommand, advancedAchievements,
+				langConfig, logger, quitListener);
 		this.disabledCategories = disabledCategories;
 	}
 
