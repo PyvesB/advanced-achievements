@@ -35,7 +35,6 @@ public class QuitListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		System.out.println(cleanables.size());
 		UUID uuid = event.getPlayer().getUniqueId();
 
 		// Delay cleaning up to avoid invalidating data immediately: players frequently disconnect and reconnect just
