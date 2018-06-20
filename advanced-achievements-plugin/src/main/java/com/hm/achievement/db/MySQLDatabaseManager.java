@@ -1,5 +1,8 @@
 package com.hm.achievement.db;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -24,13 +27,13 @@ public class MySQLDatabaseManager extends AbstractDatabaseManager {
 	}
 
 	@Override
-	void performPreliminaryTasks() throws ClassNotFoundException {
+	void performPreliminaryTasks() throws ClassNotFoundException, UnsupportedEncodingException {
 		Class.forName("com.mysql.jdbc.Driver");
 
 		// Get parameters from the MySQL config category.
 		databaseAddress = mainConfig.getString("MYSQL.Database", "jdbc:mysql://localhost:3306/minecraft");
-		databaseUser = mainConfig.getString("MYSQL.User", "root");
-		databasePassword = mainConfig.getString("MYSQL.Password", "root");
+		databaseUser = URLEncoder.encode(mainConfig.getString("MYSQL.User", "root"), StandardCharsets.UTF_8.name());
+		databasePassword = URLEncoder.encode(mainConfig.getString("MYSQL.Password", "root"), StandardCharsets.UTF_8.name());
 	}
 
 	@Override

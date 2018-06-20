@@ -1,5 +1,8 @@
 package com.hm.achievement.db;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -89,12 +92,15 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		logger.info("Initialising database...");
 
 		prefix = mainConfig.getString("TablePrefix", "");
-		additionalConnectionOptions = mainConfig.getString("AdditionalConnectionOptions", "");
 
 		try {
+			additionalConnectionOptions = URLEncoder.encode(mainConfig.getString("AdditionalConnectionOptions", ""),
+					StandardCharsets.UTF_8.name());
 			performPreliminaryTasks();
 		} catch (ClassNotFoundException e) {
 			logger.severe("The JBDC driver for the chosen database type was not found.");
+		} catch (UnsupportedEncodingException e) {
+			logger.log(Level.SEVERE, "Error while encoding the database URL:", e);
 		}
 
 		// Try to establish connection with database; stays opened until explicitly closed by the plugin.
@@ -116,8 +122,9 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 *
 	 * @throws ClassNotFoundException
 	 * @throws PluginLoadError
+	 * @throws UnsupportedEncodingException
 	 */
-	abstract void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError;
+	abstract void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError, UnsupportedEncodingException;
 
 	/**
 	 * Shuts the thread pool down and closes connection to database.

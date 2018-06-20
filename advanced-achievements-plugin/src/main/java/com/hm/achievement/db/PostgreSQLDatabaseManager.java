@@ -1,5 +1,8 @@
 package com.hm.achievement.db;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -31,13 +34,14 @@ public class PostgreSQLDatabaseManager extends AbstractDatabaseManager {
 	}
 
 	@Override
-	void performPreliminaryTasks() throws ClassNotFoundException {
+	void performPreliminaryTasks() throws ClassNotFoundException, UnsupportedEncodingException {
 		Class.forName("org.postgresql.Driver");
 
 		// Get parameters from the PostgreSQL config category.
 		databaseAddress = mainConfig.getString("POSTGRESQL.Database", "jdbc:postgresql://localhost:5432/minecraft");
-		databaseUser = mainConfig.getString("POSTGRESQL.User", "root");
-		databasePassword = mainConfig.getString("POSTGRESQL.Password", "root");
+		databaseUser = URLEncoder.encode(mainConfig.getString("POSTGRESQL.User", "root"), StandardCharsets.UTF_8.name());
+		databasePassword = URLEncoder.encode(mainConfig.getString("POSTGRESQL.Password", "root"),
+				StandardCharsets.UTF_8.name());
 	}
 
 	@Override
