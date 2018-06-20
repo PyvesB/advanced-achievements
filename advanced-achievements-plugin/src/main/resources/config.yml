@@ -206,7 +206,7 @@ DatabaseType: sqlite
 TablePrefix: ""
   
 # Specify additional options when opening a connection to a MySQL/PostgreSQL database. Start each option with &,
-# for instance "&useUnicode=yes&characterEncoding=UTF-8".
+# for instance "&useUnicode=yes&characterEncoding=UTF-8". Make sure the key-value pairs themselves are URL encoded.
 AdditionalConnectionOptions: ""
 
 # Settings to link with MySQL database (ignored if sqlite or postgresql).

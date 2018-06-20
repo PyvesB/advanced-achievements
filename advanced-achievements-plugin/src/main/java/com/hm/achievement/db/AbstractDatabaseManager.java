@@ -1,8 +1,6 @@
 package com.hm.achievement.db;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -92,10 +90,9 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		logger.info("Initialising database...");
 
 		prefix = mainConfig.getString("TablePrefix", "");
+		additionalConnectionOptions = mainConfig.getString("AdditionalConnectionOptions", "");
 
 		try {
-			additionalConnectionOptions = URLEncoder.encode(mainConfig.getString("AdditionalConnectionOptions", ""),
-					StandardCharsets.UTF_8.name());
 			performPreliminaryTasks();
 		} catch (ClassNotFoundException e) {
 			logger.severe("The JBDC driver for the chosen database type was not found.");
