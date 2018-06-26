@@ -66,31 +66,28 @@ public class InfoCommand extends AbstractCommand {
 				+ " " + ChatColor.GRAY + LangHelper.get(InfoLang.DESCRIPTION_DETAILS, langConfig);
 
 		langVersionCommandVersion = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.VERSION, langConfig)
-				+ " "
-				+ ChatColor.GRAY + advancedAchievements.getDescription().getVersion();
+				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getVersion();
 
-		langVersionCommandAuthor = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.AUTHOR, langConfig) + " "
-				+ ChatColor.GRAY + advancedAchievements.getDescription().getAuthors().get(0);
+		langVersionCommandAuthor = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.AUTHOR, langConfig)
+				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getAuthors().get(0);
 
 		langVersionCommandWebsite = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.WEBSITE, langConfig)
-				+ " "
-				+ ChatColor.GRAY + advancedAchievements.getDescription().getWebsite();
+				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getWebsite();
 
 		// Display whether Advanced Achievements is linked to Vault.
 		String vaultState = rewardParser.getEconomy() != null ? "&a\u2714" : "&4\u2718";
-		langVersionCommandVault = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.VAULT, langConfig) + " "
-				+ ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(vaultState));
+		langVersionCommandVault = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.VAULT, langConfig)
+				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(vaultState));
 
 		// Display whether Advanced Achievements is linked to Pet Master.
 		String petMasterState = Bukkit.getPluginManager().isPluginEnabled("PetMaster") ? "&a\u2714" : "&4\u2718";
 		langVersionCommandPetmaster = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.PETMASTER, langConfig)
-				+ " "
-				+ ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
+				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
 
 		// Display whether Advanced Achievements is linked to BungeeTabListPlus.
 		String btlpState = Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus") ? "&a\u2714" : "&4\u2718";
-		langVersionCommandBtlp = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.BTLP, langConfig) + " "
-				+ ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(btlpState));
+		langVersionCommandBtlp = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.BTLP, langConfig)
+				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(btlpState));
 
 		// Display whether Advanced Achievements is linked to Essentials.
 		boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials")
@@ -109,8 +106,7 @@ public class InfoCommand extends AbstractCommand {
 		// Display database type.
 		String databaseType = getDatabaseType();
 		langVersionCommandDatabase = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.DATABASE, langConfig)
-				+ " "
-				+ ChatColor.GRAY + databaseType;
+				+ " " + ChatColor.GRAY + databaseType;
 	}
 
 	private String getDatabaseType() {
@@ -130,11 +126,13 @@ public class InfoCommand extends AbstractCommand {
 		sender.sendMessage(langVersionCommandVersion);
 		sender.sendMessage(langVersionCommandAuthor);
 		sender.sendMessage(langVersionCommandWebsite);
-		sender.sendMessage(langVersionCommandVault);
-		sender.sendMessage(langVersionCommandPetmaster);
-		sender.sendMessage(langVersionCommandBtlp);
-		sender.sendMessage(langVersionCommandEssentials);
-		sender.sendMessage(langVersionCommandPlaceholderAPI);
-		sender.sendMessage(langVersionCommandDatabase);
+		if (sender.hasPermission("achievement.*")) {
+			sender.sendMessage(langVersionCommandVault);
+			sender.sendMessage(langVersionCommandPetmaster);
+			sender.sendMessage(langVersionCommandBtlp);
+			sender.sendMessage(langVersionCommandEssentials);
+			sender.sendMessage(langVersionCommandPlaceholderAPI);
+			sender.sendMessage(langVersionCommandDatabase);
+		}
 	}
 }
