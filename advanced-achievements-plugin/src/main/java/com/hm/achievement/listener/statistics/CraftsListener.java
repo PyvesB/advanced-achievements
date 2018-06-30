@@ -57,8 +57,8 @@ public class CraftsListener extends AbstractListener {
 			return;
 		}
 
-		Set<String> foundAchievements = findAchievementsByCategoryAndName(category, craftName + ":" + item.getDurability());
-		foundAchievements.addAll(findAchievementsByCategoryAndName(category, craftName));
+		Set<String> foundAchievements = findAchievementsByCategoryAndName(category, craftName + ':' + item.getDurability());
+		foundAchievements.addAll(findAchievementsByCategoryAndName(category, craftName + ':' + item.getDurability()));
 
 		int eventAmount = event.getCurrentItem().getAmount();
 		if (event.isShiftClick()) {
@@ -81,6 +81,6 @@ public class CraftsListener extends AbstractListener {
 
 		int incrementValue = eventAmount; // Effectively final variable needed.
 		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
-				craftName, incrementValue));
+				achievement, incrementValue));
 	}
 }
