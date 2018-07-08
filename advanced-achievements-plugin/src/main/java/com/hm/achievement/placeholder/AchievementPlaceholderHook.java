@@ -7,33 +7,35 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.hm.achievement.AdvancedAchievements;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
-import me.clip.placeholderapi.PlaceholderHook;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 /**
  * Class enabling usage of placeholder with PlaceholderAPI to get achievements stats in others plugins.
  * 
  * @author Phoetrix
- *
  */
 @Singleton
-public class AchievementPlaceholderHook extends PlaceholderHook {
+public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
+	private final AdvancedAchievements advancedAchievements;
 	private final CommentedYamlConfiguration mainConfig;
 	private final CacheManager cacheManager;
 	private final Set<String> disabledCategories;
 	private final Map<String, String> achievementsAndDisplayNames;
 
 	@Inject
-	public AchievementPlaceholderHook(@Named("main") CommentedYamlConfiguration mainConfig,
-                  CacheManager cacheManager, Set<String> disabledCategories, Map<String, String> achievementsAndDisplayNames) {
+	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements,
+				@Named("main") CommentedYamlConfiguration mainConfig,
+                CacheManager cacheManager, Set<String> disabledCategories, Map<String, String> achievementsAndDisplayNames) {
+		this.advancedAchievements = advancedAchievements;
 		this.mainConfig = mainConfig;
 		this.cacheManager = cacheManager;
 		this.disabledCategories = disabledCategories;
@@ -42,7 +44,6 @@ public class AchievementPlaceholderHook extends PlaceholderHook {
 
 	@Override
 	public String onPlaceholderRequest(Player p, String identifier) {
-
 		if ("achievements".equalsIgnoreCase(identifier)) {
 			return String.valueOf(cacheManager.getPlayerTotalAchievements(p.getUniqueId()));
 		}
@@ -81,5 +82,20 @@ public class AchievementPlaceholderHook extends PlaceholderHook {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return "aach";
+	}
+
+	@Override
+	public String getAuthor() {
+		return String.join(", ", advancedAchievements.getDescription().getAuthors());
+	}
+
+	@Override
+	public String getVersion() {
+		return advancedAchievements.getDescription().getVersion();
 	}
 }

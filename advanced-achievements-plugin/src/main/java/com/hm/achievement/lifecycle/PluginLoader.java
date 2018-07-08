@@ -423,7 +423,7 @@ public class PluginLoader {
 		}
 
 		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-			achievementPlaceholderHook.get().hook();
+			achievementPlaceholderHook.get().register();
 		}
 	}
 }
