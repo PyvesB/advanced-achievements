@@ -15,7 +15,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
-import me.clip.placeholderapi.external.EZPlaceholderHook;
+import me.clip.placeholderapi.PlaceholderHook;
 
 /**
  * Class enabling usage of placeholder with PlaceholderAPI to get achievements stats in others plugins.
@@ -24,7 +24,7 @@ import me.clip.placeholderapi.external.EZPlaceholderHook;
  *
  */
 @Singleton
-public class AchievementPlaceholderHook extends EZPlaceholderHook {
+public class AchievementPlaceholderHook extends PlaceholderHook {
 
 	private final CommentedYamlConfiguration mainConfig;
 	private final CacheManager cacheManager;
@@ -32,10 +32,8 @@ public class AchievementPlaceholderHook extends EZPlaceholderHook {
 	private final Map<String, String> achievementsAndDisplayNames;
 
 	@Inject
-	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements,
-			@Named("main") CommentedYamlConfiguration mainConfig, CacheManager cacheManager, Set<String> disabledCategories,
-			Map<String, String> achievementsAndDisplayNames) {
-		super(advancedAchievements, "aach");
+	public AchievementPlaceholderHook(@Named("main") CommentedYamlConfiguration mainConfig,
+                  CacheManager cacheManager, Set<String> disabledCategories, Map<String, String> achievementsAndDisplayNames) {
 		this.mainConfig = mainConfig;
 		this.cacheManager = cacheManager;
 		this.disabledCategories = disabledCategories;
