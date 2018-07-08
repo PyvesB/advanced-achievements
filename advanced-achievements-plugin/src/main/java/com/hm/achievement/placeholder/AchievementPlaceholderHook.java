@@ -43,6 +43,11 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 	}
 
 	@Override
+	public boolean persist() {
+		return true;
+	}
+
+	@Override
 	public String onPlaceholderRequest(Player p, String identifier) {
 		if ("achievements".equalsIgnoreCase(identifier)) {
 			return String.valueOf(cacheManager.getPlayerTotalAchievements(p.getUniqueId()));
