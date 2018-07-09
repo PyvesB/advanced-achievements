@@ -57,6 +57,8 @@ public class ReloadCommand extends AbstractCommand {
 
 	@Override
 	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
 		langConfigReloadFailed = pluginHeader + LangHelper.get(CmdLang.CONFIGURATION_RELOAD_FAILED, langConfig);
 		langConfigSuccessfullyReloaded = pluginHeader
 				+ LangHelper.get(CmdLang.CONFIGURATION_SUCCESSFULLY_RELOADED, langConfig);
