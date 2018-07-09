@@ -4,6 +4,8 @@
 </p>
 
 # Advanced Achievements
+
+[![Build Status](https://travis-ci.com/supertassu/AdvancedAchievements.svg?branch=master)](https://travis-ci.com/supertassu/AdvancedAchievements)
 <a href="https://github.com/PyvesB/AdvancedAchievements/blob/master/LICENSE">
 <img src ="https://img.shields.io/github/license/PyvesB/AdvancedAchievements.svg" />
 </a>
