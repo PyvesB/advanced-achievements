@@ -70,7 +70,7 @@ local.properties
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
 
-AdvancedAchievements.iml
+*.iml
 .idea/
 
 ### NetBeans ###
