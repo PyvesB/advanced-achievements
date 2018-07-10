@@ -53,9 +53,12 @@ public class EnderPearlsDistancesListener extends AbstractListener {
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 
-		// Event fired twice when teleporting with a nether portal: first time to go to nether with the cause
-		// NETHER_PORTAL, then later on to change location in nether; we must only consider the second change because
-		// the location of the player is not updated during the first event; if the distances are monitored by the
+		// Event fired twice when teleporting with a nether portal: first time to go to
+		// nether with the cause
+		// NETHER_PORTAL, then later on to change location in nether; we must only
+		// consider the second change because
+		// the location of the player is not updated during the first event; if the
+		// distances are monitored by the
 		// plugin between the two events, it would lead to incorrect results.
 		if (event.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) {
 			return;

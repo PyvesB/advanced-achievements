@@ -10,8 +10,8 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Abstract class in charge of factoring out common functionality for commands with more than one argument (/aach give,
- * delete and check).
+ * Abstract class in charge of factoring out common functionality for commands
+ * with more than one argument (/aach give, delete and check).
  *
  * @author Pyves
  */
@@ -63,7 +63,8 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	 */
 	String parseAchievementName(String[] args) {
 		StringBuilder achievementName = new StringBuilder();
-		// Rebuild name of achievement by concatenating elements in the string array. The name of the player is last.
+		// Rebuild name of achievement by concatenating elements in the string array.
+		// The name of the player is last.
 		for (int i = 1; i < args.length - 1; i++) {
 			achievementName.append(args[i]);
 			if (i != args.length - 2) {

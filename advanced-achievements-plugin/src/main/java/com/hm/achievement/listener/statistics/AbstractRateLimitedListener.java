@@ -22,7 +22,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.FancyMessageSender;
 
 /**
- * Abstract class in charge of factoring out common functionality for the listener classes with cooldown maps.
+ * Abstract class in charge of factoring out common functionality for the
+ * listener classes with cooldown maps.
  *
  * @author Pyves
  */
@@ -64,7 +65,8 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 			}
 		}
 		configCooldownActionBar = mainConfig.getBoolean("CooldownActionBar", true);
-		// Action bars introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
+		// Action bars introduced in Minecraft 1.8. Automatically relevant parameter for
+		// older versions.
 		if (configCooldownActionBar && serverVersion < 8) {
 			configCooldownActionBar = false;
 		}
@@ -78,8 +80,8 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	}
 
 	/**
-	 * Determines whether a similar event was taken into account too recently and the player is still in the cooldown
-	 * period.
+	 * Determines whether a similar event was taken into account too recently and
+	 * the player is still in the cooldown period.
 	 *
 	 * @param player
 	 * @param delay
@@ -91,8 +93,9 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	}
 
 	/**
-	 * Determines whether a similar event was taken into account too recently and the player is still in the cooldown
-	 * period. Stores elements in the map with prefixes to enable several distinct entries for the same player.
+	 * Determines whether a similar event was taken into account too recently and
+	 * the player is still in the cooldown period. Stores elements in the map with
+	 * prefixes to enable several distinct entries for the same player.
 	 *
 	 * @param player
 	 * @param prefixInMap
@@ -120,7 +123,8 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 				String message = "&o" + StringUtils.replaceOnce(langStatisticCooldown, "TIME",
 						String.format("%.1f", (double) timeToWait / 1000));
 				if (delay) {
-					// Display message with a delay to avoid it being overwritten by another message (typically disc
+					// Display message with a delay to avoid it being overwritten by another message
+					// (typically disc
 					// name).
 					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(advancedAchievements,
 							() -> displayActionBarMessage(player, message), 20);

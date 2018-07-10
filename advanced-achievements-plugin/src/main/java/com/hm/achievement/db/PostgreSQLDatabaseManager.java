@@ -20,8 +20,8 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class used to handle a PosgreSQL database. Note that some query methods are overriden as the SQL syntax is different
- * from other database types.
+ * Class used to handle a PosgreSQL database. Note that some query methods are
+ * overriden as the SQL syntax is different from other database types.
  * 
  * @author Pyves
  *
@@ -39,20 +39,22 @@ public class PostgreSQLDatabaseManager extends AbstractDatabaseManager {
 
 		// Get parameters from the PostgreSQL config category.
 		databaseAddress = mainConfig.getString("POSTGRESQL.Database", "jdbc:postgresql://localhost:5432/minecraft");
-		databaseUser = URLEncoder.encode(mainConfig.getString("POSTGRESQL.User", "root"), StandardCharsets.UTF_8.name());
+		databaseUser = URLEncoder.encode(mainConfig.getString("POSTGRESQL.User", "root"),
+				StandardCharsets.UTF_8.name());
 		databasePassword = URLEncoder.encode(mainConfig.getString("POSTGRESQL.Password", "root"),
 				StandardCharsets.UTF_8.name());
 	}
 
 	@Override
 	Connection createSQLConnection() throws SQLException {
-		return DriverManager.getConnection(databaseAddress + "?autoReconnect=true" + additionalConnectionOptions + "&user="
-				+ databaseUser + "&password=" + databasePassword);
+		return DriverManager.getConnection(databaseAddress + "?autoReconnect=true" + additionalConnectionOptions
+				+ "&user=" + databaseUser + "&password=" + databasePassword);
 	}
 
 	@Override
 	public void registerAchievement(UUID uuid, String achName, String achMessage) {
-		// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available
+		// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
+		// construct, which is available
 		// for PostgreSQL 9.5+.
 		String sql = "INSERT INTO " + prefix + "achievements VALUES (?,?,?,?)"
 				+ " ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)";
@@ -80,7 +82,8 @@ public class PostgreSQLDatabaseManager extends AbstractDatabaseManager {
 				ps.setString(1, uuid.toString());
 				ResultSet rs = ps.executeQuery();
 				int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
-				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
+				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
+				// construct, which is
 				// available for PostgreSQL 9.5+.
 				String sqlWrite = "INSERT INTO " + prefix + dbName + " VALUES (?,?,?)"
 						+ " ON CONFLICT (playername) DO UPDATE SET (" + dbName + ",date)=(?,?)";

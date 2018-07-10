@@ -38,11 +38,8 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		MockUtility mockUtility = MockUtility.setUp()
-				.withPluginDescription()
-				.withLogger()
-				.withDataFolder(temporaryFolder.getRoot())
-				.withPluginFile("config.yml");
+		MockUtility mockUtility = MockUtility.setUp().withPluginDescription().withLogger()
+				.withDataFolder(temporaryFolder.getRoot()).withPluginFile("config.yml");
 		initDB(mockUtility);
 	}
 

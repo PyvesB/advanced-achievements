@@ -50,7 +50,7 @@ public class BreedingListener extends AbstractListener {
 		}
 
 		Set<String> foundAchievements = findAchievementsByCategoryAndName(category, mobName);
-		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
-				achievement, 1));
+		foundAchievements.forEach(
+				achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category, achievement, 1));
 	}
 }

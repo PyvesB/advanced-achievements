@@ -18,11 +18,8 @@ public class HelpLangTest {
 
 	@Test
 	public void testHelpAndHoverValuesExists() {
-		Set<String> helpNames = Arrays.stream(HelpLang.values())
-				.map(HelpLang::name)
-				.collect(Collectors.toSet());
-		Set<String> hoverNames = Arrays.stream(HelpLang.Hover.values())
-				.map(HelpLang.Hover::name)
+		Set<String> helpNames = Arrays.stream(HelpLang.values()).map(HelpLang::name).collect(Collectors.toSet());
+		Set<String> hoverNames = Arrays.stream(HelpLang.Hover.values()).map(HelpLang.Hover::name)
 				.collect(Collectors.toSet());
 		assertEquals(helpNames, hoverNames);
 	}

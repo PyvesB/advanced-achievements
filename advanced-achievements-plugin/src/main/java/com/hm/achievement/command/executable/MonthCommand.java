@@ -12,7 +12,8 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling the /aach month command, which displays monthly rankings.
+ * Class in charge of handling the /aach month command, which displays monthly
+ * rankings.
  *
  * @author Pyves
  */
@@ -24,7 +25,8 @@ public class MonthCommand extends AbstractRankingCommand {
 	public MonthCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger,
 			int serverVersion, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, logger, serverVersion, CmdLang.MONTH_ACHIEVEMENT, sqlDatabaseManager);
+		super(mainConfig, langConfig, pluginHeader, logger, serverVersion, CmdLang.MONTH_ACHIEVEMENT,
+				sqlDatabaseManager);
 	}
 
 	@Override

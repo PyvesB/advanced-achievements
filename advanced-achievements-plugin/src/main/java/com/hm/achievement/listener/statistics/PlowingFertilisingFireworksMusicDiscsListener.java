@@ -26,7 +26,8 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with HoePlowings, Fertilising, Fireworks and MusicDiscs achievements.
+ * Listener class to deal with HoePlowings, Fertilising, Fireworks and
+ * MusicDiscs achievements.
  * 
  * @author Pyves
  *
@@ -94,7 +95,8 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 		short durability = block.getState().getData().toItemStack(0).getDurability();
 		if (clickedMaterial == Material.DOUBLE_PLANT) {
 			if (durability == 10) {
-				// Upper part of double plant. We must look at the lower part to get the double plant type.
+				// Upper part of double plant. We must look at the lower part to get the double
+				// plant type.
 				durability = block.getRelative(BlockFace.DOWN).getState().getData().toItemStack(0).getDurability();
 			}
 			// Fertilisation does not work on double tallgrass and large fern.
@@ -105,116 +107,118 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 				|| clickedMaterial == Material.CARROT && durability < 7
 				|| clickedMaterial == Material.CROPS && durability < 7
 				|| clickedMaterial == Material.PUMPKIN_STEM && durability < 7
-				|| clickedMaterial == Material.MELON_STEM && durability < 7 || clickedMaterial == Material.BROWN_MUSHROOM
-				|| clickedMaterial == Material.RED_MUSHROOM || clickedMaterial == Material.COCOA && durability < 9
-				|| clickedMaterial == Material.LONG_GRASS
+				|| clickedMaterial == Material.MELON_STEM && durability < 7
+				|| clickedMaterial == Material.BROWN_MUSHROOM || clickedMaterial == Material.RED_MUSHROOM
+				|| clickedMaterial == Material.COCOA && durability < 9 || clickedMaterial == Material.LONG_GRASS
 				|| (serverVersion >= 9 && clickedMaterial == Material.BEETROOT_BLOCK && durability < 3);
 	}
 
 	/**
-	 * Determines whether a firework can be launched when interacting with this block.
+	 * Determines whether a firework can be launched when interacting with this
+	 * block.
 	 * 
 	 * @param clickedMaterial
-	 * @return true if the material can be used to launch a firework, false otherwise
+	 * @return true if the material can be used to launch a firework, false
+	 *         otherwise
 	 */
 	private boolean canAccommodateFireworkLaunch(Material clickedMaterial) {
 		switch (clickedMaterial) {
-			case WORKBENCH:
-			case FURNACE:
-			case BURNING_FURNACE:
-			case DISPENSER:
-			case CHEST:
-			case NOTE_BLOCK:
-			case LEVER:
-			case STONE_BUTTON:
-			case WOOD_BUTTON:
-			case TRAP_DOOR:
-			case FENCE_GATE:
-			case ENCHANTMENT_TABLE:
-			case ENDER_CHEST:
-			case BEACON:
-			case ANVIL:
-			case TRAPPED_CHEST:
-			case HOPPER:
-			case DROPPER:
-			case WOOD_DOOR:
-			case WOODEN_DOOR:
-			case PAINTING:
-			case MINECART:
-			case HOPPER_MINECART:
-			case EXPLOSIVE_MINECART:
-			case COMMAND_MINECART:
-			case POWERED_MINECART:
-			case STORAGE_MINECART:
-			case BOAT:
-			case BED_BLOCK:
-			case BREWING_STAND:
-			case CAKE_BLOCK:
-			case ITEM_FRAME:
-			case REDSTONE_COMPARATOR_OFF:
-			case REDSTONE_COMPARATOR_ON:
-			case DIODE_BLOCK_OFF:
-			case DIODE_BLOCK_ON:
-			case COMMAND:
+			case WORKBENCH :
+			case FURNACE :
+			case BURNING_FURNACE :
+			case DISPENSER :
+			case CHEST :
+			case NOTE_BLOCK :
+			case LEVER :
+			case STONE_BUTTON :
+			case WOOD_BUTTON :
+			case TRAP_DOOR :
+			case FENCE_GATE :
+			case ENCHANTMENT_TABLE :
+			case ENDER_CHEST :
+			case BEACON :
+			case ANVIL :
+			case TRAPPED_CHEST :
+			case HOPPER :
+			case DROPPER :
+			case WOOD_DOOR :
+			case WOODEN_DOOR :
+			case PAINTING :
+			case MINECART :
+			case HOPPER_MINECART :
+			case EXPLOSIVE_MINECART :
+			case COMMAND_MINECART :
+			case POWERED_MINECART :
+			case STORAGE_MINECART :
+			case BOAT :
+			case BED_BLOCK :
+			case BREWING_STAND :
+			case CAKE_BLOCK :
+			case ITEM_FRAME :
+			case REDSTONE_COMPARATOR_OFF :
+			case REDSTONE_COMPARATOR_ON :
+			case DIODE_BLOCK_OFF :
+			case DIODE_BLOCK_ON :
+			case COMMAND :
 				return false;
-			default:
+			default :
 				break;
 		}
 
 		if (serverVersion >= 8) {
 			switch (clickedMaterial) {
-				case ACACIA_FENCE_GATE:
-				case BIRCH_FENCE_GATE:
-				case DARK_OAK_FENCE_GATE:
-				case JUNGLE_FENCE_GATE:
-				case SPRUCE_FENCE_GATE:
-				case ACACIA_DOOR:
-				case BIRCH_DOOR:
-				case DARK_OAK_DOOR:
-				case JUNGLE_DOOR:
-				case SPRUCE_DOOR:
-				case ARMOR_STAND:
+				case ACACIA_FENCE_GATE :
+				case BIRCH_FENCE_GATE :
+				case DARK_OAK_FENCE_GATE :
+				case JUNGLE_FENCE_GATE :
+				case SPRUCE_FENCE_GATE :
+				case ACACIA_DOOR :
+				case BIRCH_DOOR :
+				case DARK_OAK_DOOR :
+				case JUNGLE_DOOR :
+				case SPRUCE_DOOR :
+				case ARMOR_STAND :
 					return false;
-				default:
+				default :
 					break;
 			}
 		}
 
 		if (serverVersion >= 9) {
 			switch (clickedMaterial) {
-				case BOAT_ACACIA:
-				case BOAT_BIRCH:
-				case BOAT_DARK_OAK:
-				case BOAT_JUNGLE:
-				case BOAT_SPRUCE:
-				case COMMAND_REPEATING:
-				case COMMAND_CHAIN:
+				case BOAT_ACACIA :
+				case BOAT_BIRCH :
+				case BOAT_DARK_OAK :
+				case BOAT_JUNGLE :
+				case BOAT_SPRUCE :
+				case COMMAND_REPEATING :
+				case COMMAND_CHAIN :
 					return false;
-				default:
+				default :
 					break;
 			}
 		}
 
 		if (serverVersion >= 11) {
 			switch (clickedMaterial) {
-				case BLACK_SHULKER_BOX:
-				case BLUE_SHULKER_BOX:
-				case BROWN_SHULKER_BOX:
-				case CYAN_SHULKER_BOX:
-				case GRAY_SHULKER_BOX:
-				case GREEN_SHULKER_BOX:
-				case LIGHT_BLUE_SHULKER_BOX:
-				case LIME_SHULKER_BOX:
-				case MAGENTA_SHULKER_BOX:
-				case ORANGE_SHULKER_BOX:
-				case PINK_SHULKER_BOX:
-				case PURPLE_SHULKER_BOX:
-				case RED_SHULKER_BOX:
-				case SILVER_SHULKER_BOX:
-				case WHITE_SHULKER_BOX:
-				case YELLOW_SHULKER_BOX:
+				case BLACK_SHULKER_BOX :
+				case BLUE_SHULKER_BOX :
+				case BROWN_SHULKER_BOX :
+				case CYAN_SHULKER_BOX :
+				case GRAY_SHULKER_BOX :
+				case GREEN_SHULKER_BOX :
+				case LIGHT_BLUE_SHULKER_BOX :
+				case LIME_SHULKER_BOX :
+				case MAGENTA_SHULKER_BOX :
+				case ORANGE_SHULKER_BOX :
+				case PINK_SHULKER_BOX :
+				case PURPLE_SHULKER_BOX :
+				case RED_SHULKER_BOX :
+				case SILVER_SHULKER_BOX :
+				case WHITE_SHULKER_BOX :
+				case YELLOW_SHULKER_BOX :
 					return false;
-				default:
+				default :
 					break;
 			}
 		}

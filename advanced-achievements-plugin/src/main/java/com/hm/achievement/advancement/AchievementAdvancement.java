@@ -44,8 +44,8 @@ public class AchievementAdvancement {
 		return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
 				+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]], " + "\"display\": " + "{\"icon\": {\"item\": \""
 				+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", "
-				+ "\"description\": \"" + description + "\", \"frame\": \"" + frame
-				+ "\", \"background\": \"" + background + "\", \"announce_to_chat\": false}}";
+				+ "\"description\": \"" + description + "\", \"frame\": \"" + frame + "\", \"background\": \""
+				+ background + "\", \"announce_to_chat\": false}}";
 	}
 
 	public static class AchievementAdvancementBuilder {

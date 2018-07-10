@@ -22,7 +22,8 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Utility class for Mocking the main AdvancedAchievements in order to complete testing.
+ * Utility class for Mocking the main AdvancedAchievements in order to complete
+ * testing.
  *
  * @author Rsl1122
  */

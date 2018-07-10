@@ -18,8 +18,8 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling the /aach reset command, which resets the statistics for a given player and achievement
- * category.
+ * Class in charge of handling the /aach reset command, which resets the
+ * statistics for a given player and achievement category.
  * 
  * @author Pyves
  */
@@ -66,8 +66,8 @@ public class ResetCommand extends AbstractParsableCommand {
 						statistic.setValue(0L);
 					}
 				}
-				sender.sendMessage(
-						pluginHeader + args[1] + StringUtils.replaceOnce(langResetSuccessful, "PLAYER", player.getName()));
+				sender.sendMessage(pluginHeader + args[1]
+						+ StringUtils.replaceOnce(langResetSuccessful, "PLAYER", player.getName()));
 				return;
 			}
 		}

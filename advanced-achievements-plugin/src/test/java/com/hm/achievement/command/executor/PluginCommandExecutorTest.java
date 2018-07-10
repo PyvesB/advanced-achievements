@@ -51,7 +51,7 @@ public class PluginCommandExecutorTest {
 
 	@Test
 	public void itShouldCallListCommand() {
-		String[] args = new String[] { "list" };
+		String[] args = new String[]{"list"};
 		underTest.onCommand(sender, null, null, args);
 
 		verify(listCommand).execute(sender, args);
@@ -60,7 +60,7 @@ public class PluginCommandExecutorTest {
 
 	@Test
 	public void itShouldFallBackToHelpCommandIfNoOtherCommandCouldBeMapped() {
-		String[] args = new String[] { "list", "unexpected_arg" };
+		String[] args = new String[]{"list", "unexpected_arg"};
 		underTest.onCommand(sender, null, null, args);
 
 		verify(helpCommand).execute(sender, args);

@@ -14,7 +14,8 @@ import com.hm.achievement.command.executable.CommandSpec;
 import com.hm.achievement.command.executable.HelpCommand;
 
 /**
- * Class in charge of handling /aach commands and dispatching to the different command modules.
+ * Class in charge of handling /aach commands and dispatching to the different
+ * command modules.
  *
  * @author Pyves
  */
@@ -37,8 +38,8 @@ public class PluginCommandExecutor implements CommandExecutor {
 	}
 
 	/**
-	 * Determines whether an Advanced Achievements command should be executed based on the provided command line
-	 * arguments.
+	 * Determines whether an Advanced Achievements command should be executed based
+	 * on the provided command line arguments.
 	 * 
 	 * @param command
 	 * @param args

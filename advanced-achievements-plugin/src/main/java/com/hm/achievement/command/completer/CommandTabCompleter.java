@@ -22,8 +22,8 @@ import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling auto-completion for achievements and categories when using /aach check, /aach reset,
- * /aach give or /aach delete commands.
+ * Class in charge of handling auto-completion for achievements and categories
+ * when using /aach check, /aach reset, /aach give or /aach delete commands.
  * 
  * @author Pyves
  *
@@ -86,8 +86,9 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 	}
 
 	/**
-	 * Returns a partial list based on the input set. Members of the returned list must start with what the player has
-	 * types so far. The list also has a limited length to avoid filling the player's screen.
+	 * Returns a partial list based on the input set. Members of the returned list
+	 * must start with what the player has types so far. The list also has a limited
+	 * length to avoid filling the player's screen.
 	 * 
 	 * @param fullSet
 	 * @param prefix

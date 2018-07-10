@@ -22,8 +22,8 @@ public class DatabaseModule {
 
 	@Provides
 	@Singleton
-	AbstractDatabaseManager provideSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
-			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater,
+	AbstractDatabaseManager provideSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig,
+			Logger logger, Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater,
 			AdvancedAchievements advancedAchievements) {
 		String databaseType = advancedAchievements.getConfig().getString("DatabaseType", "sqlite");
 		if ("mysql".equalsIgnoreCase(databaseType)) {

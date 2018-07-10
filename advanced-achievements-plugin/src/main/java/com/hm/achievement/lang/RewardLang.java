@@ -6,12 +6,9 @@ package com.hm.achievement.lang;
  * @author Rsl1122
  */
 public enum RewardLang implements Lang {
-	MONEY("receive AMOUNT"),
-	ITEM("receive AMOUNT ITEM"),
-	COMMAND("other"),
-	EXPERIENCE("receive AMOUNT experience"),
-	INCREASE_MAX_HEALTH("increase max health by AMOUNT"),
-	INCREASE_MAX_OXYGEN("increase max oxygen by AMOUNT");
+	MONEY("receive AMOUNT"), ITEM("receive AMOUNT ITEM"), COMMAND("other"), EXPERIENCE(
+			"receive AMOUNT experience"), INCREASE_MAX_HEALTH(
+					"increase max health by AMOUNT"), INCREASE_MAX_OXYGEN("increase max oxygen by AMOUNT");
 
 	private final String defaultMessage;
 

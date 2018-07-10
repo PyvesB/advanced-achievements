@@ -58,8 +58,9 @@ public class PlayerCommandsListener extends AbstractListener {
 	}
 
 	/**
-	 * Computes a list containing equivalent commands of an input command. For instance, if input is "/aach stats", the
-	 * returned list is: ["aach stats", "advancedachievements stats", "aachievements stats", "aa stats"]
+	 * Computes a list containing equivalent commands of an input command. For
+	 * instance, if input is "/aach stats", the returned list is: ["aach stats",
+	 * "advancedachievements stats", "aachievements stats", "aa stats"]
 	 * 
 	 * @param command
 	 * @return the list of commands have the same effect as the input one

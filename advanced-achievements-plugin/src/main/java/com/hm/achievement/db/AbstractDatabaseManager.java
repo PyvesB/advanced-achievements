@@ -32,7 +32,8 @@ import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Abstract class in charge of factoring out common functionality for the database manager.
+ * Abstract class in charge of factoring out common functionality for the
+ * database manager.
  *
  * @author Pyves
  */
@@ -63,7 +64,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		this.logger = logger;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
 		this.databaseUpdater = databaseUpdater;
-		// We expect to execute many short writes to the database. The pool can grow dynamically under high load and
+		// We expect to execute many short writes to the database. The pool can grow
+		// dynamically under high load and
 		// allows to reuse threads.
 		pool = Executors.newCachedThreadPool();
 	}
@@ -82,7 +84,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Initialises the database system by extracting settings, performing setup tasks and updating schemas if necessary.
+	 * Initialises the database system by extracting settings, performing setup
+	 * tasks and updating schemas if necessary.
 	 *
 	 * @throws PluginLoadError
 	 */
@@ -100,11 +103,13 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			logger.log(Level.SEVERE, "Error while encoding the database URL:", e);
 		}
 
-		// Try to establish connection with database; stays opened until explicitly closed by the plugin.
+		// Try to establish connection with database; stays opened until explicitly
+		// closed by the plugin.
 		Connection conn = getSQLConnection();
 
 		if (conn == null) {
-			throw new PluginLoadError("Failed to establish database connection. Please verify your settings in config.yml.");
+			throw new PluginLoadError(
+					"Failed to establish database connection. Please verify your settings in config.yml.");
 		}
 
 		databaseUpdater.renameExistingTables(this, databaseAddress);
@@ -121,7 +126,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @throws PluginLoadError
 	 * @throws UnsupportedEncodingException
 	 */
-	abstract void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError, UnsupportedEncodingException;
+	abstract void performPreliminaryTasks()
+			throws ClassNotFoundException, PluginLoadError, UnsupportedEncodingException;
 
 	/**
 	 * Shuts the thread pool down and closes connection to database.
@@ -193,8 +199,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setFetchSize(1000);
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
-					// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to
-					// 3.0.2 where names containing single quotes were inserted with two single quotes in the database.
+					// Check for names with single quotes but also two single quotes, due to a bug
+					// in versions 3.0 to
+					// 3.0.2 where names containing single quotes were inserted with two single
+					// quotes in the database.
 					achievementNamesList.add(StringUtils.replace(rs.getString(1), "''", "'"));
 				}
 			}
@@ -210,10 +218,13 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @return date represented as a string
 	 */
 	public String getPlayerAchievementDate(UUID uuid, String achName) {
-		// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
-		// where names containing single quotes were inserted with two single quotes in the database.
+		// Check for names with single quotes but also two single quotes, due to a bug
+		// in versions 3.0 to 3.0.2
+		// where names containing single quotes were inserted with two single quotes in
+		// the database.
 		String sql = achName.contains("'")
-				? "SELECT date FROM " + prefix + "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
+				? "SELECT date FROM " + prefix
+						+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
 				: "SELECT date FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<String>) () -> {
 			Connection conn = getSQLConnection();
@@ -233,8 +244,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Gets the total number of achievements received by every player; this method is provided as a convenience for
-	 * other plugins.
+	 * Gets the total number of achievements received by every player; this method
+	 * is provided as a convenience for other plugins.
 	 *
 	 * @return map containing number of achievements for every players
 	 */
@@ -278,15 +289,19 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Constructs a mapping of players with the most achievements over a given period.
+	 * Constructs a mapping of players with the most achievements over a given
+	 * period.
 	 *
 	 * @param start
-	 * @return LinkedHashMap with keys corresponding to player UUIDs and values corresponding to their achievement count
+	 * @return LinkedHashMap with keys corresponding to player UUIDs and values
+	 *         corresponding to their achievement count
 	 */
 	public Map<String, Integer> getTopList(long start) {
-		// Either consider all the achievements or only those received after the start date.
+		// Either consider all the achievements or only those received after the start
+		// date.
 		String sql = start == 0L
-				? "SELECT playername, COUNT(*) FROM " + prefix + "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
+				? "SELECT playername, COUNT(*) FROM " + prefix
+						+ "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
 				: "SELECT playername, COUNT(*) FROM " + prefix
 						+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC";
 		return ((SQLReadOperation<Map<String, Integer>>) () -> {
@@ -323,7 +338,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @param uuid
 	 * @param achName
 	 * @param achMessage
-	 * @param epochMs Moment the achievement was registered at.
+	 * @param epochMs
+	 *            Moment the achievement was registered at.
 	 */
 	void registerAchievement(UUID uuid, String achName, String achMessage, long epochMs) {
 		String sql = "REPLACE INTO " + prefix + "achievements VALUES (?,?,?,?)";
@@ -347,8 +363,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @return true if achievement found in database, false otherwise
 	 */
 	public boolean hasPlayerAchievement(UUID uuid, String achName) {
-		// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
-		// where names containing single quotes were inserted with two single quotes in the database.
+		// Check for names with single quotes but also two single quotes, due to a bug
+		// in versions 3.0 to 3.0.2
+		// where names containing single quotes were inserted with two single quotes in
+		// the database.
 		String sql = achName.contains("'")
 				? "SELECT achievement FROM " + prefix
 						+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
@@ -460,8 +478,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Updates a player's number of connections and last connection date and returns number of connections (used by
-	 * Connections listener).
+	 * Updates a player's number of connections and last connection date and returns
+	 * number of connections (used by Connections listener).
 	 *
 	 * @param uuid
 	 * @param date
@@ -498,8 +516,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @param achName
 	 */
 	public void deletePlayerAchievement(UUID uuid, String achName) {
-		// Check for names with single quotes but also two single quotes, due to a bug in versions 3.0 to 3.0.2
-		// where names containing single quotes were inserted with two single quotes in the database.
+		// Check for names with single quotes but also two single quotes, due to a bug
+		// in versions 3.0 to 3.0.2
+		// where names containing single quotes were inserted with two single quotes in
+		// the database.
 		String sql = achName.contains("'")
 				? "DELETE FROM " + prefix + "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
 				: "DELETE FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
@@ -538,8 +558,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	/**
 	 * Returns a list of AwardedDBAchievements get by a player.
 	 *
-	 * @param uuid UUID of a player.
-	 * @return ArrayList containing all information about achievements awarded to a player.
+	 * @param uuid
+	 *            UUID of a player.
+	 * @return ArrayList containing all information about achievements awarded to a
+	 *         player.
 	 */
 	public List<AwardedDBAchievement> getPlayerAchievementsList(UUID uuid) {
 		// Either oldest date to newest one or newest date to oldest one.
@@ -553,7 +575,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setObject(1, uuid, Types.CHAR);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
-						// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing
+						// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where
+						// names containing
 						// single quotes were inserted with two single quotes in the database.
 						String achName = StringUtils.replace(rs.getString(2), "''", "'");
 						String displayName = achievementsAndDisplayNames.get(achName);

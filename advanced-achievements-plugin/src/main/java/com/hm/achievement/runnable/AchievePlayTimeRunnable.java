@@ -62,7 +62,8 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 	}
 
 	/**
-	 * Updates play time if all conditions are met and awards achievements if necessary.
+	 * Updates play time if all conditions are met and awards achievements if
+	 * necessary.
 	 * 
 	 * @param player
 	 */
@@ -80,8 +81,8 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 		}
 
 		int millisSinceLastRun = (int) (System.currentTimeMillis() - previousRunMillis);
-		long totalMillis = cacheManager.getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME, player.getUniqueId(),
-				millisSinceLastRun);
+		long totalMillis = cacheManager.getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME,
+				player.getUniqueId(), millisSinceLastRun);
 		// Thresholds in the configuration are in hours.
 		checkThresholdsAndAchievements(player, NormalAchievements.PLAYEDTIME.toString(), totalMillis / MILLIS_PER_HOUR);
 	}

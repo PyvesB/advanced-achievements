@@ -11,7 +11,8 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling the /aach top command, which displays global rankings.
+ * Class in charge of handling the /aach top command, which displays global
+ * rankings.
  *
  * @author Pyves
  */

@@ -15,7 +15,8 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling the /aach delete command, which deletes an achievement from a player.
+ * Class in charge of handling the /aach delete command, which deletes an
+ * achievement from a player.
  * 
  * @author Pyves
  */
@@ -50,16 +51,17 @@ public class DeleteCommand extends AbstractParsableCommand {
 	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		String achievementName = parseAchievementName(args);
 
-		// Check if achievement exists in database and display message accordingly; if received, delete it.
+		// Check if achievement exists in database and display message accordingly; if
+		// received, delete it.
 		if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
-			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementFalse, new String[] { "PLAYER", "ACH" },
-					new String[] { args[args.length - 1], achievementName }));
+			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementFalse, new String[]{"PLAYER", "ACH"},
+					new String[]{args[args.length - 1], achievementName}));
 		} else {
 			cacheManager.removePreviouslyReceivedAchievement(player.getUniqueId(), achievementName);
 			sqlDatabaseManager.deletePlayerAchievement(player.getUniqueId(), achievementName);
 
-			sender.sendMessage(StringUtils.replaceEach(langDeleteAchievements, new String[] { "PLAYER", "ACH" },
-					new String[] { args[args.length - 1], achievementName }));
+			sender.sendMessage(StringUtils.replaceEach(langDeleteAchievements, new String[]{"PLAYER", "ACH"},
+					new String[]{args[args.length - 1], achievementName}));
 		}
 	}
 }

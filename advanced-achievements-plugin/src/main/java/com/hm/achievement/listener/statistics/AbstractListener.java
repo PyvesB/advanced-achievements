@@ -22,7 +22,8 @@ import com.hm.achievement.utils.StatisticIncreaseHandler;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Abstract class in charge of factoring out common functionality for the listener classes.
+ * Abstract class in charge of factoring out common functionality for the
+ * listener classes.
  * 
  * @author Pyves
  */
@@ -34,29 +35,30 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	}
 
 	/**
-	 * Updates the statistic in the database for a NormalAchievement and awards an achievement if an available one is
-	 * found.
+	 * Updates the statistic in the database for a NormalAchievement and awards an
+	 * achievement if an available one is found.
 	 * 
 	 * @param player
 	 * @param category
 	 * @param incrementValue
 	 */
-	void updateStatisticAndAwardAchievementsIfAvailable(Player player, NormalAchievements category, int incrementValue) {
+	void updateStatisticAndAwardAchievementsIfAvailable(Player player, NormalAchievements category,
+			int incrementValue) {
 		long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), incrementValue);
 		checkThresholdsAndAchievements(player, category.toString(), amount);
 	}
 
 	/**
-	 * Updates the statistic in the database for a MultipleAchievement and awards an achievement if an available one is
-	 * found.
+	 * Updates the statistic in the database for a MultipleAchievement and awards an
+	 * achievement if an available one is found.
 	 * 
 	 * @param player
 	 * @param category
 	 * @param subcategory
 	 * @param incrementValue
 	 */
-	void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category, String subcategory,
-			int incrementValue) {
+	void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category,
+			String subcategory, int incrementValue) {
 		long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
 				incrementValue);
 		checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
@@ -77,8 +79,8 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	}
 
 	/**
-	 * Calculates the space available to accommodate a new item stack. This method takes empty slots and existing item
-	 * stacks of the same type into account.
+	 * Calculates the space available to accommodate a new item stack. This method
+	 * takes empty slots and existing item stacks of the same type into account.
 	 * 
 	 * @param player
 	 * @param newItemStack
@@ -86,7 +88,8 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 */
 	int getInventoryAvailableSpace(Player player, ItemStack newItemStack) {
 		int availableSpace = 0;
-		// Get all similar item stacks with a similar material in the player's inventory.
+		// Get all similar item stacks with a similar material in the player's
+		// inventory.
 		HashMap<Integer, ? extends ItemStack> inventoryItemStackMap = player.getInventory().all(newItemStack.getType());
 		// If matching item stack, add remaining space.
 		for (ItemStack currentItemStack : inventoryItemStackMap.values()) {
@@ -95,7 +98,8 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 			}
 		}
 
-		ItemStack[] storageContents = serverVersion >= 9 ? player.getInventory().getStorageContents()
+		ItemStack[] storageContents = serverVersion >= 9
+				? player.getInventory().getStorageContents()
 				: player.getInventory().getContents();
 		// Get all empty slots in the player's inventory.
 		for (ItemStack currentItemStack : storageContents) {
@@ -110,8 +114,10 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	/**
 	 * Returns all achievements that match the provided identifier.
 	 * 
-	 * @param category the category to search from
-	 * @param identifier the identifier to match
+	 * @param category
+	 *            the category to search from
+	 * @param identifier
+	 *            the identifier to match
 	 * @return all matched achievements
 	 * @author tassu
 	 */

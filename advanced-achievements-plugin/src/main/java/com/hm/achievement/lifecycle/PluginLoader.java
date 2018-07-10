@@ -72,7 +72,8 @@ import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
 import dagger.Lazy;
 
 /**
- * Class in charge of loading/reloading the plugin. Orchestrates the different plugin components together.
+ * Class in charge of loading/reloading the plugin. Orchestrates the different
+ * plugin components together.
  * 
  * @author Pyves
  */
@@ -115,7 +116,8 @@ public class PluginLoader {
 	private final ListGUIListener listGUIListener;
 	private final PlayerAdvancedAchievementListener playerAdvancedAchievementListener;
 
-	// Integrations with other plugins. Use lazy injection as these may or may not be used depending on runtime
+	// Integrations with other plugins. Use lazy injection as these may or may not
+	// be used depending on runtime
 	// conditions.
 	private final Lazy<AchievementPlaceholderHook> achievementPlaceholderHook;
 	private final Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable;
@@ -141,13 +143,14 @@ public class PluginLoader {
 	private BukkitTask distanceTask;
 
 	@Inject
-	public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger, ConnectionsListener connectionsListener,
-			DeathsListener deathsListener, ArrowsListener arrowsListener, SnowballsEggsListener snowballsEggsListener,
-			CaughtFishTreasuresListener caughtFishTreasuresListener, ItemBreaksListener itemBreaksListener,
-			ConsumedPotionsEatenItemsListener consumedPotionsEatenItemsListener, ShearsListener shearsListener,
-			MilksLavaWaterBucketsListener milksLavaWaterBucketsListener, LevelsListener levelsListener,
-			TradesAnvilsBrewingSmeltingListener tradesAnvilsBrewingSmeltingListener, BedsListener bedsListener,
-			EnchantmentsListener enchantmentsListener, DropsListener dropsListener, PickupsListener pickupsListener,
+	public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger,
+			ConnectionsListener connectionsListener, DeathsListener deathsListener, ArrowsListener arrowsListener,
+			SnowballsEggsListener snowballsEggsListener, CaughtFishTreasuresListener caughtFishTreasuresListener,
+			ItemBreaksListener itemBreaksListener, ConsumedPotionsEatenItemsListener consumedPotionsEatenItemsListener,
+			ShearsListener shearsListener, MilksLavaWaterBucketsListener milksLavaWaterBucketsListener,
+			LevelsListener levelsListener, TradesAnvilsBrewingSmeltingListener tradesAnvilsBrewingSmeltingListener,
+			BedsListener bedsListener, EnchantmentsListener enchantmentsListener, DropsListener dropsListener,
+			PickupsListener pickupsListener,
 			PlowingFertilisingFireworksMusicDiscsListener plowingFertilisingFireworksMusicDiscsListener,
 			TamesListener tamesListener, BreedingListener breedingListener, PlacesListener placesListener,
 			BreaksListener breaksListener, KillsListener killsListener, CraftsListener craftsListener,
@@ -253,8 +256,8 @@ public class PluginLoader {
 	}
 
 	/**
-	 * Registers the different event listeners so they can monitor server events. If relevant categories are disabled,
-	 * listeners aren't registered.
+	 * Registers the different event listeners so they can monitor server events. If
+	 * relevant categories are disabled, listeners aren't registered.
 	 */
 	private void registerListeners() {
 		logger.info("Registering event listeners...");
@@ -329,7 +332,8 @@ public class PluginLoader {
 	private void launchScheduledTasks() {
 		logger.info("Launching scheduled tasks...");
 
-		// Schedule a repeating task to group database queries when statistics are modified.
+		// Schedule a repeating task to group database queries when statistics are
+		// modified.
 		if (asyncCachedRequestsSenderTask == null) {
 			int configPooledRequestsTaskInterval = mainConfig.getInt("PooledRequestsTaskInterval", 10);
 			asyncCachedRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(
@@ -337,7 +341,8 @@ public class PluginLoader {
 					configPooledRequestsTaskInterval * 20L);
 		}
 
-		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
+		// Schedule a repeating task to monitor played time for each player (not
+		// directly related to an event).
 		if (playedTimeTask != null) {
 			playedTimeTask.cancel();
 		}
@@ -347,7 +352,8 @@ public class PluginLoader {
 					configPlaytimeTaskInterval * 10L, configPlaytimeTaskInterval * 20L);
 		}
 
-		// Schedule a repeating task to monitor distances travelled by each player (not directly related to an event).
+		// Schedule a repeating task to monitor distances travelled by each player (not
+		// directly related to an event).
 		if (distanceTask != null) {
 			distanceTask.cancel();
 		}
@@ -365,8 +371,9 @@ public class PluginLoader {
 	}
 
 	/**
-	 * Launches an update check task. If updateChecker already registered (i.e. reload), does not check for update
-	 * again. If CheckForUpdate switched to false unregisters listener.
+	 * Launches an update check task. If updateChecker already registered (i.e.
+	 * reload), does not check for update again. If CheckForUpdate switched to false
+	 * unregisters listener.
 	 */
 	private void launchUpdateChecker() {
 		if (!mainConfig.getBoolean("CheckForUpdate", true)) {
@@ -384,8 +391,9 @@ public class PluginLoader {
 	}
 
 	/**
-	 * Registers permissions that depend on the user's configuration file (for MultipleAchievements; for instance for
-	 * stone breaks, achievement.count.breaks.stone will be registered).
+	 * Registers permissions that depend on the user's configuration file (for
+	 * MultipleAchievements; for instance for stone breaks,
+	 * achievement.count.breaks.stone will be registered).
 	 */
 	private void registerPermissions() {
 		logger.info("Registering permissions...");
@@ -395,7 +403,8 @@ public class PluginLoader {
 			for (String section : mainConfig.getShallowKeys(category.toString())) {
 				int startOfMetadata = section.indexOf(':');
 				if (startOfMetadata > -1) {
-					// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories.
+					// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts
+					// categories.
 					section = section.substring(0, startOfMetadata);
 				}
 				if (category == MultipleAchievements.PLAYERCOMMANDS) {
@@ -403,18 +412,20 @@ public class PluginLoader {
 					section = StringUtils.deleteWhitespace(section);
 				}
 
-				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when
+				// Bukkit only allows permissions to be set once, check to ensure they were not
+				// previously set when
 				// performing /aach reload.
 				if (pluginManager.getPermission(category.toPermName() + "." + section) == null) {
-					pluginManager
-							.addPermission(new Permission(category.toPermName() + "." + section, PermissionDefault.TRUE));
+					pluginManager.addPermission(
+							new Permission(category.toPermName() + "." + section, PermissionDefault.TRUE));
 				}
 			}
 		}
 	}
 
 	/**
-	 * Links third-party placeholder plugins (PlaceholderAPI and BungeeTabListPlus currently supported).
+	 * Links third-party placeholder plugins (PlaceholderAPI and BungeeTabListPlus
+	 * currently supported).
 	 */
 	private void linkPlaceholders() {
 		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {

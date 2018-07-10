@@ -49,8 +49,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	}
 
 	/**
-	 * Returns a ready to use API instance. The caller must previously check whether the plugin is enabled and has a
-	 * minimum version of 5.0.
+	 * Returns a ready to use API instance. The caller must previously check whether
+	 * the plugin is enabled and has a minimum version of 5.0.
 	 *
 	 * @return API instance
 	 * @deprecated use the AdvancedAchievementsAPIFetcher class in the public API
@@ -66,7 +66,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		String version = advancedAchievements.getDescription().getVersion();
 		int versionCode = 100
 				* Integer.parseInt(Character.toString(advancedAchievements.getDescription().getVersion().charAt(0)))
-				+ 10 * Integer.parseInt(Character.toString(advancedAchievements.getDescription().getVersion().charAt(2)));
+				+ 10 * Integer
+						.parseInt(Character.toString(advancedAchievements.getDescription().getVersion().charAt(2)));
 		if (version.length() > 4) {
 			versionCode += Integer
 					.parseInt(Character.toString(advancedAchievements.getDescription().getVersion().charAt(4)));
@@ -78,8 +79,10 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	public boolean hasPlayerReceivedAchievement(UUID player, String achievementName) {
 		validateNotNull(player, "Player");
 		validateNotEmpty(achievementName, "Achievement Name");
-		// Underlying structures do not support concurrent operations and are only used by the main server thread. Not
-		// thread-safe to modify or read them asynchronously. Do not use cached data if player is offline.
+		// Underlying structures do not support concurrent operations and are only used
+		// by the main server thread. Not
+		// thread-safe to modify or read them asynchronously. Do not use cached data if
+		// player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
 			return cacheManager.hasPlayerAchievement(player, achievementName);
 		} else {
@@ -112,7 +115,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		List<Integer> achievementCounts = new ArrayList<>(rankings.values());
 		Integer achievementsCount = rankings.get(player.toString());
 		if (achievementsCount != null) {
-			// Rank is the first index in the list that has received as many achievements as the player.
+			// Rank is the first index in the list that has received as many achievements as
+			// the player.
 			int playerRank = achievementCounts.indexOf(achievementsCount) + 1;
 			return new Rank(playerRank, rankings.size());
 		} else {
@@ -122,15 +126,16 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public List<UUID> getTopPlayers(int numOfPlayers, long rankingPeriodStart) {
-		return sqlDatabaseManager.getTopList(rankingPeriodStart).keySet().stream().limit(numOfPlayers).map(UUID::fromString)
-				.collect(Collectors.toList());
+		return sqlDatabaseManager.getTopList(rankingPeriodStart).keySet().stream().limit(numOfPlayers)
+				.map(UUID::fromString).collect(Collectors.toList());
 	}
 
 	@Override
 	public long getStatisticForNormalCategory(UUID player, NormalAchievements category) {
 		validateNotNull(player, "Player");
 		validateNotNull(category, "Category");
-		// Underlying structures do not support concurrent write operations and are only modified by the main server
+		// Underlying structures do not support concurrent write operations and are only
+		// modified by the main server
 		// thread. Do not use cache if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
 			return cacheManager.getAndIncrementStatisticAmount(category, player, 0);
@@ -144,7 +149,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		validateNotNull(player, "Player");
 		validateNotNull(category, "Category");
 		validateNotEmpty(subcategory, "Sub-category");
-		// Underlying structures do not support concurrent write operations and are only modified by the main server
+		// Underlying structures do not support concurrent write operations and are only
+		// modified by the main server
 		// thread. Do not use cache if player is offline.
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
 			return cacheManager.getAndIncrementStatisticAmount(category, subcategory, player, 0);
@@ -165,7 +171,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	}
 
 	/**
-	 * Checks whether the player is online by making a call on the server's main thread of execution.
+	 * Checks whether the player is online by making a call on the server's main
+	 * thread of execution.
 	 *
 	 * @param player
 	 * @return true if player is online, false otherwise
@@ -174,7 +181,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		if (Bukkit.getServer().isPrimaryThread()) {
 			return Bukkit.getPlayer(player) != null;
 		}
-		// Called asynchronously. To ensure thread safety we must issue a call on the server's main thread of execution.
+		// Called asynchronously. To ensure thread safety we must issue a call on the
+		// server's main thread of execution.
 		Future<Boolean> onlineCheckFuture = Bukkit.getScheduler().callSyncMethod(advancedAchievements,
 				() -> Bukkit.getPlayer(player) != null);
 

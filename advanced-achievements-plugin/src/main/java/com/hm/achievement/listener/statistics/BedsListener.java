@@ -31,7 +31,8 @@ public class BedsListener extends AbstractRateLimitedListener {
 	@Inject
 	public BedsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger) {
+			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig,
+			Logger logger) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, advancedAchievements, langConfig,
 				logger);
 	}

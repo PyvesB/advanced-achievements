@@ -50,10 +50,10 @@ public class PlacesListener extends AbstractListener {
 			return;
 		}
 
-		Set<String> foundAchievements = findAchievementsByCategoryAndName(
-				category, blockName + ':' + block.getState().getData().toItemStack(0).getDurability());
+		Set<String> foundAchievements = findAchievementsByCategoryAndName(category,
+				blockName + ':' + block.getState().getData().toItemStack(0).getDurability());
 		foundAchievements.addAll(findAchievementsByCategoryAndName(category, blockName));
-		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
-				achievement, 1));
+		foundAchievements.forEach(
+				achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category, achievement, 1));
 	}
 }

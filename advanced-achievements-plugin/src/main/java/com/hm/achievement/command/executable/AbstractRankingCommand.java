@@ -24,7 +24,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ParticleEffect;
 
 /**
- * Abstract class in charge of factoring out common functionality for /aach top, week and month commands.
+ * Abstract class in charge of factoring out common functionality for /aach top,
+ * week and month commands.
  *
  * @author Pyves
  */
@@ -103,11 +104,13 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 		if (sender instanceof Player) {
 			Integer achievementsCount = cachedSortedRankings.get((((Player) sender).getUniqueId().toString()));
-			// If not entry in the map, player has not yet received an achievement for this period, not ranked.
+			// If not entry in the map, player has not yet received an achievement for this
+			// period, not ranked.
 			if (achievementsCount == null) {
 				sender.sendMessage(langNotRanked);
 			} else {
-				// Rank is the first index in the list that has received as many achievements as the player.
+				// Rank is the first index in the list that has received as many achievements as
+				// the player.
 				int playerRank = cachedAchievementCounts.indexOf(achievementsCount) + 1;
 				// Launch effect if player is in top list.
 				if (playerRank <= configTopList) {
@@ -131,8 +134,8 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 			if (playerName != null) {
 				// Color the name of the player if he is in the top list.
 				ChatColor color = playerName.equals(sender.getName()) ? configColor : ChatColor.GRAY;
-				rankingMessages.add(color + " " + getRankingSymbol(currentRank) + " " + playerName + " - "
-						+ ranking.getValue());
+				rankingMessages.add(
+						color + " " + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue());
 			} else {
 				logger.warning("Ranking command: could not find player's name using a database UUID.");
 			}
@@ -189,7 +192,8 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 		// Play special sound when in top list.
 		if (configSound) {
-			// If old version, retrieving sound by name as it no longer exists in newer versions.
+			// If old version, retrieving sound by name as it no longer exists in newer
+			// versions.
 			Sound sound = serverVersion < 9 ? Sound.valueOf("FIREWORK_BLAST") : Sound.ENTITY_FIREWORK_LARGE_BLAST;
 			player.getWorld().playSound(player.getLocation(), sound, 1, 0.7f);
 		}

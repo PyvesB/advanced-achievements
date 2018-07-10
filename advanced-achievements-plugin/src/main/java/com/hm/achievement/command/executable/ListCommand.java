@@ -11,7 +11,8 @@ import com.hm.achievement.gui.MainGUI;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling the /aach list command, which displays interactive GUIs.
+ * Class in charge of handling the /aach list command, which displays
+ * interactive GUIs.
  * 
  * @author Pyves
  */

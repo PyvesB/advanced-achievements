@@ -17,7 +17,8 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling the /aach give command, which gives an achievement from the Commands category.
+ * Class in charge of handling the /aach give command, which gives an
+ * achievement from the Commands category.
  * 
  * @author Pyves
  */
@@ -48,7 +49,8 @@ public class GiveCommand extends AbstractParsableCommand {
 
 		configMultiCommand = mainConfig.getBoolean("MultiCommand", true);
 
-		langAchievementAlreadyReceived = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_ALREADY_RECEIVED, langConfig);
+		langAchievementAlreadyReceived = pluginHeader
+				+ LangHelper.get(CmdLang.ACHIEVEMENT_ALREADY_RECEIVED, langConfig);
 		langAchievementGiven = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_GIVEN, langConfig);
 		langAchievementNotFound = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_NOT_FOUND, langConfig);
 	}
@@ -58,7 +60,8 @@ public class GiveCommand extends AbstractParsableCommand {
 		String achievementPath = "Commands." + args[1];
 
 		if (mainConfig.getString(achievementPath + ".Message", null) != null) {
-			// Check whether player has already received achievement and cannot receive it again.
+			// Check whether player has already received achievement and cannot receive it
+			// again.
 			String achievementName = mainConfig.getString(achievementPath + ".Name");
 			if (!configMultiCommand && cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 				sender.sendMessage(StringUtils.replaceOnce(langAchievementAlreadyReceived, "PLAYER", args[2]));
@@ -68,7 +71,8 @@ public class GiveCommand extends AbstractParsableCommand {
 			String rewardPath = achievementPath + ".Reward";
 			// Fire achievement event.
 			PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
-					.player(player).name(achievementName).displayName(mainConfig.getString(achievementPath + ".DisplayName"))
+					.player(player).name(achievementName)
+					.displayName(mainConfig.getString(achievementPath + ".DisplayName"))
 					.message(mainConfig.getString(achievementPath + ".Message"))
 					.commandRewards(rewardParser.getCommandRewards(rewardPath, player))
 					.commandMessage(rewardParser.getCustomCommandMessage(rewardPath))

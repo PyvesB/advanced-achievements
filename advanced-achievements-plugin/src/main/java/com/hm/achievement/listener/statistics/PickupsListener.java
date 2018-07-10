@@ -18,8 +18,9 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with ItemPickups achievements. Keep PlayerPickupItemEvent for now, as it was only introduced
- * in late Minecraft 1.12 versions.
+ * Listener class to deal with ItemPickups achievements. Keep
+ * PlayerPickupItemEvent for now, as it was only introduced in late Minecraft
+ * 1.12 versions.
  * 
  * @author Pyves
  *
