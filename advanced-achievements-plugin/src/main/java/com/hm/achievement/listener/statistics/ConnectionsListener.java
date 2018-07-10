@@ -97,7 +97,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 				// In addition to the usual reception conditions, check that the player is still connected and that
 				// another runnable hasn't already done the work (even though this method is intended to run once per
 				// player per connection instance, it might happen with some server settings).
-				if (shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)  && player.isOnline()
+				if (shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS) && player.isOnline()
 						&& !playersConnectionProcessed.contains(player.getUniqueId())) {
 					handleConnectionAchievements(player);
 					// Ran successfully to completion: no need to re-run while player is connected.
