@@ -58,7 +58,7 @@ public class CraftsListener extends AbstractListener {
 		}
 
 		Set<String> foundAchievements = findAchievementsByCategoryAndName(category, craftName + ':' + item.getDurability());
-		foundAchievements.addAll(findAchievementsByCategoryAndName(category, craftName + ':' + item.getDurability()));
+		foundAchievements.addAll(findAchievementsByCategoryAndName(category, craftName));
 
 		int eventAmount = event.getCurrentItem().getAmount();
 		if (event.isShiftClick()) {
