@@ -19,8 +19,7 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with Shear achievements (only sheep are taken into
- * account).
+ * Listener class to deal with Shear achievements (only sheep are taken into account).
  * 
  * @author Pyves
  *

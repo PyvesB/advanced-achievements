@@ -38,17 +38,28 @@ public class LangImplementationKeyTest {
 
 	@Before
 	public void setUp() throws Exception {
-		MockUtility mockUtility = MockUtility.setUp().withPluginDescription().withLogger()
-				.withDataFolder(temporaryFolder.getRoot()).withPluginFile("lang.yml");
+		MockUtility mockUtility = MockUtility.setUp()
+				.withPluginDescription()
+				.withLogger()
+				.withDataFolder(temporaryFolder.getRoot())
+				.withPluginFile("lang.yml");
 		langConfig = mockUtility.getLoadedConfig("lang.yml");
 	}
 
 	@Test
 	public void testLangImplForWrongKeys() throws Exception {
-		List<Lang> langImpl = Arrays.stream(new Lang[][]{CmdLang.values(), HelpLang.values(), HelpLang.Hover.values(),
-				InfoLang.values(), GuiLang.values(), ListenerLang.values(), RewardLang.values(),
-				NormalAchievements.values(), MultipleAchievements.values()}).flatMap(Arrays::stream)
-				.collect(Collectors.toList());
+		List<Lang> langImpl = Arrays.stream(
+				new Lang[][] {
+						CmdLang.values(),
+						HelpLang.values(),
+						HelpLang.Hover.values(),
+						InfoLang.values(),
+						GuiLang.values(),
+						ListenerLang.values(),
+						RewardLang.values(),
+						NormalAchievements.values(),
+						MultipleAchievements.values()
+				}).flatMap(Arrays::stream).collect(Collectors.toList());
 
 		List<String> missing = new ArrayList<>();
 		for (Lang lang : langImpl) {

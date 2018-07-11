@@ -34,8 +34,7 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Represents the main GUI, corresponding to more specific details about the
- * different achievements.
+ * Represents the main GUI, corresponding to more specific details about the different achievements.
  *
  * @author Pyves
  */
@@ -104,8 +103,8 @@ public class CategoryGUI extends AbstractGUI {
 		langListGUITitle = translateColorCodes(LangHelper.get(GuiLang.GUI_TITLE, langConfig));
 		langListAchievementReceived = StringEscapeUtils
 				.unescapeJava(LangHelper.get(GuiLang.ACHIEVEMENT_RECEIVED, langConfig));
-		langListAchievementNotReceived = StringEscapeUtils.unescapeJava(
-				LangHelper.get(GuiLang.ACHIEVEMENT_NOT_RECEIVED, langConfig) + configListColorNotReceived);
+		langListAchievementNotReceived = StringEscapeUtils
+				.unescapeJava(LangHelper.get(GuiLang.ACHIEVEMENT_NOT_RECEIVED, langConfig) + configListColorNotReceived);
 		langListDescription = translateColorCodes("&7&l" + LangHelper.get(GuiLang.DESCRIPTION, langConfig));
 		langListReception = translateColorCodes("&7&l" + LangHelper.get(GuiLang.RECEPTION, langConfig));
 		langListGoal = translateColorCodes("&7&l" + LangHelper.get(GuiLang.GOAL, langConfig));
@@ -129,8 +128,7 @@ public class CategoryGUI extends AbstractGUI {
 	}
 
 	/**
-	 * Displays a category GUI, containing all the achievements from a given
-	 * category.
+	 * Displays a category GUI, containing all the achievements from a given category.
 	 *
 	 * @param item
 	 * @param player
@@ -138,8 +136,7 @@ public class CategoryGUI extends AbstractGUI {
 	 */
 	public void displayCategoryGUI(ItemStack item, Player player, int requestedPage) {
 		for (Entry<MultipleAchievements, ItemStack> entry : multipleAchievementItems.entrySet()) {
-			if (entry.getValue().getType() == item.getType()
-					&& entry.getValue().getDurability() == item.getDurability()) {
+			if (entry.getValue().getType() == item.getType() && entry.getValue().getDurability() == item.getDurability()) {
 				String categoryName = entry.getKey().toString();
 				List<String> achievementPaths = getSortedMultipleAchievementPaths(categoryName);
 				Map<String, Long> subcategoriesToStatistics = getMultipleStatisticsMapping(entry.getKey(), player);
@@ -148,13 +145,12 @@ public class CategoryGUI extends AbstractGUI {
 			}
 		}
 		for (Entry<NormalAchievements, ItemStack> entry : normalAchievementItems.entrySet()) {
-			if (entry.getValue().getType() == item.getType()
-					&& entry.getValue().getDurability() == item.getDurability()) {
+			if (entry.getValue().getType() == item.getType() && entry.getValue().getDurability() == item.getDurability()) {
 				String categoryName = entry.getKey().toString();
 				List<String> achievementThresholds = getSortedNormalAchievementThresholds(categoryName);
 				long statistic = getNormalStatistic(entry.getKey(), player);
-				displayPage(categoryName, player, Collections.singletonMap(NO_SUBCATEGORY, statistic), requestedPage,
-						item, achievementThresholds);
+				displayPage(categoryName, player, Collections.singletonMap(NO_SUBCATEGORY, statistic), requestedPage, item,
+						achievementThresholds);
 				return;
 			}
 		}
@@ -164,8 +160,7 @@ public class CategoryGUI extends AbstractGUI {
 	}
 
 	/**
-	 * Displays a category GUI page, containing up to MAX_PER_PAGE achievements from
-	 * a given category.
+	 * Displays a category GUI page, containing up to MAX_PER_PAGE achievements from a given category.
 	 *
 	 * @param categoryName
 	 * @param player
@@ -181,15 +176,13 @@ public class CategoryGUI extends AbstractGUI {
 		int pageEnd = Math.min(MAX_PER_PAGE * (pageIndex + 1), achievementPaths.size());
 		int navigationItems = achievementPaths.size() > MAX_PER_PAGE ? 3 : 1;
 
-		// Create a new chest-like inventory as small as possible whilst still
-		// containing the category item, all page
+		// Create a new chest-like inventory as small as possible whilst still containing the category item, all page
 		// achievements and the navigation items.
 		int guiSize = nextMultipleOf9(achievementPaths.size() + navigationItems + 1, MAX_PER_PAGE);
 		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder(pageIndex);
 		Inventory inventory = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
 		inventoryHolder.setInventory(inventory);
-		// Persist clicked item (ie. category's item in the main GUI) as first item in
-		// the category GUI.
+		// Persist clicked item (ie. category's item in the main GUI) as first item in the category GUI.
 		inventory.setItem(0, clickedItem);
 
 		String previousItemDate = null;
@@ -204,8 +197,7 @@ public class CategoryGUI extends AbstractGUI {
 		}
 		// Populate the current GUI page with all of the achievements for the category.
 		for (int index = pageStart; index < pageEnd; ++index) {
-			// Path can either be a threshold (eg '10', or a subcategory and threshold (eg
-			// 'skeleton.10').
+			// Path can either be a threshold (eg '10', or a subcategory and threshold (eg 'skeleton.10').
 			String path = achievementPaths.get(index);
 			String subcategory = path.contains(".") ? path.split("\\.")[0] : NO_SUBCATEGORY;
 			long statistic = subcategoriesToStatistics.get(subcategory);
@@ -215,8 +207,7 @@ public class CategoryGUI extends AbstractGUI {
 			boolean ineligibleSeriesItem = true;
 			if (statistic == NO_STAT || receptionDate != null || previousItemDate != null
 					|| index == pageStart && pageStart == 0 || !previousSubcategory.equals(subcategory)) {
-				// Commands achievement OR achievement has been completed OR previous
-				// achievement has been completed OR
+				// Commands achievement OR achievement has been completed OR previous achievement has been completed OR
 				// first achievement in the category OR different subcategory.
 				ineligibleSeriesItem = false;
 			}
@@ -257,8 +248,7 @@ public class CategoryGUI extends AbstractGUI {
 	 */
 	private void insertAchievement(Inventory gui, int position, long statistic, String name, String date,
 			boolean ineligibleSeriesItem, List<String> lore) {
-		// Display an item depending on whether the achievement was received or not, or
-		// whether progress was started.
+		// Display an item depending on whether the achievement was received or not, or whether progress was started.
 		// Clone in order to work with an independent set of metadata.
 		ItemStack achItem;
 		if (date != null) {
@@ -269,15 +259,14 @@ public class CategoryGUI extends AbstractGUI {
 			achItem = achievementNotStarted.clone();
 		}
 
-		// Set name of the achievement. The style depends whether it was received or not
-		// and whether the user has set
+		// Set name of the achievement. The style depends whether it was received or not and whether the user has set
 		// obfuscateNotReceived and/or obfuscateProgressiveAchievements in the config.
 		ItemMeta itemMeta = achItem.getItemMeta();
 		if (date != null) {
 			itemMeta.setDisplayName(translateColorCodes(langListAchievementReceived + name));
 		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-			itemMeta.setDisplayName(translateColorCodes(
-					langListAchievementNotReceived + "&k" + REGEX_PATTERN.matcher(name).replaceAll("")));
+			itemMeta.setDisplayName(
+					translateColorCodes(langListAchievementNotReceived + "&k" + REGEX_PATTERN.matcher(name).replaceAll("")));
 		} else {
 			itemMeta.setDisplayName(translateColorCodes(StringEscapeUtils
 					.unescapeJava(langListAchievementNotReceived + "&o" + REGEX_PATTERN.matcher(name).replaceAll(""))));
@@ -292,8 +281,7 @@ public class CategoryGUI extends AbstractGUI {
 	}
 
 	/**
-	 * Gets a sorted list of paths (subcategory + threshold) for a Multiple
-	 * category.
+	 * Gets a sorted list of paths (subcategory + threshold) for a Multiple category.
 	 *
 	 * @param categoryName
 	 * @return the list of paths for the Multiple category
@@ -331,8 +319,7 @@ public class CategoryGUI extends AbstractGUI {
 	public Map<String, Long> getMultipleStatisticsMapping(MultipleAchievements category, Player player) {
 		Map<String, Long> subcategoriesToStatistics = new HashMap<>();
 		for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
-			long statistic = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
-					0);
+			long statistic = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(), 0);
 			subcategoriesToStatistics.put(subcategory, statistic);
 		}
 		return subcategoriesToStatistics;
@@ -388,9 +375,8 @@ public class CategoryGUI extends AbstractGUI {
 	}
 
 	/**
-	 * Computes the page index to display given a requested page and the total
-	 * number of achievements in the category. The returned page index must be
-	 * within a meaningful range, such that there are achievements to display on the
+	 * Computes the page index to display given a requested page and the total number of achievements in the category.
+	 * The returned page index must be within a meaningful range, such that there are achievements to display on the
 	 * page.
 	 *
 	 * @param requestedPage
@@ -407,8 +393,8 @@ public class CategoryGUI extends AbstractGUI {
 	}
 
 	/**
-	 * Creates the lore for the current achievement, containing information about
-	 * the progress, date of reception, description, rewards.
+	 * Creates the lore for the current achievement, containing information about the progress, date of reception,
+	 * description, rewards.
 	 *
 	 * @param categoryName
 	 * @param description
@@ -479,8 +465,7 @@ public class CategoryGUI extends AbstractGUI {
 		StringBuilder barDisplay = new StringBuilder(configListColorNotReceived.toString()).append("[");
 		// Length of the progress bar; we make it the same size as Goal/Message.
 		int textSize;
-		// MinecraftFont essentially supports latin alphabet characters. If invalid
-		// characters are found just use
+		// MinecraftFont essentially supports latin alphabet characters. If invalid characters are found just use
 		// number of chars.
 		if (FONT.isValid(achMessage)) {
 			textSize = FONT.getWidth(REGEX_PATTERN.matcher(achMessage).replaceAll(""));
@@ -512,8 +497,7 @@ public class CategoryGUI extends AbstractGUI {
 				barDisplay.append(middleText);
 				// Do not display middleText again.
 				hasDisplayedMiddleText = true;
-				// Iterate a number of times equal to the number of iterations so far to have
-				// the same number of
+				// Iterate a number of times equal to the number of iterations so far to have the same number of
 				// vertical bars left and right from the middle text.
 				i = textSize / 2 + 1 - i;
 			} else {

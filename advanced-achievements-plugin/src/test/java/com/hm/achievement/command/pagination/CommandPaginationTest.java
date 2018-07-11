@@ -26,10 +26,13 @@ import utilities.MockUtility;
  */
 public class CommandPaginationTest {
 
-	private final List<String> toPaginate = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "1", "2",
-			"3", "4", "5", "6", "7", "8", "9", "10", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "1", "2", "3",
-			"4", "5", "6", "7", "8", "9", "10", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "1", "2", "3", "4",
-			"5", "6", "7", "8", "9", "10");
+	private final List<String> toPaginate = Arrays.asList(
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
 
 	@ClassRule
 	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -38,8 +41,11 @@ public class CommandPaginationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		MockUtility mockUtility = MockUtility.setUp().withPluginDescription().withLogger()
-				.withDataFolder(temporaryFolder.getRoot()).withPluginFile("lang.yml");
+		MockUtility mockUtility = MockUtility.setUp()
+				.withPluginDescription()
+				.withLogger()
+				.withDataFolder(temporaryFolder.getRoot())
+				.withPluginFile("lang.yml");
 		langConfig = mockUtility.getLoadedConfig("lang.yml");
 	}
 
@@ -47,8 +53,11 @@ public class CommandPaginationTest {
 	public void testPagination() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
-		List<String> expected = Arrays.asList(getPaginationHeader(1, 4), "1", "2", "3", "4", "5", "6", "7", "8", "9",
-				"10", "1", "2", "3", "4", "5", "6", "7", "8", getPaginationFooter());
+		List<String> expected = Arrays.asList(
+				getPaginationHeader(1, 4),
+				"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+				"1", "2", "3", "4", "5", "6", "7", "8",
+				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(1, result::add);
@@ -60,8 +69,11 @@ public class CommandPaginationTest {
 	public void testPaginationPage2() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
-		List<String> expected = Arrays.asList(getPaginationHeader(2, 4), "9", "10", "1", "2", "3", "4", "5", "6", "7",
-				"8", "9", "10", "1", "2", "3", "4", "5", "6", getPaginationFooter());
+		List<String> expected = Arrays.asList(
+				getPaginationHeader(2, 4),
+				"9", "10", "1", "2", "3", "4", "5", "6", "7", "8",
+				"9", "10", "1", "2", "3", "4", "5", "6",
+				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(2, result::add);
@@ -73,8 +85,11 @@ public class CommandPaginationTest {
 	public void testPaginationPage3() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
-		List<String> expected = Arrays.asList(getPaginationHeader(3, 4), "7", "8", "9", "10", "1", "2", "3", "4", "5",
-				"6", "7", "8", "9", "10", "1", "2", "3", "4", getPaginationFooter());
+		List<String> expected = Arrays.asList(
+				getPaginationHeader(3, 4),
+				"7", "8", "9", "10", "1", "2", "3", "4", "5", "6",
+				"7", "8", "9", "10", "1", "2", "3", "4",
+				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(3, result::add);
@@ -86,7 +101,9 @@ public class CommandPaginationTest {
 	public void testPaginationPage4() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
-		List<String> expected = Arrays.asList(getPaginationHeader(4, 4), "5", "6", "7", "8", "9", "10",
+		List<String> expected = Arrays.asList(
+				getPaginationHeader(4, 4),
+				"5", "6", "7", "8", "9", "10",
 				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
@@ -99,7 +116,9 @@ public class CommandPaginationTest {
 	public void testPaginationPage5WhenOnly4Pages() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
-		List<String> expected = Arrays.asList(getPaginationHeader(4, 4), "5", "6", "7", "8", "9", "10",
+		List<String> expected = Arrays.asList(
+				getPaginationHeader(4, 4),
+				"5", "6", "7", "8", "9", "10",
 				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
@@ -112,7 +131,9 @@ public class CommandPaginationTest {
 	public void testEmptyPagination() {
 		CommandPagination pagination = new CommandPagination(Collections.emptyList(), 18, langConfig);
 
-		List<String> expected = Arrays.asList(getPaginationHeader(0, 0), getPaginationFooter());
+		List<String> expected = Arrays.asList(
+				getPaginationHeader(0, 0),
+				getPaginationFooter());
 
 		List<String> result = new ArrayList<>();
 		pagination.sendPage(1, result::add);
@@ -121,12 +142,15 @@ public class CommandPaginationTest {
 	}
 
 	private String getPaginationHeader(int page, int max) {
-		return ChatColor.translateAlternateColorCodes('&', LangHelper.getEachReplaced(CmdLang.PAGINATION_HEADER,
-				langConfig, new String[]{"PAGE", "MAX"}, new String[]{Integer.toString(page), Integer.toString(max)}));
+		return ChatColor.translateAlternateColorCodes('&',
+				LangHelper.getEachReplaced(CmdLang.PAGINATION_HEADER, langConfig,
+						new String[] { "PAGE", "MAX" },
+						new String[] { Integer.toString(page), Integer.toString(max) }));
 	}
 
 	private String getPaginationFooter() {
-		return ChatColor.translateAlternateColorCodes('&', LangHelper.get(CmdLang.PAGINATION_FOOTER, langConfig));
+		return ChatColor.translateAlternateColorCodes('&',
+				LangHelper.get(CmdLang.PAGINATION_FOOTER, langConfig));
 	}
 
 }

@@ -61,15 +61,15 @@ public class BreaksListener extends AbstractListener {
 		Block block = event.getBlock();
 		if (disableSilkTouchOreBreaks && silkTouchBreak) {
 			switch (block.getType()) {
-				case COAL_ORE :
-				case DIAMOND_ORE :
-				case EMERALD_ORE :
-				case LAPIS_ORE :
-				case QUARTZ_ORE :
-				case REDSTONE_ORE :
-				case GLOWING_REDSTONE_ORE :
+				case COAL_ORE:
+				case DIAMOND_ORE:
+				case EMERALD_ORE:
+				case LAPIS_ORE:
+				case QUARTZ_ORE:
+				case REDSTONE_ORE:
+				case GLOWING_REDSTONE_ORE:
 					return;
-				default :
+				default:
 					break;
 			}
 		}
@@ -81,10 +81,10 @@ public class BreaksListener extends AbstractListener {
 			return;
 		}
 
-		Set<String> foundAchievements = findAchievementsByCategoryAndName(category,
-				blockName + ':' + block.getState().getData().toItemStack().getDurability());
+		Set<String> foundAchievements = findAchievementsByCategoryAndName(
+				category, blockName + ':' + block.getState().getData().toItemStack().getDurability());
 		foundAchievements.addAll(findAchievementsByCategoryAndName(category, blockName));
-		foundAchievements.forEach(
-				achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category, achievement, 1));
+		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
+				achievement, 1));
 	}
 }

@@ -13,8 +13,7 @@ public class ServerVersionModule {
 	@Provides
 	@Singleton
 	int provideServerVersion() {
-		// Simple parsing of game version. Might need to be updated in the future
-		// depending on how the Minecraft
+		// Simple parsing of game version. Might need to be updated in the future depending on how the Minecraft
 		// versions change in the future.
 		return Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 	}

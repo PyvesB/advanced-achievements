@@ -28,8 +28,7 @@ import com.hm.achievement.utils.StatisticIncreaseHandler;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class used to monitor distances travelled by players for the different
- * available categories.
+ * Class used to monitor distances travelled by players for the different available categories.
  * 
  * @author Pyves
  *
@@ -72,8 +71,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	}
 
 	/**
-	 * Update distances and store them into server's memory until player
-	 * disconnects.
+	 * Update distances and store them into server's memory until player disconnects.
 	 * 
 	 * @param player
 	 */
@@ -83,15 +81,13 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 		// Update new location.
 		playerLocations.put(player.getUniqueId(), player.getLocation());
 
-		// If player location not found or if player has changed world, ignore previous
-		// location.
+		// If player location not found or if player has changed world, ignore previous location.
 		// Evaluating distance would give an exception.
 		if (previousLocation == null || !previousLocation.getWorld().getName().equals(player.getWorld().getName())) {
 			return;
 		}
 
-		// If player is in restricted game mode or is in a blocked world, don't update
-		// distances.
+		// If player is in restricted game mode or is in a blocked world, don't update distances.
 		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
 			return;
 		}
@@ -120,8 +116,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	}
 
 	/**
-	 * Calculates the difference between the player's last location and his current
-	 * one.
+	 * Calculates the difference between the player's last location and his current one.
 	 * 
 	 * @param player
 	 * @param previousLocation
@@ -140,8 +135,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	}
 
 	/**
-	 * Updates distance if all conditions are met and awards achievements if
-	 * necessary.
+	 * Updates distance if all conditions are met and awards achievements if necessary.
 	 * 
 	 * @param difference
 	 * @param player

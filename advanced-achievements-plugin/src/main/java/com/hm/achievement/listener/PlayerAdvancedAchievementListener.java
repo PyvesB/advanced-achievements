@@ -51,8 +51,7 @@ import com.hm.mcshared.particle.ParticleEffect;
 import net.milkbowl.vault.economy.Economy;
 
 /**
- * Listener class to deal with achievement receptions: rewards, display and
- * database operations.
+ * Listener class to deal with achievement receptions: rewards, display and database operations.
  *
  * @author Pyves
  */
@@ -99,8 +98,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			@Named("lang") CommentedYamlConfiguration langConfig, int serverVersion, Logger logger,
 			StringBuilder pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements,
 			RewardParser rewardParser, Map<String, String> achievementsAndDisplayNames,
-			AbstractDatabaseManager sqlDatabaseManager, ToggleCommand toggleCommand,
-			FireworkListener fireworkListener) {
+			AbstractDatabaseManager sqlDatabaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.serverVersion = serverVersion;
@@ -121,25 +119,21 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		configFirework = mainConfig.getBoolean("Firework", true);
 		configSimplifiedReception = mainConfig.getBoolean("SimplifiedReception", false);
 		configTitleScreen = mainConfig.getBoolean("TitleScreen", true);
-		// Title screens introduced in Minecraft 1.8. Automatically relevant parameter
-		// for older versions.
+		// Title screens introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configTitleScreen && serverVersion < 8) {
 			configTitleScreen = false;
 		}
 		configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers", false);
 		configActionBarNotify = mainConfig.getBoolean("ActionBarNotify", false);
-		// Action bars introduced in Minecraft 1.8. Automatically relevant parameter for
-		// older versions.
+		// Action bars introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configActionBarNotify && serverVersion < 8) {
 			configActionBarNotify = false;
 		}
-		// No longer available in default config, kept for compatibility with versions
-		// prior to 2.1; defines whether
+		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
 		// a player is notified in case of a command reward.
 		configRewardCommandNotif = mainConfig.getBoolean("RewardCommandNotif", true);
 		configHoverableReceiverChatText = mainConfig.getBoolean("HoverableReceiverChatText", false);
-		// Hoverable chat messages introduced in Minecraft 1.8. Automatically relevant
-		// parameter for older versions.
+		// Hoverable chat messages introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configHoverableReceiverChatText && serverVersion < 8) {
 			configHoverableReceiverChatText = false;
 		}
@@ -149,12 +143,9 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		langItemRewardReceived = LangHelper.get(ListenerLang.ITEM_REWARD_RECEIVED, langConfig) + " ";
 		langMoneyRewardReceived = LangHelper.get(ListenerLang.MONEY_REWARD_RECEIVED, langConfig);
 		langExperienceRewardReceived = LangHelper.get(ListenerLang.EXPERIENCE_REWARD_RECEIVED, langConfig);
-		langIncreaseMaxHealthRewardReceived = LangHelper.get(ListenerLang.INCREASE_MAX_HEALTH_REWARD_RECEIVED,
-				langConfig);
-		langIncreaseMaxOxygenRewardReceived = LangHelper.get(ListenerLang.INCREASE_MAX_OXYGEN_REWARD_RECEIVED,
-				langConfig);
-		langAchievementNew = pluginHeader + LangHelper.get(ListenerLang.ACHIEVEMENT_NEW, langConfig) + " "
-				+ ChatColor.WHITE;
+		langIncreaseMaxHealthRewardReceived = LangHelper.get(ListenerLang.INCREASE_MAX_HEALTH_REWARD_RECEIVED, langConfig);
+		langIncreaseMaxOxygenRewardReceived = LangHelper.get(ListenerLang.INCREASE_MAX_OXYGEN_REWARD_RECEIVED, langConfig);
+		langAchievementNew = pluginHeader + LangHelper.get(ListenerLang.ACHIEVEMENT_NEW, langConfig) + " " + ChatColor.WHITE;
 		langCustomMessageCommandReward = LangHelper.get(ListenerLang.CUSTOM_COMMAND_REWARD, langConfig);
 		langAllAchievementsReceived = pluginHeader + LangHelper.get(ListenerLang.ALL_ACHIEVEMENTS_RECEIVED, langConfig);
 	}
@@ -162,14 +153,13 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerAdvancedAchievementReception(PlayerAdvancedAchievementEvent event) {
 		Player player = event.getPlayer();
-		// Achievement could have already been received if MultiCommand is set to true
-		// in the configuration.
+		// Achievement could have already been received if MultiCommand is set to true in the configuration.
 		if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), event.getName())) {
 			cacheManager.registerNewlyReceivedAchievement(player.getUniqueId(), event.getName());
 
 			if (serverVersion >= 12) {
-				Advancement advancement = Bukkit.getServer().getAdvancement(
-						new NamespacedKey(advancedAchievements, AdvancementManager.getKey(event.getName())));
+				Advancement advancement = Bukkit.getServer()
+						.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.getKey(event.getName())));
 				// Matching advancement might not exist if user has not called /aach generate.
 				if (advancement != null) {
 					player.getAdvancementProgress(advancement).awardCriteria(AchievementAdvancement.CRITERIA_NAME);
@@ -178,9 +168,9 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		}
 		sqlDatabaseManager.registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 
-		List<String> rewardTexts = giveRewardsAndPrepareTexts(player, event.getCommandRewards(),
-				event.getCommandMessages(), event.getItemReward(), event.getMoneyReward(), event.getExperienceReward(),
-				event.getMaxHealthReward(), event.getMaxOxygenReward());
+		List<String> rewardTexts = giveRewardsAndPrepareTexts(player, event.getCommandRewards(), event.getCommandMessages(),
+				event.getItemReward(), event.getMoneyReward(), event.getExperienceReward(), event.getMaxHealthReward(),
+				event.getMaxOxygenReward());
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage(), rewardTexts);
 
 		if (cacheManager.getPlayerTotalAchievements(player.getUniqueId()) == achievementsAndDisplayNames.size()) {
@@ -189,8 +179,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	}
 
 	/**
-	 * Gives relevant rewards and prepares the texts to be displayed to the
-	 * receiver.
+	 * Gives relevant rewards and prepares the texts to be displayed to the receiver.
 	 * 
 	 * @param player
 	 * @param commands
@@ -235,16 +224,14 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 */
 	private List<String> rewardCommands(String[] commands, List<String> messages) {
 		for (String command : commands) {
-			advancedAchievements.getServer().dispatchCommand(advancedAchievements.getServer().getConsoleSender(),
-					command);
+			advancedAchievements.getServer().dispatchCommand(advancedAchievements.getServer().getConsoleSender(), command);
 		}
 		if (!configRewardCommandNotif || langCommandReward.length() == 0) {
 			return new ArrayList<>();
 		}
 
 		if (messages != null) {
-			return messages.stream()
-					.map(message -> StringUtils.replace(langCustomMessageCommandReward, "MESSAGE", message))
+			return messages.stream().map(message -> StringUtils.replace(langCustomMessageCommandReward, "MESSAGE", message))
 					.collect(Collectors.toList());
 		}
 
@@ -339,8 +326,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	}
 
 	/**
-	 * Displays chat messages, screen title and launches a firework when a player
-	 * receives an achievement.
+	 * Displays chat messages, screen title and launches a firework when a player receives an achievement.
 	 *
 	 * @param player
 	 * @param name
@@ -356,8 +342,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			nameToShowUser = ChatColor.translateAlternateColorCodes('&', displayName);
 			logger.info("Player " + player.getName() + " received the achievement: " + name + " (" + displayName + ")");
 		} else {
-			// Use the achievement key name (this name is used in the achievements table in
-			// the database).
+			// Use the achievement key name (this name is used in the achievements table in the database).
 			nameToShowUser = ChatColor.translateAlternateColorCodes('&', name);
 			logger.info("Player " + player.getName() + " received the achievement: " + name);
 
@@ -368,11 +353,9 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 		// Notify other online players that the player has received an achievement.
 		for (Player p : advancedAchievements.getServer().getOnlinePlayers()) {
-			// Notify other players only if NotifyOtherPlayers is enabled and player has not
-			// used /aach toggle, or if
+			// Notify other players only if NotifyOtherPlayers is enabled and player has not used /aach toggle, or if
 			// NotifyOtherPlayers is disabled and player has used /aach toggle.
-			if (!p.getName().equals(player.getName())
-					&& (configNotifyOtherPlayers ^ toggleCommand.isPlayerToggled(p))) {
+			if (!p.getName().equals(player.getName()) && (configNotifyOtherPlayers ^ toggleCommand.isPlayerToggled(p))) {
 				displayNotification(player, nameToShowUser, p);
 			}
 		}
@@ -389,9 +372,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	}
 
 	/**
-	 * Displays texts related to the achievement in the receiver's chat. This method
-	 * can display a single hoverable message or several messages one after the
-	 * other.
+	 * Displays texts related to the achievement in the receiver's chat. This method can display a single hoverable
+	 * message or several messages one after the other.
 	 *
 	 * @param player
 	 * @param nameToShowUser
@@ -436,9 +418,9 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 				logger.warning("Failed to display action bar message for achievement reception notification.");
 			}
 		} else {
-			otherPlayer.sendMessage(pluginHeader
-					+ StringUtils.replaceOnce(langAchievementReceived, "PLAYER", achievementReceiver.getName())
-					+ nameToShowUser);
+			otherPlayer.sendMessage(
+					pluginHeader + StringUtils.replaceOnce(langAchievementReceived, "PLAYER", achievementReceiver.getName())
+							+ nameToShowUser);
 		}
 	}
 
@@ -480,8 +462,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			// Firework launched by plugin: damage will later be cancelled out.
 			fireworkListener.addFirework(firework);
 		} catch (Exception e) {
-			// Particle effect workaround to handle various bugs in early Spigot 1.9 and
-			// 1.11 releases. We try to
+			// Particle effect workaround to handle various bugs in early Spigot 1.9 and 1.11 releases. We try to
 			// simulate a firework.
 			player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_LAUNCH, 1, 0.6f);
 			ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, location, 1);
@@ -511,23 +492,21 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	}
 
 	/**
-	 * Displays a simplified particle effect and calm sound when receiving an
-	 * achievement. Is used instead of displayFirework.
+	 * Displays a simplified particle effect and calm sound when receiving an achievement. Is used instead of
+	 * displayFirework.
 	 *
 	 * @param player
 	 */
 	private void displaySimplifiedReception(Player player) {
 		Location location = player.getLocation();
-		// If old version, retrieving sound by name as it no longer exists in newer
-		// versions.
+		// If old version, retrieving sound by name as it no longer exists in newer versions.
 		Sound sound = serverVersion < 9 ? Sound.valueOf("LEVEL_UP") : Sound.ENTITY_PLAYER_LEVELUP;
 		player.getWorld().playSound(location, sound, 1, 0.9f);
 		ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, location, 1);
 	}
 
 	/**
-	 * Handles rewards and displaying messages when a player has received all
-	 * achievements.
+	 * Handles rewards and displaying messages when a player has received all achievements.
 	 * 
 	 * @param player
 	 */

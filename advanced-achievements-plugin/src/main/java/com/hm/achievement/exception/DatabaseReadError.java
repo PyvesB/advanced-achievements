@@ -3,8 +3,7 @@ package com.hm.achievement.exception;
 import java.sql.SQLException;
 
 /**
- * Runtime exception thrown if the plugin repeatedly fails to read information
- * from the database.
+ * Runtime exception thrown if the plugin repeatedly fails to read information from the database.
  * 
  * @author Pyves
  *

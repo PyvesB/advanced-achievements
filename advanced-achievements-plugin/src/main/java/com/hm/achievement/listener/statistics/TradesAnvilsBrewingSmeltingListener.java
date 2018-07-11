@@ -26,8 +26,7 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with Trades, AnvilsUsed, Smelting and Brewing
- * achievements.
+ * Listener class to deal with Trades, AnvilsUsed, Smelting and Brewing achievements.
  * 
  * @author Pyves
  *
@@ -40,8 +39,8 @@ public class TradesAnvilsBrewingSmeltingListener extends AbstractRateLimitedList
 	@Inject
 	public TradesAnvilsBrewingSmeltingListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig,
-			Logger logger, Set<String> disabledCategories) {
+			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
+			Set<String> disabledCategories) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, advancedAchievements, langConfig,
 				logger);
 		this.disabledCategories = disabledCategories;
@@ -50,8 +49,7 @@ public class TradesAnvilsBrewingSmeltingListener extends AbstractRateLimitedList
 	@Override
 	public void cleanPlayerData(UUID uuid) {
 		String uuidString = uuid.toString();
-		// The cooldown for this class only handles Brewing achievements, but each slot
-		// in the brewing stand must be
+		// The cooldown for this class only handles Brewing achievements, but each slot in the brewing stand must be
 		// handled independently, hence the prefix in the cooldown map.
 		cooldownMap.remove("0" + uuidString);
 		cooldownMap.remove("1" + uuidString);
@@ -62,8 +60,7 @@ public class TradesAnvilsBrewingSmeltingListener extends AbstractRateLimitedList
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (event.getRawSlot() < 0 || event.getRawSlot() > 2 || event.getCurrentItem() == null
 				|| event.getCurrentItem().getType() == Material.AIR || event.getAction() == InventoryAction.NOTHING
-				|| event.getClick() == ClickType.NUMBER_KEY
-						&& event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
+				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
 			return;
 		}
 

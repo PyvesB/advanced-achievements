@@ -22,8 +22,7 @@ import com.hm.achievement.lang.LangHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Represents the main GUI, corresponding to all the different available
- * categories and their names.
+ * Represents the main GUI, corresponding to all the different available categories and their names.
  *
  * @author Pyves
  */
@@ -72,8 +71,8 @@ public class MainGUI extends AbstractGUI {
 		int totalEnabledCategories = MultipleAchievements.values().length + NormalAchievements.values().length + 1
 				- disabledCategories.size();
 		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder();
-		Inventory mainGUI = Bukkit.createInventory(inventoryHolder,
-				nextMultipleOf9(totalEnabledCategories, MAX_PER_PAGE), langListGUITitle);
+		Inventory mainGUI = Bukkit.createInventory(inventoryHolder, nextMultipleOf9(totalEnabledCategories, MAX_PER_PAGE),
+				langListGUITitle);
 		inventoryHolder.setInventory(mainGUI);
 
 		int displayedSoFar = 0;
@@ -109,19 +108,16 @@ public class MainGUI extends AbstractGUI {
 	 * @param player
 	 * @param category
 	 * @param permName
-	 * @return true if an item corresponding to the category should be added to the
-	 *         GUI
+	 * @return true if an item corresponding to the category should be added to the GUI
 	 */
 	private boolean shouldDisplayCategory(ItemStack item, Player player, String category, String permName) {
-		// Hide category if an empty name is defined for it, if it's disabled or if the
-		// player is missing permissions.
+		// Hide category if an empty name is defined for it, if it's disabled or if the player is missing permissions.
 		return item.getItemMeta().getDisplayName().length() > 0 && !disabledCategories.contains(category)
 				&& (!configHideNoPermissionCategories || permName == null || player.hasPermission(permName));
 	}
 
 	/**
-	 * Displays an item corresponding to a Multiple category, or a barrier if the
-	 * category should be hidden.
+	 * Displays an item corresponding to a Multiple category, or a barrier if the category should be hidden.
 	 *
 	 * @param item
 	 * @param gui
@@ -140,8 +136,7 @@ public class MainGUI extends AbstractGUI {
 	}
 
 	/**
-	 * Displays an item corresponding to a Normal category, or a barrier if the
-	 * category should be hidden.
+	 * Displays an item corresponding to a Normal category, or a barrier if the category should be hidden.
 	 *
 	 * @param item
 	 * @param gui
@@ -158,20 +153,17 @@ public class MainGUI extends AbstractGUI {
 	}
 
 	/**
-	 * Determines whether the player has received at least one achievement in the
-	 * category or subcategory.
+	 * Determines whether the player has received at least one achievement in the category or subcategory.
 	 *
 	 * @param player
 	 * @param configPath
-	 * @return true if the player has received at least one achievement in the
-	 *         category, false otherwise
+	 * @return true if the player has received at least one achievement in the category, false otherwise
 	 */
 	private boolean hasReceivedInCategory(Player player, String configPath) {
 		for (String threshold : mainConfig.getShallowKeys(configPath)) {
 			if (cacheManager.hasPlayerAchievement(player.getUniqueId(),
 					mainConfig.getString(configPath + '.' + threshold + ".Name", ""))) {
-				// At least one achievement was received in the current category: it is
-				// unlocked.
+				// At least one achievement was received in the current category: it is unlocked.
 				return true;
 			}
 		}

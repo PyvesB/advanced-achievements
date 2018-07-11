@@ -37,8 +37,7 @@ public class QuitListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		UUID uuid = event.getPlayer().getUniqueId();
 
-		// Delay cleaning up to avoid invalidating data immediately: players frequently
-		// disconnect and reconnect just
+		// Delay cleaning up to avoid invalidating data immediately: players frequently disconnect and reconnect just
 		// after. This also avoids players taking advantage of the reset of cooldowns.
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> {
 			if (Bukkit.getPlayer(uuid) != null) {

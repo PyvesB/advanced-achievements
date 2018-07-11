@@ -10,8 +10,7 @@ import com.hm.achievement.db.CacheManager;
 import codecrafter47.bungeetablistplus.api.bukkit.Variable;
 
 /**
- * Class enabling usage of the achievement_count placeholder in
- * BungeeTabListPlus configuration.
+ * Class enabling usage of the achievement_count placeholder in BungeeTabListPlus configuration.
  * 
  * @author Pyves
  *

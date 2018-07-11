@@ -35,9 +35,8 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with Connections achievements and advancements for
- * Minecraft 1.12+. This class uses delays processing of tasks to avoid spamming
- * a barely connected player.
+ * Listener class to deal with Connections achievements and advancements for Minecraft 1.12+. This class uses delays
+ * processing of tasks to avoid spamming a barely connected player.
  * 
  * @author Pyves
  *
@@ -95,12 +94,10 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 		if (!disabledCategories.contains(NormalAchievements.CONNECTIONS.toString())
 				&& !playersConnectionProcessed.contains(player.getUniqueId())) {
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> {
-				// In addition to the usual reception conditions, check that the player is still
-				// connected and that
-				// another runnable hasn't already done the work (even though this method is
-				// intended to run once per
+				// In addition to the usual reception conditions, check that the player is still connected and that
+				// another runnable hasn't already done the work (even though this method is intended to run once per
 				// player per connection instance, it might happen with some server settings).
-				if (shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS) && player.isOnline()
+				if (shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.CONNECTIONS)  && player.isOnline()
 						&& !playersConnectionProcessed.contains(player.getUniqueId())) {
 					handleConnectionAchievements(player);
 					// Ran successfully to completion: no need to re-run while player is connected.
@@ -141,10 +138,9 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	}
 
 	/**
-	 * Schedules a delayed task to award advancements created by Advanced
-	 * Achievements. This method can be seen as a synchronisation to give
-	 * advancements which were generated after the corresponding achievement was
-	 * received for a given player.
+	 * Schedules a delayed task to award advancements created by Advanced Achievements. This method can be seen as a
+	 * synchronisation to give advancements which were generated after the corresponding achievement was received for a
+	 * given player.
 	 * 
 	 * @param player
 	 */
@@ -154,8 +150,8 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 			if (!player.isOnline()) {
 				return;
 			}
-			Advancement advancement = Bukkit.getServer().getAdvancement(
-					new NamespacedKey(advancedAchievements, AdvancementManager.ADVANCED_ACHIEVEMENTS_PARENT));
+			Advancement advancement = Bukkit.getServer().getAdvancement(new NamespacedKey(advancedAchievements,
+					AdvancementManager.ADVANCED_ACHIEVEMENTS_PARENT));
 			// If no parent, user has not used /aach generate, do not do anything.
 			if (advancement != null) {
 				AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
@@ -163,8 +159,8 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 					advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
 				}
 				for (String achName : sqlDatabaseManager.getPlayerAchievementNamesList(player.getUniqueId())) {
-					advancement = Bukkit.getServer().getAdvancement(
-							new NamespacedKey(advancedAchievements, AdvancementManager.getKey(achName)));
+					advancement = Bukkit.getServer()
+							.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.getKey(achName)));
 					// Matching advancement might not exist if user has not called /aach generate.
 					if (advancement != null) {
 						advancementProgress = player.getAdvancementProgress(advancement);

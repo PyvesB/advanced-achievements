@@ -75,7 +75,7 @@ public class KillsListener extends AbstractListener {
 			}
 		}
 
-		foundAchievements.forEach(
-				achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category, achievement, 1));
+		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
+				achievement, 1));
 	}
 }

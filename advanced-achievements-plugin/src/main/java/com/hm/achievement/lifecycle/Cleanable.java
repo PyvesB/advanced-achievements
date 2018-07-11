@@ -5,9 +5,8 @@ import java.util.Observer;
 import java.util.UUID;
 
 /**
- * Interface used for classes that contain player specific data structures, and
- * that should clean up when a player disconnects. This avoids Maps and Sets
- * from growing unboundedly until the server is restarted. Implementing classes
+ * Interface used for classes that contain player specific data structures, and that should clean up when a player
+ * disconnects. This avoids Maps and Sets from growing unboundedly until the server is restarted. Implementing classes
  * cooperate with QuitListener using the Observer pattern.
  *
  * @author Pyves

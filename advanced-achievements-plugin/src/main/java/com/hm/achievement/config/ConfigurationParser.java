@@ -24,9 +24,8 @@ import com.hm.achievement.exception.PluginLoadError;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of parsing the config.yml, lang.yml and gui.yml configuration
- * files. It loads the files and populates common data structures used in other
- * parts of the plugin. Basic validation is performed on the achievements.
+ * Class in charge of parsing the config.yml, lang.yml and gui.yml configuration files. It loads the files and populates
+ * common data structures used in other parts of the plugin. Basic validation is performed on the achievements.
  *
  * @author Pyves
  */
@@ -63,8 +62,8 @@ public class ConfigurationParser {
 	}
 
 	/**
-	 * Loads the files and populates common data structures used in other parts of
-	 * the plugin. Performs basic validation on the achievements.
+	 * Loads the files and populates common data structures used in other parts of the plugin. Performs basic validation
+	 * on the achievements.
 	 * 
 	 * @throws PluginLoadError
 	 */
@@ -119,8 +118,8 @@ public class ConfigurationParser {
 		if (StringUtils.isNotBlank(icon)) {
 			String coloredIcon = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0)) + icon;
 			pluginHeader
-					.append(ChatColor.translateAlternateColorCodes('&', StringUtils
-							.replace(mainConfig.getString("ChatHeader", "&7[%ICON%&7]"), "%ICON%", coloredIcon)))
+					.append(ChatColor.translateAlternateColorCodes('&',
+							StringUtils.replace(mainConfig.getString("ChatHeader", "&7[%ICON%&7]"), "%ICON%", coloredIcon)))
 					.append(" ");
 		}
 		pluginHeader.trimToSize();
@@ -132,13 +131,11 @@ public class ConfigurationParser {
 	private void parseDisabledCategories() {
 		disabledCategories.clear();
 		disabledCategories.addAll(mainConfig.getList("DisabledCategories"));
-		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and
-		// PetMasterReceive categories.
+		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
 		if ((!disabledCategories.contains(NormalAchievements.PETMASTERGIVE.toString())
 				|| !disabledCategories.contains(NormalAchievements.PETMASTERRECEIVE.toString()))
-				&& (!Bukkit.getPluginManager().isPluginEnabled("PetMaster")
-						|| Integer.parseInt(Character.toString(Bukkit.getPluginManager().getPlugin("PetMaster")
-								.getDescription().getVersion().charAt(2))) < 4)) {
+				&& (!Bukkit.getPluginManager().isPluginEnabled("PetMaster") || Integer.parseInt(Character.toString(
+						Bukkit.getPluginManager().getPlugin("PetMaster").getDescription().getVersion().charAt(2))) < 4)) {
 			disabledCategories.add(NormalAchievements.PETMASTERGIVE.toString());
 			disabledCategories.add(NormalAchievements.PETMASTERRECEIVE.toString());
 			logger.warning("Overriding configuration: disabling PetMasterGive and PetMasterReceive categories.");
@@ -169,8 +166,8 @@ public class ConfigurationParser {
 	}
 
 	/**
-	 * Goes through all the achievements for non-disabled categories. Populates
-	 * relevant data structures and performs basic validation. Logs some statistics.
+	 * Goes through all the achievements for non-disabled categories. Populates relevant data structures and performs
+	 * basic validation. Logs some statistics.
 	 * 
 	 * @throws PluginLoadError
 	 */
@@ -214,8 +211,7 @@ public class ConfigurationParser {
 	}
 
 	/**
-	 * Parses all achievements for a given category or category + subcategory.
-	 * Populates the sortedThresholds map.
+	 * Parses all achievements for a given category or category + subcategory. Populates the sortedThresholds map.
 	 * 
 	 * @param path
 	 * @throws PluginLoadError
@@ -231,8 +227,7 @@ public class ConfigurationParser {
 	}
 
 	/**
-	 * Performs validation for a single achievement and populates an entry in the
-	 * achievementsAndDisplayNames map.
+	 * Performs validation for a single achievement and populates an entry in the achievementsAndDisplayNames map.
 	 * 
 	 * @param path
 	 * @throws PluginLoadError
@@ -240,11 +235,10 @@ public class ConfigurationParser {
 	private void parseAchievement(String path) throws PluginLoadError {
 		String achName = mainConfig.getString(path + ".Name");
 		if (achName == null) {
-			throw new PluginLoadError(
-					"Achievement with path (" + path + ") is missing its Name parameter in config.yml.");
+			throw new PluginLoadError("Achievement with path (" + path + ") is missing its Name parameter in config.yml.");
 		} else if (achievementsAndDisplayNames.containsKey(achName)) {
-			throw new PluginLoadError("Duplicate achievement Name (" + achName + "). "
-					+ "Please ensure each Name is unique in config.yml.");
+			throw new PluginLoadError(
+					"Duplicate achievement Name (" + achName + "). " + "Please ensure each Name is unique in config.yml.");
 		} else {
 			achievementsAndDisplayNames.put(achName, mainConfig.getString(path + ".DisplayName", ""));
 		}

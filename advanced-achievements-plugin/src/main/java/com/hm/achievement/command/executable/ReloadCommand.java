@@ -25,8 +25,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 import dagger.Lazy;
 
 /**
- * Class in charge of handling the /aach reload command, which reloads the
- * plugin's configuration files.
+ * Class in charge of handling the /aach reload command, which reloads the plugin's configuration files.
  *
  * @author Pyves
  */
@@ -89,8 +88,7 @@ public class ReloadCommand extends AbstractCommand {
 			if (sender instanceof Player) {
 				sender.sendMessage(langConfigReloadFailed);
 			}
-			logger.log(Level.SEVERE,
-					"A non recoverable error was encountered while reloading the plugin, disabling it:", e);
+			logger.log(Level.SEVERE, "A non recoverable error was encountered while reloading the plugin, disabling it:", e);
 			Bukkit.getServer().getPluginManager().disablePlugin(advancedAchievements);
 			return;
 		}

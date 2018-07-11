@@ -21,8 +21,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ParticleEffect;
 
 /**
- * Class in charge of handling the /aach stats command, which creates and
- * displays a progress bar of the player's achievements
+ * Class in charge of handling the /aach stats command, which creates and displays a progress bar of the player's
+ * achievements
  *
  * @author Pyves
  */
@@ -66,8 +66,7 @@ public class StatsCommand extends AbstractCommand {
 		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects", true);
 		configSound = mainConfig.getBoolean("Sound", true);
 
-		langNumberAchievements = pluginHeader + LangHelper.get(CmdLang.NUMBER_ACHIEVEMENTS, langConfig) + " "
-				+ configColor;
+		langNumberAchievements = pluginHeader + LangHelper.get(CmdLang.NUMBER_ACHIEVEMENTS, langConfig) + " " + configColor;
 	}
 
 	@Override
@@ -81,8 +80,8 @@ public class StatsCommand extends AbstractCommand {
 		int playerAchievements = cacheManager.getPlayerTotalAchievements(player.getUniqueId());
 		int totalAchievements = achievementsAndDisplayNames.size();
 
-		player.sendMessage(langNumberAchievements
-				+ String.format("%.1f", 100 * (double) playerAchievements / totalAchievements) + "%");
+		player.sendMessage(
+				langNumberAchievements + String.format("%.1f", 100 * (double) playerAchievements / totalAchievements) + "%");
 
 		String middleText = " " + playerAchievements + "/" + totalAchievements + " ";
 		int verticalBarsToDisplay = 150 - configIcon.length() - FONT.getWidth(middleText);
@@ -95,8 +94,7 @@ public class StatsCommand extends AbstractCommand {
 				barDisplay.append(ChatColor.GRAY).append(middleText);
 				// Do not display middleText again.
 				hasDisplayedMiddleText = true;
-				// Iterate a number of times equal to the number of iterations so far to have
-				// the same number of
+				// Iterate a number of times equal to the number of iterations so far to have the same number of
 				// vertical bars left and right from the middle text.
 				i = verticalBarsToDisplay - i;
 			} else if (i < ((verticalBarsToDisplay - 1) * playerAchievements) / totalAchievements) {
@@ -125,8 +123,7 @@ public class StatsCommand extends AbstractCommand {
 
 			// Play special sound.
 			if (configSound) {
-				// If old version, retrieving sound by name as it no longer exists in newer
-				// versions.
+				// If old version, retrieving sound by name as it no longer exists in newer versions.
 				Sound sound = serverVersion < 9 ? Sound.valueOf("FIREWORK_BLAST") : Sound.ENTITY_FIREWORK_LARGE_BLAST;
 				player.getWorld().playSound(player.getLocation(), sound, 1, 0.7f);
 			}

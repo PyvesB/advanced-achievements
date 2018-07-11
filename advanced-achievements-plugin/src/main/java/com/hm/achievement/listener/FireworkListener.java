@@ -27,8 +27,7 @@ import com.hm.achievement.AdvancedAchievements;
 @Singleton
 public class FireworkListener implements Listener {
 
-	private final Set<UUID> fireworksLaunchedByPlugin = Collections
-			.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
+	private final Set<UUID> fireworksLaunchedByPlugin = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
 	private final AdvancedAchievements advancedAchievements;
 
 	@Inject

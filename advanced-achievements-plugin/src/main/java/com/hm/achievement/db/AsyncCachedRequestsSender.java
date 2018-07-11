@@ -34,8 +34,8 @@ public class AsyncCachedRequestsSender implements Runnable {
 	private final AbstractDatabaseManager sqlDatabaseManager;
 
 	@Inject
-	public AsyncCachedRequestsSender(AdvancedAchievements advancedAchievements, Logger logger,
-			CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager) {
+	public AsyncCachedRequestsSender(AdvancedAchievements advancedAchievements, Logger logger, CacheManager cacheManager,
+			AbstractDatabaseManager sqlDatabaseManager) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.cacheManager = cacheManager;
@@ -43,8 +43,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 	}
 
 	/**
-	 * Writes cached statistics to the database and cleans up the no longer relevant
-	 * cached statistics.
+	 * Writes cached statistics to the database and cleans up the no longer relevant cached statistics.
 	 * 
 	 */
 	@Override
@@ -54,8 +53,8 @@ public class AsyncCachedRequestsSender implements Runnable {
 	}
 
 	/**
-	 * Writes cached statistics to the database, with batched writes for efficiency
-	 * purposes. If a failure occurs, the same queries will be attempted again.
+	 * Writes cached statistics to the database, with batched writes for efficiency purposes. If a failure occurs, the
+	 * same queries will be attempted again.
 	 */
 	public void sendBatchedRequests() {
 		List<String> batchedRequests = new ArrayList<>();
@@ -87,8 +86,8 @@ public class AsyncCachedRequestsSender implements Runnable {
 	/**
 	 * Adds the database queries to perform for a given Multiple category.
 	 * 
-	 * PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
-	 * construct, which is available for PostgreSQL 9.5+.
+	 * PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available for
+	 * PostgreSQL 9.5+.
 	 * 
 	 * @param batchedRequests
 	 * @param category
@@ -97,19 +96,17 @@ public class AsyncCachedRequestsSender implements Runnable {
 		Map<String, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
 		for (Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
 			if (!entry.getValue().isDatabaseConsistent()) {
-				// Set flag before writing to database so that concurrent updates are not
-				// wrongly marked as consistent.
+				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
 				entry.getValue().prepareDatabaseWrite();
 				if (sqlDatabaseManager instanceof PostgreSQLDatabaseManager) {
-					batchedRequests.add("INSERT INTO " + sqlDatabaseManager.getPrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36)
-							+ "', " + entry.getValue().getValue() + ") ON CONFLICT (playername, "
-							+ category.toSubcategoryDBName() + ") DO UPDATE SET (" + category.toDBName() + ")=("
-							+ entry.getValue().getValue() + ")");
+					batchedRequests.add("INSERT INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue().getValue() + ") ON CONFLICT (playername, " + category.toSubcategoryDBName()
+							+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue().getValue() + ")");
 				} else {
-					batchedRequests.add("REPLACE INTO " + sqlDatabaseManager.getPrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36)
-							+ "', " + entry.getValue().getValue() + ")");
+					batchedRequests.add("REPLACE INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
+							+ entry.getValue().getValue() + ")");
 				}
 			}
 		}
@@ -118,8 +115,8 @@ public class AsyncCachedRequestsSender implements Runnable {
 	/**
 	 * Adds the database queries to perform for a given Normal category.
 	 * 
-	 * PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT
-	 * construct, which is available for PostgreSQL 9.5+.
+	 * PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available for
+	 * PostgreSQL 9.5+.
 	 * 
 	 * @param batchedRequests
 	 * @param category
@@ -128,25 +125,24 @@ public class AsyncCachedRequestsSender implements Runnable {
 		Map<String, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
 		for (Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
 			if (!entry.getValue().isDatabaseConsistent()) {
-				// Set flag before writing to database so that concurrent updates are not
-				// wrongly marked as consistent.
+				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
 				entry.getValue().prepareDatabaseWrite();
 				if (sqlDatabaseManager instanceof PostgreSQLDatabaseManager) {
-					batchedRequests.add("INSERT INTO " + sqlDatabaseManager.getPrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue().getValue()
+					batchedRequests.add("INSERT INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue().getValue()
 							+ ") ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
 							+ entry.getValue().getValue() + ")");
 				} else {
-					batchedRequests.add("REPLACE INTO " + sqlDatabaseManager.getPrefix() + category.toDBName()
-							+ " VALUES ('" + entry.getKey() + "', " + entry.getValue().getValue() + ")");
+					batchedRequests.add("REPLACE INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+							+ entry.getKey() + "', " + entry.getValue().getValue() + ")");
 				}
 			}
 		}
 	}
 
 	/**
-	 * Removes the cached statistics that have been written to the database and for
-	 * which the player is no longer connected.
+	 * Removes the cached statistics that have been written to the database and for which the player is no longer
+	 * connected.
 	 */
 	private void cleanUpCaches() {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
@@ -167,18 +163,15 @@ public class AsyncCachedRequestsSender implements Runnable {
 	private void cleanUpCache(Map<String, CachedStatistic> categoryMap) {
 		for (Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
 			if (entry.getValue().didPlayerDisconnect() && entry.getValue().isDatabaseConsistent()) {
-				// Player was disconnected at some point in the recent past. Hand over the
-				// cleaning to the main server
+				// Player was disconnected at some point in the recent past. Hand over the cleaning to the main server
 				// thread.
 				Bukkit.getScheduler().callSyncMethod(advancedAchievements, () -> {
-					// Check again whether statistic has been written to the database. This is
-					// necessary to cover
+					// Check again whether statistic has been written to the database. This is necessary to cover
 					// cases where the player may have reconnected in the meantime.
 					if (entry.getValue().isDatabaseConsistent()) {
 						categoryMap.remove(entry.getKey());
 					} else {
-						// Get player UUID, which always corresponds to the 36 first characters of the
-						// key
+						// Get player UUID, which always corresponds to the 36 first characters of the key
 						// regardless of the category type.
 						UUID player = UUID.fromString(entry.getKey().substring(0, 36));
 						if (Bukkit.getPlayer(player) != null) {

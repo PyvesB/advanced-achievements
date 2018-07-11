@@ -20,8 +20,8 @@ import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class used to provide a cache wrapper for various database statistics, in
- * order to reduce load of database and enable faster in-memory operations.
+ * Class used to provide a cache wrapper for various database statistics, in order to reduce load of database and enable
+ * faster in-memory operations.
  * 
  * @author Pyves
  *
@@ -31,24 +31,19 @@ public class CacheManager implements Cleanable {
 
 	private final CommentedYamlConfiguration mainConfig;
 	private final AbstractDatabaseManager sqlDatabaseManager;
-	// Statistics of the different players for normal achievements; keys in the
-	// inner maps correspond to UUIDs.
+	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
 	private final Map<NormalAchievements, Map<String, CachedStatistic>> normalAchievementsToPlayerStatistics;
-	// Statistics of the different players for multiple achievements; keys in the
-	// inner maps correspond to concatenated
+	// Statistics of the different players for multiple achievements; keys in the inner maps correspond to concatenated
 	// UUIDs and block/entity/command identifiers.
 	private final Map<MultipleAchievements, Map<String, CachedStatistic>> multipleAchievementsToPlayerStatistics;
-	// Multimaps corresponding to the different achievements received by the
-	// players.
+	// Multimaps corresponding to the different achievements received by the players.
 	private final Map<UUID, Set<String>> receivedAchievementsCache;
 	private final Map<UUID, Set<String>> notReceivedAchievementsCache;
-	// Map corresponding to the total amount of achievements received by each
-	// player.
+	// Map corresponding to the total amount of achievements received by each player.
 	private final Map<UUID, Integer> totalPlayerAchievementsCache;
 
 	@Inject
-	public CacheManager(@Named("main") CommentedYamlConfiguration mainConfig,
-			AbstractDatabaseManager sqlDatabaseManager) {
+	public CacheManager(@Named("main") CommentedYamlConfiguration mainConfig, AbstractDatabaseManager sqlDatabaseManager) {
 		this.mainConfig = mainConfig;
 		this.sqlDatabaseManager = sqlDatabaseManager;
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
@@ -58,8 +53,7 @@ public class CacheManager implements Cleanable {
 
 		// ConcurrentHashMaps are necessary to guarantee thread safety.
 		for (NormalAchievements normalAchievement : NormalAchievements.values()) {
-			normalAchievementsToPlayerStatistics.put(normalAchievement,
-					new ConcurrentHashMap<String, CachedStatistic>());
+			normalAchievementsToPlayerStatistics.put(normalAchievement, new ConcurrentHashMap<String, CachedStatistic>());
 		}
 		for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
 			multipleAchievementsToPlayerStatistics.put(multipleAchievement,
@@ -114,9 +108,8 @@ public class CacheManager implements Cleanable {
 	}
 
 	/**
-	 * Increases the statistic for a NormalAchievement by the given value and
-	 * returns the updated statistic value. Calls the database if not found in the
-	 * cache.
+	 * Increases the statistic for a NormalAchievement by the given value and returns the updated statistic value. Calls
+	 * the database if not found in the cache.
 	 * 
 	 * @param category
 	 * @param player
@@ -138,9 +131,8 @@ public class CacheManager implements Cleanable {
 	}
 
 	/**
-	 * Increases the statistic for a MultipleAchievement by the given value and
-	 * returns the updated statistic value. Calls the database if not found in the
-	 * cache.
+	 * Increases the statistic for a MultipleAchievement by the given value and returns the updated statistic value.
+	 * Calls the database if not found in the cache.
 	 * 
 	 * @param category
 	 * @param subcategory
@@ -148,10 +140,8 @@ public class CacheManager implements Cleanable {
 	 * @param value
 	 * @return the updated statistic value
 	 */
-	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player,
-			int value) {
-		CachedStatistic statistic = getHashMap(category)
-				.get(getMultipleCategoryCacheKey(category, player, subcategory));
+	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player, int value) {
+		CachedStatistic statistic = getHashMap(category).get(getMultipleCategoryCacheKey(category, player, subcategory));
 		if (statistic == null) {
 			String subcategoryDBName = subcategory;
 			if (category == MultipleAchievements.PLAYERCOMMANDS) {
@@ -196,9 +186,8 @@ public class CacheManager implements Cleanable {
 	}
 
 	/**
-	 * Returns the total number of achievements received by a player. Can be called
-	 * asynchronously by BungeeTabListPlus, method must therefore be synchronized to
-	 * avoid race conditions if a player calls /aach stats at the same time.
+	 * Returns the total number of achievements received by a player. Can be called asynchronously by BungeeTabListPlus,
+	 * method must therefore be synchronized to avoid race conditions if a player calls /aach stats at the same time.
 	 * 
 	 * @param player
 	 * @return the number of achievements received by the player
@@ -213,9 +202,8 @@ public class CacheManager implements Cleanable {
 	}
 
 	/**
-	 * Returns a key for the multipleAchievementsToPlayerStatistics structure.
-	 * Concatenation of player UUID and subcategory name, with removed whitespaces
-	 * for PlayerCommands.
+	 * Returns a key for the multipleAchievementsToPlayerStatistics structure. Concatenation of player UUID and
+	 * subcategory name, with removed whitespaces for PlayerCommands.
 	 * 
 	 * @param category
 	 * @param player
@@ -230,9 +218,8 @@ public class CacheManager implements Cleanable {
 	}
 
 	/**
-	 * Adds an achievement to the achievement received cache and removes it from the
-	 * not received cache. A call to {@link #hasPlayerAchievement(UUID, String)} is
-	 * expected to have been made made beforehand for the same player.
+	 * Adds an achievement to the achievement received cache and removes it from the not received cache. A call to
+	 * {@link #hasPlayerAchievement(UUID, String)} is expected to have been made made beforehand for the same player.
 	 * 
 	 * @param player
 	 * @param achievementName
@@ -244,9 +231,8 @@ public class CacheManager implements Cleanable {
 	}
 
 	/**
-	 * Removes an achievement from the achievement received cache and adds it to the
-	 * not received cache. A call to {@link #hasPlayerAchievement(UUID, String)} is
-	 * expected to have been made made beforehand for the same player.
+	 * Removes an achievement from the achievement received cache and adds it to the not received cache. A call to
+	 * {@link #hasPlayerAchievement(UUID, String)} is expected to have been made made beforehand for the same player.
 	 * 
 	 * @param player
 	 * @param achievementName

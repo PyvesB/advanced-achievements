@@ -16,8 +16,8 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling the /aach toggle command, which allows a player
- * to override the default behaviour of the NotifyOtherPlayers parameter.
+ * Class in charge of handling the /aach toggle command, which allows a player to override the default behaviour of the
+ * NotifyOtherPlayers parameter.
  * 
  * @author Pyves
  */
@@ -49,8 +49,7 @@ public class ToggleCommand extends AbstractCommand {
 	}
 
 	/**
-	 * Indicates whether player has used the /aach toggle command since the last
-	 * server restart/plugin reload.
+	 * Indicates whether player has used the /aach toggle command since the last server restart/plugin reload.
 	 * 
 	 * @param player
 	 * @return true if player has used the toggle command, false otherwise

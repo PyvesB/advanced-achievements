@@ -14,8 +14,7 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling the /aach check command, which checks whether a
- * player has received an achievement.
+ * Class in charge of handling the /aach check command, which checks whether a player has received an achievement.
  * 
  * @author Pyves
  */
@@ -30,8 +29,7 @@ public class CheckCommand extends AbstractParsableCommand {
 
 	@Inject
 	public CheckCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
-			CacheManager cacheManager) {
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 	}
@@ -50,11 +48,11 @@ public class CheckCommand extends AbstractParsableCommand {
 
 		// Check if achievement exists in database and display message accordingly.
 		if (cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
-			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementTrue, new String[]{"PLAYER", "ACH"},
-					new String[]{args[args.length - 1], achievementName}));
+			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementTrue, new String[] { "PLAYER", "ACH" },
+					new String[] { args[args.length - 1], achievementName }));
 		} else {
-			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementFalse, new String[]{"PLAYER", "ACH"},
-					new String[]{args[args.length - 1], achievementName}));
+			sender.sendMessage(StringUtils.replaceEach(langCheckAchievementFalse, new String[] { "PLAYER", "ACH" },
+					new String[] { args[args.length - 1], achievementName }));
 		}
 	}
 }

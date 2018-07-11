@@ -56,8 +56,7 @@ public class RewardParser implements Reloadable {
 		this.logger = logger;
 		// Try to retrieve an Economy instance from Vault.
 		if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
-			RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager()
-					.getRegistration(Economy.class);
+			RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
 			if (rsp != null) {
 				economy = rsp.getProvider();
 			}
@@ -79,11 +78,9 @@ public class RewardParser implements Reloadable {
 	}
 
 	/**
-	 * Constructs the listing of an achievement's rewards with strings coming from
-	 * language file.
+	 * Constructs the listing of an achievement's rewards with strings coming from language file.
 	 *
-	 * @param path
-	 *            achievement path
+	 * @param path achievement path
 	 * @return type(s) of the achievement reward as an array of strings
 	 */
 	public List<String> getRewardListing(String path) {
@@ -92,8 +89,7 @@ public class RewardParser implements Reloadable {
 
 		if (economy != null && keyNames.contains(path + ".Money")) {
 			int amount = getRewardAmount(path, "Money");
-			rewardTypes.add(
-					StringUtils.replaceOnce(langListRewardMoney, "AMOUNT", amount + " " + getCurrencyName(amount)));
+			rewardTypes.add(StringUtils.replaceOnce(langListRewardMoney, "AMOUNT", amount + " " + getCurrencyName(amount)));
 		}
 
 		if (keyNames.contains(path + ".Item")) {
@@ -102,8 +98,8 @@ public class RewardParser implements Reloadable {
 			if (name == null || name.isEmpty()) {
 				name = getItemName(getItemReward(path));
 			}
-			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[]{"AMOUNT", "ITEM"},
-					new String[]{Integer.toString(amount), name}));
+			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
+					new String[] { Integer.toString(amount), name }));
 		}
 
 		if (keyNames.contains(path + ".Experience")) {
@@ -113,14 +109,12 @@ public class RewardParser implements Reloadable {
 
 		if (keyNames.contains(path + ".IncreaseMaxHealth")) {
 			int amount = getRewardAmount(path, "IncreaseMaxHealth");
-			rewardTypes
-					.add(StringUtils.replaceOnce(langListRewardIncreaseMaxHealth, "AMOUNT", Integer.toString(amount)));
+			rewardTypes.add(StringUtils.replaceOnce(langListRewardIncreaseMaxHealth, "AMOUNT", Integer.toString(amount)));
 		}
 
 		if (keyNames.contains(path + ".IncreaseMaxOxygen")) {
 			int amount = getRewardAmount(path, "IncreaseMaxOxygen");
-			rewardTypes
-					.add(StringUtils.replaceOnce(langListRewardIncreaseMaxOxygen, "AMOUNT", Integer.toString(amount)));
+			rewardTypes.add(StringUtils.replaceOnce(langListRewardIncreaseMaxOxygen, "AMOUNT", Integer.toString(amount)));
 		}
 
 		if (keyNames.contains(path + ".Command")) {
@@ -137,8 +131,7 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Returns name of currency depending on amount.
 	 *
-	 * @param amount
-	 *            achievement configuration path
+	 * @param amount achievement configuration path
 	 * @return the name of the currency
 	 */
 	public String getCurrencyName(int amount) {
@@ -148,8 +141,7 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Returns the name of an item reward, in a readable format.
 	 *
-	 * @param item
-	 *            the item reward
+	 * @param item the item reward
 	 * @return the item name
 	 */
 	public String getItemName(ItemStack item) {
@@ -165,27 +157,22 @@ public class RewardParser implements Reloadable {
 	}
 
 	/**
-	 * Extracts the money, experience, increased max health or increased max oxygen
-	 * rewards amount from the configuration.
+	 * Extracts the money, experience, increased max health or increased max oxygen rewards amount from the
+	 * configuration.
 	 *
-	 * @param path
-	 *            achievement configuration path
-	 * @param type
-	 *            reward type
+	 * @param path achievement configuration path
+	 * @param type reward type
 	 * @return the reward amount
 	 */
 	public int getRewardAmount(String path, String type) {
-		// Supports both old and new plugin syntax (Amount used to be a separate
-		// sub-category).
+		// Supports both old and new plugin syntax (Amount used to be a separate sub-category).
 		return Math.max(mainConfig.getInt(path + "." + type, 0), mainConfig.getInt(path + "." + type + ".Amount", 0));
 	}
 
 	/**
-	 * Returns an item reward for a given achievement (specified in configuration
-	 * file).
+	 * Returns an item reward for a given achievement (specified in configuration file).
 	 *
-	 * @param path
-	 *            achievement configuration path
+	 * @param path achievement configuration path
 	 * @return ItemStack object corresponding to the reward
 	 */
 	public ItemStack getItemReward(String path) {
@@ -198,8 +185,7 @@ public class RewardParser implements Reloadable {
 		ItemStack item = null;
 		if (mainConfig.getKeys(true).contains(path + ".Item.Type")) {
 			// Old config syntax (type of item separated in a additional subcategory).
-			Material rewardMaterial = Material
-					.getMaterial(mainConfig.getString(path + ".Item.Type", "stone").toUpperCase());
+			Material rewardMaterial = Material.getMaterial(mainConfig.getString(path + ".Item.Type", "stone").toUpperCase());
 			if (rewardMaterial != null) {
 				item = new ItemStack(rewardMaterial, amount);
 			}
@@ -209,8 +195,7 @@ public class RewardParser implements Reloadable {
 			String materialNameAndQty = mainConfig.getString(path + ".Item", "stone");
 			int spaceIndex = materialNameAndQty.indexOf(' ');
 
-			String materialName = spaceIndex > 0
-					? materialNameAndQty.toUpperCase().substring(0, spaceIndex)
+			String materialName = spaceIndex > 0 ? materialNameAndQty.toUpperCase().substring(0, spaceIndex)
 					: materialNameAndQty.toUpperCase();
 
 			Material rewardMaterial = Material.getMaterial(materialName);
@@ -226,8 +211,8 @@ public class RewardParser implements Reloadable {
 			}
 		}
 		if (item == null) {
-			logger.warning("Invalid item reward for achievement with path \"" + path
-					+ "\". Please specify a valid Material name.");
+			logger.warning(
+					"Invalid item reward for achievement with path \"" + path + "\". Please specify a valid Material name.");
 		}
 		return item;
 	}
@@ -235,10 +220,8 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Extracts the list of commands to be executed as rewards.
 	 *
-	 * @param path
-	 *            achievement configuration path
-	 * @param player
-	 *            the player to parse commands for
+	 * @param path achievement configuration path
+	 * @param player the player to parse commands for
 	 * @return the array containing the commands to be performed as a reward
 	 */
 	public String[] getCommandRewards(String path, Player player) {
@@ -252,16 +235,14 @@ public class RewardParser implements Reloadable {
 			return new String[0];
 		}
 		commandReward = StringUtils.replace(commandReward, "PLAYER", player.getName());
-		// Multiple reward commands can be set, separated by a semicolon and space.
-		// Extra parsing needed.
+		// Multiple reward commands can be set, separated by a semicolon and space. Extra parsing needed.
 		return commandReward.split(";[ ]*");
 	}
 
 	/**
 	 * Extracts custom command message from config. Might be null.
 	 *
-	 * @param path
-	 *            achievement configuration path
+	 * @param path achievement configuration path
 	 * @return the custom command message (null if not present)
 	 * @author tassu
 	 */
@@ -280,8 +261,7 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Extracts the item reward amount from the configuration.
 	 *
-	 * @param path
-	 *            achievement configuration path
+	 * @param path achievement configuration path
 	 * @return the amount for an item reward
 	 */
 	private int getItemAmount(String path) {
@@ -290,8 +270,7 @@ public class RewardParser implements Reloadable {
 			// Old config syntax.
 			itemAmount = mainConfig.getInt(path + ".Item.Amount", 0);
 		} else if (mainConfig.getKeys(true).contains(path + ".Item")) {
-			// New config syntax. Name of item and quantity are on the same line, separated
-			// by a space.
+			// New config syntax. Name of item and quantity are on the same line, separated by a space.
 			String materialAndQty = mainConfig.getString(path + ".Item", "");
 			int indexOfAmount = materialAndQty.indexOf(' ');
 			if (indexOfAmount != -1) {
@@ -310,8 +289,7 @@ public class RewardParser implements Reloadable {
 	/**
 	 * Extracts the item reward custom name from the configuration.
 	 *
-	 * @param path
-	 *            achievement configuration path
+	 * @param path achievement configuration path
 	 * @return the custom name for an item reward
 	 */
 	private String getItemName(String path) {

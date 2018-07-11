@@ -78,8 +78,7 @@ public abstract class AbstractGUI implements Reloadable {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, LangHelper.get(category, langConfig),
-					mainConfig.getShallowKeys(categoryName).size());
+			buildItemLore(itemStack, LangHelper.get(category, langConfig), mainConfig.getShallowKeys(categoryName).size());
 			normalAchievementItems.put(category, itemStack);
 		}
 
@@ -90,9 +89,8 @@ public abstract class AbstractGUI implements Reloadable {
 	}
 
 	/**
-	 * Inventory GUIs need a number of slots that is a multiple of 9. This simple
-	 * function gets the smallest multiple of 9 greater than its input value, in
-	 * order for the GUI to contain all of its elements with minimum empty space.
+	 * Inventory GUIs need a number of slots that is a multiple of 9. This simple function gets the smallest multiple of
+	 * 9 greater than its input value, in order for the GUI to contain all of its elements with minimum empty space.
 	 *
 	 * @param value
 	 * @param maxPerPage
@@ -137,7 +135,7 @@ public abstract class AbstractGUI implements Reloadable {
 			itemMeta.setDisplayName("");
 		} else {
 			itemMeta.setDisplayName(translateColorCodes(StringUtils.replaceEach(configListAchievementFormat,
-					new String[]{"%ICON%", "%NAME%"}, new String[]{configIcon, "&l" + displayName + "&8"})));
+					new String[] { "%ICON%", "%NAME%" }, new String[] { configIcon, "&l" + displayName + "&8" })));
 		}
 
 		// Construct lore of the category item.

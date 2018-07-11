@@ -20,8 +20,8 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAch
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Abstract class in charge of factoring out common functionality for classes
- * which track statistic increases (such as listeners or runnables).
+ * Abstract class in charge of factoring out common functionality for classes which track statistic increases (such as
+ * listeners or runnables).
  * 
  * @author Pyves
  */
@@ -54,8 +54,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 		configRestrictCreative = mainConfig.getBoolean("RestrictCreative", false);
 		configRestrictSpectator = mainConfig.getBoolean("RestrictSpectator", true);
 		configRestrictAdventure = mainConfig.getBoolean("RestrictAdventure", false);
-		// Spectator mode introduced in Minecraft 1.8. Automatically relevant parameter
-		// for older versions.
+		// Spectator mode introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configRestrictSpectator && serverVersion < 8) {
 			configRestrictSpectator = false;
 		}
@@ -63,8 +62,8 @@ public class StatisticIncreaseHandler implements Reloadable {
 	}
 
 	/**
-	 * Compares the current value to the achievement thresholds. If a threshold is
-	 * reached, awards the achievement if it wasn't previously received.
+	 * Compares the current value to the achievement thresholds. If a threshold is reached, awards the achievement if it
+	 * wasn't previously received.
 	 * 
 	 * @param player
 	 * @param categorySubcategory
@@ -96,8 +95,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 					Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 				}
 			} else {
-				// Entries in List sorted in increasing order, all subsequent thresholds will
-				// fail the condition.
+				// Entries in List sorted in increasing order, all subsequent thresholds will fail the condition.
 				return;
 			}
 		}
@@ -118,13 +116,11 @@ public class StatisticIncreaseHandler implements Reloadable {
 		boolean restrictedAdventure = configRestrictAdventure && player.getGameMode() == GameMode.ADVENTURE;
 		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
 
-		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !restrictedAdventure
-				&& !excludedWorld;
+		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !restrictedAdventure && !excludedWorld;
 	}
 
 	/**
-	 * Determines whether the statistic increase should be taken into account.
-	 * Ignore permission check.
+	 * Determines whether the statistic increase should be taken into account. Ignore permission check.
 	 * 
 	 * @param player
 	 * @return true if the increase should be taken into account, false otherwise

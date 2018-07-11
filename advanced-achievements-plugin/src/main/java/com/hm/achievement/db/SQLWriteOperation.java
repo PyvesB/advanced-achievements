@@ -6,8 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class used to perform write operations to the database and automatically
- * retry if a SQLException is thrown.
+ * Class used to perform write operations to the database and automatically retry if a SQLException is thrown.
  *
  * @author Pyves
  */
@@ -35,8 +34,7 @@ public interface SQLWriteOperation {
 	}
 
 	/**
-	 * Calls {@code performWrite} repeatedly until the write succeeds or
-	 * {@code MAX_ATTEMPTS} is reached.
+	 * Calls {@code performWrite} repeatedly until the write succeeds or {@code MAX_ATTEMPTS} is reached.
 	 *
 	 * @param logger
 	 * @param operationMessage

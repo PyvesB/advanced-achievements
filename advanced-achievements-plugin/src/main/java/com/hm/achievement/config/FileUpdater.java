@@ -26,8 +26,7 @@ import com.hm.achievement.lang.command.InfoLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of updating the language and configuration files when a new
- * version of the plugin is released.
+ * Class in charge of updating the language and configuration files when a new version of the plugin is released.
  *
  * @author Pyves
  */
@@ -44,8 +43,8 @@ public class FileUpdater {
 	}
 
 	/**
-	 * Updates configuration file from older plugin versions by adding missing
-	 * parameters. Upgrades from versions prior to 2.5.2 are not supported.
+	 * Updates configuration file from older plugin versions by adding missing parameters. Upgrades from versions prior
+	 * to 2.5.2 are not supported.
 	 *
 	 * @param config
 	 */
@@ -134,8 +133,7 @@ public class FileUpdater {
 				"Ignored if Firework parameter is set to true.");
 
 		// Added in version 5.1:
-		updateSetting(config, "NotifyOtherPlayers", false,
-				"Notify other connected players when an achievement is received.",
+		updateSetting(config, "NotifyOtherPlayers", false, "Notify other connected players when an achievement is received.",
 				"Default behaviour, a player can override what he sees by using /aach toggle.");
 		updateSetting(config, "ActionBarNotify", true,
 				"When NotifyOtherPlayers is enabled, notifications are done using action bars when ActionBarNotify is true.",
@@ -202,8 +200,8 @@ public class FileUpdater {
 	}
 
 	/**
-	 * Updates language file from older plugin versions by adding missing
-	 * parameters. Upgrades from versions prior to 2.5.2 are not supported.
+	 * Updates language file from older plugin versions by adding missing parameters. Upgrades from versions prior to
+	 * 2.5.2 are not supported.
 	 *
 	 * @param lang
 	 */
@@ -225,9 +223,9 @@ public class FileUpdater {
 		}
 
 		// Iterate through all Lang implementation keys & default values
-		Arrays.stream(new Lang[][]{CmdLang.values(), HelpLang.values(), HelpLang.Hover.values(), InfoLang.values(),
-				GuiLang.values(), ListenerLang.values(), RewardLang.values(), NormalAchievements.values(),
-				MultipleAchievements.values()}).flatMap(Arrays::stream).forEach(language -> updateLang(lang, language));
+		Arrays.stream(new Lang[][] { CmdLang.values(), HelpLang.values(), HelpLang.Hover.values(), InfoLang.values(),
+			GuiLang.values(), ListenerLang.values(), RewardLang.values(), NormalAchievements.values(),
+			MultipleAchievements.values() }).flatMap(Arrays::stream).forEach(language -> updateLang(lang, language));
 
 		// Not found in Enums (Possibly unused)
 		updateSetting(lang, "list-custom", "Custom Categories");
@@ -244,8 +242,8 @@ public class FileUpdater {
 	}
 
 	/**
-	 * Updates GUI file from older plugin versions by adding missing parameters. New
-	 * configuration file introduced in version 5.0 of the plugin.
+	 * Updates GUI file from older plugin versions by adding missing parameters. New configuration file introduced in
+	 * version 5.0 of the plugin.
 	 *
 	 * @param gui
 	 */
@@ -286,9 +284,8 @@ public class FileUpdater {
 	}
 
 	/**
-	 * Updates the configuration file to include a new setting with its default
-	 * value and its comments (each comment String corresponding to a separate
-	 * line).
+	 * Updates the configuration file to include a new setting with its default value and its comments (each comment
+	 * String corresponding to a separate line).
 	 *
 	 * @param file
 	 * @param name
@@ -307,8 +304,7 @@ public class FileUpdater {
 	}
 
 	/**
-	 * Adds a new category to the configuration file, and includes it in the
-	 * DisabledCategories list.
+	 * Adds a new category to the configuration file, and includes it in the DisabledCategories list.
 	 *
 	 * @param config
 	 * @param categoryName

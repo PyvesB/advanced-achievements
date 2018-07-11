@@ -43,18 +43,15 @@ public class DatabaseUpdater {
 	}
 
 	/**
-	 * Renames the database tables with the prefix given in the configuration file.
-	 * This method is only used and only works if the tables had the default name.
-	 * It does not support multiple successive table renamings.
+	 * Renames the database tables with the prefix given in the configuration file. This method is only used and only
+	 * works if the tables had the default name. It does not support multiple successive table renamings.
 	 * 
 	 * @param sqlDatabaseManager
 	 * @param databaseAddress
 	 * @throws PluginLoadError
 	 */
-	void renameExistingTables(AbstractDatabaseManager sqlDatabaseManager, String databaseAddress)
-			throws PluginLoadError {
-		// If a prefix is set in the config, check whether the tables with the default
-		// names exist. If so do renaming.
+	void renameExistingTables(AbstractDatabaseManager sqlDatabaseManager, String databaseAddress) throws PluginLoadError {
+		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
 		if (StringUtils.isNotBlank(sqlDatabaseManager.getPrefix())) {
 			Connection conn = sqlDatabaseManager.getSQLConnection();
 			try (Statement st = conn.createStatement()) {
@@ -70,19 +67,17 @@ public class DatabaseUpdater {
 							"SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'achievements' AND c.relkind = 'r'");
 				}
 
-				// Table achievements still has its default name (ie. no prefix), but a prefix
-				// is set in the
+				// Table achievements still has its default name (ie. no prefix), but a prefix is set in the
 				// configuration; do a renaming of all tables.
 				if (rs.next()) {
-					st.addBatch(
-							"ALTER TABLE achievements RENAME TO " + sqlDatabaseManager.getPrefix() + "achievements");
+					st.addBatch("ALTER TABLE achievements RENAME TO " + sqlDatabaseManager.getPrefix() + "achievements");
 					for (NormalAchievements category : NormalAchievements.values()) {
-						st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO "
-								+ sqlDatabaseManager.getPrefix() + category.toDBName());
+						st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + sqlDatabaseManager.getPrefix()
+								+ category.toDBName());
 					}
 					for (MultipleAchievements category : MultipleAchievements.values()) {
-						st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO "
-								+ sqlDatabaseManager.getPrefix() + category.toDBName());
+						st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + sqlDatabaseManager.getPrefix()
+								+ category.toDBName());
 					}
 					st.executeBatch();
 				}
@@ -93,8 +88,8 @@ public class DatabaseUpdater {
 	}
 
 	/**
-	 * Initialises database tables by creating non existing ones. We batch the
-	 * requests to send a unique batch to the database.
+	 * Initialises database tables by creating non existing ones. We batch the requests to send a unique batch to the
+	 * database.
 	 * 
 	 * @param sqlDatabaseManager
 	 * @throws PluginLoadError
@@ -107,9 +102,8 @@ public class DatabaseUpdater {
 
 			for (MultipleAchievements category : MultipleAchievements.values()) {
 				st.addBatch("CREATE TABLE IF NOT EXISTS " + sqlDatabaseManager.getPrefix() + category.toDBName()
-						+ " (playername char(36)," + category.toSubcategoryDBName() + " varchar(51),"
-						+ category.toDBName() + " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName()
-						+ "))");
+						+ " (playername char(36)," + category.toSubcategoryDBName() + " varchar(51)," + category.toDBName()
+						+ " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 			}
 
 			for (NormalAchievements category : NormalAchievements.values()) {
@@ -129,10 +123,9 @@ public class DatabaseUpdater {
 	}
 
 	/**
-	 * Update the database tables for Breaks, Crafts and Places achievements (from
-	 * int to varchar for identification column). The tables are now using material
-	 * names and no longer item IDs, which are deprecated; this also allows to store
-	 * extra data information, extending the number of items available for the user.
+	 * Update the database tables for Breaks, Crafts and Places achievements (from int to varchar for identification
+	 * column). The tables are now using material names and no longer item IDs, which are deprecated; this also allows
+	 * to store extra data information, extending the number of items available for the user.
 	 * 
 	 * @param sqlDatabaseManager
 	 * @throws PluginLoadError
@@ -148,8 +141,7 @@ public class DatabaseUpdater {
 			logger.log(Level.SEVERE, "Database error while checking if Material upgrade is needed:", e);
 		}
 
-		// Old column type for versions prior to 2.4.1 was integer for SQLite and
-		// smallint unsigned for MySQL.
+		// Old column type for versions prior to 2.4.1 was integer for SQLite and smallint unsigned for MySQL.
 		if ("integer".equalsIgnoreCase(type) || "smallint unsigned".equalsIgnoreCase(type)) {
 			logger.info("Updating database tables with Material names, please wait...");
 			if (serverVersion < 13) {
@@ -190,8 +182,7 @@ public class DatabaseUpdater {
 			List<String> materials = new ArrayList<>(ids.size());
 
 			for (int id : ids) {
-				// Convert from ID to Material name. getMaterial(int id) is only available on
-				// Minecraft versions prior
+				// Convert from ID to Material name. getMaterial(int id) is only available on Minecraft versions prior
 				// to 1.13.
 				Material material = (Material) Material.class.getMethod("getMaterial", int.class).invoke(null, id);
 				materials.add(material.name().toLowerCase());
@@ -203,8 +194,7 @@ public class DatabaseUpdater {
 			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(64),"
 					+ tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 
-			// Populate new table with contents of the old one and material strings. Batch
-			// the insert requests.
+			// Populate new table with contents of the old one and material strings. Batch the insert requests.
 			for (int i = 0; i < uuids.size(); ++i) {
 				prep.setString(1, uuids.get(i));
 				prep.setString(2, materials.get(i));
@@ -226,29 +216,23 @@ public class DatabaseUpdater {
 	}
 
 	/**
-	 * Updates the database achievements table. The table is now using a date type
-	 * for the date column. We also increase the number of chars allowed for the
-	 * achievement names and descriptions.
+	 * Updates the database achievements table. The table is now using a date type for the date column. We also increase
+	 * the number of chars allowed for the achievement names and descriptions.
 	 * 
 	 * @param sqlDatabaseManager
 	 */
 	void updateOldDBToDates(AbstractDatabaseManager sqlDatabaseManager) {
 		Connection conn = sqlDatabaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
-			ResultSet rs = st
-					.executeQuery("SELECT date FROM " + sqlDatabaseManager.getPrefix() + "achievements LIMIT 1");
+			ResultSet rs = st.executeQuery("SELECT date FROM " + sqlDatabaseManager.getPrefix() + "achievements LIMIT 1");
 			String type = rs.getMetaData().getColumnTypeName(1);
-			// Old column type for versions prior to 3.0 was text for SQLite, char for MySQL
-			// and varchar for PostgreSQL
-			// (even though PostgreSQL was not supported on versions prior to 3.0, we still
-			// support the upgrade for it
-			// in case a user imports another database into PostgreSQL without doing the
-			// table upgrade beforehand).
+			// Old column type for versions prior to 3.0 was text for SQLite, char for MySQL and varchar for PostgreSQL
+			// (even though PostgreSQL was not supported on versions prior to 3.0, we still support the upgrade for it
+			// in case a user imports another database into PostgreSQL without doing the table upgrade beforehand).
 			if ("text".equalsIgnoreCase(type) || "char".equalsIgnoreCase(type) || "varchar".equalsIgnoreCase(type)) {
 				logger.info("Updating database table with date datatype for achievements, please wait...");
 				try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?,?);")) {
-					// Early versions of the plugin added colors to the date. We have to get rid of
-					// them by using a
+					// Early versions of the plugin added colors to the date. We have to get rid of them by using a
 					// regex pattern, else parsing will fail.
 					Pattern regexPattern = Pattern.compile("&([a-f]|[0-9]){1}");
 					// Old date format, which was stored as a string.
@@ -274,8 +258,7 @@ public class DatabaseUpdater {
 					try {
 						for (String date : oldDates) {
 							// Convert to SQL date format.
-							newDates.add(
-									new Date(oldFormat.parse(regexPattern.matcher(date).replaceAll("")).getTime()));
+							newDates.add(new Date(oldFormat.parse(regexPattern.matcher(date).replaceAll("")).getTime()));
 						}
 					} catch (ParseException e) {
 						logger.log(Level.SEVERE, "Database error while parsing dates:", e);
@@ -312,8 +295,8 @@ public class DatabaseUpdater {
 	}
 
 	/**
-	 * Increases size of the mobname column of the kills table to accommodate new
-	 * parameters such as specificplayer-56c79b19-4500-466c-94ea-514a755fdd09.
+	 * Increases size of the mobname column of the kills table to accommodate new parameters such as
+	 * specificplayer-56c79b19-4500-466c-94ea-514a755fdd09.
 	 * 
 	 * @param sqlDatabaseManager
 	 */
@@ -323,8 +306,7 @@ public class DatabaseUpdater {
 		if (!(sqlDatabaseManager instanceof SQLiteDatabaseManager)) {
 			int size = 51;
 			try (Statement st = conn.createStatement()) {
-				ResultSet rs = st
-						.executeQuery("SELECT mobname FROM " + sqlDatabaseManager.getPrefix() + "kills LIMIT 1");
+				ResultSet rs = st.executeQuery("SELECT mobname FROM " + sqlDatabaseManager.getPrefix() + "kills LIMIT 1");
 				size = rs.getMetaData().getPrecision(1);
 				// Old kills table prior to version 4.2.1 contained a capacity of only 32 chars.
 				if (size == 32) {
@@ -334,8 +316,7 @@ public class DatabaseUpdater {
 						st.execute("ALTER TABLE " + sqlDatabaseManager.getPrefix()
 								+ "kills ALTER COLUMN mobname TYPE varchar(51)");
 					} else {
-						st.execute(
-								"ALTER TABLE " + sqlDatabaseManager.getPrefix() + "kills MODIFY mobname varchar(51)");
+						st.execute("ALTER TABLE " + sqlDatabaseManager.getPrefix() + "kills MODIFY mobname varchar(51)");
 					}
 				}
 			} catch (SQLException e) {

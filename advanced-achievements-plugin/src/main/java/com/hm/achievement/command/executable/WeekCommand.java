@@ -12,8 +12,7 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling the /aach week command, which displays weekly
- * rankings.
+ * Class in charge of handling the /aach week command, which displays weekly rankings.
  *
  * @author Pyves
  */
@@ -25,8 +24,7 @@ public class WeekCommand extends AbstractRankingCommand {
 	public WeekCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger,
 			int serverVersion, AbstractDatabaseManager sqlDatabaseManager) {
-		super(mainConfig, langConfig, pluginHeader, logger, serverVersion, CmdLang.WEEK_ACHIEVEMENT,
-				sqlDatabaseManager);
+		super(mainConfig, langConfig, pluginHeader, logger, serverVersion, CmdLang.WEEK_ACHIEVEMENT, sqlDatabaseManager);
 	}
 
 	@Override

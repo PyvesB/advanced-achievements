@@ -39,8 +39,7 @@ public class ListGUIListener implements Listener {
 	private final Material lockedMaterial;
 
 	@Inject
-	public ListGUIListener(int serverVersion, Set<String> disabledCategories, MainGUI mainGUI,
-			CategoryGUI categoryGUI) {
+	public ListGUIListener(int serverVersion, Set<String> disabledCategories, MainGUI mainGUI, CategoryGUI categoryGUI) {
 		this.disabledCategories = disabledCategories;
 		this.mainGUI = mainGUI;
 		this.categoryGUI = categoryGUI;
@@ -88,12 +87,9 @@ public class ListGUIListener implements Listener {
 	private boolean isButtonClicked(InventoryClickEvent event, ItemStack button) {
 		if (event.getCurrentItem().getDurability() == button.getDurability()
 				&& event.getCurrentItem().getType() == button.getType()) {
-			// Clicked item seems to be the button. But player could have clicked on item in
-			// his personal inventory that
-			// matches the properties of the button used by Advanced Achievements. The first
-			// item matching the
-			// properties of the button is the real one, check that this is indeed the
-			// clicked one.
+			// Clicked item seems to be the button. But player could have clicked on item in his personal inventory that
+			// matches the properties of the button used by Advanced Achievements. The first item matching the
+			// properties of the button is the real one, check that this is indeed the clicked one.
 			Map<Integer, ItemStack> backButtonCandidates = new TreeMap<>(
 					event.getInventory().all(event.getCurrentItem().getType()));
 			for (Entry<Integer, ItemStack> entry : backButtonCandidates.entrySet()) {
@@ -115,7 +111,6 @@ public class ListGUIListener implements Listener {
 	 * @return the count of non disabled categories
 	 */
 	private int getMainGUIItemCount() {
-		return NormalAchievements.values().length + MultipleAchievements.values().length - disabledCategories.size()
-				+ 1;
+		return NormalAchievements.values().length + MultipleAchievements.values().length - disabledCategories.size() + 1;
 	}
 }

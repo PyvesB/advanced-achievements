@@ -33,13 +33,12 @@ public class MySQLDatabaseManager extends AbstractDatabaseManager {
 		// Get parameters from the MySQL config category.
 		databaseAddress = mainConfig.getString("MYSQL.Database", "jdbc:mysql://localhost:3306/minecraft");
 		databaseUser = URLEncoder.encode(mainConfig.getString("MYSQL.User", "root"), StandardCharsets.UTF_8.name());
-		databasePassword = URLEncoder.encode(mainConfig.getString("MYSQL.Password", "root"),
-				StandardCharsets.UTF_8.name());
+		databasePassword = URLEncoder.encode(mainConfig.getString("MYSQL.Password", "root"), StandardCharsets.UTF_8.name());
 	}
 
 	@Override
 	Connection createSQLConnection() throws SQLException {
-		return DriverManager.getConnection(databaseAddress + "?useSSL=false&autoReconnect=true"
-				+ additionalConnectionOptions + "&user=" + databaseUser + "&password=" + databasePassword);
+		return DriverManager.getConnection(databaseAddress + "?useSSL=false&autoReconnect=true" + additionalConnectionOptions
+				+ "&user=" + databaseUser + "&password=" + databasePassword);
 	}
 }

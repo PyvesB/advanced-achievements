@@ -18,8 +18,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 /**
- * Class enabling usage of placeholder with PlaceholderAPI to get achievements
- * stats in others plugins.
+ * Class enabling usage of placeholder with PlaceholderAPI to get achievements stats in others plugins.
  * 
  * @author Phoetrix
  */
@@ -34,8 +33,8 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 	@Inject
 	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements,
-			@Named("main") CommentedYamlConfiguration mainConfig, CacheManager cacheManager,
-			Set<String> disabledCategories, Map<String, String> achievementsAndDisplayNames) {
+				@Named("main") CommentedYamlConfiguration mainConfig,
+                CacheManager cacheManager, Set<String> disabledCategories, Map<String, String> achievementsAndDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.mainConfig = mainConfig;
 		this.cacheManager = cacheManager;
@@ -82,8 +81,8 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 				String categoryPath = categoryName + "_" + subcategory;
 
 				if (identifier.equalsIgnoreCase(categoryPath)) {
-					return String.valueOf(
-							cacheManager.getAndIncrementStatisticAmount(category, subcategory, p.getUniqueId(), 0));
+					return String
+							.valueOf(cacheManager.getAndIncrementStatisticAmount(category, subcategory, p.getUniqueId(), 0));
 				}
 			}
 		}

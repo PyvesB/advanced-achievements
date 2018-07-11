@@ -39,8 +39,11 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		MockUtility mockUtility = MockUtility.setUp().withPluginDescription().withLogger()
-				.withDataFolder(temporaryFolder.getRoot()).withPluginFile("config.yml");
+		MockUtility mockUtility = MockUtility.setUp()
+				.withPluginDescription()
+				.withLogger()
+				.withDataFolder(temporaryFolder.getRoot())
+				.withPluginFile("config.yml");
 		initDB(mockUtility);
 	}
 
@@ -156,7 +159,8 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 		assertEquals(expected, topList);
 
 		Map<String, Integer> topListFirst = db.getTopList(firstSave);
-		assertEquals("Top list from first save & all top list should be the same", topList, topListFirst);
+		assertEquals("Top list from first save & all top list should be the same",
+				topList, topListFirst);
 
 		expected.remove(testUUID.toString());
 

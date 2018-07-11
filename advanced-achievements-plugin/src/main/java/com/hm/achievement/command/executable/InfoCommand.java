@@ -58,12 +58,12 @@ public class InfoCommand extends AbstractCommand {
 		String configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
 		configDatabaseType = mainConfig.getString("DatabaseType", "sqlite");
 
-		header = configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ")
-				+ configColor + configIcon + configColor + " ------------";
+		header = configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ") + configColor
+				+ configIcon + configColor + " ------------";
 
 		langVersionCommandDescription = pluginHeader.toString() + configColor
-				+ LangHelper.get(InfoLang.DESCRIPTION, langConfig) + " " + ChatColor.GRAY
-				+ LangHelper.get(InfoLang.DESCRIPTION_DETAILS, langConfig);
+				+ LangHelper.get(InfoLang.DESCRIPTION, langConfig)
+				+ " " + ChatColor.GRAY + LangHelper.get(InfoLang.DESCRIPTION_DETAILS, langConfig);
 
 		langVersionCommandVersion = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.VERSION, langConfig)
 				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getVersion();
@@ -81,35 +81,32 @@ public class InfoCommand extends AbstractCommand {
 
 		// Display whether Advanced Achievements is linked to Pet Master.
 		String petMasterState = Bukkit.getPluginManager().isPluginEnabled("PetMaster") ? "&a\u2714" : "&4\u2718";
-		langVersionCommandPetmaster = pluginHeader.toString() + configColor
-				+ LangHelper.get(InfoLang.PETMASTER, langConfig) + " " + ChatColor.GRAY
-				+ translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
+		langVersionCommandPetmaster = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.PETMASTER, langConfig)
+				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
 
 		// Display whether Advanced Achievements is linked to BungeeTabListPlus.
 		String btlpState = Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus") ? "&a\u2714" : "&4\u2718";
-		langVersionCommandBtlp = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.BTLP, langConfig) + " "
-				+ ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(btlpState));
+		langVersionCommandBtlp = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.BTLP, langConfig)
+				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(btlpState));
 
 		// Display whether Advanced Achievements is linked to Essentials.
 		boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials")
 				&& mainConfig.getBoolean("IgnoreAFKPlayedTime", false);
 		String essentialsState = essentialsUsed ? "&a\u2714" : "&4\u2718";
 		langVersionCommandEssentials = pluginHeader.toString() + configColor
-				+ LangHelper.get(InfoLang.ESSENTIALS, langConfig) + " " + ChatColor.GRAY
-				+ translateColorCodes(StringEscapeUtils.unescapeJava(essentialsState));
+				+ LangHelper.get(InfoLang.ESSENTIALS, langConfig)
+				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(essentialsState));
 
 		// Display whether Advanced Achievements is linked to PlaceholderAPI.
-		String placeholderAPIState = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")
-				? "&a\u2714"
-				: "&4\u2718";
+		String placeholderAPIState = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "&a\u2714" : "&4\u2718";
 		langVersionCommandPlaceholderAPI = pluginHeader.toString() + configColor
 				+ LangHelper.get(InfoLang.PLACEHOLDERAPI, langConfig) + " " + ChatColor.GRAY
 				+ translateColorCodes(StringEscapeUtils.unescapeJava(placeholderAPIState));
 
 		// Display database type.
 		String databaseType = getDatabaseType();
-		langVersionCommandDatabase = pluginHeader.toString() + configColor
-				+ LangHelper.get(InfoLang.DATABASE, langConfig) + " " + ChatColor.GRAY + databaseType;
+		langVersionCommandDatabase = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.DATABASE, langConfig)
+				+ " " + ChatColor.GRAY + databaseType;
 	}
 
 	private String getDatabaseType() {

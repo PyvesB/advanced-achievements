@@ -4,8 +4,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 /**
- * Simple wrapper class to keep track of the plugin's inventories and their page
- * numbers.
+ * Simple wrapper class to keep track of the plugin's inventories and their page numbers.
  * 
  * @author Pyves
  */

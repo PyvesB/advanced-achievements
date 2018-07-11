@@ -100,9 +100,8 @@ public class HelpCommand extends AbstractCommand {
 		langCommandReloadHover = LangHelper.get(HelpLang.Hover.RELOAD, langConfig);
 		langCommandGenerate = header("/aach generate") + LangHelper.get(HelpLang.GENERATE, langConfig);
 		langCommandGenerateHover = LangHelper.get(HelpLang.Hover.GENERATE, langConfig);
-		langCommandGive = header("/aach give &oach player")
-				+ translateColorCodes(LangHelper.getEachReplaced(HelpLang.GIVE, langConfig, new String[]{"ACH", "NAME"},
-						new String[]{"&oach&7", "&oplayer&7"}));
+		langCommandGive = header("/aach give &oach player") + translateColorCodes(LangHelper.getEachReplaced(HelpLang.GIVE,
+				langConfig, new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
 		langCommandGiveHover = LangHelper.get(HelpLang.Hover.GIVE, langConfig);
 		langCommandAdd = header("/aach add &ox cat player") + LangHelper.get(HelpLang.ADD, langConfig);
 		langCommandAddHover = LangHelper.get(HelpLang.Hover.ADD, langConfig);
@@ -110,12 +109,12 @@ public class HelpCommand extends AbstractCommand {
 				+ LangHelper.getReplacedOnce(HelpLang.RESET, "CAT", "&ocat&7", langConfig);
 		langCommandResetHover = LangHelper.get(HelpLang.Hover.RESET, langConfig);
 		langCommandCheck = header("/aach check &oach player")
-				+ translateColorCodes(LangHelper.getEachReplaced(HelpLang.CHECK, langConfig,
-						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}));
+				+ translateColorCodes(LangHelper.getEachReplaced(HelpLang.CHECK, langConfig, new String[] { "ACH", "NAME" },
+						new String[] { "&oach&7", "&oplayer&7" }));
 		langCommandCheckHover = LangHelper.get(HelpLang.Hover.CHECK, langConfig);
 		langCommandDelete = header("/aach delete &oach player")
-				+ translateColorCodes(LangHelper.getEachReplaced(HelpLang.DELETE, langConfig,
-						new String[]{"ACH", "NAME"}, new String[]{"&oach&7", "&oplayer&7"}));
+				+ translateColorCodes(LangHelper.getEachReplaced(HelpLang.DELETE,
+						langConfig, new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
 		langCommandDeleteHover = LangHelper.get(HelpLang.Hover.DELETE, langConfig);
 		langTip = ChatColor.GRAY + translateColorCodes(LangHelper.get(CmdLang.AACH_TIP, langConfig));
 	}
@@ -185,8 +184,7 @@ public class HelpCommand extends AbstractCommand {
 		}
 
 		if (sender.hasPermission("achievement.delete")) {
-			sendJsonClickableHoverableMessage(sender, langCommandDelete, "/aach delete ach name",
-					langCommandDeleteHover);
+			sendJsonClickableHoverableMessage(sender, langCommandDelete, "/aach delete ach name", langCommandDeleteHover);
 		}
 
 		// Empty line.
@@ -196,9 +194,8 @@ public class HelpCommand extends AbstractCommand {
 	}
 
 	/**
-	 * Sends a packet message to the server in order to display a clickable and
-	 * hoverable message. A suggested command is displayed in the chat when clicked
-	 * on, and an additional help message appears when a command is hovered.
+	 * Sends a packet message to the server in order to display a clickable and hoverable message. A suggested command
+	 * is displayed in the chat when clicked on, and an additional help message appears when a command is hovered.
 	 *
 	 * @param sender
 	 * @param message
@@ -206,8 +203,7 @@ public class HelpCommand extends AbstractCommand {
 	 * @param hover
 	 */
 	private void sendJsonClickableHoverableMessage(CommandSender sender, String message, String command, String hover) {
-		// Send clickable and hoverable message if sender is a player and if supported
-		// by the Minecraft version.
+		// Send clickable and hoverable message if sender is a player and if supported by the Minecraft version.
 		if (sender instanceof Player && serverVersion > 7) {
 			try {
 				FancyMessageSender.sendHoverableCommandMessage((Player) sender, message, command, hover,

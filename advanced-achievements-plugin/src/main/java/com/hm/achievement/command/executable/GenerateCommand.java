@@ -12,8 +12,8 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Class in charge of handling the /aach generate command, which creates
- * advancements for the achievements defined in the plugin's configuration.
+ * Class in charge of handling the /aach generate command, which creates advancements for the achievements defined in
+ * the plugin's configuration.
  * 
  * @author Pyves
  */

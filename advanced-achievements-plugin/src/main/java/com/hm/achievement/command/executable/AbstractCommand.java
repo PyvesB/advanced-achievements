@@ -34,8 +34,7 @@ public abstract class AbstractCommand implements Reloadable {
 	}
 
 	/**
-	 * Executes the command issued by the sender if he has the relevant permissions.
-	 * If permission null, skip check.
+	 * Executes the command issued by the sender if he has the relevant permissions. If permission null, skip check.
 	 *
 	 * @param sender
 	 * @param args

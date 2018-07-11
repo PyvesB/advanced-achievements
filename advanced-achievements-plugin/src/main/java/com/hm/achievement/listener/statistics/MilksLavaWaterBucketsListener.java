@@ -35,8 +35,8 @@ public class MilksLavaWaterBucketsListener extends AbstractRateLimitedListener {
 	@Inject
 	public MilksLavaWaterBucketsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig,
-			Logger logger, Set<String> disabledCategories) {
+			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
+			Set<String> disabledCategories) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, advancedAchievements, langConfig,
 				logger);
 		this.disabledCategories = disabledCategories;
@@ -45,8 +45,7 @@ public class MilksLavaWaterBucketsListener extends AbstractRateLimitedListener {
 	@Override
 	public void cleanPlayerData(UUID uuid) {
 		String uuidString = uuid.toString();
-		// The cooldown for this class must handle Milk, WaterBuckets and LavaBuckets
-		// achievements independently, hence
+		// The cooldown for this class must handle Milk, WaterBuckets and LavaBuckets achievements independently, hence
 		// the prefix in the cooldown map.
 		cooldownMap.remove(NormalAchievements.MILKS + uuidString);
 		cooldownMap.remove(NormalAchievements.LAVABUCKETS + uuidString);
@@ -74,11 +73,11 @@ public class MilksLavaWaterBucketsListener extends AbstractRateLimitedListener {
 
 	private NormalAchievements getCategory(Material resultBucket) {
 		switch (resultBucket) {
-			case MILK_BUCKET :
+			case MILK_BUCKET:
 				return NormalAchievements.MILKS;
-			case LAVA_BUCKET :
+			case LAVA_BUCKET:
 				return NormalAchievements.LAVABUCKETS;
-			default :
+			default:
 				return NormalAchievements.WATERBUCKETS;
 		}
 	}
