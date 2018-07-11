@@ -131,7 +131,7 @@ public class AdvancementManager implements Reloadable {
 		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_PARENT);
 		if (Bukkit.getServer().getAdvancement(namespacedKey) == null) {
 			unsafeValues.loadAdvancement(namespacedKey,
-					achievementAdvancementBuilder.buildGoal().toParentJson(configHideAdvancements));
+					achievementAdvancementBuilder.buildGoal().toParentJson(configHideAdvancements, configBackgroundTexture));
 		}
 	}
 
