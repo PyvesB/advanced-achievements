@@ -188,6 +188,12 @@ AllAchievementsReceivedRewards:
   IncreaseMaxOxygen: 30
   Experience: 100
 
+# Title shown on the root advancement.
+RootAdvancementTitle: "Advanced Achievements"
+# Background shown on the Advanced Achievements advancement tab.
+# Must be a resource location to any image in a resource pack.
+AdvancementsBackground: "minecraft:textures/items/book_enchanted.png"
+
 #=============================OOO=============================#
 # III-----------------------------------------------------III #
 # |                    Database settings                    | #
