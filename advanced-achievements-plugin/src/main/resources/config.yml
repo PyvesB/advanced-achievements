@@ -302,7 +302,8 @@ Breaks:
           Execute: give PLAYER 158 10; give PLAYER 126 5
               
 # When a specific mob is killed.
-# Use an Entity name or poweredcreeper, in lower case.
+# Use an Entity type or poweredcreeper, in lower case.
+# You can also use customname- followed by a mob's custom name.
 # Use player to track player kills as a whole.
 # Use specificplayer- followed by player UUID to track how many times a specific player has been killed.
 Kills:

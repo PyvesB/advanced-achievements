@@ -398,10 +398,8 @@ public class PluginLoader {
 					// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories.
 					section = section.substring(0, startOfMetadata);
 				}
-				if (category == MultipleAchievements.PLAYERCOMMANDS) {
-					// Permissions don't take spaces into account for this category.
-					section = StringUtils.deleteWhitespace(section);
-				}
+				// Permissions don't take spaces into account.
+				section = StringUtils.deleteWhitespace(section);
 
 				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when
 				// performing /aach reload.

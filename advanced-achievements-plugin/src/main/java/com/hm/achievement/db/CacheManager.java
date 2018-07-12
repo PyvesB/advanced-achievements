@@ -73,7 +73,7 @@ public class CacheManager implements Cleanable {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Map<String, CachedStatistic> categoryMap = getHashMap(category);
 			for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
-				CachedStatistic statistic = categoryMap.get(getMultipleCategoryCacheKey(category, uuid, subcategory));
+				CachedStatistic statistic = categoryMap.get(getMultipleCategoryCacheKey(uuid, subcategory));
 				if (statistic != null) {
 					statistic.signalPlayerDisconnection();
 				}
@@ -141,15 +141,12 @@ public class CacheManager implements Cleanable {
 	 * @return the updated statistic value
 	 */
 	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player, int value) {
-		CachedStatistic statistic = getHashMap(category).get(getMultipleCategoryCacheKey(category, player, subcategory));
+		CachedStatistic statistic = getHashMap(category).get(getMultipleCategoryCacheKey(player, subcategory));
 		if (statistic == null) {
-			String subcategoryDBName = subcategory;
-			if (category == MultipleAchievements.PLAYERCOMMANDS) {
-				subcategoryDBName = StringUtils.deleteWhitespace(subcategory);
-			}
-			statistic = new CachedStatistic(
-					sqlDatabaseManager.getMultipleAchievementAmount(player, category, subcategoryDBName), true);
-			getHashMap(category).put(getMultipleCategoryCacheKey(category, player, subcategory), statistic);
+			String subcategoryDBName = StringUtils.deleteWhitespace(subcategory);
+			statistic = new CachedStatistic(sqlDatabaseManager.getMultipleAchievementAmount(player, category,
+					subcategoryDBName), true);
+			getHashMap(category).put(getMultipleCategoryCacheKey(player, subcategory), statistic);
 		}
 		if (value > 0) {
 			long newValue = statistic.getValue() + value;
@@ -203,18 +200,14 @@ public class CacheManager implements Cleanable {
 
 	/**
 	 * Returns a key for the multipleAchievementsToPlayerStatistics structure. Concatenation of player UUID and
-	 * subcategory name, with removed whitespaces for PlayerCommands.
+	 * subcategory name, with removed whitespaces.
 	 * 
-	 * @param category
 	 * @param player
 	 * @param subcategory
 	 * @return the statistics key for a Multiple category
 	 */
-	public String getMultipleCategoryCacheKey(MultipleAchievements category, UUID player, String subcategory) {
-		if (category == MultipleAchievements.PLAYERCOMMANDS) {
-			return player.toString() + StringUtils.deleteWhitespace(subcategory);
-		}
-		return player.toString() + subcategory;
+	public String getMultipleCategoryCacheKey(UUID player, String subcategory) {
+		return player.toString() + StringUtils.deleteWhitespace(subcategory);
 	}
 
 	/**
