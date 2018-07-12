@@ -224,8 +224,8 @@ public class FileUpdater {
 
 		// Iterate through all Lang implementation keys & default values
 		Arrays.stream(new Lang[][] { CmdLang.values(), HelpLang.values(), HelpLang.Hover.values(), InfoLang.values(),
-			GuiLang.values(), ListenerLang.values(), RewardLang.values(), NormalAchievements.values(),
-			MultipleAchievements.values() }).flatMap(Arrays::stream).forEach(language -> updateLang(lang, language));
+				GuiLang.values(), ListenerLang.values(), RewardLang.values(), NormalAchievements.values(),
+				MultipleAchievements.values() }).flatMap(Arrays::stream).forEach(language -> updateLang(lang, language));
 
 		// Not found in Enums (Possibly unused)
 		updateSetting(lang, "list-custom", "Custom Categories");

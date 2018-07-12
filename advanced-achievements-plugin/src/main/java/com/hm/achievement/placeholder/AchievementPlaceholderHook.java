@@ -33,8 +33,8 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 	@Inject
 	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements,
-				@Named("main") CommentedYamlConfiguration mainConfig,
-                CacheManager cacheManager, Set<String> disabledCategories, Map<String, String> achievementsAndDisplayNames) {
+			@Named("main") CommentedYamlConfiguration mainConfig,
+			CacheManager cacheManager, Set<String> disabledCategories, Map<String, String> achievementsAndDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.mainConfig = mainConfig;
 		this.cacheManager = cacheManager;
