@@ -87,7 +87,8 @@ public class AdvancementManager implements Reloadable {
 		configRegisterAdvancementDescriptions = mainConfig.getBoolean("RegisterAdvancementDescriptions", true);
 		configHideAdvancements = mainConfig.getBoolean("HideAdvancements", false);
 		configRootAdvancementTitle = mainConfig.getString("RootAdvancementTitle", "Advanced Achievements");
-		configBackgroundTexture = mainConfig.getString("AdvancementsBackground", "minecraft:textures/items/book_enchanted.png");
+		configBackgroundTexture = mainConfig.getString("AdvancementsBackground",
+				"minecraft:textures/items/book_enchanted.png");
 	}
 
 	public static String getKey(String achName) {
