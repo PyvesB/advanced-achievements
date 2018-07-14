@@ -1,19 +1,13 @@
 package com.hm.achievement.gui;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.lang.GuiLang;
+import com.hm.achievement.lang.LangHelper;
+import com.hm.achievement.utils.RewardParser;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
@@ -24,14 +18,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MinecraftFont;
 
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.db.AbstractDatabaseManager;
-import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.GuiLang;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Represents the main GUI, corresponding to more specific details about the different achievements.
@@ -379,15 +373,15 @@ public class CategoryGUI extends AbstractGUI {
 	 * The returned page index must be within a meaningful range, such that there are achievements to display on the
 	 * page.
 	 *
-	 * @param requestedPage
-	 * @param totalAchievements
+	 * @param requestedPage Index of requested page
+	 * @param totalAchievements Number of achievements in the category
 	 * @return the page index to display (start index is 0)
 	 */
 	private int getPageIndex(int requestedPage, int totalAchievements) {
-		if (totalAchievements <= MAX_PER_PAGE * requestedPage) {
-			return requestedPage - 1;
-		} else if (requestedPage < 0) {
+		if (requestedPage <= 0) {
 			return 0;
+		} else if (totalAchievements <= MAX_PER_PAGE * requestedPage) {
+			return requestedPage - 1;
 		}
 		return requestedPage;
 	}
