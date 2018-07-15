@@ -166,10 +166,11 @@ public class ConfigurationParser {
 	}
 
 	/**
-	 * Goes through all the achievements for non-disabled categories. Populates relevant data structures and performs
-	 * basic validation. Logs some statistics.
+	 * Goes through all the achievements for non-disabled categories.
+	 * 
+	 * Populates relevant data structures and performs basic validation.
 	 *
-	 * @throws PluginLoadError
+	 * @throws PluginLoadError If an achievement fails to parse due to misconfiguration.
 	 */
 	private void parseAchievements() throws PluginLoadError {
 		achievementsAndDisplayNames.clear();
@@ -247,10 +248,10 @@ public class ConfigurationParser {
 		int categories = NormalAchievements.values().length + MultipleAchievements.values().length + 1
 				- disabledCategoryCount;
 		logger.info("Loaded " + achievementsAndDisplayNames.size() + " achievements in " + categories + " categories.");
-		if (disabledCategoryCount == 1) {
-			logger.info(disabledCategoryCount + " disabled category: " + disabledCategories.toString());
-		} else if (!disabledCategories.isEmpty()) {
-			logger.info(disabledCategoryCount + " disabled categories: " + disabledCategories.toString());
+
+		if (!disabledCategories.isEmpty()) {
+			String noun = disabledCategoryCount == 1 ? "category" : "categories";
+			logger.info(disabledCategoryCount + " disabled " + noun + ": " + disabledCategories.toString());
 		}
 	}
 
