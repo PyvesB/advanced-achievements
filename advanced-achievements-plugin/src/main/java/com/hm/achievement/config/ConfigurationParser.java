@@ -177,7 +177,11 @@ public class ConfigurationParser {
 		sortedThresholds.clear();
 
 		// Enumerate Commands achievements.
-		parseAchievements("Commands");
+		if (!disabledCategories.contains("Commands")) {
+			for (String ach : mainConfig.getShallowKeys("Commands")) {
+				parseAchievement("Commands." + ach);
+			}
+		}
 
 		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
