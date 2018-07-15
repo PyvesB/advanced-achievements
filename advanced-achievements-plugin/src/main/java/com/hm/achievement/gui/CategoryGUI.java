@@ -379,15 +379,15 @@ public class CategoryGUI extends AbstractGUI {
 	 * The returned page index must be within a meaningful range, such that there are achievements to display on the
 	 * page.
 	 *
-	 * @param requestedPage
-	 * @param totalAchievements
+	 * @param requestedPage Index of requested page
+	 * @param totalAchievements Number of achievements in the category
 	 * @return the page index to display (start index is 0)
 	 */
 	private int getPageIndex(int requestedPage, int totalAchievements) {
-		if (totalAchievements <= MAX_PER_PAGE * requestedPage) {
-			return requestedPage - 1;
-		} else if (requestedPage < 0) {
+		if (requestedPage <= 0) {
 			return 0;
+		} else if (totalAchievements <= MAX_PER_PAGE * requestedPage) {
+			return requestedPage - 1;
 		}
 		return requestedPage;
 	}
