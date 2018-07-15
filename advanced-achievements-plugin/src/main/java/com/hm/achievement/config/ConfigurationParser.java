@@ -178,8 +178,13 @@ public class ConfigurationParser {
 
 		// Enumerate Commands achievements.
 		if (!disabledCategories.contains("Commands")) {
-			for (String ach : mainConfig.getShallowKeys("Commands")) {
-				parseAchievement("Commands." + ach);
+			Set<String> commands = mainConfig.getShallowKeys("Commands");
+			if (commands.isEmpty()) {
+				disabledCategories.add("Commands");
+			} else {
+				for (String ach : commands) {
+					parseAchievement("Commands." + ach);
+				}
 			}
 		}
 
