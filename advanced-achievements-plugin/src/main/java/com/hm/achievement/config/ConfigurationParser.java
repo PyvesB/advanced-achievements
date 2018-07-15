@@ -191,7 +191,9 @@ public class ConfigurationParser {
 		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
-			parseAchievements(categoryName);
+			if (!disabledCategories.contains(categoryName)) {
+				parseAchievements(categoryName);
+			}
 		}
 
 		// Enumerate the achievements with multiple categories.
@@ -212,10 +214,6 @@ public class ConfigurationParser {
 	 * @throws PluginLoadError If an achievement fails to parse due to misconfiguration.
 	 */
 	private void parseAchievements(String path) throws PluginLoadError {
-		if (disabledCategories.contains(path)) {
-			return;
-		}
-
 		Set<String> keys = mainConfig.getShallowKeys(path);
 
 		// Disable category if no achievements exist
