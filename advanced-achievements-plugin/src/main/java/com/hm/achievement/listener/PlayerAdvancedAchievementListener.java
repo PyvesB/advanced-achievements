@@ -464,10 +464,16 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		} catch (Exception e) {
 			// Particle effect workaround to handle various bugs in early Spigot 1.9 and 1.11 releases. We try to
 			// simulate a firework.
-			player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_LAUNCH, 1, 0.6f);
+			Sound launchSound = serverVersion < 9 ? Sound.valueOf("ENTITY_FIREWORK_LAUNCH")
+					: Sound.ENTITY_FIREWORK_ROCKET_LAUNCH;
+			player.getWorld().playSound(location, launchSound, 1, 0.6f);
 			ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, location, 1);
-			player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_BLAST, 1, 0.6f);
-			player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_TWINKLE, 1, 0.6f);
+			Sound blastSound = serverVersion < 9 ? Sound.valueOf("ENTITY_FIREWORK_BLAST")
+					: Sound.ENTITY_FIREWORK_ROCKET_BLAST;
+			player.getWorld().playSound(location, blastSound, 1, 0.6f);
+			Sound twinkleSound = serverVersion < 9 ? Sound.valueOf("ENTITY_FIREWORK_TWINKLE")
+					: Sound.ENTITY_FIREWORK_ROCKET_BLAST;
+			player.getWorld().playSound(location, twinkleSound, 1, 0.6f);
 		}
 	}
 

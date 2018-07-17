@@ -9,7 +9,6 @@ import javax.inject.Singleton;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
@@ -123,9 +122,7 @@ public class StatsCommand extends AbstractCommand {
 
 			// Play special sound.
 			if (configSound) {
-				// If old version, retrieving sound by name as it no longer exists in newer versions.
-				Sound sound = serverVersion < 9 ? Sound.valueOf("FIREWORK_BLAST") : Sound.ENTITY_FIREWORK_LARGE_BLAST;
-				player.getWorld().playSound(player.getLocation(), sound, 1, 0.7f);
+				playSpecialSound(player, serverVersion);
 			}
 		}
 	}
