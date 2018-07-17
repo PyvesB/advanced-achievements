@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,8 +46,8 @@ public class CaughtFishTreasuresListener extends AbstractListener {
 
 		Player player = event.getPlayer();
 		NormalAchievements category;
-		Item caughtItem = (Item) event.getCaught();
-		if (caughtItem.getItemStack().getType() == Material.RAW_FISH) {
+		String caughtMaterialName = ((Item) event.getCaught()).getItemStack().getType().name();
+		if (caughtMaterialName.endsWith("FISH")) {
 			category = NormalAchievements.FISH;
 		} else {
 			category = NormalAchievements.TREASURES;
