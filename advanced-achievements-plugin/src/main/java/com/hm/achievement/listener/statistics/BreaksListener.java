@@ -57,7 +57,7 @@ public class BreaksListener extends AbstractListener {
 		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player) || disableSilkTouchBreaks && silkTouchBreak) {
 			return;
 		}
-		
+
 		Block block = event.getBlock();
 		if (disableSilkTouchOreBreaks && silkTouchBreak && isOre(block.getType().name())) {
 			return;
@@ -76,7 +76,7 @@ public class BreaksListener extends AbstractListener {
 		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
 				achievement, 1));
 	}
-	
+
 	/**
 	 * Determines whether the borken material is an ore.
 	 * 
