@@ -200,7 +200,12 @@ public class ConfigurationParser {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
 			if (!disabledCategories.contains(categoryName)) {
-				for (String section : mainConfig.getShallowKeys(categoryName)) {
+				Set<String> keys = mainConfig.getShallowKeys(categoryName);
+				if (keys.isEmpty()) {
+					disabledCategories.add(categoryName);
+					continue;
+				}
+				for (String section : keys) {
 					parseAchievements(categoryName + '.' + section);
 				}
 			}
