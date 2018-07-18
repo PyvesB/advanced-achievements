@@ -103,7 +103,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 	@SuppressWarnings("deprecation")
 	private boolean canBeFertilised(Material clickedMaterial, Block block) {
 		short durability = block.getState().getData().toItemStack(0).getDurability();
-		if (clickedMaterial.name().equals("DOUBLE_PLANT")) {
+		if ("DOUBLE_PLANT".equals(clickedMaterial.name())) {
 			if (durability == 10) {
 				// Upper part of double plant. We must look at the lower part to get the double plant type.
 				durability = block.getRelative(BlockFace.DOWN).getState().getData().toItemStack(0).getDurability();
@@ -114,11 +114,11 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 		return clickedMaterial == Material.GRASS || clickedMaterial.name().endsWith("SAPLING")
 				|| clickedMaterial == Material.POTATO && durability < 7
 				|| clickedMaterial == Material.CARROT && durability < 7
-				|| clickedMaterial.name().equals("CROPS") && durability < 7
+				|| "CROPS".equals(clickedMaterial.name()) && durability < 7
 				|| clickedMaterial == Material.PUMPKIN_STEM && durability < 7
 				|| clickedMaterial == Material.MELON_STEM && durability < 7 || clickedMaterial == Material.BROWN_MUSHROOM
 				|| clickedMaterial == Material.RED_MUSHROOM || clickedMaterial == Material.COCOA && durability < 9
-				|| serverVersion >= 9 && clickedMaterial.name().equals("BEETROOT_BLOCK") && durability < 3
+				|| serverVersion >= 9 && "BEETROOT_BLOCK".equals(clickedMaterial.name()) && durability < 3
 				|| serverVersion >= 13 && (clickedMaterial == Material.FARMLAND && durability < 7
 						|| clickedMaterial == Material.BEETROOTS && durability < 3
 						|| clickedMaterial == Material.SUNFLOWER || clickedMaterial == Material.LILAC
@@ -132,7 +132,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 	 * @return true if the material is a firework, false otherwise
 	 */
 	private boolean isFirework(Material material) {
-		return serverVersion >= 13 ? material == Material.FIREWORK_ROCKET : material.name().equals("FIREWORK");
+		return serverVersion >= 13 ? material == Material.FIREWORK_ROCKET : "FIREWORK".equals(material.name());
 	}
 
 	/**
