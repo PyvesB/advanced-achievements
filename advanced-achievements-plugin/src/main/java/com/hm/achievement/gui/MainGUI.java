@@ -1,7 +1,6 @@
 package com.hm.achievement.gui;
 
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -19,6 +18,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
+import com.hm.achievement.utils.MaterialHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -42,8 +42,8 @@ public class MainGUI extends AbstractGUI {
 	@Inject
 	public MainGUI(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			Logger logger, CacheManager cacheManager, int serverVersion, Set<String> disabledCategories) {
-		super(mainConfig, langConfig, guiConfig, logger, cacheManager);
+			CacheManager cacheManager, int serverVersion, Set<String> disabledCategories, MaterialHelper materialHelper) {
+		super(mainConfig, langConfig, guiConfig, cacheManager, materialHelper);
 		this.disabledCategories = disabledCategories;
 		lockedItem = new ItemStack(serverVersion < 8 ? Material.OBSIDIAN : Material.BARRIER);
 	}

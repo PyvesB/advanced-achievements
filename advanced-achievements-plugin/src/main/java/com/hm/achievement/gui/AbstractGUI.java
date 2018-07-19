@@ -3,7 +3,6 @@ package com.hm.achievement.gui;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -18,6 +17,7 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.MaterialHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -36,7 +36,7 @@ public abstract class AbstractGUI implements Reloadable {
 	ItemStack commandsAchievementsItem;
 
 	private final CommentedYamlConfiguration guiConfig;
-	private final Logger logger;
+	private final MaterialHelper materialHelper;
 
 	private String configListAchievementFormat;
 	private String configIcon;
@@ -45,12 +45,12 @@ public abstract class AbstractGUI implements Reloadable {
 	private String langListAchievementInCategorySingular;
 
 	AbstractGUI(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
-			CommentedYamlConfiguration guiConfig, Logger logger, CacheManager cacheManager) {
+			CommentedYamlConfiguration guiConfig, CacheManager cacheManager, MaterialHelper materialHelper) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
-		this.logger = logger;
 		this.cacheManager = cacheManager;
+		this.materialHelper = materialHelper;
 	}
 
 	@Override
@@ -111,13 +111,9 @@ public abstract class AbstractGUI implements Reloadable {
 	 * @return the item for the category
 	 */
 	ItemStack createItemStack(String categoryName) {
-		Material material = Material.matchMaterial(guiConfig.getString(categoryName + ".Item", "bedrock"));
+		String path = categoryName + ".Item";
+		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BEDROCK, path);
 		short metadata = (short) guiConfig.getInt(categoryName + ".Metadata", 0);
-		if (material == null) {
-			material = Material.BEDROCK;
-			logger.warning("GUI material for category " + categoryName + " was not found. "
-					+ "Have you spelt the name correctly and is it available for your Minecraft version?");
-		}
 		return new ItemStack(material, 1, metadata);
 	}
 

@@ -24,6 +24,7 @@ import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancem
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.MaterialHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
@@ -60,6 +61,7 @@ public class AdvancementManager implements Reloadable {
 	private final Logger logger;
 	private final Map<String, List<Long>> sortedThresholds;
 	private final Set<String> disabledCategories;
+	private final MaterialHelper materialHelper;
 	private final UnsafeValues unsafeValues;
 
 	private boolean configRegisterAdvancementDescriptions;
@@ -69,13 +71,14 @@ public class AdvancementManager implements Reloadable {
 	@Inject
 	public AdvancementManager(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("gui") CommentedYamlConfiguration guiConfig, AdvancedAchievements advancedAchievements, Logger logger,
-			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories) {
+			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories, MaterialHelper materialHelper) {
 		this.mainConfig = mainConfig;
 		this.guiConfig = guiConfig;
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.sortedThresholds = sortedThresholds;
 		this.disabledCategories = disabledCategories;
+		this.materialHelper = materialHelper;
 		unsafeValues = Bukkit.getUnsafe();
 		generatedAdvancements = 0;
 	}
@@ -210,8 +213,10 @@ public class AdvancementManager implements Reloadable {
 			description = REGEX_PATTERN_COLOURS.matcher(description).replaceAll("");
 		}
 
+		String path = categoryName + ".Item";
+		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BOOK, path);
 		AchievementAdvancementBuilder achievementAdvancementBuilder = new AchievementAdvancementBuilder()
-				.iconItem("minecraft:" + getInternalName(new ItemStack(getMaterial(categoryName), 1, (short) metadata)))
+				.iconItem("minecraft:" + getInternalName(new ItemStack(material, 1, (short) metadata)))
 				.iconData(Integer.toString(metadata)).title(achDisplayName).description(description).parent(parentKey);
 		if (lastAchievement) {
 			unsafeValues.loadAdvancement(namespacedKey, achievementAdvancementBuilder.buildChallenge().toJson());
@@ -220,22 +225,6 @@ public class AdvancementManager implements Reloadable {
 		}
 		++generatedAdvancements;
 		return achKey;
-	}
-
-	/**
-	 * Retrieves the Material enum corresponding to a name specified in gui.yml.
-	 * 
-	 * @param categoryName
-	 * @return the material for that category
-	 */
-	private Material getMaterial(String categoryName) {
-		Material material = Material.matchMaterial(guiConfig.getString(categoryName + ".Item", "bedrock"));
-		if (material == null) {
-			material = Material.BOOK;
-			logger.warning("GUI material for category " + categoryName + " was not found. "
-					+ "Have you spelt the name correctly and is it available for your Minecraft version?");
-		}
-		return material;
 	}
 
 	/**

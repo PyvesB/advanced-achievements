@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -30,6 +29,7 @@ import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
+import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -80,9 +80,9 @@ public class CategoryGUI extends AbstractGUI {
 	@Inject
 	public CategoryGUI(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			Logger logger, CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager,
-			Map<String, List<Long>> sortedThresholds, RewardParser rewardParser) {
-		super(mainConfig, langConfig, guiConfig, logger, cacheManager);
+			CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager, Map<String, List<Long>> sortedThresholds,
+			RewardParser rewardParser, MaterialHelper materialHelper) {
+		super(mainConfig, langConfig, guiConfig, cacheManager, materialHelper);
 		this.sqlDatabaseManager = sqlDatabaseManager;
 		this.sortedThresholds = sortedThresholds;
 		this.rewardParser = rewardParser;
