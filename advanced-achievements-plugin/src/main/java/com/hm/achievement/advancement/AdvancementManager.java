@@ -64,6 +64,8 @@ public class AdvancementManager implements Reloadable {
 
 	private boolean configRegisterAdvancementDescriptions;
 	private boolean configHideAdvancements;
+	private String configRootAdvancementTitle;
+	private String configBackgroundTexture;
 	private int generatedAdvancements;
 
 	@Inject
@@ -84,6 +86,9 @@ public class AdvancementManager implements Reloadable {
 	public void extractConfigurationParameters() {
 		configRegisterAdvancementDescriptions = mainConfig.getBoolean("RegisterAdvancementDescriptions", true);
 		configHideAdvancements = mainConfig.getBoolean("HideAdvancements", false);
+		configRootAdvancementTitle = mainConfig.getString("RootAdvancementTitle", "Advanced Achievements");
+		configBackgroundTexture = mainConfig.getString("AdvancementsBackground",
+				"minecraft:textures/items/book_enchanted.png");
 	}
 
 	public static String getKey(String achName) {
@@ -107,8 +112,7 @@ public class AdvancementManager implements Reloadable {
 		Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
 		while (advancements.hasNext()) {
 			NamespacedKey namespacedKey = advancements.next().getKey();
-			if ("advancedachievements".equals(namespacedKey.getNamespace())
-					&& !ADVANCED_ACHIEVEMENTS_PARENT.equals(namespacedKey.getKey())) {
+			if ("advancedachievements".equals(namespacedKey.getNamespace())) {
 				++achievementsCleaned;
 				unsafeValues.removeAdvancement(namespacedKey);
 			}
@@ -124,11 +128,11 @@ public class AdvancementManager implements Reloadable {
 	private void registerParentAdvancement() {
 		AchievementAdvancementBuilder achievementAdvancementBuilder = new AchievementAdvancementBuilder()
 				.iconItem("minecraft:" + getInternalName(new ItemStack(Material.BOOK, 1, (short) 0)))
-				.iconData(Integer.toString(0)).title("Advanced Achievements").description("");
+				.iconData(Integer.toString(0)).title(configRootAdvancementTitle).description("");
 		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_PARENT);
 		if (Bukkit.getServer().getAdvancement(namespacedKey) == null) {
 			unsafeValues.loadAdvancement(namespacedKey,
-					achievementAdvancementBuilder.buildGoal().toParentJson(configHideAdvancements));
+					achievementAdvancementBuilder.buildGoal().toParentJson(configHideAdvancements, configBackgroundTexture));
 		}
 	}
 

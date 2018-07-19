@@ -64,7 +64,7 @@ public class ConfigurationParser {
 	/**
 	 * Loads the files and populates common data structures used in other parts of the plugin. Performs basic validation
 	 * on the achievements.
-	 * 
+	 *
 	 * @throws PluginLoadError
 	 */
 	public void loadAndParseConfiguration() throws PluginLoadError {
@@ -76,13 +76,13 @@ public class ConfigurationParser {
 		parseHeader();
 		parseDisabledCategories();
 		parseAchievements();
+		logLoadingMessages();
 	}
 
 	/**
 	 * Loads and backs up a configuration file.
-	 * 
+	 *
 	 * @param configuration
-	 * 
 	 * @throws PluginLoadError
 	 */
 	private void loadAndBackupConfiguration(CommentedYamlConfiguration configuration) throws PluginLoadError {
@@ -166,10 +166,11 @@ public class ConfigurationParser {
 	}
 
 	/**
-	 * Goes through all the achievements for non-disabled categories. Populates relevant data structures and performs
-	 * basic validation. Logs some statistics.
+	 * Goes through all the achievements for non-disabled categories.
 	 * 
-	 * @throws PluginLoadError
+	 * Populates relevant data structures and performs basic validation.
+	 *
+	 * @throws PluginLoadError If an achievement fails to parse due to misconfiguration.
 	 */
 	private void parseAchievements() throws PluginLoadError {
 		achievementsAndDisplayNames.clear();
@@ -177,8 +178,13 @@ public class ConfigurationParser {
 
 		// Enumerate Commands achievements.
 		if (!disabledCategories.contains("Commands")) {
-			for (String ach : mainConfig.getShallowKeys("Commands")) {
-				parseAchievement("Commands." + ach);
+			Set<String> commands = mainConfig.getShallowKeys("Commands");
+			if (commands.isEmpty()) {
+				disabledCategories.add("Commands");
+			} else {
+				for (String ach : commands) {
+					parseAchievement("Commands." + ach);
+				}
 			}
 		}
 
@@ -194,31 +200,36 @@ public class ConfigurationParser {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
 			if (!disabledCategories.contains(categoryName)) {
-				for (String section : mainConfig.getShallowKeys(categoryName)) {
+				Set<String> keys = mainConfig.getShallowKeys(categoryName);
+				if (keys.isEmpty()) {
+					disabledCategories.add(categoryName);
+					continue;
+				}
+				for (String section : keys) {
 					parseAchievements(categoryName + '.' + section);
 				}
 			}
-		}
-
-		int categories = NormalAchievements.values().length + MultipleAchievements.values().length + 1
-				- disabledCategories.size();
-		logger.info("Loaded " + achievementsAndDisplayNames.size() + " achievements in " + categories + " categories.");
-		if (disabledCategories.size() == 1) {
-			logger.info(disabledCategories.size() + " disabled category: " + disabledCategories.toString());
-		} else if (!disabledCategories.isEmpty()) {
-			logger.info(disabledCategories.size() + " disabled categories: " + disabledCategories.toString());
 		}
 	}
 
 	/**
 	 * Parses all achievements for a given category or category + subcategory. Populates the sortedThresholds map.
-	 * 
-	 * @param path
-	 * @throws PluginLoadError
+	 *
+	 * @param path category or category.subcategory
+	 * @throws PluginLoadError If an achievement fails to parse due to misconfiguration.
 	 */
 	private void parseAchievements(String path) throws PluginLoadError {
+		Set<String> keys = mainConfig.getShallowKeys(path);
+
+		// Disable category if no achievements exist
+		// Don't add multi-achievement categories to disabled categories (path has a .)
+		if (keys.isEmpty() && !path.contains(".")) {
+			disabledCategories.add(path);
+			return;
+		}
+
 		List<Long> thresholds = new ArrayList<>();
-		for (String threshold : mainConfig.getShallowKeys(path)) {
+		for (String threshold : keys) {
 			parseAchievement(path + "." + threshold);
 			thresholds.add(Long.valueOf(threshold));
 		}
@@ -228,9 +239,9 @@ public class ConfigurationParser {
 
 	/**
 	 * Performs validation for a single achievement and populates an entry in the achievementsAndDisplayNames map.
-	 * 
+	 *
 	 * @param path
-	 * @throws PluginLoadError
+	 * @throws PluginLoadError If the achievement fails to parse due to misconfiguration.
 	 */
 	private void parseAchievement(String path) throws PluginLoadError {
 		String achName = mainConfig.getString(path + ".Name");
@@ -241,6 +252,18 @@ public class ConfigurationParser {
 					"Duplicate achievement Name (" + achName + "). " + "Please ensure each Name is unique in config.yml.");
 		} else {
 			achievementsAndDisplayNames.put(achName, mainConfig.getString(path + ".DisplayName", ""));
+		}
+	}
+
+	private void logLoadingMessages() {
+		int disabledCategoryCount = disabledCategories.size();
+		int categories = NormalAchievements.values().length + MultipleAchievements.values().length + 1
+				- disabledCategoryCount;
+		logger.info("Loaded " + achievementsAndDisplayNames.size() + " achievements in " + categories + " categories.");
+
+		if (!disabledCategories.isEmpty()) {
+			String noun = disabledCategoryCount == 1 ? "category" : "categories";
+			logger.info(disabledCategoryCount + " disabled " + noun + ": " + disabledCategories.toString());
 		}
 	}
 
