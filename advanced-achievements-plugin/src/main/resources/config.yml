@@ -247,20 +247,20 @@ PooledRequestsTaskInterval: 10
 
 # When a specific block is placed (specify material name, lower case).
 Places:  
-  smooth_brick:
+  stone_bricks:
     500:
       # Used in /aach list when achievement not yet received, and in advancements.
       Goal: Place 500 stone bricks.
       # Description; displayed when receiving achievement, and in /aach book and /aach list.
       Message: "&4You have placed 500 stone bricks!"
       # Database name, must also be used in /aach delete and /aach check.
-      Name: place_500_smooth_brick
+      Name: place_500_stone_bricks
       # Name; displayed when receiving achievement, and in /aach book and /aach list.
       DisplayName: Stone Brick Layer
     2500:
       Goal: "Place 2500 stone bricks."
       Message: "&4You have placed 2500 stone bricks!"
-      Name: place_2500_smooth_brick
+      Name: place_2500_stone_bricks
       DisplayName: Stone Brick Architect
   stone:
     100:
@@ -277,16 +277,15 @@ Places:
           Display: Become the Stone God!
 
 # When a specific block is broken (specify material name, lower case).
-# Below, the notation sand:1 means sand item with metadata 1 (red sand).
 Breaks: 
-  sand:1:
+  red_sand:
     10:
       Message: "&cYou have collected 10 red sand blocks!"
-      Name: break_10_sand1
+      Name: break_10_red_sand
       DisplayName: Red Sand Fan
   # Use the following construct to track multiple types. Note that if ever you add/remove a type grouped to others with |,
   # progress for this sub-category group will start back at 0.
-  sand|sand:1:
+  sand|red_sand:
     32:
       Message: "&cYou have collected half a stack of any sand! Woo!"
       Name: break_32_sand_any
@@ -299,7 +298,7 @@ Breaks:
       # Use semicolons for multiple command rewards. PLAYER will be replaced by players name.
       Reward:
         Command:
-          Execute: give PLAYER 158 10; give PLAYER 126 5
+          Execute: give PLAYER dispenser 10; give PLAYER oak_slab 5
               
 # When a specific mob is killed.
 # Use an Entity name or poweredcreeper, in lower case.
@@ -349,9 +348,9 @@ PlayerCommands:
 # When animals breed (specify an entity name, lower case).
 Breeding:
   sheep:
-    100:
-      Message: You bred your first animal!
-      Name: breeding_1
+    1:
+      Message: You bred your first sheep!
+      Name: breeding_1_sheep
       DisplayName: Breeder
 
 #===========================OOO=OOO===========================#
@@ -505,7 +504,7 @@ ConsumedPotions:
 # Amount of time played on the server (in hours, use integers).
 PlayedTime:
   1:
-    Message: You played during one hour on the server!
+    Message: You played for one hour on the server!
     Name: playedtime_1
     DisplayName: First Hour
     
