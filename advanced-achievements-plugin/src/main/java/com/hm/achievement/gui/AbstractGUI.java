@@ -111,7 +111,7 @@ public abstract class AbstractGUI implements Reloadable {
 	 * @return the item for the category
 	 */
 	ItemStack createItemStack(String categoryName) {
-		Material material = Material.getMaterial(guiConfig.getString(categoryName + ".Item", "bedrock").toUpperCase());
+		Material material = Material.matchMaterial(guiConfig.getString(categoryName + ".Item", "bedrock"));
 		short metadata = (short) guiConfig.getInt(categoryName + ".Metadata", 0);
 		if (material == null) {
 			material = Material.BEDROCK;

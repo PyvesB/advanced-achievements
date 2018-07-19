@@ -185,7 +185,7 @@ public class RewardParser implements Reloadable {
 		ItemStack item = null;
 		if (mainConfig.getKeys(true).contains(path + ".Item.Type")) {
 			// Old config syntax (type of item separated in a additional subcategory).
-			Material rewardMaterial = Material.getMaterial(mainConfig.getString(path + ".Item.Type", "stone").toUpperCase());
+			Material rewardMaterial = Material.matchMaterial(mainConfig.getString(path + ".Item.Type", "stone"));
 			if (rewardMaterial != null) {
 				item = new ItemStack(rewardMaterial, amount);
 			}
@@ -195,10 +195,9 @@ public class RewardParser implements Reloadable {
 			String materialNameAndQty = mainConfig.getString(path + ".Item", "stone");
 			int spaceIndex = materialNameAndQty.indexOf(' ');
 
-			String materialName = spaceIndex > 0 ? materialNameAndQty.toUpperCase().substring(0, spaceIndex)
-					: materialNameAndQty.toUpperCase();
+			String materialName = spaceIndex > 0 ? materialNameAndQty.substring(0, spaceIndex) : materialNameAndQty;
 
-			Material rewardMaterial = Material.getMaterial(materialName);
+			Material rewardMaterial = Material.matchMaterial(materialName);
 			if (rewardMaterial != null) {
 				item = new ItemStack(rewardMaterial, amount);
 
@@ -211,8 +210,8 @@ public class RewardParser implements Reloadable {
 			}
 		}
 		if (item == null) {
-			logger.warning(
-					"Invalid item reward for achievement with path \"" + path + "\". Please specify a valid Material name.");
+			logger.warning("Invalid item reward for achievement with path \"" + path + "\". "
+					+ "Please specify a valid Material name.");
 		}
 		return item;
 	}

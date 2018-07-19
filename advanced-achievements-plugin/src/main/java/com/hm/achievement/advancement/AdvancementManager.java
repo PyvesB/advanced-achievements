@@ -229,7 +229,7 @@ public class AdvancementManager implements Reloadable {
 	 * @return the material for that category
 	 */
 	private Material getMaterial(String categoryName) {
-		Material material = Material.getMaterial(guiConfig.getString(categoryName + ".Item", "bedrock").toUpperCase());
+		Material material = Material.matchMaterial(guiConfig.getString(categoryName + ".Item", "bedrock"));
 		if (material == null) {
 			material = Material.BOOK;
 			logger.warning("GUI material for category " + categoryName + " was not found. "
