@@ -11,57 +11,66 @@
 
 # Items used to represent the achievements.
 AchievementNotStarted:
-  Item: stained_clay
-  Metadata: 14
+  Item: red_terracotta
+  Metadata: 0
 AchievementStarted:
-  Item: stained_clay
-  Metadata: 4
+  Item: yellow_terracotta
+  Metadata: 0
 AchievementReceived:
-  Item: stained_clay
-  Metadata: 5
+  Item: lime_terracotta
+  Metadata: 0
   
 # Buttons when navigating in a category.
 BackButton:
   Item: book
   Metadata: 0
 PreviousButton:
-  Item: wood_button
+  Item: oak_button
   Metadata: 0
 NextButton:
   Item: stone_button
   Metadata: 0
 
 # Items used to represent the categories.
-Connections:
-  Item: book_and_quill
-  Metadata: 0
 Places:
   Item: stone
-  Metadata: 6
+  Metadata: 0
 Breaks:
-  Item: smooth_brick
-  Metadata: 2
+  Item: stone_bricks
+  Metadata: 0
 Kills:
   Item: bone
   Metadata: 0
 Crafts:
-  Item: workbench
+  Item: crafting_table
+  Metadata: 0
+Breeding:
+  Item: wheat
+  Metadata: 0
+PlayerCommands:
+  Item: paper
+  Metadata: 0
+Custom:
+  Item: feather
+  Metadata: 0
+Connections:
+  Item: writable_book
   Metadata: 0
 Deaths:
-  Item: skull_item
+  Item: skeleton_skull
   Metadata: 0
 Arrows:
   Item: arrow
   Metadata: 0
 Snowballs:
-  Item: snow_ball
+  Item: snowball
   Metadata: 0
 Eggs:
   Item: egg
   Metadata: 0
 Fish:
-  Item: raw_fish
-  Metadata: 2
+  Item: tropical_fish
+  Metadata: 0
 Treasures:
   Item: fishing_rod
   Metadata: 0
@@ -69,7 +78,7 @@ ItemBreaks:
   Item: flint
   Metadata: 0
 EatenItems:
-  Item: melon
+  Item: melon_slice
   Metadata: 0
 Shear:
   Item: shears
@@ -90,41 +99,20 @@ AnvilsUsed:
   Item: anvil
   Metadata: 0
 Enchantments:
-  Item: enchantment_table
+  Item: enchanting_table
   Metadata: 0
 Beds:
-  Item: bed
+  Item: white_bed
   Metadata: 0
 MaxLevel:
-  Item: exp_bottle
-  Metadata: 0  
+  Item: experience_bottle
+  Metadata: 0
 ConsumedPotions:
   Item: glass_bottle
   Metadata: 0
 PlayedTime:
-  Item: watch
+  Item: clock
   Metadata: 0
-DistanceFoot:
-  Item: leather_boots
-  Metadata: 0
-DistancePig:
-  Item: carrot_stick
-  Metadata: 0
-DistanceHorse:
-  Item: saddle
-  Metadata: 0
-DistanceMinecart:
-  Item: minecart
-  Metadata: 0
-DistanceBoat:
-  Item: boat
-  Metadata: 0
-DistanceGliding:
-  Item: elytra
-  Metadata: 0
-DistanceLlama:
-  Item: carpet
-  Metadata: 9
 ItemDrops:
   Item: hopper
   Metadata: 0
@@ -135,19 +123,16 @@ HoePlowings:
   Item: grass_path
   Metadata: 0
 Fertilising:
-  Item: ink_sack
-  Metadata: 15
-Taming:
-  Item: leash
+  Item: bone_meal
   Metadata: 0
-Breeding:
-  Item: wheat
+Taming:
+  Item: lead
   Metadata: 0
 Brewing:
-  Item: brewing_stand_item
+  Item: brewing_stand
   Metadata: 0
 Fireworks:
-  Item: firework
+  Item: firework_rocket
   Metadata: 0
 MusicDiscs:
   Item: jukebox
@@ -156,22 +141,37 @@ EnderPearls:
   Item: ender_pearl
   Metadata: 0
 PetMasterGive:
-  Item: gold_barding
+  Item: golden_horse_armor
   Metadata: 0
 PetMasterReceive:
-  Item: iron_barding
+  Item: iron_horse_armor
   Metadata: 0
 Smelting:
   Item: furnace
   Metadata: 0
-PlayerCommands:
-  Item: paper
+DistanceFoot:
+  Item: leather_boots
+  Metadata: 0
+DistancePig:
+  Item: carrot_on_a_stick
+  Metadata: 0
+DistanceHorse:
+  Item: saddle
+  Metadata: 0
+DistanceMinecart:
+  Item: minecart
+  Metadata: 0
+DistanceBoat:
+  Item: birch_boat
+  Metadata: 0
+DistanceGliding:
+  Item: elytra
+  Metadata: 0
+DistanceLlama:
+  Item: cyan_carpet
   Metadata: 0
 Commands:
   Item: bookshelf
-  Metadata: 0
-Custom:
-  Item: feather
   Metadata: 0
 
 #============================================================#
