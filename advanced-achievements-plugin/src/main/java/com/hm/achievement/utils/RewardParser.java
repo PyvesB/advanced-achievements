@@ -185,7 +185,8 @@ public class RewardParser implements Reloadable {
 		String typePath = path + ".Item.Type";
 		if (mainConfig.getKeys(true).contains(typePath)) {
 			// Old config syntax (type of item separated in a additional subcategory).
-			Optional<Material> rewardMaterial = materialHelper.matchMaterial(mainConfig.getString(typePath), typePath);
+			Optional<Material> rewardMaterial = materialHelper.matchMaterial(mainConfig.getString(typePath),
+					"config.yml (" + typePath + ")");
 			if (rewardMaterial.isPresent()) {
 				return new ItemStack(rewardMaterial.get(), amount);
 			}
@@ -198,7 +199,7 @@ public class RewardParser implements Reloadable {
 
 			String materialName = spaceIndex > 0 ? materialNameAndQty.substring(0, spaceIndex) : materialNameAndQty;
 
-			Optional<Material> rewardMaterial = materialHelper.matchMaterial(materialName, itemPath);
+			Optional<Material> rewardMaterial = materialHelper.matchMaterial(materialName, "config.yml (" + typePath + ")");
 			if (rewardMaterial.isPresent()) {
 				ItemStack item = new ItemStack(rewardMaterial.get(), amount);
 

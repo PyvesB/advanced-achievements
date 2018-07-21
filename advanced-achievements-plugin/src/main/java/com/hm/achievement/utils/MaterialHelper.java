@@ -27,11 +27,11 @@ public class MaterialHelper {
 	 * Tries to match a name to a Material instance.
 	 * 
 	 * @param name the string to match
-	 * @param path used for logging
+	 * @param usageLocation used for logging
 	 * @return a Material wrapped inside an Optional or an empty Optional.
 	 */
-	public Optional<Material> matchMaterial(String name, String path) {
-		return Optional.ofNullable(matchMaterial(name, null, path));
+	public Optional<Material> matchMaterial(String name, String usageLocation) {
+		return Optional.ofNullable(matchMaterial(name, null, usageLocation));
 	}
 
 	/**
@@ -39,12 +39,12 @@ public class MaterialHelper {
 	 * 
 	 * @param name the string to match
 	 * @param defaultMaterial returned if name could not be matched
-	 * @param path used for logging
+	 * @param usageLocation used for logging
 	 * @return a Material or null.
 	 */
-	public Material matchMaterial(String name, Material defaultMaterial, String path) {
+	public Material matchMaterial(String name, Material defaultMaterial, String usageLocation) {
 		if (name == null || name.isEmpty()) {
-			logger.warning(path + " is missing. Please check your configuration.");
+			logger.warning(usageLocation + " is missing. Please check your configuration.");
 			return defaultMaterial;
 		}
 		Material material = Material.matchMaterial(name);
@@ -52,8 +52,8 @@ public class MaterialHelper {
 			material = Material.matchMaterial(name, true);
 		}
 		if (material == null) {
-			logger.warning("Material \"" + name + "\" used at path \"" + path
-					+ "\" is invalid. Have you spelt the name correctly and is it available for your Minecraft version?");
+			logger.warning("Material \"" + name + "\" used in " + usageLocation
+					+ " is invalid. Have you spelt the name correctly and is it available for your Minecraft version?");
 			material = defaultMaterial;
 		}
 		return material;

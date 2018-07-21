@@ -214,7 +214,7 @@ public class AdvancementManager implements Reloadable {
 		}
 
 		String path = categoryName + ".Item";
-		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BOOK, path);
+		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BOOK, "gui.yml (" + path + ")");
 		AchievementAdvancementBuilder achievementAdvancementBuilder = new AchievementAdvancementBuilder()
 				.iconItem("minecraft:" + getInternalName(new ItemStack(material, 1, (short) metadata)))
 				.iconData(Integer.toString(metadata)).title(achDisplayName).description(description).parent(parentKey);

@@ -112,7 +112,8 @@ public abstract class AbstractGUI implements Reloadable {
 	 */
 	ItemStack createItemStack(String categoryName) {
 		String path = categoryName + ".Item";
-		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BEDROCK, path);
+		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BEDROCK,
+				"gui.yml (" + path + ")");
 		short metadata = (short) guiConfig.getInt(categoryName + ".Metadata", 0);
 		return new ItemStack(material, 1, metadata);
 	}
