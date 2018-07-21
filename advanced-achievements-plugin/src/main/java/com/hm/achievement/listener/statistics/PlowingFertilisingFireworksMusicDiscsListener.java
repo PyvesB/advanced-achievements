@@ -60,9 +60,10 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 				&& (clickedMaterial == Material.GRASS || clickedMaterial == Material.DIRT)
 				&& event.getClickedBlock().getRelative(BlockFace.UP).getType() == Material.AIR) {
 			category = NormalAchievements.HOEPLOWING;
-		} else if (isBoneMeal(event.getItem()) && canBeFertilised(clickedMaterial, event.getClickedBlock())) {
+		} else if (isBoneMeal(event.getItem()) && (canBeFertilisedOnLand(clickedMaterial, event.getClickedBlock())
+				|| canBeFertilisedUnderwater(clickedMaterial, event.getClickedBlock()))) {
 			category = NormalAchievements.FERTILISING;
-		} else if (isFirework(event.getItem().getType()) && canAccommodateFireworkLaunch(clickedMaterial)) {
+		} else if (isFirework(event.getItem().getType()) && canAccommodateFireworkLaunch(clickedMaterial, player)) {
 			category = NormalAchievements.FIREWORKS;
 		} else if (event.getItem().getType().isRecord() && clickedMaterial == Material.JUKEBOX) {
 			category = NormalAchievements.MUSICDISCS;
@@ -94,16 +95,16 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 	}
 
 	/**
-	 * Determines whether clickedMaterial can be fertilised.
+	 * Determines whether a material can be fertilised on the land.
 	 * 
-	 * @param clickedMaterial
+	 * @param material
 	 * @param block
 	 * @return true if the block can be fertilised, false otherwise
 	 */
 	@SuppressWarnings("deprecation")
-	private boolean canBeFertilised(Material clickedMaterial, Block block) {
+	private boolean canBeFertilisedOnLand(Material material, Block block) {
 		short durability = block.getState().getData().toItemStack(0).getDurability();
-		if ("DOUBLE_PLANT".equals(clickedMaterial.name())) {
+		if ("DOUBLE_PLANT".equals(material.name())) {
 			if (durability == 10) {
 				// Upper part of double plant. We must look at the lower part to get the double plant type.
 				durability = block.getRelative(BlockFace.DOWN).getState().getData().toItemStack(0).getDurability();
@@ -111,18 +112,33 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 			// Fertilisation does not work on double tallgrass and large fern.
 			return durability != 2 && durability != 3;
 		}
-		return clickedMaterial == Material.GRASS || clickedMaterial.name().endsWith("SAPLING")
-				|| clickedMaterial == Material.POTATO && durability < 7
-				|| clickedMaterial == Material.CARROT && durability < 7
-				|| "CROPS".equals(clickedMaterial.name()) && durability < 7
-				|| clickedMaterial == Material.PUMPKIN_STEM && durability < 7
-				|| clickedMaterial == Material.MELON_STEM && durability < 7 || clickedMaterial == Material.BROWN_MUSHROOM
-				|| clickedMaterial == Material.RED_MUSHROOM || clickedMaterial == Material.COCOA && durability < 9
-				|| serverVersion >= 9 && "BEETROOT_BLOCK".equals(clickedMaterial.name()) && durability < 3
-				|| serverVersion >= 13 && (clickedMaterial == Material.FARMLAND && durability < 7
-						|| clickedMaterial == Material.BEETROOTS && durability < 3
-						|| clickedMaterial == Material.SUNFLOWER || clickedMaterial == Material.LILAC
-						|| clickedMaterial == Material.ROSE_BUSH || clickedMaterial == Material.PEONY);
+		return material == Material.GRASS || material.name().endsWith("SAPLING")
+				|| material == Material.POTATO && durability < 7
+				|| material == Material.CARROT && durability < 7
+				|| "CROPS".equals(material.name()) && durability < 7
+				|| material == Material.PUMPKIN_STEM && durability < 7
+				|| material == Material.MELON_STEM && durability < 7 || material == Material.BROWN_MUSHROOM
+				|| material == Material.RED_MUSHROOM || material == Material.COCOA && durability < 9
+				|| serverVersion >= 9 && "BEETROOT_BLOCK".equals(material.name()) && durability < 3
+				|| serverVersion >= 13 && (material == Material.FARMLAND && durability < 7
+						|| material == Material.BEETROOTS && durability < 3
+						|| material == Material.SUNFLOWER || material == Material.LILAC
+						|| material == Material.ROSE_BUSH || material == Material.PEONY);
+	}
+
+	/**
+	 * Determines whether a material can be fertilised underneath the water.
+	 * 
+	 * @param material
+	 * @param block
+	 * @return true if the block can be fertilised, false otherwise
+	 */
+	private boolean canBeFertilisedUnderwater(Material material, Block block) {
+		if (serverVersion < 13) {
+			return false;
+		}
+		return material.isOccluding() && block.getRelative(BlockFace.UP).getType() == Material.WATER
+				|| material == Material.KELP || material == Material.SEAGRASS || material == Material.SEA_PICKLE;
 	}
 
 	/**
@@ -138,132 +154,143 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 	/**
 	 * Determines whether a firework can be launched when interacting with this block.
 	 * 
-	 * @param clickedMaterialName
+	 * @param material
+	 * @param player
 	 * @return true if the material can be used to launch a firework, false otherwise
 	 */
-	private boolean canAccommodateFireworkLaunch(Material clickedMaterialName) {
-		switch (clickedMaterialName.name()) {
-			case "FURNACE":
-			case "DISPENSER":
-			case "CHEST":
-			case "NOTE_BLOCK":
-			case "LEVER":
-			case "STONE_BUTTON":
-			case "ENDER_CHEST":
-			case "BEACON":
-			case "ANVIL":
-			case "TRAPPED_CHEST":
-			case "HOPPER":
-			case "DROPPER":
+	private boolean canAccommodateFireworkLaunch(Material material, Player player) {
+		if (!player.isSneaking()) {
+			// The following materials only prevent firework launches whilst not sneaking.
+			switch (material.name()) {
+				case "FURNACE":
+				case "DISPENSER":
+				case "CHEST":
+				case "NOTE_BLOCK":
+				case "LEVER":
+				case "STONE_BUTTON":
+				case "ENDER_CHEST":
+				case "BEACON":
+				case "ANVIL":
+				case "TRAPPED_CHEST":
+				case "HOPPER":
+				case "DROPPER":
+				case "BREWING_STAND":
+				case "CRAFTING_TABLE":
+				case "ACACIA_BUTTON":
+				case "BIRCH_BUTTON":
+				case "DARK_OAK_BUTTON":
+				case "JUNGLE_BUTTON":
+				case "OAK_BUTTON":
+				case "SPRUCE_BUTTON":
+				case "ACACIA_DOOR":
+				case "BIRCH_DOOR":
+				case "DARK_OAK_DOOR":
+				case "JUNGLE_DOOR":
+				case "OAK_DOOR":
+				case "SPRUCE_DOOR":
+				case "ACACIA_FENCE_GATE":
+				case "BIRCH_FENCE_GATE":
+				case "DARK_OAK_FENCE_GATE":
+				case "JUNGLE_FENCE_GATE":
+				case "OAK_FENCE_GATE":
+				case "SPRUCE_FENCE_GATE":
+				case "ENCHANTING_TABLE":
+				case "ACACIA_TRAPDOOR":
+				case "BIRCH_TRAPDOOR":
+				case "DARK_OAK_TRAPDOOR":
+				case "JUNGLE_TRAPDOOR":
+				case "OAK_TRAPDOOR":
+				case "SPRUCE_TRAPDOOR":
+				case "ACACIA_BOAT":
+				case "BIRCH_BOAT":
+				case "DARK_OAK_BOAT":
+				case "JUNGLE_BOAT":
+				case "OAK_BOAT":
+				case "SPRUCE_BOAT":
+				case "BLACK_BED":
+				case "BLUE_BED":
+				case "BROWN_BED":
+				case "CYAN_BED":
+				case "GRAY_BED":
+				case "GREEN_BED":
+				case "LIGHT_BLUE_BED":
+				case "LIGHT_GRAY_BED":
+				case "LIME_BED":
+				case "MAGENTA_BED":
+				case "ORANGE_BED":
+				case "PINK_BED":
+				case "PURPLE_BED":
+				case "RED_BED":
+				case "WHITE_BED":
+				case "YELLOW_BED":
+				case "CAKE":
+				case "COMPARATOR":
+				case "REPEATER":
+				case "COMMAND_BLOCK":
+				case "ARMOR_STAND":
+				case "CHAIN_COMMAND_BLOCK":
+				case "REPEATING_COMMAND_BLOCK":
+				case "BLACK_SHULKER_BOX":
+				case "BLUE_SHULKER_BOX":
+				case "BROWN_SHULKER_BOX":
+				case "CYAN_SHULKER_BOX":
+				case "GRAY_SHULKER_BOX":
+				case "GREEN_SHULKER_BOX":
+				case "LIGHT_BLUE_SHULKER_BOX":
+				case "LIME_SHULKER_BOX":
+				case "MAGENTA_SHULKER_BOX":
+				case "ORANGE_SHULKER_BOX":
+				case "PINK_SHULKER_BOX":
+				case "PURPLE_SHULKER_BOX":
+				case "RED_SHULKER_BOX":
+				case "WHITE_SHULKER_BOX":
+				case "YELLOW_SHULKER_BOX":
+				case "SHULKER_BOX":
+					// Pre Minecraft 1.13":
+				case "WORKBENCH":
+				case "BURNING_FURNACE":
+				case "WOOD_BUTTON":
+				case "TRAP_DOOR":
+				case "FENCE_GATE":
+				case "ENCHANTMENT_TABLE":
+				case "WOOD_DOOR":
+				case "WOODEN_DOOR":
+				case "BOAT":
+				case "BED_BLOCK":
+				case "CAKE_BLOCK":
+				case "REDSTONE_COMPARATOR_OFF":
+				case "REDSTONE_COMPARATOR_ON":
+				case "DIODE_BLOCK_OFF":
+				case "DIODE_BLOCK_ON":
+				case "COMMAND":
+				case "BOAT_ACACIA":
+				case "BOAT_BIRCH":
+				case "BOAT_DARK_OAK":
+				case "BOAT_JUNGLE":
+				case "BOAT_SPRUCE":
+				case "COMMAND_REPEATING":
+				case "COMMAND_CHAIN":
+				case "SILVER_SHULKER_BOX":
+					return false;
+				default:
+					break;
+			}
+		}
+		// The following materials prevent firework launches regardless of whether the player is sneaking or not.
+		switch (material.name()) {
 			case "PAINTING":
+			case "ITEM_FRAME":
 			case "MINECART":
 			case "HOPPER_MINECART":
-			case "BREWING_STAND":
-			case "ITEM_FRAME":
-			case "CRAFTING_TABLE":
-			case "ACACIA_BUTTON":
-			case "BIRCH_BUTTON":
-			case "DARK_OAK_BUTTON":
-			case "JUNGLE_BUTTON":
-			case "OAK_BUTTON":
-			case "SPRUCE_BUTTON":
-			case "ACACIA_DOOR":
-			case "BIRCH_DOOR":
-			case "DARK_OAK_DOOR":
-			case "JUNGLE_DOOR":
-			case "OAK_DOOR":
-			case "SPRUCE_DOOR":
-			case "ACACIA_FENCE_GATE":
-			case "BIRCH_FENCE_GATE":
-			case "DARK_OAK_FENCE_GATE":
-			case "JUNGLE_FENCE_GATE":
-			case "OAK_FENCE_GATE":
-			case "SPRUCE_FENCE_GATE":
-			case "ENCHANTING_TABLE":
-			case "ACACIA_TRAPDOOR":
-			case "BIRCH_TRAPDOOR":
-			case "DARK_OAK_TRAPDOOR":
-			case "JUNGLE_TRAPDOOR":
-			case "OAK_TRAPDOOR":
-			case "SPRUCE_TRAPDOOR":
 			case "TNT_MINECART":
 			case "COMMAND_BLOCK_MINECART":
 			case "FURNACE_MINECART":
 			case "CHEST_MINECART":
-			case "ACACIA_BOAT":
-			case "BIRCH_BOAT":
-			case "DARK_OAK_BOAT":
-			case "JUNGLE_BOAT":
-			case "OAK_BOAT":
-			case "SPRUCE_BOAT":
-			case "BLACK_BED":
-			case "BLUE_BED":
-			case "BROWN_BED":
-			case "CYAN_BED":
-			case "GRAY_BED":
-			case "GREEN_BED":
-			case "LIGHT_BLUE_BED":
-			case "LIGHT_GRAY_BED":
-			case "LIME_BED":
-			case "MAGENTA_BED":
-			case "ORANGE_BED":
-			case "PINK_BED":
-			case "PURPLE_BED":
-			case "RED_BED":
-			case "WHITE_BED":
-			case "YELLOW_BED":
-			case "CAKE":
-			case "COMPARATOR":
-			case "REPEATER":
-			case "COMMAND_BLOCK":
-			case "ARMOR_STAND":
-			case "CHAIN_COMMAND_BLOCK":
-			case "REPEATING_COMMAND_BLOCK":
-			case "BLACK_SHULKER_BOX":
-			case "BLUE_SHULKER_BOX":
-			case "BROWN_SHULKER_BOX":
-			case "CYAN_SHULKER_BOX":
-			case "GRAY_SHULKER_BOX":
-			case "GREEN_SHULKER_BOX":
-			case "LIGHT_BLUE_SHULKER_BOX":
-			case "LIME_SHULKER_BOX":
-			case "MAGENTA_SHULKER_BOX":
-			case "ORANGE_SHULKER_BOX":
-			case "PINK_SHULKER_BOX":
-			case "PURPLE_SHULKER_BOX":
-			case "RED_SHULKER_BOX":
-			case "WHITE_SHULKER_BOX":
-			case "YELLOW_SHULKER_BOX":
-			case "SHULKER_BOX":
 				// Pre Minecraft 1.13":
-			case "WORKBENCH":
-			case "BURNING_FURNACE":
-			case "WOOD_BUTTON":
-			case "TRAP_DOOR":
-			case "FENCE_GATE":
-			case "ENCHANTMENT_TABLE":
-			case "WOOD_DOOR":
-			case "WOODEN_DOOR":
 			case "EXPLOSIVE_MINECART":
 			case "COMMAND_MINECART":
 			case "POWERED_MINECART":
 			case "STORAGE_MINECART":
-			case "BOAT":
-			case "BED_BLOCK":
-			case "CAKE_BLOCK":
-			case "REDSTONE_COMPARATOR_OFF":
-			case "REDSTONE_COMPARATOR_ON":
-			case "DIODE_BLOCK_OFF":
-			case "DIODE_BLOCK_ON":
-			case "COMMAND":
-			case "BOAT_ACACIA":
-			case "BOAT_BIRCH":
-			case "BOAT_DARK_OAK":
-			case "BOAT_JUNGLE":
-			case "BOAT_SPRUCE":
-			case "COMMAND_REPEATING":
-			case "COMMAND_CHAIN":
-			case "SILVER_SHULKER_BOX":
 				return false;
 			default:
 				return true;
