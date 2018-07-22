@@ -27,7 +27,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with HoePlowings, Fertilising, Fireworks and MusicDiscs achievements.
- * 
+ *
  * @author Pyves
  *
  */
@@ -85,7 +85,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 
 	/**
 	 * Determines whether the used item is bone meal.
-	 * 
+	 *
 	 * @param itemStack
 	 * @return true if the item is bone meal, false otherwise
 	 */
@@ -96,7 +96,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 
 	/**
 	 * Determines whether a material can be fertilised on the land.
-	 * 
+	 *
 	 * @param material
 	 * @param block
 	 * @return true if the block can be fertilised, false otherwise
@@ -121,14 +121,14 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 				|| material == Material.RED_MUSHROOM || material == Material.COCOA && durability < 9
 				|| serverVersion >= 9 && "BEETROOT_BLOCK".equals(material.name()) && durability < 3
 				|| serverVersion >= 13 && (material == Material.FARMLAND && durability < 7
-						|| material == Material.BEETROOTS && durability < 3
+						|| material == Material.BEETROOTS && durability < 3 || material == Material.GRASS_BLOCK
 						|| material == Material.SUNFLOWER || material == Material.LILAC
 						|| material == Material.ROSE_BUSH || material == Material.PEONY);
 	}
 
 	/**
 	 * Determines whether a material can be fertilised underneath the water.
-	 * 
+	 *
 	 * @param material
 	 * @param block
 	 * @return true if the block can be fertilised, false otherwise
@@ -143,7 +143,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 
 	/**
 	 * Determines whether the used material is a firework.
-	 * 
+	 *
 	 * @param material
 	 * @return true if the material is a firework, false otherwise
 	 */
@@ -153,7 +153,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 
 	/**
 	 * Determines whether a firework can be launched when interacting with this block.
-	 * 
+	 *
 	 * @param material
 	 * @param player
 	 * @return true if the material can be used to launch a firework, false otherwise
