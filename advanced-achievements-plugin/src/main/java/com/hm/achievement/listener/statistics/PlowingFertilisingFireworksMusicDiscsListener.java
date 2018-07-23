@@ -56,9 +56,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 		NormalAchievements category;
 
 		Material clickedMaterial = event.getClickedBlock().getType();
-		if (event.getItem().getType().name().contains("HOE")
-				&& (clickedMaterial == Material.GRASS || clickedMaterial == Material.DIRT)
-				&& event.getClickedBlock().getRelative(BlockFace.UP).getType() == Material.AIR) {
+		if (event.getItem().getType().name().contains("HOE") && canBePlowed(clickedMaterial, event.getClickedBlock())) {
 			category = NormalAchievements.HOEPLOWING;
 		} else if (isBoneMeal(event.getItem()) && (canBeFertilisedOnLand(clickedMaterial, event.getClickedBlock())
 				|| canBeFertilisedUnderwater(clickedMaterial, event.getClickedBlock()))) {
@@ -81,6 +79,19 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+	}
+
+	/**
+	 * Determines whether a material can be plowed with a hoe.
+	 *
+	 * @param material
+	 * @param block
+	 * @return true if the block can be plowed, false otherwise
+	 */
+	private boolean canBePlowed(Material material, Block block) {
+		return (serverVersion <= 13 && material == Material.GRASS || material == Material.DIRT
+				|| serverVersion >= 13 && material == Material.GRASS_BLOCK)
+				&& block.getRelative(BlockFace.UP).getType() == Material.AIR;
 	}
 
 	/**
