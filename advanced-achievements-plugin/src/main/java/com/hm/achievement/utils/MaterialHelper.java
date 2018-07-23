@@ -17,10 +17,12 @@ import org.bukkit.Material;
 public class MaterialHelper {
 
 	private final Logger logger;
+	private final int serverVersion;
 
 	@Inject
-	public MaterialHelper(Logger logger) {
+	public MaterialHelper(Logger logger, int serverVersion) {
 		this.logger = logger;
+		this.serverVersion = serverVersion;
 	}
 
 	/**
@@ -48,7 +50,7 @@ public class MaterialHelper {
 			return defaultMaterial;
 		}
 		Material material = Material.matchMaterial(name);
-		if (material == null) {
+		if (material == null && serverVersion >= 13) {
 			material = Material.matchMaterial(name, true);
 		}
 		if (material == null) {
