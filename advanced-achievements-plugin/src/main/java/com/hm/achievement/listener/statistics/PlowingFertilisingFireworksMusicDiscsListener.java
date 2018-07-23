@@ -131,8 +131,8 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 				|| material == Material.MELON_STEM && durability < 7 || material == Material.BROWN_MUSHROOM
 				|| material == Material.RED_MUSHROOM || material == Material.COCOA && durability < 9
 				|| serverVersion >= 9 && "BEETROOT_BLOCK".equals(material.name()) && durability < 3
-				|| serverVersion >= 13 && (material == Material.FARMLAND && durability < 7
-						|| material == Material.BEETROOTS && durability < 3 || material == Material.GRASS_BLOCK
+				|| serverVersion >= 13 && (material == Material.BEETROOTS && durability < 3
+						|| material == Material.GRASS_BLOCK
 						|| material == Material.SUNFLOWER || material == Material.LILAC
 						|| material == Material.ROSE_BUSH || material == Material.PEONY);
 	}
