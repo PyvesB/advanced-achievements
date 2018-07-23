@@ -89,7 +89,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 	 * @return true if the block can be plowed, false otherwise
 	 */
 	private boolean canBePlowed(Material material, Block block) {
-		return (serverVersion <= 13 && material == Material.GRASS || material == Material.DIRT
+		return (serverVersion < 13 && material == Material.GRASS || material == Material.DIRT
 				|| serverVersion >= 13 && material == Material.GRASS_BLOCK)
 				&& block.getRelative(BlockFace.UP).getType() == Material.AIR;
 	}
