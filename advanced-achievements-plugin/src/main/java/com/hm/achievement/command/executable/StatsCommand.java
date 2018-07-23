@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
@@ -112,11 +113,14 @@ public class StatsCommand extends AbstractCommand {
 		// Player has received all achievement; play special effect and sound.
 		if (playerAchievements >= totalAchievements) {
 			if (configAdditionalEffects) {
-				try {
-					// Play special effect.
-					ParticleEffect.SPELL_WITCH.display(0, 1, 0, 0.5f, 400, player.getLocation(), 1);
-				} catch (Exception e) {
-					logger.warning("Failed to display additional particle effects for stats command.");
+				if (serverVersion >= 13) {
+					player.spawnParticle(Particle.SPELL_WITCH, player.getLocation(), 400, 0, 1, 0, 0.5f);
+				} else {
+					try {
+						ParticleEffect.SPELL_WITCH.display(0, 1, 0, 0.5f, 400, player.getLocation(), 1);
+					} catch (Exception e) {
+						logger.warning("Failed to display additional particle effects for stats command.");
+					}
 				}
 			}
 
