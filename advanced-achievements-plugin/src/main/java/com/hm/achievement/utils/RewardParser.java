@@ -298,7 +298,7 @@ public class RewardParser implements Reloadable {
 		if (!mainConfig.getKeys(true).contains(path + ".Item.Amount")) {
 			String configString = mainConfig.getString(path + ".Item", "");
 			String[] splittedString = configString.split(" ");
-			if (splittedString.length >= 2) {
+			if (splittedString.length >= 3) {
 				StringBuilder builder = new StringBuilder();
 				for (int i = 2; i < splittedString.length; i++) {
 					builder.append(splittedString[i]).append(" ");
