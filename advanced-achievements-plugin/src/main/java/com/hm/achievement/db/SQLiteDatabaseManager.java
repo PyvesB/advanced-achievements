@@ -18,7 +18,7 @@ import com.hm.mcshared.file.FileManager;
 
 /**
  * Class used to handle a SQLite database.
- * 
+ *
  * @author Pyves
  *
  */
@@ -51,7 +51,7 @@ public class SQLiteDatabaseManager extends AbstractDatabaseManager {
 			if (System.currentTimeMillis() - backup.lastModified() > 86400000L || backup.length() == 0L) {
 				logger.info("Backing up database file...");
 				try {
-					FileManager fileManager = new FileManager("achievements.db", "achievements.db", advancedAchievements);
+					FileManager fileManager = new FileManager("achievements.db", advancedAchievements);
 					fileManager.backupFile();
 				} catch (IOException e) {
 					logger.log(Level.SEVERE, "Error while backing up database file:", e);

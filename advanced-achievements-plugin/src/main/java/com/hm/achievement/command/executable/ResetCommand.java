@@ -28,7 +28,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class ResetCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 
 	private String langResetSuccessful;
 	private String langCategoryDoesNotExist;
@@ -36,10 +36,10 @@ public class ResetCommand extends AbstractParsableCommand {
 	@Inject
 	public ResetCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
-			AbstractDatabaseManager sqlDatabaseManager) {
+			AbstractDatabaseManager databaseManager) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class ResetCommand extends AbstractParsableCommand {
 			if (category.toString().equalsIgnoreCase(args[1])) {
 				if (category == NormalAchievements.CONNECTIONS) {
 					// Not handled by a database cache.
-					sqlDatabaseManager.clearConnection(player.getUniqueId());
+					databaseManager.clearConnection(player.getUniqueId());
 				} else {
 					CachedStatistic statistic = cacheManager.getHashMap(category).get(uuid);
 					if (statistic == null) {

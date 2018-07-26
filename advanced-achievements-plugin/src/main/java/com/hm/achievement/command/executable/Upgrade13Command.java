@@ -20,21 +20,21 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @CommandSpec(name = "upgrade13", permission = "*", minArgs = 1, maxArgs = 1)
 public class Upgrade13Command extends AbstractCommand {
 
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 	private final DatabaseUpdater databaseUpdater;
 
 	@Inject
 	public Upgrade13Command(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
-			AbstractDatabaseManager sqlDatabaseManager, DatabaseUpdater databaseUpdater) {
+			AbstractDatabaseManager databaseManager, DatabaseUpdater databaseUpdater) {
 		super(mainConfig, langConfig, pluginHeader);
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 		this.databaseUpdater = databaseUpdater;
 	}
 
 	@Override
 	void onExecute(CommandSender sender, String[] args) {
-		databaseUpdater.updateOldMaterialsToNewOnes(sqlDatabaseManager);
+		databaseUpdater.updateOldMaterialsToNewOnes(databaseManager);
 		sender.sendMessage(pluginHeader +
 				"Database upgrade to Minecraft 1.13 completed for the Crafts, Places and Breaks categories.");
 	}

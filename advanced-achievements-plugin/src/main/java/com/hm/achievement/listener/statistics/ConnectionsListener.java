@@ -49,17 +49,17 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	private final Set<UUID> playersConnectionProcessed = new HashSet<>();
 	private final AdvancedAchievements advancedAchievements;
 	private final Set<String> disabledCategories;
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 
 	@Inject
 	public ConnectionsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
 			AdvancedAchievements advancedAchievements, Set<String> disabledCategories,
-			AbstractDatabaseManager sqlDatabaseManager) {
+			AbstractDatabaseManager databaseManager) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.advancedAchievements = advancedAchievements;
 		this.disabledCategories = disabledCategories;
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 	}
 
 	@Override
@@ -114,8 +114,8 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	 */
 	private void handleConnectionAchievements(Player player) {
 		String dateString = LocalDate.now().format(DATE_TIME_FORMATTER);
-		if (!dateString.equals(sqlDatabaseManager.getPlayerConnectionDate(player.getUniqueId()))) {
-			int connections = sqlDatabaseManager.updateAndGetConnection(player.getUniqueId(), dateString);
+		if (!dateString.equals(databaseManager.getPlayerConnectionDate(player.getUniqueId()))) {
+			int connections = databaseManager.updateAndGetConnection(player.getUniqueId(), dateString);
 			String achievementPath = NormalAchievements.CONNECTIONS + "." + connections;
 			String rewardPath = achievementPath + ".Reward";
 			if (mainConfig.getString(achievementPath + ".Message", null) != null) {
@@ -158,7 +158,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 				if (!advancementProgress.isDone()) {
 					advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
 				}
-				for (String achName : sqlDatabaseManager.getPlayerAchievementNamesList(player.getUniqueId())) {
+				for (String achName : databaseManager.getPlayerAchievementNamesList(player.getUniqueId())) {
 					advancement = Bukkit.getServer()
 							.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.getKey(achName)));
 					// Matching advancement might not exist if user has not called /aach generate.

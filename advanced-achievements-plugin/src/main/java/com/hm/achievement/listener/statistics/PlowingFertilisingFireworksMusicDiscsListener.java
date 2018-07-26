@@ -52,18 +52,17 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 			return;
 		}
 
-		Player player = event.getPlayer();
 		NormalAchievements category;
-
-		Material clickedMaterial = event.getClickedBlock().getType();
-		if (event.getItem().getType().name().contains("HOE") && canBePlowed(clickedMaterial, event.getClickedBlock())) {
+		Block clickedBlock = event.getClickedBlock();
+		if (event.getMaterial().name().contains("HOE") && canBePlowed(clickedBlock)) {
 			category = NormalAchievements.HOEPLOWING;
-		} else if (isBoneMeal(event.getItem()) && (canBeFertilisedOnLand(clickedMaterial, event.getClickedBlock())
-				|| canBeFertilisedUnderwater(clickedMaterial, event.getClickedBlock()))) {
+		} else if (isBoneMeal(event.getItem())
+				&& (canBeFertilisedOnLand(clickedBlock) || canBeFertilisedUnderwater(clickedBlock))) {
 			category = NormalAchievements.FERTILISING;
-		} else if (isFirework(event.getItem().getType()) && canAccommodateFireworkLaunch(clickedMaterial, player)) {
+		} else if (isFirework(event.getMaterial())
+				&& canAccommodateFireworkLaunch(clickedBlock.getType(), event.getPlayer())) {
 			category = NormalAchievements.FIREWORKS;
-		} else if (event.getItem().getType().isRecord() && clickedMaterial == Material.JUKEBOX) {
+		} else if (event.getMaterial().isRecord() && clickedBlock.getType() == Material.JUKEBOX) {
 			category = NormalAchievements.MUSICDISCS;
 		} else {
 			return;
@@ -73,24 +72,24 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 			return;
 		}
 
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)
-				|| category == NormalAchievements.MUSICDISCS && isInCooldownPeriod(player, true, category)) {
+		if (!shouldIncreaseBeTakenIntoAccount(event.getPlayer(), category)
+				|| category == NormalAchievements.MUSICDISCS && isInCooldownPeriod(event.getPlayer(), true, category)) {
 			return;
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), category, 1);
 	}
 
 	/**
 	 * Determines whether a material can be plowed with a hoe.
 	 *
-	 * @param material
 	 * @param block
+	 *
 	 * @return true if the block can be plowed, false otherwise
 	 */
-	private boolean canBePlowed(Material material, Block block) {
-		return (serverVersion < 13 && material == Material.GRASS || material == Material.DIRT
-				|| serverVersion >= 13 && material == Material.GRASS_BLOCK)
+	private boolean canBePlowed(Block block) {
+		return (serverVersion < 13 && block.getType() == Material.GRASS || block.getType() == Material.DIRT
+				|| serverVersion >= 13 && block.getType() == Material.GRASS_BLOCK)
 				&& block.getRelative(BlockFace.UP).getType() == Material.AIR;
 	}
 
@@ -108,13 +107,14 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 	/**
 	 * Determines whether a material can be fertilised on the land.
 	 *
-	 * @param material
 	 * @param block
+	 *
 	 * @return true if the block can be fertilised, false otherwise
 	 */
 	@SuppressWarnings("deprecation")
-	private boolean canBeFertilisedOnLand(Material material, Block block) {
+	private boolean canBeFertilisedOnLand(Block block) {
 		short durability = block.getState().getData().toItemStack(0).getDurability();
+		Material material = block.getType();
 		if ("DOUBLE_PLANT".equals(material.name())) {
 			if (durability == 10) {
 				// Upper part of double plant. We must look at the lower part to get the double plant type.
@@ -140,16 +140,17 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 	/**
 	 * Determines whether a material can be fertilised underneath the water.
 	 *
-	 * @param material
 	 * @param block
+	 *
 	 * @return true if the block can be fertilised, false otherwise
 	 */
-	private boolean canBeFertilisedUnderwater(Material material, Block block) {
+	private boolean canBeFertilisedUnderwater(Block block) {
 		if (serverVersion < 13) {
 			return false;
 		}
-		return material.isOccluding() && block.getRelative(BlockFace.UP).getType() == Material.WATER
-				|| material == Material.KELP || material == Material.SEAGRASS || material == Material.SEA_PICKLE;
+		return block.getType().isOccluding() && block.getRelative(BlockFace.UP).getType() == Material.WATER
+				|| block.getType() == Material.KELP || block.getType() == Material.SEAGRASS
+				|| block.getType() == Material.SEA_PICKLE;
 	}
 
 	/**

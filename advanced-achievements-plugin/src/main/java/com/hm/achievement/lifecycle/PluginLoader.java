@@ -405,12 +405,12 @@ public class PluginLoader {
 
 				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when
 				// performing /aach reload.
-                for (String groupElement : section.split("\\|")) {
-                    String permissionNode = category.toPermName() + "." + groupElement;
-                    if (pluginManager.getPermission(permissionNode) == null) {
-                        pluginManager.addPermission(new Permission(permissionNode, PermissionDefault.TRUE));
-                    }
-                }
+				for (String groupElement : section.split("\\|")) {
+					String permissionNode = category.toPermName() + "." + groupElement;
+					if (pluginManager.getPermission(permissionNode) == null) {
+						pluginManager.addPermission(new Permission(permissionNode, PermissionDefault.TRUE));
+					}
+				}
 			}
 		}
 	}

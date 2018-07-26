@@ -70,7 +70,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private final AdvancedAchievements advancedAchievements;
 	private final RewardParser rewardParser;
 	private final Map<String, String> achievementsAndDisplayNames;
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 	private final ToggleCommand toggleCommand;
 	private final FireworkListener fireworkListener;
 
@@ -99,7 +99,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			@Named("lang") CommentedYamlConfiguration langConfig, int serverVersion, Logger logger,
 			StringBuilder pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements,
 			RewardParser rewardParser, Map<String, String> achievementsAndDisplayNames,
-			AbstractDatabaseManager sqlDatabaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener) {
+			AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.serverVersion = serverVersion;
@@ -109,7 +109,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		this.advancedAchievements = advancedAchievements;
 		this.rewardParser = rewardParser;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 		this.toggleCommand = toggleCommand;
 		this.fireworkListener = fireworkListener;
 	}
@@ -167,7 +167,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 				}
 			}
 		}
-		sqlDatabaseManager.registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
+		databaseManager.registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 
 		List<String> rewardTexts = giveRewardsAndPrepareTexts(player, event.getCommandRewards(), event.getCommandMessages(),
 				event.getItemReward(), event.getMoneyReward(), event.getExperienceReward(), event.getMaxHealthReward(),

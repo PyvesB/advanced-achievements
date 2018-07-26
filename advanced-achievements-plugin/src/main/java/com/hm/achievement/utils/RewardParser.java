@@ -95,7 +95,7 @@ public class RewardParser implements Reloadable {
 		if (keyNames.contains(path + ".Item")) {
 			int amount = getItemAmount(path);
 			String name = getItemName(path);
-			if (name == null || name.isEmpty()) {
+			if (name.isEmpty()) {
 				name = getItemName(getItemReward(path));
 			}
 			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
@@ -177,7 +177,6 @@ public class RewardParser implements Reloadable {
 	 */
 	public ItemStack getItemReward(String path) {
 		int amount = getItemAmount(path);
-		String name = getItemName(path);
 		if (amount <= 0) {
 			return null;
 		}
@@ -203,7 +202,8 @@ public class RewardParser implements Reloadable {
 			if (rewardMaterial.isPresent()) {
 				ItemStack item = new ItemStack(rewardMaterial.get(), amount);
 
-				if (name != null) {
+				String name = getItemName(path);
+				if (!name.isEmpty()) {
 					ItemMeta meta = item.getItemMeta();
 					meta.setDisplayName(name);
 					item.setItemMeta(meta);
@@ -284,26 +284,14 @@ public class RewardParser implements Reloadable {
 	}
 
 	/**
-	 * Extracts the item reward custom name from the configuration.
+	 * Extracts the item reward custom name from the configuration. Not supported for old config syntax.
 	 *
 	 * @param path achievement configuration path
 	 * @return the custom name for an item reward
 	 */
 	private String getItemName(String path) {
-		String itemName = null;
-		// Old config syntax does not support item reward names
-		if (!mainConfig.getKeys(true).contains(path + ".Item.Amount")) {
-			String configString = mainConfig.getString(path + ".Item", "");
-			String[] splittedString = configString.split(" ");
-			if (splittedString.length >= 3) {
-				StringBuilder builder = new StringBuilder();
-				for (int i = 2; i < splittedString.length; i++) {
-					builder.append(splittedString[i]).append(" ");
-				}
-
-				itemName = builder.toString().trim();
-			}
-		}
-		return itemName;
+		String configString = mainConfig.getString(path + ".Item", "");
+		String[] splittedString = configString.split(" ");
+		return StringUtils.join(splittedString, " ", 2, splittedString.length).trim();
 	}
 }
