@@ -30,7 +30,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class CacheManager implements Cleanable {
 
 	private final CommentedYamlConfiguration mainConfig;
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
 	private final Map<NormalAchievements, Map<String, CachedStatistic>> normalAchievementsToPlayerStatistics;
 	// Statistics of the different players for multiple achievements; keys in the inner maps correspond to concatenated
@@ -43,9 +43,9 @@ public class CacheManager implements Cleanable {
 	private final Map<UUID, Integer> totalPlayerAchievementsCache;
 
 	@Inject
-	public CacheManager(@Named("main") CommentedYamlConfiguration mainConfig, AbstractDatabaseManager sqlDatabaseManager) {
+	public CacheManager(@Named("main") CommentedYamlConfiguration mainConfig, AbstractDatabaseManager databaseManager) {
 		this.mainConfig = mainConfig;
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
 		receivedAchievementsCache = new HashMap<>();
@@ -119,7 +119,7 @@ public class CacheManager implements Cleanable {
 	public long getAndIncrementStatisticAmount(NormalAchievements category, UUID player, int value) {
 		CachedStatistic statistic = getHashMap(category).get(player.toString());
 		if (statistic == null) {
-			statistic = new CachedStatistic(sqlDatabaseManager.getNormalAchievementAmount(player, category), true);
+			statistic = new CachedStatistic(databaseManager.getNormalAchievementAmount(player, category), true);
 			getHashMap(category).put(player.toString(), statistic);
 		}
 		if (value > 0) {
@@ -148,7 +148,7 @@ public class CacheManager implements Cleanable {
 				subcategoryDBName = StringUtils.deleteWhitespace(subcategory);
 			}
 			statistic = new CachedStatistic(
-					sqlDatabaseManager.getMultipleAchievementAmount(player, category, subcategoryDBName), true);
+					databaseManager.getMultipleAchievementAmount(player, category, subcategoryDBName), true);
 			getHashMap(category).put(getMultipleCategoryCacheKey(category, player, subcategory), statistic);
 		}
 		if (value > 0) {
@@ -176,7 +176,7 @@ public class CacheManager implements Cleanable {
 			return false;
 		}
 
-		boolean received = sqlDatabaseManager.hasPlayerAchievement(player, name);
+		boolean received = databaseManager.hasPlayerAchievement(player, name);
 		if (received) {
 			playerReceived.add(name);
 		} else {
@@ -195,7 +195,7 @@ public class CacheManager implements Cleanable {
 	public synchronized int getPlayerTotalAchievements(UUID player) {
 		Integer totalAchievements = totalPlayerAchievementsCache.get(player);
 		if (totalAchievements == null) {
-			totalAchievements = sqlDatabaseManager.getPlayerAchievementsAmount(player);
+			totalAchievements = databaseManager.getPlayerAchievementsAmount(player);
 			totalPlayerAchievementsCache.put(player, totalAchievements);
 		}
 		return totalAchievements;

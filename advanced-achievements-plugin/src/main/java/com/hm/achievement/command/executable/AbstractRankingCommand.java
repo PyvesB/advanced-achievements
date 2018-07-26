@@ -41,7 +41,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private final Logger logger;
 	private final int serverVersion;
 	private final Lang languageHeader;
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 
 	private ChatColor configColor;
 	private int configTopList;
@@ -57,12 +57,12 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 	AbstractRankingCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
 			StringBuilder pluginHeader, Logger logger, int serverVersion, Lang languageHeader,
-			AbstractDatabaseManager sqlDatabaseManager) {
+			AbstractDatabaseManager databaseManager) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.logger = logger;
 		this.serverVersion = serverVersion;
 		this.languageHeader = languageHeader;
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	public void onExecute(CommandSender sender, String[] args) {
 		if (System.currentTimeMillis() - lastCacheUpdate >= CACHE_EXPIRATION_DELAY) {
 			// Update cached data structures.
-			cachedSortedRankings = sqlDatabaseManager.getTopList(getRankingStartTime());
+			cachedSortedRankings = databaseManager.getTopList(getRankingStartTime());
 			cachedAchievementCounts = new ArrayList<>(cachedSortedRankings.values());
 			lastCacheUpdate = System.currentTimeMillis();
 		}
