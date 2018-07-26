@@ -307,10 +307,12 @@ Breaks:
         Command:
           Execute: give PLAYER dispenser 10; give PLAYER lever 5
 
-# When a specific mob is killed.
-# Use an Entity name or poweredcreeper, in lower case.
-# Use player to track player kills as a whole.
-# Use specificplayer- followed by player UUID to track how many times a specific player has been killed.
+# When "something" is killed. You can use any of the following:
+# - an Entity type, in lower case.
+# - poweredcreeper.
+# - a mob's custom name (name tag/plugins such as Mythic Mobs)..
+# - player to track player kills as a whole.
+# - specificplayer- followed by player UUID to track how many times a specific player has been killed.
 Kills:
   zombie:
     1:
@@ -320,6 +322,11 @@ Kills:
       Reward:
         Money: 1         
         Item: diamond 1
+  '&2Skeletal Knight':
+    1:
+      Message: You killed a Mythic Mob!
+      DisplayName: Mythic Killer
+      Name: kills_1_skeletal_night
   specificplayer-56c79b19-4500-466c-94ea-514a755fdd09:
     1:
       Message: You killed the author of the plugin!

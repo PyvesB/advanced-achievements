@@ -77,11 +77,10 @@ public class ResetCommand extends AbstractParsableCommand {
 				String categoryPath = category.toString() + "." + StringUtils.deleteWhitespace(subcategory);
 				if (categoryPath.equalsIgnoreCase(args[1])) {
 					CachedStatistic statistic = cacheManager.getHashMap(category)
-							.get(cacheManager.getMultipleCategoryCacheKey(category, player.getUniqueId(), subcategory));
+							.get(cacheManager.getMultipleCategoryCacheKey(player.getUniqueId(), subcategory));
 					if (statistic == null) {
-						cacheManager.getHashMap(category).put(
-								cacheManager.getMultipleCategoryCacheKey(category, player.getUniqueId(), subcategory),
-								new CachedStatistic(0L, false));
+						cacheManager.getHashMap(category).put(cacheManager.getMultipleCategoryCacheKey(player.getUniqueId(),
+								subcategory), new CachedStatistic(0L, false));
 					} else {
 						statistic.setValue(0L);
 					}
