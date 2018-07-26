@@ -59,19 +59,8 @@ public class BreaksListener extends AbstractListener {
 		}
 
 		Block block = event.getBlock();
-		if (disableSilkTouchOreBreaks && silkTouchBreak) {
-			switch (block.getType()) {
-				case COAL_ORE:
-				case DIAMOND_ORE:
-				case EMERALD_ORE:
-				case LAPIS_ORE:
-				case QUARTZ_ORE:
-				case REDSTONE_ORE:
-				case GLOWING_REDSTONE_ORE:
-					return;
-				default:
-					break;
-			}
+		if (disableSilkTouchOreBreaks && silkTouchBreak && isOre(block.getType().name())) {
+			return;
 		}
 
 		MultipleAchievements category = MultipleAchievements.BREAKS;
@@ -86,5 +75,28 @@ public class BreaksListener extends AbstractListener {
 		foundAchievements.addAll(findAchievementsByCategoryAndName(category, blockName));
 		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
 				achievement, 1));
+	}
+
+	/**
+	 * Determines whether the borken material is an ore.
+	 * 
+	 * @param materialName
+	 * @return boolean if material is of type ore.
+	 */
+	private boolean isOre(String materialName) {
+		switch (materialName) {
+			case "COAL_ORE":
+			case "DIAMOND_ORE":
+			case "EMERALD_ORE":
+			case "LAPIS_ORE":
+			case "NETHER_QUARTZ_ORE":
+			case "REDSTONE_ORE":
+				// Pre Minecraft 1.13:
+			case "QUARTZ_ORE":
+			case "GLOWING_REDSTONE_ORE":
+				return true;
+			default:
+				return false;
+		}
 	}
 }

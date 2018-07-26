@@ -60,8 +60,9 @@ public class ConfigModule {
 	@Provides
 	@Singleton
 	@Named("gui")
-	CommentedYamlConfiguration providesGuiConfig(AdvancedAchievements advancedAchievements) {
-		return new CommentedYamlConfiguration("gui.yml", advancedAchievements);
+	CommentedYamlConfiguration providesGuiConfig(AdvancedAchievements advancedAchievements, int serverVersion) {
+		String pluginResourceName = serverVersion < 13 ? "gui-legacy.yml" : "gui.yml";
+		return new CommentedYamlConfiguration("gui.yml", pluginResourceName, advancedAchievements);
 	}
 
 }
