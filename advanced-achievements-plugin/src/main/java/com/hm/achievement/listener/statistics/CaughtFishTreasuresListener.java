@@ -47,8 +47,9 @@ public class CaughtFishTreasuresListener extends AbstractListener {
 
 		Player player = event.getPlayer();
 		NormalAchievements category;
-		Item caughtItem = (Item) event.getCaught();
-		if (caughtItem.getItemStack().getType() == Material.RAW_FISH) {
+		Material caughtMaterial = ((Item) event.getCaught()).getItemStack().getType();
+		if (caughtMaterial.name().endsWith("FISH")
+				|| serverVersion >= 13 && (caughtMaterial == Material.COD || caughtMaterial == Material.SALMON)) {
 			category = NormalAchievements.FISH;
 		} else {
 			category = NormalAchievements.TREASURES;

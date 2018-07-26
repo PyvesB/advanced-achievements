@@ -11,7 +11,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
+import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -180,18 +180,20 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private void launchEffects(Player player) {
 		// Play special effect when in top list.
 		if (configAdditionalEffects) {
-			try {
-				ParticleEffect.PORTAL.display(0, 1, 0, 0.5f, 1000, player.getLocation(), 1);
-			} catch (Exception e) {
-				logger.warning("Failed to display additional particle effects for rankings.");
+			if (serverVersion >= 13) {
+				player.spawnParticle(Particle.PORTAL, player.getLocation(), 100, 0, 1, 0, 0.5f);
+			} else {
+				try {
+					ParticleEffect.PORTAL.display(0, 1, 0, 0.5f, 1000, player.getLocation(), 1);
+				} catch (Exception e) {
+					logger.warning("Failed to display additional particle effects for rankings.");
+				}
 			}
 		}
 
 		// Play special sound when in top list.
 		if (configSound) {
-			// If old version, retrieving sound by name as it no longer exists in newer versions.
-			Sound sound = serverVersion < 9 ? Sound.valueOf("FIREWORK_BLAST") : Sound.ENTITY_FIREWORK_LARGE_BLAST;
-			player.getWorld().playSound(player.getLocation(), sound, 1, 0.7f);
+			playSpecialSound(player, serverVersion);
 		}
 	}
 }
