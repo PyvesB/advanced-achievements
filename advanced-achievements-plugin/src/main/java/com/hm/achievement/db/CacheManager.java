@@ -22,7 +22,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 /**
  * Class used to provide a cache wrapper for various database statistics, in order to reduce load of database and enable
  * faster in-memory operations.
- * 
+ *
  * @author Pyves
  *
  */
@@ -89,7 +89,7 @@ public class CacheManager implements Cleanable {
 
 	/**
 	 * Retrieves a HashMap for a NormalAchievement based on the category.
-	 * 
+	 *
 	 * @param category
 	 * @return the map of cached statistics for a Normal category
 	 */
@@ -99,7 +99,7 @@ public class CacheManager implements Cleanable {
 
 	/**
 	 * Retrieves a HashMap for a MultipleAchievement based on the category.
-	 * 
+	 *
 	 * @param category
 	 * @return the map of cached statistics for a Multiple category
 	 */
@@ -110,7 +110,7 @@ public class CacheManager implements Cleanable {
 	/**
 	 * Increases the statistic for a NormalAchievement by the given value and returns the updated statistic value. Calls
 	 * the database if not found in the cache.
-	 * 
+	 *
 	 * @param category
 	 * @param player
 	 * @param value
@@ -133,7 +133,7 @@ public class CacheManager implements Cleanable {
 	/**
 	 * Increases the statistic for a MultipleAchievement by the given value and returns the updated statistic value.
 	 * Calls the database if not found in the cache.
-	 * 
+	 *
 	 * @param category
 	 * @param subcategory
 	 * @param player
@@ -144,7 +144,7 @@ public class CacheManager implements Cleanable {
 		CachedStatistic statistic = getHashMap(category).get(getMultipleCategoryCacheKey(player, subcategory));
 		if (statistic == null) {
 			String subcategoryDBName = StringUtils.deleteWhitespace(subcategory);
-			statistic = new CachedStatistic(sqlDatabaseManager.getMultipleAchievementAmount(player, category,
+			statistic = new CachedStatistic(databaseManager.getMultipleAchievementAmount(player, category,
 					subcategoryDBName), true);
 			getHashMap(category).put(getMultipleCategoryCacheKey(player, subcategory), statistic);
 		}
@@ -158,7 +158,7 @@ public class CacheManager implements Cleanable {
 
 	/**
 	 * Returns whether player has received a specific achievement.
-	 * 
+	 *
 	 * @param player
 	 * @param name
 	 * @return true if achievement received by player, false otherwise
@@ -185,7 +185,7 @@ public class CacheManager implements Cleanable {
 	/**
 	 * Returns the total number of achievements received by a player. Can be called asynchronously by BungeeTabListPlus,
 	 * method must therefore be synchronized to avoid race conditions if a player calls /aach stats at the same time.
-	 * 
+	 *
 	 * @param player
 	 * @return the number of achievements received by the player
 	 */
@@ -201,7 +201,7 @@ public class CacheManager implements Cleanable {
 	/**
 	 * Returns a key for the multipleAchievementsToPlayerStatistics structure. Concatenation of player UUID and
 	 * subcategory name, with removed whitespaces.
-	 * 
+	 *
 	 * @param player
 	 * @param subcategory
 	 * @return the statistics key for a Multiple category
@@ -213,7 +213,7 @@ public class CacheManager implements Cleanable {
 	/**
 	 * Adds an achievement to the achievement received cache and removes it from the not received cache. A call to
 	 * {@link #hasPlayerAchievement(UUID, String)} is expected to have been made made beforehand for the same player.
-	 * 
+	 *
 	 * @param player
 	 * @param achievementName
 	 */
@@ -226,7 +226,7 @@ public class CacheManager implements Cleanable {
 	/**
 	 * Removes an achievement from the achievement received cache and adds it to the not received cache. A call to
 	 * {@link #hasPlayerAchievement(UUID, String)} is expected to have been made made beforehand for the same player.
-	 * 
+	 *
 	 * @param player
 	 * @param achievementName
 	 */
