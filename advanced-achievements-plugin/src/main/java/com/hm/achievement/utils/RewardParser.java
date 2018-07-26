@@ -3,8 +3,8 @@ package com.hm.achievement.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +37,7 @@ public class RewardParser implements Reloadable {
 
 	private final CommentedYamlConfiguration mainConfig;
 	private final CommentedYamlConfiguration langConfig;
-	private final Logger logger;
+	private final MaterialHelper materialHelper;
 
 	private String langListRewardMoney;
 	private String langListRewardItem;
@@ -50,10 +50,10 @@ public class RewardParser implements Reloadable {
 
 	@Inject
 	public RewardParser(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger) {
+			@Named("lang") CommentedYamlConfiguration langConfig, MaterialHelper materialHelper) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
-		this.logger = logger;
+		this.materialHelper = materialHelper;
 		// Try to retrieve an Economy instance from Vault.
 		if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
 			RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
@@ -95,7 +95,7 @@ public class RewardParser implements Reloadable {
 		if (keyNames.contains(path + ".Item")) {
 			int amount = getItemAmount(path);
 			String name = getItemName(path);
-			if (name == null || name.isEmpty()) {
+			if (name.isEmpty()) {
 				name = getItemName(getItemReward(path));
 			}
 			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
@@ -177,44 +177,41 @@ public class RewardParser implements Reloadable {
 	 */
 	public ItemStack getItemReward(String path) {
 		int amount = getItemAmount(path);
-		String name = getItemName(path);
 		if (amount <= 0) {
 			return null;
 		}
 
-		ItemStack item = null;
-		if (mainConfig.getKeys(true).contains(path + ".Item.Type")) {
+		String typePath = path + ".Item.Type";
+		if (mainConfig.getKeys(true).contains(typePath)) {
 			// Old config syntax (type of item separated in a additional subcategory).
-			Material rewardMaterial = Material.getMaterial(mainConfig.getString(path + ".Item.Type", "stone").toUpperCase());
-			if (rewardMaterial != null) {
-				item = new ItemStack(rewardMaterial, amount);
+			Optional<Material> rewardMaterial = materialHelper.matchMaterial(mainConfig.getString(typePath),
+					"config.yml (" + typePath + ")");
+			if (rewardMaterial.isPresent()) {
+				return new ItemStack(rewardMaterial.get(), amount);
 			}
 		} else {
 			// New config syntax. Reward is of the form: "Item: coal 5 Christmas Coal"
 			// The amount has already been parsed out and is provided by parameter amount.
-			String materialNameAndQty = mainConfig.getString(path + ".Item", "stone");
+			String itemPath = path + ".Item";
+			String materialNameAndQty = mainConfig.getString(itemPath, "");
 			int spaceIndex = materialNameAndQty.indexOf(' ');
 
-			String materialName = spaceIndex > 0 ? materialNameAndQty.toUpperCase().substring(0, spaceIndex)
-					: materialNameAndQty.toUpperCase();
+			String materialName = spaceIndex > 0 ? materialNameAndQty.substring(0, spaceIndex) : materialNameAndQty;
 
-			Material rewardMaterial = Material.getMaterial(materialName);
-			if (rewardMaterial != null) {
-				item = new ItemStack(rewardMaterial, amount);
+			Optional<Material> rewardMaterial = materialHelper.matchMaterial(materialName, "config.yml (" + typePath + ")");
+			if (rewardMaterial.isPresent()) {
+				ItemStack item = new ItemStack(rewardMaterial.get(), amount);
 
-				if (name != null) {
+				String name = getItemName(path);
+				if (!name.isEmpty()) {
 					ItemMeta meta = item.getItemMeta();
 					meta.setDisplayName(name);
 					item.setItemMeta(meta);
 				}
-
+				return item;
 			}
 		}
-		if (item == null) {
-			logger.warning(
-					"Invalid item reward for achievement with path \"" + path + "\". Please specify a valid Material name.");
-		}
-		return item;
+		return null;
 	}
 
 	/**
@@ -287,26 +284,14 @@ public class RewardParser implements Reloadable {
 	}
 
 	/**
-	 * Extracts the item reward custom name from the configuration.
+	 * Extracts the item reward custom name from the configuration. Not supported for old config syntax.
 	 *
 	 * @param path achievement configuration path
 	 * @return the custom name for an item reward
 	 */
 	private String getItemName(String path) {
-		String itemName = null;
-		// Old config syntax does not support item reward names
-		if (!mainConfig.getKeys(true).contains(path + ".Item.Amount")) {
-			String configString = mainConfig.getString(path + ".Item", "");
-			String[] splittedString = configString.split(" ");
-			if (splittedString.length >= 2) {
-				StringBuilder builder = new StringBuilder();
-				for (int i = 2; i < splittedString.length; i++) {
-					builder.append(splittedString[i]).append(" ");
-				}
-
-				itemName = builder.toString().trim();
-			}
-		}
-		return itemName;
+		String configString = mainConfig.getString(path + ".Item", "");
+		String[] splittedString = configString.split(" ");
+		return StringUtils.join(splittedString, " ", 2, splittedString.length).trim();
 	}
 }

@@ -68,6 +68,7 @@
 					<include>plugin.yml</include>
 					<include>config.yml</include>
 					<include>gui.yml</include>
+					<include>gui-legacy.yml</include>
 				</includes>
 				<filtering>true</filtering>
 			</resource>

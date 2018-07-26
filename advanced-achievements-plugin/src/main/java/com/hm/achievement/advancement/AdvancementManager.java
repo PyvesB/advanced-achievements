@@ -24,6 +24,7 @@ import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancem
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.MaterialHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
@@ -60,22 +61,26 @@ public class AdvancementManager implements Reloadable {
 	private final Logger logger;
 	private final Map<String, List<Long>> sortedThresholds;
 	private final Set<String> disabledCategories;
+	private final MaterialHelper materialHelper;
 	private final UnsafeValues unsafeValues;
 
 	private boolean configRegisterAdvancementDescriptions;
 	private boolean configHideAdvancements;
+	private String configRootAdvancementTitle;
+	private String configBackgroundTexture;
 	private int generatedAdvancements;
 
 	@Inject
 	public AdvancementManager(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("gui") CommentedYamlConfiguration guiConfig, AdvancedAchievements advancedAchievements, Logger logger,
-			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories) {
+			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories, MaterialHelper materialHelper) {
 		this.mainConfig = mainConfig;
 		this.guiConfig = guiConfig;
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.sortedThresholds = sortedThresholds;
 		this.disabledCategories = disabledCategories;
+		this.materialHelper = materialHelper;
 		unsafeValues = Bukkit.getUnsafe();
 		generatedAdvancements = 0;
 	}
@@ -84,6 +89,9 @@ public class AdvancementManager implements Reloadable {
 	public void extractConfigurationParameters() {
 		configRegisterAdvancementDescriptions = mainConfig.getBoolean("RegisterAdvancementDescriptions", true);
 		configHideAdvancements = mainConfig.getBoolean("HideAdvancements", false);
+		configRootAdvancementTitle = mainConfig.getString("RootAdvancementTitle", "Advanced Achievements");
+		configBackgroundTexture = mainConfig.getString("AdvancementsBackground",
+				"minecraft:textures/items/book_enchanted.png");
 	}
 
 	public static String getKey(String achName) {
@@ -107,8 +115,7 @@ public class AdvancementManager implements Reloadable {
 		Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
 		while (advancements.hasNext()) {
 			NamespacedKey namespacedKey = advancements.next().getKey();
-			if ("advancedachievements".equals(namespacedKey.getNamespace())
-					&& !ADVANCED_ACHIEVEMENTS_PARENT.equals(namespacedKey.getKey())) {
+			if ("advancedachievements".equals(namespacedKey.getNamespace())) {
 				++achievementsCleaned;
 				unsafeValues.removeAdvancement(namespacedKey);
 			}
@@ -124,11 +131,11 @@ public class AdvancementManager implements Reloadable {
 	private void registerParentAdvancement() {
 		AchievementAdvancementBuilder achievementAdvancementBuilder = new AchievementAdvancementBuilder()
 				.iconItem("minecraft:" + getInternalName(new ItemStack(Material.BOOK, 1, (short) 0)))
-				.iconData(Integer.toString(0)).title("Advanced Achievements").description("");
+				.iconData(Integer.toString(0)).title(configRootAdvancementTitle).description("");
 		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_PARENT);
 		if (Bukkit.getServer().getAdvancement(namespacedKey) == null) {
 			unsafeValues.loadAdvancement(namespacedKey,
-					achievementAdvancementBuilder.buildGoal().toParentJson(configHideAdvancements));
+					achievementAdvancementBuilder.buildGoal().toParentJson(configHideAdvancements, configBackgroundTexture));
 		}
 	}
 
@@ -210,8 +217,10 @@ public class AdvancementManager implements Reloadable {
 			description = REGEX_PATTERN_COLOURS.matcher(description).replaceAll("");
 		}
 
+		String path = categoryName + ".Item";
+		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BOOK, "gui.yml (" + path + ")");
 		AchievementAdvancementBuilder achievementAdvancementBuilder = new AchievementAdvancementBuilder()
-				.iconItem("minecraft:" + getInternalName(new ItemStack(getMaterial(categoryName), 1, (short) metadata)))
+				.iconItem("minecraft:" + getInternalName(new ItemStack(material, 1, (short) metadata)))
 				.iconData(Integer.toString(metadata)).title(achDisplayName).description(description).parent(parentKey);
 		if (lastAchievement) {
 			unsafeValues.loadAdvancement(namespacedKey, achievementAdvancementBuilder.buildChallenge().toJson());
@@ -220,22 +229,6 @@ public class AdvancementManager implements Reloadable {
 		}
 		++generatedAdvancements;
 		return achKey;
-	}
-
-	/**
-	 * Retrieves the Material enum corresponding to a name specified in gui.yml.
-	 * 
-	 * @param categoryName
-	 * @return the material for that category
-	 */
-	private Material getMaterial(String categoryName) {
-		Material material = Material.getMaterial(guiConfig.getString(categoryName + ".Item", "bedrock").toUpperCase());
-		if (material == null) {
-			material = Material.BOOK;
-			logger.warning("GUI material for category " + categoryName + " was not found. "
-					+ "Have you spelt the name correctly and is it available for your Minecraft version?");
-		}
-		return material;
 	}
 
 	/**

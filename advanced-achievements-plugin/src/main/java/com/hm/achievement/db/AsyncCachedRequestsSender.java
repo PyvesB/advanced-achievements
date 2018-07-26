@@ -31,15 +31,15 @@ public class AsyncCachedRequestsSender implements Runnable {
 	private final AdvancedAchievements advancedAchievements;
 	private final Logger logger;
 	private final CacheManager cacheManager;
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 
 	@Inject
 	public AsyncCachedRequestsSender(AdvancedAchievements advancedAchievements, Logger logger, CacheManager cacheManager,
-			AbstractDatabaseManager sqlDatabaseManager) {
+			AbstractDatabaseManager databaseManager) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.cacheManager = cacheManager;
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 		}
 
 		((SQLWriteOperation) () -> {
-			Connection conn = sqlDatabaseManager.getSQLConnection();
+			Connection conn = databaseManager.getSQLConnection();
 			try (Statement st = conn.createStatement()) {
 				for (String request : batchedRequests) {
 					st.addBatch(request);
@@ -98,13 +98,13 @@ public class AsyncCachedRequestsSender implements Runnable {
 			if (!entry.getValue().isDatabaseConsistent()) {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
 				entry.getValue().prepareDatabaseWrite();
-				if (sqlDatabaseManager instanceof PostgreSQLDatabaseManager) {
-					batchedRequests.add("INSERT INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+				if (databaseManager instanceof PostgreSQLDatabaseManager) {
+					batchedRequests.add("INSERT INTO " + databaseManager.getPrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
 							+ entry.getValue().getValue() + ") ON CONFLICT (playername, " + category.toSubcategoryDBName()
 							+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue().getValue() + ")");
 				} else {
-					batchedRequests.add("REPLACE INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+					batchedRequests.add("REPLACE INTO " + databaseManager.getPrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
 							+ entry.getValue().getValue() + ")");
 				}
@@ -127,13 +127,13 @@ public class AsyncCachedRequestsSender implements Runnable {
 			if (!entry.getValue().isDatabaseConsistent()) {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
 				entry.getValue().prepareDatabaseWrite();
-				if (sqlDatabaseManager instanceof PostgreSQLDatabaseManager) {
-					batchedRequests.add("INSERT INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+				if (databaseManager instanceof PostgreSQLDatabaseManager) {
+					batchedRequests.add("INSERT INTO " + databaseManager.getPrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue().getValue()
 							+ ") ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
 							+ entry.getValue().getValue() + ")");
 				} else {
-					batchedRequests.add("REPLACE INTO " + sqlDatabaseManager.getPrefix() + category.toDBName() + " VALUES ('"
+					batchedRequests.add("REPLACE INTO " + databaseManager.getPrefix() + category.toDBName() + " VALUES ('"
 							+ entry.getKey() + "', " + entry.getValue().getValue() + ")");
 				}
 			}

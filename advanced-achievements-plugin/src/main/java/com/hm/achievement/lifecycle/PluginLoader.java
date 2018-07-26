@@ -73,7 +73,7 @@ import dagger.Lazy;
 
 /**
  * Class in charge of loading/reloading the plugin. Orchestrates the different plugin components together.
- * 
+ *
  * @author Pyves
  */
 @Singleton
@@ -210,7 +210,7 @@ public class PluginLoader {
 
 	/**
 	 * Loads the plugin.
-	 * 
+	 *
 	 * @param firstLoad
 	 * @throws PluginLoadError
 	 */
@@ -299,7 +299,7 @@ public class PluginLoader {
 
 	/**
 	 * Registers a listener class, unless all matchingCatgories are disabled.
-	 * 
+	 *
 	 * @param listener
 	 * @param matchingCategories
 	 */
@@ -403,9 +403,11 @@ public class PluginLoader {
 
 				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when
 				// performing /aach reload.
-				if (pluginManager.getPermission(category.toPermName() + "." + section) == null) {
-					pluginManager
-							.addPermission(new Permission(category.toPermName() + "." + section, PermissionDefault.TRUE));
+				for (String groupElement : section.split("\\|")) {
+					String permissionNode = category.toPermName() + "." + groupElement;
+					if (pluginManager.getPermission(permissionNode) == null) {
+						pluginManager.addPermission(new Permission(permissionNode, PermissionDefault.TRUE));
+					}
 				}
 			}
 		}

@@ -21,6 +21,7 @@ import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.attribute.Attribute;
@@ -69,7 +70,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private final AdvancedAchievements advancedAchievements;
 	private final RewardParser rewardParser;
 	private final Map<String, String> achievementsAndDisplayNames;
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 	private final ToggleCommand toggleCommand;
 	private final FireworkListener fireworkListener;
 
@@ -98,7 +99,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			@Named("lang") CommentedYamlConfiguration langConfig, int serverVersion, Logger logger,
 			StringBuilder pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements,
 			RewardParser rewardParser, Map<String, String> achievementsAndDisplayNames,
-			AbstractDatabaseManager sqlDatabaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener) {
+			AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.serverVersion = serverVersion;
@@ -108,7 +109,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		this.advancedAchievements = advancedAchievements;
 		this.rewardParser = rewardParser;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 		this.toggleCommand = toggleCommand;
 		this.fireworkListener = fireworkListener;
 	}
@@ -166,7 +167,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 				}
 			}
 		}
-		sqlDatabaseManager.registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
+		databaseManager.registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 
 		List<String> rewardTexts = giveRewardsAndPrepareTexts(player, event.getCommandRewards(), event.getCommandMessages(),
 				event.getItemReward(), event.getMoneyReward(), event.getExperienceReward(), event.getMaxHealthReward(),
@@ -464,10 +465,20 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		} catch (Exception e) {
 			// Particle effect workaround to handle various bugs in early Spigot 1.9 and 1.11 releases. We try to
 			// simulate a firework.
-			player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_LAUNCH, 1, 0.6f);
-			ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, location, 1);
-			player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_BLAST, 1, 0.6f);
-			player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_TWINKLE, 1, 0.6f);
+			Sound launchSound = serverVersion < 9 ? Sound.valueOf("ENTITY_FIREWORK_LAUNCH")
+					: Sound.ENTITY_FIREWORK_ROCKET_LAUNCH;
+			player.getWorld().playSound(location, launchSound, 1, 0.6f);
+			if (serverVersion >= 13) {
+				player.spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 500, 0, 3, 0, 0.1f);
+			} else {
+				ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, player.getLocation(), 1);
+			}
+			Sound blastSound = serverVersion < 9 ? Sound.valueOf("ENTITY_FIREWORK_BLAST")
+					: Sound.ENTITY_FIREWORK_ROCKET_BLAST;
+			player.getWorld().playSound(location, blastSound, 1, 0.6f);
+			Sound twinkleSound = serverVersion < 9 ? Sound.valueOf("ENTITY_FIREWORK_TWINKLE")
+					: Sound.ENTITY_FIREWORK_ROCKET_BLAST;
+			player.getWorld().playSound(location, twinkleSound, 1, 0.6f);
 		}
 	}
 
@@ -502,7 +513,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		// If old version, retrieving sound by name as it no longer exists in newer versions.
 		Sound sound = serverVersion < 9 ? Sound.valueOf("LEVEL_UP") : Sound.ENTITY_PLAYER_LEVELUP;
 		player.getWorld().playSound(location, sound, 1, 0.9f);
-		ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, location, 1);
+		if (serverVersion >= 13) {
+			player.spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 500, 0, 3, 0, 0.1f);
+		} else {
+			ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, player.getLocation(), 1);
+		}
 	}
 
 	/**
