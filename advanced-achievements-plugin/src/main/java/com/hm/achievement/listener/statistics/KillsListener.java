@@ -64,9 +64,8 @@ public class KillsListener extends AbstractListener {
 			foundAchievements.addAll(findAchievementsByCategoryAndName(category, mobType));
 		}
 
-		String customName = "customname-" + entity.getCustomName();
-		if (player.hasPermission(category.toPermName() + '.' + customName)) {
-			foundAchievements.addAll(findAchievementsByCategoryAndName(category, customName));
+		if (entity.getCustomName() != null && player.hasPermission(category.toPermName() + '.' + entity.getCustomName())) {
+			foundAchievements.addAll(findAchievementsByCategoryAndName(category, entity.getCustomName()));
 		}
 
 		if (entity instanceof Player) {
