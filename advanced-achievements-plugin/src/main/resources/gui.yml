@@ -3,11 +3,9 @@
 # | Advanced Achievements ${project.version} /aach list GUI configuration | #
 # +----------------------------------------------------------+ #
 #==============================================================#
-# Possible items: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
-# Material names are not case sensitive in this configuration file.
+# Possible items: github.com/PyvesB/AdvancedAchievements/wiki/Material-names
 # Do not use bedrock or barrier.
-# Do not use the same Item and Metadata pair twice.
-# If you are using a Minecraft version prior to 1.9, change grass_path of HoePlowings!
+# Do not use the same Item twice.
 
 # Items used to represent the achievements.
 AchievementNotStarted:
