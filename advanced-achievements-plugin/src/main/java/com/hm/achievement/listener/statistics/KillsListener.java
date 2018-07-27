@@ -45,16 +45,8 @@ public class KillsListener extends AbstractListener {
 		}
 
 		Entity entity = event.getEntity();
-
-		String mobType;
-		if (entity instanceof Player) {
-			mobType = "player";
-		} else {
-			mobType = entity.getType().name().toLowerCase();
-			if (entity instanceof Creeper && ((Creeper) entity).isPowered()) {
-				mobType = "poweredcreeper";
-			}
-		}
+		String mobType = (entity instanceof Creeper && ((Creeper) entity).isPowered()) ? "poweredcreeper"
+				: entity.getType().name().toLowerCase();
 
 		MultipleAchievements category = MultipleAchievements.KILLS;
 
