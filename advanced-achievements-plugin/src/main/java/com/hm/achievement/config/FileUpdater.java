@@ -185,7 +185,7 @@ public class FileUpdater {
 					"See https://github.com/PyvesB/AdvancedAchievements/wiki/Rewards");
 		}
 
-		// Added in INSERT VERSION:
+		// Added in 5.9.0:
 		updateSetting(config, "RootAdvancementTitle", "Advanced Achievements", "Title shown on the root advancement.");
 		updateSetting(config, "AdvancementsBackground", "minecraft:textures/items/book_enchanted.png",
 				"Background shown on the Advanced Achievements advancement tab.",
