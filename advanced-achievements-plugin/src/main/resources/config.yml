@@ -8,9 +8,7 @@
 # Only spaces, NO tabs. Don't forget the indents (2 spaces per indentation level), plugin won't work otherwise!
 # To check syntax errors in your file, use: yaml-online-parser.appspot.com
 # Do NOT delete any top level (= not indentented) sections in the configuration file.
-# Possible items for rewards/Crafts/Places/Breaks: hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
-# Possible mobs for the Kills section:    hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
-# Default config.yml file:  github.com/PyvesB/AdvancedAchievements/blob/master/src/main/resources/config.yml
+# Default config.yml: github.com/PyvesB/AdvancedAchievements/blob/master/advanced-achievements-plugin/src/main/resources/config.yml
 # Visit the wiki for some valuable additional documentation: github.com/PyvesB/AdvancedAchievements/wiki
 
 #=============================O=O=============================#
@@ -251,7 +249,7 @@ PooledRequestsTaskInterval: 10
 # 5---------------------------------------------------------5 #
 #============================ooooo============================#
 
-# When a specific block is placed (specify material name, lower case).
+# When a specific block is placed (available names: github.com/PyvesB/AdvancedAchievements/wiki/Material-names).
 Places:  
   chest:
     5:
@@ -282,8 +280,8 @@ Places:
           Execute: "say §7ALERT: §4PLAYER§7 has become the §4STONE GOD§7!"
           Display: Become the Stone God!
 
-# When a specific block is broken (specify material name, lower case).
-# Below, the notation sand:1 means sand item with metadata 1 (red sand) ONLY for pre-1.13 versions.
+# When a specific block is broken (available names: github.com/PyvesB/AdvancedAchievements/wiki/Material-names).
+# You can use notations such as sand:1 for pre-1.13 versions, which means sand item with metadata 1 (red sand) .
 Breaks: 
   ice:
     10:
@@ -308,9 +306,9 @@ Breaks:
           Execute: give PLAYER dispenser 10; give PLAYER lever 5
 
 # When "something" is killed. You can use any of the following:
-# - an Entity type, in lower case.
+# - an entity type (available names: github.com/PyvesB/AdvancedAchievements/wiki/Entity-names).
 # - poweredcreeper.
-# - a mob's custom name (name tag/plugins such as Mythic Mobs)..
+# - a mob's custom name (name tag/plugins such as Mythic Mobs).
 # - player to track player kills as a whole.
 # - specificplayer- followed by player UUID to track how many times a specific player has been killed.
 Kills:
@@ -335,7 +333,7 @@ Kills:
       Reward:
         IncreaseMaxHealth: 1
           
-# When a specific item is crafted (specify material name, lower case).
+# When a specific item is crafted (available names: github.com/PyvesB/AdvancedAchievements/wiki/Material-names).
 Crafts:
   diamond_sword:
     1:
@@ -359,7 +357,7 @@ PlayerCommands:
           Execute: "say §cALERT: §7PLAYER is now a statistician"
           Display: Broadcast
           
-# When animals breed (specify an entity name, lower case).
+# When animals breed (available names: github.com/PyvesB/AdvancedAchievements/wiki/Entity-names).
 Breeding:
   sheep:
     1:
