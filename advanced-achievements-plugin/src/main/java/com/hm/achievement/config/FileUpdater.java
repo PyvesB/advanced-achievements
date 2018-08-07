@@ -187,7 +187,7 @@ public class FileUpdater {
 
 		// Added in 5.9.0:
 		updateSetting(config, "RootAdvancementTitle", "Advanced Achievements", "Title shown on the root advancement.");
-		updateSetting(config, "AdvancementsBackground", "minecraft:textures/items/book_enchanted.png",
+		updateSetting(config, "AdvancementsBackground", "minecraft:textures/item/book.png",
 				"Background shown on the Advanced Achievements advancement tab.",
 				"Must be a resource location to any image in a resource pack.");
 

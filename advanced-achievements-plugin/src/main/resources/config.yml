@@ -190,7 +190,7 @@ AllAchievementsReceivedRewards:
 RootAdvancementTitle: "Advanced Achievements"
 # Background shown on the Advanced Achievements advancement tab.
 # Must be a resource location to any image in a resource pack.
-AdvancementsBackground: "minecraft:textures/items/book_enchanted.png"
+AdvancementsBackground: "minecraft:textures/item/book.png"
 
 #=============================OOO=============================#
 # III-----------------------------------------------------III #

@@ -10,42 +10,51 @@ public class AchievementAdvancement {
 
 	public static final String CRITERIA_NAME = "aach_handled";
 
-	private String iconItem;
-	private String iconData;
-	private String title;
-	private String description;
-	private String parent;
-	private String frame;
+	private final String iconItem;
+	private final String iconData;
+	private final String title;
+	private final String description;
+	private final String parent;
+	private final String background;
+	private final String frame;
 
 	private AchievementAdvancement(String iconItem, String iconData, String title, String description, String parent,
-			String frame) {
+			String background, String frame) {
 		this.iconItem = iconItem;
 		this.iconData = iconData;
 		this.title = title;
 		this.description = description;
 		this.parent = parent;
+		this.background = background;
 		this.frame = frame;
 	}
 
-	public String toJson() {
-		return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
-				+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]], " + "\"display\": " + "{\"icon\": {\"item\": \""
-				+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", "
-				+ "\"description\": \"" + description + "\", \"frame\": \"" + frame
-				+ "\", \"announce_to_chat\": false}, \"parent\": \"advancedachievements:" + parent + "\"}";
+	public String getIconItem() {
+		return iconItem;
 	}
 
-	public String toParentJson(boolean configHideAdvancements, String background) {
-		if (configHideAdvancements) {
-			return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
-					+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]], \"background\": \"" + background + "\"}";
+	public String getIconData() {
+		return iconData;
+	}
 
-		}
-		return "{\"criteria\": {\"" + CRITERIA_NAME + "\": {\"trigger\": \"minecraft:impossible\"}}, "
-				+ "\"requirements\": [[\"" + CRITERIA_NAME + "\"]], " + "\"display\": " + "{\"icon\": {\"item\": \""
-				+ iconItem + "\",\"data\": " + iconData + "}, " + "\"title\": \"" + title + "\", "
-				+ "\"description\": \"" + description + "\", \"frame\": \"" + frame
-				+ "\", \"background\": \"" + background + "\", \"announce_to_chat\": false}}";
+	public String getTitle() {
+		return title;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public String getBackground() {
+		return background;
+	}
+
+	public String getFrame() {
+		return frame;
 	}
 
 	public static class AchievementAdvancementBuilder {
@@ -55,6 +64,8 @@ public class AchievementAdvancement {
 		private String title;
 		private String description;
 		private String parent;
+		private String background;
+		private AdvancementType type;
 
 		public AchievementAdvancementBuilder iconItem(String iconItem) {
 			this.iconItem = iconItem;
@@ -81,16 +92,19 @@ public class AchievementAdvancement {
 			return this;
 		}
 
-		public AchievementAdvancement buildTask() {
-			return new AchievementAdvancement(iconItem, iconData, title, description, parent, "task");
+		public AchievementAdvancementBuilder background(String background) {
+			this.background = background;
+			return this;
 		}
 
-		public AchievementAdvancement buildChallenge() {
-			return new AchievementAdvancement(iconItem, iconData, title, description, parent, "challenge");
+		public AchievementAdvancementBuilder type(AdvancementType type) {
+			this.type = type;
+			return this;
 		}
 
-		public AchievementAdvancement buildGoal() {
-			return new AchievementAdvancement(iconItem, iconData, title, description, parent, "goal");
+		public AchievementAdvancement build() {
+			return new AchievementAdvancement(iconItem, iconData, title, description, parent, background, type.toString());
 		}
+
 	}
 }

@@ -62,6 +62,7 @@ public class AdvancementManager implements Reloadable {
 	private final Map<String, List<Long>> sortedThresholds;
 	private final Set<String> disabledCategories;
 	private final MaterialHelper materialHelper;
+	private final int serverVersion;
 	private final UnsafeValues unsafeValues;
 
 	private boolean configRegisterAdvancementDescriptions;
@@ -73,7 +74,8 @@ public class AdvancementManager implements Reloadable {
 	@Inject
 	public AdvancementManager(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("gui") CommentedYamlConfiguration guiConfig, AdvancedAchievements advancedAchievements, Logger logger,
-			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories, MaterialHelper materialHelper) {
+			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories, MaterialHelper materialHelper,
+			int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.guiConfig = guiConfig;
 		this.advancedAchievements = advancedAchievements;
@@ -81,8 +83,8 @@ public class AdvancementManager implements Reloadable {
 		this.sortedThresholds = sortedThresholds;
 		this.disabledCategories = disabledCategories;
 		this.materialHelper = materialHelper;
+		this.serverVersion = serverVersion;
 		unsafeValues = Bukkit.getUnsafe();
-		generatedAdvancements = 0;
 	}
 
 	@Override
@@ -90,8 +92,7 @@ public class AdvancementManager implements Reloadable {
 		configRegisterAdvancementDescriptions = mainConfig.getBoolean("RegisterAdvancementDescriptions", true);
 		configHideAdvancements = mainConfig.getBoolean("HideAdvancements", false);
 		configRootAdvancementTitle = mainConfig.getString("RootAdvancementTitle", "Advanced Achievements");
-		configBackgroundTexture = mainConfig.getString("AdvancementsBackground",
-				"minecraft:textures/items/book_enchanted.png");
+		configBackgroundTexture = parseBackgroundTexture();
 	}
 
 	public static String getKey(String achName) {
@@ -105,6 +106,20 @@ public class AdvancementManager implements Reloadable {
 		cleanupOldAchievementAdvancements();
 		registerParentAdvancement();
 		registerOtherAdvancements();
+	}
+
+	/**
+	 * Parses the background texture to insure maximum compatibility across Minecraft versions.
+	 * 
+	 * @return the background texture path
+	 */
+	private String parseBackgroundTexture() {
+		String configTexture = mainConfig.getString("AdvancementsBackground", "minecraft:textures/item/book.png");
+		if (serverVersion == 12) {
+			return StringUtils.replace(configTexture, "/item/", "/items/");
+		}
+		return StringUtils.replaceEach(configTexture, new String[] { "/items/", "book_enchanted.png" },
+				new String[] { "/item/", "enchanted_book.png" });
 	}
 
 	/**
@@ -129,13 +144,21 @@ public class AdvancementManager implements Reloadable {
 	 * by Advanced Achievements.
 	 */
 	private void registerParentAdvancement() {
-		AchievementAdvancementBuilder achievementAdvancementBuilder = new AchievementAdvancementBuilder()
-				.iconItem("minecraft:" + getInternalName(new ItemStack(Material.BOOK, 1, (short) 0)))
-				.iconData(Integer.toString(0)).title(configRootAdvancementTitle).description("");
 		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_PARENT);
 		if (Bukkit.getServer().getAdvancement(namespacedKey) == null) {
-			unsafeValues.loadAdvancement(namespacedKey,
-					achievementAdvancementBuilder.buildGoal().toParentJson(configHideAdvancements, configBackgroundTexture));
+			if (configHideAdvancements) {
+				unsafeValues.loadAdvancement(namespacedKey, AdvancementJsonHelper.toHiddenJson(configBackgroundTexture));
+			} else {
+				AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
+						.iconItem(getInternalName(new ItemStack(Material.BOOK, 1, (short) 0)))
+						.title(configRootAdvancementTitle)
+						.description("")
+						.background(configBackgroundTexture)
+						.type(AdvancementType.GOAL);
+
+				AchievementAdvancement aa = (serverVersion == 12 ? builder.iconData(Integer.toString(0)) : builder).build();
+				unsafeValues.loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(aa));
+			}
 		}
 	}
 
@@ -143,6 +166,7 @@ public class AdvancementManager implements Reloadable {
 	 * Registers all non parent advancements.
 	 */
 	private void registerOtherAdvancements() {
+		generatedAdvancements = 1; // Already generated 1 for parent.
 		if (!disabledCategories.contains("Commands")) {
 			String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
 			for (String ach : mainConfig.getConfigurationSection("Commands").getKeys(false)) {
@@ -179,9 +203,10 @@ public class AdvancementManager implements Reloadable {
 				: sortedThresholds.get(categoryName + subcategory);
 		String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
 		// Advancements are registered as a branch with increasing threshold values.
-		for (long threshold : orderedThresholds) {
-			parentKey = registerAdvancement(categoryName, categoryName + subcategory + "." + threshold, parentKey,
-					orderedThresholds.isEmpty());
+		for (int i = 0; i < orderedThresholds.size(); ++i) {
+			boolean last = (i == orderedThresholds.size() - 1);
+			parentKey = registerAdvancement(categoryName, categoryName + subcategory + "." + orderedThresholds.get(i),
+					parentKey, last);
 		}
 	}
 
@@ -219,14 +244,15 @@ public class AdvancementManager implements Reloadable {
 
 		String path = categoryName + ".Item";
 		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BOOK, "gui.yml (" + path + ")");
-		AchievementAdvancementBuilder achievementAdvancementBuilder = new AchievementAdvancementBuilder()
-				.iconItem("minecraft:" + getInternalName(new ItemStack(material, 1, (short) metadata)))
-				.iconData(Integer.toString(metadata)).title(achDisplayName).description(description).parent(parentKey);
-		if (lastAchievement) {
-			unsafeValues.loadAdvancement(namespacedKey, achievementAdvancementBuilder.buildChallenge().toJson());
-		} else {
-			unsafeValues.loadAdvancement(namespacedKey, achievementAdvancementBuilder.buildTask().toJson());
-		}
+		AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
+				.iconItem(getInternalName(new ItemStack(material, 1, (short) metadata)))
+				.title(achDisplayName)
+				.description(description)
+				.parent("advancedachievements:" + parentKey)
+				.type(lastAchievement ? AdvancementType.CHALLENGE : AdvancementType.TASK);
+
+		AchievementAdvancement aa = (serverVersion == 12 ? builder.iconData(Integer.toString(metadata)) : builder).build();
+		unsafeValues.loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(aa));
 		++generatedAdvancements;
 		return achKey;
 	}
@@ -236,7 +262,7 @@ public class AdvancementManager implements Reloadable {
 	 * and internal names can differ quite significantly (for instance: book_and_quill vs. writable_book).
 	 * 
 	 * @param item
-	 * @return the internal Minecraft name
+	 * @return the internal Minecraft name, prefixed with "minecraft:"
 	 */
 	private String getInternalName(ItemStack item) {
 		try {
@@ -247,11 +273,12 @@ public class AdvancementManager implements Reloadable {
 			Object registry = PackageType.MINECRAFT_SERVER.getClass(CLASS_ITEM).getField(FIELD_REGISTRY).get(null);
 			Object minecraftKey = PackageType.MINECRAFT_SERVER.getClass(CLASS_REGISTRY_MATERIALS)
 					.getMethod(METHOD_B, Object.class).invoke(registry, nmsItem);
-			return (String) PackageType.MINECRAFT_SERVER.getClass(CLASS_MINECRAFT_KEY).getMethod(METHOD_GET_KEY)
+			return "minecraft:" + PackageType.MINECRAFT_SERVER.getClass(CLASS_MINECRAFT_KEY).getMethod(METHOD_GET_KEY)
 					.invoke(minecraftKey);
 		} catch (Exception e) {
 			logger.warning("Failed to get internal item name for advancement icon. Using book instead.");
-			return "book";
+			return "minecraft:book";
 		}
 	}
+
 }
