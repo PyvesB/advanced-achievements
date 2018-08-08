@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
@@ -265,8 +266,8 @@ public class CategoryGUI extends AbstractGUI {
 		if (date != null) {
 			itemMeta.setDisplayName(translateColorCodes(langListAchievementReceived + name));
 		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-			itemMeta.setDisplayName(
-					translateColorCodes(langListAchievementNotReceived + "&k" + REGEX_PATTERN.matcher(name).replaceAll("")));
+			itemMeta.setDisplayName(translateColorCodes(langListAchievementNotReceived + "&k" +
+					randomiseParts(REGEX_PATTERN.matcher(name).replaceAll(""))));
 		} else {
 			itemMeta.setDisplayName(translateColorCodes(StringEscapeUtils
 					.unescapeJava(langListAchievementNotReceived + "&o" + REGEX_PATTERN.matcher(name).replaceAll(""))));
@@ -420,12 +421,12 @@ public class CategoryGUI extends AbstractGUI {
 			lore.add(langListGoal);
 			String strippedAchMessage = REGEX_PATTERN.matcher(description).replaceAll("");
 			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-				lore.add(translateColorCodes(configListColorNotReceived + "&k" + strippedAchMessage));
+				lore.add(translateColorCodes(configListColorNotReceived + "&k" + randomiseParts(strippedAchMessage)));
 			} else {
 				lore.add(translateColorCodes(configListColorNotReceived + "&o" + strippedAchMessage));
 			}
 			lore.add("");
-			// Display progress if not COmmands category.
+			// Display progress if not Commands category.
 			if (!configObfuscateNotReceived && statistic != NO_STAT) {
 				String threshold = path.contains(".") ? path.split("\\.")[1] : path;
 				boolean timeStat = NormalAchievements.PLAYEDTIME.toString().equals(categoryName);
@@ -513,6 +514,23 @@ public class CategoryGUI extends AbstractGUI {
 			}
 		}
 		return barDisplay.append(configListColorNotReceived).append("]").toString();
+	}
+
+	/**
+	 * Randomises the contents of a string; preserves spaces.
+	 * 
+	 * @param text
+	 * @return a string with randomised alphabetic characters
+	 */
+	private String randomiseParts(String text) {
+		if (text.isEmpty()) {
+			return "";
+		}
+		StringBuilder randomisedText = new StringBuilder();
+		for (String part : StringUtils.split(text)) {
+			randomisedText.append(RandomStringUtils.randomAlphabetic(part.length())).append(' ');
+		}
+		return randomisedText.substring(0, randomisedText.length() - 1);
 	}
 
 	public ItemStack getPreviousButton() {
