@@ -7,27 +7,27 @@
 # +---------------------------------------------------------+ #
 #=============================================================#
 
-no-permissions: У вас нету разрешения использовать эту команду.
+no-permissions: У вас нет разрешения использовать эту команду.
 
 # Related to /aach reload.
 configuration-successfully-reloaded: Конфигурация успешно перезагружена.
-configuration-reload-failed: Ошибки при перечитывания конфигурации. Пожалуйста, просмотрите журналы для получения более подробной информации.
+configuration-reload-failed: Ошибки при перечитывании конфигурации. Пожалуйста, просмотрите журналы для получения более подробной информации.
 
 # Related to /aach top.
 top-achievement: 'ТОП Выполненых достижений:'
 player-rank: 'Текущее место:'
 week-achievement: 'Недельный ранг достижений:'
 month-achievement: 'Месячный ранг достижений:'
-not-ranked: Вы в настоящее время ты не попал в статистику за этот период.
+not-ranked: Вы в настоящее время не попали в статистику за этот период.
 
 # Related to /aach stats.
 number-achievements: 'Полученные достижения:'
 
 # Related to /aach book.
 book-received: Вы получили вашу книгу достижений!
-book-delay: Вы должны подождать прежде чем снова получить новую книгу!
+book-delay: Вы должны подождать прежде чем снова получить книгу!
 book-name: Достижения
-book-date: Book created on DATE.
+book-date: Книга создана в DATE.
 
 # Related to /aach give.
 player-offline: Игрок PLAYER Оффлайн!
@@ -121,12 +121,12 @@ list-beds: Кроватей использовано
 list-maxlevel: Максимальный уровней достигнуто
 list-potions: Зелий выпито
 list-playedtime: Временни сыграно
-list-distance-foot: Дистанций пройдено пешком
-list-distance-pig: Дистанций пройдено на свинье
-list-distance-horse: Дистанций пройдено на лошади
-list-distance-minecart: Дистанций проехано на вагонетке
-list-distance-boat: Дистанций проплыто на лодке
-list-distance-gliding: Distance Travelled with Elytra
+list-distance-foot: Расстояние пройденое пешком
+list-distance-pig: Расстояние пройденое на свинье
+list-distance-horse: Расстояние пройденое на лошади
+list-distance-minecart: Расстояние проеханное на вагонетке
+list-distance-boat: Расстояние проплытое на лодке
+list-distance-gliding: Расстояние пройденное в полете на Элитрах
 list-itemdrops: Предметов выкинуто
 list-hoeplowings: Земли вспахано
 list-fertilising: Растений посажено
