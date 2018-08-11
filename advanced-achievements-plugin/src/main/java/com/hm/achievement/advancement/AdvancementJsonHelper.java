@@ -3,6 +3,7 @@ package com.hm.achievement.advancement;
 import static com.hm.achievement.advancement.AchievementAdvancement.CRITERIA_NAME;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * Class used to generate JSON strings for advancements.
@@ -27,8 +28,8 @@ public class AdvancementJsonHelper {
 				"    \"icon\":{\n" +
 				"      \"item\":\"" + aa.getIconItem() + "\"" + getIntegerFieldOrEmpty("data", aa.getIconData()) + "\n" +
 				"    },\n" +
-				"    \"title\":\"" + aa.getTitle() + "\",\n" +
-				"    \"description\":\"" + aa.getDescription() + "\",\n" +
+				"    \"title\":\"" + StringEscapeUtils.escapeJson(aa.getTitle()) + "\",\n" +
+				"    \"description\":\"" + StringEscapeUtils.escapeJson(aa.getDescription()) + "\",\n" +
 				"    \"frame\":\"" + aa.getFrame() + "\",\n" +
 				"    \"announce_to_chat\":false" +
 				getStringFieldOrLineBreak("background", aa.getBackground(), 4) +

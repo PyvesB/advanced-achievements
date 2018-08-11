@@ -16,7 +16,7 @@ public class AdvancementJsonHelperTest {
 	@Test
 	public void shouldGenerateAdvancementJson() {
 		AchievementAdvancement aa = new AchievementAdvancementBuilder().iconItem("minecraft:dirt")
-				.iconData("0").title("Special Event Achievement!").description("You took part in the special event!")
+				.iconData("0").title("Special Event Achievement!").description("You took part in the \"Special Event\"!")
 				.parent("advancedachievements:advanced_achievements_parent").type(AdvancementType.TASK).build();
 
 		assertEquals("{\n" +
@@ -35,7 +35,7 @@ public class AdvancementJsonHelperTest {
 				"      \"item\":\"minecraft:dirt\",\"data\":0\n" +
 				"    },\n" +
 				"    \"title\":\"Special Event Achievement!\",\n" +
-				"    \"description\":\"You took part in the special event!\",\n" +
+				"    \"description\":\"You took part in the \\\"Special Event\\\"!\",\n" +
 				"    \"frame\":\"task\",\n" +
 				"    \"announce_to_chat\":false\n" +
 				"  },\n" +
