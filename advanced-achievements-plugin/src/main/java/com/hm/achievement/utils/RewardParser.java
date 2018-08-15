@@ -231,7 +231,12 @@ public class RewardParser implements Reloadable {
 		if (commandReward == null) {
 			return new String[0];
 		}
-		commandReward = StringUtils.replace(commandReward, "PLAYER", player.getName());
+		commandReward = StringUtils.replaceEach(commandReward,
+				new String[] { "PLAYER", "PLAYER_WORLD", "PLAYER_X", "PLAYER_Y", "PLAYER_Z" },
+				new String[] { player.getName(), player.getWorld().getName(),
+						Integer.toString(player.getLocation().getBlockX()),
+						Integer.toString(player.getLocation().getBlockY()),
+						Integer.toString(player.getLocation().getBlockZ()) });
 		// Multiple reward commands can be set, separated by a semicolon and space. Extra parsing needed.
 		return commandReward.split(";[ ]*");
 	}
