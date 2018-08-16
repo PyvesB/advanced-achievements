@@ -81,7 +81,7 @@ public class PluginLoader {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final Logger logger;
-	private final UpdateChecker updateChecker;
+	private final Lazy<UpdateChecker> updateChecker;
 	private final ReloadCommand reloadCommand;
 
 	// Listeners, to monitor events and manage stats.
@@ -161,7 +161,7 @@ public class PluginLoader {
 			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
 			Set<String> disabledCategorySet, @Named("main") CommentedYamlConfiguration mainConfig,
 			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
-			AchievePlayTimeRunnable playTimeRunnable, UpdateChecker updateChecker, ReloadCommand reloadCommand) {
+			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.connectionsListener = connectionsListener;
@@ -370,15 +370,15 @@ public class PluginLoader {
 	 */
 	private void launchUpdateChecker() {
 		if (!mainConfig.getBoolean("CheckForUpdate", true)) {
-			PlayerJoinEvent.getHandlerList().unregister(updateChecker);
+			PlayerJoinEvent.getHandlerList().unregister(updateChecker.get());
 		} else {
 			for (RegisteredListener registeredListener : PlayerJoinEvent.getHandlerList().getRegisteredListeners()) {
 				if (registeredListener.getListener() == updateChecker) {
 					return;
 				}
 			}
-			advancedAchievements.getServer().getPluginManager().registerEvents(updateChecker, advancedAchievements);
-			updateChecker.launchUpdateCheckerTask();
+			advancedAchievements.getServer().getPluginManager().registerEvents(updateChecker.get(), advancedAchievements);
+			updateChecker.get().launchUpdateCheckerTask();
 		}
 
 	}
