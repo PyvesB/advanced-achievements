@@ -613,6 +613,6 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				}
 			}
 			return achievements;
-		}).executeOperation("retrieving the full data of received achievements");
+		}).executeOperation("retrieving the recipients of an achievement");
 	}
 }
