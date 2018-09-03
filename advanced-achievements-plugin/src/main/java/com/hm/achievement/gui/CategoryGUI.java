@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -14,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
@@ -30,6 +30,7 @@ import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
+import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -49,7 +50,7 @@ public class CategoryGUI extends AbstractGUI {
 	// Minecraft font, used to get size information in the progress bar.
 	private static final MinecraftFont FONT = MinecraftFont.Font;
 
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 	private final Map<String, List<Long>> sortedThresholds;
 	private final RewardParser rewardParser;
 
@@ -80,10 +81,10 @@ public class CategoryGUI extends AbstractGUI {
 	@Inject
 	public CategoryGUI(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			Logger logger, CacheManager cacheManager, AbstractDatabaseManager sqlDatabaseManager,
-			Map<String, List<Long>> sortedThresholds, RewardParser rewardParser) {
-		super(mainConfig, langConfig, guiConfig, logger, cacheManager);
-		this.sqlDatabaseManager = sqlDatabaseManager;
+			CacheManager cacheManager, AbstractDatabaseManager databaseManager, Map<String, List<Long>> sortedThresholds,
+			RewardParser rewardParser, MaterialHelper materialHelper) {
+		super(mainConfig, langConfig, guiConfig, cacheManager, materialHelper);
+		this.databaseManager = databaseManager;
 		this.sortedThresholds = sortedThresholds;
 		this.rewardParser = rewardParser;
 	}
@@ -190,7 +191,7 @@ public class CategoryGUI extends AbstractGUI {
 		if (pageStart > 0) {
 			String previousAchievement = achievementPaths.get(pageStart - 1);
 			String achName = mainConfig.getString(categoryName + '.' + previousAchievement + ".Name", "");
-			previousItemDate = sqlDatabaseManager.getPlayerAchievementDate(player.getUniqueId(), achName);
+			previousItemDate = databaseManager.getPlayerAchievementDate(player.getUniqueId(), achName);
 			if (previousAchievement.contains(".")) {
 				previousSubcategory = previousAchievement.split("\\.")[0];
 			}
@@ -202,7 +203,7 @@ public class CategoryGUI extends AbstractGUI {
 			String subcategory = path.contains(".") ? path.split("\\.")[0] : NO_SUBCATEGORY;
 			long statistic = subcategoriesToStatistics.get(subcategory);
 			String achName = mainConfig.getString(categoryName + '.' + path + ".Name", "");
-			String receptionDate = sqlDatabaseManager.getPlayerAchievementDate(player.getUniqueId(), achName);
+			String receptionDate = databaseManager.getPlayerAchievementDate(player.getUniqueId(), achName);
 
 			boolean ineligibleSeriesItem = true;
 			if (statistic == NO_STAT || receptionDate != null || previousItemDate != null
@@ -265,8 +266,8 @@ public class CategoryGUI extends AbstractGUI {
 		if (date != null) {
 			itemMeta.setDisplayName(translateColorCodes(langListAchievementReceived + name));
 		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-			itemMeta.setDisplayName(
-					translateColorCodes(langListAchievementNotReceived + "&k" + REGEX_PATTERN.matcher(name).replaceAll("")));
+			itemMeta.setDisplayName(translateColorCodes(langListAchievementNotReceived + "&k" +
+					randomiseParts(REGEX_PATTERN.matcher(name).replaceAll(""))));
 		} else {
 			itemMeta.setDisplayName(translateColorCodes(StringEscapeUtils
 					.unescapeJava(langListAchievementNotReceived + "&o" + REGEX_PATTERN.matcher(name).replaceAll(""))));
@@ -334,7 +335,7 @@ public class CategoryGUI extends AbstractGUI {
 	 */
 	public long getNormalStatistic(NormalAchievements category, Player player) {
 		if (category == NormalAchievements.CONNECTIONS) {
-			return sqlDatabaseManager.getConnectionsAmount(player.getUniqueId());
+			return databaseManager.getConnectionsAmount(player.getUniqueId());
 		}
 		return cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
 	}
@@ -420,12 +421,12 @@ public class CategoryGUI extends AbstractGUI {
 			lore.add(langListGoal);
 			String strippedAchMessage = REGEX_PATTERN.matcher(description).replaceAll("");
 			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-				lore.add(translateColorCodes(configListColorNotReceived + "&k" + strippedAchMessage));
+				lore.add(translateColorCodes(configListColorNotReceived + "&k" + randomiseParts(strippedAchMessage)));
 			} else {
 				lore.add(translateColorCodes(configListColorNotReceived + "&o" + strippedAchMessage));
 			}
 			lore.add("");
-			// Display progress if not COmmands category.
+			// Display progress if not Commands category.
 			if (!configObfuscateNotReceived && statistic != NO_STAT) {
 				String threshold = path.contains(".") ? path.split("\\.")[1] : path;
 				boolean timeStat = NormalAchievements.PLAYEDTIME.toString().equals(categoryName);
@@ -513,6 +514,23 @@ public class CategoryGUI extends AbstractGUI {
 			}
 		}
 		return barDisplay.append(configListColorNotReceived).append("]").toString();
+	}
+
+	/**
+	 * Randomises the contents of a string; preserves spaces.
+	 * 
+	 * @param text
+	 * @return a string with randomised alphabetic characters
+	 */
+	private String randomiseParts(String text) {
+		if (text.isEmpty()) {
+			return "";
+		}
+		StringBuilder randomisedText = new StringBuilder();
+		for (String part : StringUtils.split(text)) {
+			randomisedText.append(RandomStringUtils.randomAlphabetic(part.length())).append(' ');
+		}
+		return randomisedText.substring(0, randomisedText.length() - 1);
 	}
 
 	public ItemStack getPreviousButton() {

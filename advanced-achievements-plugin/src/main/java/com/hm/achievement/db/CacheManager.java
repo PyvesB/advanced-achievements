@@ -22,7 +22,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 /**
  * Class used to provide a cache wrapper for various database statistics, in order to reduce load of database and enable
  * faster in-memory operations.
- * 
+ *
  * @author Pyves
  *
  */
@@ -30,7 +30,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class CacheManager implements Cleanable {
 
 	private final CommentedYamlConfiguration mainConfig;
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
 	private final Map<NormalAchievements, Map<String, CachedStatistic>> normalAchievementsToPlayerStatistics;
 	// Statistics of the different players for multiple achievements; keys in the inner maps correspond to concatenated
@@ -43,9 +43,9 @@ public class CacheManager implements Cleanable {
 	private final Map<UUID, Integer> totalPlayerAchievementsCache;
 
 	@Inject
-	public CacheManager(@Named("main") CommentedYamlConfiguration mainConfig, AbstractDatabaseManager sqlDatabaseManager) {
+	public CacheManager(@Named("main") CommentedYamlConfiguration mainConfig, AbstractDatabaseManager databaseManager) {
 		this.mainConfig = mainConfig;
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
 		receivedAchievementsCache = new HashMap<>();
@@ -73,7 +73,7 @@ public class CacheManager implements Cleanable {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Map<String, CachedStatistic> categoryMap = getHashMap(category);
 			for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
-				CachedStatistic statistic = categoryMap.get(getMultipleCategoryCacheKey(category, uuid, subcategory));
+				CachedStatistic statistic = categoryMap.get(getMultipleCategoryCacheKey(uuid, subcategory));
 				if (statistic != null) {
 					statistic.signalPlayerDisconnection();
 				}
@@ -89,7 +89,7 @@ public class CacheManager implements Cleanable {
 
 	/**
 	 * Retrieves a HashMap for a NormalAchievement based on the category.
-	 * 
+	 *
 	 * @param category
 	 * @return the map of cached statistics for a Normal category
 	 */
@@ -99,7 +99,7 @@ public class CacheManager implements Cleanable {
 
 	/**
 	 * Retrieves a HashMap for a MultipleAchievement based on the category.
-	 * 
+	 *
 	 * @param category
 	 * @return the map of cached statistics for a Multiple category
 	 */
@@ -110,7 +110,7 @@ public class CacheManager implements Cleanable {
 	/**
 	 * Increases the statistic for a NormalAchievement by the given value and returns the updated statistic value. Calls
 	 * the database if not found in the cache.
-	 * 
+	 *
 	 * @param category
 	 * @param player
 	 * @param value
@@ -119,7 +119,7 @@ public class CacheManager implements Cleanable {
 	public long getAndIncrementStatisticAmount(NormalAchievements category, UUID player, int value) {
 		CachedStatistic statistic = getHashMap(category).get(player.toString());
 		if (statistic == null) {
-			statistic = new CachedStatistic(sqlDatabaseManager.getNormalAchievementAmount(player, category), true);
+			statistic = new CachedStatistic(databaseManager.getNormalAchievementAmount(player, category), true);
 			getHashMap(category).put(player.toString(), statistic);
 		}
 		if (value > 0) {
@@ -133,7 +133,7 @@ public class CacheManager implements Cleanable {
 	/**
 	 * Increases the statistic for a MultipleAchievement by the given value and returns the updated statistic value.
 	 * Calls the database if not found in the cache.
-	 * 
+	 *
 	 * @param category
 	 * @param subcategory
 	 * @param player
@@ -141,15 +141,12 @@ public class CacheManager implements Cleanable {
 	 * @return the updated statistic value
 	 */
 	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player, int value) {
-		CachedStatistic statistic = getHashMap(category).get(getMultipleCategoryCacheKey(category, player, subcategory));
+		CachedStatistic statistic = getHashMap(category).get(getMultipleCategoryCacheKey(player, subcategory));
 		if (statistic == null) {
-			String subcategoryDBName = subcategory;
-			if (category == MultipleAchievements.PLAYERCOMMANDS) {
-				subcategoryDBName = StringUtils.deleteWhitespace(subcategory);
-			}
-			statistic = new CachedStatistic(
-					sqlDatabaseManager.getMultipleAchievementAmount(player, category, subcategoryDBName), true);
-			getHashMap(category).put(getMultipleCategoryCacheKey(category, player, subcategory), statistic);
+			String subcategoryDBName = StringUtils.deleteWhitespace(subcategory);
+			statistic = new CachedStatistic(databaseManager.getMultipleAchievementAmount(player, category,
+					subcategoryDBName), true);
+			getHashMap(category).put(getMultipleCategoryCacheKey(player, subcategory), statistic);
 		}
 		if (value > 0) {
 			long newValue = statistic.getValue() + value;
@@ -161,7 +158,7 @@ public class CacheManager implements Cleanable {
 
 	/**
 	 * Returns whether player has received a specific achievement.
-	 * 
+	 *
 	 * @param player
 	 * @param name
 	 * @return true if achievement received by player, false otherwise
@@ -176,7 +173,7 @@ public class CacheManager implements Cleanable {
 			return false;
 		}
 
-		boolean received = sqlDatabaseManager.hasPlayerAchievement(player, name);
+		boolean received = databaseManager.hasPlayerAchievement(player, name);
 		if (received) {
 			playerReceived.add(name);
 		} else {
@@ -188,14 +185,14 @@ public class CacheManager implements Cleanable {
 	/**
 	 * Returns the total number of achievements received by a player. Can be called asynchronously by BungeeTabListPlus,
 	 * method must therefore be synchronized to avoid race conditions if a player calls /aach stats at the same time.
-	 * 
+	 *
 	 * @param player
 	 * @return the number of achievements received by the player
 	 */
 	public synchronized int getPlayerTotalAchievements(UUID player) {
 		Integer totalAchievements = totalPlayerAchievementsCache.get(player);
 		if (totalAchievements == null) {
-			totalAchievements = sqlDatabaseManager.getPlayerAchievementsAmount(player);
+			totalAchievements = databaseManager.getPlayerAchievementsAmount(player);
 			totalPlayerAchievementsCache.put(player, totalAchievements);
 		}
 		return totalAchievements;
@@ -203,24 +200,20 @@ public class CacheManager implements Cleanable {
 
 	/**
 	 * Returns a key for the multipleAchievementsToPlayerStatistics structure. Concatenation of player UUID and
-	 * subcategory name, with removed whitespaces for PlayerCommands.
-	 * 
-	 * @param category
+	 * subcategory name, with removed whitespaces.
+	 *
 	 * @param player
 	 * @param subcategory
 	 * @return the statistics key for a Multiple category
 	 */
-	public String getMultipleCategoryCacheKey(MultipleAchievements category, UUID player, String subcategory) {
-		if (category == MultipleAchievements.PLAYERCOMMANDS) {
-			return player.toString() + StringUtils.deleteWhitespace(subcategory);
-		}
-		return player.toString() + subcategory;
+	public String getMultipleCategoryCacheKey(UUID player, String subcategory) {
+		return player.toString() + StringUtils.deleteWhitespace(subcategory);
 	}
 
 	/**
 	 * Adds an achievement to the achievement received cache and removes it from the not received cache. A call to
 	 * {@link #hasPlayerAchievement(UUID, String)} is expected to have been made made beforehand for the same player.
-	 * 
+	 *
 	 * @param player
 	 * @param achievementName
 	 */
@@ -233,7 +226,7 @@ public class CacheManager implements Cleanable {
 	/**
 	 * Removes an achievement from the achievement received cache and adds it to the not received cache. A call to
 	 * {@link #hasPlayerAchievement(UUID, String)} is expected to have been made made beforehand for the same player.
-	 * 
+	 *
 	 * @param player
 	 * @param achievementName
 	 */

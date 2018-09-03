@@ -1,0 +1,202 @@
+#=============================================================#
+# +---------------------------------------------------------+ #
+# | Advanced Achievements Czech translation by EncryptSL    | #
+# |             ~ Valid as of version 5.9.3 ~               | #
+# |   Newer plugin versions will automatically append new   | #
+# |     untranslated parameters to the end of the file.     | #
+# +---------------------------------------------------------+ #
+#=============================================================#
+
+no-permissions: "Nemas dostatek opravneni k provedeni teto akce."
+statistic-cooldown: "Uspeschy cooldown: pockej TIME sekundu, nez se akce zapocita znovu."
+category-does-not-exist: "Kategorie nebo podkategorie CAT neexistuje."
+all-achievements-received: "Gratuluji, obdrzel jsi vsechny uspechy!"
+
+# Related to /aach reload.
+configuration-successfully-reloaded: "Konfigurace uspesne nactena."
+configuration-reload-failed: "Chyba pri znovunacteni konfigurace. Prosim podivej se do logu."
+
+# Related to /aach top week and month.
+top-achievement: "Nejlepsi uspechy majitelu:"
+player-rank: "Aktualni rank:"
+week-achievement: "Tydenni hodnoceni uspechu:"
+month-achievement: "Mesicni hodnoceni uspechu:"
+not-ranked: "Nejsi v teto chvili hodnocen."
+pagination-header: "&7> &5Stranka PAGE/MAX"
+pagination-footer: "&7>"
+
+# Related to /aach stats.
+number-achievements: "Dosazene uspechy:"
+
+# Related to /aach book.
+book-received: "Obdrzel si knihu uspechu!"
+book-delay: "Musis pockat TIME sekund/u mezi kazdym obdrzenim knihy!"
+book-name: "Kniha uspechu"
+book-date: "Kniha vytvorena DATE."
+book-not-received: "Dosud jsi nedosahl zadneho uspechu."
+
+# Related to /aach give.
+player-offline: "Hrac PLAYER je offline!"
+achievement-already-received: "Hrac PLAYER jiz obdrzel tento uspech!"
+achievement-not-found: "Tento uspech nebyl nalezen."
+achievement-given: "Dosazeny uspech !"
+
+# Related to /aach add.
+error-value: "Hodnota VALUE musi byt ciselna!"
+statistic-increased: "Statistika ACH se zvisila o AMOUNT pro hrace PLAYER!"
+
+# Related to achievement reception.
+achievement-received: "Hrac PLAYER ziskal uspech:"
+achievement-new: "Novy uspech:"
+
+# Related to /aach check.
+check-achievement-true: "Hrac PLAYER ziskal uspech ACH!"
+check-achievements-false: "Hrac PLAYER nedostal uspech ACH!"
+
+# Related to /aach delete.
+delete-achievements: "The achievement ACH was deleted from PLAYER."
+
+# Related to achievement rewards.
+item-reward-received: "Obdrzel jste odmenu:"
+money-reward-received: "Obdrzel jste: AMOUNT!"
+command-reward: "Odmena byla provedena!"
+custom-command-reward: "Ziskal jste svou odmenu: MESSAGE"
+experience-reward-received: "Obdrzel jste: AMOUNT zkusenosti!"
+increase-max-health-reward-received: "Vase zdravi se zvysilo o AMOUNT!"
+increase-max-oxygen-reward-received: "Vas kyslik vzrostl o AMOUNT!"
+
+# Related to /aach help.
+aach-command-book: "Ziskate knihu uspechu."
+aach-command-book-hover: "Položky RP muzete shromazdovat a vymenit s ostatnimi."
+aach-command-stats: "Zobrazi mnostvi uspechu."
+aach-command-stats-hover: "Ukazatel prubehu, musite je vsechny mit!"
+aach-command-list: "Zobrazi prijate a dokoncene uspechy."
+aach-command-list-hover: "Pekne menu se vsemi uspechy!"
+aach-command-top: "Zobrazi osobni a globalni uspechy."
+aach-command-top-hover: "Kdo je boss serveru a jak ho pokorite?"
+aach-command-give: "Dat uspech ACH na NAME."
+aach-command-give-hover: "Hrac musi byt online; jinak prikaz nelze pouzit."
+aach-command-add: "Zvyste statistiku."
+aach-command-add-hover: "Hrac musi byt online; pouzivane hlavne pro vlastni kategorii."
+aach-command-reload: "Znovu nacte konfiguraci."
+aach-command-reload-hover: "Znovu nacte nastaveni konfigurace, gui.yml a lang.yml soubory."
+aach-command-info: "Zobrazi informace o pluginu."
+aach-command-info-hover: "Nekolik dalsich informaci o pluginu a jeho uzasnem authoru!"
+aach-command-check: "Zkontrolujte, zda NAME ma ACH."
+aach-command-check-hover: "Pouzijte parametr NAME, pouzity v konfiguraci."
+aach-command-delete: "Vymaze ACH z NAME."
+aach-command-delete-hover: "Hrac musi byt online; neresetuje zadne souvisejici statistiky."
+aach-command-week: "Zobrazit tydenni hodnoceni."
+aach-command-week-hover: "Nejlepsi lovci uspechu od zacatku tydne!"
+aach-command-month: "Zobrazi mesicni hodnoceni."
+aach-command-month-hover: "Nejlepsi lovci uspechu od zacatku mesice!"
+aach-command-toggle: "Prepinejte uspechy ostatnim hracum."
+aach-command-toggle-hover: "Vase volba je ulozena az do dalsiho restartu serveru"
+aach-command-reset: "Obnovit statistku pro kategorii CAT."
+aach-command-reset-hover: "Hrac musi byt online; priklad: reset Places.stone DarkPyves"
+aach-command-generate: "Vytvorte uspech."
+aach-command-generate-hover: "Potencionalne spomalit prikaz; pouzivat s opatrnosti!"
+aach-tip: "&lTIP &8Muzete &7&n&onajet na prikaz &8nebo &7&n&okliknout &8na prikaz!"
+
+# Related to /aach info.
+version-command-version: "Verze:"
+version-command-website: "Web:"
+version-command-author: "Autor:"
+version-command-description: "Popis:"
+version-command-description-details: "Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"
+version-command-vault: "Vault integration:"
+version-command-petmaster: "Pet Master integration:"
+version-command-btlp: "BungeeTabListPlus integration:"
+version-command-essentials: "Essentials integration:"
+version-command-placeholderapi: "PlaceholderAPI integration:"
+version-command-database: "Database type:"
+
+# Related to /aach list.
+list-gui-title: "&5&lSeznam uspechu"
+list-delay: "Musite pockat TIME sekund/u pred dalsim prikazem!"
+list-description: "Popis:"
+list-goal: "Goal:"
+list-reception: "Datum prijmu:"
+list-progress: "Postup:"
+list-reward: "Odmena(y):"
+list-reward-money: "obdrzel AMOUNT"
+list-reward-item: "obdrzel AMOUNT ITEM"
+list-reward-command: "ostatni"
+list-reward-experience: "obdrzel AMOUNT zkusenosti"
+list-reward-increase-max-health: "zvysit HP o AMOUNT"
+list-reward-increase-max-oxygen: "zvysit kyslik o AMOUNT"
+list-achievement-received: "&5\u2714&f "
+list-achievement-not-received: "&4\u2718 "
+list-category-not-unlocked: "Jeste jste neodemkli tuto kategorii."
+list-back-message: "&7Zpet"
+list-previous-message: "&7Predchozi"
+list-next-message: "&7Dalsi"
+list-achievements-in-category-singular: "AMOUNT uspech"
+list-achievements-in-category-plural: "AMOUNT uspechu"
+
+# Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
+list-connections: "Pripojeni"
+list-places: "Polozene bloky"
+list-breaks: "Znicene bloky"
+list-kills: "Zabite entity"
+list-crafts: "Vyrobene itemy"
+list-playercommands: "Napsano Prikazu"
+list-deaths: "Pocet umrti"
+list-arrows: "Vystrelene sipy"
+list-snowballs: "Vyhazene Koule"
+list-eggs: "Vyhazene vajicka"
+list-fish: "Chycene ryby"
+list-treasure: "Poklad"
+list-itembreaks: "Znicene itemy"
+list-eatenitems: "Snezene jidlo"
+list-shear: "Ostrihane ovce"
+list-milk: "Kravy mleka"
+list-lavabuckets: "Kbelik lavy"
+list-waterbuckets: "Kbelik vody"
+list-trades: "Pocet vymeny"
+list-anvils: "Pouzite kovadliny"
+list-enchantments: "Ocarovane predmety"
+list-beds: "Pocet spanku"
+list-maxlevel: "Dosahnute levely"
+list-potions: "Vypite lektvary"
+list-playedtime: "Odehrany cas"
+list-distance-foot: "Vzdalenost ujita pesky"
+list-distance-pig: "Vzdalenost ujeta na praseti"
+list-distance-horse: "Vzdalenost ujeta na koni"
+list-distance-minecart: "Vzdalenost ujeta na voziku"
+list-distance-boat: "Vzdalenost ujeta na lodi"
+list-distance-gliding: "Vzdalenost proletena s elytrou"
+list-distance-llama: "Vzdalenost ujeta na llame"
+list-itemdrops: "Vyhozene itemy"
+list-itempickups: "Sebrane itemy"
+list-hoeplowings: "Povrchova uprava"
+list-fertilising: "Oplodnene rostliny"
+list-taming: "Zkrocene zvirata"
+list-breeding: "Chovani zvirat"
+list-brewing: "Uvarene lektvary"
+list-fireworks: "Pouzite ohnostroje"
+list-musicdiscs: "Odehrano hudebnich desek"
+list-enderpearls: "Teleportace s enderperlou"
+list-petmastergive: "Zvirate dana jinemu hraci"
+list-petmasterreceive: "Obdrzene zrivate od jinych hracu"
+list-smelting: "Vypalene itemy"
+list-commands: "Ostatni Uspechy"
+list-custom: "Vlastni Kategorie"
+
+# Related to /aach toggle.
+toggle-displayed: "Nyni budete upozorneni kdyz ostatni hraci dosahnou uspechu."
+toggle-hidden: "Jiz nebudete dostavat upozorneni."
+
+# Related to /aach reset.
+reset-successful: " statistiky byli resetovani hraci PLAYER."
+
+# Related to /aach generate.
+advancements-generated: "Uspechy byli uspesne vygenerovany."
+minecraft-not-supported: "Uspechy nefunguji na vasi versi serveru. Pouzijte prosim verzi 1.12+."
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# | Parameters in future plugin versions will  appear here | #
+# +--------------------------------------------------------+ #
+#============================================================#

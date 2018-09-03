@@ -16,6 +16,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -53,7 +54,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	private final HashMap<UUID, Long> playersBookTime = new HashMap<>();
 	private final Logger logger;
 	private final int serverVersion;
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 
 	private int configTimeBook;
 	private String configBookSeparator;
@@ -69,11 +70,11 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	@Inject
 	public BookCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger,
-			int serverVersion, AbstractDatabaseManager sqlDatabaseManager) {
+			int serverVersion, AbstractDatabaseManager databaseManager) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.logger = logger;
 		this.serverVersion = serverVersion;
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 	}
 
 	@Override
@@ -110,7 +111,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		Player player = (Player) sender;
 
 		if (!isInCooldownPeriod(player)) {
-			List<AwardedDBAchievement> playerAchievementsList = sqlDatabaseManager
+			List<AwardedDBAchievement> playerAchievementsList = databaseManager
 					.getPlayerAchievementsList(player.getUniqueId());
 			if (playerAchievementsList.isEmpty()) {
 				player.sendMessage(langBookNotReceived);
@@ -118,10 +119,14 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 			}
 			// Play special particle effect when receiving the book.
 			if (configAdditionalEffects) {
-				try {
-					ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 100);
-				} catch (Exception e) {
-					logger.warning("Failed to display additional particle effects for books.");
+				if (serverVersion >= 13) {
+					player.spawnParticle(Particle.ENCHANTMENT_TABLE, player.getLocation(), 1000, 0, 2, 0, 1);
+				} else {
+					try {
+						ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 100);
+					} catch (Exception e) {
+						logger.warning("Failed to display additional particle effects for books.");
+					}
 				}
 			}
 

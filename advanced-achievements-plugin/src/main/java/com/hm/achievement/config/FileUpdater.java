@@ -34,12 +34,14 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class FileUpdater {
 
 	private final Logger logger;
+	private final int serverVersion;
 
 	private boolean updatePerformed;
 
 	@Inject
-	public FileUpdater(Logger logger) {
+	public FileUpdater(Logger logger, int serverVersion) {
 		this.logger = logger;
+		this.serverVersion = serverVersion;
 	}
 
 	/**
@@ -183,9 +185,9 @@ public class FileUpdater {
 					"See https://github.com/PyvesB/AdvancedAchievements/wiki/Rewards");
 		}
 
-		// Added in INSERT VERSION:
+		// Added in 5.9.0:
 		updateSetting(config, "RootAdvancementTitle", "Advanced Achievements", "Title shown on the root advancement.");
-		updateSetting(config, "AdvancementsBackground", "minecraft:textures/items/book_enchanted.png",
+		updateSetting(config, "AdvancementsBackground", "minecraft:textures/item/book.png",
 				"Background shown on the Advanced Achievements advancement tab.",
 				"Must be a resource location to any image in a resource pack.");
 
@@ -253,25 +255,28 @@ public class FileUpdater {
 
 		// Added in version 5.2.5:
 		updateSetting(gui, "Breeding.Item", "wheat");
-		updateSetting(gui, "Breeding.Metadata", 0);
 
 		// Added in version 5.3:
 		updateSetting(gui, "AchievementNotStarted.Item", "stained_clay");
-		updateSetting(gui, "AchievementNotStarted.Metadata", 14);
 		updateSetting(gui, "AchievementStarted.Item", "stained_clay");
-		updateSetting(gui, "AchievementStarted.Metadata", 4);
 		updateSetting(gui, "AchievementReceived.Item", "stained_clay");
-		updateSetting(gui, "AchievementReceived.Metadata", 5);
 		updateSetting(gui, "BackButton.Item", "book");
-		updateSetting(gui, "BackButton.Metadata", 0);
 		updateSetting(gui, "PreviousButton.Item", "wood_button");
-		updateSetting(gui, "PreviousButton.Metadata", 0);
 		updateSetting(gui, "NextButton.Item", "stone_button");
-		updateSetting(gui, "NextButton.Metadata", 0);
 
 		// Added in version 5.5:
 		updateSetting(gui, "Custom.Item", "feather");
-		updateSetting(gui, "Custom.Metadata", 0);
+
+		if (serverVersion < 13) {
+			updateSetting(gui, "Breeding.Metadata", 0);
+			updateSetting(gui, "AchievementNotStarted.Metadata", 14);
+			updateSetting(gui, "AchievementStarted.Metadata", 4);
+			updateSetting(gui, "AchievementReceived.Metadata", 5);
+			updateSetting(gui, "BackButton.Metadata", 0);
+			updateSetting(gui, "PreviousButton.Metadata", 0);
+			updateSetting(gui, "NextButton.Metadata", 0);
+			updateSetting(gui, "Custom.Metadata", 0);
+		}
 
 		if (updatePerformed) {
 			// Changes in the gui file: save and do a fresh load.

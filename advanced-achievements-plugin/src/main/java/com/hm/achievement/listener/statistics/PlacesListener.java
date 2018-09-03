@@ -34,6 +34,7 @@ public class PlacesListener extends AbstractListener {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();

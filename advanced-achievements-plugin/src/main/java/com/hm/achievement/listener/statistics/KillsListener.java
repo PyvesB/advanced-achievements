@@ -40,32 +40,24 @@ public class KillsListener extends AbstractListener {
 	public void onEntityDeath(EntityDeathEvent event) {
 		Player player = event.getEntity().getKiller();
 
-		if (player == null) {
-			return;
-		}
-
-		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
+		if (player == null || !shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
 			return;
 		}
 
 		Entity entity = event.getEntity();
-
-		String mobName;
-		if (entity instanceof Player) {
-			mobName = "player";
-		} else {
-			mobName = entity.getType().name().toLowerCase();
-			if (entity instanceof Creeper && ((Creeper) entity).isPowered()) {
-				mobName = "poweredcreeper";
-			}
-		}
+		String mobType = (entity instanceof Creeper && ((Creeper) entity).isPowered()) ? "poweredcreeper"
+				: entity.getType().name().toLowerCase();
 
 		MultipleAchievements category = MultipleAchievements.KILLS;
 
 		Set<String> foundAchievements = new HashSet<>();
 
-		if (player.hasPermission(category.toPermName() + '.' + mobName)) {
-			foundAchievements.addAll(findAchievementsByCategoryAndName(category, mobName));
+		if (player.hasPermission(category.toPermName() + '.' + mobType)) {
+			foundAchievements.addAll(findAchievementsByCategoryAndName(category, mobType));
+		}
+
+		if (entity.getCustomName() != null && player.hasPermission(category.toPermName() + '.' + entity.getCustomName())) {
+			foundAchievements.addAll(findAchievementsByCategoryAndName(category, entity.getCustomName()));
 		}
 
 		if (entity instanceof Player) {

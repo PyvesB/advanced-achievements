@@ -73,7 +73,7 @@ import dagger.Lazy;
 
 /**
  * Class in charge of loading/reloading the plugin. Orchestrates the different plugin components together.
- * 
+ *
  * @author Pyves
  */
 @Singleton
@@ -81,7 +81,7 @@ public class PluginLoader {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final Logger logger;
-	private final UpdateChecker updateChecker;
+	private final Lazy<UpdateChecker> updateChecker;
 	private final ReloadCommand reloadCommand;
 
 	// Listeners, to monitor events and manage stats.
@@ -161,7 +161,7 @@ public class PluginLoader {
 			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
 			Set<String> disabledCategorySet, @Named("main") CommentedYamlConfiguration mainConfig,
 			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
-			AchievePlayTimeRunnable playTimeRunnable, UpdateChecker updateChecker, ReloadCommand reloadCommand) {
+			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.connectionsListener = connectionsListener;
@@ -210,7 +210,7 @@ public class PluginLoader {
 
 	/**
 	 * Loads the plugin.
-	 * 
+	 *
 	 * @param firstLoad
 	 * @throws PluginLoadError
 	 */
@@ -299,7 +299,7 @@ public class PluginLoader {
 
 	/**
 	 * Registers a listener class, unless all matchingCatgories are disabled.
-	 * 
+	 *
 	 * @param listener
 	 * @param matchingCategories
 	 */
@@ -370,15 +370,15 @@ public class PluginLoader {
 	 */
 	private void launchUpdateChecker() {
 		if (!mainConfig.getBoolean("CheckForUpdate", true)) {
-			PlayerJoinEvent.getHandlerList().unregister(updateChecker);
+			PlayerJoinEvent.getHandlerList().unregister(updateChecker.get());
 		} else {
 			for (RegisteredListener registeredListener : PlayerJoinEvent.getHandlerList().getRegisteredListeners()) {
 				if (registeredListener.getListener() == updateChecker) {
 					return;
 				}
 			}
-			advancedAchievements.getServer().getPluginManager().registerEvents(updateChecker, advancedAchievements);
-			updateChecker.launchUpdateCheckerTask();
+			advancedAchievements.getServer().getPluginManager().registerEvents(updateChecker.get(), advancedAchievements);
+			updateChecker.get().launchUpdateCheckerTask();
 		}
 
 	}
@@ -398,16 +398,16 @@ public class PluginLoader {
 					// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories.
 					section = section.substring(0, startOfMetadata);
 				}
-				if (category == MultipleAchievements.PLAYERCOMMANDS) {
-					// Permissions don't take spaces into account for this category.
-					section = StringUtils.deleteWhitespace(section);
-				}
+				// Permissions don't take spaces into account.
+				section = StringUtils.deleteWhitespace(section);
 
 				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when
 				// performing /aach reload.
-				if (pluginManager.getPermission(category.toPermName() + "." + section) == null) {
-					pluginManager
-							.addPermission(new Permission(category.toPermName() + "." + section, PermissionDefault.TRUE));
+				for (String groupElement : section.split("\\|")) {
+					String permissionNode = category.toPermName() + "." + groupElement;
+					if (pluginManager.getPermission(permissionNode) == null) {
+						pluginManager.addPermission(new Permission(permissionNode, PermissionDefault.TRUE));
+					}
 				}
 			}
 		}

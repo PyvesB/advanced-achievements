@@ -34,17 +34,17 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final CacheManager cacheManager;
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 	private final Map<String, String> achievementsAndDisplayNames;
 	private final Logger logger;
 
 	@Inject
 	AdvancedAchievementsBukkitAPI(AdvancedAchievements advancedAchievements, Logger logger, CacheManager cacheManager,
-			AbstractDatabaseManager sqlDatabaseManager, Map<String, String> achievementsAndDisplayNames) {
+			AbstractDatabaseManager databaseManager, Map<String, String> achievementsAndDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.cacheManager = cacheManager;
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
 	}
 
@@ -83,14 +83,14 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
 			return cacheManager.hasPlayerAchievement(player, achievementName);
 		} else {
-			return sqlDatabaseManager.hasPlayerAchievement(player, achievementName);
+			return databaseManager.hasPlayerAchievement(player, achievementName);
 		}
 	}
 
 	@Override
 	public List<Achievement> getPlayerAchievementsList(UUID player) {
 		validateNotNull(player, "Player");
-		return sqlDatabaseManager.getPlayerAchievementsList(player).stream().map(AwardedDBAchievement::toAPIAchievement)
+		return databaseManager.getPlayerAchievementsList(player).stream().map(AwardedDBAchievement::toAPIAchievement)
 				.collect(Collectors.toList());
 	}
 
@@ -101,14 +101,14 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		if (isPlayerOnline(player)) {
 			return cacheManager.getPlayerTotalAchievements(player);
 		} else {
-			return sqlDatabaseManager.getPlayerAchievementsAmount(player);
+			return databaseManager.getPlayerAchievementsAmount(player);
 		}
 	}
 
 	@Override
 	public Rank getPlayerRank(UUID player, long rankingPeriodStart) {
 		validateNotNull(player, "Player");
-		Map<String, Integer> rankings = sqlDatabaseManager.getTopList(rankingPeriodStart);
+		Map<String, Integer> rankings = databaseManager.getTopList(rankingPeriodStart);
 		List<Integer> achievementCounts = new ArrayList<>(rankings.values());
 		Integer achievementsCount = rankings.get(player.toString());
 		if (achievementsCount != null) {
@@ -122,7 +122,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public List<UUID> getTopPlayers(int numOfPlayers, long rankingPeriodStart) {
-		return sqlDatabaseManager.getTopList(rankingPeriodStart).keySet().stream().limit(numOfPlayers).map(UUID::fromString)
+		return databaseManager.getTopList(rankingPeriodStart).keySet().stream().limit(numOfPlayers).map(UUID::fromString)
 				.collect(Collectors.toList());
 	}
 
@@ -135,7 +135,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
 			return cacheManager.getAndIncrementStatisticAmount(category, player, 0);
 		} else {
-			return sqlDatabaseManager.getNormalAchievementAmount(player, category);
+			return databaseManager.getNormalAchievementAmount(player, category);
 		}
 	}
 
@@ -149,7 +149,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
 			return cacheManager.getAndIncrementStatisticAmount(category, subcategory, player, 0);
 		} else {
-			return sqlDatabaseManager.getMultipleAchievementAmount(player, category, subcategory);
+			return databaseManager.getMultipleAchievementAmount(player, category, subcategory);
 		}
 	}
 
@@ -161,7 +161,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Override
 	public Map<UUID, Integer> getPlayersTotalAchievements() {
-		return sqlDatabaseManager.getPlayersAchievementsAmount();
+		return databaseManager.getPlayersAchievementsAmount();
 	}
 
 	/**

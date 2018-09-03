@@ -24,7 +24,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class DeleteCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
-	private final AbstractDatabaseManager sqlDatabaseManager;
+	private final AbstractDatabaseManager databaseManager;
 
 	private String langCheckAchievementFalse;
 	private String langDeleteAchievements;
@@ -32,10 +32,10 @@ public class DeleteCommand extends AbstractParsableCommand {
 	@Inject
 	public DeleteCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
-			AbstractDatabaseManager sqlDatabaseManager) {
+			AbstractDatabaseManager databaseManager) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
-		this.sqlDatabaseManager = sqlDatabaseManager;
+		this.databaseManager = databaseManager;
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class DeleteCommand extends AbstractParsableCommand {
 					new String[] { args[args.length - 1], achievementName }));
 		} else {
 			cacheManager.removePreviouslyReceivedAchievement(player.getUniqueId(), achievementName);
-			sqlDatabaseManager.deletePlayerAchievement(player.getUniqueId(), achievementName);
+			databaseManager.deletePlayerAchievement(player.getUniqueId(), achievementName);
 
 			sender.sendMessage(StringUtils.replaceEach(langDeleteAchievements, new String[] { "PLAYER", "ACH" },
 					new String[] { args[args.length - 1], achievementName }));

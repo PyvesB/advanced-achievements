@@ -1,144 +1,206 @@
-#=============================================================#
-# +---------------------------------------------------------+ #
-# |   Advanced Achievements Russian translation by CeleDKo  | #
-# |               ~ Valid as of version 3.0 ~               | #
-# |   Newer plugin versions will automatically append new   | #
-# |     untranslated parameters to the end of the file.     | #
-# +---------------------------------------------------------+ #
-#=============================================================#
+#=================================================================#
+# +-------------------------------------------------------------+ #
+# |    Advanced Achievements. Russian translation by Shanzji    | #
+# |              ~ Актуально для версии 5.9.3 ~                 | #
+# |        Новое обновление плагина автоматически добавит       | #
+# |               недостающие строки в конец файла.             | #
+# |               Если вам не лень, можете заменить             | #
+# |                   сообщения на удобные вам.                 | #
+# +-------------------------------------------------------------+ #
+#=================================================================#
 
-no-permissions: У вас нету разрешения использовать эту команду.
+# Общее.
+no-permissions: У вас нет прав на эту команду.
+statistic-cooldown: Подождите TIME сек.
+category-does-not-exist: Категории достижений CAT не существует. Или название указано неверно.
+all-achievements-received: Воу! Вы получили все достижения. Вот это да!
 
-# Related to /aach reload.
-configuration-successfully-reloaded: Конфигурация успешно перезагружена.
-configuration-reload-failed: Ошибки при перечитывания конфигурации. Пожалуйста, просмотрите журналы для получения более подробной информации.
+# Команда /aach reload.
+configuration-successfully-reloaded: Конфигурация перезагружена.
+configuration-reload-failed: Упс! Что-то пошло не так во время перезагрузки. Загляние в лог-файл, чтобы узнать больше об ошибке.
 
-# Related to /aach top.
-top-achievement: 'ТОП Выполненых достижений:'
-player-rank: 'Текущее место:'
-week-achievement: 'Недельный ранг достижений:'
-month-achievement: 'Месячный ранг достижений:'
-not-ranked: Вы в настоящее время ты не попал в статистику за этот период.
+# Команда /aach top week and month.
+top-achievement: 'Список лучших авантюристов:'
+player-rank: 'Ваше место:'
+week-achievement: 'Список лучших авантюристов за неделю:'
+month-achievement: 'Список лучших авантюристов за месяц:'
+not-ranked: Вы еще не находитесь в списке лучших авантюристов за этот период.
+pagination-header: '&7> &5Стр. PAGE из MAX'
+pagination-footer: '&7>'
 
-# Related to /aach stats.
-number-achievements: 'Полученные достижения:'
+# Команда /aach stats.
+number-achievements: 'Получено достижений:'
 
-# Related to /aach book.
-book-received: Вы получили вашу книгу достижений!
-book-delay: Вы должны подождать прежде чем снова получить новую книгу!
-book-name: Достижения
-book-date: Book created on DATE.
+# Команда /aach book.
+book-received: Получена книга достижений
+book-delay: Подождите TIME сек. перед повторным получение книги достижений
+book-name: Сборник достижений
+book-date: Издание от DATE.
+book-not-received: Вы еще не получали достижений.
 
-# Related to /aach give.
-player-offline: Игрок PLAYER Оффлайн!
-achievement-already-received: Игрок PLAYER уже получил это достижение!
-achievement-not-found: Указанное достижение не было найдено в категории команд.
-achievement-given: Достижение выдано
+# Команда /aach give.
+player-offline: PLAYER не в сети.
+achievement-already-received: PLAYER уже получил(а) это достижение.
+achievement-not-found: Достижение не найдено.
+achievement-given: Достижение получено.
 
-# Related to achievement reception.
-achievement-received: 'PLAYER получил достижение:'
-achievement-new: 'Новое достижение:'
+# Команда /aach add.
+error-value: Значение VALUE должно быть целым числом!
+statistic-increased: Значение достижения ACH увеличено на AMOUNT ед. для игрока PLAYER!
 
-# Related to /aach check.
-check-achievement-true: PLAYER получил достижение ACH!
-check-achievements-false: PLAYER не получил достижение ACH!
+# Получение достижения.
+achievement-received: PLAYER заслужил(а) достижение
+achievement-new: Вы заслужили достижение
 
-# Related to /aach delete.
-delete-achievements: Достижение ACH было удалено у PLAYER.
+# Команда /aach check.
+check-achievement-true: PLAYER получал(а) достижение ACH!
+check-achievements-false: PLAYER еще не получал(а) достижение ACH!
 
-# Related to achievement rewards.
-item-reward-received: 'Вы получили в награду предмет:'
-money-reward-received: 'Вы получили: AMOUNT !'
-command-reward: Reward command carried out!
+# Команда /aach delete.
+delete-achievements: Достижение ACH отобрано у игрока PLAYER.
 
-# Related to /aach help.
-aach-command-book: Получить вашу книгу с достижениями.
-aach-command-book-hover: RP элементы, которые вы можете собирать и обмена с другими! Время на основе списка
-aach-command-stats: Узнать кол-во выполненых достижений.
-aach-command-stats-hover: Индикатор. Должен поймать их всех!
-aach-command-list: Открыть список всех достижений.
-aach-command-list-hover: GUI чтобы получить обзор всех достижений и ваш прогресс!
-aach-command-top: Показать личный и глобальный рейтинг.
-aach-command-top-hover: Кто лидеры сервера и как вы сравнитесь с ними?
-aach-command-give: Выдать достижение ACH игроку &7NAME.
-aach-command-give-hover: Игрок должен быть в режиме онлайн; Только команды достижений могут быть использованы.
-aach-command-reload: Перезагрузить Advanced Achievements.
-aach-command-reload-hover: Настройки перезагружены.
-aach-command-info: Показать информацию о плагине
-aach-command-info-hover: Подробная информация о плагине и его удивительном авторе!
-aach-command-check: Узнать получил ли достижение  игрок.
-aach-command-check-hover: Не забудьте добавить цвета, определенные в конфигурационном файле.
-aach-command-delete: Удалить достижение у игрока
-aach-command-delete-hover: Игрок должен быть в режиме онлайн; не сбрасывает все связанные с ним статистические данные.
-aach-command-week: Показать ежедневный ранг достижений.
-aach-command-week-hover: Лучшие охотники достижений с начала недели!
-aach-command-month: Показать месячный ранг достижений.
-aach-command-month-hover: Лучшие охотники достижений с начала месяца!
-aach-tip: '&8Ты можешь &7&n&oнавести &8или &7&n&oкликнуть &8на команды!'
+# Награды за достижение.
+item-reward-received: '&aПолучена награда за достижение:&a'
+money-reward-received: '&aПолучено &6&l© &eAMOUNTкрон&a.' # &6&l© &eAMOUNTкрон может быть заменено на вашу валюту. Например, &2$AMOUNT
+command-reward: Получена награда за достижение.
+custom-command-reward: 'Получена награда за достижение: MESSAGE'
+experience-reward-received: '&aПолучено &9AMOUNT очков опыта&a.'
+increase-max-health-reward-received: '&aВаше здоровье повышено на &2AMOUNT ед.'
+increase-max-oxygen-reward-received: '&aВаш запас кислорода увеличен на &2AMOUNT ед.'
 
-# Related to /aach info.
-version-command-name: 'Имя:'
-version-command-version: 'Версия:'
-version-command-website: 'ВебСайт:'
-version-command-author: 'Автор(Автор перевода CeleDKo):'
+# Команда /aach help.
+aach-command-book: Получить сборник достижений.
+aach-command-book-hover: Получить сборник достижений.
+aach-command-stats: Показать статистику достижений.
+aach-command-stats-hover: Показать статистику достижений.
+aach-command-list: Открыть окно достижений.
+aach-command-list-hover: Открыть окно достижений.
+aach-command-top: Показать список лучших авантюристов за все время.
+aach-command-top-hover: Показать список лучших авантюристов за все время.
+aach-command-give: Выдать достижение игроку.
+aach-command-give-hover: Выдать достижение игроку.
+aach-command-add: Увеличить значение достижения.
+aach-command-add-hover: Позволяет быстро получить требуемое значение в достижении.
+aach-command-reload: Перезагрузить плагин.
+aach-command-reload-hover: Просто перезагружает плагин. Даже перезапуск сервера не требуется
+aach-command-info: Показать информацию о плагине.
+aach-command-info-hover: Показывает название плагина и еще кое-что. Вдруг вы забыли название плагина.
+aach-command-check: Проверить наличие достижения у игрока.
+aach-command-check-hover: Проверить наличие достижения у игрока.
+aach-command-delete: Отобрать достижение у игрока.
+aach-command-delete-hover: Отобрать достижение у игрока.
+aach-command-week: Показать список лучших авантюристов за неделю.
+aach-command-week-hover: Показать список лучших авантюристов за неделю.
+aach-command-month: Показать список лучших авантюристов за месяц.
+aach-command-month-hover: Показать список лучших авантюристов за месяц.
+aach-command-toggle: Включить/отключить отображение получения достижений другими игроками.
+aach-command-toggle-hover: Включить/отключить отображение получения достижений другими игроками.
+aach-command-reset: Сбросить достижения игрока в определенной категории.
+aach-command-reset-hover: Сбрасывает значения категории до 0, но не забирает сами достижения.
+aach-command-generate: Сгенерировать достижения для стандартного окна достижений Minecraft (необходима версия сервера 1.12 или выше).
+aach-command-generate-hover: Позволяет скопировать достижения из /aach list в окно достижений игры.
+aach-tip: '&lПримечание: &7Вы можете &f&n&oнавести &7и/или &f&n&oкликнуть &7по команде.'
+
+# Команда /aach info.
+version-command-version: 'Версия плагина:'
+version-command-website: 'Сайт:'
+version-command-author: 'Разработчик:'
 version-command-description: 'Описание:'
-version-command-description-details: Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!
-version-command-vault: 'Vault integration:'
-version-command-database: 'Database type:'
+version-command-description-details: Достижения привносят на ваш сервер немного разнообразия.
+version-command-vault: 'Интеграция Vault:'
+version-command-petmaster: 'Интеграция Pet Master:'
+version-command-btlp: 'Интеграция BungeeTabListPlus:'
+version-command-essentials: 'Интеграция Essentials:'
+version-command-placeholderapi: 'Интеграция PlaceholderAPI:'
+version-command-database: 'Тип базы данных:'
 
-# Related to /aach list.
-list-gui-title: '&5&lСписок достижений'
-list-delay: Вы должны подождать прежде чем снова использовать эту команду
-list-reward: 'Награда: '
-list-reward-money: деньги
-list-reward-item: предмет
-list-reward-command: другое
-list-amount: 'уровень: '
-list-achievement-received: "&5\u2714&f "
-list-achievement-not-received: "&4\u2718&8 "
+# Команда /aach list.
+list-gui-title: '&9&lДостижения'
+list-delay: Подождите TIME сек. перед повторным использованием команды.
+list-description: 'Описание:'
+list-goal: 'Описание:'
+list-reception: Достижение получено
+list-progress: 'Прогресс достижения:'
+list-reward: 'Награда:'
+list-reward-money: '&6&l© &eAMOUNTкрон' #&6&l© &eAMOUNTкрон может быть заменено на вашу валюту. Например, &2$AMOUNT
+list-reward-item: '&aITEM (хAMOUNT)'
+list-reward-command: '&3Наградное звание'
+list-reward-experience: '&9AMOUNT очков опыта'
+list-reward-increase-max-health: '&2Повышение здоровья на AMOUNT ед.'
+list-reward-increase-max-oxygen: "&2Повышение запаса кислорода на AMOUNT ед."
+list-achievement-received: '&2✔&f '
+list-achievement-not-received: '&c✘&8 '
+list-category-not-unlocked: Вы еще не получали достижений из этой категории.
+list-previous-message: '&7Пред. страница'
+list-next-message: '&7След. страница'
 list-back-message: '&7Назад'
+list-achievements-in-category-singular: '&7AMOUNT достижение' # 1 достижение
+list-achievements-in-category-plural: '&7AMOUNT достижений(я)' # 2 достижений(я) / 5 достижений(я) и т.д.
 
-# Related to category names in /aach list.
-# Set a parameter to "" to hide it from /aach list (but not disable the category).
-list-connections: Присоеденения
-list-places: Размещенные блоки
+# Команда /aach list.
+# Вы можете заменить название категории на "", чтобы скрыть ее из /aach list, но не отключая саму категорию.
+# Можете заменить названия категорий на свои, если вам не лень.
+list-connections: Входы на сервер
+list-places: Поставленные блоки
 list-breaks: Сломанные блоки
-list-kills: Сущностей убито
-list-crafts: Предметов скрафчено
-list-deaths: Количество смертей
-list-arrows: Выстрелы стрел
-list-snowballs: Метание снежков
-list-eggs: Метание яиц
-list-fish: Пойманная рыба
-list-itembreaks: Предметов сломано
-list-eatenitems: Предметов съедено
-list-shear: Овец подстрижено
-list-milk: Собрано молока
-list-trades: Количество сделок
-list-anvils: Наковален использовано
-list-enchantments: Предметов зачаровано
-list-beds: Кроватей использовано
-list-maxlevel: Максимальный уровней достигнуто
-list-potions: Зелий выпито
-list-playedtime: Временни сыграно
-list-distance-foot: Дистанций пройдено пешком
-list-distance-pig: Дистанций пройдено на свинье
-list-distance-horse: Дистанций пройдено на лошади
-list-distance-minecart: Дистанций проехано на вагонетке
-list-distance-boat: Дистанций проплыто на лодке
-list-distance-gliding: Distance Travelled with Elytra
-list-itemdrops: Предметов выкинуто
-list-hoeplowings: Земли вспахано
-list-fertilising: Растений посажено
-list-taming: Животных приручено
-list-brewing: Зелий сварено
-list-fireworks: Фейверков запущено
-list-musicdiscs: Музыкальных дисков сыграно
-list-enderpearls: Телепортаций с ендер жемчугом
+list-kills: Убитые игроки/существа
+list-crafts: Созданные предметы
+list-playercommands: Введенные команды
+list-deaths: Смерти
+list-arrows: Выстрелы из лука
+list-snowballs: Брошенные снежки
+list-eggs: Брошенные яйца
+list-fish: Выловленная рыба
+list-treasure: Выловленные сокровища
+list-itembreaks: Сломанные предметы
+list-eatenitems: Употребленная пища
+list-shear: Подстриженные овцы
+list-milk: Подоенные коровы
+list-lavabuckets: Наполенные лавой ведра
+list-waterbuckets: Наполенные водой ведра
+list-trades: Проведенные сделки с жителями
+list-anvils: Починенные предметы
+list-enchantments: Зачарованные предметы
+list-beds: Сон
+list-maxlevel: Уровень
+list-potions: Выпитые зелья
+list-playedtime: Проведенное на сервере время
+list-distance-foot: Пройденное расстояние на своих двоих
+list-distance-pig: Пройденное расстояние верхом на свинье
+list-distance-horse: Пройденное расстояние верхом на лошади
+list-distance-minecart: Пройденное расстояние на вагонетке
+list-distance-boat: Пройденное расстояние на лодке
+list-distance-gliding: Пройденное расстояние с использованием крыльев
+list-distance-llama: Пройденное верхом на ламе расстояние
+list-itemdrops: Выброшенные предметы
+list-itempickups: Поднятые предметы
+list-hoeplowings: Вспаханная земля
+list-fertilising: Удобренные растения
+list-taming: Прирученные животные
+list-breeding: Разведенные животные
+list-brewing: Сваренные зелья
+list-fireworks: Запущенные фейерверки
+list-musicdiscs: Прослушанная музыка
+list-enderpearls: Использованный жемчуг Края
+list-petmastergive: Переданные питомцы
+list-petmasterreceive: Полученные питомцы
+list-smelting: Расплавленные предметы
 list-commands: Другие достижения
+list-custom: Другие категории
+
+# Команда /aach toggle.
+toggle-displayed: Вы теперь будете получать оповещения о получении достижений другими игроками.
+toggle-hidden: Вы теперь не будете получать оповещения о получении достижений другими игроками.
+
+# Команда /aach reset.
+reset-successful: ': Статистика сброшена у игрока PLAYER.' #В чате отображается как "НазваниеКатегории: Статистика сброшена у игрока PLAYER."
+
+# Команда /aach generate.
+advancements-generated: Достижения успешно скопированы в окно достижений игры.
+minecraft-not-supported: Окно достижений игры не поддерживается вашей версией. Обновитесь до 1.12 или выше.
 
 # ============================================================#
-# +--------------------------------------------------------+  #
-# |         Parameters to appear in future versions        |  #
-# +--------------------------------------------------------+  #
+# +--------------------------------------------------------+ #
+# | Parameters in future plugin versions will  appear here | #
+# +--------------------------------------------------------+ #
 # ============================================================#

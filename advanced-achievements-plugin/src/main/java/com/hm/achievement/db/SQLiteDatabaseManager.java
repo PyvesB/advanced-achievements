@@ -18,7 +18,7 @@ import com.hm.mcshared.file.FileManager;
 
 /**
  * Class used to handle a SQLite database.
- * 
+ *
  * @author Pyves
  *
  */
