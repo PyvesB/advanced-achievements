@@ -54,4 +54,22 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 
 		onExecuteForPlayer(sender, args, player);
 	}
+
+	/**
+	 * Extracts the name of the achievement from the command line arguments.
+	 *
+	 * @param args
+	 * @return the achievement name
+	 */
+	String parseAchievementName(String[] args) {
+		StringBuilder achievementName = new StringBuilder();
+		// Rebuild name of achievement by concatenating elements in the string array. The name of the player is last.
+		for (int i = 1; i < args.length - 1; i++) {
+			achievementName.append(args[i]);
+			if (i != args.length - 2) {
+				achievementName.append(' ');
+			}
+		}
+		return StringUtils.replace(achievementName.toString(), "\u2423", " ");
+	}
 }

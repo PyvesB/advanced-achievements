@@ -128,6 +128,21 @@ public class CommandPaginationTest {
 	}
 
 	@Test
+	public void testPaginationPageSinglePage() {
+		CommandPagination pagination = new CommandPagination(Collections.singletonList("1"), 18, langConfig);
+
+		List<String> expected = Arrays.asList(
+				getPaginationHeader(1, 1),
+				"1",
+				getPaginationFooter());
+
+		List<String> result = new ArrayList<>();
+		pagination.sendPage(5, result::add);
+
+		assertEquals(expected, result);
+	}
+
+	@Test
 	public void testEmptyPagination() {
 		CommandPagination pagination = new CommandPagination(Collections.emptyList(), 18, langConfig);
 

@@ -581,7 +581,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @return List of AwardedDBAchievement objects, message field is empty to save memory.
 	 */
 	public List<AwardedDBAchievement> getAchievementsRecipientList(String achievementName) {
-		String sql = "SELECT playername, achievement, date FROM " + prefix + "WHERE achievement LIKE LOWER(?)" +
+		String sql = "SELECT playername, achievement, date FROM " + prefix + "achievements WHERE achievement LIKE LOWER(?)" +
 				" ORDER BY date DESC LIMIT 1000";
 		return ((SQLReadOperation<List<AwardedDBAchievement>>) () -> {
 			List<AwardedDBAchievement> achievements = new ArrayList<>();
@@ -605,7 +605,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 						} catch (IllegalArgumentException improperUUIDFormatException) {
 							continue;
 						}
-						Date dateAwarded = rs.getDate(4);
+						Date dateAwarded = rs.getDate("date");
 
 						achievements.add(new AwardedDBAchievement(uuid, achName, "", dateAwarded.getTime(),
 								dateFormat.format(dateAwarded)));
