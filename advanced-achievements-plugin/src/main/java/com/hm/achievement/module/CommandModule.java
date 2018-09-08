@@ -10,6 +10,7 @@ import com.hm.achievement.command.executable.GenerateCommand;
 import com.hm.achievement.command.executable.GiveCommand;
 import com.hm.achievement.command.executable.HelpCommand;
 import com.hm.achievement.command.executable.InfoCommand;
+import com.hm.achievement.command.executable.InspectCommand;
 import com.hm.achievement.command.executable.ListCommand;
 import com.hm.achievement.command.executable.MonthCommand;
 import com.hm.achievement.command.executable.ReloadCommand;
@@ -99,4 +100,7 @@ public interface CommandModule {
 	@IntoSet
 	abstract AbstractCommand bindUpdate13Command(Upgrade13Command upgrade13Command);
 
+	@Binds
+	@IntoSet
+	abstract AbstractCommand bindInspectCommand(InspectCommand inspectCommand);
 }
