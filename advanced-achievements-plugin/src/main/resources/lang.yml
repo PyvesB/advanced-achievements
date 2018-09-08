@@ -96,6 +96,8 @@ aach-command-reset: "Reset statistic for category CAT."
 aach-command-reset-hover: "Player must be online; example: reset Places.stone DarkPyves"
 aach-command-generate: "Generate advancements."
 aach-command-generate-hover: "Potentially slow command; use with care!"
+aach-command-inspect: "Inspect Recipients of ACH"
+aach-command-inspect-hover: "Lists most recent recipients of an achievement, max 1000."
 aach-tip: "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!"
 
 # Related to /aach info.
@@ -194,6 +196,9 @@ reset-successful: " statistics were cleared for PLAYER."
 # Related to /aach generate.
 advancements-generated: "Advancements were successfully generated."
 minecraft-not-supported: "Advancements not supported in your Minecraft version. Please update to 1.12+."
+
+# Related to /aach inspect
+achievement-not-recognized: "Achievement called 'NAME' was not recognized."
 
 #============================================================#
 # +--------------------------------------------------------+ #
