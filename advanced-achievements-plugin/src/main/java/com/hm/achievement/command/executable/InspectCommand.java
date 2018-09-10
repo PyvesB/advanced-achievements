@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.TextStringBuilder;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
@@ -88,7 +87,7 @@ public class InspectCommand extends AbstractCommand {
 		String achievementDisplayName = parseAchievementName(args).toLowerCase();
 		String achievementName = getAchievementName(achievementDisplayName);
 		if (achievementName == null) {
-			sender.sendMessage(ChatColor.RED + LangHelper.getReplacedOnce(CmdLang.ACHIEVEMENT_NOT_RECOGNIZED,
+			sender.sendMessage(pluginHeader + LangHelper.getReplacedOnce(CmdLang.ACHIEVEMENT_NOT_RECOGNIZED,
 					"NAME", achievementDisplayName, langConfig));
 			return;
 		}
