@@ -154,7 +154,7 @@ public class InspectCommand extends AbstractCommand {
 					.map(achievement -> (Supplier<String>) () -> {
 						UUID uuid = achievement.getAwardedTo();
 						OfflinePlayer player = advancedAchievements.getServer().getOfflinePlayer(uuid);
-						String identifier = player != null ? player.getName() : uuid.toString();
+						String identifier = player.hasPlayedBefore() ? player.getName() : uuid.toString();
 						return "  " + identifier + " (" + achievement.getFormattedDate() + ")";
 					}).collect(Collectors.toList());
 
