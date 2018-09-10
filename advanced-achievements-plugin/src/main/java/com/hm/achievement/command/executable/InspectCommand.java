@@ -112,7 +112,7 @@ public class InspectCommand extends AbstractCommand {
 
 		boolean lastArgumentIsNumber = args.length > 1 && NumberUtils.isDigits(args[args.length - 1]);
 		boolean secondLastArgumentIsNumber = args.length > 2 && NumberUtils.isDigits(args[args.length - 2]);
-		if (lastArgumentIsNumber && secondLastArgumentIsNumber) {
+		if (lastArgumentIsNumber || secondLastArgumentIsNumber) {
 			List<String> endsRemoved = new ArrayList<>(Arrays.asList(args).subList(1, args.length - 1));
 			achName.appendWithSeparators(endsRemoved, " ");
 		} else {
