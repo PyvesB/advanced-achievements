@@ -35,7 +35,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Rsl1122
  */
 @Singleton
-@CommandSpec(name = "inspect", permission = "inspect", minArgs = 1, maxArgs = 5)
+@CommandSpec(name = "inspect", permission = "inspect", minArgs = 1, maxArgs = Integer.MAX_VALUE)
 public class InspectCommand extends AbstractCommand {
 
 	private static final int CACHE_EXPIRATION_DELAY = 60000;
