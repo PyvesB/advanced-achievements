@@ -16,7 +16,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.text.StrBuilder;
+import org.apache.commons.text.TextStringBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -52,9 +52,9 @@ public class InspectCommand extends AbstractCommand {
 
 	@Inject
 	public InspectCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
-			AdvancedAchievements advancedAchievements,
-			AbstractDatabaseManager databaseManager, Map<String, String> achievementsAndDisplayNames) {
+	                      @Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
+	                      AdvancedAchievements advancedAchievements,
+	                      AbstractDatabaseManager databaseManager, Map<String, String> achievementsAndDisplayNames) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;
@@ -62,6 +62,12 @@ public class InspectCommand extends AbstractCommand {
 
 		this.lastCached = new HashMap<>();
 		this.cachedPaginations = new HashMap<>();
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+		achievementDisplayNamesAndDatabaseNames = reverseMap(achievementsAndDisplayNames);
 	}
 
 	private Map<String, String> reverseMap(Map<String, String> map) {
@@ -100,7 +106,7 @@ public class InspectCommand extends AbstractCommand {
 	}
 
 	private String parseAchievementName(String[] args) {
-		StrBuilder achName = new StrBuilder();
+		TextStringBuilder achName = new TextStringBuilder();
 
 		boolean lastArgumentIsNumber = args.length > 1 && NumberUtils.isDigits(args[args.length - 1]);
 		boolean secondLastArgumentIsNumber = args.length > 2 && NumberUtils.isDigits(args[args.length - 2]);
@@ -116,11 +122,6 @@ public class InspectCommand extends AbstractCommand {
 	}
 
 	private String getAchievementName(String achievementDisplayName) {
-		// Initialize this map here, in constructor achievementsAndDisplayNames is empty
-		if (achievementDisplayNamesAndDatabaseNames == null) {
-			achievementDisplayNamesAndDatabaseNames = reverseMap(achievementsAndDisplayNames);
-		}
-
 		String achievementName = achievementDisplayNamesAndDatabaseNames.get(achievementDisplayName);
 		if (achievementName == null) {
 			String whiteSpaceRemovedName = achievementDisplayName.replaceAll("\\s", "_");
