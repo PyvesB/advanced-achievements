@@ -52,6 +52,8 @@ public class HelpCommand extends AbstractCommand {
 	private String langCommandReloadHover;
 	private String langCommandGenerate;
 	private String langCommandGenerateHover;
+	private String langCommandInspect;
+	private String langCommandInspectHover;
 	private String langCommandGive;
 	private String langCommandGiveHover;
 	private String langCommandAdd;
@@ -62,8 +64,6 @@ public class HelpCommand extends AbstractCommand {
 	private String langCommandCheckHover;
 	private String langCommandDelete;
 	private String langCommandDeleteHover;
-	private String langCommandInspect;
-	private String langCommandInspectHover;
 	private String langTip;
 
 	@Inject
@@ -104,6 +104,9 @@ public class HelpCommand extends AbstractCommand {
 		langCommandGenerateHover = LangHelper.get(HelpLang.Hover.GENERATE, langConfig);
 		langCommandGive = header("/aach give &oach player") + translateColorCodes(LangHelper.getEachReplaced(HelpLang.GIVE,
 				langConfig, new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
+		langCommandInspect = header("/aach inspect &oach")
+				+ translateColorCodes(LangHelper.getReplacedOnce(HelpLang.INSPECT, "ACH", "&oach&7", langConfig));
+		langCommandInspectHover = LangHelper.get(HelpLang.Hover.INSPECT, langConfig);
 		langCommandGiveHover = LangHelper.get(HelpLang.Hover.GIVE, langConfig);
 		langCommandAdd = header("/aach add &ox cat player") + LangHelper.get(HelpLang.ADD, langConfig);
 		langCommandAddHover = LangHelper.get(HelpLang.Hover.ADD, langConfig);
@@ -118,9 +121,6 @@ public class HelpCommand extends AbstractCommand {
 				+ translateColorCodes(LangHelper.getEachReplaced(HelpLang.DELETE,
 						langConfig, new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
 		langCommandDeleteHover = LangHelper.get(HelpLang.Hover.DELETE, langConfig);
-		langCommandInspect = header("/aach inspect &oach")
-				+ translateColorCodes(LangHelper.getReplacedOnce(HelpLang.INSPECT, "ACH", "&oach&7", langConfig));
-		langCommandInspectHover = LangHelper.get(HelpLang.Hover.INSPECT, langConfig);
 		langTip = ChatColor.GRAY + translateColorCodes(LangHelper.get(CmdLang.AACH_TIP, langConfig));
 	}
 
@@ -172,6 +172,10 @@ public class HelpCommand extends AbstractCommand {
 			sendJsonClickableHoverableMessage(sender, langCommandGenerate, "/aach generate", langCommandGenerateHover);
 		}
 
+		if (sender.hasPermission("achievement.inspect")) {
+			sendJsonClickableHoverableMessage(sender, langCommandInspect, "/aach inspect ach", langCommandInspectHover);
+		}
+
 		if (sender.hasPermission("achievement.give")) {
 			sendJsonClickableHoverableMessage(sender, langCommandGive, "/aach give ach name", langCommandGiveHover);
 		}
@@ -190,10 +194,6 @@ public class HelpCommand extends AbstractCommand {
 
 		if (sender.hasPermission("achievement.delete")) {
 			sendJsonClickableHoverableMessage(sender, langCommandDelete, "/aach delete ach name", langCommandDeleteHover);
-		}
-
-		if (sender.hasPermission("achievement.inspect")) {
-			sendJsonClickableHoverableMessage(sender, langCommandInspect, "/aach inspect ach", langCommandInspectHover);
 		}
 
 		// Empty line.
