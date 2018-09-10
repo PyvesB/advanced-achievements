@@ -51,9 +51,9 @@ public class InspectCommand extends AbstractCommand {
 
 	@Inject
 	public InspectCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-	                      @Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
-	                      AdvancedAchievements advancedAchievements,
-	                      AbstractDatabaseManager databaseManager, Map<String, String> achievementsAndDisplayNames) {
+			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
+			AdvancedAchievements advancedAchievements,
+			AbstractDatabaseManager databaseManager, Map<String, String> achievementsAndDisplayNames) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;
@@ -80,7 +80,8 @@ public class InspectCommand extends AbstractCommand {
 	}
 
 	private int getPage(String[] args) {
-		return args.length > 1 && NumberUtils.isDigits(args[args.length - 1]) ? Integer.parseInt(args[args.length - 1]) : 1;
+		boolean lastArgIsNumber = args.length > 1 && NumberUtils.isDigits(args[args.length - 1]);
+		return lastArgIsNumber ? Integer.parseInt(args[args.length - 1]) : 1;
 	}
 
 	@Override
