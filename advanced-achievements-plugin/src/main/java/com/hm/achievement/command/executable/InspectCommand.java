@@ -72,7 +72,9 @@ public class InspectCommand extends AbstractCommand {
 	private Map<String, String> reverseMap(Map<String, String> map) {
 		Map<String, String> reversed = new HashMap<>();
 		for (Map.Entry<String, String> entry : map.entrySet()) {
-			reversed.put(entry.getValue().toLowerCase(), entry.getKey());
+			String databaseName = entry.getKey();
+			String name = entry.getValue().isEmpty() ? databaseName : entry.getValue();
+			reversed.put(name.toLowerCase(), databaseName);
 		}
 		return reversed;
 	}
