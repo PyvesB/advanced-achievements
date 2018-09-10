@@ -25,7 +25,7 @@ public enum HelpLang implements Lang {
 	RESET("Reset statistic for category CAT."),
 	CHECK("Check if NAME has ACH."),
 	DELETE("Delete ACH from NAME."),
-	INSPECT("Inspect Recipients of ACH");
+	INSPECT("Inspect recipients of ACH.");
 
 	private final String defaultMessage;
 
