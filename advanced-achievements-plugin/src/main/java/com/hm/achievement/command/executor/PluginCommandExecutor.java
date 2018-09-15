@@ -1,5 +1,6 @@
 package com.hm.achievement.command.executor;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -32,8 +33,16 @@ public class PluginCommandExecutor implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		commands.stream().filter(cmd -> shouldExecute(cmd, args)).findFirst().orElse(helpCommand).execute(sender, args);
+		String[] parsedArgs = parseArguments(args);
+		commands.stream().filter(cmd -> shouldExecute(cmd, parsedArgs)).findFirst().orElse(helpCommand).execute(sender,
+				parsedArgs);
 		return true;
+	}
+
+	private String[] parseArguments(String[] args) {
+		return Arrays.stream(args)
+				.flatMap(argument -> Arrays.stream(argument.split("\u2423")))
+				.toArray(String[]::new);
 	}
 
 	/**
