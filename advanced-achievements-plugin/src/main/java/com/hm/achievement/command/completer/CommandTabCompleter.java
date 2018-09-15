@@ -114,8 +114,13 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	private List<String> getFormattedMatchingOptions(Collection<String> options, String prefix,
 			Function<String, String> displayMapper) {
+		// Remove chat colors
+		// Find matching options
+		// Map matches to be displayed properly with displayMapper
 		// Sort matching elements by alphabetical order.
-		List<String> allOptions = options.stream().filter(s -> s.toLowerCase().startsWith(prefix.toLowerCase()))
+		List<String> allOptions = options.stream()
+				.map(s -> StringUtils.removePattern(s, "&([a-f]|r|[k-o]|[0-9]){1}"))
+				.filter(s -> s.toLowerCase().startsWith(prefix.toLowerCase()))
 				.map(displayMapper).sorted().collect(Collectors.toList());
 
 		if (allOptions.size() > MAX_LIST_LENGTH) {
