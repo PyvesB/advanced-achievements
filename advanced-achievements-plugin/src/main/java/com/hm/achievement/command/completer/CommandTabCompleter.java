@@ -1,5 +1,6 @@
 package com.hm.achievement.command.completer;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +14,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -41,7 +41,6 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 	private final Set<String> disabledCategories;
 
 	private Set<String> configCommandsKeys;
-	private Set<String> achievementNamesAndDisplayNames;
 
 	@Inject
 	public CommandTabCompleter(@Named("main") CommentedYamlConfiguration mainConfig,
@@ -54,11 +53,6 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 	@Override
 	public void extractConfigurationParameters() {
 		configCommandsKeys = mainConfig.getShallowKeys("Commands");
-
-		achievementNamesAndDisplayNames = new HashSet<>();
-		achievementNamesAndDisplayNames.addAll(achievementsAndDisplayNames.keySet());
-		achievementsAndDisplayNames.values().stream().map(ChatColor::stripColor)
-				.forEach(achievementNamesAndDisplayNames::add);
 
 		enabledCategoriesWithSubcategories.clear();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
@@ -90,7 +84,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 			return getPartialList(sender, achievementsAndDisplayNames.keySet(), args[1]);
 		} else if (args.length == 2 && "inspect".equalsIgnoreCase(args[0])) {
 			// Spaces are not replaced.
-			return getPartialList(sender, achievementNamesAndDisplayNames, args[1]);
+			return getPartialList(sender, achievementsAndDisplayNames.values(), args[1]);
 		}
 		// No completion.
 		return Collections.singletonList("");
@@ -102,34 +96,34 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 	 *
 	 *
 	 * @param sender
-	 * @param fullSet
+	 * @param options
 	 * @param prefix
 	 * @return a list limited in length, containing elements matching the prefix,
 	 */
-	private List<String> getPartialList(CommandSender sender, Set<String> fullSet, String prefix) {
+	private List<String> getPartialList(CommandSender sender, Collection<String> options, String prefix) {
 		if (sender instanceof ConsoleCommandSender) {
 			// Console mapper uses the given parameters, spaces and all.
-			return getFormattedPartialList(fullSet, prefix, Function.identity());
+			return getFormattedMatchingOptions(options, prefix, Function.identity());
 		} else {
 			// Default mapper replaces spaces with an Open Box character to prevent completing wrong word.
 			// Prevented Behaviour:
 			// T -> Tamer -> Teleport Man -> Teleport The Avener -> Teleport The The Smelter
-			return getFormattedPartialList(fullSet, prefix, s -> StringUtils.replace(s, " ", "\u2423"));
+			return getFormattedMatchingOptions(options, prefix, s -> StringUtils.replace(s, " ", "\u2423"));
 		}
 	}
 
-	private List<String> getFormattedPartialList(Set<String> fullSet, String prefix,
+	private List<String> getFormattedMatchingOptions(Collection<String> options, String prefix,
 			Function<String, String> displayMapper) {
 		// Sort matching elements by alphabetical order.
-		List<String> fullList = fullSet.stream().filter(s -> s.toLowerCase().startsWith(prefix.toLowerCase()))
+		List<String> allOptions = options.stream().filter(s -> s.toLowerCase().startsWith(prefix.toLowerCase()))
 				.map(displayMapper).sorted().collect(Collectors.toList());
 
-		if (fullList.size() > MAX_LIST_LENGTH) {
-			List<String> partialList = fullList.subList(0, MAX_LIST_LENGTH - 2);
+		if (allOptions.size() > MAX_LIST_LENGTH) {
+			List<String> matchingOptions = allOptions.subList(0, MAX_LIST_LENGTH - 2);
 			// Suspension points to show that list was truncated.
-			partialList.add("\u2022\u2022\u2022");
-			return partialList;
+			matchingOptions.add("\u2022\u2022\u2022");
+			return matchingOptions;
 		}
-		return fullList;
+		return allOptions;
 	}
 }
