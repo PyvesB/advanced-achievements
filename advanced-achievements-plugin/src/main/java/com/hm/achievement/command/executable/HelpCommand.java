@@ -52,6 +52,8 @@ public class HelpCommand extends AbstractCommand {
 	private String langCommandReloadHover;
 	private String langCommandGenerate;
 	private String langCommandGenerateHover;
+	private String langCommandInspect;
+	private String langCommandInspectHover;
 	private String langCommandGive;
 	private String langCommandGiveHover;
 	private String langCommandAdd;
@@ -102,6 +104,9 @@ public class HelpCommand extends AbstractCommand {
 		langCommandGenerateHover = LangHelper.get(HelpLang.Hover.GENERATE, langConfig);
 		langCommandGive = header("/aach give &oach player") + translateColorCodes(LangHelper.getEachReplaced(HelpLang.GIVE,
 				langConfig, new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
+		langCommandInspect = header("/aach inspect &oach")
+				+ translateColorCodes(LangHelper.getReplacedOnce(HelpLang.INSPECT, "ACH", "&oach&7", langConfig));
+		langCommandInspectHover = LangHelper.get(HelpLang.Hover.INSPECT, langConfig);
 		langCommandGiveHover = LangHelper.get(HelpLang.Hover.GIVE, langConfig);
 		langCommandAdd = header("/aach add &ox cat player") + LangHelper.get(HelpLang.ADD, langConfig);
 		langCommandAddHover = LangHelper.get(HelpLang.Hover.ADD, langConfig);
@@ -165,6 +170,10 @@ public class HelpCommand extends AbstractCommand {
 
 		if (serverVersion >= 12 && sender.hasPermission("achievement.generate")) {
 			sendJsonClickableHoverableMessage(sender, langCommandGenerate, "/aach generate", langCommandGenerateHover);
+		}
+
+		if (sender.hasPermission("achievement.inspect")) {
+			sendJsonClickableHoverableMessage(sender, langCommandInspect, "/aach inspect ach", langCommandInspectHover);
 		}
 
 		if (sender.hasPermission("achievement.give")) {

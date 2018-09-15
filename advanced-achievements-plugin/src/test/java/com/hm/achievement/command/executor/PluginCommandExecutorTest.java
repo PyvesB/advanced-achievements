@@ -15,6 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.HelpCommand;
+import com.hm.achievement.command.executable.InspectCommand;
 import com.hm.achievement.command.executable.ListCommand;
 import com.hm.achievement.command.executable.NoArgsCommand;
 
@@ -38,6 +39,9 @@ public class PluginCommandExecutorTest {
 	@Mock
 	private NoArgsCommand noArgsCommand;
 
+	@Mock
+	private InspectCommand argsCommand;
+
 	private PluginCommandExecutor underTest;
 
 	@Before
@@ -46,6 +50,7 @@ public class PluginCommandExecutorTest {
 		commands.add(helpCommand);
 		commands.add(listCommand);
 		commands.add(noArgsCommand);
+		commands.add(argsCommand);
 		underTest = new PluginCommandExecutor(helpCommand, commands);
 	}
 
@@ -76,4 +81,12 @@ public class PluginCommandExecutorTest {
 		verifyNoMoreInteractions(listCommand, helpCommand, noArgsCommand);
 	}
 
+	@Test
+	public void itShouldParseOpenBoxCharactersIntoArray() {
+		String[] args = new String[] { "inspect", "one\u2423two", "three\u2423four" };
+		String[] expected = { "inspect", "one", "two", "three", "four" };
+		underTest.onCommand(sender, null, null, args);
+
+		verify(argsCommand).execute(sender, expected);
+	}
 }

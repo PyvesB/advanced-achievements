@@ -24,7 +24,8 @@ public enum HelpLang implements Lang {
 	ADD("Increase a statistic."),
 	RESET("Reset statistic for category CAT."),
 	CHECK("Check if NAME has ACH."),
-	DELETE("Delete ACH from NAME.");
+	DELETE("Delete ACH from NAME."),
+	INSPECT("Inspect recipients of ACH.");
 
 	private final String defaultMessage;
 
@@ -60,7 +61,8 @@ public enum HelpLang implements Lang {
 		ADD("Player must be online; mainly used for Customs achievements."),
 		RESET("Player must be online; example: reset Places.stone DarkPyves"),
 		CHECK("Use the Name parameter specified in the config."),
-		DELETE("Player must be online; does not reset any associated statistics.");
+		DELETE("Player must be online; does not reset any associated statistics."),
+		INSPECT("Lists most recent recipients of an achievement, max 1000.");
 
 		private final String defaultMessage;
 

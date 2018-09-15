@@ -571,4 +571,48 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			return achievements;
 		}).executeOperation("retrieving the full data of received achievements");
 	}
+
+	/**
+	 * Retrieve matching list of achievements for a name of an achievement.
+	 * <p>
+	 * Limited to 1000 most recent entries to save memory.
+	 *
+	 * @param achievementName Name of an achievement in database format.
+	 * @return List of AwardedDBAchievement objects, message field is empty to save memory.
+	 */
+	public List<AwardedDBAchievement> getAchievementsRecipientList(String achievementName) {
+		String sql = "SELECT playername, achievement, date FROM " + prefix + "achievements WHERE achievement LIKE LOWER(?)" +
+				" ORDER BY date DESC LIMIT 1000";
+		return ((SQLReadOperation<List<AwardedDBAchievement>>) () -> {
+			List<AwardedDBAchievement> achievements = new ArrayList<>();
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setFetchSize(1000);
+				ps.setString(1, achievementName);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing
+						// single quotes were inserted with two single quotes in the database.
+						String achName = StringUtils.replace(rs.getString("achievement"), "''", "'");
+						String displayName = achievementsAndDisplayNames.get(achName);
+						if (StringUtils.isNotBlank(displayName)) {
+							achName = displayName;
+						}
+						UUID uuid;
+						try {
+							String uuidString = rs.getString("playername");
+							uuid = UUID.fromString(uuidString);
+						} catch (IllegalArgumentException improperUUIDFormatException) {
+							continue;
+						}
+						Date dateAwarded = rs.getDate("date");
+
+						achievements.add(new AwardedDBAchievement(uuid, achName, "", dateAwarded.getTime(),
+								dateFormat.format(dateAwarded)));
+					}
+				}
+			}
+			return achievements;
+		}).executeOperation("retrieving the recipients of an achievement");
+	}
 }
