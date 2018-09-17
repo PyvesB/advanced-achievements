@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -25,6 +24,7 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.utils.MaterialHelper;
+import com.hm.achievement.utils.TextHelper;
 
 /**
  * Class used to update the database schema.
@@ -252,9 +252,6 @@ public class DatabaseUpdater {
 				st.execute("CREATE TABLE tempTable (playername char(36),achievement varchar(64),description varchar(128),"
 						+ "date DATE,PRIMARY KEY (playername, achievement))");
 				try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?,?);")) {
-					// Early versions of the plugin added colors to the date. We have to get rid of them by using a
-					// regex pattern, else parsing will fail.
-					Pattern regexPattern = Pattern.compile("&([a-f]|[0-9]){1}");
 					// Old date format, which was stored as a string.
 					SimpleDateFormat oldFormat = new SimpleDateFormat("dd/MM/yyyy");
 					// Load entire achievements table into memory.
@@ -277,8 +274,9 @@ public class DatabaseUpdater {
 
 					try {
 						for (String date : oldDates) {
-							// Convert to SQL date format.
-							newDates.add(new Date(oldFormat.parse(regexPattern.matcher(date).replaceAll("")).getTime()));
+							// Convert to SQL date format. Early versions of the plugin added colors to the date. We
+							// have to get rid of them else parsing will fail.
+							newDates.add(new Date(oldFormat.parse(TextHelper.removeFormattingCodes(date)).getTime()));
 						}
 					} catch (ParseException e) {
 						logger.log(Level.SEVERE, "Database error while parsing dates:", e);

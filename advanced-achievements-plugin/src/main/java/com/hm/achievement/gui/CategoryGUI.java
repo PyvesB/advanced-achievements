@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -32,6 +31,7 @@ import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.RewardParser;
+import com.hm.achievement.utils.TextHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -45,8 +45,6 @@ public class CategoryGUI extends AbstractGUI {
 	private static final int MAX_PER_PAGE = 50;
 	private static final long NO_STAT = -1L;
 	private static final String NO_SUBCATEGORY = "";
-	// Pattern to delete colors if achievement not yet received.
-	private static final Pattern REGEX_PATTERN = Pattern.compile("&([a-f]|[0-9]){1}");
 	// Minecraft font, used to get size information in the progress bar.
 	private static final MinecraftFont FONT = MinecraftFont.Font;
 
@@ -266,11 +264,11 @@ public class CategoryGUI extends AbstractGUI {
 		if (date != null) {
 			itemMeta.setDisplayName(translateColorCodes(langListAchievementReceived + name));
 		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-			itemMeta.setDisplayName(translateColorCodes(langListAchievementNotReceived + "&k" +
-					randomiseParts(REGEX_PATTERN.matcher(name).replaceAll(""))));
+			itemMeta.setDisplayName(translateColorCodes(langListAchievementNotReceived
+					+ "&k" + TextHelper.removeFormattingCodes(name)));
 		} else {
-			itemMeta.setDisplayName(translateColorCodes(StringEscapeUtils
-					.unescapeJava(langListAchievementNotReceived + "&o" + REGEX_PATTERN.matcher(name).replaceAll(""))));
+			itemMeta.setDisplayName(translateColorCodes(StringEscapeUtils.unescapeJava(langListAchievementNotReceived
+					+ "&o" + TextHelper.removeFormattingCodes(name))));
 		}
 
 		itemMeta.setLore(lore);
@@ -419,7 +417,7 @@ public class CategoryGUI extends AbstractGUI {
 			lore.add("");
 		} else {
 			lore.add(langListGoal);
-			String strippedAchMessage = REGEX_PATTERN.matcher(description).replaceAll("");
+			String strippedAchMessage = TextHelper.removeFormattingCodes(description);
 			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
 				lore.add(translateColorCodes(configListColorNotReceived + "&k" + randomiseParts(strippedAchMessage)));
 			} else {
@@ -469,7 +467,7 @@ public class CategoryGUI extends AbstractGUI {
 		// MinecraftFont essentially supports latin alphabet characters. If invalid characters are found just use
 		// number of chars.
 		if (FONT.isValid(achMessage)) {
-			textSize = FONT.getWidth(REGEX_PATTERN.matcher(achMessage).replaceAll(""));
+			textSize = FONT.getWidth(TextHelper.removeFormattingCodes(achMessage));
 		} else {
 			textSize = achMessage.length() * 3;
 		}

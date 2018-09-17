@@ -25,6 +25,7 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.MaterialHelper;
+import com.hm.achievement.utils.TextHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
@@ -40,8 +41,6 @@ public class AdvancementManager implements Reloadable {
 	public static final String ADVANCED_ACHIEVEMENTS_PARENT = "advanced_achievements_parent";
 	// Pattern to produce keys for advancements.
 	private static final Pattern REGEX_PATTERN_KEYS = Pattern.compile("[^A-Za-z0-9|_]");
-	// Pattern to delete colours as the advancement interface does not support them.
-	private static final Pattern REGEX_PATTERN_COLOURS = Pattern.compile("&([a-f]|[0-9]){1}");
 	// Strings related to Reflection.
 	private static final String PACKAGE_INVENTORY = "inventory";
 	private static final String CLASS_CRAFT_ITEM_STACK = "CraftItemStack";
@@ -227,7 +226,7 @@ public class AdvancementManager implements Reloadable {
 			achDisplayName = achName;
 		}
 		// Strip colours as the advancements interface does not support them.
-		achDisplayName = REGEX_PATTERN_COLOURS.matcher(achDisplayName).replaceAll("");
+		achDisplayName = TextHelper.removeFormattingCodes(achDisplayName);
 
 		String achKey = getKey(achName);
 		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, achKey);
@@ -239,7 +238,7 @@ public class AdvancementManager implements Reloadable {
 			if (!StringUtils.isNotBlank(description)) {
 				description = mainConfig.getString(configAchievement + ".Message", "");
 			}
-			description = REGEX_PATTERN_COLOURS.matcher(description).replaceAll("");
+			description = TextHelper.removeFormattingCodes(description);
 		}
 
 		String path = categoryName + ".Item";

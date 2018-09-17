@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -26,6 +25,7 @@ import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.CommandSpec;
 import com.hm.achievement.command.executable.EasterEggCommand;
 import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.TextHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -133,7 +133,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 		// Map matches to be displayed properly with displayMapper
 		// Sort matching elements by alphabetical order.
 		List<String> allOptions = options.stream()
-				.map(s -> RegExUtils.removePattern(s, "&([a-f]|r|[k-o]|[0-9]){1}"))
+				.map(TextHelper::removeFormattingCodes)
 				.filter(s -> s.toLowerCase().startsWith(prefix.toLowerCase()))
 				.map(displayMapper).sorted().collect(Collectors.toList());
 
