@@ -11,6 +11,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,8 +25,6 @@ import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.item.ItemInfo;
-import net.milkbowl.vault.item.Items;
 
 /**
  * Class in charge of handling the rewards for achievements.
@@ -145,15 +144,7 @@ public class RewardParser implements Reloadable {
 	 * @return the item name
 	 */
 	public String getItemName(ItemStack item) {
-		// Return Vault name of object if available.
-		if (economy != null) {
-			ItemInfo itemInfo = Items.itemByStack(item);
-			if (itemInfo != null) {
-				return itemInfo.getName();
-			}
-		}
-		// Vault name of object not available.
-		return StringUtils.replace(item.getType().toString(), "_", " ").toLowerCase();
+		return WordUtils.capitalizeFully(item.getType().toString().replace('_', ' '));
 	}
 
 	/**

@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -132,7 +133,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 		// Map matches to be displayed properly with displayMapper
 		// Sort matching elements by alphabetical order.
 		List<String> allOptions = options.stream()
-				.map(s -> StringUtils.removePattern(s, "&([a-f]|r|[k-o]|[0-9]){1}"))
+				.map(s -> RegExUtils.removePattern(s, "&([a-f]|r|[k-o]|[0-9]){1}"))
 				.filter(s -> s.toLowerCase().startsWith(prefix.toLowerCase()))
 				.map(displayMapper).sorted().collect(Collectors.toList());
 

@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.TextStringBuilder;
 import org.bukkit.OfflinePlayer;
@@ -44,8 +44,8 @@ public class InspectCommand extends AbstractCommand {
 	private final AdvancedAchievements advancedAchievements;
 	private final AbstractDatabaseManager databaseManager;
 
-	private Map<String, Long> lastCached;
-	private Map<String, SupplierCommandPagination> cachedPaginations;
+	private final Map<String, Long> lastCached;
+	private final Map<String, SupplierCommandPagination> cachedPaginations;
 
 	private final Map<String, String> achievementsAndDisplayNames;
 	private Map<String, String> achievementDisplayNamesAndDatabaseNames;
@@ -75,7 +75,7 @@ public class InspectCommand extends AbstractCommand {
 		for (Map.Entry<String, String> entry : map.entrySet()) {
 			String databaseName = entry.getKey();
 			String name = entry.getValue().isEmpty() ? databaseName : entry.getValue();
-			name = StringUtils.removePattern(name, "&([a-f]|r|[k-o]|[0-9]){1}");
+			name = RegExUtils.removePattern(name, "&([a-f]|r|[k-o]|[0-9]){1}");
 			reversed.put(name.toLowerCase(), databaseName);
 		}
 		return reversed;
