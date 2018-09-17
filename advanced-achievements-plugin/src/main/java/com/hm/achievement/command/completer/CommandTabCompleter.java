@@ -21,6 +21,9 @@ import org.bukkit.command.TabCompleter;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.executable.AbstractCommand;
+import com.hm.achievement.command.executable.CommandSpec;
+import com.hm.achievement.command.executable.EasterEggCommand;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -39,15 +42,21 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 	private final CommentedYamlConfiguration mainConfig;
 	private final Map<String, String> achievementsAndDisplayNames;
 	private final Set<String> disabledCategories;
+	private final Set<CommandSpec> commandSpecs;
+	private final int serverVersion;
 
 	private Set<String> configCommandsKeys;
 
 	@Inject
 	public CommandTabCompleter(@Named("main") CommentedYamlConfiguration mainConfig,
-			Map<String, String> achievementsAndDisplayNames, Set<String> disabledCategories) {
+			Map<String, String> achievementsAndDisplayNames, Set<String> disabledCategories, Set<AbstractCommand> commands,
+			int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
 		this.disabledCategories = disabledCategories;
+		this.serverVersion = serverVersion;
+		this.commandSpecs = commands.stream().filter(c -> !(c instanceof EasterEggCommand))
+				.map(c -> c.getClass().getAnnotation(CommandSpec.class)).collect(Collectors.toSet());
 	}
 
 	@Override
@@ -56,49 +65,53 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 		enabledCategoriesWithSubcategories.clear();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
-				enabledCategoriesWithSubcategories.add(category + "." + StringUtils.deleteWhitespace(subcategory));
+			if (!disabledCategories.contains(category.toString())) {
+				for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
+					enabledCategoriesWithSubcategories.add(category + "." + StringUtils.deleteWhitespace(subcategory));
+				}
 			}
 		}
 		for (NormalAchievements category : NormalAchievements.values()) {
-			enabledCategoriesWithSubcategories.add(category.toString());
+			if (!disabledCategories.contains(category.toString())) {
+				enabledCategoriesWithSubcategories.add(category.toString());
+			}
 		}
-		enabledCategoriesWithSubcategories.add("Commands");
-		// Only auto-complete with non-disabled categories.
-		enabledCategoriesWithSubcategories.removeAll(disabledCategories);
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-		if (!"aach".equals(command.getName()) || args.length == 3 && !"add".equalsIgnoreCase(args[0])
-				|| args.length == 4 && "add".equalsIgnoreCase(args[0])) {
-			// Complete with players.
-			return null;
-		} else if (args.length == 2 && "reset".equalsIgnoreCase(args[0])) {
-			return getPartialList(sender, enabledCategoriesWithSubcategories, args[1]);
-		} else if (args.length == 3 && "add".equalsIgnoreCase(args[0])) {
-			return getPartialList(sender, enabledCategoriesWithSubcategories, args[2]);
-		} else if (args.length == 2 && "give".equalsIgnoreCase(args[0])) {
-			return getPartialList(sender, configCommandsKeys, args[1]);
-		} else if (args.length == 2 && ("delete".equalsIgnoreCase(args[0]) || "check".equalsIgnoreCase(args[0]))) {
-			return getPartialList(sender, achievementsAndDisplayNames.keySet(), args[1]);
-		} else if (args.length == 2 && "inspect".equalsIgnoreCase(args[0])) {
-			// Spaces are not replaced.
-			return getPartialList(sender, achievementsAndDisplayNames.values(), args[1]);
+		if (shouldReturnPlayerList(command, args)) {
+			return null; // Complete with players.
 		}
-		// No completion.
-		return Collections.singletonList("");
+
+		String aachCommand = args[0];
+		Collection<String> options = Collections.emptyList();
+		if (args.length == 2 && "reset".equalsIgnoreCase(aachCommand)) {
+			options = enabledCategoriesWithSubcategories;
+		} else if (args.length == 2 && "give".equalsIgnoreCase(aachCommand)) {
+			options = configCommandsKeys;
+		} else if (args.length == 2 && StringUtils.equalsAnyIgnoreCase(aachCommand, "check", "delete")) {
+			options = achievementsAndDisplayNames.keySet();
+		} else if (args.length == 2 && "inspect".equalsIgnoreCase(aachCommand)) {
+			options = achievementsAndDisplayNames.values();
+		} else if (args.length == 3 && "add".equalsIgnoreCase(aachCommand)) {
+			options = enabledCategoriesWithSubcategories;
+		} else if (args.length == 1) {
+			options = commandSpecs.stream()
+					.filter(cs -> cs.permission().isEmpty() || sender.hasPermission("achievement." + cs.permission()))
+					.map(CommandSpec::name).collect(Collectors.toSet());
+		}
+		return getPartialList(sender, options, args[args.length - 1]);
 	}
 
 	/**
 	 * Returns a partial list based on the input set. Members of the returned list must start with what the player has
-	 * types so far. The list also has a limited length to avoid filling the player's screen.
-	 *
+	 * types so far. The list also has a limited length prior to Minecraft 1.13 to avoid filling the player's screen.
 	 *
 	 * @param sender
 	 * @param options
 	 * @param prefix
-	 * @return a list limited in length, containing elements matching the prefix,
+	 * @return a list limited in length, containing elements matching the prefix.
 	 */
 	private List<String> getPartialList(CommandSender sender, Collection<String> options, String prefix) {
 		if (sender instanceof ConsoleCommandSender) {
@@ -123,12 +136,17 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 				.filter(s -> s.toLowerCase().startsWith(prefix.toLowerCase()))
 				.map(displayMapper).sorted().collect(Collectors.toList());
 
-		if (allOptions.size() > MAX_LIST_LENGTH) {
-			List<String> matchingOptions = allOptions.subList(0, MAX_LIST_LENGTH - 2);
+		if (serverVersion < 13 && allOptions.size() > MAX_LIST_LENGTH) {
+			allOptions = allOptions.subList(0, MAX_LIST_LENGTH - 1);
 			// Suspension points to show that list was truncated.
-			matchingOptions.add("\u2022\u2022\u2022");
-			return matchingOptions;
+			allOptions.add("\u2022\u2022\u2022");
 		}
 		return allOptions;
+	}
+
+	private boolean shouldReturnPlayerList(Command command, String[] args) {
+		return !"aach".equals(command.getName())
+				|| args.length == 3 && StringUtils.equalsAnyIgnoreCase(args[0], "give", "reset", "check", "delete")
+				|| args.length == 4 && "add".equalsIgnoreCase(args[0]);
 	}
 }
