@@ -95,7 +95,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shouldReturnNullForThirdArgOfGiveCommand() {
+	public void shouldReturnNullForPlayerArgOfGiveCommand() {
 		String[] args = new String[] { "give", "yourAch1", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -103,7 +103,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shouldReturnNullForThirdArgOfResetCommand() {
+	public void shouldReturnNullForPlayerArgOfResetCommand() {
 		String[] args = new String[] { "reset", "Beds", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -111,7 +111,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shouldReturnNullForThirdArgOfCheckCommand() {
+	public void shouldReturnNullForPlayerArgOfCheckCommand() {
 		String[] args = new String[] { "check", "yourAch1", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -119,7 +119,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shouldReturnNullForThirdArgOfDeleteCommand() {
+	public void shouldReturnNullForPlayerArgOfDeleteCommand() {
 		String[] args = new String[] { "delete", "yourAch1", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -127,7 +127,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shouldReturnNullForFourthArgOfAddCommand() {
+	public void shouldReturnNullForPlayerArgOfAddCommand() {
 		String[] args = new String[] { "add", "1", "Breaks.sand", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
