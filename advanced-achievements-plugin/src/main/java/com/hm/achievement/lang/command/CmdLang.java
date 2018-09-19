@@ -10,6 +10,7 @@ import com.hm.achievement.lang.LangHelper;
  */
 public enum CmdLang implements Lang {
 	NO_PERMISSIONS("You do not have the permission to do this."),
+	INVALID_COMMAND("Invalid command. Please type /aach to display the command help."),
 	PLAYER_OFFLINE("The player PLAYER is offline!"),
 	PLAYER_RANK("Current rank:"),
 	NOT_RANKED("You are currently not ranked for this period."),

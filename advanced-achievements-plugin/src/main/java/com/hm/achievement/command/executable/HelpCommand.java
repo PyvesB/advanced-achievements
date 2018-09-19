@@ -23,7 +23,7 @@ import com.hm.mcshared.particle.FancyMessageSender;
  * @author Pyves
  */
 @Singleton
-@CommandSpec(name = "help", permission = "", minArgs = 1, maxArgs = Integer.MAX_VALUE)
+@CommandSpec(name = "help", permission = "", minArgs = 0, maxArgs = Integer.MAX_VALUE)
 public class HelpCommand extends AbstractCommand {
 
 	private final int serverVersion;

@@ -11,6 +11,7 @@ no-permissions: "You do not have the permission to do this."
 statistic-cooldown: "Achievements cooldown: wait TIME seconds before this action counts again."
 category-does-not-exist: "The category and/or sub-category CAT does not exist."
 all-achievements-received: "Congratulations, you have received all the achievements!"
+invalid-command: "Invalid command. Please type /aach to display the command help."
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "Configuration successfully reloaded."
