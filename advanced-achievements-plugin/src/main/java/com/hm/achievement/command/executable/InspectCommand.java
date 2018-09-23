@@ -26,7 +26,7 @@ import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
-import com.hm.achievement.utils.TextHelper;
+import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -75,7 +75,7 @@ public class InspectCommand extends AbstractCommand {
 		for (Map.Entry<String, String> entry : map.entrySet()) {
 			String databaseName = entry.getKey();
 			String name = entry.getValue().isEmpty() ? databaseName : entry.getValue();
-			name = TextHelper.removeFormattingCodes(name);
+			name = StringHelper.removeFormattingCodes(name);
 			reversed.put(name.toLowerCase(), databaseName);
 		}
 		return reversed;
@@ -92,8 +92,9 @@ public class InspectCommand extends AbstractCommand {
 		String achievementDisplayName = parseAchievementName(args).toLowerCase();
 		String achievementName = getAchievementName(achievementDisplayName);
 		if (achievementName == null) {
-			sender.sendMessage(pluginHeader + LangHelper.getReplacedOnce(CmdLang.ACHIEVEMENT_NOT_RECOGNIZED,
-					"NAME", achievementDisplayName, langConfig));
+			sender.sendMessage(pluginHeader + LangHelper.getEachReplaced(CmdLang.ACHIEVEMENT_NOT_RECOGNIZED, langConfig,
+					new String[] { "NAME", "CLOSEST_MATCH" }, new String[] { achievementDisplayName, StringHelper
+							.getClosestMatch(achievementDisplayName, achievementDisplayNamesAndDatabaseNames.values()) }));
 			return;
 		}
 		int page = getPage(args);

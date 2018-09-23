@@ -1,5 +1,6 @@
 package com.hm.achievement.module;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +35,12 @@ public class ConfigModule {
 	@Singleton
 	Set<String> provideDisabledCategories() {
 		return new HashSet<>();
+	}
+
+	@Provides
+	@Singleton
+	List<String> provideEnabledCategoriesWithSubcategories() {
+		return new ArrayList<>();
 	}
 
 	@Provides

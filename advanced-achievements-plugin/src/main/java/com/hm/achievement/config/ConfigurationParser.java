@@ -2,6 +2,7 @@ package com.hm.achievement.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.exception.PluginLoadError;
+import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -39,6 +41,7 @@ public class ConfigurationParser {
 	private final Map<String, String> achievementsAndDisplayNames;
 	private final Map<String, List<Long>> sortedThresholds;
 	private final Set<String> disabledCategories;
+	private final List<String> enabledCategoriesWithSubcategories;
 	private final StringBuilder pluginHeader;
 	private final Logger logger;
 	private final int serverVersion;
@@ -47,8 +50,8 @@ public class ConfigurationParser {
 	public ConfigurationParser(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
 			FileUpdater fileUpdater, Map<String, String> achievementsAndDisplayNames,
-			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories, StringBuilder pluginHeader,
-			Logger logger, int serverVersion) {
+			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories,
+			List<String> enabledCategoriesWithSubcategories, StringBuilder pluginHeader, Logger logger, int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
@@ -56,6 +59,7 @@ public class ConfigurationParser {
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
 		this.sortedThresholds = sortedThresholds;
 		this.disabledCategories = disabledCategories;
+		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;
 		this.pluginHeader = pluginHeader;
 		this.logger = logger;
 		this.serverVersion = serverVersion;
@@ -75,6 +79,7 @@ public class ConfigurationParser {
 		updateOldConfigurations();
 		parseHeader();
 		parseDisabledCategories();
+		parseEnabledCategoriesWithSubcategories();
 		parseAchievements();
 		logLoadingMessages();
 	}
@@ -177,7 +182,32 @@ public class ConfigurationParser {
 		for (String disabledCategory : mainConfig.getList("DisabledCategories")) {
 			if (!"Commands".equals(disabledCategory) && NormalAchievements.getByName(disabledCategory) == null
 					&& MultipleAchievements.getByName(disabledCategory) == null) {
-				throw new PluginLoadError("Category " + disabledCategory + " specified in DisabledCategories is misspelt.");
+				List<String> allCategories = new ArrayList<>();
+				Arrays.stream(NormalAchievements.values()).forEach(n -> allCategories.add(n.toString()));
+				Arrays.stream(MultipleAchievements.values()).forEach(m -> allCategories.add(m.toString()));
+				allCategories.add("Commands");
+				throw new PluginLoadError("Category " + disabledCategory + " specified in DisabledCategories is misspelt. "
+						+ "Did you mean " + StringHelper.getClosestMatch(disabledCategory, allCategories) + "?");
+			}
+		}
+	}
+
+	/**
+	 * Extracts all enabled categories from the configuration and adds subcategories if relevant. Ignores the Commands
+	 * category.
+	 */
+	private void parseEnabledCategoriesWithSubcategories() {
+		enabledCategoriesWithSubcategories.clear();
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			if (!disabledCategories.contains(category.toString())) {
+				for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
+					enabledCategoriesWithSubcategories.add(category + "." + StringUtils.deleteWhitespace(subcategory));
+				}
+			}
+		}
+		for (NormalAchievements category : NormalAchievements.values()) {
+			if (!disabledCategories.contains(category.toString())) {
+				enabledCategoriesWithSubcategories.add(category.toString());
 			}
 		}
 	}

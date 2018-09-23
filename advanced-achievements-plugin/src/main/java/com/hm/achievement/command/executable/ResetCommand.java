@@ -1,5 +1,7 @@
 package com.hm.achievement.command.executable;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -15,6 +17,7 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.db.CachedStatistic;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
+import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -29,6 +32,7 @@ public class ResetCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
 	private final AbstractDatabaseManager databaseManager;
+	private final List<String> enabledCategoriesWithSubcategories;
 
 	private String langResetSuccessful;
 	private String langCategoryDoesNotExist;
@@ -36,10 +40,11 @@ public class ResetCommand extends AbstractParsableCommand {
 	@Inject
 	public ResetCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
-			AbstractDatabaseManager databaseManager) {
+			AbstractDatabaseManager databaseManager, List<String> enabledCategoriesWithSubcategories) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.databaseManager = databaseManager;
+		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;
 	}
 
 	@Override
@@ -91,6 +96,7 @@ public class ResetCommand extends AbstractParsableCommand {
 			}
 		}
 
-		sender.sendMessage(StringUtils.replaceOnce(langCategoryDoesNotExist, "CAT", args[1]));
+		sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[] { "CAT", "CLOSEST_MATCH" },
+				new String[] { args[1], StringHelper.getClosestMatch(args[1], enabledCategoriesWithSubcategories) }));
 	}
 }

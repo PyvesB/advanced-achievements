@@ -25,7 +25,7 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.MaterialHelper;
-import com.hm.achievement.utils.TextHelper;
+import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
@@ -226,7 +226,7 @@ public class AdvancementManager implements Reloadable {
 			achDisplayName = achName;
 		}
 		// Strip colours as the advancements interface does not support them.
-		achDisplayName = TextHelper.removeFormattingCodes(achDisplayName);
+		achDisplayName = StringHelper.removeFormattingCodes(achDisplayName);
 
 		String achKey = getKey(achName);
 		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, achKey);
@@ -238,7 +238,7 @@ public class AdvancementManager implements Reloadable {
 			if (!StringUtils.isNotBlank(description)) {
 				description = mainConfig.getString(configAchievement + ".Message", "");
 			}
-			description = TextHelper.removeFormattingCodes(description);
+			description = StringHelper.removeFormattingCodes(description);
 		}
 
 		String path = categoryName + ".Item";

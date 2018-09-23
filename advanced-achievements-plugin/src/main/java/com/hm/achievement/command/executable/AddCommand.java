@@ -1,5 +1,7 @@
 package com.hm.achievement.command.executable;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -15,6 +17,7 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
+import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -32,14 +35,16 @@ public class AddCommand extends AbstractParsableCommand {
 	private String langErrorValue;
 	private String langStatisticIncreased;
 	private String langCategoryDoesNotExist;
+	private final List<String> enabledCategoriesWithSubcategories;
 
 	@Inject
 	public AddCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
-			StatisticIncreaseHandler statisticIncreaseHandler) {
+			StatisticIncreaseHandler statisticIncreaseHandler, List<String> enabledCategoriesWithSubcategories) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.statisticIncreaseHandler = statisticIncreaseHandler;
+		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;
 	}
 
 	@Override
@@ -90,6 +95,7 @@ public class AddCommand extends AbstractParsableCommand {
 			}
 		}
 
-		sender.sendMessage(StringUtils.replaceOnce(langCategoryDoesNotExist, "CAT", args[2]));
+		sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[] { "CAT", "CLOSEST_MATCH" },
+				new String[] { args[2], StringHelper.getClosestMatch(args[2], enabledCategoriesWithSubcategories) }));
 	}
 }

@@ -9,7 +9,7 @@
 
 no-permissions: "You do not have the permission to do this."
 statistic-cooldown: "Achievements cooldown: wait TIME seconds before this action counts again."
-category-does-not-exist: "The category and/or sub-category CAT does not exist."
+category-does-not-exist: "The category and/or sub-category CAT does not exist. Did you mean CLOSEST_MATCH?"
 all-achievements-received: "Congratulations, you have received all the achievements!"
 invalid-command: "Invalid command. Please type /aach to display the command help."
 
@@ -39,7 +39,7 @@ book-not-received: "You have not yet received any achievements."
 # Related to /aach give.
 player-offline: "The player PLAYER is offline!"
 achievement-already-received: "The player PLAYER has already received this achievement!"
-achievement-not-found: "The specified achievement was not found in Commands category."
+achievement-not-found: "The specified achievement was not found in Commands category. Did you mean CLOSEST_MATCH?"
 achievement-given: "Achievement given!"
 
 # Related to /aach add.
@@ -199,7 +199,7 @@ advancements-generated: "Advancements were successfully generated."
 minecraft-not-supported: "Advancements not supported in your Minecraft version. Please update to 1.12+."
 
 # Related to /aach inspect
-achievement-not-recognized: "Achievement called 'NAME' was not recognized."
+achievement-not-recognized: "Achievement called 'NAME' was not recognized. Did you mean CLOSEST_MATCH?"
 
 #============================================================#
 # +--------------------------------------------------------+ #

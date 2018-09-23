@@ -14,6 +14,7 @@ import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.utils.RewardParser;
+import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -82,7 +83,8 @@ public class GiveCommand extends AbstractParsableCommand {
 
 			sender.sendMessage(langAchievementGiven);
 		} else {
-			sender.sendMessage(StringUtils.replaceOnce(langAchievementNotFound, "PLAYER", args[2]));
+			sender.sendMessage(StringUtils.replaceOnce(langAchievementNotFound, "CLOSEST_MATCH",
+					StringHelper.getClosestMatch(args[1], mainConfig.getShallowKeys("Commands"))));
 		}
 	}
 }

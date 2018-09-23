@@ -2,7 +2,6 @@ package com.hm.achievement.command.completer;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,13 +18,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabCompleter;
 
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.CommandSpec;
 import com.hm.achievement.command.executable.EasterEggCommand;
 import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.achievement.utils.TextHelper;
+import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -39,10 +36,9 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	private static final int MAX_LIST_LENGTH = 50;
 
-	private final Set<String> enabledCategoriesWithSubcategories = new HashSet<>();
 	private final CommentedYamlConfiguration mainConfig;
 	private final Map<String, String> achievementsAndDisplayNames;
-	private final Set<String> disabledCategories;
+	private final List<String> enabledCategoriesWithSubcategories;
 	private final Set<CommandSpec> commandSpecs;
 	private final int serverVersion;
 
@@ -50,11 +46,11 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	@Inject
 	public CommandTabCompleter(@Named("main") CommentedYamlConfiguration mainConfig,
-			Map<String, String> achievementsAndDisplayNames, Set<String> disabledCategories, Set<AbstractCommand> commands,
-			int serverVersion) {
+			Map<String, String> achievementsAndDisplayNames, List<String> enabledCategoriesWithSubcategories,
+			Set<AbstractCommand> commands, int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
-		this.disabledCategories = disabledCategories;
+		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;
 		this.serverVersion = serverVersion;
 		this.commandSpecs = commands.stream().filter(c -> !(c instanceof EasterEggCommand))
 				.map(c -> c.getClass().getAnnotation(CommandSpec.class)).collect(Collectors.toSet());
@@ -63,20 +59,6 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 	@Override
 	public void extractConfigurationParameters() {
 		configCommandsKeys = mainConfig.getShallowKeys("Commands");
-
-		enabledCategoriesWithSubcategories.clear();
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			if (!disabledCategories.contains(category.toString())) {
-				for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
-					enabledCategoriesWithSubcategories.add(category + "." + StringUtils.deleteWhitespace(subcategory));
-				}
-			}
-		}
-		for (NormalAchievements category : NormalAchievements.values()) {
-			if (!disabledCategories.contains(category.toString())) {
-				enabledCategoriesWithSubcategories.add(category.toString());
-			}
-		}
 	}
 
 	@Override
@@ -133,7 +115,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 		// Map matches to be displayed properly with displayMapper
 		// Sort matching elements by alphabetical order.
 		List<String> allOptions = options.stream()
-				.map(TextHelper::removeFormattingCodes)
+				.map(StringHelper::removeFormattingCodes)
 				.filter(s -> s.toLowerCase().startsWith(prefix.toLowerCase()))
 				.map(displayMapper).sorted().collect(Collectors.toList());
 

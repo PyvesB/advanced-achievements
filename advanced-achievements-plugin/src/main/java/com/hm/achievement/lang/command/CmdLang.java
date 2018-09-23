@@ -17,7 +17,7 @@ public enum CmdLang implements Lang {
 	// AddCommand
 	ERROR_VALUE("The value VALUE must to be an integer!"),
 	STATISTIC_INCREASED("Statistic ACH increased by AMOUNT for PLAYER!"),
-	CATEGORY_DOES_NOT_EXIST("The category and/or sub-category CAT does not exist."),
+	CATEGORY_DOES_NOT_EXIST("The category and/or sub-category CAT does not exist. Did you mean CLOSEST_MATCH?"),
 	// BookCommand
 	BOOK_DELAY("You must wait TIME seconds between each book reception!"),
 	BOOK_NOT_RECEIVED("You have not yet received any achievements."),
@@ -35,7 +35,7 @@ public enum CmdLang implements Lang {
 	// GiveCommand
 	ACHIEVEMENT_ALREADY_RECEIVED("The player PLAYER has already received this achievement!"),
 	ACHIEVEMENT_GIVEN("Achievement given!"),
-	ACHIEVEMENT_NOT_FOUND("The specified achievement was not found in Commands category."),
+	ACHIEVEMENT_NOT_FOUND("The specified achievement was not found in Commands category. Did you mean CLOSEST_MATCH?"),
 	// HelpCommand, check out HelpLang for more.
 	AACH_TIP("&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!"),
 	CONFIGURATION_RELOAD_FAILED("Errors while reloading configuration. Please view logs for more details."),
@@ -54,7 +54,7 @@ public enum CmdLang implements Lang {
 	PAGINATION_HEADER("&7> &5Page PAGE/MAX"),
 	PAGINATION_FOOTER("&7>"),
 	// InspectCommand
-	ACHIEVEMENT_NOT_RECOGNIZED("Achievement called 'NAME' was not recognized.");
+	ACHIEVEMENT_NOT_RECOGNIZED("Achievement called 'NAME' was not recognized. Did you mean CLOSEST_MATCH?");
 
 	private final String defaultMessage;
 

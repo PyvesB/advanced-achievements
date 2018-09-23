@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -78,10 +79,10 @@ public class CommandTabCompleterTest {
 		achievementsAndDisplayNames.put("yourAch1", "Special Event Achievement!");
 		achievementsAndDisplayNames.put("yourAch2", "&2Coloured &rAchievement!");
 		achievementsAndDisplayNames.put("No Display Name Achievements!", "");
-		Set<String> disabledCategories = new HashSet<>();
-		disabledCategories.add("Crafts");
-		disabledCategories.add("Connections");
-		underTest = new CommandTabCompleter(mainConfig, achievementsAndDisplayNames, disabledCategories, commands, 13);
+		List<String> enabledCategoriesWithSubcategories = Arrays.asList("Custom.someSubcategory", "Beds",
+				"Breaks.someSubcategory", "Breeding.someSubcategory", "Brewing");
+		underTest = new CommandTabCompleter(mainConfig, achievementsAndDisplayNames, enabledCategoriesWithSubcategories,
+				commands, 13);
 		underTest.extractConfigurationParameters();
 	}
 
@@ -163,14 +164,6 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudExcludeDisabledCategoriesFromCompletion() {
-		String[] args = new String[] { "reset", "C" };
-		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
-
-		assertEquals(asList("ConsumedPotions", "Custom.someSubcategory"), completionResult);
-	}
-
-	@Test
 	public void shoudCompleteForAddCommand() {
 		String[] args = new String[] { "add", "1", "Cust" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
@@ -221,7 +214,7 @@ public class CommandTabCompleterTest {
 
 	@Test
 	public void shoudTruncateCompletionListOnOldServerVersionsIfOverFiftyElements() {
-		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptySet(), emptySet(), 12);
+		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptyList(), emptySet(), 12);
 		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
 		when(mainConfig.getShallowKeys("Commands")).thenReturn(commands);
 		underTest.extractConfigurationParameters();

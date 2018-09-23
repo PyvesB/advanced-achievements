@@ -31,7 +31,7 @@ import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.achievement.utils.TextHelper;
+import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -265,10 +265,10 @@ public class CategoryGUI extends AbstractGUI {
 			itemMeta.setDisplayName(translateColorCodes(langListAchievementReceived + name));
 		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
 			itemMeta.setDisplayName(translateColorCodes(langListAchievementNotReceived
-					+ "&k" + TextHelper.removeFormattingCodes(name)));
+					+ "&k" + StringHelper.removeFormattingCodes(name)));
 		} else {
 			itemMeta.setDisplayName(translateColorCodes(StringEscapeUtils.unescapeJava(langListAchievementNotReceived
-					+ "&o" + TextHelper.removeFormattingCodes(name))));
+					+ "&o" + StringHelper.removeFormattingCodes(name))));
 		}
 
 		itemMeta.setLore(lore);
@@ -417,7 +417,7 @@ public class CategoryGUI extends AbstractGUI {
 			lore.add("");
 		} else {
 			lore.add(langListGoal);
-			String strippedAchMessage = TextHelper.removeFormattingCodes(description);
+			String strippedAchMessage = StringHelper.removeFormattingCodes(description);
 			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
 				lore.add(translateColorCodes(configListColorNotReceived + "&k" + randomiseParts(strippedAchMessage)));
 			} else {
@@ -467,7 +467,7 @@ public class CategoryGUI extends AbstractGUI {
 		// MinecraftFont essentially supports latin alphabet characters. If invalid characters are found just use
 		// number of chars.
 		if (FONT.isValid(achMessage)) {
-			textSize = FONT.getWidth(TextHelper.removeFormattingCodes(achMessage));
+			textSize = FONT.getWidth(StringHelper.removeFormattingCodes(achMessage));
 		} else {
 			textSize = achMessage.length() * 3;
 		}
