@@ -1,5 +1,8 @@
 package com.hm.achievement.category;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * List of standard achievements.
  *
@@ -47,6 +50,13 @@ public enum NormalAchievements implements Category {
 	DISTANCEGLIDING("DistanceGliding", "list-distance-gliding", "Distance Travelled with Elytra", "When a distance is traveled with elytra."),
 	DISTANCELLAMA("DistanceLlama", "list-distance-llama", "Distance Travelled on a Llama", "When a distance is traveled on a llama.");
 
+	private static final Map<String, NormalAchievements> CATEGORY_NAMES_TO_ENUM = new HashMap<>();
+	static {
+		for (NormalAchievements category : NormalAchievements.values()) {
+			CATEGORY_NAMES_TO_ENUM.put(category.categoryName, category);
+		}
+	}
+
 	private final String categoryName;
 	private final String langName;
 	private final String langDefault;
@@ -59,6 +69,16 @@ public enum NormalAchievements implements Category {
 		this.configComment = configComment;
 	}
 
+	/**
+	 * Finds the category matching the provided name.
+	 * 
+	 * @param categoryName
+	 * @return a category or null if not found
+	 */
+	public static NormalAchievements getByName(String categoryName) {
+		return CATEGORY_NAMES_TO_ENUM.get(categoryName);
+	}
+
 	@Override
 	public String toString() {
 		return categoryName;
@@ -67,6 +87,7 @@ public enum NormalAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toDBName() {
 		return name().toLowerCase();
 	}
@@ -74,6 +95,7 @@ public enum NormalAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toPermName() {
 		return "achievement.count." + categoryName.toLowerCase();
 	}
@@ -81,6 +103,7 @@ public enum NormalAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangKey() {
 		return langName;
 	}
@@ -88,6 +111,7 @@ public enum NormalAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangDefault() {
 		return langDefault;
 	}
@@ -95,6 +119,7 @@ public enum NormalAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toConfigComment() {
 		return configComment;
 	}

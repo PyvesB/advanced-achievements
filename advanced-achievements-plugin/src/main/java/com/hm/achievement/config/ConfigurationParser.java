@@ -127,8 +127,11 @@ public class ConfigurationParser {
 
 	/**
 	 * Extracts disabled categories from the configuration file.
+	 * 
+	 * @throws PluginLoadError
 	 */
-	private void parseDisabledCategories() {
+	private void parseDisabledCategories() throws PluginLoadError {
+		validateDisabledCategories();
 		disabledCategories.clear();
 		disabledCategories.addAll(mainConfig.getList("DisabledCategories"));
 		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
@@ -162,6 +165,20 @@ public class ConfigurationParser {
 			logger.warning("Overriding configuration: disabling Breeding category.");
 			logger.warning(
 					"The breeding event is not available in your server version, please add Breeding to the DisabledCategories list in config.yml.");
+		}
+	}
+
+	/**
+	 * Performs validation for the DisabledCategories list.
+	 * 
+	 * @throws PluginLoadError
+	 */
+	private void validateDisabledCategories() throws PluginLoadError {
+		for (String disabledCategory : mainConfig.getList("DisabledCategories")) {
+			if (!"Commands".equals(disabledCategory) && NormalAchievements.getByName(disabledCategory) == null
+					&& MultipleAchievements.getByName(disabledCategory) == null) {
+				throw new PluginLoadError("Category " + disabledCategory + " specified in DisabledCategories is misspelt.");
+			}
 		}
 	}
 

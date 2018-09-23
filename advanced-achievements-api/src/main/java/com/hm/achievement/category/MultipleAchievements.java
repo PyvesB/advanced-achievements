@@ -1,5 +1,8 @@
 package com.hm.achievement.category;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * List of multiple achievements, ie. with sub-categories
  *
@@ -15,6 +18,13 @@ public enum MultipleAchievements implements Category {
 	PLAYERCOMMANDS("PlayerCommands", "Commands Entered", "When a player enters a specific command (specify command prefixes in lower case without spaces).", "command"),
 	CUSTOM("Custom", "Custom Categories", "When the command /aach add is called for this category.", "customname");
 
+	private static final Map<String, MultipleAchievements> CATEGORY_NAMES_TO_ENUM = new HashMap<>();
+	static {
+		for (MultipleAchievements category : MultipleAchievements.values()) {
+			CATEGORY_NAMES_TO_ENUM.put(category.categoryName, category);
+		}
+	}
+
 	private final String categoryName;
 	private final String langDefault;
 	private final String configComment;
@@ -27,6 +37,16 @@ public enum MultipleAchievements implements Category {
 		subcategoryDBName = subcategoryName;
 	}
 
+	/**
+	 * Finds the category matching the provided name.
+	 * 
+	 * @param categoryName
+	 * @return a category or null if not found
+	 */
+	public static MultipleAchievements getByName(String categoryName) {
+		return CATEGORY_NAMES_TO_ENUM.get(categoryName);
+	}
+
 	@Override
 	public String toString() {
 		return categoryName;
@@ -35,6 +55,7 @@ public enum MultipleAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toDBName() {
 		return name().toLowerCase();
 	}
@@ -42,6 +63,7 @@ public enum MultipleAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toPermName() {
 		return "achievement.count." + categoryName.toLowerCase();
 	}
@@ -49,6 +71,7 @@ public enum MultipleAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangKey() {
 		return "list-" + name().toLowerCase();
 	}
@@ -56,6 +79,7 @@ public enum MultipleAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toLangDefault() {
 		return langDefault;
 	}
@@ -63,6 +87,7 @@ public enum MultipleAchievements implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toConfigComment() {
 		return configComment;
 	}
