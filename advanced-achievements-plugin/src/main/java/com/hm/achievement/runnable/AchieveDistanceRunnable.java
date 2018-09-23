@@ -20,6 +20,7 @@ import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
@@ -37,14 +38,14 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements Cleanable, Runnable {
 
 	private final Map<UUID, Location> playerLocations = new HashMap<>();
-	private final Set<String> disabledCategories;
+	private final Set<Category> disabledCategories;
 
 	private boolean configIgnoreVerticalDistance;
 
 	@Inject
 	public AchieveDistanceRunnable(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			Set<String> disabledCategories) {
+			Set<Category> disabledCategories) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.disabledCategories = disabledCategories;
 	}
@@ -142,7 +143,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	 * @param category
 	 */
 	private void updateDistance(int difference, Player player, NormalAchievements category) {
-		if (!player.hasPermission(category.toPermName()) || disabledCategories.contains(category.toString())) {
+		if (!player.hasPermission(category.toPermName()) || disabledCategories.contains(category)) {
 			return;
 		}
 

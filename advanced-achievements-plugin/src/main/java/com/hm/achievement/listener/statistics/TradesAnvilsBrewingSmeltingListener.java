@@ -20,6 +20,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
@@ -34,13 +35,13 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class TradesAnvilsBrewingSmeltingListener extends AbstractRateLimitedListener {
 
-	private final Set<String> disabledCategories;
+	private final Set<Category> disabledCategories;
 
 	@Inject
 	public TradesAnvilsBrewingSmeltingListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
 			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
-			Set<String> disabledCategories) {
+			Set<Category> disabledCategories) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, advancedAchievements, langConfig,
 				logger);
 		this.disabledCategories = disabledCategories;
@@ -82,7 +83,7 @@ public class TradesAnvilsBrewingSmeltingListener extends AbstractRateLimitedList
 			return;
 		}
 
-		if (disabledCategories.contains(category.toString()) || !shouldIncreaseBeTakenIntoAccount(player, category)
+		if (disabledCategories.contains(category) || !shouldIncreaseBeTakenIntoAccount(player, category)
 				|| category == NormalAchievements.BREWING
 						&& isInCooldownPeriod(player, Integer.toString(event.getRawSlot()), false, category)) {
 			return;

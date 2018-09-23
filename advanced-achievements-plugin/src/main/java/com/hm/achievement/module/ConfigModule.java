@@ -11,6 +11,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.Category;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 import dagger.Module;
@@ -33,7 +34,7 @@ public class ConfigModule {
 
 	@Provides
 	@Singleton
-	Set<String> provideDisabledCategories() {
+	Set<Category> provideDisabledCategories() {
 		return new HashSet<>();
 	}
 

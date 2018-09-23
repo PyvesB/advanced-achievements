@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import com.hm.achievement.AdvancedAchievements;
 import org.bukkit.entity.Player;
 
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -28,13 +29,13 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 	private final AdvancedAchievements advancedAchievements;
 	private final CommentedYamlConfiguration mainConfig;
 	private final CacheManager cacheManager;
-	private final Set<String> disabledCategories;
+	private final Set<Category> disabledCategories;
 	private final Map<String, String> achievementsAndDisplayNames;
 
 	@Inject
 	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements,
 			@Named("main") CommentedYamlConfiguration mainConfig,
-			CacheManager cacheManager, Set<String> disabledCategories, Map<String, String> achievementsAndDisplayNames) {
+			CacheManager cacheManager, Set<Category> disabledCategories, Map<String, String> achievementsAndDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.mainConfig = mainConfig;
 		this.cacheManager = cacheManager;
@@ -71,14 +72,12 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		}
 
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			String categoryName = category.toString();
-
-			if (disabledCategories.contains(categoryName)) {
+			if (disabledCategories.contains(category)) {
 				continue;
 			}
 
-			for (String subcategory : mainConfig.getShallowKeys(categoryName)) {
-				String categoryPath = categoryName + "_" + subcategory;
+			for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
+				String categoryPath = category + "_" + subcategory;
 
 				if (identifier.equalsIgnoreCase(categoryPath)) {
 					return String

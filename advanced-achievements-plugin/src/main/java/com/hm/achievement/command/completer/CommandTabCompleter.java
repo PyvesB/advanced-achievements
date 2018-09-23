@@ -18,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabCompleter;
 
+import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.CommandSpec;
 import com.hm.achievement.command.executable.EasterEggCommand;
@@ -58,7 +59,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		configCommandsKeys = mainConfig.getShallowKeys("Commands");
+		configCommandsKeys = mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString());
 	}
 
 	@Override

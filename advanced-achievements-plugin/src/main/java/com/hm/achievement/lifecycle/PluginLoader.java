@@ -3,7 +3,6 @@ package com.hm.achievement.lifecycle;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -48,7 +47,6 @@ import com.hm.achievement.listener.statistics.DeathsListener;
 import com.hm.achievement.listener.statistics.DropsListener;
 import com.hm.achievement.listener.statistics.EnchantmentsListener;
 import com.hm.achievement.listener.statistics.EnderPearlsDistancesListener;
-import com.hm.achievement.listener.statistics.PlowingFertilisingFireworksMusicDiscsListener;
 import com.hm.achievement.listener.statistics.ItemBreaksListener;
 import com.hm.achievement.listener.statistics.KillsListener;
 import com.hm.achievement.listener.statistics.LevelsListener;
@@ -57,6 +55,7 @@ import com.hm.achievement.listener.statistics.PetMasterGiveReceiveListener;
 import com.hm.achievement.listener.statistics.PickupsListener;
 import com.hm.achievement.listener.statistics.PlacesListener;
 import com.hm.achievement.listener.statistics.PlayerCommandsListener;
+import com.hm.achievement.listener.statistics.PlowingFertilisingFireworksMusicDiscsListener;
 import com.hm.achievement.listener.statistics.ShearsListener;
 import com.hm.achievement.listener.statistics.SnowballsEggsListener;
 import com.hm.achievement.listener.statistics.TamesListener;
@@ -127,7 +126,7 @@ public class PluginLoader {
 	// Various other fields and parameters.
 	private final PluginCommandExecutor pluginCommandExecutor;
 	private final CommandTabCompleter commandTabCompleter;
-	private final Set<String> disabledCategorySet;
+	private final Set<Category> disabledCategories;
 	private final CommentedYamlConfiguration mainConfig;
 	private final ConfigurationParser configurationParser;
 
@@ -159,7 +158,7 @@ public class PluginLoader {
 			Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
 			AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
 			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
-			Set<String> disabledCategorySet, @Named("main") CommentedYamlConfiguration mainConfig,
+			Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
 			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
 			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand) {
 		this.advancedAchievements = advancedAchievements;
@@ -199,7 +198,7 @@ public class PluginLoader {
 		this.asyncCachedRequestsSender = asyncCachedRequestsSender;
 		this.pluginCommandExecutor = pluginCommandExecutor;
 		this.commandTabCompleter = commandTabCompleter;
-		this.disabledCategorySet = disabledCategorySet;
+		this.disabledCategories = disabledCategories;
 		this.mainConfig = mainConfig;
 		this.configurationParser = configurationParser;
 		this.distanceRunnable = distanceRunnable;
@@ -305,9 +304,7 @@ public class PluginLoader {
 	 */
 	private void registerListener(Listener listener, Category... matchingCategories) {
 		HandlerList.unregisterAll(listener);
-		Set<String> matchingCategoryStrings = Arrays.stream(matchingCategories).map(Category::toString)
-				.collect(Collectors.toSet());
-		if (matchingCategoryStrings.isEmpty() || !disabledCategorySet.containsAll(matchingCategoryStrings)) {
+		if (matchingCategories.length == 0 || !disabledCategories.containsAll(Arrays.asList(matchingCategories))) {
 			advancedAchievements.getServer().getPluginManager().registerEvents(listener, advancedAchievements);
 		}
 	}
@@ -341,7 +338,7 @@ public class PluginLoader {
 		if (playedTimeTask != null) {
 			playedTimeTask.cancel();
 		}
-		if (!disabledCategorySet.contains(NormalAchievements.PLAYEDTIME.toString())) {
+		if (!disabledCategories.contains(NormalAchievements.PLAYEDTIME)) {
 			int configPlaytimeTaskInterval = mainConfig.getInt("PlaytimeTaskInterval", 60);
 			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(advancedAchievements, playTimeRunnable,
 					configPlaytimeTaskInterval * 10L, configPlaytimeTaskInterval * 20L);
@@ -351,13 +348,13 @@ public class PluginLoader {
 		if (distanceTask != null) {
 			distanceTask.cancel();
 		}
-		if (!disabledCategorySet.contains(NormalAchievements.DISTANCEFOOT.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEPIG.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEHORSE.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEMINECART.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEBOAT.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCEGLIDING.toString())
-				|| !disabledCategorySet.contains(NormalAchievements.DISTANCELLAMA.toString())) {
+		if (!disabledCategories.contains(NormalAchievements.DISTANCEFOOT)
+				|| !disabledCategories.contains(NormalAchievements.DISTANCEPIG)
+				|| !disabledCategories.contains(NormalAchievements.DISTANCEHORSE)
+				|| !disabledCategories.contains(NormalAchievements.DISTANCEMINECART)
+				|| !disabledCategories.contains(NormalAchievements.DISTANCEBOAT)
+				|| !disabledCategories.contains(NormalAchievements.DISTANCEGLIDING)
+				|| !disabledCategories.contains(NormalAchievements.DISTANCELLAMA)) {
 			int configDistanceTaskInterval = mainConfig.getInt("DistanceTaskInterval", 5);
 			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(advancedAchievements, distanceRunnable,
 					configDistanceTaskInterval * 40L, configDistanceTaskInterval * 20L);

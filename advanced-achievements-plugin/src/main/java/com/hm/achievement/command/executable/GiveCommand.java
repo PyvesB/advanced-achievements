@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
@@ -56,7 +57,7 @@ public class GiveCommand extends AbstractParsableCommand {
 
 	@Override
 	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
-		String achievementPath = "Commands." + args[1];
+		String achievementPath = CommandAchievements.COMMANDS + "." + args[1];
 
 		if (mainConfig.getString(achievementPath + ".Message", null) != null) {
 			// Check whether player has already received achievement and cannot receive it again.
@@ -84,7 +85,8 @@ public class GiveCommand extends AbstractParsableCommand {
 			sender.sendMessage(langAchievementGiven);
 		} else {
 			sender.sendMessage(StringUtils.replaceOnce(langAchievementNotFound, "CLOSEST_MATCH",
-					StringHelper.getClosestMatch(args[1], mainConfig.getShallowKeys("Commands"))));
+					StringHelper.getClosestMatch(args[1],
+							mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString()))));
 		}
 	}
 }

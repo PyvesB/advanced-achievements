@@ -26,6 +26,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
@@ -48,13 +49,13 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 
 	private final Set<UUID> playersConnectionProcessed = new HashSet<>();
 	private final AdvancedAchievements advancedAchievements;
-	private final Set<String> disabledCategories;
+	private final Set<Category> disabledCategories;
 	private final AbstractDatabaseManager databaseManager;
 
 	@Inject
 	public ConnectionsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, Set<String> disabledCategories,
+			AdvancedAchievements advancedAchievements, Set<Category> disabledCategories,
 			AbstractDatabaseManager databaseManager) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.advancedAchievements = advancedAchievements;
@@ -91,7 +92,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	 * @param player
 	 */
 	private void scheduleAwardConnection(Player player) {
-		if (!disabledCategories.contains(NormalAchievements.CONNECTIONS.toString())
+		if (!disabledCategories.contains(NormalAchievements.CONNECTIONS)
 				&& !playersConnectionProcessed.contains(player.getUniqueId())) {
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> {
 				// In addition to the usual reception conditions, check that the player is still connected and that

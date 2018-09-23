@@ -19,6 +19,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 
+import com.hm.achievement.category.Category;
+import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.exception.PluginLoadError;
@@ -40,7 +42,7 @@ public class ConfigurationParser {
 	private final FileUpdater fileUpdater;
 	private final Map<String, String> achievementsAndDisplayNames;
 	private final Map<String, List<Long>> sortedThresholds;
-	private final Set<String> disabledCategories;
+	private final Set<Category> disabledCategories;
 	private final List<String> enabledCategoriesWithSubcategories;
 	private final StringBuilder pluginHeader;
 	private final Logger logger;
@@ -50,7 +52,7 @@ public class ConfigurationParser {
 	public ConfigurationParser(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
 			FileUpdater fileUpdater, Map<String, String> achievementsAndDisplayNames,
-			Map<String, List<Long>> sortedThresholds, Set<String> disabledCategories,
+			Map<String, List<Long>> sortedThresholds, Set<Category> disabledCategories,
 			List<String> enabledCategoriesWithSubcategories, StringBuilder pluginHeader, Logger logger, int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
@@ -136,37 +138,35 @@ public class ConfigurationParser {
 	 * @throws PluginLoadError
 	 */
 	private void parseDisabledCategories() throws PluginLoadError {
-		validateDisabledCategories();
-		disabledCategories.clear();
-		disabledCategories.addAll(mainConfig.getList("DisabledCategories"));
+		extractDisabledCategoriesFromConfig();
 		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
-		if ((!disabledCategories.contains(NormalAchievements.PETMASTERGIVE.toString())
-				|| !disabledCategories.contains(NormalAchievements.PETMASTERRECEIVE.toString()))
+		if ((!disabledCategories.contains(NormalAchievements.PETMASTERGIVE)
+				|| !disabledCategories.contains(NormalAchievements.PETMASTERRECEIVE))
 				&& (!Bukkit.getPluginManager().isPluginEnabled("PetMaster") || Integer.parseInt(Character.toString(
 						Bukkit.getPluginManager().getPlugin("PetMaster").getDescription().getVersion().charAt(2))) < 4)) {
-			disabledCategories.add(NormalAchievements.PETMASTERGIVE.toString());
-			disabledCategories.add(NormalAchievements.PETMASTERRECEIVE.toString());
+			disabledCategories.add(NormalAchievements.PETMASTERGIVE);
+			disabledCategories.add(NormalAchievements.PETMASTERRECEIVE);
 			logger.warning("Overriding configuration: disabling PetMasterGive and PetMasterReceive categories.");
 			logger.warning(
 					"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in config.yml.");
 		}
 		// Elytras introduced in Minecraft 1.9.
-		if (!disabledCategories.contains(NormalAchievements.DISTANCEGLIDING.toString()) && serverVersion < 9) {
-			disabledCategories.add(NormalAchievements.DISTANCEGLIDING.toString());
+		if (!disabledCategories.contains(NormalAchievements.DISTANCEGLIDING) && serverVersion < 9) {
+			disabledCategories.add(NormalAchievements.DISTANCEGLIDING);
 			logger.warning("Overriding configuration: disabling DistanceGliding category.");
 			logger.warning(
 					"Elytra are not available in your Minecraft version, please add DistanceGliding to the DisabledCategories list in config.yml.");
 		}
 		// Llamas introduced in Minecraft 1.11.
-		if (!disabledCategories.contains(NormalAchievements.DISTANCELLAMA.toString()) && serverVersion < 11) {
-			disabledCategories.add(NormalAchievements.DISTANCELLAMA.toString());
+		if (!disabledCategories.contains(NormalAchievements.DISTANCELLAMA) && serverVersion < 11) {
+			disabledCategories.add(NormalAchievements.DISTANCELLAMA);
 			logger.warning("Overriding configuration: disabling DistanceLlama category.");
 			logger.warning(
 					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in config.yml.");
 		}
 		// Breeding event introduced in Spigot 1319 (Minecraft 1.10.2).
-		if (!disabledCategories.contains(MultipleAchievements.BREEDING.toString()) && serverVersion < 10) {
-			disabledCategories.add(MultipleAchievements.BREEDING.toString());
+		if (!disabledCategories.contains(MultipleAchievements.BREEDING) && serverVersion < 10) {
+			disabledCategories.add(MultipleAchievements.BREEDING);
 			logger.warning("Overriding configuration: disabling Breeding category.");
 			logger.warning(
 					"The breeding event is not available in your server version, please add Breeding to the DisabledCategories list in config.yml.");
@@ -174,21 +174,31 @@ public class ConfigurationParser {
 	}
 
 	/**
-	 * Performs validation for the DisabledCategories list.
+	 * Performs validation for the DisabledCategories list and maps the values to Category instances.
 	 * 
 	 * @throws PluginLoadError
 	 */
-	private void validateDisabledCategories() throws PluginLoadError {
+	private void extractDisabledCategoriesFromConfig() throws PluginLoadError {
+		disabledCategories.clear();
 		for (String disabledCategory : mainConfig.getList("DisabledCategories")) {
-			if (!"Commands".equals(disabledCategory) && NormalAchievements.getByName(disabledCategory) == null
-					&& MultipleAchievements.getByName(disabledCategory) == null) {
+			Category category = CommandAchievements.COMMANDS.toString().equals(disabledCategory)
+					? CommandAchievements.COMMANDS
+					: null;
+			if (category == null) {
+				category = NormalAchievements.getByName(disabledCategory);
+			}
+			if (category == null) {
+				category = MultipleAchievements.getByName(disabledCategory);
+			}
+			if (category == null) {
 				List<String> allCategories = new ArrayList<>();
 				Arrays.stream(NormalAchievements.values()).forEach(n -> allCategories.add(n.toString()));
 				Arrays.stream(MultipleAchievements.values()).forEach(m -> allCategories.add(m.toString()));
-				allCategories.add("Commands");
+				allCategories.add(CommandAchievements.COMMANDS.toString());
 				throw new PluginLoadError("Category " + disabledCategory + " specified in DisabledCategories is misspelt. "
 						+ "Did you mean " + StringHelper.getClosestMatch(disabledCategory, allCategories) + "?");
 			}
+			disabledCategories.add(category);
 		}
 	}
 
@@ -199,14 +209,14 @@ public class ConfigurationParser {
 	private void parseEnabledCategoriesWithSubcategories() {
 		enabledCategoriesWithSubcategories.clear();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			if (!disabledCategories.contains(category.toString())) {
+			if (!disabledCategories.contains(category)) {
 				for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
 					enabledCategoriesWithSubcategories.add(category + "." + StringUtils.deleteWhitespace(subcategory));
 				}
 			}
 		}
 		for (NormalAchievements category : NormalAchievements.values()) {
-			if (!disabledCategories.contains(category.toString())) {
+			if (!disabledCategories.contains(category)) {
 				enabledCategoriesWithSubcategories.add(category.toString());
 			}
 		}
@@ -224,36 +234,34 @@ public class ConfigurationParser {
 		sortedThresholds.clear();
 
 		// Enumerate Commands achievements.
-		if (!disabledCategories.contains("Commands")) {
-			Set<String> commands = mainConfig.getShallowKeys("Commands");
+		if (!disabledCategories.contains(CommandAchievements.COMMANDS)) {
+			Set<String> commands = mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString());
 			if (commands.isEmpty()) {
-				disabledCategories.add("Commands");
+				disabledCategories.add(CommandAchievements.COMMANDS);
 			} else {
 				for (String ach : commands) {
-					parseAchievement("Commands." + ach);
+					parseAchievement(CommandAchievements.COMMANDS + "." + ach);
 				}
 			}
 		}
 
 		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
-			String categoryName = category.toString();
-			if (!disabledCategories.contains(categoryName)) {
-				parseAchievements(categoryName);
+			if (!disabledCategories.contains(category)) {
+				parseAchievements(category.toString());
 			}
 		}
 
 		// Enumerate the achievements with multiple categories.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			String categoryName = category.toString();
-			if (!disabledCategories.contains(categoryName)) {
-				Set<String> keys = mainConfig.getShallowKeys(categoryName);
+			if (!disabledCategories.contains(category)) {
+				Set<String> keys = mainConfig.getShallowKeys(category.toString());
 				if (keys.isEmpty()) {
-					disabledCategories.add(categoryName);
+					disabledCategories.add(category);
 					continue;
 				}
 				for (String section : keys) {
-					parseAchievements(categoryName + '.' + section);
+					parseAchievements(category + "." + section);
 				}
 			}
 		}
@@ -267,14 +275,6 @@ public class ConfigurationParser {
 	 */
 	private void parseAchievements(String path) throws PluginLoadError {
 		Set<String> keys = mainConfig.getShallowKeys(path);
-
-		// Disable category if no achievements exist
-		// Don't add multi-achievement categories to disabled categories (path has a .)
-		if (keys.isEmpty() && !path.contains(".")) {
-			disabledCategories.add(path);
-			return;
-		}
-
 		List<Long> thresholds = new ArrayList<>();
 		for (String threshold : keys) {
 			parseAchievement(path + "." + threshold);

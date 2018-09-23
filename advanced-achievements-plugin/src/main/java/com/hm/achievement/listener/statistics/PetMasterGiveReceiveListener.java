@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
@@ -27,12 +28,12 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class PetMasterGiveReceiveListener extends AbstractListener {
 
-	private final Set<String> disabledCategories;
+	private final Set<Category> disabledCategories;
 
 	@Inject
 	public PetMasterGiveReceiveListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			Set<String> disabledCategories) {
+			Set<Category> disabledCategories) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.disabledCategories = disabledCategories;
 	}
@@ -50,7 +51,7 @@ public class PetMasterGiveReceiveListener extends AbstractListener {
 			return;
 		}
 
-		if (!disabledCategories.contains(categoryReceive.toString())) {
+		if (!disabledCategories.contains(categoryReceive)) {
 			updateStatisticAndAwardAchievementsIfAvailable(receiverPlayer, categoryReceive, 1);
 		}
 
@@ -60,7 +61,7 @@ public class PetMasterGiveReceiveListener extends AbstractListener {
 			return;
 		}
 
-		if (!disabledCategories.contains(categoryGive.toString())) {
+		if (!disabledCategories.contains(categoryGive)) {
 			updateStatisticAndAwardAchievementsIfAvailable(giverPlayer, categoryGive, 1);
 		}
 	}

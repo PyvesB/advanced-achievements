@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -83,9 +84,9 @@ public abstract class AbstractGUI implements Reloadable {
 		}
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
-		commandsAchievementsItem = createItemStack("Commands");
+		commandsAchievementsItem = createItemStack(CommandAchievements.COMMANDS.toString());
 		buildItemLore(commandsAchievementsItem, LangHelper.get(GuiLang.COMMANDS, langConfig),
-				mainConfig.getShallowKeys("Commands").size());
+				mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString()).size());
 	}
 
 	/**

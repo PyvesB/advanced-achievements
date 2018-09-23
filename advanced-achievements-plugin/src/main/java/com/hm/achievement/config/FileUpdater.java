@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 
+import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lang.GuiLang;
@@ -69,9 +70,7 @@ public class FileUpdater {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			addNewCategory(config, category.toString(), category.toConfigComment());
 		}
-		addNewCategory(config, "Commands",
-				"A player with achievement.give (or the console) can use /aach give yourAch1 PLAYER to give",
-				"yourAch1 achievement to PLAYER. The /aach give command does NOT work with other achievements.");
+		addNewCategory(config, CommandAchievements.COMMANDS.toString(), CommandAchievements.COMMANDS.toConfigComment());
 
 		// Added in version 3.0:
 		updateSetting(config, "TablePrefix", "",

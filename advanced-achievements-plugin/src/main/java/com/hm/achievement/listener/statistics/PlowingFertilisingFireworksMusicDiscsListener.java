@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
@@ -34,13 +35,13 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateLimitedListener {
 
-	private final Set<String> disabledCategories;
+	private final Set<Category> disabledCategories;
 
 	@Inject
 	public PlowingFertilisingFireworksMusicDiscsListener(@Named("main") CommentedYamlConfiguration mainConfig,
 			int serverVersion, Map<String, List<Long>> sortedThresholds, CacheManager cacheManager,
 			RewardParser rewardParser, AdvancedAchievements advancedAchievements,
-			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger, Set<String> disabledCategories) {
+			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger, Set<Category> disabledCategories) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, advancedAchievements, langConfig,
 				logger);
 		this.disabledCategories = disabledCategories;
@@ -68,7 +69,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 			return;
 		}
 
-		if (disabledCategories.contains(category.toString())) {
+		if (disabledCategories.contains(category)) {
 			return;
 		}
 

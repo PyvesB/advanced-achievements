@@ -13,6 +13,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.hm.achievement.category.Category;
+import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -31,7 +33,7 @@ public class MainGUI extends AbstractGUI {
 
 	private static final int MAX_PER_PAGE = 54;
 
-	private final Set<String> disabledCategories;
+	private final Set<Category> disabledCategories;
 	private final ItemStack lockedItem;
 
 	private boolean configHideNotReceivedCategories;
@@ -42,7 +44,7 @@ public class MainGUI extends AbstractGUI {
 	@Inject
 	public MainGUI(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			CacheManager cacheManager, int serverVersion, Set<String> disabledCategories, MaterialHelper materialHelper) {
+			CacheManager cacheManager, int serverVersion, Set<Category> disabledCategories, MaterialHelper materialHelper) {
 		super(mainConfig, langConfig, guiConfig, cacheManager, materialHelper);
 		this.disabledCategories = disabledCategories;
 		lockedItem = new ItemStack(serverVersion < 8 ? Material.OBSIDIAN : Material.BARRIER);
@@ -79,7 +81,7 @@ public class MainGUI extends AbstractGUI {
 		// Display Multiple categories in the GUI.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			ItemStack item = multipleAchievementItems.get(category);
-			if (shouldDisplayCategory(item, player, category.toString(), category.toPermName())) {
+			if (shouldDisplayCategory(item, player, category)) {
 				displayMultipleCategory(item, mainGUI, player, category.toString(), displayedSoFar);
 				++displayedSoFar;
 			}
@@ -87,14 +89,15 @@ public class MainGUI extends AbstractGUI {
 		// Display Normal categories in the GUI.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			ItemStack item = normalAchievementItems.get(category);
-			if (shouldDisplayCategory(item, player, category.toString(), category.toPermName())) {
+			if (shouldDisplayCategory(item, player, category)) {
 				displayNormalCategory(item, mainGUI, player, category.toString(), displayedSoFar);
 				++displayedSoFar;
 			}
 		}
 		// Display the Commands category.
-		if (shouldDisplayCategory(commandsAchievementsItem, player, "Commands", null)) {
-			displayNormalCategory(commandsAchievementsItem, mainGUI, player, "Commands", displayedSoFar);
+		if (shouldDisplayCategory(commandsAchievementsItem, player, CommandAchievements.COMMANDS)) {
+			displayNormalCategory(commandsAchievementsItem, mainGUI, player, CommandAchievements.COMMANDS.toString(),
+					displayedSoFar);
 		}
 
 		// Display the main GUI to the player.
@@ -107,13 +110,12 @@ public class MainGUI extends AbstractGUI {
 	 * @param item
 	 * @param player
 	 * @param category
-	 * @param permName
 	 * @return true if an item corresponding to the category should be added to the GUI
 	 */
-	private boolean shouldDisplayCategory(ItemStack item, Player player, String category, String permName) {
+	private boolean shouldDisplayCategory(ItemStack item, Player player, Category category) {
 		// Hide category if an empty name is defined for it, if it's disabled or if the player is missing permissions.
 		return item.getItemMeta().getDisplayName().length() > 0 && !disabledCategories.contains(category)
-				&& (!configHideNoPermissionCategories || permName == null || player.hasPermission(permName));
+				&& (!configHideNoPermissionCategories || player.hasPermission(category.toPermName()));
 	}
 
 	/**

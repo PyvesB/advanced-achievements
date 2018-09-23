@@ -19,6 +19,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.gui.AchievementInventoryHolder;
@@ -33,13 +34,13 @@ import com.hm.achievement.gui.MainGUI;
 @Singleton
 public class ListGUIListener implements Listener {
 
-	private final Set<String> disabledCategories;
+	private final Set<Category> disabledCategories;
 	private final MainGUI mainGUI;
 	private final CategoryGUI categoryGUI;
 	private final Material lockedMaterial;
 
 	@Inject
-	public ListGUIListener(int serverVersion, Set<String> disabledCategories, MainGUI mainGUI, CategoryGUI categoryGUI) {
+	public ListGUIListener(int serverVersion, Set<Category> disabledCategories, MainGUI mainGUI, CategoryGUI categoryGUI) {
 		this.disabledCategories = disabledCategories;
 		this.mainGUI = mainGUI;
 		this.categoryGUI = categoryGUI;

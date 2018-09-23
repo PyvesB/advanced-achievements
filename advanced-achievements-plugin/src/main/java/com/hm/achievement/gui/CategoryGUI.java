@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MinecraftFont;
 
+import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.AbstractDatabaseManager;
@@ -153,9 +154,9 @@ public class CategoryGUI extends AbstractGUI {
 				return;
 			}
 		}
-		List<String> achievementPaths = new ArrayList<>(mainConfig.getShallowKeys("Commands"));
-		displayPage("Commands", player, Collections.singletonMap(NO_SUBCATEGORY, NO_STAT), requestedPage, item,
-				achievementPaths);
+		List<String> achievementPaths = new ArrayList<>(mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString()));
+		displayPage(CommandAchievements.COMMANDS.toString(), player, Collections.singletonMap(NO_SUBCATEGORY, NO_STAT),
+				requestedPage, item, achievementPaths);
 	}
 
 	/**

@@ -14,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
@@ -29,13 +30,13 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class EnderPearlsDistancesListener extends AbstractListener {
 
-	private final Set<String> disabledCategories;
+	private final Set<Category> disabledCategories;
 	private final AchieveDistanceRunnable distanceRunnable;
 
 	@Inject
 	public EnderPearlsDistancesListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			Set<String> disabledCategories, AchieveDistanceRunnable distanceRunnable) {
+			Set<Category> disabledCategories, AchieveDistanceRunnable distanceRunnable) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.disabledCategories = disabledCategories;
 		this.distanceRunnable = distanceRunnable;
@@ -68,8 +69,7 @@ public class EnderPearlsDistancesListener extends AbstractListener {
 
 		NormalAchievements category = NormalAchievements.ENDERPEARLS;
 
-		if (event.getCause() != PlayerTeleportEvent.TeleportCause.ENDER_PEARL
-				|| disabledCategories.contains(category.toString())) {
+		if (event.getCause() != PlayerTeleportEvent.TeleportCause.ENDER_PEARL || disabledCategories.contains(category)) {
 			return;
 		}
 

@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
@@ -29,12 +30,12 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class SnowballsEggsListener extends AbstractListener {
 
-	private final Set<String> disabledCategories;
+	private final Set<Category> disabledCategories;
 
 	@Inject
 	public SnowballsEggsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			Set<String> disabledCategories) {
+			Set<Category> disabledCategories) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.disabledCategories = disabledCategories;
 	}
@@ -55,7 +56,7 @@ public class SnowballsEggsListener extends AbstractListener {
 			return;
 		}
 
-		if (disabledCategories.contains(category.toString())) {
+		if (disabledCategories.contains(category)) {
 			return;
 		}
 
