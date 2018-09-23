@@ -119,7 +119,7 @@ public class DatabaseUpdater {
 
 			for (MultipleAchievements category : MultipleAchievements.values()) {
 				st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix() + category.toDBName()
-						+ " (playername char(36)," + category.toSubcategoryDBName() + " varchar(51)," + category.toDBName()
+						+ " (playername char(36)," + category.toSubcategoryDBName() + " varchar(128)," + category.toDBName()
 						+ " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 			}
 
@@ -184,7 +184,7 @@ public class DatabaseUpdater {
 		Connection conn = databaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			// Create new temporary table.
-			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(64),"
+			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(128),"
 					+ tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 			try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
 				ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "");
@@ -309,32 +309,29 @@ public class DatabaseUpdater {
 	}
 
 	/**
-	 * Increases size of the mobname column of the kills table to accommodate new parameters such as
-	 * specificplayer-56c79b19-4500-466c-94ea-514a755fdd09.
+	 * Increases the size of the sub-category column of MultipleAchievements database tables to accommodate new
+	 * parameters such as specificplayer-56c79b19-4500-466c-94ea-514a755fdd09 or grouped sub-categories.
 	 * 
 	 * @param databaseManager
+	 * @param category
 	 */
-	void updateOldDBMobnameSize(AbstractDatabaseManager databaseManager) {
-		Connection conn = databaseManager.getSQLConnection();
+	void updateOldDBColumnSize(AbstractDatabaseManager databaseManager, MultipleAchievements category) {
 		// SQLite ignores size for varchar datatype.
 		if (!(databaseManager instanceof SQLiteDatabaseManager)) {
-			int size = 51;
+			Connection conn = databaseManager.getSQLConnection();
 			try (Statement st = conn.createStatement()) {
-				ResultSet rs = st.executeQuery("SELECT mobname FROM " + databaseManager.getPrefix() + "kills LIMIT 1");
-				size = rs.getMetaData().getPrecision(1);
-				// Old kills table prior to version 4.2.1 contained a capacity of only 32 chars.
-				if (size == 32) {
-					logger.info("Updating kills database table with new mobname column, please wait...");
+				ResultSet rs = st.executeQuery("SELECT " + category.toSubcategoryDBName() + " FROM "
+						+ databaseManager.getPrefix() + category.toDBName() + " LIMIT 1");
+				if (rs.getMetaData().getPrecision(1) < 128) {
+					logger.info("Updating " + category.toDBName() + " database table with extended column, please wait...");
 					// Increase size of table.
-					if (databaseManager instanceof PostgreSQLDatabaseManager) {
-						st.execute("ALTER TABLE " + databaseManager.getPrefix()
-								+ "kills ALTER COLUMN mobname TYPE varchar(51)");
-					} else {
-						st.execute("ALTER TABLE " + databaseManager.getPrefix() + "kills MODIFY mobname varchar(51)");
-					}
+					String alterOperation = databaseManager instanceof PostgreSQLDatabaseManager
+							? "ALTER COLUMN " + category.toSubcategoryDBName() + " TYPE varchar(128)"
+							: "MODIFY " + category.toSubcategoryDBName() + " varchar(128)";
+					st.execute("ALTER TABLE " + databaseManager.getPrefix() + category.toDBName() + " " + alterOperation);
 				}
 			} catch (SQLException e) {
-				logger.log(Level.SEVERE, "Database error while updating old kills table:", e);
+				logger.log(Level.SEVERE, "Database error while updating old " + category.toDBName() + " table:", e);
 			}
 		}
 	}
@@ -351,7 +348,7 @@ public class DatabaseUpdater {
 		Connection conn = databaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			// Create new temporary table.
-			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(64),"
+			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(128),"
 					+ tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 			try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
 				ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "");

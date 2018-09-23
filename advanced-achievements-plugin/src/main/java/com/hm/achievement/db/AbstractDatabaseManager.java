@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -111,7 +112,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		databaseUpdater.initialiseTables(this);
 		databaseUpdater.updateOldDBToMaterial(this);
 		databaseUpdater.updateOldDBToDates(this);
-		databaseUpdater.updateOldDBMobnameSize(this);
+		Arrays.stream(MultipleAchievements.values()).forEach(m -> databaseUpdater.updateOldDBColumnSize(this, m));
 	}
 
 	/**
