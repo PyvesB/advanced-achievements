@@ -22,7 +22,6 @@ import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.CommandSpec;
 import com.hm.achievement.command.executable.EasterEggCommand;
-import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -33,7 +32,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
-public class CommandTabCompleter implements TabCompleter, Reloadable {
+public class CommandTabCompleter implements TabCompleter {
 
 	private static final int MAX_LIST_LENGTH = 50;
 
@@ -42,8 +41,6 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 	private final List<String> enabledCategoriesWithSubcategories;
 	private final Set<CommandSpec> commandSpecs;
 	private final int serverVersion;
-
-	private Set<String> configCommandsKeys;
 
 	@Inject
 	public CommandTabCompleter(@Named("main") CommentedYamlConfiguration mainConfig,
@@ -58,11 +55,6 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 	}
 
 	@Override
-	public void extractConfigurationParameters() {
-		configCommandsKeys = mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString());
-	}
-
-	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		if (shouldReturnPlayerList(command, args)) {
 			return null; // Complete with players.
@@ -73,7 +65,7 @@ public class CommandTabCompleter implements TabCompleter, Reloadable {
 		if (args.length == 2 && "reset".equalsIgnoreCase(aachCommand)) {
 			options = enabledCategoriesWithSubcategories;
 		} else if (args.length == 2 && "give".equalsIgnoreCase(aachCommand)) {
-			options = configCommandsKeys;
+			options = mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString());
 		} else if (args.length == 2 && StringUtils.equalsAnyIgnoreCase(aachCommand, "check", "delete")) {
 			options = achievementsAndDisplayNames.keySet();
 		} else if (args.length == 2 && "inspect".equalsIgnoreCase(aachCommand)) {

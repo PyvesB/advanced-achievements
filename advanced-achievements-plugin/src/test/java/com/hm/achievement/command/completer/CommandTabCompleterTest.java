@@ -83,7 +83,6 @@ public class CommandTabCompleterTest {
 				"Breaks.someSubcategory", "Breeding.someSubcategory", "Brewing");
 		underTest = new CommandTabCompleter(mainConfig, achievementsAndDisplayNames, enabledCategoriesWithSubcategories,
 				commands, 13);
-		underTest.extractConfigurationParameters();
 	}
 
 	@Test
@@ -217,7 +216,6 @@ public class CommandTabCompleterTest {
 		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptyList(), emptySet(), 12);
 		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
 		when(mainConfig.getShallowKeys("Commands")).thenReturn(commands);
-		underTest.extractConfigurationParameters();
 
 		String[] args = new String[] { "give", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
@@ -228,10 +226,8 @@ public class CommandTabCompleterTest {
 
 	@Test
 	public void shoudNotTruncateCompletionListIfRecentServerVersion() {
-		underTest.extractConfigurationParameters();
 		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
 		when(mainConfig.getShallowKeys("Commands")).thenReturn(commands);
-		underTest.extractConfigurationParameters();
 
 		String[] args = new String[] { "give", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);

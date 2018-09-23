@@ -3,7 +3,6 @@ package com.hm.achievement.module;
 import java.util.Set;
 
 import com.hm.achievement.advancement.AdvancementManager;
-import com.hm.achievement.command.completer.CommandTabCompleter;
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executor.PluginCommandExecutor;
 import com.hm.achievement.db.AbstractDatabaseManager;
@@ -68,10 +67,6 @@ public interface ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindAdvancementManager(AdvancementManager advancementManager);
-
-	@Binds
-	@IntoSet
-	abstract Reloadable bindCommandTabCompleter(CommandTabCompleter commandTabCompleter);
 
 	@Binds
 	@IntoSet
