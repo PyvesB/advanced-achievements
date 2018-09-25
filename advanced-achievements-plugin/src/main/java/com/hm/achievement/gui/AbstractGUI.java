@@ -111,6 +111,7 @@ public abstract class AbstractGUI implements Reloadable {
 	 * @param categoryName
 	 * @return the item for the category
 	 */
+	@SuppressWarnings("deprecation")
 	ItemStack createItemStack(String categoryName) {
 		String path = categoryName + ".Item";
 		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BEDROCK,

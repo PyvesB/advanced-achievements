@@ -37,6 +37,7 @@ public class CraftsListener extends AbstractListener {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(CraftItemEvent event) {
 		if (!(event.getWhoClicked() instanceof Player) || event.getAction() == InventoryAction.NOTHING

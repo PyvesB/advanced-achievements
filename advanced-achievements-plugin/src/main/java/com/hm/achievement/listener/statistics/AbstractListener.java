@@ -68,6 +68,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * @param item
 	 * @return true if the item is a water potion, false otherwise
 	 */
+	@SuppressWarnings("deprecation")
 	boolean isWaterPotion(ItemStack item) {
 		if (serverVersion >= 9) {
 			// Method getBasePotionData does not exist for versions prior to Minecraft 1.9.

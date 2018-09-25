@@ -79,8 +79,8 @@ public class CommandTabCompleterTest {
 		achievementsAndDisplayNames.put("yourAch1", "Special Event Achievement!");
 		achievementsAndDisplayNames.put("yourAch2", "&2Coloured &rAchievement!");
 		achievementsAndDisplayNames.put("No Display Name Achievements!", "");
-		List<String> enabledCategoriesWithSubcategories = Arrays.asList("Custom.someSubcategory", "Beds",
-				"Breaks.someSubcategory", "Breeding.someSubcategory", "Brewing");
+		Set<String> enabledCategoriesWithSubcategories = new HashSet<>(Arrays.asList("Custom.someSubcategory", "Beds",
+				"Breaks.someSubcategory", "Breeding.someSubcategory", "Brewing"));
 		underTest = new CommandTabCompleter(mainConfig, achievementsAndDisplayNames, enabledCategoriesWithSubcategories,
 				commands, 13);
 	}
@@ -213,7 +213,7 @@ public class CommandTabCompleterTest {
 
 	@Test
 	public void shoudTruncateCompletionListOnOldServerVersionsIfOverFiftyElements() {
-		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptyList(), emptySet(), 12);
+		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptySet(), emptySet(), 12);
 		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
 		when(mainConfig.getShallowKeys("Commands")).thenReturn(commands);
 

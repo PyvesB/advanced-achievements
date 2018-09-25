@@ -41,4 +41,8 @@ public class AdvancedAchievementsAPIFetcher {
 		return Optional.empty();
 	}
 
+	private AdvancedAchievementsAPIFetcher() {
+		// Not called.
+	}
+
 }

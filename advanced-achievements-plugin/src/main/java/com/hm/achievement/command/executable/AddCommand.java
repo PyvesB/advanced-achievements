@@ -1,6 +1,6 @@
 package com.hm.achievement.command.executable;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,12 +35,12 @@ public class AddCommand extends AbstractParsableCommand {
 	private String langErrorValue;
 	private String langStatisticIncreased;
 	private String langCategoryDoesNotExist;
-	private final List<String> enabledCategoriesWithSubcategories;
+	private final Set<String> enabledCategoriesWithSubcategories;
 
 	@Inject
 	public AddCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
-			StatisticIncreaseHandler statisticIncreaseHandler, List<String> enabledCategoriesWithSubcategories) {
+			StatisticIncreaseHandler statisticIncreaseHandler, Set<String> enabledCategoriesWithSubcategories) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.statisticIncreaseHandler = statisticIncreaseHandler;
@@ -58,44 +58,30 @@ public class AddCommand extends AbstractParsableCommand {
 
 	@Override
 	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
-		int value;
-
-		if (NumberUtils.isDigits(args[1])) {
-			value = Integer.parseInt(args[1]);
-		} else {
+		if (!NumberUtils.isDigits(args[1])) {
 			sender.sendMessage(StringUtils.replaceOnce(langErrorValue, "VALUE", args[1]));
 			return;
 		}
 
-		for (NormalAchievements category : NormalAchievements.values()) {
-			String categoryName = category.toString();
-
-			if (args[2].equalsIgnoreCase(categoryName) && category != NormalAchievements.CONNECTIONS) {
-				long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), value);
+		int valueToAdd = Integer.parseInt(args[1]);
+		if (enabledCategoriesWithSubcategories.contains(args[2])) {
+			if (args[2].contains(".")) {
+				MultipleAchievements category = MultipleAchievements.getByName(StringUtils.substringBefore(args[2], "."));
+				long amount = cacheManager.getAndIncrementStatisticAmount(category, StringUtils.substringAfter(args[2], "."),
+						player.getUniqueId(), valueToAdd);
+				statisticIncreaseHandler.checkThresholdsAndAchievements(player, args[2], amount);
+				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
+						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
+			} else if (!NormalAchievements.CONNECTIONS.toString().equals(args[2])) {
+				NormalAchievements category = NormalAchievements.getByName(args[2]);
+				long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd);
 				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category.toString(), amount);
 				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
 						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
-				return;
 			}
+		} else {
+			sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[] { "CAT", "CLOSEST_MATCH" },
+					new String[] { args[2], StringHelper.getClosestMatch(args[2], enabledCategoriesWithSubcategories) }));
 		}
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			String categoryName = category.toString();
-
-			for (String subcategory : mainConfig.getShallowKeys(categoryName)) {
-				String categoryPath = categoryName + "." + StringUtils.deleteWhitespace(subcategory);
-
-				if (args[2].equalsIgnoreCase(categoryPath)) {
-					long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
-							value);
-					statisticIncreaseHandler.checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
-					sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
-							new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
-					return;
-				}
-			}
-		}
-
-		sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[] { "CAT", "CLOSEST_MATCH" },
-				new String[] { args[2], StringHelper.getClosestMatch(args[2], enabledCategoriesWithSubcategories) }));
 	}
 }

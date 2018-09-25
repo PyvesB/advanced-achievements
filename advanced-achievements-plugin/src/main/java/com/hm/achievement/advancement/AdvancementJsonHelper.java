@@ -62,4 +62,8 @@ public class AdvancementJsonHelper {
 		return value == null ? "\n" : ",\n" + StringUtils.repeat(' ', spacing) + "\"" + key + "\":\"" + value + "\"\n";
 	}
 
+	private AdvancementJsonHelper() {
+		// Not called.
+	}
+
 }

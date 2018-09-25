@@ -51,22 +51,24 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configIgnoreAFKPlayedTime = essentials == null ? false : mainConfig.getBoolean("IgnoreAFKPlayedTime", false);
+		configIgnoreAFKPlayedTime = essentials != null && mainConfig.getBoolean("IgnoreAFKPlayedTime", false);
 	}
 
 	@Override
 	public void run() {
-		Bukkit.getServer().getOnlinePlayers().stream().forEach(this::updateTime);
+		long currentTime = System.currentTimeMillis();
+		Bukkit.getServer().getOnlinePlayers().stream().forEach(p -> updateTime(p, currentTime));
 
-		previousRunMillis = System.currentTimeMillis();
+		previousRunMillis = currentTime;
 	}
 
 	/**
 	 * Updates play time if all conditions are met and awards achievements if necessary.
 	 * 
 	 * @param player
+	 * @param currentTime
 	 */
-	private void updateTime(Player player) {
+	private void updateTime(Player player, long currentTime) {
 		if (!shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.PLAYEDTIME)) {
 			return;
 		}
@@ -79,7 +81,7 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 			}
 		}
 
-		int millisSinceLastRun = (int) (System.currentTimeMillis() - previousRunMillis);
+		int millisSinceLastRun = (int) (currentTime - previousRunMillis);
 		long totalMillis = cacheManager.getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME, player.getUniqueId(),
 				millisSinceLastRun);
 		// Thresholds in the configuration are in hours.

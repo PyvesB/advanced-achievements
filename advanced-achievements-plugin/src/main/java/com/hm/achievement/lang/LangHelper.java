@@ -57,7 +57,7 @@ public class LangHelper {
 	 * @return config key
 	 */
 	public static String toPath(String enumName) {
-		return StringUtils.replace(enumName.toLowerCase(), "_", "-");
+		return enumName.toLowerCase().replace('_', '-');
 	}
 
 }

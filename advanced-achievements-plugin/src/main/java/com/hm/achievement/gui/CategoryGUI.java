@@ -136,7 +136,7 @@ public class CategoryGUI extends AbstractGUI {
 	 */
 	public void displayCategoryGUI(ItemStack item, Player player, int requestedPage) {
 		for (Entry<MultipleAchievements, ItemStack> entry : multipleAchievementItems.entrySet()) {
-			if (entry.getValue().getType() == item.getType() && entry.getValue().getDurability() == item.getDurability()) {
+			if (entry.getValue().isSimilar(item)) {
 				String categoryName = entry.getKey().toString();
 				List<String> achievementPaths = getSortedMultipleAchievementPaths(categoryName);
 				Map<String, Long> subcategoriesToStatistics = getMultipleStatisticsMapping(entry.getKey(), player);
@@ -145,7 +145,7 @@ public class CategoryGUI extends AbstractGUI {
 			}
 		}
 		for (Entry<NormalAchievements, ItemStack> entry : normalAchievementItems.entrySet()) {
-			if (entry.getValue().getType() == item.getType() && entry.getValue().getDurability() == item.getDurability()) {
+			if (entry.getValue().isSimilar(item)) {
 				String categoryName = entry.getKey().toString();
 				List<String> achievementThresholds = getSortedNormalAchievementThresholds(categoryName);
 				long statistic = getNormalStatistic(entry.getKey(), player);
@@ -192,14 +192,14 @@ public class CategoryGUI extends AbstractGUI {
 			String achName = mainConfig.getString(categoryName + '.' + previousAchievement + ".Name", "");
 			previousItemDate = databaseManager.getPlayerAchievementDate(player.getUniqueId(), achName);
 			if (previousAchievement.contains(".")) {
-				previousSubcategory = previousAchievement.split("\\.")[0];
+				previousSubcategory = StringUtils.substringBefore(previousAchievement, ".");
 			}
 		}
 		// Populate the current GUI page with all of the achievements for the category.
 		for (int index = pageStart; index < pageEnd; ++index) {
 			// Path can either be a threshold (eg '10', or a subcategory and threshold (eg 'skeleton.10').
 			String path = achievementPaths.get(index);
-			String subcategory = path.contains(".") ? path.split("\\.")[0] : NO_SUBCATEGORY;
+			String subcategory = path.contains(".") ? StringUtils.substringBefore(path, ".") : NO_SUBCATEGORY;
 			long statistic = subcategoriesToStatistics.get(subcategory);
 			String achName = mainConfig.getString(categoryName + '.' + path + ".Name", "");
 			String receptionDate = databaseManager.getPlayerAchievementDate(player.getUniqueId(), achName);
@@ -427,7 +427,7 @@ public class CategoryGUI extends AbstractGUI {
 			lore.add("");
 			// Display progress if not Commands category.
 			if (!configObfuscateNotReceived && statistic != NO_STAT) {
-				String threshold = path.contains(".") ? path.split("\\.")[1] : path;
+				String threshold = StringUtils.defaultIfEmpty(StringUtils.substringAfter(path, "."), path);
 				boolean timeStat = NormalAchievements.PLAYEDTIME.toString().equals(categoryName);
 				lore.add(langListProgress);
 				lore.add(translateColorCodes(constructProgressBar(strippedAchMessage, threshold, statistic, timeStat)));

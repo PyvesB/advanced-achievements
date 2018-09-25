@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;

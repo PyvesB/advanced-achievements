@@ -395,12 +395,12 @@ public class DatabaseUpdater {
 	 */
 	private String convertToNewMaterialKey(String oldMaterialKey) {
 		List<String> newMaterials = new ArrayList<>();
-		for (String oldMaterial : oldMaterialKey.split("\\|")) {
-			String[] parts = oldMaterial.split(":");
-			Optional<Material> material = materialHelper.matchMaterial(parts[0], "the database (" + oldMaterialKey + ")");
+		for (String oldMaterial : StringUtils.split(oldMaterialKey, '|')) {
+			Optional<Material> material = materialHelper.matchMaterial(StringUtils.substringBefore(oldMaterialKey, ":"),
+					"the database (" + oldMaterialKey + ")");
 			if (material.isPresent()) {
-				newMaterials.add(parts.length > 1 ? material.get().name().toLowerCase() + ":" + parts[1]
-						: material.get().name().toLowerCase());
+				String metadata = StringUtils.substringAfter(oldMaterialKey, ":");
+				newMaterials.add(material.get().name().toLowerCase() + (metadata.isEmpty() ? "" : ":" + metadata));
 			} else {
 				newMaterials.add(oldMaterial);
 			}

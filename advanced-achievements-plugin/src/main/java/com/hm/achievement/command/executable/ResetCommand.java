@@ -1,6 +1,6 @@
 package com.hm.achievement.command.executable;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,7 +32,7 @@ public class ResetCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
 	private final AbstractDatabaseManager databaseManager;
-	private final List<String> enabledCategoriesWithSubcategories;
+	private final Set<String> enabledCategoriesWithSubcategories;
 
 	private String langResetSuccessful;
 	private String langCategoryDoesNotExist;
@@ -40,7 +40,7 @@ public class ResetCommand extends AbstractParsableCommand {
 	@Inject
 	public ResetCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
-			AbstractDatabaseManager databaseManager, List<String> enabledCategoriesWithSubcategories) {
+			AbstractDatabaseManager databaseManager, Set<String> enabledCategoriesWithSubcategories) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.databaseManager = databaseManager;
@@ -58,8 +58,23 @@ public class ResetCommand extends AbstractParsableCommand {
 	@Override
 	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		String uuid = player.getUniqueId().toString();
-		for (NormalAchievements category : NormalAchievements.values()) {
-			if (category.toString().equalsIgnoreCase(args[1])) {
+
+		if (enabledCategoriesWithSubcategories.contains(args[1])) {
+			if (args[1].contains(".")) {
+				MultipleAchievements category = MultipleAchievements.getByName(StringUtils.substringBefore(args[1], "."));
+				String subcategory = StringUtils.substringAfter(args[1], ".");
+				CachedStatistic statistic = cacheManager.getHashMap(category)
+						.get(cacheManager.getMultipleCategoryCacheKey(player.getUniqueId(), subcategory));
+				if (statistic == null) {
+					cacheManager.getHashMap(category).put(cacheManager.getMultipleCategoryCacheKey(player.getUniqueId(),
+							subcategory), new CachedStatistic(0L, false));
+				} else {
+					statistic.setValue(0L);
+				}
+				sender.sendMessage(pluginHeader + args[1] +
+						StringUtils.replaceOnce(langResetSuccessful, "PLAYER", player.getName()));
+			} else {
+				NormalAchievements category = NormalAchievements.getByName(args[1]);
 				if (category == NormalAchievements.CONNECTIONS) {
 					// Not handled by a database cache.
 					databaseManager.clearConnection(player.getUniqueId());
@@ -71,32 +86,12 @@ public class ResetCommand extends AbstractParsableCommand {
 						statistic.setValue(0L);
 					}
 				}
-				sender.sendMessage(
-						pluginHeader + args[1] + StringUtils.replaceOnce(langResetSuccessful, "PLAYER", player.getName()));
-				return;
+				sender.sendMessage(pluginHeader + args[1] +
+						StringUtils.replaceOnce(langResetSuccessful, "PLAYER", player.getName()));
 			}
+		} else {
+			sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[] { "CAT", "CLOSEST_MATCH" },
+					new String[] { args[1], StringHelper.getClosestMatch(args[1], enabledCategoriesWithSubcategories) }));
 		}
-
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
-				String categoryPath = category.toString() + "." + StringUtils.deleteWhitespace(subcategory);
-				if (categoryPath.equalsIgnoreCase(args[1])) {
-					CachedStatistic statistic = cacheManager.getHashMap(category)
-							.get(cacheManager.getMultipleCategoryCacheKey(player.getUniqueId(), subcategory));
-					if (statistic == null) {
-						cacheManager.getHashMap(category).put(cacheManager.getMultipleCategoryCacheKey(player.getUniqueId(),
-								subcategory), new CachedStatistic(0L, false));
-					} else {
-						statistic.setValue(0L);
-					}
-					sender.sendMessage(pluginHeader + args[1]
-							+ StringUtils.replaceOnce(langResetSuccessful, "PLAYER", player.getName()));
-					return;
-				}
-			}
-		}
-
-		sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[] { "CAT", "CLOSEST_MATCH" },
-				new String[] { args[1], StringHelper.getClosestMatch(args[1], enabledCategoriesWithSubcategories) }));
 	}
 }

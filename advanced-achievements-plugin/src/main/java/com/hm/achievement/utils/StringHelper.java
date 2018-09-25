@@ -31,4 +31,8 @@ public class StringHelper {
 		return closestMatch;
 	}
 
+	private StringHelper() {
+		// Not called.
+	}
+
 }

@@ -390,17 +390,13 @@ public class PluginLoader {
 		PluginManager pluginManager = Bukkit.getServer().getPluginManager();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			for (String section : mainConfig.getShallowKeys(category.toString())) {
-				int startOfMetadata = section.indexOf(':');
-				if (startOfMetadata > -1) {
-					// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories.
-					section = section.substring(0, startOfMetadata);
-				}
-				// Permissions don't take spaces into account.
-				section = StringUtils.deleteWhitespace(section);
+				// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories and don't take
+				// spaces into account.
+				section = StringUtils.deleteWhitespace(StringUtils.substringBefore(section, ":"));
 
 				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when
 				// performing /aach reload.
-				for (String groupElement : section.split("\\|")) {
+				for (String groupElement : StringUtils.split(section, '|')) {
 					String permissionNode = category.toPermName() + "." + groupElement;
 					if (pluginManager.getPermission(permissionNode) == null) {
 						pluginManager.addPermission(new Permission(permissionNode, PermissionDefault.TRUE));

@@ -42,7 +42,7 @@ public class AdvancementManager implements Reloadable {
 
 	public static final String ADVANCED_ACHIEVEMENTS_PARENT = "advanced_achievements_parent";
 	// Pattern to produce keys for advancements.
-	private static final Pattern REGEX_PATTERN_KEYS = Pattern.compile("[^A-Za-z0-9|_]");
+	private static final Pattern REGEX_PATTERN_KEYS = Pattern.compile("[^A-Za-z0-9_]");
 	// Strings related to Reflection.
 	private static final String PACKAGE_INVENTORY = "inventory";
 	private static final String CLASS_CRAFT_ITEM_STACK = "CraftItemStack";

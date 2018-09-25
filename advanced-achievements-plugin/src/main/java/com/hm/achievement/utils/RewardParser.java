@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,6 +34,8 @@ import net.milkbowl.vault.economy.Economy;
  */
 @Singleton
 public class RewardParser implements Reloadable {
+
+	private static final Pattern MULTIPLE_REWARD_COMMANDS_SPLITTER = Pattern.compile(";\\s*");
 
 	private final CommentedYamlConfiguration mainConfig;
 	private final CommentedYamlConfiguration langConfig;
@@ -117,8 +120,8 @@ public class RewardParser implements Reloadable {
 		}
 
 		if (keyNames.contains(path + ".Command")) {
-			if (mainConfig.isConfigurationSection(path + ".Command") && keyNames.contains(path + ".Command.Display")) {
-				List<String> messages = getCustomCommandMessage(path);
+			List<String> messages = getCustomCommandMessage(path);
+			if (messages != null) {
 				rewardTypes.addAll(messages);
 			} else {
 				rewardTypes.add(langListRewardCommand);
@@ -185,9 +188,7 @@ public class RewardParser implements Reloadable {
 			// The amount has already been parsed out and is provided by parameter amount.
 			String itemPath = path + ".Item";
 			String materialNameAndQty = mainConfig.getString(itemPath, "");
-			int spaceIndex = materialNameAndQty.indexOf(' ');
-
-			String materialName = spaceIndex > 0 ? materialNameAndQty.substring(0, spaceIndex) : materialNameAndQty;
+			String materialName = StringUtils.substringBefore(materialNameAndQty, " ");
 
 			Optional<Material> rewardMaterial = materialHelper.matchMaterial(materialName, "config.yml (" + typePath + ")");
 			if (rewardMaterial.isPresent()) {
@@ -228,7 +229,7 @@ public class RewardParser implements Reloadable {
 						Integer.toString(player.getLocation().getBlockY()),
 						Integer.toString(player.getLocation().getBlockZ()), player.getName() });
 		// Multiple reward commands can be set, separated by a semicolon and space. Extra parsing needed.
-		return commandReward.split(";[ ]*");
+		return MULTIPLE_REWARD_COMMANDS_SPLITTER.split(commandReward);
 	}
 
 	/**
@@ -264,16 +265,8 @@ public class RewardParser implements Reloadable {
 		} else if (mainConfig.getKeys(true).contains(path + ".Item")) {
 			// New config syntax. Name of item and quantity are on the same line, separated by a space.
 			String materialAndQty = mainConfig.getString(path + ".Item", "");
-			int indexOfAmount = materialAndQty.indexOf(' ');
-			if (indexOfAmount != -1) {
-				String intString = materialAndQty.substring(indexOfAmount + 1).trim();
-				int indexOfName = intString.indexOf(' ');
-				if (indexOfName != -1) {
-					itemAmount = Integer.parseInt(intString.split(" ")[0]);
-				} else {
-					itemAmount = Integer.parseInt(intString);
-				}
-			}
+			String intString = StringUtils.substringBetween(StringUtils.normalizeSpace(materialAndQty), " ");
+			itemAmount = Integer.parseInt(intString);
 		}
 		return itemAmount;
 	}
@@ -286,7 +279,7 @@ public class RewardParser implements Reloadable {
 	 */
 	private String getItemName(String path) {
 		String configString = mainConfig.getString(path + ".Item", "");
-		String[] splittedString = configString.split(" ");
+		String[] splittedString = StringUtils.split(configString);
 		return StringUtils.join(splittedString, " ", 2, splittedString.length).trim();
 	}
 }

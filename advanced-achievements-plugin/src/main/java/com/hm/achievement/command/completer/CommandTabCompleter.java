@@ -38,13 +38,13 @@ public class CommandTabCompleter implements TabCompleter {
 
 	private final CommentedYamlConfiguration mainConfig;
 	private final Map<String, String> achievementsAndDisplayNames;
-	private final List<String> enabledCategoriesWithSubcategories;
+	private final Set<String> enabledCategoriesWithSubcategories;
 	private final Set<CommandSpec> commandSpecs;
 	private final int serverVersion;
 
 	@Inject
 	public CommandTabCompleter(@Named("main") CommentedYamlConfiguration mainConfig,
-			Map<String, String> achievementsAndDisplayNames, List<String> enabledCategoriesWithSubcategories,
+			Map<String, String> achievementsAndDisplayNames, Set<String> enabledCategoriesWithSubcategories,
 			Set<AbstractCommand> commands, int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
@@ -97,7 +97,7 @@ public class CommandTabCompleter implements TabCompleter {
 			// Default mapper replaces spaces with an Open Box character to prevent completing wrong word.
 			// Prevented Behaviour:
 			// T -> Tamer -> Teleport Man -> Teleport The Avener -> Teleport The The Smelter
-			return getFormattedMatchingOptions(options, prefix, s -> StringUtils.replace(s, " ", "\u2423"));
+			return getFormattedMatchingOptions(options, prefix, s -> s.replace(' ', '\u2423'));
 		}
 	}
 

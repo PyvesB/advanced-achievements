@@ -43,7 +43,7 @@ public class ConfigurationParser {
 	private final Map<String, String> achievementsAndDisplayNames;
 	private final Map<String, List<Long>> sortedThresholds;
 	private final Set<Category> disabledCategories;
-	private final List<String> enabledCategoriesWithSubcategories;
+	private final Set<String> enabledCategoriesWithSubcategories;
 	private final StringBuilder pluginHeader;
 	private final Logger logger;
 	private final int serverVersion;
@@ -53,7 +53,7 @@ public class ConfigurationParser {
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
 			FileUpdater fileUpdater, Map<String, String> achievementsAndDisplayNames,
 			Map<String, List<Long>> sortedThresholds, Set<Category> disabledCategories,
-			List<String> enabledCategoriesWithSubcategories, StringBuilder pluginHeader, Logger logger, int serverVersion) {
+			Set<String> enabledCategoriesWithSubcategories, StringBuilder pluginHeader, Logger logger, int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;

@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -60,7 +61,7 @@ public class PluginCommandExecutor implements CommandExecutor, Reloadable {
 
 	private String[] parseArguments(String[] args) {
 		return Arrays.stream(args)
-				.flatMap(argument -> Arrays.stream(argument.split("\u2423")))
+				.flatMap(argument -> Arrays.stream(StringUtils.split(argument, '\u2423')))
 				.toArray(String[]::new);
 	}
 

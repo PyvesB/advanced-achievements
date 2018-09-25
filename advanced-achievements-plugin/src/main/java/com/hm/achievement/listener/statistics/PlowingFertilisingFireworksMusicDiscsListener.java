@@ -100,6 +100,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 	 * @param itemStack
 	 * @return true if the item is bone meal, false otherwise
 	 */
+	@SuppressWarnings("deprecation")
 	private boolean isBoneMeal(ItemStack itemStack) {
 		return serverVersion >= 13 ? itemStack.getType() == Material.BONE_MEAL
 				: itemStack.isSimilar(new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 15));
