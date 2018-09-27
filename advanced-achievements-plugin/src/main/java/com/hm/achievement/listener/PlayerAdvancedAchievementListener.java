@@ -12,12 +12,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
-import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -119,7 +119,12 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		configFireworkStyle = mainConfig.getString("FireworkStyle", "BALL_LARGE");
+		configFireworkStyle = mainConfig.getString("FireworkStyle", "BALL_LARGE").toUpperCase();
+		if (!"RANDOM".equals(configFireworkStyle) && !EnumUtils.isValidEnum(Type.class, configFireworkStyle)) {
+			configFireworkStyle = Type.BALL_LARGE.name();
+			logger.warning("Failed to load FireworkStyle, using ball_large instead. Please use one of the following: "
+					+ "ball_large, ball, burst, creeper, star or random.");
+		}
 		configFirework = mainConfig.getBoolean("Firework", true);
 		configSimplifiedReception = mainConfig.getBoolean("SimplifiedReception", false);
 		configTitleScreen = mainConfig.getBoolean("TitleScreen", true);
@@ -449,19 +454,21 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @param player
 	 */
 	private void displayFirework(Player player) {
-		Location location = player.getLocation();
+		// Set firework to launch beneath player.
+		Location location = player.getLocation().subtract(0, 1, 0);
 		try {
-			// Set firework to launch beneath user.
-			location.setY(location.getY() - 1);
-
 			Firework firework = player.getWorld().spawn(location, Firework.class);
 			FireworkMeta fireworkMeta = firework.getFireworkMeta();
-			Builder effectBuilder = FireworkEffect.builder().flicker(false).trail(false)
-					.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY))).withFade(Color.PURPLE);
-			setFireworkType(effectBuilder);
-			fireworkMeta.addEffects(effectBuilder.build());
-			firework.setVelocity(player.getLocation().getDirection().multiply(0));
+			FireworkEffect fireworkEffect = FireworkEffect.builder()
+					.flicker(false)
+					.trail(false)
+					.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))
+					.withFade(Color.PURPLE)
+					.with(getFireworkType())
+					.build();
+			fireworkMeta.addEffects(fireworkEffect);
 			firework.setFireworkMeta(fireworkMeta);
+			firework.setVelocity(location.getDirection().multiply(0));
 
 			// Firework launched by plugin: damage will later be cancelled out.
 			fireworkListener.addFirework(firework);
@@ -483,22 +490,16 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	}
 
 	/**
-	 * Sets the type of the firework, which can either be predefined or random.
+	 * Gets the type of the firework, which can either be predefined or random.
 	 *
-	 * @param effectBuilder
+	 * @return the firework type.
 	 */
-	private void setFireworkType(Builder effectBuilder) {
-		if ("RANDOM".equalsIgnoreCase(configFireworkStyle)) {
+	private Type getFireworkType() {
+		if ("RANDOM".equals(configFireworkStyle)) {
 			Type[] fireworkTypes = Type.values();
-			effectBuilder.with(fireworkTypes[RANDOM.nextInt(fireworkTypes.length)]);
+			return fireworkTypes[RANDOM.nextInt(fireworkTypes.length)];
 		} else {
-			try {
-				effectBuilder.with(Type.valueOf(configFireworkStyle.toUpperCase()));
-			} catch (Exception e) {
-				effectBuilder.with(Type.BALL_LARGE);
-				logger.warning(
-						"Failed to load FireworkStyle. Please use one of the following: BALL_LARGE, BALL, BURST, CREEPER or STAR.");
-			}
+			return Type.valueOf(configFireworkStyle);
 		}
 	}
 
