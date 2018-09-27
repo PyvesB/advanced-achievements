@@ -44,6 +44,15 @@ AdditionalEffects: true
 # /aach top, week or month when ranked in the top list.
 Sound: true
 
+# For /aach book. Possible values: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names
+SoundBook: entity_player_levelup
+
+# For /aach stats with all achievements. Possible values: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names
+SoundStats: entity_firework_rocket_blast
+
+# For /aach top, week, month when ranked in the top list. Possible values: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names
+SoundRanking: entity_firework_rocket_blast
+
 # Set the icon of the plugin (default: shamrock, \u2618).
 Icon: \u2618
 

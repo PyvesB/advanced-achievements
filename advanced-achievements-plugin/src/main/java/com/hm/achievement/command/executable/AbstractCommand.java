@@ -1,9 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
@@ -61,24 +59,5 @@ public abstract class AbstractCommand implements Reloadable {
 
 	String translateColorCodes(String translate) {
 		return ChatColor.translateAlternateColorCodes('&', translate);
-	}
-
-	/**
-	 * Plays a special firework blast sound.
-	 * 
-	 * @param player
-	 * @param serverVersion
-	 */
-	void playSpecialSound(Player player, int serverVersion) {
-		// If old version, retrieving sound by name as it no longer exists in newer versions.
-		Sound sound;
-		if (serverVersion < 9) {
-			sound = Sound.valueOf("FIREWORK_BLAST");
-		} else if (serverVersion < 13) {
-			sound = Sound.valueOf("ENTITY_FIREWORK_LARGE_BLAST");
-		} else {
-			sound = Sound.ENTITY_FIREWORK_ROCKET_BLAST;
-		}
-		player.getWorld().playSound(player.getLocation(), sound, 1, 0.7f);
 	}
 }

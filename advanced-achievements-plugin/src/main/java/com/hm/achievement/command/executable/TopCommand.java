@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.lang.command.CmdLang;
+import com.hm.achievement.utils.SoundPlayer;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -22,8 +23,9 @@ public class TopCommand extends AbstractRankingCommand {
 	@Inject
 	public TopCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger,
-			int serverVersion, AbstractDatabaseManager databaseManager) {
-		super(mainConfig, langConfig, pluginHeader, logger, serverVersion, CmdLang.TOP_ACHIEVEMENT, databaseManager);
+			int serverVersion, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
+		super(mainConfig, langConfig, pluginHeader, logger, serverVersion, CmdLang.TOP_ACHIEVEMENT, databaseManager,
+				soundPlayer);
 	}
 
 	@Override

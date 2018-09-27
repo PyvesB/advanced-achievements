@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -28,6 +27,7 @@ import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lifecycle.Cleanable;
+import com.hm.achievement.utils.SoundPlayer;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ParticleEffect;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
@@ -55,11 +55,13 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	private final Logger logger;
 	private final int serverVersion;
 	private final AbstractDatabaseManager databaseManager;
+	private final SoundPlayer soundPlayer;
 
 	private int configTimeBook;
 	private String configBookSeparator;
 	private boolean configAdditionalEffects;
 	private boolean configSound;
+	private String configSoundBook;
 	private String langBookDelay;
 	private String langBookNotReceived;
 	private String langBookDate;
@@ -70,11 +72,12 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	@Inject
 	public BookCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger,
-			int serverVersion, AbstractDatabaseManager databaseManager) {
+			int serverVersion, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.logger = logger;
 		this.serverVersion = serverVersion;
 		this.databaseManager = databaseManager;
+		this.soundPlayer = soundPlayer;
 	}
 
 	@Override
@@ -85,6 +88,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		configBookSeparator = "\n&r" + mainConfig.getString("BookSeparator", "") + "\n&r";
 		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects", true);
 		configSound = mainConfig.getBoolean("Sound", true);
+		configSoundBook = mainConfig.getString("SoundBook", "ENTITY_PLAYER_LEVELUP").toUpperCase();
 
 		langBookDelay = pluginHeader + LangHelper.getReplacedOnce(CmdLang.BOOK_DELAY, "TIME",
 				Integer.toString(configTimeBook / 1000), langConfig);
@@ -132,9 +136,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 
 			// Play special sound when receiving the book.
 			if (configSound) {
-				// If old version, retrieving sound by name as it no longer exists in newer versions.
-				Sound sound = serverVersion < 9 ? Sound.valueOf("LEVEL_UP") : Sound.ENTITY_PLAYER_LEVELUP;
-				player.getWorld().playSound(player.getLocation(), sound, 1.0f, 0.0f);
+				soundPlayer.play(player, configSoundBook, "ENTITY_PLAYER_LEVELUP", "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
 			}
 
 			fillBook(playerAchievementsList, player);

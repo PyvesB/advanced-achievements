@@ -190,6 +190,17 @@ public class FileUpdater {
 				"Background shown on the Advanced Achievements advancement tab.",
 				"Must be a resource location to any image in a resource pack.");
 
+		// Added in 5.10.0:
+		String bookDefault = serverVersion < 9 ? "level_up" : "entity_player_levelup";
+		updateSetting(config, "SoundBook", bookDefault,
+				"For /aach book. Possible values: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names");
+		String statsRankingDefault = serverVersion < 9 ? "firework_blast"
+				: serverVersion < 13 ? "entity_firework_large_blast" : "entity_firework_rocket_blast";
+		updateSetting(config, "SoundStats", statsRankingDefault,
+				"For /aach stats with all achievements. Possible values: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names");
+		updateSetting(config, "SoundRanking", statsRankingDefault,
+				"For /aach top, week, month when ranked in the top list. Possible values: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names");
+
 		if (updatePerformed) {
 			// Changes in the configuration: save and do a fresh load.
 			try {
