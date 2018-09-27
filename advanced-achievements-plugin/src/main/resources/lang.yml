@@ -99,7 +99,7 @@ aach-command-generate: "Generate advancements."
 aach-command-generate-hover: "Potentially slow command; use with care!"
 aach-command-inspect: "Inspect recipients of ACH."
 aach-command-inspect-hover: "Lists most recent recipients of an achievement, max 1000."
-aach-tip: "&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!"
+aach-tip: "&lHINT &8You can &7&n&ohover&8 or &7&n&oclick&8 on the commands!"
 
 # Related to /aach info.
 version-command-version: "Version:"

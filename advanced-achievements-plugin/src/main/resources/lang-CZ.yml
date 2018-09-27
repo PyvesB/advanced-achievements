@@ -96,7 +96,7 @@ aach-command-reset: "Obnovit statistku pro kategorii CAT."
 aach-command-reset-hover: "Hrac musi byt online; priklad: reset Places.stone DarkPyves"
 aach-command-generate: "Vytvorte uspech."
 aach-command-generate-hover: "Potencionalne spomalit prikaz; pouzivat s opatrnosti!"
-aach-tip: "&lTIP &8Muzete &7&n&onajet na prikaz &8nebo &7&n&okliknout &8na prikaz!"
+aach-tip: "&lTIP &8Muzete &7&n&onajet na prikaz&8 nebo &7&n&okliknout&8 na prikaz!"
 
 # Related to /aach info.
 version-command-version: "Verze:"

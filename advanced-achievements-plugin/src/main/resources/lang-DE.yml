@@ -80,7 +80,7 @@ aach-command-toggle: Umschalten von Achievements andere Spieler
 aach-command-toggle-hover: Ihre Wahl wird bis zum naechsten Neustart des Servers gespeichert!
 aach-command-reset: Resetet dieStatistik für Kategorie &7CAT .
 aach-command-reset-hover: Spieler muss online sein; fuer Kategorien mit Unterkategorien, Sie sind alle zurückgesetzt!
-aach-tip: '&lHinweis&8Du kannst &7&nüber &8oder &7&n&oauf &8die Befehle klicken!'
+aach-tip: '&lHinweis&8Du kannst &7&nüber&8 oder &7&n&oauf&8 die Befehle klicken!'
 
 # Related to /aach info.
 version-command-version: 'Version:'

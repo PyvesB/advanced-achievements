@@ -97,7 +97,7 @@ aach-command-reset: "A kategória statisztikájának visszaállítása CAT."
 aach-command-reset-hover: "A játékosnak elérhetőnek kell lennie; az alkategóriákkal rendelkező kategóriák esetében mindegyikre visszaáll!"
 aach-command-generate: "Létrehoz küldetéseket."
 aach-command-generate-hover: "Lehetséges lassú parancs; használd gondosan!"
-aach-tip: "&lTIPP &8Tudsz &7&n&olebegő &8vagy &7&n&okattintható &8a parancsokban!"
+aach-tip: "&lTIPP &8Tudsz &7&n&olebegő&8 vagy &7&n&okattintható&8 a parancsokban!"
 
 # Related to /aach info.
 version-command-version: "Verzió:"

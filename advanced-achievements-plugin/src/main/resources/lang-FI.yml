@@ -95,7 +95,7 @@ aach-command-reset: "Nollaa tilastot kategorialle CAT."
 aach-command-reset-hover: "Pelaajan tulee olla paikalla (online); esimerkki: reset Places.stone DarkPyves"
 aach-command-generate: "Generoi uudet MC-saavutukset."
 aach-command-generate-hover: "Mahdollisesti hidas komento; käytä varoen!"
-aach-tip: "&VIHJE &8Voit &7&n&olaittaa hiiren komennon päälle &8tai &7&n&oklikata komentoa&8!"
+aach-tip: "&VIHJE &8Voit &7&n&olaittaa hiiren komennon päälle&8 tai &7&n&oklikata komentoa&8!"
 
 # Related to /aach info.
 version-command-version: "Versio:"

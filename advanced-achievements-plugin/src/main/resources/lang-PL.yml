@@ -84,7 +84,7 @@ aach-command-reset: "Zresetuj statystyki dla kategorii CAT."
 aach-command-reset-hover: "Gracz musi byc online; wszystkie podkategorie z danej kategori sa resetowane!"
 aach-command-generate: "Generuj postepy."
 aach-command-generate-hover: "Powolna komenda; uzywaj jej rozwaznie!"
-aach-tip: "&lWSKAZÓWKA &8Mozesz &7&n&onajechac &8lub &7&n&okliknac &8na pokazane komendy!"
+aach-tip: "&lWSKAZÓWKA &8Mozesz &7&n&onajechac&8 lub &7&n&okliknac&8 na pokazane komendy!"
 
 # Related to /aach info.
 version-command-version: "Wersja:"

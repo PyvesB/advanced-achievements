@@ -84,7 +84,7 @@ aach-command-reset: "Réinitialiser la stat pour CAT."
 aach-command-reset-hover: "Pour les catégories avec sous-catégories, elles sont toutes réinitialisées."
 aach-command-generate: "Générer les avancements."
 aach-command-generate-hover: "La commande rique de prendre du temps, à utiliser avec précaution!"
-aach-tip: "&lASTUCE &7&n&oCliquez &8ou &7&n&opassez votre curseur &8sur les commandes !"
+aach-tip: "&lASTUCE &7&n&oCliquez&8 ou &7&n&opassez votre curseur&8 sur les commandes !"
 
 # Related to /aach info.
 version-command-name: "Nom :"

@@ -96,7 +96,7 @@ aach-command-reset: Đặt lại thống kê cho danh mục CAT.
 aach-command-reset-hover: 'Người chơi phải trực tuyến; ví dụ: reset Places.stone DarkPyves'
 aach-command-generate: Tạo tiến bộ.
 aach-command-generate-hover: Lệnh có khả năng làm chậm; sử dụng cẩn thận!
-aach-tip: '&lHINT&r &8Bạn có thể &7&n&orê chuột &r &8hoặc &7&n&onhấn chuột&r &8lên các câu lệnh!'
+aach-tip: '&lHINT&r &8Bạn có thể &7&n&orê chuột&r &8hoặc &7&n&onhấn chuột&r &8lên các câu lệnh!'
 
 # Related to /aach info.
 version-command-version: 'Phiên bản:'

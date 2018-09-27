@@ -87,7 +87,7 @@ aach-command-reset: Restablecer estadística para la categoría CAT.
 aach-command-reset-hover: El jugador debe estar en línea; para las categorías con subcategorías, ¡todas se reinician!
 aach-command-generate: Generar avances.
 aach-command-generate-hover: Comando potencialmente lento; usar con cuidado!
-aach-tip: '&lHINT &8Puede &7&n&odesplasarce &8o hacer &7&n&oclic &8en los comandos!'
+aach-tip: '&lHINT &8Puede &7&n&odesplasarce&8 o hacer &7&n&oclic&8 en los comandos!'
 
 # Related to /aach info.
 version-command-version: 'Version:'

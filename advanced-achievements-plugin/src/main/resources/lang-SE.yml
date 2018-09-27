@@ -74,7 +74,7 @@ aach-command-week: "Visa veckovis ranking."
 aach-command-week-hover: "Bästa prestandajägare sedan början av veckan!"
 aach-command-month: "Visar månadsvis ranking."
 aach-command-month-hover: "Bästa prestandajägare sedan början av månaden!"
-aach-tip: "&lTIPS &8Du kan &7&n&ohovra &8eller &7&n&oklicka &8på kommandona!"
+aach-tip: "&lTIPS &8Du kan &7&n&ohovra&8 eller &7&n&oklicka&8 på kommandona!"
 
 # Related to /aach info.
 version-command-name: "Namn:"
