@@ -194,6 +194,9 @@ reset-successful: " tilastot nollattiin pelaajalle PLAYER."
 advancements-generated: "MC-Saavutukset Generoitu onnistuneesti."
 minecraft-not-supported: "MC-Saavutuksia ei tueta tässä Minecraft versiossa. Ole hyvä ja päivitä versioon 1.12+."
 
+# Related to /aach inspect
+achievement-not-recognized: "Saavutusta nimellä 'NAME' ei tunnistettu. Tarkoititko CLOSEST_MATCH?"
+
 #============================================================#
 # +--------------------------------------------------------+ #
 # | Parameters in future plugin versions will  appear here | #
