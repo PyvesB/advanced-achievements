@@ -332,8 +332,10 @@ public class FileUpdater {
 			config.set(categoryName, emptyMap, categoryComments);
 			// As no achievements are set, we initially disable this new category.
 			List<String> disabledCategories = config.getList("DisabledCategories");
-			disabledCategories.add(categoryName);
-			config.set("DisabledCategories", disabledCategories);
+			if (!disabledCategories.contains(categoryName)) {
+				disabledCategories.add(categoryName);
+				config.set("DisabledCategories", disabledCategories);
+			}
 			updatePerformed = true;
 		}
 	}
