@@ -161,9 +161,17 @@ public class CommandTabCompleterTest {
 
 		assertEquals(asList("Beds", "Breaks.someSubcategory", "Breeding.someSubcategory", "Brewing"), completionResult);
 	}
+	
+	@Test
+	public void shoudCompleteWithNumberForAddCommand() {
+		String[] args = new String[] { "add", "" };
+		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+
+		assertEquals(asList("1"), completionResult);
+	}
 
 	@Test
-	public void shoudCompleteForAddCommand() {
+	public void shoudCompleteWithCategoryForAddCommand() {
 		String[] args = new String[] { "add", "1", "Cust" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 

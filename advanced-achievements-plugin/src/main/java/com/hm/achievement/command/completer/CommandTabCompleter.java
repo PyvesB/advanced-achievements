@@ -70,6 +70,8 @@ public class CommandTabCompleter implements TabCompleter {
 			options = achievementsAndDisplayNames.keySet();
 		} else if (args.length == 2 && "inspect".equalsIgnoreCase(aachCommand)) {
 			options = achievementsAndDisplayNames.values();
+		} else if (args.length == 2 && "add".equalsIgnoreCase(aachCommand)) {
+			options = Collections.singleton("1");
 		} else if (args.length == 3 && "add".equalsIgnoreCase(aachCommand)) {
 			options = enabledCategoriesWithSubcategories;
 		} else if (args.length == 1) {
