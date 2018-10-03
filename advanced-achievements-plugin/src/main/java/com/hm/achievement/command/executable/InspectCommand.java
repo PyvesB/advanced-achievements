@@ -80,7 +80,7 @@ public class InspectCommand extends AbstractCommand {
 		if (achievementName == null) {
 			sender.sendMessage(pluginHeader + LangHelper.getEachReplaced(CmdLang.ACHIEVEMENT_NOT_RECOGNIZED, langConfig,
 					new String[] { "NAME", "CLOSEST_MATCH" }, new String[] { achievementDisplayName, StringHelper
-							.getClosestMatch(achievementDisplayName, displayNamesToNames.values()) }));
+							.getClosestMatch(achievementDisplayName, displayNamesToNames.keySet()) }));
 			return;
 		}
 		int page = getPage(args);
