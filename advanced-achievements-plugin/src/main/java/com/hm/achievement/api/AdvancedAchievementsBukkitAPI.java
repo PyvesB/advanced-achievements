@@ -16,6 +16,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -73,6 +74,15 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 					.parseInt(Character.toString(advancedAchievements.getDescription().getVersion().charAt(4)));
 		}
 		return versionCode;
+	}
+
+	@Override
+	public Version getAdvancedAchievementsVersion() {
+		String[] versionParts = StringUtils.split(advancedAchievements.getDescription().getVersion(), '.');
+		int major = versionParts.length > 0 ? NumberUtils.toInt(versionParts[0]) : 0;
+		int minor = versionParts.length > 1 ? NumberUtils.toInt(versionParts[1]) : 0;
+		int patch = versionParts.length > 2 ? NumberUtils.toInt(versionParts[2]) : 0;
+		return new AdvancedAchievementsAPI.Version(major, minor, patch);
 	}
 
 	@Override
@@ -216,4 +226,5 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 			throw new IllegalArgumentException(argumentName + " cannot be empty.");
 		}
 	}
+
 }

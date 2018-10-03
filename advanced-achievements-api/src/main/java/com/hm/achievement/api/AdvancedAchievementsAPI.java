@@ -16,12 +16,23 @@ public interface AdvancedAchievementsAPI {
 
 	/**
 	 * Formats Advanced Achievements's version as an integer. The version is computed as follows: 100 * major + 10 *
-	 * minor + micro. For instance plugin version 5.5.0 will return 550; plugin version 5.1.2 will return 512.
+	 * minor + patch. For instance plugin version 5.5.0 will return 550; plugin version 5.1.2 will return 512.
 	 *
+	 * @deprecated use {@link #getAdvancedAchievementsVersion()} instead
 	 * @return version code
 	 * @since 1.0.0
 	 */
+	@Deprecated
 	int getAdvancedAchievementsVersionCode();
+
+	/**
+	 * Returns Advanced Achievement's version as an object. Version 5.10.1 corresponds to major version 5, minor version
+	 * 10 and patch version 1.
+	 *
+	 * @return version object
+	 * @since 1.1.0
+	 */
+	Version getAdvancedAchievementsVersion();
 
 	/**
 	 * Checks whether player has received achievement {@code achievementName}. Implementation benefits from Advanced
@@ -140,4 +151,18 @@ public interface AdvancedAchievementsAPI {
 			this.formattedDate = formattedDate;
 		}
 	}
+
+	final class Version {
+
+		public final int major;
+		public final int minor;
+		public final int patch;
+
+		public Version(int major, int minor, int patch) {
+			this.major = major;
+			this.minor = minor;
+			this.patch = patch;
+		}
+	}
+
 }
