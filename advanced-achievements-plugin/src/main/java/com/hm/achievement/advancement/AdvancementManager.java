@@ -170,7 +170,7 @@ public class AdvancementManager implements Reloadable {
 		generatedAdvancements = 1; // Already generated 1 for parent.
 		if (!disabledCategories.contains(CommandAchievements.COMMANDS)) {
 			String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
-			for (String ach : mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString()).getKeys(false)) {
+			for (String ach : mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString())) {
 				parentKey = registerAdvancement(CommandAchievements.COMMANDS, CommandAchievements.COMMANDS + "." + ach,
 						parentKey, true);
 			}
@@ -181,7 +181,7 @@ public class AdvancementManager implements Reloadable {
 		}
 
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			for (String section : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
+			for (String section : mainConfig.getShallowKeys(category.toString())) {
 				registerCategoryAdvancements(category, "." + section);
 			}
 		}
