@@ -69,7 +69,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private final CacheManager cacheManager;
 	private final AdvancedAchievements advancedAchievements;
 	private final RewardParser rewardParser;
-	private final Map<String, String> achievementsAndDisplayNames;
+	private final Map<String, String> namesToDisplayNames;
 	private final AbstractDatabaseManager databaseManager;
 	private final ToggleCommand toggleCommand;
 	private final FireworkListener fireworkListener;
@@ -99,7 +99,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	public PlayerAdvancedAchievementListener(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, int serverVersion, Logger logger,
 			StringBuilder pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements,
-			RewardParser rewardParser, Map<String, String> achievementsAndDisplayNames,
+			RewardParser rewardParser, @Named("ntd") Map<String, String> namesToDisplayNames,
 			AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener,
 			SoundPlayer soundPlayer) {
 		this.mainConfig = mainConfig;
@@ -110,7 +110,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		this.cacheManager = cacheManager;
 		this.advancedAchievements = advancedAchievements;
 		this.rewardParser = rewardParser;
-		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
+		this.namesToDisplayNames = namesToDisplayNames;
 		this.databaseManager = databaseManager;
 		this.toggleCommand = toggleCommand;
 		this.fireworkListener = fireworkListener;
@@ -182,7 +182,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 				event.getMaxOxygenReward());
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage(), rewardTexts);
 
-		if (cacheManager.getPlayerTotalAchievements(player.getUniqueId()) == achievementsAndDisplayNames.size()) {
+		if (cacheManager.getPlayerTotalAchievements(player.getUniqueId()) == namesToDisplayNames.size()) {
 			handleAllAchievementsReceived(player);
 		}
 	}

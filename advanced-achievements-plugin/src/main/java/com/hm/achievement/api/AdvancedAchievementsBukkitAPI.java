@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,17 +36,17 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	private final AdvancedAchievements advancedAchievements;
 	private final CacheManager cacheManager;
 	private final AbstractDatabaseManager databaseManager;
-	private final Map<String, String> achievementsAndDisplayNames;
+	private final Map<String, String> namesToDisplayNames;
 	private final Logger logger;
 
 	@Inject
 	AdvancedAchievementsBukkitAPI(AdvancedAchievements advancedAchievements, Logger logger, CacheManager cacheManager,
-			AbstractDatabaseManager databaseManager, Map<String, String> achievementsAndDisplayNames) {
+			AbstractDatabaseManager databaseManager, @Named("ntd") Map<String, String> namesToDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.cacheManager = cacheManager;
 		this.databaseManager = databaseManager;
-		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
+		this.namesToDisplayNames = namesToDisplayNames;
 	}
 
 	/**
@@ -156,7 +157,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	@Override
 	public String getDisplayNameForName(String achievementName) {
 		validateNotEmpty(achievementName, "Achievement Name");
-		return achievementsAndDisplayNames.get(achievementName);
+		return namesToDisplayNames.get(achievementName);
 	}
 
 	@Override

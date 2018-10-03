@@ -37,7 +37,7 @@ public class StatsCommand extends AbstractCommand {
 	private final Logger logger;
 	private final int serverVersion;
 	private final CacheManager cacheManager;
-	private final Map<String, String> achievementsAndDisplayNames;
+	private final Map<String, String> namesToDisplayNames;
 	private final SoundPlayer soundPlayer;
 
 	private ChatColor configColor;
@@ -51,13 +51,13 @@ public class StatsCommand extends AbstractCommand {
 	@Inject
 	public StatsCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger,
-			int serverVersion, CacheManager cacheManager, Map<String, String> achievementsAndDisplayNames,
+			int serverVersion, CacheManager cacheManager, @Named("ntd") Map<String, String> namesToDisplayNames,
 			SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.serverVersion = serverVersion;
 		this.logger = logger;
 		this.cacheManager = cacheManager;
-		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
+		this.namesToDisplayNames = namesToDisplayNames;
 		this.soundPlayer = soundPlayer;
 	}
 
@@ -84,7 +84,7 @@ public class StatsCommand extends AbstractCommand {
 		Player player = (Player) sender;
 
 		int playerAchievements = cacheManager.getPlayerTotalAchievements(player.getUniqueId());
-		int totalAchievements = achievementsAndDisplayNames.size();
+		int totalAchievements = namesToDisplayNames.size();
 
 		player.sendMessage(
 				langNumberAchievements + String.format("%.1f", 100 * (double) playerAchievements / totalAchievements) + "%");

@@ -52,17 +52,17 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	volatile String additionalConnectionOptions;
 	volatile String prefix;
 
-	private final Map<String, String> achievementsAndDisplayNames;
+	private final Map<String, String> namesToDisplayNames;
 	private final DatabaseUpdater databaseUpdater;
 
 	private DateFormat dateFormat;
 	private boolean configBookChronologicalOrder;
 
 	public AbstractDatabaseManager(CommentedYamlConfiguration mainConfig, Logger logger,
-			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater) {
+			Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
 		this.mainConfig = mainConfig;
 		this.logger = logger;
-		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
+		this.namesToDisplayNames = namesToDisplayNames;
 		this.databaseUpdater = databaseUpdater;
 		// We expect to execute many short writes to the database. The pool can grow dynamically under high load and
 		// allows to reuse threads.
@@ -557,7 +557,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 						// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing
 						// single quotes were inserted with two single quotes in the database.
 						String achName = StringUtils.replace(rs.getString(2), "''", "'");
-						String displayName = achievementsAndDisplayNames.get(achName);
+						String displayName = namesToDisplayNames.get(achName);
 						if (StringUtils.isNotBlank(displayName)) {
 							achName = displayName;
 						}
@@ -595,7 +595,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 						// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing
 						// single quotes were inserted with two single quotes in the database.
 						String achName = StringUtils.replace(rs.getString("achievement"), "''", "'");
-						String displayName = achievementsAndDisplayNames.get(achName);
+						String displayName = namesToDisplayNames.get(achName);
 						if (StringUtils.isNotBlank(displayName)) {
 							achName = displayName;
 						}

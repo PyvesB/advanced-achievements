@@ -43,22 +43,20 @@ public class InspectCommand extends AbstractCommand {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final AbstractDatabaseManager databaseManager;
+	private final Map<String, String> displayNamesToNames;
 
 	private final Map<String, Long> lastCached;
 	private final Map<String, SupplierCommandPagination> cachedPaginations;
 
-	private final Map<String, String> achievementsAndDisplayNames;
-	private Map<String, String> achievementDisplayNamesAndDatabaseNames;
-
 	@Inject
 	public InspectCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
-			AdvancedAchievements advancedAchievements,
-			AbstractDatabaseManager databaseManager, Map<String, String> achievementsAndDisplayNames) {
+			AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager,
+			@Named("dtn") Map<String, String> displayNamesToNames) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;
-		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
+		this.displayNamesToNames = displayNamesToNames;
 
 		this.lastCached = new HashMap<>();
 		this.cachedPaginations = new HashMap<>();
@@ -67,18 +65,6 @@ public class InspectCommand extends AbstractCommand {
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
-		achievementDisplayNamesAndDatabaseNames = reverseMap(achievementsAndDisplayNames);
-	}
-
-	private Map<String, String> reverseMap(Map<String, String> map) {
-		Map<String, String> reversed = new HashMap<>();
-		for (Map.Entry<String, String> entry : map.entrySet()) {
-			String databaseName = entry.getKey();
-			String name = entry.getValue().isEmpty() ? databaseName : entry.getValue();
-			name = StringHelper.removeFormattingCodes(name);
-			reversed.put(name.toLowerCase(), databaseName);
-		}
-		return reversed;
 	}
 
 	private int getPage(String[] args) {
@@ -94,7 +80,7 @@ public class InspectCommand extends AbstractCommand {
 		if (achievementName == null) {
 			sender.sendMessage(pluginHeader + LangHelper.getEachReplaced(CmdLang.ACHIEVEMENT_NOT_RECOGNIZED, langConfig,
 					new String[] { "NAME", "CLOSEST_MATCH" }, new String[] { achievementDisplayName, StringHelper
-							.getClosestMatch(achievementDisplayName, achievementDisplayNamesAndDatabaseNames.values()) }));
+							.getClosestMatch(achievementDisplayName, displayNamesToNames.values()) }));
 			return;
 		}
 		int page = getPage(args);
@@ -126,10 +112,10 @@ public class InspectCommand extends AbstractCommand {
 	}
 
 	private String getAchievementName(String achievementDisplayName) {
-		String achievementName = achievementDisplayNamesAndDatabaseNames.get(achievementDisplayName);
+		String achievementName = displayNamesToNames.get(achievementDisplayName);
 		if (achievementName == null) {
 			String whiteSpaceRemovedName = achievementDisplayName.replace(' ', '_');
-			if (achievementDisplayNamesAndDatabaseNames.values().contains(whiteSpaceRemovedName)) {
+			if (displayNamesToNames.values().contains(whiteSpaceRemovedName)) {
 				achievementName = whiteSpaceRemovedName;
 			}
 		}

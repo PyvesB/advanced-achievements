@@ -27,7 +27,15 @@ public class ConfigModule {
 
 	@Provides
 	@Singleton
-	Map<String, String> provideAchievementsAndDisplayNames() {
+	@Named("ntd")
+	Map<String, String> provideNamesToDisplayNames() {
+		return new HashMap<>();
+	}
+
+	@Provides
+	@Singleton
+	@Named("dtn")
+	Map<String, String> provideDisplayNamesToNames() {
 		return new HashMap<>();
 	}
 

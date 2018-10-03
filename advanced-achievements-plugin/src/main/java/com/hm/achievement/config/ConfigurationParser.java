@@ -40,7 +40,8 @@ public class ConfigurationParser {
 	private final CommentedYamlConfiguration langConfig;
 	private final CommentedYamlConfiguration guiConfig;
 	private final FileUpdater fileUpdater;
-	private final Map<String, String> achievementsAndDisplayNames;
+	private final Map<String, String> namesToDisplayNames;
+	private final Map<String, String> displayNamesToNames;
 	private final Map<String, List<Long>> sortedThresholds;
 	private final Set<Category> disabledCategories;
 	private final Set<String> enabledCategoriesWithSubcategories;
@@ -51,14 +52,16 @@ public class ConfigurationParser {
 	@Inject
 	public ConfigurationParser(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			FileUpdater fileUpdater, Map<String, String> achievementsAndDisplayNames,
-			Map<String, List<Long>> sortedThresholds, Set<Category> disabledCategories,
-			Set<String> enabledCategoriesWithSubcategories, StringBuilder pluginHeader, Logger logger, int serverVersion) {
+			FileUpdater fileUpdater, @Named("ntd") Map<String, String> namesToDisplayNames,
+			@Named("dtn") Map<String, String> displayNamesToNames, Map<String, List<Long>> sortedThresholds,
+			Set<Category> disabledCategories, Set<String> enabledCategoriesWithSubcategories, StringBuilder pluginHeader,
+			Logger logger, int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
 		this.fileUpdater = fileUpdater;
-		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
+		this.namesToDisplayNames = namesToDisplayNames;
+		this.displayNamesToNames = displayNamesToNames;
 		this.sortedThresholds = sortedThresholds;
 		this.disabledCategories = disabledCategories;
 		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;
@@ -230,7 +233,8 @@ public class ConfigurationParser {
 	 * @throws PluginLoadError If an achievement fails to parse due to misconfiguration.
 	 */
 	private void parseAchievements() throws PluginLoadError {
-		achievementsAndDisplayNames.clear();
+		namesToDisplayNames.clear();
+		displayNamesToNames.clear();
 		sortedThresholds.clear();
 
 		// Enumerate Commands achievements.
@@ -285,7 +289,7 @@ public class ConfigurationParser {
 	}
 
 	/**
-	 * Performs validation for a single achievement and populates an entry in the achievementsAndDisplayNames map.
+	 * Performs validation for a single achievement and populates an entry in the namesToDisplayNames map.
 	 *
 	 * @param path
 	 * @throws PluginLoadError If the achievement fails to parse due to misconfiguration.
@@ -294,11 +298,14 @@ public class ConfigurationParser {
 		String achName = mainConfig.getString(path + ".Name");
 		if (achName == null) {
 			throw new PluginLoadError("Achievement with path (" + path + ") is missing its Name parameter in config.yml.");
-		} else if (achievementsAndDisplayNames.containsKey(achName)) {
+		} else if (namesToDisplayNames.containsKey(achName)) {
 			throw new PluginLoadError(
 					"Duplicate achievement Name (" + achName + "). " + "Please ensure each Name is unique in config.yml.");
 		} else {
-			achievementsAndDisplayNames.put(achName, mainConfig.getString(path + ".DisplayName", ""));
+			namesToDisplayNames.put(achName, mainConfig.getString(path + ".DisplayName", ""));
+			String formattedDisplayName = StringHelper
+					.removeFormattingCodes(mainConfig.getString(path + ".DisplayName", achName)).toLowerCase();
+			displayNamesToNames.put(formattedDisplayName, achName);
 		}
 	}
 
@@ -306,7 +313,7 @@ public class ConfigurationParser {
 		int disabledCategoryCount = disabledCategories.size();
 		int categories = NormalAchievements.values().length + MultipleAchievements.values().length + 1
 				- disabledCategoryCount;
-		logger.info("Loaded " + achievementsAndDisplayNames.size() + " achievements in " + categories + " categories.");
+		logger.info("Loaded " + namesToDisplayNames.size() + " achievements in " + categories + " categories.");
 
 		if (!disabledCategories.isEmpty()) {
 			String noun = disabledCategoryCount == 1 ? "category" : "categories";

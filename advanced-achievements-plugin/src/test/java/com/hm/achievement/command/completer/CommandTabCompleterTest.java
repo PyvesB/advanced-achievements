@@ -75,14 +75,18 @@ public class CommandTabCompleterTest {
 		commands.add(bookCommand);
 		commands.add(easterEggCommand);
 		commands.add(helpCommand);
-		Map<String, String> achievementsAndDisplayNames = new HashMap<>();
-		achievementsAndDisplayNames.put("yourAch1", "Special Event Achievement!");
-		achievementsAndDisplayNames.put("yourAch2", "&2Coloured &rAchievement!");
-		achievementsAndDisplayNames.put("No Display Name Achievements!", "");
+		Map<String, String> namesToDisplayNames = new HashMap<>();
+		namesToDisplayNames.put("yourAch1", "Special Event Achievement!");
+		namesToDisplayNames.put("yourAch2", "&2Coloured &rAchievement!");
+		namesToDisplayNames.put("No Display Name Achievement!", "");
+		Map<String, String> displayNamesToNames = new HashMap<>();
+		displayNamesToNames.put("special event achievement!", "yourAch1");
+		displayNamesToNames.put("coloured achievement!", "yourAch2");
+		displayNamesToNames.put("no display name Achievement!", "No Display Name Achievement!");
 		Set<String> enabledCategoriesWithSubcategories = new HashSet<>(Arrays.asList("Custom.someSubcategory", "Beds",
 				"Breaks.someSubcategory", "Breeding.someSubcategory", "Brewing"));
-		underTest = new CommandTabCompleter(mainConfig, achievementsAndDisplayNames, enabledCategoriesWithSubcategories,
-				commands, 13);
+		underTest = new CommandTabCompleter(mainConfig, namesToDisplayNames, displayNamesToNames,
+				enabledCategoriesWithSubcategories, commands, 13);
 	}
 
 	@Test
@@ -161,7 +165,7 @@ public class CommandTabCompleterTest {
 
 		assertEquals(asList("Beds", "Breaks.someSubcategory", "Breeding.someSubcategory", "Brewing"), completionResult);
 	}
-	
+
 	@Test
 	public void shoudCompleteWithNumberForAddCommand() {
 		String[] args = new String[] { "add", "" };
@@ -199,7 +203,7 @@ public class CommandTabCompleterTest {
 		String[] args = new String[] { "check", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("No␣Display␣Name␣Achievements!", "yourAch1", "yourAch2"), completionResult);
+		assertEquals(asList("No␣Display␣Name␣Achievement!", "yourAch1", "yourAch2"), completionResult);
 	}
 
 	@Test
@@ -207,7 +211,8 @@ public class CommandTabCompleterTest {
 		String[] args = new String[] { "inspect", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("", "Coloured␣Achievement!", "Special␣Event␣Achievement!"), completionResult);
+		assertEquals(asList("coloured␣achievement!", "no␣display␣name␣Achievement!", "special␣event␣achievement!"),
+				completionResult);
 	}
 
 	@Test
@@ -216,12 +221,12 @@ public class CommandTabCompleterTest {
 		String[] args = new String[] { "check", "N" };
 		List<String> completionResult = underTest.onTabComplete(consoleCommandSender, command, null, args);
 
-		assertEquals(asList("No Display Name Achievements!"), completionResult);
+		assertEquals(asList("No Display Name Achievement!"), completionResult);
 	}
 
 	@Test
 	public void shoudTruncateCompletionListOnOldServerVersionsIfOverFiftyElements() {
-		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptySet(), emptySet(), 12);
+		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptyMap(), emptySet(), emptySet(), 12);
 		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
 		when(mainConfig.getShallowKeys("Commands")).thenReturn(commands);
 

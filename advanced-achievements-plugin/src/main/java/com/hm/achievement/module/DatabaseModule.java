@@ -23,17 +23,16 @@ public class DatabaseModule {
 	@Provides
 	@Singleton
 	AbstractDatabaseManager provideSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
-			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater,
+			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
 			AdvancedAchievements advancedAchievements) {
 		String databaseType = advancedAchievements.getConfig().getString("DatabaseType", "sqlite");
 		if ("mysql".equalsIgnoreCase(databaseType)) {
-			return new MySQLDatabaseManager(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater);
+			return new MySQLDatabaseManager(mainConfig, logger, namesToDisplayNames, databaseUpdater);
 		} else if ("postgresql".equalsIgnoreCase(databaseType)) {
-			return new PostgreSQLDatabaseManager(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater);
+			return new PostgreSQLDatabaseManager(mainConfig, logger, namesToDisplayNames, databaseUpdater);
 		} else {
 			// User has specified "sqlite" or an invalid type.
-			return new SQLiteDatabaseManager(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater,
-					advancedAchievements);
+			return new SQLiteDatabaseManager(mainConfig, logger, namesToDisplayNames, databaseUpdater, advancedAchievements);
 		}
 	}
 

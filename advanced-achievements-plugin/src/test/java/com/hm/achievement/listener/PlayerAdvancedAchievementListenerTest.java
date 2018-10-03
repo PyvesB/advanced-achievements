@@ -59,9 +59,9 @@ public class PlayerAdvancedAchievementListenerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Map<String, String> achievementsAndDisplayNames = new HashMap<>();
-		achievementsAndDisplayNames.put("connect_1", "Good Choice");
-		achievementsAndDisplayNames.put("place_500_smooth_brick", "Stone Brick Layer");
+		Map<String, String> namesToDisplayNames = new HashMap<>();
+		namesToDisplayNames.put("connect_1", "Good Choice");
+		namesToDisplayNames.put("place_500_smooth_brick", "Stone Brick Layer");
 		MockUtility mockUtility = MockUtility.setUp()
 				.mockServer()
 				.withLogger()
@@ -75,7 +75,7 @@ public class PlayerAdvancedAchievementListenerTest {
 		CommentedYamlConfiguration mainConfig = mockUtility.getLoadedConfig("config-reward-reception.yml");
 		underTest = new PlayerAdvancedAchievementListener(mainConfig, mockUtility.getLoadedConfig("lang.yml"), 11,
 				mock(Logger.class), new StringBuilder(PLUGIN_HEADER), new CacheManager(mainConfig, abstractDatabaseManager),
-				plugin, rewardParser, achievementsAndDisplayNames, abstractDatabaseManager, null, null, null);
+				plugin, rewardParser, namesToDisplayNames, abstractDatabaseManager, null, null, null);
 		underTest.extractConfigurationParameters();
 		when(player.getUniqueId()).thenReturn(PLAYER_UUID);
 		when(player.getName()).thenReturn("DarkPyves");

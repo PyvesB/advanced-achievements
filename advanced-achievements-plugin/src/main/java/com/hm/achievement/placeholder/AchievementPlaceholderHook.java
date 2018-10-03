@@ -30,17 +30,18 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 	private final CommentedYamlConfiguration mainConfig;
 	private final CacheManager cacheManager;
 	private final Set<Category> disabledCategories;
-	private final Map<String, String> achievementsAndDisplayNames;
+	private final Map<String, String> namesToDisplayNames;
 
 	@Inject
 	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements,
 			@Named("main") CommentedYamlConfiguration mainConfig,
-			CacheManager cacheManager, Set<Category> disabledCategories, Map<String, String> achievementsAndDisplayNames) {
+			CacheManager cacheManager, Set<Category> disabledCategories,
+			@Named("ntd") Map<String, String> namesToDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.mainConfig = mainConfig;
 		this.cacheManager = cacheManager;
 		this.disabledCategories = disabledCategories;
-		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
+		this.namesToDisplayNames = namesToDisplayNames;
 	}
 
 	@Override
@@ -56,11 +57,11 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 		if ("achievements_percentage".equalsIgnoreCase(identifier)) {
 			return String.format("%.1f%%", 100 * (double) cacheManager.getPlayerTotalAchievements(p.getUniqueId())
-					/ achievementsAndDisplayNames.size());
+					/ namesToDisplayNames.size());
 		}
 
 		if ("total_achievements".equalsIgnoreCase(identifier)) {
-			return String.valueOf(achievementsAndDisplayNames.size());
+			return String.valueOf(namesToDisplayNames.size());
 		}
 
 		for (NormalAchievements category : NormalAchievements.values()) {

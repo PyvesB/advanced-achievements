@@ -22,8 +22,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class MySQLDatabaseManager extends AbstractDatabaseManager {
 
 	public MySQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
-			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater) {
-		super(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater);
+			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
+		super(mainConfig, logger, namesToDisplayNames, databaseUpdater);
 	}
 
 	@Override

@@ -22,7 +22,6 @@ import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.CommandSpec;
 import com.hm.achievement.command.executable.EasterEggCommand;
-import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -37,17 +36,19 @@ public class CommandTabCompleter implements TabCompleter {
 	private static final int MAX_LIST_LENGTH = 50;
 
 	private final CommentedYamlConfiguration mainConfig;
-	private final Map<String, String> achievementsAndDisplayNames;
+	private final Map<String, String> namesToDisplayNames;
+	private final Map<String, String> displayNamesToNames;
 	private final Set<String> enabledCategoriesWithSubcategories;
 	private final Set<CommandSpec> commandSpecs;
 	private final int serverVersion;
 
 	@Inject
 	public CommandTabCompleter(@Named("main") CommentedYamlConfiguration mainConfig,
-			Map<String, String> achievementsAndDisplayNames, Set<String> enabledCategoriesWithSubcategories,
-			Set<AbstractCommand> commands, int serverVersion) {
+			@Named("ntd") Map<String, String> namesToDisplayNames, @Named("dtn") Map<String, String> displayNamesToNames,
+			Set<String> enabledCategoriesWithSubcategories, Set<AbstractCommand> commands, int serverVersion) {
 		this.mainConfig = mainConfig;
-		this.achievementsAndDisplayNames = achievementsAndDisplayNames;
+		this.namesToDisplayNames = namesToDisplayNames;
+		this.displayNamesToNames = displayNamesToNames;
 		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;
 		this.serverVersion = serverVersion;
 		this.commandSpecs = commands.stream().filter(c -> !(c instanceof EasterEggCommand))
@@ -67,9 +68,9 @@ public class CommandTabCompleter implements TabCompleter {
 		} else if (args.length == 2 && "give".equalsIgnoreCase(aachCommand)) {
 			options = mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString());
 		} else if (args.length == 2 && StringUtils.equalsAnyIgnoreCase(aachCommand, "check", "delete")) {
-			options = achievementsAndDisplayNames.keySet();
+			options = namesToDisplayNames.keySet();
 		} else if (args.length == 2 && "inspect".equalsIgnoreCase(aachCommand)) {
-			options = achievementsAndDisplayNames.values();
+			options = displayNamesToNames.keySet();
 		} else if (args.length == 2 && "add".equalsIgnoreCase(aachCommand)) {
 			options = Collections.singleton("1");
 		} else if (args.length == 3 && "add".equalsIgnoreCase(aachCommand)) {
@@ -105,12 +106,10 @@ public class CommandTabCompleter implements TabCompleter {
 
 	private List<String> getFormattedMatchingOptions(Collection<String> options, String prefix,
 			Function<String, String> displayMapper) {
-		// Remove chat colors
 		// Find matching options
 		// Map matches to be displayed properly with displayMapper
 		// Sort matching elements by alphabetical order.
 		List<String> allOptions = options.stream()
-				.map(StringHelper::removeFormattingCodes)
 				.filter(s -> s.toLowerCase().startsWith(prefix.toLowerCase()))
 				.map(displayMapper).sorted().collect(Collectors.toList());
 

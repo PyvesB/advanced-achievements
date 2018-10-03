@@ -28,9 +28,9 @@ public class SQLiteDatabaseManager extends AbstractDatabaseManager {
 	private boolean configDatabaseBackup;
 
 	public SQLiteDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
-			Map<String, String> achievementsAndDisplayNames, DatabaseUpdater databaseUpdater,
+			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
 			AdvancedAchievements advancedAchievements) {
-		super(mainConfig, logger, achievementsAndDisplayNames, databaseUpdater);
+		super(mainConfig, logger, namesToDisplayNames, databaseUpdater);
 		this.advancedAchievements = advancedAchievements;
 	}
 
