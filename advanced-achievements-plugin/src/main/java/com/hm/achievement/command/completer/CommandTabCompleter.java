@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -15,7 +14,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabCompleter;
 
 import com.hm.achievement.category.CommandAchievements;
@@ -80,38 +78,27 @@ public class CommandTabCompleter implements TabCompleter {
 					.filter(cs -> cs.permission().isEmpty() || sender.hasPermission("achievement." + cs.permission()))
 					.map(CommandSpec::name).collect(Collectors.toSet());
 		}
-		return getPartialList(sender, options, args[args.length - 1]);
+		return getPartialList(options, args[args.length - 1]);
 	}
 
 	/**
 	 * Returns a partial list based on the input set. Members of the returned list must start with what the player has
 	 * types so far. The list also has a limited length prior to Minecraft 1.13 to avoid filling the player's screen.
 	 *
-	 * @param sender
 	 * @param options
 	 * @param prefix
 	 * @return a list limited in length, containing elements matching the prefix.
 	 */
-	private List<String> getPartialList(CommandSender sender, Collection<String> options, String prefix) {
-		if (sender instanceof ConsoleCommandSender) {
-			// Console mapper uses the given parameters, spaces and all.
-			return getFormattedMatchingOptions(options, prefix, Function.identity());
-		} else {
-			// Default mapper replaces spaces with an Open Box character to prevent completing wrong word.
-			// Prevented Behaviour:
-			// T -> Tamer -> Teleport Man -> Teleport The Avener -> Teleport The The Smelter
-			return getFormattedMatchingOptions(options, prefix, s -> s.replace(' ', '\u2423'));
-		}
-	}
-
-	private List<String> getFormattedMatchingOptions(Collection<String> options, String prefix,
-			Function<String, String> displayMapper) {
+	private List<String> getPartialList(Collection<String> options, String prefix) {
 		// Find matching options
-		// Map matches to be displayed properly with displayMapper
+		// Replace spaces with an Open Box character to prevent completing wrong word. Prevented Behaviour:
+		// T -> Tamer -> Teleport Man -> Teleport The Avener -> Teleport The The Smelter
 		// Sort matching elements by alphabetical order.
 		List<String> allOptions = options.stream()
-				.filter(s -> s.toLowerCase().startsWith(prefix.toLowerCase()))
-				.map(displayMapper).sorted().collect(Collectors.toList());
+				.filter(s1 -> s1.toLowerCase().startsWith(prefix.toLowerCase()))
+				.map(s -> s.replace(' ', '\u2423'))
+				.sorted()
+				.collect(Collectors.toList());
 
 		if (serverVersion < 13 && allOptions.size() > MAX_LIST_LENGTH) {
 			allOptions = allOptions.subList(0, MAX_LIST_LENGTH - 1);

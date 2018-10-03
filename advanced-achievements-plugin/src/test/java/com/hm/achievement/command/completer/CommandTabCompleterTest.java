@@ -22,12 +22,10 @@ import java.util.stream.IntStream;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.hm.achievement.command.executable.AbstractCommand;
@@ -213,15 +211,6 @@ public class CommandTabCompleterTest {
 
 		assertEquals(asList("coloured␣achievement!", "no␣display␣name␣Achievement!", "special␣event␣achievement!"),
 				completionResult);
-	}
-
-	@Test
-	public void shoudCompleteWithoutReplacingWhitespacesIfConsole() {
-		ConsoleCommandSender consoleCommandSender = Mockito.mock(ConsoleCommandSender.class);
-		String[] args = new String[] { "check", "N" };
-		List<String> completionResult = underTest.onTabComplete(consoleCommandSender, command, null, args);
-
-		assertEquals(asList("No Display Name Achievement!"), completionResult);
 	}
 
 	@Test
