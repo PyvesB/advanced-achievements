@@ -4,10 +4,9 @@
 # 1---------------------------------------------------------1 #
 #==============================o==============================#
 
-# You can use Minecraft chat colors in Message|DisplayName|Goal, but include double quotes around the whole text: "&4Color".
-# Only spaces, NO tabs. Don't forget the indents (2 spaces per indentation level), plugin won't work otherwise!
+# To use Minecraft chat colors in Message, DisplayName or Goal parameters, add double quotes around the whole text: "&4Color".
+# Only spaces, NO tabs. Don't forget the indents (2 spaces per indentation level).
 # To check syntax errors in your file, use: yaml-online-parser.appspot.com
-# Do NOT delete any top level (= not indentented) sections in the configuration file.
 # Default config.yml: github.com/PyvesB/AdvancedAchievements/blob/master/advanced-achievements-plugin/src/main/resources/config.yml
 # Visit the wiki for some valuable additional documentation: github.com/PyvesB/AdvancedAchievements/wiki
 
@@ -40,8 +39,8 @@ TopList: 5
 # /aach top, week or month when ranked in the top list.
 AdditionalEffects: true
 
-# Set to true to activate sounds when performing /aach book, /aach stats with all achievements and
-# /aach top, week or month when ranked in the top list.
+# Set to true to activate sounds when performing /aach book, /aach stats with all achievements and /aach top, 
+# week or month when ranked in the top list.
 Sound: true
 
 # For /aach book. Possible values: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names
@@ -60,17 +59,17 @@ Icon: \u2618
 Color: 5
 
 # Notify other connected players when an achievement is received.
-# Default behaviour, a player can override what he sees by using /aach toggle.
+# This defines the default behaviour, a player can override what he sees by using /aach toggle.
 NotifyOtherPlayers: false
 
 # When NotifyOtherPlayers is enabled, notifications are done using action bars when ActionBarNotify is true.
 # When ActionBarNotify is false, chat messages are used.
 ActionBarNotify: true
 
-# Display achievement Name and Message as screen titles. No effect if using Minecraft 1.7.9 or 1.7.10.
+# Display achievement DisplayName and Message as screen titles. Ignored if using Minecraft 1.7.9 or 1.7.10.
 TitleScreen: true
 
-# When a player receives an achievement, the Name, Message and rewards of the achievement are displayed in
+# When a player receives an achievement, the DisplayName, Message and rewards of the achievement are displayed in
 # the chat. If HoverableReceiverChatText is true, a single hoverable text will be displayed to the receiver.
 # Otherwise texts will be displayed one after the other.
 HoverableReceiverChatText: false
@@ -125,7 +124,7 @@ ObfuscateNotReceived: false
 # the 500 stone achievement will become legible.
 ObfuscateProgressiveAchievements: false
 
-# Hide categories with no achievements yet received in /aach list by marking them as locked.
+# Hide categories for which a player has not yet received achievements by marking them as locked in /aach list.
 HideNotReceivedCategories: false
 
 # Completely hide categories for which the player does not have the corresponding count permissions.
@@ -153,7 +152,7 @@ DisableSilkTouchBreaks: false
 # DisableSilkTouchBreaks takes precedence over this. Not applicable to iron or gold ores.
 DisableSilkTouchOreBreaks: false
 
-# Name of the language file.
+# Name of the language file you want to use in your AdvancedAchievements directory.
 LanguageFileName: lang.yml
 
 # Time in seconds between each statistic count. Only the listed categories are currently supported.
@@ -173,7 +172,7 @@ CooldownActionBar: true
 # The list of possible language codes can be found at www.loc.gov/standards/iso639-2/php/code_list.php
 DateLocale: en
 
-# Display time of reception of achievements in /aach book and /aach list in addition to the date. For achievements
+# Display reception time of achievements in /aach book and /aach list in addition to the date. For achievements
 # received in plugin versions prior to 3.0, the precise time information is not available and will be displayed as midnight.
 DateDisplayTime: true
 
@@ -197,6 +196,7 @@ AllAchievementsReceivedRewards:
 
 # Title shown on the root advancement.
 RootAdvancementTitle: "Advanced Achievements"
+
 # Background shown on the Advanced Achievements advancement tab.
 # Must be a resource location to any image in a resource pack.
 AdvancementsBackground: "minecraft:textures/item/book.png"
@@ -238,17 +238,17 @@ POSTGRESQL:
 #============================OO=OO============================#
 # IV-------------------------------------------------------IV #
 # |                  Performance settings                   | #
+# |        Change only if you are an experienced user       | #
 # 4---------------------------------------------------------4 #
 #============================oo=oo============================#
 
-# DO NOT CHANGE THE FOLLOWING UNLESS YOU ARE AN EXPERIENCED USER. The intervals are in seconds. 
-# Frequency of play time checks for players. Smaller values give more precision but more CPU usage.
+# Frequency of play time checks for players (seconds). Smaller values give more precision but more CPU usage.
 PlaytimeTaskInterval: 60
 
-# Calculates distance traveled by players. Smaller values give more precision but more CPU usage.
+# Calculates distance traveled by players (seconds). Smaller values give more precision but more CPU usage.
 DistanceTaskInterval: 5
 
-# Frequency of some statistics writes to the database. Do a full server restart, and not just /aach reload.
+# Frequency of some statistics writes to the database (seconds). Do a full server restart, and not just /aach reload.
 PooledRequestsTaskInterval: 10
 
 #============================OOOOO============================#
@@ -268,7 +268,7 @@ Places:
       Message: "&4You have placed 5 chests!"
       # Database name, must also be used in /aach delete and /aach check.
       Name: place_5_chest
-      # Name; displayed when receiving achievement, and in /aach book and /aach list.
+      # Displayed when receiving achievement, and in /aach book and /aach list.
       DisplayName: Storage Expert
     50:
       Goal: "Place 50 chests."
@@ -377,7 +377,7 @@ Breeding:
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
 # |               Normal action achievements                | #
-# |          These are simply based on thresholds           | #
+# |           These are based on thresholds only            | #
 # 6---------------------------------------------------------6 #
 #===========================ooo=ooo===========================#
 
@@ -565,7 +565,7 @@ DistanceBoat:
     DisplayName: Great Sailor
 
 # When a distance is traveled with elytra.
-# Ignored on Minecraft versions prior to 1.9, add it to DisabledCategories list.
+# Ignored on Minecraft versions prior to 1.9.
 DistanceGliding:
   100:
     Message: You traveled 100 blocks with elytra!
@@ -573,7 +573,7 @@ DistanceGliding:
     DisplayName: Angel
     
 # When a distance is traveled on a llama.
-# Ignored on Minecraft versions prior to 1.11, add it to DisabledCategories list.
+# Ignored on Minecraft versions prior to 1.11.
 DistanceLlama:
   50:
     Message: You traveled 50 blocks on a llama!
@@ -674,7 +674,7 @@ Smelting:
 # 7---------------------------------------------------------7 #
 #===========================ooooooo===========================#
     
-# Let achievement commands be given several times.
+# Allow Commands achievement to be awarded several times.
 MultiCommand: true
     
 # A player with achievement.give (or the console) can use /aach give yourAch1 PLAYER to give

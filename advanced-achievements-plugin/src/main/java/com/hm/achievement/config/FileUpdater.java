@@ -94,7 +94,8 @@ public class FileUpdater {
 		updateSetting(config, "DisableSilkTouchOreBreaks", false,
 				"Do not take into account ores broken with Silk Touch for the Breaks achievements.",
 				"DisableSilkTouchBreaks takes precedence over this.");
-		updateSetting(config, "LanguageFileName", "lang.yml", "Name of the language file.");
+		updateSetting(config, "LanguageFileName", "lang.yml",
+				" Name of the language file you want to use in your AdvancedAchievements directory.");
 
 		// Added in version 4.0:
 		updateSetting(config, "EnrichedListProgressBars", true,
@@ -119,7 +120,7 @@ public class FileUpdater {
 				"Locale used to format dates in /aach book and /aach list. You must select an ISO 639 language code.",
 				"The list of possible language codes can be found here at www.loc.gov/standards/iso639-2/php/code_list.php");
 		updateSetting(config, "DateDisplayTime", false,
-				"Display time of reception of achievements in /aach book and /aach list in addition to the date. For achievements",
+				"Display reception time of achievements in /aach book and /aach list in addition to the date. For achievements",
 				"received in plugin versions prior to 3.0, the precise time information is not available and will be displayed as midnight.");
 
 		// Added in version 4.2:
@@ -135,7 +136,7 @@ public class FileUpdater {
 
 		// Added in version 5.1:
 		updateSetting(config, "NotifyOtherPlayers", false, "Notify other connected players when an achievement is received.",
-				"Default behaviour, a player can override what he sees by using /aach toggle.");
+				"This defines the default behaviour, a player can override what he sees by using /aach toggle.");
 		updateSetting(config, "ActionBarNotify", true,
 				"When NotifyOtherPlayers is enabled, notifications are done using action bars when ActionBarNotify is true.",
 				"When ActionBarNotify is false, chat messages are used.");
@@ -169,7 +170,7 @@ public class FileUpdater {
 				"Specify additional options when opening a connection to a MySQL/PostgreSQL database. Start each option with &,",
 				"for instance \"&useUnicode=yes&characterEncoding=UTF-8\".");
 		updateSetting(config, "HoverableReceiverChatText", false,
-				"When a player receives an achievement, the Name, Message and rewards of the achievement are displayed in",
+				"When a player receives an achievement, the DisplayName, Message and rewards of the achievement are displayed in",
 				"the chat. If HoverableReceiverChatText is true, a single hoverable text will be displayed to the receiver.",
 				"Otherwise texts will be displayed one after the other.");
 
