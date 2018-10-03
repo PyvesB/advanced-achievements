@@ -246,8 +246,10 @@ public class AdvancementManager implements Reloadable {
 
 		String path = category + ".Item";
 		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BOOK, "gui.yml (" + path + ")");
+		String icon = serverVersion == 12 ? getInternalName(new ItemStack(material, 1, (short) metadata))
+				: material.name().toLowerCase();
 		AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
-				.iconItem(getInternalName(new ItemStack(material, 1, (short) metadata)))
+				.iconItem(icon)
 				.title(achDisplayName)
 				.description(description)
 				.parent("advancedachievements:" + parentKey)
