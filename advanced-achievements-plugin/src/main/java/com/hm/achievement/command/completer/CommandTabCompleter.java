@@ -20,6 +20,8 @@ import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.CommandSpec;
 import com.hm.achievement.command.executable.EasterEggCommand;
+import com.hm.achievement.command.executable.GenerateCommand;
+import com.hm.achievement.command.executable.Upgrade13Command;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -49,8 +51,11 @@ public class CommandTabCompleter implements TabCompleter {
 		this.displayNamesToNames = displayNamesToNames;
 		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;
 		this.serverVersion = serverVersion;
-		this.commandSpecs = commands.stream().filter(c -> !(c instanceof EasterEggCommand))
-				.map(c -> c.getClass().getAnnotation(CommandSpec.class)).collect(Collectors.toSet());
+		this.commandSpecs = commands.stream()
+				.filter(c -> !(c instanceof EasterEggCommand || c instanceof Upgrade13Command
+						|| serverVersion < 12 && c instanceof GenerateCommand))
+				.map(c -> c.getClass().getAnnotation(CommandSpec.class))
+				.collect(Collectors.toSet());
 	}
 
 	@Override

@@ -31,7 +31,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.BookCommand;
 import com.hm.achievement.command.executable.EasterEggCommand;
+import com.hm.achievement.command.executable.GenerateCommand;
 import com.hm.achievement.command.executable.HelpCommand;
+import com.hm.achievement.command.executable.Upgrade13Command;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -60,6 +62,12 @@ public class CommandTabCompleterTest {
 	@Mock
 	private EasterEggCommand easterEggCommand;
 
+	@Mock
+	private Upgrade13Command upgrade13Command;
+	
+	@Mock
+	private GenerateCommand generateCommand;
+
 	private CommandTabCompleter underTest;
 
 	@Before
@@ -72,6 +80,8 @@ public class CommandTabCompleterTest {
 		Set<AbstractCommand> commands = new HashSet<>();
 		commands.add(bookCommand);
 		commands.add(easterEggCommand);
+		commands.add(upgrade13Command);
+		commands.add(generateCommand);
 		commands.add(helpCommand);
 		Map<String, String> namesToDisplayNames = new HashMap<>();
 		namesToDisplayNames.put("yourAch1", "Special Event Achievement!");
@@ -137,13 +147,27 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudCompleteWithNonEasterEggCommands() {
+	public void shoudCompleteWithNonEasterEggAndNonUpgrade13Commands() {
 		when(commandSender.hasPermission(anyString())).thenReturn(true);
 
 		String[] args = new String[] { "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("book", "help"), completionResult);
+		assertEquals(asList("book", "generate", "help"), completionResult);
+	}
+	
+	@Test
+	public void shoudNotCompleteWithGenerateCommandOnOldMinecraftVersion() {
+		Set<AbstractCommand> commands = new HashSet<>();
+		commands.add(bookCommand);
+		commands.add(generateCommand);
+		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptyMap(), emptySet(), commands, 11);
+		when(commandSender.hasPermission(anyString())).thenReturn(true);
+
+		String[] args = new String[] { "" };
+		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+
+		assertEquals(asList("book"), completionResult);
 	}
 
 	@Test
