@@ -120,11 +120,11 @@ public class RewardParser implements Reloadable {
 		}
 
 		if (keyNames.contains(path + ".Command")) {
-			List<String> messages = getCustomCommandMessage(path);
-			if (messages != null) {
-				rewardTypes.addAll(messages);
-			} else {
+			List<String> messages = getCustomCommandMessages(path);
+			if (messages.isEmpty()) {
 				rewardTypes.add(langListRewardCommand);
+			} else {
+				rewardTypes.addAll(messages);
 			}
 		}
 		return rewardTypes;
@@ -239,9 +239,9 @@ public class RewardParser implements Reloadable {
 	 * @return the custom command message (null if not present)
 	 * @author tassu
 	 */
-	public List<String> getCustomCommandMessage(String path) {
-		if (!mainConfig.isConfigurationSection(path + ".Command")) {
-			return null;
+	public List<String> getCustomCommandMessages(String path) {
+		if (!mainConfig.contains(path + ".Command.Display")) {
+			return Collections.emptyList();
 		}
 
 		if (mainConfig.isList(path + ".Command.Display")) {
@@ -264,8 +264,8 @@ public class RewardParser implements Reloadable {
 			itemAmount = mainConfig.getInt(path + ".Item.Amount", 0);
 		} else if (mainConfig.getKeys(true).contains(path + ".Item")) {
 			// New config syntax. Name of item and quantity are on the same line, separated by a space.
-			String materialAndQty = mainConfig.getString(path + ".Item", "");
-			String intString = StringUtils.substringBetween(StringUtils.normalizeSpace(materialAndQty), " ");
+			String materialAndQty = StringUtils.normalizeSpace(mainConfig.getString(path + ".Item", ""));
+			String intString = StringUtils.substringBefore(StringUtils.substringAfter(materialAndQty, " "), " ");
 			itemAmount = Integer.parseInt(intString);
 		}
 		return itemAmount;

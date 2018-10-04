@@ -126,7 +126,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 						.displayName(mainConfig.getString(achievementPath + ".DisplayName"))
 						.message(mainConfig.getString(achievementPath + ".Message"))
 						.commandRewards(rewardParser.getCommandRewards(rewardPath, player))
-						.commandMessage(rewardParser.getCustomCommandMessage(rewardPath))
+						.commandMessage(rewardParser.getCustomCommandMessages(rewardPath))
 						.itemReward(rewardParser.getItemReward(rewardPath))
 						.moneyReward(rewardParser.getRewardAmount(rewardPath, "Money"))
 						.experienceReward(rewardParser.getRewardAmount(rewardPath, "Experience"))

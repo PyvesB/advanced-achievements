@@ -192,7 +192,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * 
 	 * @param player
 	 * @param commands
-	 * @param commandMessage
+	 * @param commandMessages
 	 * @param item
 	 * @param money
 	 * @param experience
@@ -200,11 +200,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @param oxygen
 	 * @return all the reward texts to be displayed to the user
 	 */
-	private List<String> giveRewardsAndPrepareTexts(Player player, String[] commands, List<String> commandMessage,
+	private List<String> giveRewardsAndPrepareTexts(Player player, String[] commands, List<String> commandMessages,
 			ItemStack item, int money, int experience, int health, int oxygen) {
 		List<String> rewardTexts = new ArrayList<>();
 		if (commands != null && commands.length > 0) {
-			rewardTexts.addAll(rewardCommands(commands, commandMessage));
+			rewardTexts.addAll(rewardCommands(commands, commandMessages));
 		}
 		if (item != null) {
 			rewardTexts.add(rewardItem(player, item));
@@ -239,12 +239,12 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			return new ArrayList<>();
 		}
 
-		if (messages != null) {
-			return messages.stream().map(message -> StringUtils.replace(langCustomMessageCommandReward, "MESSAGE", message))
-					.collect(Collectors.toList());
+		if (messages.isEmpty()) {
+			return Collections.singletonList(langCommandReward);
 		}
-
-		return Collections.singletonList(langCommandReward);
+		return messages.stream()
+				.map(message -> StringUtils.replace(langCustomMessageCommandReward, "MESSAGE", message))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -526,7 +526,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private void handleAllAchievementsReceived(Player player) {
 		List<String> rewardTexts = giveRewardsAndPrepareTexts(player,
 				rewardParser.getCommandRewards("AllAchievementsReceivedRewards", player),
-				rewardParser.getCustomCommandMessage("AllAchievementsReceivedRewards"),
+				rewardParser.getCustomCommandMessages("AllAchievementsReceivedRewards"),
 				rewardParser.getItemReward("AllAchievementsReceivedRewards"),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "Money"),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "Experience"),

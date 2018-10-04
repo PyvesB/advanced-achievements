@@ -64,7 +64,7 @@ public class CommandTabCompleterTest {
 
 	@Mock
 	private Upgrade13Command upgrade13Command;
-	
+
 	@Mock
 	private GenerateCommand generateCommand;
 
@@ -155,7 +155,7 @@ public class CommandTabCompleterTest {
 
 		assertEquals(asList("book", "generate", "help"), completionResult);
 	}
-	
+
 	@Test
 	public void shoudNotCompleteWithGenerateCommandOnOldMinecraftVersion() {
 		Set<AbstractCommand> commands = new HashSet<>();
