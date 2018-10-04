@@ -5,7 +5,9 @@
 
 # Advanced Achievements
 
-[![Build Status](https://travis-ci.com/PyvesB/AdvancedAchievements.svg?branch=master)](https://travis-ci.com/PyvesB/AdvancedAchievements)
+<a href="https://travis-ci.com/PyvesB/AdvancedAchievements/">
+<img src ="https://img.shields.io/travis/com/PyvesB/AdvancedAchievements.svg" />
+</a>
 <a href="https://github.com/PyvesB/AdvancedAchievements/blob/master/LICENSE">
 <img src ="https://img.shields.io/github/license/PyvesB/AdvancedAchievements.svg" />
 </a>
@@ -50,11 +52,9 @@ Your generated `AdvancedAchievements.jar` can be found in the `target` folder.
 
 * [Bukkit](http://dev.bukkit.org/bukkit-plugins/advanced-achievements/), another homepage.
 
-* [Documentation, installation and FAQ](https://github.com/PyvesB/AdvancedAchievements/wiki), a lot of valuable information on how to set the plugin up or use it properly.
+* [Wiki](https://github.com/PyvesB/AdvancedAchievements/wiki), a lot of valuable information on how to set the plugin up and use it properly.
 
-* [Plugin translations](https://github.com/PyvesB/AdvancedAchievements/tree/master/advanced-achievements-plugin/src/main/resources), 16 languages available, feel free to improve them!
-
-* [HelloMinecraft](http://hellominecraft.fr/), the plugin's official server, amongst the best French servers out there!
+* [Translations](https://github.com/PyvesB/AdvancedAchievements/tree/master/advanced-achievements-plugin/src/main/resources), 16 languages available, feel free to improve them!
 
 # Contributing
 
