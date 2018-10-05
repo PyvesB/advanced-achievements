@@ -2,7 +2,7 @@
 # +---------------------------------------------------------+ #
 # |             Advanced Achievements Hungarian             | #
 # |               translation by montlikadani               | #
-# |             ~ Valid as of version 5.9.3 ~               | #
+# |             ~ Valid as of version 5.10.0 ~              | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
@@ -10,8 +10,9 @@
 
 no-permissions: "Nincs jogod erre."
 statistic-cooldown: "Küldetés várakozás: várj TIME másodpercet, mielőtt ez a művelet újra számítana."
-category-does-not-exist: "Ez a kategória és/vagy alkategória CAT nem létezik."
+category-does-not-exist: "Ez a kategória és/vagy alkategória CAT nem létezik. Úgy érted CLOSEST_MATCH?"
 all-achievements-received: "Gratulálok, minden küldetést megnyertél!"
+invalid-command: "Érvénytelen parancs. Kérlek, használd a /aach hogy megjelenítse a parancsokat."
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "A konfiguráció sikeresen újratöltve."
@@ -39,7 +40,7 @@ book-not-received: "Még nem kaptál küldetéseket."
 # Related to /aach give.
 player-offline: "A játékos PLAYER nem elérhető!"
 achievement-already-received: "A játékos PLAYER már kapott küldetést!"
-achievement-not-found: "A megadott küldetés nem található a Parancs kategóriában."
+achievement-not-found: "A megadott küldetés nem található a Parancs kategóriában. Úgy érted CLOSEST_MATCH?"
 achievement-given: "Küldetés adva!"
 
 # Related to /aach add.
@@ -68,7 +69,7 @@ increase-max-oxygen-reward-received: "A max oxigén értéke emelkedett: AMOUNT!
 
 # Related to /aach help.
 aach-command-book: "Ad egy küldetés könyvet."
-aach-command-book-hover: "RP tárgyakat gyűjthet és cserélhet másokkal! Időalapú lista."
+aach-command-book-hover: "RP tárgyakat gyűjthetsz és cserélhetsz másokkal! Időalapú lista."
 aach-command-stats: "A kapott küldetések összegének megjelenítése."
 aach-command-stats-hover: "Fejlődésmutató. El kell kapni mind!"
 aach-command-list: "A beérkezett és hiányzó küldetések megjelenítése."
@@ -97,6 +98,8 @@ aach-command-reset: "A kategória statisztikájának visszaállítása CAT."
 aach-command-reset-hover: "A játékosnak elérhetőnek kell lennie; az alkategóriákkal rendelkező kategóriák esetében mindegyikre visszaáll!"
 aach-command-generate: "Létrehoz küldetéseket."
 aach-command-generate-hover: "Lehetséges lassú parancs; használd gondosan!"
+aach-command-inspect: "Ellenőrzi az ACH címzettjeit."
+aach-command-inspect-hover: "Az eredmény legutóbbi címzettjeinek listája, max. 1000."
 aach-tip: "&lTIPP &8Tudsz &7&n&olebegő&8 vagy &7&n&okattintható&8 a parancsokban!"
 
 # Related to /aach info.
@@ -163,7 +166,7 @@ list-maxlevel: "Max. elért a szint"
 list-potions: "Fogyasztott bájitalok"
 list-playedtime: "Játékidő"
 list-distance-foot: "Távolságmegtétel lábbal"
-list-distance-pig: "Távolságmegtétel malac hátom"
+list-distance-pig: "Távolságmegtétel malac háton"
 list-distance-horse: "Távolságmegtétel lóháton"
 list-distance-minecart: "Távolságmegtétel csillével"
 list-distance-boat: "Távolságmegtétel csónakkal"
@@ -176,7 +179,7 @@ list-fertilising: "Fertilizált növények"
 list-taming: "Az állatok megszelídítése"
 list-breeding: "Állatok tenyésztése"
 list-brewing: "Italok főzése"
-list-fireworks: "Tűzijáték indulása"
+list-fireworks: "Tűzijáték kilövése"
 list-musicdiscs: "Zene lemezek lejátszása"
 list-enderpearls: "Teleportálás végzet gyönggyel"
 list-petmastergive: "A másik játékosnak adott háziállatok"
@@ -195,6 +198,9 @@ reset-successful: " a statisztikák törölve PLAYER játékostól."
 # Related to /aach generate.
 advancements-generated: "A küldetések sikeresen létrehozva."
 minecraft-not-supported: "A Minecraft verziójában nem támogatott a küldetések. Kérjük, frissítse 1.12+."
+
+# Related to /aach inspect
+achievement-not-recognized: "A(z) 'NAME' elnevezésű küldetést nem sikerült felismerni. Úgy érted CLOSEST_MATCH?"
 
 #============================================================#
 # +--------------------------------------------------------+ #
