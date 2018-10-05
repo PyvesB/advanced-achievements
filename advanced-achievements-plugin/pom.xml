@@ -36,6 +36,14 @@
 						<configuration>
 							<finalName>AdvancedAchievements</finalName>
 							<minimizeJar>true</minimizeJar>
+							<filters>
+								<filter>
+									<artifact>com.hm.achievement:advanced-achievements-api</artifact>
+									<includes>
+										<include>**</include>
+									</includes>
+								</filter>
+							</filters>
 							<relocations>
 								<relocation>
 									<pattern>com.hm.mcshared</pattern>
