@@ -1,32 +1,33 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
-# |   Advanced Achievements German translation by YtKater.de| #
+# |   Advanced Achievements German translation by           | #
+# |        YtKater.de | PlayInfected.de | Minecityelan.net  | #
 # |       Edit by PlayInfected.de - Network of Future       | #
 # |             ~ Valid as of version 5.1.1 ~               | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
 #=============================================================#
-no-permissions: "Du hast nicht genügend Rechte für diese Tätigkeit."
-statistic-cooldown: "Erfolgs-Abklingzeit: Warte TIME Sekunde/n bis diese Aktion wieder funktioniert."
+no-permissions: "Du hast keine Berechtigung für diess Vorhaben."
+statistic-cooldown: "Erfolgs-Abklingzeit: Warte TIME Sekunde/n bis diese Aktion wieder verfügbar ist."
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "Die Konfiguration wurde neu geladen!"
-configuration-reload-failed: "Es wurden Fehler gefunden! Bitte schaue in den Logs nach!"
+configuration-reload-failed: "Es wurden Fehler gefunden! Bitte überprüfe den Log!"
 
 # Related to /aach top week and month.
 top-achievement: "Meiste Erfolge:"
 player-rank: "Aktueller Rang:"
 week-achievement: "Meiste Erfolge (In dieser Woche):"
 month-achievement: "Meiste Erfolge (In diesem Monat):"
-not-ranked: "Sie sind derzeit nicht für diesen Zeitraum geordnet."
+not-ranked: "Du bist derzeit nicht für diesen Zeitraum geordnet."
 
 # Related to /aach stats.
 number-achievements: "Dein aktueller Fortschritt:"
 
 # Related to /aach book.
 book-received: "Du hast dein Erfolgs-Buch erhalten!"
-book-delay: "Du musst TIME Sekunden warten, bevor du das Buch wieder bekommst!"
+book-delay: "Du musst TIME Sekunden warten, bevor du das Buch wieder bekommen kannst!"
 book-name: "Meine Erfolge"
 book-date: "Erstellt am DATE"
 book-not-received: "Du hast leider noch keine Erfolge erzielt."
@@ -54,40 +55,40 @@ money-reward-received: "Du erhälst: AMOUNT!"
 command-reward: "Die Belohnung wurde überliefert!"
 
 # Related to /aach help.
-aach-command-book: Erhalte dein Achievement-Buch.
+aach-command-book: Erhalte dein Erfolg-Buch.
 aach-command-book-hover: RP Artikel kannst du sammeln und mit anderen austauschen! Zeitbasierte Auflistung.
 aach-command-stats: Anzahl der erhaltenen Achievements.
 aach-command-stats-hover: Fortschrittsanzeige. Schnapp sie dir alle!
 aach-command-list: Zeige alle Achievements an.
-aach-command-list-hover: Fancy GUI, um einen Überblick über alle Leistungen und Ihren Fortschritt zu bekommen!
-aach-command-top: Zeige alle Rankings an.
+aach-command-list-hover: Schickes GUI, um einen Überblick über alle Leistungen und Ihren Fortschritt zu bekommen!
+aach-command-top: Zeige alle Ranglisten an.
 aach-command-top-hover: Wer sind die Leiter des Servers und wie verhält man sich mit ihnen?
-aach-command-give: Gebe Achievement ACH zu &7NAME.
+aach-command-give: Gibt den Erfolg ACH an &7NAME.
 aach-command-give-hover: Spieler muss online sein; nur Befehl Achievements können gegeben werden
 aach-command-reload: Lade das Plugin neu.
 aach-command-reload-hover: Laden Sie die meisten Einstellungen in config.yml und lang.yml Dateien neu.
 aach-command-info: Zeige diverse Informationen des Plugins an.
 aach-command-info-hover: Einige zusätzliche Infos über das Plugin und seinen großartigen Autor!
-aach-command-check: Pruefe ob NAME das Achievement &7ACH besitzt.
-aach-command-check-hover: Verwenden Sie den in der config angegebenen Namen-Parameter.
-aach-command-delete: Loesche ACH von &7 NAME.
-aach-command-delete-hover: Spieler muss online sein; Setzt keine zugehoerigen Statistiken zurück.
-aach-command-week: Wochen Topliste anzeigen
-aach-command-week-hover: Beste Erfolgsjaeger seit Beginn der Woche!
-aach-command-month: Monats Topliste anzeigen
-aach-command-month-hover: Beste Erfolgsjaeger seit Beginn des Monats!
-aach-command-toggle: Umschalten von Achievements andere Spieler
-aach-command-toggle-hover: Ihre Wahl wird bis zum naechsten Neustart des Servers gespeichert!
-aach-command-reset: Resetet dieStatistik für Kategorie &7CAT .
-aach-command-reset-hover: Spieler muss online sein; fuer Kategorien mit Unterkategorien, Sie sind alle zurückgesetzt!
-aach-tip: '&lHinweis&8Du kannst &7&nüber&8 oder &7&n&oauf&8 die Befehle klicken!'
+aach-command-check: Überprüfe ob NAME das Achievement &7ACH besitzt.
+aach-command-check-hover: Verwende bitte den in der config angegebenen Namen-Parameter.
+aach-command-delete: Lösche den Erfolg ACH von &7 NAME.
+aach-command-delete-hover: Der Spieler muss online sein; Es setzt keine zugehoerigen Statistiken zurück.
+aach-command-week: Wochen Rangliste anzeigen
+aach-command-week-hover: Beste Erfolgsjäger seit Beginn der Woche!
+aach-command-month: Monats Rangliste anzeigen
+aach-command-month-hover: Beste Erfolgsjäger seit Beginn des Monats!
+aach-command-toggle: Wechselt die Erfolge von anderen Spielern.
+aach-command-toggle-hover: Deine Wahl wird bis zum nächsten Neustart des Servers gespeichert!
+aach-command-reset: Setzt die Statistik für die Kategorie &7CAT zurück.
+aach-command-reset-hover: Der Spieler muss online sein; beispiel: reset Places.stone Chakuroo
+aach-tip: '&lHinweis&8Du kannst &7&nüber&8 oder &7&n&oauf&8 AACH-Befehle klicken!'
 
 # Related to /aach info.
 version-command-version: 'Version:'
-version-command-website: 'Website:'
+version-command-website: 'Webseite:'
 version-command-author: 'Autor:'
 version-command-description: 'Beschreibung:'
-version-command-description-details: Advanced Achievements ermöglichen einzigartige und herausfordernde Leistungen. Versuchen Sie, so viele zu sammeln, wie Sie koennen, verdienen Sie Belohnungen, klettern Sie die Rangliste rauf und erhalten Sie RP Buecher!
+version-command-description-details: Advanced Achievements ermöglichen einzigartige und herausfordernde Leistungen. Versuch doch, so viele zu sammeln, wie du kannst. Verdiene wertvolle Belohnungen, erklimme die Spitze der Rangliste und erhalte RP-Bücher.
 version-command-vault: 'Vault integriert:'
 version-command-petmaster: 'Pet Master integriert:'
 version-command-btlp: 'BungeeTabListPlus integriert:'
@@ -125,14 +126,14 @@ list-snowballs: "Schneebälle geworfen"
 list-eggs: "Eier geworfen"
 list-fish: "Fische geangelt"
 list-treasure: "Schätze geangelt"
-list-itembreaks: "Werkzeuge zerstoert"
+list-itembreaks: "Werkzeuge zerstört"
 list-eatenitems: "Essen gegessen"
 list-shear: "Schafe geschoren"
 list-milk: "Kühe gemolken"
 list-lavabuckets: "Eimer mit Lava befüllt"
-list-waterbuckets: "Eimer mit Wasser gefuellt"
+list-waterbuckets: "Eimer mit Wasser gefüllt"
 list-trades: "Anzahl der Handel"
-list-anvils: "Ambösse genutzt"
+list-anvils: "Ambosse genutzt"
 list-enchantments: "Werkzeuge verzaubert"
 list-beds: "Betten benutzt"
 list-maxlevel: "Level erreicht"
@@ -141,10 +142,10 @@ list-playedtime: "Spielzeit"
 list-distance-foot: "Distanz zu Fuss gelaufen"
 list-distance-pig: "Distanz mit Schwein geritten"
 list-distance-horse: "Distanz mit Pferd geritten"
-list-distance-minecart: "Distanz mit Lore gefahren"
-list-distance-boat: "Distanz mit Boot gefahren"
+list-distance-minecart: "Distanz mit einer Lore gefahren"
+list-distance-boat: "Distanz mit einem Boot gefahren"
 list-distance-gliding: "Distanz mit Elytren geflogen"
-list-distance-llama: "Distanz mit Lama geritten"
+list-distance-llama: "Distanz mit einem Lama geritten"
 list-itemdrops: "Items weggeworfen"
 list-itempickups: "Items aufgehoben"
 list-hoeplowings: "Ackerböden erstellt"
@@ -160,8 +161,8 @@ list-smelting: "Erze geschmolzen"
 list-commands: "Sonstige Erfolge"
 
 # Related to /aach toggle.
-toggle-displayed: "Du wirst nun informiert wenn andere Spieler Achievements erreichen."
-toggle-hidden: "Du wirst nun nicht mehr informiert wenn andere Spieler Achievements erreichen."
+toggle-displayed: "Du wirst nun informiert wenn andere Spieler Erfolge erreichen."
+toggle-hidden: "Du wirst nun nicht mehr informiert wenn andere Spieler Erfolge erreichen."
 
 # Related to /aach reset.
 reset-successful: "Die Statistik von Spieler wurde zurückgesetzt."
@@ -172,14 +173,14 @@ category-does-not-exist: "Die angegebene Kategorie existiert nicht."
 # |         Parameters to appear in future versions        | #
 # +--------------------------------------------------------+ #
 #============================================================#
-list-breeding: Animals Bred
-advancements-generated: Advancements were successfully generated.
-aach-command-generate: Generate advancements.
-aach-command-generate-hover: Potentially slow command; use with care!
-minecraft-not-supported: Advancements not supported in your Minecraft version. Please update to 1.12+.
-experience-reward-received: 'You received: AMOUNT experience!'
-list-reward-experience: receive AMOUNT experience
-increase-max-health-reward-received: Your max health has increased by AMOUNT!
-list-reward-increase-max-health: increase max health by AMOUNT
-increase-max-oxygen-reward-received: Your max oxygen has increased by AMOUNT!
-list-reward-increase-max-oxygen: increase max oxygen by AMOUNT
+list-breeding: Tierzüchtung
+advancements-generated: Fortschritte wurden erfolgreich generiert.
+aach-command-generate: Generiere Fortschritte.
+aach-command-generate-hover: Das ist möglicherweise ein langsamer Befehl; Verwende ihn bedacht!
+minecraft-not-supported: Fortschritte sind mit der Minecraftversion 1.12+ verfügbar.
+experience-reward-received: 'Du erhälst: AMOUNT Erfahrung!'
+list-reward-experience: Erreiche AMOUNT Erfahrung
+increase-max-health-reward-received: Deine maximale Gesundheit hat sich auf AMOUNT erhöht!
+list-reward-increase-max-health: Erhöht die maximale Gesundheit um AMOUNT.
+increase-max-oxygen-reward-received: Dein Lungenvolumen hat sich um AMOUNT erhöht!
+list-reward-increase-max-oxygen: Erhöht dein Lungenvolumen um AMOUNT.
