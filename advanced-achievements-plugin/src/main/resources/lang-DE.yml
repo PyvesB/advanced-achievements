@@ -2,14 +2,16 @@
 # +---------------------------------------------------------+ #
 # |   Advanced Achievements German translation by           | #
 # |        YtKater.de | PlayInfected.de | Minecityelan.net  | #
-# |       Edit by PlayInfected.de - Network of Future       | #
-# |             ~ Valid as of version 5.1.1 ~               | #
+# |             ~ Valid as of version 5.10.1 ~              | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
 #=============================================================#
 no-permissions: "Du hast keine Berechtigung für diess Vorhaben."
 statistic-cooldown: "Erfolgs-Abklingzeit: Warte TIME Sekunde/n bis diese Aktion wieder verfügbar ist."
+category-does-not-exist: "Die angegebene Kategorie existiert nicht."
+all-achievements-received: "Herzlichen Glückwunsch! Du hast alle Erfolge erreicht! Du bist unser Champion!"
+invalid-command: "Der Befehl ist ungültig. Verwende /aach um das Hilfemenü aufzurufen."
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "Die Konfiguration wurde neu geladen!"
@@ -21,6 +23,8 @@ player-rank: "Aktueller Rang:"
 week-achievement: "Meiste Erfolge (In dieser Woche):"
 month-achievement: "Meiste Erfolge (In diesem Monat):"
 not-ranked: "Du bist derzeit nicht für diesen Zeitraum geordnet."
+pagination-header: "&7> &5Seite PAGE/MAX"
+pagination-footer: "&7>"
 
 # Related to /aach stats.
 number-achievements: "Dein aktueller Fortschritt:"
@@ -38,6 +42,10 @@ achievement-already-received: "PLAYER hat diesen Erfolg bereits!"
 achievement-not-found: "Der angegebene Erfolg existiert nicht!"
 achievement-given: "Der Spieler PLAYER hat den Erfolg erhalten!"
 
+# Related to /aach add.
+error-value: "Der Wert VALUE must muss eine ganze Zahl sein!"
+statistic-increased: "PLAYER's Statistik ACH ist um AMOUNT erhöht worden."
+
 # Related to achievement reception.
 achievement-received: "PLAYER erhielt den Erfolg:"
 achievement-new: "Neuer Erfolg:"
@@ -53,6 +61,10 @@ delete-achievements: "Der Erfolg ACH wurde von PLAYER entfernt."
 item-reward-received: "Du hast eine Itembelohnung erhalten:"
 money-reward-received: "Du erhälst: AMOUNT!"
 command-reward: "Die Belohnung wurde überliefert!"
+custom-command-reward: "Du erhälst deine Belohnung: MESSAGE"
+experience-reward-received: 'Du erhälst: AMOUNT Erfahrung!'
+increase-max-health-reward-received: Deine maximale Gesundheit hat sich auf AMOUNT erhöht!
+increase-max-oxygen-reward-received: Dein Lungenvolumen hat sich um AMOUNT erhöht!
 
 # Related to /aach help.
 aach-command-book: Erhalte dein Erfolg-Buch.
@@ -65,6 +77,8 @@ aach-command-top: Zeige alle Ranglisten an.
 aach-command-top-hover: Wer sind die Leiter des Servers und wie verhält man sich mit ihnen?
 aach-command-give: Gibt den Erfolg ACH an &7NAME.
 aach-command-give-hover: Spieler muss online sein; nur Befehl Achievements können gegeben werden
+aach-command-add: "Erhöht eine Statistik."
+aach-command-add-hover: "Der Spieler muss Online sein; Wird meistens für eigene Kategorien verwendet."
 aach-command-reload: Lade das Plugin neu.
 aach-command-reload-hover: Laden Sie die meisten Einstellungen in config.yml und lang.yml Dateien neu.
 aach-command-info: Zeige diverse Informationen des Plugins an.
@@ -79,6 +93,8 @@ aach-command-month: Monats Rangliste anzeigen
 aach-command-month-hover: Beste Erfolgsjäger seit Beginn des Monats!
 aach-command-toggle: Wechselt die Erfolge von anderen Spielern.
 aach-command-toggle-hover: Deine Wahl wird bis zum nächsten Neustart des Servers gespeichert!
+aach-command-inspect: "Überprüfe den Empfänger von ACH."
+aach-command-inspect-hover: "Lists most recent recipients of an achievement, max 1000."
 aach-command-reset: Setzt die Statistik für die Kategorie &7CAT zurück.
 aach-command-reset-hover: Der Spieler muss online sein; beispiel: reset Places.stone Chakuroo
 aach-tip: '&lHinweis&8Du kannst &7&nüber&8 oder &7&n&oauf&8 AACH-Befehle klicken!'
@@ -91,6 +107,8 @@ version-command-description: 'Beschreibung:'
 version-command-description-details: Advanced Achievements ermöglichen einzigartige und herausfordernde Leistungen. Versuch doch, so viele zu sammeln, wie du kannst. Verdiene wertvolle Belohnungen, erklimme die Spitze der Rangliste und erhalte RP-Bücher.
 version-command-vault: 'Vault integriert:'
 version-command-petmaster: 'Pet Master integriert:'
+version-command-essentials: "Essentials integriert:"
+version-command-placeholderapi: "PlaceholderAPI integriert:"
 version-command-btlp: 'BungeeTabListPlus integriert:'
 version-command-database: 'Datenbank Typ:'
 
@@ -105,10 +123,15 @@ list-reward: ' Belohnung:'
 list-reward-money: Token/s
 list-reward-item: Item/s
 list-reward-command: Sonstiges
+list-reward-experience: Erreiche AMOUNT Erfahrung
+list-reward-increase-max-health: Erhöht die maximale Gesundheit um AMOUNT.
+list-reward-increase-max-oxygen: Erhöht dein Lungenvolumen um AMOUNT.
 list-achievement-received: '&a✔&f '
 list-achievement-not-received: '&4✘&8 '
 list-category-not-unlocked: "Du hast diese Kategorie noch nicht freigeschaltet."
 list-back-message: '&7Zurück'
+list-previous-message: "&7Zurück"
+list-next-message: "&7Weiter"
 list-achievements-in-category-singular: "AMOUNT Erfolg"
 list-achievements-in-category-plural: "AMOUNT Erfolge"
 
@@ -152,6 +175,7 @@ list-hoeplowings: "Ackerböden erstellt"
 list-fertilising: "Knochenmehl benutzt"
 list-taming: "Tiere gezähmt"
 list-brewing: "Tränke gebraut"
+list-breeding: "Tierzüchtung"
 list-fireworks: "Feuerwerke gezündet"
 list-musicdiscs: "Schallplatten abgespielt"
 list-enderpearls: "Enderperlen benutzt"
@@ -159,6 +183,7 @@ list-petmastergive: "Haustiere an einem anderen Spieler übergeben"
 list-petmasterreceive: "Haustiere von einem anderen Spieler bekommen"
 list-smelting: "Erze geschmolzen"
 list-commands: "Sonstige Erfolge"
+list-custom: "Benutzerdefinierte Kategorien"
 
 # Related to /aach toggle.
 toggle-displayed: "Du wirst nun informiert wenn andere Spieler Erfolge erreichen."
@@ -166,21 +191,20 @@ toggle-hidden: "Du wirst nun nicht mehr informiert wenn andere Spieler Erfolge e
 
 # Related to /aach reset.
 reset-successful: "Die Statistik von Spieler wurde zurückgesetzt."
-category-does-not-exist: "Die angegebene Kategorie existiert nicht."
+
+
+# Related to /aach generate
+advancements-generated: "Fortschritte wurden erfolgreich generiert."
+aach-command-generate: "Generiere Fortschritte."
+aach-command-generate-hover: "Das ist möglicherweise ein langsamer Befehl; Verwende ihn bedacht!"
+minecraft-not-supported: Fortschritte sind mit der Minecraftversion 1.12+ verfügbar.
+
+# Related to /aach inspect
+achievement-not-recognized: "Der Erfolg mit dem namen 'NAME' wurde nicht erkannt. Meintest du CLOSEST_MATCH?"
 
 #============================================================#
 # +--------------------------------------------------------+ #
 # |         Parameters to appear in future versions        | #
 # +--------------------------------------------------------+ #
 #============================================================#
-list-breeding: Tierzüchtung
-advancements-generated: Fortschritte wurden erfolgreich generiert.
-aach-command-generate: Generiere Fortschritte.
-aach-command-generate-hover: Das ist möglicherweise ein langsamer Befehl; Verwende ihn bedacht!
-minecraft-not-supported: Fortschritte sind mit der Minecraftversion 1.12+ verfügbar.
-experience-reward-received: 'Du erhälst: AMOUNT Erfahrung!'
-list-reward-experience: Erreiche AMOUNT Erfahrung
-increase-max-health-reward-received: Deine maximale Gesundheit hat sich auf AMOUNT erhöht!
-list-reward-increase-max-health: Erhöht die maximale Gesundheit um AMOUNT.
-increase-max-oxygen-reward-received: Dein Lungenvolumen hat sich um AMOUNT erhöht!
-list-reward-increase-max-oxygen: Erhöht dein Lungenvolumen um AMOUNT.
+
