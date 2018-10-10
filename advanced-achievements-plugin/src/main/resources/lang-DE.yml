@@ -95,8 +95,8 @@ aach-command-toggle: Wechselt die Erfolge von anderen Spielern.
 aach-command-toggle-hover: Deine Wahl wird bis zum nächsten Neustart des Servers gespeichert!
 aach-command-inspect: "Überprüfe den Empfänger von ACH."
 aach-command-inspect-hover: "Lists most recent recipients of an achievement, max 1000."
-aach-command-reset: Setzt die Statistik für die Kategorie &7CAT zurück.
-aach-command-reset-hover: Der Spieler muss online sein; beispiel: reset Places.stone Chakuroo
+aach-command-reset: 'Setzt die Statistik für die Kategorie &7CAT zurück.'
+aach-command-reset-hover: 'Der Spieler muss online sein; beispiel: reset Places.stone Chakuroo'
 aach-tip: '&lHinweis&8Du kannst &7&nüber&8 oder &7&n&oauf&8 AACH-Befehle klicken!'
 
 # Related to /aach info.
