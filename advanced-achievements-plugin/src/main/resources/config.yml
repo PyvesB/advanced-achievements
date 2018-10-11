@@ -745,7 +745,7 @@ MultiCommand: true
 # yourAch1 achievement to PLAYER. The /aach give command does NOT work with other achievements.
 Commands:
   yourAch1:
-    Goal: "i'm a goal"
+    Goal: "i´m a goal"
     Message: "&eYou took part in the special event!"
     Name: yourAch1
     DisplayName: Special Event Achievement!
