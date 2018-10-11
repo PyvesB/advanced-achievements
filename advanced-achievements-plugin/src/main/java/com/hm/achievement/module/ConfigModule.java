@@ -67,9 +67,9 @@ public class ConfigModule {
 	@Provides
 	@Singleton
 	@Named("lang")
-	CommentedYamlConfiguration providesLangConfig(@Named("main") CommentedYamlConfiguration mainConfig,
-			AdvancedAchievements advancedAchievements) {
-		return new CommentedYamlConfiguration(mainConfig.getString("LanguageFileName", "lang.yml"), advancedAchievements);
+	CommentedYamlConfiguration providesLangConfig(AdvancedAchievements advancedAchievements) {
+		String languageFileName = advancedAchievements.getConfig().getString("LanguageFileName", "lang.yml");
+		return new CommentedYamlConfiguration(languageFileName, advancedAchievements);
 	}
 
 	@Provides
