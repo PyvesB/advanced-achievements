@@ -454,7 +454,7 @@ Eggs:
 # When a fish is caught. 
 Fish:
   1:
-     Goal: "fish a fish."
+    Goal: "fish a fish."
     Message: "&eThe first time you caught a fish!"
     Name: fish_1
     DisplayName: Time for Fish and Chips
