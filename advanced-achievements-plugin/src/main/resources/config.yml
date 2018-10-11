@@ -537,7 +537,7 @@ AnvilsUsed:
 Enchantments:
   5:
     Goal: "Enchant 5 things."
-#if you don't use '"' the output will be white 
+# if you don't use '"' the output will be white 
     Message: 5 objects enchanted!
     Name: enchantments_5
     DisplayName: "&5Wizard"
