@@ -528,7 +528,7 @@ Trades:
 # When an anvil is used.
 AnvilsUsed:
   1:
-    Goal: "Rapair an item."
+    Goal: "Repair an item."
     Message: "&eYou just repaired your first item!"
     Name: anvilsused_1
     DisplayName: First Repair 
