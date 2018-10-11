@@ -577,7 +577,7 @@ PlayedTime:
 # When a distance is traveled by foot.
 DistanceFoot:
   1000:
-   Goal: "Travel 100 Blocks with your feet"
+    Goal: "Travel 100 Blocks with your feet"
     Message: "&eYou traveled 1000 blocks by foot!"
     Name: distancefoot_1000
     DisplayName: Big Walker 
