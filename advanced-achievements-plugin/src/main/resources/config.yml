@@ -494,7 +494,7 @@ Shear:
 # When a cow is milked.
 Milk:
   1:
-     Goal: "Milk a cow."
+    Goal: "Milk a cow."
     Message: "&eJust milked a cow!.... &cMOOW"
     Name: milk_1
     DisplayName: First Milk
