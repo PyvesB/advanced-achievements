@@ -9,7 +9,7 @@
 # To check syntax errors in your file, use: yaml-online-parser.appspot.com
 # Default config.yml: github.com/PyvesB/AdvancedAchievements/blob/master/advanced-achievements-plugin/src/main/resources/config.yml
 
-# If you want to help Advanced Achievements, so feel free to check our github:# 
+# If you want to help Advanced Achievements,feel free to check our github:# 
 #==============================O==============================#
 # I---------------------------------------------------------I #
 # |     https://github.com/PyvesB/AdvancedAchievements/     | #
@@ -285,18 +285,18 @@ Places:
       DisplayName: Storage Expert
     50:
       Goal: "Place 50 chests."
-      Message: "&4You have placed 50 chests!"
+      Message: "&eYou have placed 50 chests!"
       Name: place_50_chest
       DisplayName: Tetris Master
   stone:
     100:
       Goal: "Place 100 Stones."
-      Message: "&4One hundred placed stones!"
+      Message: "&eOne hundred placed stones!"
       Name: place_100_stone
       DisplayName: Stone Addict
     1000:
       Goal: "Place 1000 stones."
-      Message: "&4One thousand placed stones!"
+      Message: "&eOne thousand placed stones!"
       Name: place_1000_stone
       DisplayName: Stone God
       Reward:
@@ -310,7 +310,7 @@ Breaks:
   ice:
     10:
       Goal: "Break 10 Ice Blocks."
-      Message: "&cYou have broken 10 ice blocks!"
+      Message: "&eYou have broken 10 ice blocks!"
       Name: break_10_ice
       DisplayName: Cold Drink Supplier
   # Use the following construct to track multiple types. Note that if ever you add/remove a type grouped to others with |,
@@ -318,7 +318,7 @@ Breaks:
   snow|snow_block|ice:
     32:
       Goal: "Break 32 ice and/or snow."
-      Message: "&cYou have broken 32 ice and snow, Woo!"
+      Message: "&eYou have broken 32 ice and snow, Woo!"
       Name: break_32_ice_any
       DisplayName: Praying for Summer
   stone:
@@ -342,7 +342,7 @@ Kills:
   zombie:
     1:
       Goal: "Kill a Zombie."
-      Message: "&8The first time you killed a zombie!"
+      Message: "&eThe first time you killed a zombie!"
       DisplayName: The Walking Dead
       Name: kills_1_zombie
       Reward:
@@ -351,13 +351,13 @@ Kills:
   '&2Skeletal Knight':
     1:
       Goal: "Kill the evil Skeletal Knight."
-      Message: "You killed a Mythic Mob!"
+      Message: "&eYou killed a Mythic Mob!"
       DisplayName: Mythic Killer
       Name: kills_1_skeletal_night
   specificplayer-56c79b19-4500-466c-94ea-514a755fdd09:
     1:
       Goal: "Kill the evil Author."
-      Message: "Yippie! You killed the author of the plugin!"
+      Message: "&eYippie! You killed the author of the plugin!"
       DisplayName:  No More DarkPyves
       Name: kills_1_darkpyves
       Reward:
@@ -368,7 +368,7 @@ Crafts:
   diamond_sword:
     1:      
       Goal: "Craft a sword."
-      Message: "The first time you crafted a blade!"
+      Message: "&eThe first time you crafted a blade!"
       Name: craft_1_blade
       DisplayName: Blacksmith Apprentice
       Reward:
@@ -381,7 +381,7 @@ PlayerCommands:
   aach stats:
     10:
       Goal: "Check your stats 10x."
-      Message: "Run the stats command 10 times!"
+      Message: "&eRun the stats command 10 times!"
       Name: playercommand_aachstats_10
       DisplayName: Statistician
       Rewards:
@@ -394,7 +394,7 @@ Breeding:
   sheep:
     1:
       Goal: "breed a sheep."
-      Message: "You bred your first sheep!"
+      Message: "&eYou bred your first sheep!"
       Name: breeding_1_sheep
       DisplayName: Breeder
 
@@ -409,7 +409,7 @@ Breeding:
 Connections:
   1:
     Goal: "Mysterious"
-    Message: "You connected to our server for the first time!"
+    Message: "&eYou connected to our server for the first time!"
     Name: connect_1
     DisplayName: Good Choice
 
@@ -417,7 +417,7 @@ Connections:
 Deaths:
   1:
     Goal: "You have to Die."
-    Message: "The first time you died!"
+    Message: "&eThe first time you died!"
     Name: deaths_1
     DisplayName: Rest in Peace
     Reward:
@@ -428,15 +428,15 @@ Deaths:
 Arrows:
   50:
     Goal: "shoot 50 arrows."
-    Message: "50 arrows shot!"
+    Message: "&e50 arrows shot!"
     Name: arrows_50
     DisplayName: Arrows Around the Place
     
 # When a snowball is thrown.  
 Snowballs:
   1000:
-    Goal: "throw 1000 Snowbaals."
-    Message: "1000 snowballs thrown. That's the spirit!"
+    Goal: "throw 1000 Snowballs."
+    Message: "&e1000 snowballs thrown. That's the spirit!"
     Name: snowballs_1000
     DisplayName: Winter Addict 
     Reward:
@@ -447,7 +447,7 @@ Snowballs:
 Eggs:
   1000:
     Goal: "throw 1000 Eggs."
-    Message: "1000 eggs thrown!"
+    Message: "&e1000 eggs thrown!"
     Name: eggs_1000
     DisplayName: Omelet Addict 
     
@@ -455,7 +455,7 @@ Eggs:
 Fish:
   1:
      Goal: "fish a fish."
-    Message: "The first time you caught a fish!"
+    Message: "&eThe first time you caught a fish!"
     Name: fish_1
     DisplayName: Time for Fish and Chips
     
@@ -463,7 +463,7 @@ Fish:
 Treasures:
   1:
     Goal: "Get a treasure from the sea."
-    Message: "Your first treasure from the sea!"
+    Message: "&eYour first treasure from the sea!"
     Name: treasure_1
     DisplayName: Treasure Hunter
 
@@ -471,7 +471,7 @@ Treasures:
 ItemBreaks:
   1:
     Goal: "Let an Item break"
-    Message: "You broke your favorite tool!"
+    Message: "&eYou broke your favorite tool!"
     Name: itembreaks_1
     DisplayName: "&4Clumsy Guy"
 
@@ -479,7 +479,7 @@ ItemBreaks:
 EatenItems:
   1:
     Goal: "Eat something."
-    Message: "Just had a snack!"
+    Message: "&eJust had a snack!"
     Name: eatenitems_1
     DisplayName: First Snack  
     
@@ -487,7 +487,7 @@ EatenItems:
 Shear:
   100:
     Goal: "shear 100 Sheeps."
-    Message: "100 sheep sheared!"
+    Message: "&e100 sheep sheared!"
     Name: shear_100
     DisplayName: "&1Wool Addict"
 
@@ -495,7 +495,7 @@ Shear:
 Milk:
   1:
      Goal: "Milk a cow."
-    Message: "Just milked a cow!.... &cMOOW"
+    Message: "&eJust milked a cow!.... &cMOOW"
     Name: milk_1
     DisplayName: First Milk
     Reward:
@@ -505,7 +505,7 @@ Milk:
 LavaBuckets:
   10:
     Goal: "Fill 10 buckets with lava."
-    Message: "10 buckets filled with lava!"
+    Message: "&e10 buckets filled with lava!"
     Name: lavabuckets_10
     DisplayName: Pyroman
     
@@ -513,7 +513,7 @@ LavaBuckets:
 WaterBuckets:
   15:
     Goal: "Fill 10 buckets with water."
-    Message: "15 buckets filled with water!"
+    Message: "&e15 buckets filled with water!"
     Name: waterbuckets_15
     DisplayName: Fireman    
     
@@ -521,7 +521,7 @@ WaterBuckets:
 Trades:
   1:
     Goal: "Trade with a villager."
-    Message: "Doing business with your first villager!"
+    Message: "&eDoing business with your first villager!"
     Name: trades_1
     DisplayName: First Trade    
     
@@ -529,7 +529,7 @@ Trades:
 AnvilsUsed:
   1:
     Goal: "Rapair an item."
-    Message: "You just repaired your first item!"
+    Message: "&eYou just repaired your first item!"
     Name: anvilsused_1
     DisplayName: First Repair 
     
@@ -537,6 +537,7 @@ AnvilsUsed:
 Enchantments:
   5:
     Goal: "Enchant 5 things."
+#if you don't use '"' the output will be white 
     Message: 5 objects enchanted!
     Name: enchantments_5
     DisplayName: "&5Wizard"
@@ -545,7 +546,7 @@ Enchantments:
 Beds:  
   5:
     Goal: "sleeping 5 times"
-    Message: "You entered a bed 5 times!"
+    Message: "&eYou entered a bed 5 times!"
     Name: bed_5
     DisplayName: Sleepy Guy 
     
@@ -553,7 +554,7 @@ Beds:
 MaxLevel:  
   10:
     Goal: "Reach Level 10"
-    Message: "Level 10 reached!... Maybe"
+    Message: "&eLevel 10 reached!... Maybe"
     Name: maxlevel_10
     DisplayName: "&4Rookie"
     
@@ -561,15 +562,15 @@ MaxLevel:
 ConsumedPotions:
   100:
     Goal: "Drink 100 Potions"
-    Message: "Drinking weird beverages all the time..."
+    Message: "&eDrinking weird beverages all the time..."
     Name: consumedpotions_100
     DisplayName: Alcoholic 
     
 # Amount of time played on the server (in hours, use integers).
 PlayedTime:
   1:
-    Goal: "Play a hour"
-    Message: "You played for one hour on the server!"
+    Goal: "Play an hour"
+    Message: "&eYou played for one hour on the server!"
     Name: playedtime_1
     DisplayName: First Hour
     
@@ -577,7 +578,7 @@ PlayedTime:
 DistanceFoot:
   1000:
    Goal: "Travel 100 Blocks with your feet"
-    Message: "You traveled 1000 blocks by foot!"
+    Message: "&eYou traveled 1000 blocks by foot!"
     Name: distancefoot_1000
     DisplayName: Big Walker 
     
@@ -585,7 +586,7 @@ DistanceFoot:
 DistancePig:
   100:
     Goal: "Travel 100 Blocks with a pig"
-    Message: "You traveled 100 blocks on a pig!"
+    Message: "&eYou traveled 100 blocks on a pig!"
     Name: distancepig_100
     DisplayName: Carrot on a Stick Master
     
@@ -593,7 +594,7 @@ DistancePig:
 DistanceHorse:
   500:
     Goal: "Travel 500 Blocks with a horse"
-    Message: "You traveled 500 blocks on a horse!"
+    Message: "&eYou traveled 500 blocks on a horse!"
     Name: distancehorse_500
     DisplayName: The Avener
     
@@ -601,7 +602,7 @@ DistanceHorse:
 DistanceMinecart:
   100:
     Goal: "Travel 100 Blocks with a minecart"
-    Message: "You traveled 100 blocks in a minecart!"
+    Message: "&eYou traveled 100 blocks in a minecart!"
     Name: distanceminecart_100
     DisplayName: Carting Fan
 
@@ -609,7 +610,7 @@ DistanceMinecart:
 DistanceBoat:
   200:
     Goal: "Travel 200 Blocks with a boat"
-    Message: "You traveled 200 blocks in a boat!"
+    Message: "&eYou traveled 200 blocks in a boat!"
     Name: distanceboat_200
     DisplayName: Great Sailor
 
@@ -618,7 +619,7 @@ DistanceBoat:
 DistanceGliding:
   100:
     Goal: "fly 100 blocks with an elytra"
-    Message: "You traveled 100 blocks with elytra!"
+    Message: "&eYou traveled 100 blocks with elytra!"
     Name: distancegliding_100
     DisplayName: Angel
     
@@ -627,7 +628,7 @@ DistanceGliding:
 DistanceLlama:
   150:
     Goal: "Travel 150 Blocks with a llama"
-    Message: "You traveled 150 blocks on a llama!"
+    Message: "&eYou traveled 150 blocks on a llama!"
     Name: distancellama_150
     DisplayName: Llama Rider
 
@@ -643,7 +644,7 @@ ItemDrops:
 ItemPickups:
   40:
     Goal: "pickup 40 items"
-    Message: "You're saving the planet!"
+    Message: "&eYou're saving the planet!"
     Name: itempickups_40
     DisplayName: Environmentalist
     
@@ -651,7 +652,7 @@ ItemPickups:
 HoePlowings:
   10:
     Goal: "plow 10 times"
-    Message: "You plowed the ground 10 times!"
+    Message: "&eYou plowed the ground 10 times!"
     Name: hoeplowings_10
     DisplayName: Farmer
     Reward:                 
@@ -661,7 +662,7 @@ HoePlowings:
 Fertilising:
   15:
     Goal: "Use bonemeal 15 times"
-    Message: "You used bone meal on plants 15 times!"
+    Message: "&eYou used bone meal on plants 15 times!"
     Name: fertilising_15
     DisplayName: Gardener
     
@@ -669,7 +670,7 @@ Fertilising:
 Taming:
   1:
     Goal: "Tame an animal"
-    Message: "You tamed your first animal!"
+    Message: "&eYou tamed your first animal!"
     Name: taming_1
     DisplayName: Tamer
 
@@ -677,7 +678,7 @@ Taming:
 Brewing:
   1:
     Goal: "brew a potion"
-    Message: "You brewed your first potion!"
+    Message: "&eYou brewed your first potion!"
     Name: brewing_1
     DisplayName: Alchemist
     
@@ -685,7 +686,7 @@ Brewing:
 Fireworks:
   10:
     Goal: "launch fireworks 10 times"
-    Message: "You launched 10 fireworks!"
+    Message: "&eYou launched 10 fireworks!"
     Name: fireworks_10
     DisplayName: Pyrotechnist
     Reward:
@@ -695,7 +696,7 @@ Fireworks:
 MusicDiscs:
   1:
     Goal: "use a jukebox"
-    Message: "One jukebox used!"
+    Message: "&eOne jukebox used!"
     Name: musicdiscs_1
     DisplayName: DJ
 
@@ -703,7 +704,7 @@ MusicDiscs:
 EnderPearls:
   10:
     Goal: "teleport with ender pearls 10 times"
-    Message: "10 teleportations with ender pearls!"
+    Message: "&e10 teleportations with ender pearls!"
     Name: enderpearls_10
     DisplayName: Teleport Man
     
@@ -711,7 +712,7 @@ EnderPearls:
 PetMasterGive:
   3:
     Goal: "Give 3 pets to friends"
-    Message: "3 pets given to friends!"
+    Message: "&e3 pets given to friends!"
     Name: petmastergive_3
     DisplayName: Donator
 
@@ -719,15 +720,15 @@ PetMasterGive:
 PetMasterReceive:
   10:
     Goal: "receive 10 pets"
-    Message: "10 pets received from friends!"
+    Message: "&e10 pets received from friends!"
     Name: petmasterreceive_10
     DisplayName: Receiver
     
 # When an item is smelt in a furnace.
 Smelting:
   250:
-    Goal: "smelt 250 items
-    Message: "250 items smelt in a furnace!"
+    Goal: "smelt 250 items"
+    Message: "&e250 items smelt in a furnace!"
     Name: smeltitems_250
     DisplayName: The Smelter
           
@@ -745,7 +746,7 @@ MultiCommand: true
 Commands:
   yourAch1:
     Goal: "i'm a goal"
-    Message: "You took part in the special event!"
+    Message: "&eYou took part in the special event!"
     Name: yourAch1
     DisplayName: Special Event Achievement!
     
@@ -754,7 +755,7 @@ Custom:
   votes:
     10:
       Goal: "vote 10 times "
-      Message: "Voted 10 times for the server!"
+      Message: "&eVoted 10 times for the server!"
       Name: customs_votes_10
       DisplayName: Server fan
       Reward:
