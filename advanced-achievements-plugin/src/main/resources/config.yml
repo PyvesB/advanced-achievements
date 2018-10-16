@@ -8,8 +8,21 @@
 # Only spaces, NO tabs. Don't forget the indents (2 spaces per indentation level).
 # To check syntax errors in your file, use: yaml-online-parser.appspot.com
 # Default config.yml: github.com/PyvesB/AdvancedAchievements/blob/master/advanced-achievements-plugin/src/main/resources/config.yml
-# Visit the wiki for some valuable additional documentation: github.com/PyvesB/AdvancedAchievements/wiki
 
+# If you want to help Advanced Achievements,feel free to check our github:# 
+#==============================O==============================#
+# I---------------------------------------------------------I #
+# |     https://github.com/PyvesB/AdvancedAchievements/     | #
+# 1---------------------------------------------------------1 #
+#==============================o==============================##
+# Visit the wiki for some valuable additional documentation: 
+# I---------------------------------------------------------I
+# |   https://github.com/PyvesB/AdvancedAchievements/wiki   |
+# I---------------------------------------------------------I
+# For Donations use https://www.paypal.com/cgi-bin/webscr?hosted_button_id=7KTQYC4YT52NQ&cmd=_s-xclick
+#
+#
+#
 #=============================O=O=============================#
 # II-------------------------------------------------------II #
 # |                    General  settings                    | #
@@ -272,16 +285,18 @@ Places:
       DisplayName: Storage Expert
     50:
       Goal: "Place 50 chests."
-      Message: "&4You have placed 50 chests!"
+      Message: "&eYou have placed 50 chests!"
       Name: place_50_chest
       DisplayName: Tetris Master
   stone:
     100:
-      Message: "&4One hundred placed stones!"
+      Goal: "Place 100 Stones."
+      Message: "&eOne hundred placed stones!"
       Name: place_100_stone
       DisplayName: Stone Addict
     1000:
-      Message: "&4One thousand placed stones!"
+      Goal: "Place 1000 stones."
+      Message: "&eOne thousand placed stones!"
       Name: place_1000_stone
       DisplayName: Stone God
       Reward:
@@ -294,18 +309,21 @@ Places:
 Breaks: 
   ice:
     10:
-      Message: "&cYou have broken 10 ice blocks!"
+      Goal: "Break 10 Ice Blocks."
+      Message: "&eYou have broken 10 ice blocks!"
       Name: break_10_ice
       DisplayName: Cold Drink Supplier
   # Use the following construct to track multiple types. Note that if ever you add/remove a type grouped to others with |,
   # progress for this sub-category group will start back at 0.
   snow|snow_block|ice:
     32:
-      Message: "&cYou have broken 32 ice and snow, Woo!"
+      Goal: "Break 32 ice and/or snow."
+      Message: "&eYou have broken 32 ice and snow, Woo!"
       Name: break_32_ice_any
       DisplayName: Praying for Summer
   stone:
     1:
+      Goal: "Break a block."
       Message: "&1The first time you went mining!"
       Name: break_1_stone
       DisplayName: Cobble Gobble!
@@ -323,7 +341,8 @@ Breaks:
 Kills:
   zombie:
     1:
-      Message: "&8The first time you killed a zombie!"
+      Goal: "Kill a Zombie."
+      Message: "&eThe first time you killed a zombie!"
       DisplayName: The Walking Dead
       Name: kills_1_zombie
       Reward:
@@ -331,13 +350,15 @@ Kills:
         Item: diamond 1
   '&2Skeletal Knight':
     1:
-      Message: You killed a Mythic Mob!
+      Goal: "Kill the evil Skeletal Knight."
+      Message: "&eYou killed a Mythic Mob!"
       DisplayName: Mythic Killer
       Name: kills_1_skeletal_night
   specificplayer-56c79b19-4500-466c-94ea-514a755fdd09:
     1:
-      Message: You killed the author of the plugin!
-      DisplayName: No More DarkPyves
+      Goal: "Kill the evil Author."
+      Message: "&eYippie! You killed the author of the plugin!"
+      DisplayName:  No More DarkPyves
       Name: kills_1_darkpyves
       Reward:
         IncreaseMaxHealth: 1
@@ -345,8 +366,9 @@ Kills:
 # When a specific item is crafted (available names: github.com/PyvesB/AdvancedAchievements/wiki/Material-names).
 Crafts:
   diamond_sword:
-    1:
-      Message: The first time you crafted a blade!
+    1:      
+      Goal: "Craft a sword."
+      Message: "&eThe first time you crafted a blade!"
       Name: craft_1_blade
       DisplayName: Blacksmith Apprentice
       Reward:
@@ -358,7 +380,8 @@ Crafts:
 PlayerCommands:
   aach stats:
     10:
-      Message: Run the stats command 10 times!
+      Goal: "Check your stats 10x."
+      Message: "&eRun the stats command 10 times!"
       Name: playercommand_aachstats_10
       DisplayName: Statistician
       Rewards:
@@ -370,7 +393,8 @@ PlayerCommands:
 Breeding:
   sheep:
     1:
-      Message: You bred your first sheep!
+      Goal: "breed a sheep."
+      Message: "&eYou bred your first sheep!"
       Name: breeding_1_sheep
       DisplayName: Breeder
 
@@ -384,14 +408,16 @@ Breeding:
 # When a player connects during the day; statistic increases at most once per day.
 Connections:
   1:
-    Message: You connected to our server for the first time!
+    Goal: "Mysterious"
+    Message: "&eYou connected to our server for the first time!"
     Name: connect_1
     DisplayName: Good Choice
 
 # When the player dies.
 Deaths:
   1:
-    Message: The first time you died!
+    Goal: "You have to Die."
+    Message: "&eThe first time you died!"
     Name: deaths_1
     DisplayName: Rest in Peace
     Reward:
@@ -401,14 +427,16 @@ Deaths:
 # When an arrow is shot.
 Arrows:
   50:
-    Message: 50 arrows shot!
+    Goal: "shoot 50 arrows."
+    Message: "&e50 arrows shot!"
     Name: arrows_50
     DisplayName: Arrows Around the Place
     
 # When a snowball is thrown.  
 Snowballs:
   1000:
-    Message: 1000 snowballs thrown. That's the spirit!
+    Goal: "throw 1000 Snowballs."
+    Message: "&e1000 snowballs thrown. That's the spirit!"
     Name: snowballs_1000
     DisplayName: Winter Addict 
     Reward:
@@ -418,49 +446,56 @@ Snowballs:
 # When an egg is thrown.  
 Eggs:
   1000:
-    Message: 1000 eggs thrown!
+    Goal: "throw 1000 Eggs."
+    Message: "&e1000 eggs thrown!"
     Name: eggs_1000
     DisplayName: Omelet Addict 
     
 # When a fish is caught. 
 Fish:
   1:
-    Message: The first time you caught a fish!
+    Goal: "fish a fish."
+    Message: "&eThe first time you caught a fish!"
     Name: fish_1
     DisplayName: Time for Fish and Chips
     
 # When a treasure is caught with a fishing rod.
 Treasures:
   1:
-    Message: Your first treasure from the sea!
+    Goal: "Get a treasure from the sea."
+    Message: "&eYour first treasure from the sea!"
     Name: treasure_1
     DisplayName: Treasure Hunter
 
 # When a tool/armor/weapon is broken.  
 ItemBreaks:
   1:
-    Message: You broke your favorite tool!
+    Goal: "Let an Item break"
+    Message: "&eYou broke your favorite tool!"
     Name: itembreaks_1
     DisplayName: "&4Clumsy Guy"
 
 # When an item is eaten (excludes potions and milk).
 EatenItems:
   1:
-    Message: Just had a snack!
+    Goal: "Eat something."
+    Message: "&eJust had a snack!"
     Name: eatenitems_1
     DisplayName: First Snack  
     
 # When a sheep is sheared.
 Shear:
   100:
-    Message: 100 sheep sheared!
+    Goal: "shear 100 Sheeps."
+    Message: "&e100 sheep sheared!"
     Name: shear_100
     DisplayName: "&1Wool Addict"
 
 # When a cow is milked.
 Milk:
   1:
-    Message: Just milked a cow!
+    Goal: "Milk a cow."
+    Message: "&eJust milked a cow!.... &cMOOW"
     Name: milk_1
     DisplayName: First Milk
     Reward:
@@ -469,34 +504,40 @@ Milk:
 # When a bucket is filled with lava.
 LavaBuckets:
   10:
-    Message: 10 buckets filled with lava!
+    Goal: "Fill 10 buckets with lava."
+    Message: "&e10 buckets filled with lava!"
     Name: lavabuckets_10
     DisplayName: Pyroman
     
 # When a bucket is filled with water.
 WaterBuckets:
   15:
-    Message: 15 buckets filled with water!
+    Goal: "Fill 10 buckets with water."
+    Message: "&e15 buckets filled with water!"
     Name: waterbuckets_15
     DisplayName: Fireman    
     
 # When a trade with a villager is made.
 Trades:
   1:
-    Message: Doing business with your first villager!
+    Goal: "Trade with a villager."
+    Message: "&eDoing business with your first villager!"
     Name: trades_1
     DisplayName: First Trade    
     
 # When an anvil is used.
 AnvilsUsed:
   1:
-    Message: You just repaired your first item!
+    Goal: "Repair an item."
+    Message: "&eYou just repaired your first item!"
     Name: anvilsused_1
     DisplayName: First Repair 
     
 # When an enchantment is performed.
+# if you don't use '"' the output will be white 
 Enchantments:
   5:
+    Goal: "Enchant 5 things."
     Message: 5 objects enchanted!
     Name: enchantments_5
     DisplayName: "&5Wizard"
@@ -504,63 +545,72 @@ Enchantments:
 # When a bed is entered. 
 Beds:  
   5:
-    Message: You entered a bed 5 times!
+    Goal: "sleeping 5 times"
+    Message: "&eYou entered a bed 5 times!"
     Name: bed_5
     DisplayName: Sleepy Guy 
     
 # Maximum level reached.    
 MaxLevel:  
   10:
-    Message: Level 10 reached!
+    Goal: "Reach Level 10"
+    Message: "&eLevel 10 reached!... Maybe"
     Name: maxlevel_10
     DisplayName: "&4Rookie"
     
 # When a potion is consumed.
 ConsumedPotions:
   100:
-    Message: Drinking weird beverages all the time...
+    Goal: "Drink 100 Potions"
+    Message: "&eDrinking weird beverages all the time..."
     Name: consumedpotions_100
     DisplayName: Alcoholic 
     
 # Amount of time played on the server (in hours, use integers).
 PlayedTime:
   1:
-    Message: You played for one hour on the server!
+    Goal: "Play an hour"
+    Message: "&eYou played for one hour on the server!"
     Name: playedtime_1
     DisplayName: First Hour
     
 # When a distance is traveled by foot.
 DistanceFoot:
   1000:
-    Message: You traveled 1000 blocks by foot!
+    Goal: "Travel 100 Blocks with your feet"
+    Message: "&eYou traveled 1000 blocks by foot!"
     Name: distancefoot_1000
     DisplayName: Big Walker 
     
 # When a distance is traveled on a pig.
 DistancePig:
   100:
-    Message: You traveled 100 blocks on a pig!
+    Goal: "Travel 100 Blocks with a pig"
+    Message: "&eYou traveled 100 blocks on a pig!"
     Name: distancepig_100
     DisplayName: Carrot on a Stick Master
     
 # When a distance is traveled on a horse.
 DistanceHorse:
   500:
-    Message: You traveled 500 blocks on a horse!
+    Goal: "Travel 500 Blocks with a horse"
+    Message: "&eYou traveled 500 blocks on a horse!"
     Name: distancehorse_500
     DisplayName: The Avener
     
 # When a distance is traveled in a minecart.
 DistanceMinecart:
   100:
-    Message: You traveled 100 blocks in a minecart!
+    Goal: "Travel 100 Blocks with a minecart"
+    Message: "&eYou traveled 100 blocks in a minecart!"
     Name: distanceminecart_100
     DisplayName: Carting Fan
 
 # When a distance is traveled in a boat.
 DistanceBoat:
   200:
-    Message: You traveled 200 blocks in a boat!
+    Goal: "Travel 200 Blocks with a boat"
+    Message: "&eYou traveled 200 blocks in a boat!"
     Name: distanceboat_200
     DisplayName: Great Sailor
 
@@ -568,36 +618,41 @@ DistanceBoat:
 # Ignored on Minecraft versions prior to 1.9.
 DistanceGliding:
   100:
-    Message: You traveled 100 blocks with elytra!
+    Goal: "fly 100 blocks with an elytra"
+    Message: "&eYou traveled 100 blocks with elytra!"
     Name: distancegliding_100
     DisplayName: Angel
     
 # When a distance is traveled on a llama.
 # Ignored on Minecraft versions prior to 1.11.
 DistanceLlama:
-  50:
-    Message: You traveled 50 blocks on a llama!
-    Name: distancellama_50
+  150:
+    Goal: "Travel 150 Blocks with a llama"
+    Message: "&eYou traveled 150 blocks on a llama!"
+    Name: distancellama_150
     DisplayName: Llama Rider
 
 # When an item is dropped on the ground.
 ItemDrops:
   15:
-    Message: You're killing the planet!
+    Goal: "Drop 15 Items"
+    Message: "&cYou're killing the planet!"
     Name: itemdrops_15
     DisplayName: Polluter
     
 # When an item is picked up from the ground.
 ItemPickups:
   40:
-    Message: You're saving the planet!
+    Goal: "pickup 40 items"
+    Message: "&eYou're saving the planet!"
     Name: itempickups_40
     DisplayName: Environmentalist
     
 # When soil is plowed with a hoe.
 HoePlowings:
   10:
-    Message: You plowed the ground 10 times!
+    Goal: "plow 10 times"
+    Message: "&eYou plowed the ground 10 times!"
     Name: hoeplowings_10
     DisplayName: Farmer
     Reward:                 
@@ -606,28 +661,32 @@ HoePlowings:
 # When bone meal is used to fertilise plants.
 Fertilising:
   15:
-    Message: You used bone meal on plants 15 times!
+    Goal: "Use bonemeal 15 times"
+    Message: "&eYou used bone meal on plants 15 times!"
     Name: fertilising_15
     DisplayName: Gardener
     
 # When an animal is tamed.
 Taming:
   1:
-    Message: You tamed your first animal!
+    Goal: "Tame an animal"
+    Message: "&eYou tamed your first animal!"
     Name: taming_1
     DisplayName: Tamer
 
 # When a potion is brewed.
 Brewing:
   1:
-    Message: You brewed your first potion!
+    Goal: "brew a potion"
+    Message: "&eYou brewed your first potion!"
     Name: brewing_1
     DisplayName: Alchemist
     
 # When a firework is launched.
 Fireworks:
   10:
-    Message: You launched 10 fireworks!
+    Goal: "launch fireworks 10 times"
+    Message: "&eYou launched 10 fireworks!"
     Name: fireworks_10
     DisplayName: Pyrotechnist
     Reward:
@@ -636,35 +695,40 @@ Fireworks:
 # When a music disc is played.
 MusicDiscs:
   1:
-    Message: One jukebox used!
+    Goal: "use a jukebox"
+    Message: "&eOne jukebox used!"
     Name: musicdiscs_1
     DisplayName: DJ
 
 # When a player teleports with an enderpearl.
 EnderPearls:
   10:
-    Message: 10 teleportations with ender pearls!
+    Goal: "teleport with ender pearls 10 times"
+    Message: "&e10 teleportations with ender pearls!"
     Name: enderpearls_10
     DisplayName: Teleport Man
     
 # When a player gives a pet to another player (requires Pet Master plugin version 1.4 or above).
 PetMasterGive:
   3:
-    Message: 3 pets given to friends!
+    Goal: "Give 3 pets to friends"
+    Message: "&e3 pets given to friends!"
     Name: petmastergive_3
     DisplayName: Donator
 
 # When a player receives a pet from another player (requires Pet Master plugin version 1.4 or above).
 PetMasterReceive:
   10:
-    Message: 10 pets received from friends!
+    Goal: "receive 10 pets"
+    Message: "&e10 pets received from friends!"
     Name: petmasterreceive_10
     DisplayName: Receiver
     
 # When an item is smelt in a furnace.
 Smelting:
   250:
-    Message: 250 items smelt in a furnace!
+    Goal: "smelt 250 items"
+    Message: "&e250 items smelt in a furnace!"
     Name: smeltitems_250
     DisplayName: The Smelter
           
@@ -681,7 +745,8 @@ MultiCommand: true
 # yourAch1 achievement to PLAYER. The /aach give command does NOT work with other achievements.
 Commands:
   yourAch1:
-    Message: You took part in the special event!
+    Goal: "i´m a goal"
+    Message: "&eYou took part in the special event!"
     Name: yourAch1
     DisplayName: Special Event Achievement!
     
@@ -689,14 +754,15 @@ Commands:
 Custom:
   votes:
     10:
-      Message: Vote 10 times for the server!
+      Goal: "vote 10 times "
+      Message: "&eVoted 10 times for the server!"
       Name: customs_votes_10
       DisplayName: Server fan
       Reward:
         Money: 5
     
 #==========================OOOO=OOOO==========================#
-# VIII---------------------------------------------------VIII #
+# VIII-------------------------0-------------------------VIII #
 # |  Parameters in future plugin versions will appear here  | #
-# 8---------------------------------------------------------8 #
+# 8----------------------------0----------------------------8 #
 #==========================oooo=oooo==========================#
