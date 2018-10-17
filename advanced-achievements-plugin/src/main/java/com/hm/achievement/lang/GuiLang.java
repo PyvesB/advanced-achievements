@@ -18,8 +18,11 @@ public enum GuiLang implements Lang {
 	PROGRESS("Progress:"),
 	REWARD("Reward(s):"),
 	PREVIOUS_MESSAGE("&7Previous"),
+	PREVIOUS_LORE(""),
 	NEXT_MESSAGE("&7Next"),
+	NEXT_LORE(""),
 	BACK_MESSAGE("&7Back"),
+	BACK_LORE(""),
 	CATEGORY_NOT_UNLOCKED("You have not yet unlocked this category.");
 
 	private final String defaultMessage;

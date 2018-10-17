@@ -114,15 +114,19 @@ public class CategoryGUI extends AbstractGUI {
 		achievementNotStarted = createItemStack("AchievementNotStarted");
 		achievementStarted = createItemStack("AchievementStarted");
 		achievementReceived = createItemStack("AchievementReceived");
-		previousButton = createButton("PreviousButton", LangHelper.get(GuiLang.PREVIOUS_MESSAGE, langConfig));
-		nextButton = createButton("NextButton", LangHelper.get(GuiLang.NEXT_MESSAGE, langConfig));
-		backButton = createButton("BackButton", LangHelper.get(GuiLang.BACK_MESSAGE, langConfig));
+		previousButton = createButton("PreviousButton", GuiLang.PREVIOUS_MESSAGE, GuiLang.PREVIOUS_LORE);
+		nextButton = createButton("NextButton", GuiLang.NEXT_MESSAGE, GuiLang.NEXT_LORE);
+		backButton = createButton("BackButton", GuiLang.BACK_MESSAGE, GuiLang.BACK_LORE);
 	}
 
-	private ItemStack createButton(String category, String msg) {
+	private ItemStack createButton(String category, GuiLang msg, GuiLang lore) {
 		ItemStack button = createItemStack(category);
 		ItemMeta meta = button.getItemMeta();
-		meta.setDisplayName(translateColorCodes(StringEscapeUtils.unescapeJava(msg)));
+		meta.setDisplayName(translateColorCodes(StringEscapeUtils.unescapeJava(LangHelper.get(msg, langConfig))));
+		String loreString = translateColorCodes(StringEscapeUtils.unescapeJava(LangHelper.get(lore, langConfig)));
+		if (!loreString.isEmpty()) {
+			meta.setLore(Collections.singletonList(loreString));
+		}
 		button.setItemMeta(meta);
 		return button;
 	}
