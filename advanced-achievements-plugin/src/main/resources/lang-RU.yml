@@ -1,7 +1,7 @@
 #=================================================================#
 # +-------------------------------------------------------------+ #
 # |    Advanced Achievements. Russian translation by Shanzji    | #
-# |              ~ Актуально для версии 5.10.1 ~                 | #
+# |              ~ Актуально для версии 5.10.2 ~                 | #
 # |        Новое обновление плагина автоматически добавит       | #
 # |               недостающие строки в конец файла.             | #
 # |               Если вам не лень, можете заменить             | #
@@ -135,8 +135,11 @@ list-achievement-received: '&2✔&f '
 list-achievement-not-received: '&c✘&8 '
 list-category-not-unlocked: Вы еще не получали достижений из этой категории.
 list-previous-message: '&7Пред. страница'
+list-previous-lore: ''
 list-next-message: '&7След. страница'
+list-next-lore: ''
 list-back-message: '&7Назад'
+list-back-lore: ''
 list-achievements-in-category-singular: '&7AMOUNT достижение' # 1 достижение
 list-achievements-in-category-plural: '&7AMOUNT достижений(я)' # 2 достижений(я) / 5 достижений(я) и т.д.
 

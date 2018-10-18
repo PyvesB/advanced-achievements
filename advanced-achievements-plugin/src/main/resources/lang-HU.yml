@@ -2,7 +2,7 @@
 # +---------------------------------------------------------+ #
 # |             Advanced Achievements Hungarian             | #
 # |               translation by montlikadani               | #
-# |             ~ Valid as of version 5.10.1 ~              | #
+# |             ~ Valid as of version 5.10.2 ~              | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
@@ -133,8 +133,11 @@ list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "
 list-category-not-unlocked: "Még nem nyitottad ki ezt a kategóriát."
 list-back-message: "&7Vissza"
+list-back-lore: ""
 list-previous-message: "&7Előző"
+list-previous-lore: ""
 list-next-message: "&7Következő"
+list-next-lore: ""
 list-achievements-in-category-singular: "AMOUNT küldetés"
 list-achievements-in-category-plural: "AMOUNT küldetés"
 

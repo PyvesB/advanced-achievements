@@ -1,7 +1,7 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
 # |  Advanced Achievements Finnish translation by Rsl1122   | #
-# |             ~ Valid as of version 5.10.1 ~              | #
+# |             ~ Valid as of version 5.10.2 ~              | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
@@ -132,8 +132,11 @@ list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718 "
 list-category-not-unlocked: "Et ole vielä avannut tätä kategoriaa."
 list-back-message: "&7Takaisin"
+list-back-lore: ""
 list-previous-message: "&7Edellinen"
+list-previous-lore: ""
 list-next-message: "&7Seuraava"
+list-next-lore: ""
 list-achievements-in-category-singular: "AMOUNT saavutus"
 list-achievements-in-category-plural: "AMOUNT saavutukset"
 

@@ -2,7 +2,7 @@
 # +---------------------------------------------------------+ #
 # |   Advanced Achievements German translation by           | #
 # |        YtKater.de | PlayInfected.de | Minecityelan.net  | #
-# |             ~ Valid as of version 5.10.1 ~              | #
+# |             ~ Valid as of version 5.10.2 ~              | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
@@ -130,8 +130,11 @@ list-achievement-received: '&a✔&f '
 list-achievement-not-received: '&4✘&8 '
 list-category-not-unlocked: "Du hast diese Kategorie noch nicht freigeschaltet."
 list-back-message: '&7Zurück'
+list-back-lore: ""
 list-previous-message: "&7Zurück"
+list-previous-lore: ""
 list-next-message: "&7Weiter"
+list-next-lore: ""
 list-achievements-in-category-singular: "AMOUNT Erfolg"
 list-achievements-in-category-plural: "AMOUNT Erfolge"
 
