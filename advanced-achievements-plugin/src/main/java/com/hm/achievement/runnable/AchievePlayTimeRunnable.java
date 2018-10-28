@@ -12,7 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
@@ -58,7 +57,6 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 	public void run() {
 		long currentTime = System.currentTimeMillis();
 		Bukkit.getServer().getOnlinePlayers().stream().forEach(p -> updateTime(p, currentTime));
-
 		previousRunMillis = currentTime;
 	}
 
@@ -74,9 +72,8 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 		}
 
 		if (configIgnoreAFKPlayedTime) {
-			User user = essentials.getUser(player);
 			// If player is AFK, don't update played time.
-			if (user != null && user.isAfk()) {
+			if (essentials.getUser(player).isAfk()) {
 				return;
 			}
 		}
