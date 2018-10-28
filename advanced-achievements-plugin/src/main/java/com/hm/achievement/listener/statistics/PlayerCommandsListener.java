@@ -2,6 +2,7 @@ package com.hm.achievement.listener.statistics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,18 +44,20 @@ public class PlayerCommandsListener extends AbstractListener {
 		MultipleAchievements category = MultipleAchievements.PLAYERCOMMANDS;
 
 		List<String> equivalentCommands = getEquivalentCommands(event.getMessage());
-		for (String prefix : mainConfig.getShallowKeys(category.toString())) {
-			for (String equivalentCommand : equivalentCommands) {
-				if (equivalentCommand.startsWith(prefix)) {
-					if (player.hasPermission(category.toPermName() + '.' + StringUtils.deleteWhitespace(prefix))) {
-						Set<String> foundAchievements = findAchievementsByCategoryAndName(category, prefix);
-						foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player,
-								category, prefix, 1));
+		Set<String> foundAchievements = new HashSet<>();
+		for (String groupedPrefixes : mainConfig.getShallowKeys(category.toString())) {
+			for (String prefix : StringUtils.split(groupedPrefixes, '|')) {
+				if (player.hasPermission(category.toPermName() + '.' + StringUtils.deleteWhitespace(prefix))) {
+					for (String equivalentCommand : equivalentCommands) {
+						if (equivalentCommand.startsWith(prefix)) {
+							foundAchievements.add(groupedPrefixes);
+						}
 					}
-					return;
 				}
 			}
 		}
+		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
+				achievement, 1));
 	}
 
 	/**
