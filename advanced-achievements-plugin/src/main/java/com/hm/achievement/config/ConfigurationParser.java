@@ -252,7 +252,11 @@ public class ConfigurationParser {
 		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			if (!disabledCategories.contains(category)) {
-				parseAchievements(category.toString());
+				if (mainConfig.getShallowKeys(category.toString()).isEmpty()) {
+					disabledCategories.add(category);
+				} else {
+					parseAchievements(category.toString());
+				}
 			}
 		}
 
@@ -262,10 +266,10 @@ public class ConfigurationParser {
 				Set<String> keys = mainConfig.getShallowKeys(category.toString());
 				if (keys.isEmpty()) {
 					disabledCategories.add(category);
-					continue;
-				}
-				for (String section : keys) {
-					parseAchievements(category + "." + section);
+				} else {
+					for (String section : keys) {
+						parseAchievements(category + "." + section);
+					}
 				}
 			}
 		}
