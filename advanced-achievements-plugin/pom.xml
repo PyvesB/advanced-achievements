@@ -43,6 +43,12 @@
 										<include>**</include>
 									</includes>
 								</filter>
+								<filter>
+									<artifact>org.postgresql:postgresql</artifact>
+									<includes>
+										<include>**</include>
+									</includes>
+								</filter>
 							</filters>
 							<relocations>
 								<relocation>
@@ -116,6 +122,10 @@
 		<dependency>
 			<groupId>me.clip</groupId>
 			<artifactId>placeholderapi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 		</dependency>
 
 		<!-- Mockito (Test Dependency) -->
