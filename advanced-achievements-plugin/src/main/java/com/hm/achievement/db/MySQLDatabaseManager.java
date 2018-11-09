@@ -1,8 +1,9 @@
 package com.hm.achievement.db;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -31,14 +32,18 @@ public class MySQLDatabaseManager extends AbstractDatabaseManager {
 		Class.forName("com.mysql.jdbc.Driver");
 
 		// Get parameters from the MySQL config category.
-		databaseAddress = mainConfig.getString("MYSQL.Database", "jdbc:mysql://localhost:3306/minecraft");
-		databaseUser = URLEncoder.encode(mainConfig.getString("MYSQL.User", "root"), StandardCharsets.UTF_8.name());
-		databasePassword = URLEncoder.encode(mainConfig.getString("MYSQL.Password", "root"), StandardCharsets.UTF_8.name());
+		databaseAddress = getDatabaseConfig("DatabaseAddress", "Database", "jdbc:mysql://localhost:3306/minecraft");
+		databaseUser = URLEncoder.encode(getDatabaseConfig("DatabaseUser", "User", "root"), UTF_8.name());
+		databasePassword = URLEncoder.encode(getDatabaseConfig("DatabasePassword", "Password", "root"), UTF_8.name());
 	}
 
 	@Override
 	Connection createSQLConnection() throws SQLException {
 		return DriverManager.getConnection(databaseAddress + "?useSSL=false&autoReconnect=true" + additionalConnectionOptions
 				+ "&user=" + databaseUser + "&password=" + databasePassword);
+	}
+
+	private String getDatabaseConfig(String newName, String oldName, String defaultValue) {
+		return mainConfig.getString(newName, mainConfig.getString("MYSQL." + oldName, defaultValue));
 	}
 }

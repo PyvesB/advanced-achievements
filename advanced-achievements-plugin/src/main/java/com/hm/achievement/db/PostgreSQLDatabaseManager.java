@@ -1,8 +1,9 @@
 package com.hm.achievement.db;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -38,10 +39,9 @@ public class PostgreSQLDatabaseManager extends AbstractDatabaseManager {
 		Class.forName("org.postgresql.Driver");
 
 		// Get parameters from the PostgreSQL config category.
-		databaseAddress = mainConfig.getString("POSTGRESQL.Database", "jdbc:postgresql://localhost:5432/minecraft");
-		databaseUser = URLEncoder.encode(mainConfig.getString("POSTGRESQL.User", "root"), StandardCharsets.UTF_8.name());
-		databasePassword = URLEncoder.encode(mainConfig.getString("POSTGRESQL.Password", "root"),
-				StandardCharsets.UTF_8.name());
+		databaseAddress = getDatabaseConfig("DatabaseAddress", "Database", "jdbc:postgresql://localhost:5432/minecraft");
+		databaseUser = URLEncoder.encode(getDatabaseConfig("DatabaseUser", "User", "root"), UTF_8.name());
+		databasePassword = URLEncoder.encode(getDatabaseConfig("DatabasePassword", "Password", "root"), UTF_8.name());
 	}
 
 	@Override
@@ -98,5 +98,9 @@ public class PostgreSQLDatabaseManager extends AbstractDatabaseManager {
 				return connections;
 			}
 		}).executeOperation("handling connection event");
+	}
+
+	private String getDatabaseConfig(String newName, String oldName, String defaultValue) {
+		return mainConfig.getString(newName, mainConfig.getString("POSTGRESQL." + oldName, defaultValue));
 	}
 }

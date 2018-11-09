@@ -224,18 +224,11 @@ TablePrefix: ""
 # for instance "&useUnicode=yes&characterEncoding=UTF-8". Make sure the key-value pairs themselves are URL encoded.
 AdditionalConnectionOptions: ""
 
-# Settings to link with MySQL database (ignored if sqlite or postgresql).
-MYSQL:
-  Database: "jdbc:mysql://localhost:3306/minecraft"
-  User: root
-  Password: root
-  
-# Settings to link with PostgresSQL database (ignored if sqlite or mysql).
-# Refer to https://github.com/PyvesB/AdvancedAchievements/wiki/Installation to set up PostgreSQL.
-POSTGRESQL:
-  Database: "jdbc:postgresql://localhost:5432/minecraft"
-  User: root
-  Password: root
+# Settings to connect to your MySQL/PostgreSQL database (ignored if sqlite).
+# A PostgreSQL database address will be similar to jdbc:postgresql://localhost:5432/minecraft
+DatabaseAddress: "jdbc:mysql://localhost:3306/minecraft"
+DatabaseUser: root
+DatabasePassword: root
   
 #============================OO=OO============================#
 # IV-------------------------------------------------------IV #
