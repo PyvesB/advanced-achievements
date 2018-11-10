@@ -54,7 +54,7 @@ Your generated `AdvancedAchievements.jar` can be found in the `target` folder.
 
 * [Wiki](https://github.com/PyvesB/AdvancedAchievements/wiki), a lot of valuable information on how to set the plugin up and use it properly.
 
-* [Translations](https://github.com/PyvesB/AdvancedAchievements/tree/master/advanced-achievements-plugin/src/main/resources), 16 languages available, feel free to improve them!
+* [Translations](https://github.com/PyvesB/AdvancedAchievements/tree/master/advanced-achievements-plugin/src/main/resources), 17 languages available, feel free to improve them!
 
 # Contributing
 
