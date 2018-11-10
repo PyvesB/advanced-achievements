@@ -154,7 +154,7 @@ DisableSilkTouchBreaks: false
 DisableSilkTouchOreBreaks: false
 
 # Language file to use. Available: lang.yml, lang-BP.yml, lang-CN.yml, lang-CZ.yml, lang-DE.yml, lang-ES.yml, lang-FI.yml
-# lang-FR.yml, lang-HU.yml, lang-IT.yml, lang-PL.yml, lang-RO.yml, lang-RU.yml, lang-SE.yml, lang-TR.yml, lang-VN.yml
+# lang-FR.yml, lang-HU.yml, lang-IT.yml, lang-PL.yml, lang-RO.yml, lang-RU.yml, lang-SE.yml, lang-TR.yml, lang-TW.yml, lang-VN.yml
 LanguageFileName: lang.yml
 
 # Time in seconds between each statistic count. Only the listed categories are currently supported.
