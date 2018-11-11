@@ -1,5 +1,6 @@
 package com.hm.achievement.db;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -21,7 +22,14 @@ public class MySQLDatabaseManager extends AbstractRemoteDatabaseManager {
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "com.mysql.jdbc.Driver", "MYSQL");
 	}
-	
+
+	@Override
+	void performPreliminaryTasks() throws ClassNotFoundException, UnsupportedEncodingException {
+		super.performPreliminaryTasks();
+
+		additionalConnectionOptions = "&useSSL=false" + additionalConnectionOptions;
+	}
+
 	public String getDatabaseName() {
 		return StringUtils.substringAfterLast(databasePassword, "/");
 	}
