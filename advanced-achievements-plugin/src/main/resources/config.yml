@@ -209,10 +209,10 @@ AdvancementsBackground: "minecraft:textures/item/book.png"
 # 3---------------------------------------------------------3 #
 #=============================ooo=============================#
 
-# Make a daily backup of your local database (if sqlite).
+# Make a daily backup of your local database (if sqlite or h2).
 DatabaseBackup: true
 
-# Database type, sqlite, postgresql or mysql. Do a full server restart for this to take effect.
+# Database type, sqlite, h2, postgresql or mysql. Do a full server restart for this to take effect.
 DatabaseType: sqlite
 
 # Prefix added to the tables in the database. If you switch from the default tables names (no prefix),

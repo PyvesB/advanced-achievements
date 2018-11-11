@@ -45,11 +45,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	final AtomicReference<Connection> sqlConnection = new AtomicReference<>();
 	final CommentedYamlConfiguration mainConfig;
 	final Logger logger;
+	final String driverPath;
 
-	volatile String databaseAddress;
-	volatile String databaseUser;
-	volatile String databasePassword;
-	volatile String additionalConnectionOptions;
 	volatile String prefix;
 
 	private final Map<String, String> namesToDisplayNames;
@@ -59,11 +56,12 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	private boolean configBookChronologicalOrder;
 
 	public AbstractDatabaseManager(CommentedYamlConfiguration mainConfig, Logger logger,
-			Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
+			Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater, String driverPath) {
 		this.mainConfig = mainConfig;
 		this.logger = logger;
 		this.namesToDisplayNames = namesToDisplayNames;
 		this.databaseUpdater = databaseUpdater;
+		this.driverPath = driverPath;
 		// We expect to execute many short writes to the database. The pool can grow dynamically under high load and
 		// allows to reuse threads.
 		pool = Executors.newCachedThreadPool();
@@ -91,7 +89,6 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		logger.info("Initialising database...");
 
 		prefix = mainConfig.getString("TablePrefix", "");
-		additionalConnectionOptions = mainConfig.getString("AdditionalConnectionOptions", "");
 
 		try {
 			performPreliminaryTasks();
@@ -108,7 +105,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			throw new PluginLoadError("Failed to establish database connection. Please verify your settings in config.yml.");
 		}
 
-		databaseUpdater.renameExistingTables(this, databaseAddress);
+		databaseUpdater.renameExistingTables(this);
 		databaseUpdater.initialiseTables(this);
 		databaseUpdater.updateOldDBToMaterial(this);
 		databaseUpdater.updateOldDBToDates(this);
@@ -150,7 +147,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Retrieves SQL connection to MySQL, PostgreSQL or SQLite database.
+	 * Retrieves SQL connection to MySQL, PostgreSQL, H2 or SQLite database.
 	 *
 	 * @return the cached SQL connection or a new one
 	 */

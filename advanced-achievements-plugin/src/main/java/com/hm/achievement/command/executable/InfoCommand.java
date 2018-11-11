@@ -114,6 +114,8 @@ public class InfoCommand extends AbstractCommand {
 			return "MySQL";
 		} else if ("postgresql".equalsIgnoreCase(configDatabaseType)) {
 			return "PostgreSQL";
+		} else if ("h2".equalsIgnoreCase(configDatabaseType)) {
+			return "H2";
 		} else {
 			return "SQLite";
 		}

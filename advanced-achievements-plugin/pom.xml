@@ -49,6 +49,12 @@
 										<include>**</include>
 									</includes>
 								</filter>
+								<filter>
+									<artifact>com.h2database:h2</artifact>
+									<includes>
+										<include>**</include>
+									</includes>
+								</filter>
 							</filters>
 							<relocations>
 								<relocation>
@@ -126,6 +132,10 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
 		</dependency>
 
 		<!-- Mockito (Test Dependency) -->

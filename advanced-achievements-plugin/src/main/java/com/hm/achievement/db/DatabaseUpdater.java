@@ -64,10 +64,9 @@ public class DatabaseUpdater {
 	 * works if the tables had the default name. It does not support multiple successive table renamings.
 	 * 
 	 * @param databaseManager
-	 * @param databaseAddress
 	 * @throws PluginLoadError
 	 */
-	void renameExistingTables(AbstractDatabaseManager databaseManager, String databaseAddress) throws PluginLoadError {
+	void renameExistingTables(AbstractDatabaseManager databaseManager) throws PluginLoadError {
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
 		if (StringUtils.isNotBlank(databaseManager.getPrefix())) {
 			Connection conn = databaseManager.getSQLConnection();
@@ -76,9 +75,11 @@ public class DatabaseUpdater {
 				if (databaseManager instanceof SQLiteDatabaseManager) {
 					rs = st.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='achievements'");
 				} else if (databaseManager instanceof MySQLDatabaseManager) {
-					rs = st.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='"
-							+ databaseAddress.substring(databaseAddress.lastIndexOf('/') + 1)
-							+ "' AND table_name ='achievements'");
+					rs = st.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_name='achievements'"
+							+ " AND table_schema='" + ((MySQLDatabaseManager) databaseManager).getDatabaseName());
+				} else if (databaseManager instanceof H2DatabaseManager) {
+					rs = st.executeQuery(
+							"SELECT table_name FROM information_schema.tables WHERE table_name='achievements' AND table_schema='achievements'");
 				} else {
 					rs = st.executeQuery(
 							"SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'achievements' AND c.relkind = 'r'");
@@ -316,8 +317,8 @@ public class DatabaseUpdater {
 	 * @param category
 	 */
 	void updateOldDBColumnSize(AbstractDatabaseManager databaseManager, MultipleAchievements category) {
-		// SQLite ignores size for varchar datatype.
-		if (!(databaseManager instanceof SQLiteDatabaseManager)) {
+		// SQLite ignores size for varchar datatype. H2 support was added after this was an issue.
+		if (!(databaseManager instanceof AbstractFileDatabaseManager)) {
 			Connection conn = databaseManager.getSQLConnection();
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs = st.executeQuery("SELECT " + category.toSubcategoryDBName() + " FROM "

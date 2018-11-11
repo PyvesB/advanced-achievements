@@ -27,7 +27,7 @@
 <img src ="https://img.shields.io/github/contributors/PyvesB/AdvancedAchievements.svg" />
 </a>
 
-**Advanced Achievements enables unique and challenging achievements on Minecraft servers. Collect as many as you can, earn rewards, climb the rankings and receive RP books! The plugin supports SQLite, MySQL and PostgreSQL, manages an extensive statistics system, handles YAML configuration files and features fancy in-game GUIs and effects!**
+**Advanced Achievements enables unique and challenging achievements on Minecraft servers. Collect as many as you can, earn rewards, climb the rankings and receive RP books! The plugin supports SQLite, MySQL, H2 and PostgreSQL, manages an extensive statistics system, handles YAML configuration files and features fancy in-game GUIs and effects!**
 
 <p align="center">
 <img src ="http://images.jupload.fr/1482436416.png" />

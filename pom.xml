@@ -189,6 +189,12 @@
 				<version>42.2.5</version>
 				<scope>runtime</scope>
 			</dependency>
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>1.4.197</version>
+				<scope>runtime</scope>
+			</dependency>
 
 			<!-- Mockito (Test Dependency) -->
 			<dependency>

@@ -1,15 +1,9 @@
 package com.hm.achievement.db;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Map;
 import java.util.UUID;
@@ -27,27 +21,11 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  *
  */
-public class PostgreSQLDatabaseManager extends AbstractDatabaseManager {
+public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
 	public PostgreSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
-		super(mainConfig, logger, namesToDisplayNames, databaseUpdater);
-	}
-
-	@Override
-	void performPreliminaryTasks() throws ClassNotFoundException, UnsupportedEncodingException {
-		Class.forName("org.postgresql.Driver");
-
-		// Get parameters from the PostgreSQL config category.
-		databaseAddress = getDatabaseConfig("DatabaseAddress", "Database", "jdbc:postgresql://localhost:5432/minecraft");
-		databaseUser = URLEncoder.encode(getDatabaseConfig("DatabaseUser", "User", "root"), UTF_8.name());
-		databasePassword = URLEncoder.encode(getDatabaseConfig("DatabasePassword", "Password", "root"), UTF_8.name());
-	}
-
-	@Override
-	Connection createSQLConnection() throws SQLException {
-		return DriverManager.getConnection(databaseAddress + "?autoReconnect=true" + additionalConnectionOptions + "&user="
-				+ databaseUser + "&password=" + databasePassword);
+		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "org.postgresql.Driver", "POSTGRESQL");
 	}
 
 	@Override
@@ -98,9 +76,5 @@ public class PostgreSQLDatabaseManager extends AbstractDatabaseManager {
 				return connections;
 			}
 		}).executeOperation("handling connection event");
-	}
-
-	private String getDatabaseConfig(String newName, String oldName, String defaultValue) {
-		return mainConfig.getString(newName, mainConfig.getString("POSTGRESQL." + oldName, defaultValue));
 	}
 }
