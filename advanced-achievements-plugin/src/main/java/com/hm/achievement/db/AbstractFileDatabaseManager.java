@@ -27,7 +27,7 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
 	private final AdvancedAchievements advancedAchievements;
 	private final String url;
 	private final String filename;
-	
+
 	private boolean configDatabaseBackup;
 
 	public AbstractFileDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
