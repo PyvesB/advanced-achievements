@@ -71,23 +71,11 @@ public class DatabaseUpdater {
 		if (StringUtils.isNotBlank(databaseManager.getPrefix())) {
 			Connection conn = databaseManager.getSQLConnection();
 			try (Statement st = conn.createStatement()) {
-				ResultSet rs;
-				if (databaseManager instanceof SQLiteDatabaseManager) {
-					rs = st.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='achievements'");
-				} else if (databaseManager instanceof MySQLDatabaseManager) {
-					rs = st.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_name='achievements'"
-							+ " AND table_schema='" + ((MySQLDatabaseManager) databaseManager).getDatabaseName());
-				} else if (databaseManager instanceof H2DatabaseManager) {
-					rs = st.executeQuery(
-							"SELECT table_name FROM information_schema.tables WHERE table_name='achievements' AND table_schema='achievements'");
-				} else {
-					rs = st.executeQuery(
-							"SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'achievements' AND c.relkind = 'r'");
-				}
-
-				// Table achievements still has its default name (ie. no prefix), but a prefix is set in the
-				// configuration; do a renaming of all tables.
+				ResultSet rs = conn.getMetaData().getTables(null, null, "achievements", null);
+				// If the achievements table still has its default name (ie. no prefix), but a prefix is set in the
+				// configuration, do a renaming of all tables.
 				if (rs.next()) {
+					logger.info("Adding " + databaseManager.getPrefix() + " prefix to database table names, please wait...");
 					st.addBatch("ALTER TABLE achievements RENAME TO " + databaseManager.getPrefix() + "achievements");
 					for (NormalAchievements category : NormalAchievements.values()) {
 						st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + databaseManager.getPrefix()

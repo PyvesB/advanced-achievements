@@ -21,6 +21,7 @@ public class H2DatabaseManager extends AbstractFileDatabaseManager {
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
 			AdvancedAchievements advancedAchievements) {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, advancedAchievements, "org.h2.Driver",
-				"jdbc:h2:./" + new File(advancedAchievements.getDataFolder(), "achievements"), "achievements.mv.db");
+				"jdbc:h2:./" + new File(advancedAchievements.getDataFolder(), "achievements") + ";DATABASE_TO_UPPER=false",
+				"achievements.mv.db");
 	}
 }
