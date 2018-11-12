@@ -6,8 +6,6 @@ import java.util.logging.Logger;
 
 import javax.inject.Named;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -28,9 +26,5 @@ public class MySQLDatabaseManager extends AbstractRemoteDatabaseManager {
 		super.performPreliminaryTasks();
 
 		additionalConnectionOptions = "&useSSL=false" + additionalConnectionOptions;
-	}
-
-	public String getDatabaseName() {
-		return StringUtils.substringAfterLast(databasePassword, "/");
 	}
 }
