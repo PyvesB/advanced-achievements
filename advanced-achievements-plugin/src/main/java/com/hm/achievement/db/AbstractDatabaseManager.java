@@ -579,7 +579,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @return List of AwardedDBAchievement objects, message field is empty to save memory.
 	 */
 	public List<AwardedDBAchievement> getAchievementsRecipientList(String achievementName) {
-		String sql = "SELECT playername, achievement, date FROM " + prefix + "achievements WHERE achievement LIKE LOWER(?)" +
+		String sql = "SELECT playername, date FROM " + prefix + "achievements WHERE achievement = ?" +
 				" ORDER BY date DESC LIMIT 1000";
 		return ((SQLReadOperation<List<AwardedDBAchievement>>) () -> {
 			List<AwardedDBAchievement> achievements = new ArrayList<>();
@@ -589,13 +589,6 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setString(1, achievementName);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
-						// Remove eventual double quotes due to a bug in versions 3.0 to 3.0.2 where names containing
-						// single quotes were inserted with two single quotes in the database.
-						String achName = StringUtils.replace(rs.getString("achievement"), "''", "'");
-						String displayName = namesToDisplayNames.get(achName);
-						if (StringUtils.isNotBlank(displayName)) {
-							achName = displayName;
-						}
 						UUID uuid;
 						try {
 							String uuidString = rs.getString("playername");
@@ -605,8 +598,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 						}
 						Date dateAwarded = rs.getDate("date");
 
-						achievements.add(new AwardedDBAchievement(uuid, achName, "", dateAwarded.getTime(),
-								dateFormat.format(dateAwarded)));
+						achievements.add(new AwardedDBAchievement(uuid, namesToDisplayNames.get(achievementName), "",
+								dateAwarded.getTime(), dateFormat.format(dateAwarded)));
 					}
 				}
 			}
