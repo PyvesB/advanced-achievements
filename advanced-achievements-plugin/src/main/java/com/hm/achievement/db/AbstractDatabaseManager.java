@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -109,6 +110,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		databaseUpdater.initialiseTables(this);
 		databaseUpdater.updateOldDBToMaterial(this);
 		databaseUpdater.updateOldDBToDates(this);
+		databaseUpdater.updateOldDBToTimestamps(this);
 		Arrays.stream(MultipleAchievements.values()).forEach(m -> databaseUpdater.updateOldDBColumnSize(this, m));
 	}
 
@@ -223,7 +225,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				}
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
-					return dateFormat.format(rs.getDate(1));
+					return dateFormat.format(new Date(rs.getTimestamp(1).getTime()));
 				}
 			}
 			return null;
@@ -292,7 +294,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				if (start > 0L) {
-					ps.setDate(1, new Date(start));
+					ps.setTimestamp(1, new Timestamp(start));
 				}
 				ps.setFetchSize(1000);
 				ResultSet rs = ps.executeQuery();
@@ -331,7 +333,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				ps.setString(3, achMessage == null ? "" : achMessage);
-				ps.setDate(4, new Date(epochMs));
+				ps.setTimestamp(4, new Timestamp(epochMs));
 				ps.execute();
 			}
 		}).executeOperation(pool, logger, "registering an achievement");
@@ -559,7 +561,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 							achName = displayName;
 						}
 						String achMsg = rs.getString(3);
-						Date dateAwarded = rs.getDate(4);
+						Timestamp dateAwarded = rs.getTimestamp(4);
 
 						achievements.add(new AwardedDBAchievement(uuid, achName, achMsg, dateAwarded.getTime(),
 								dateFormat.format(dateAwarded)));
@@ -596,7 +598,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 						} catch (IllegalArgumentException improperUUIDFormatException) {
 							continue;
 						}
-						Date dateAwarded = rs.getDate("date");
+						Date dateAwarded = new Date(rs.getTimestamp("date").getTime());
 
 						achievements.add(new AwardedDBAchievement(uuid, namesToDisplayNames.get(achievementName), "",
 								dateAwarded.getTime(), dateFormat.format(dateAwarded)));

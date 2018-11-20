@@ -1,9 +1,9 @@
 package com.hm.achievement.db;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Map;
 import java.util.UUID;
@@ -40,9 +40,9 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				ps.setString(3, achMessage);
-				ps.setDate(4, new Date(System.currentTimeMillis()));
+				ps.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
 				ps.setString(5, achMessage);
-				ps.setDate(6, new Date(System.currentTimeMillis()));
+				ps.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
 				ps.execute();
 			}
 		}).executeOperation(pool, logger, "registering an achievement");

@@ -104,7 +104,7 @@ public class DatabaseUpdater {
 		Connection conn = databaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix()
-					+ "achievements (playername char(36),achievement varchar(64),description varchar(128),date DATE,PRIMARY KEY (playername, achievement))");
+					+ "achievements (playername char(36),achievement varchar(64),description varchar(128),date TIMESTAMP,PRIMARY KEY (playername, achievement))");
 
 			for (MultipleAchievements category : MultipleAchievements.values()) {
 				st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix() + category.toDBName()
@@ -239,7 +239,7 @@ public class DatabaseUpdater {
 				logger.info("Updating database table with date datatype for achievements, please wait...");
 				// Create new temporary table.
 				st.execute("CREATE TABLE tempTable (playername char(36),achievement varchar(64),description varchar(128),"
-						+ "date DATE,PRIMARY KEY (playername, achievement))");
+						+ "date TIMESTAMP,PRIMARY KEY (playername, achievement))");
 				try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?,?);")) {
 					// Old date format, which was stored as a string.
 					SimpleDateFormat oldFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -293,7 +293,33 @@ public class DatabaseUpdater {
 				conn.setAutoCommit(true);
 			}
 		} catch (SQLException e) {
-			logger.log(Level.SEVERE, "Database error while updating old connections table:", e);
+			logger.log(Level.SEVERE, "Database error while updating old achievements table:", e);
+		}
+	}
+
+	/**
+	 * Updates the database achievements table. The table is now using a timestamp type for the date column.
+	 * 
+	 * @param databaseManager
+	 */
+	void updateOldDBToTimestamps(AbstractDatabaseManager databaseManager) {
+		// SQLite unaffected by this change, H2 support added with timestamp from the start.
+		if (databaseManager instanceof AbstractRemoteDatabaseManager) {
+			Connection conn = databaseManager.getSQLConnection();
+			try (Statement st = conn.createStatement()) {
+				ResultSet rs = st.executeQuery("SELECT date FROM " + databaseManager.getPrefix() + "achievements LIMIT 1");
+				String type = rs.getMetaData().getColumnTypeName(1);
+				// Old column type for versions prior to 5.11.0 was date.
+				if ("date".equalsIgnoreCase(type)) {
+					logger.info("Updating database table with timestamp datatype for achievements, please wait...");
+					String query = databaseManager instanceof MySQLDatabaseManager
+							? "ALTER TABLE " + databaseManager.getPrefix() + "achievements MODIFY date TIMESTAMP"
+							: "ALTER TABLE " + databaseManager.getPrefix() + "achievements ALTER COLUMN date TYPE TIMESTAMP";
+					st.execute(query);
+				}
+			} catch (SQLException e) {
+				logger.log(Level.SEVERE, "Database error while updating old achievements table:", e);
+			}
 		}
 	}
 
