@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.hm.achievement</groupId>
 	<artifactId>advanced-achievements</artifactId>
-	<version>5.10.4</version>
+	<version>5.11.0</version>
 	<url>https://github.com/PyvesB/AdvancedAchievements</url>
 	<name>AdvancedAchievements</name>
 	<description>A Minecraft plugin that brings unique and challenging achievements on your server! Books, GUI, rankings, rewards, effects and more!</description>
