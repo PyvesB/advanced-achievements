@@ -80,7 +80,7 @@ public class GiveCommand extends AbstractParsableCommand {
 					.maxHealthReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxHealth"))
 					.maxOxygenReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxOxygen"));
 
-			Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
+			Bukkit.getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 
 			sender.sendMessage(langAchievementGiven);
 		} else {

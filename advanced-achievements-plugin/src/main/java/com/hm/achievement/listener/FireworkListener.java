@@ -47,7 +47,7 @@ public class FireworkListener implements Listener {
 		fireworksLaunchedByPlugin.add(firework.getUniqueId());
 
 		// Schedule for removal to avoid creating memory leaks.
-		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(advancedAchievements,
+		Bukkit.getScheduler().runTaskLaterAsynchronously(advancedAchievements,
 				() -> fireworksLaunchedByPlugin.remove(firework.getUniqueId()), 100);
 	}
 }

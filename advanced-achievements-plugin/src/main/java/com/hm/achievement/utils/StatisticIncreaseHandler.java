@@ -92,7 +92,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 							.maxHealthReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxHealth"))
 							.maxOxygenReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxOxygen"));
 
-					Bukkit.getServer().getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
+					Bukkit.getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
 				}
 			} else {
 				// Entries in List sorted in increasing order, all subsequent thresholds will fail the condition.

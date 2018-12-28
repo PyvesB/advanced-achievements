@@ -57,8 +57,8 @@ public class RewardParser implements Reloadable {
 		this.langConfig = langConfig;
 		this.materialHelper = materialHelper;
 		// Try to retrieve an Economy instance from Vault.
-		if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
-			RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+		if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+			RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
 			if (rsp != null) {
 				economy = rsp.getProvider();
 			}

@@ -39,7 +39,7 @@ public class QuitListener implements Listener {
 
 		// Delay cleaning up to avoid invalidating data immediately: players frequently disconnect and reconnect just
 		// after. This also avoids players taking advantage of the reset of cooldowns.
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> {
 			if (Bukkit.getPlayer(uuid) != null) {
 				// Player reconnected.
 				return;

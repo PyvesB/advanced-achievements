@@ -128,7 +128,7 @@ public class AdvancementManager implements Reloadable {
 	 */
 	private void cleanupOldAchievementAdvancements() {
 		int achievementsCleaned = 0;
-		Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
+		Iterator<Advancement> advancements = Bukkit.advancementIterator();
 		while (advancements.hasNext()) {
 			NamespacedKey namespacedKey = advancements.next().getKey();
 			if ("advancedachievements".equals(namespacedKey.getNamespace())) {
@@ -136,7 +136,7 @@ public class AdvancementManager implements Reloadable {
 				unsafeValues.removeAdvancement(namespacedKey);
 			}
 		}
-		Bukkit.getServer().reloadData();
+		Bukkit.reloadData();
 		logger.info("Cleaned " + achievementsCleaned + " old advancements.");
 	}
 
@@ -146,7 +146,7 @@ public class AdvancementManager implements Reloadable {
 	 */
 	private void registerParentAdvancement() {
 		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_PARENT);
-		if (Bukkit.getServer().getAdvancement(namespacedKey) == null) {
+		if (Bukkit.getAdvancement(namespacedKey) == null) {
 			if (configHideAdvancements) {
 				unsafeValues.loadAdvancement(namespacedKey, AdvancementJsonHelper.toHiddenJson(configBackgroundTexture));
 			} else {
@@ -185,7 +185,7 @@ public class AdvancementManager implements Reloadable {
 				registerCategoryAdvancements(category, "." + section);
 			}
 		}
-		Bukkit.getServer().reloadData();
+		Bukkit.reloadData();
 		logger.info("Generated " + generatedAdvancements + " new advancements.");
 	}
 

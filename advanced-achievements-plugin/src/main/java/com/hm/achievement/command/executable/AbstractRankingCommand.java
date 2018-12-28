@@ -132,7 +132,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		List<String> rankingMessages = new ArrayList<>();
 		int currentRank = 1;
 		for (Entry<String, Integer> ranking : cachedSortedRankings.entrySet()) {
-			String playerName = Bukkit.getServer().getOfflinePlayer(UUID.fromString(ranking.getKey())).getName();
+			String playerName = Bukkit.getOfflinePlayer(UUID.fromString(ranking.getKey())).getName();
 			if (playerName != null) {
 				// Color the name of the player if he is in the top list.
 				ChatColor color = playerName.equals(sender.getName()) ? configColor : ChatColor.GRAY;

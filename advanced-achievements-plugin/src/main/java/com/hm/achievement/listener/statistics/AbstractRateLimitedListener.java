@@ -122,7 +122,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 				if (delay) {
 					// Display message with a delay to avoid it being overwritten by another message (typically disc
 					// name).
-					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(advancedAchievements,
+					Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements,
 							() -> displayActionBarMessage(player, message), 20);
 				} else {
 					displayActionBarMessage(player, message);

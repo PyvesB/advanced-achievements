@@ -91,7 +91,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		validateNotEmpty(achievementName, "Achievement Name");
 		// Underlying structures do not support concurrent operations and are only used by the main server thread. Not
 		// thread-safe to modify or read them asynchronously. Do not use cached data if player is offline.
-		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
+		if (Bukkit.isPrimaryThread() && isPlayerOnline(player)) {
 			return cacheManager.hasPlayerAchievement(player, achievementName);
 		} else {
 			return databaseManager.hasPlayerAchievement(player, achievementName);
@@ -143,7 +143,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		validateNotNull(category, "Category");
 		// Underlying structures do not support concurrent write operations and are only modified by the main server
 		// thread. Do not use cache if player is offline.
-		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
+		if (Bukkit.isPrimaryThread() && isPlayerOnline(player)) {
 			return cacheManager.getAndIncrementStatisticAmount(category, player, 0);
 		} else {
 			return databaseManager.getNormalAchievementAmount(player, category);
@@ -157,7 +157,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		validateNotEmpty(subcategory, "Sub-category");
 		// Underlying structures do not support concurrent write operations and are only modified by the main server
 		// thread. Do not use cache if player is offline.
-		if (Bukkit.getServer().isPrimaryThread() && isPlayerOnline(player)) {
+		if (Bukkit.isPrimaryThread() && isPlayerOnline(player)) {
 			return cacheManager.getAndIncrementStatisticAmount(category, subcategory, player, 0);
 		} else {
 			return databaseManager.getMultipleAchievementAmount(player, category, subcategory);
@@ -182,7 +182,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	 * @return true if player is online, false otherwise
 	 */
 	private boolean isPlayerOnline(UUID player) {
-		if (Bukkit.getServer().isPrimaryThread()) {
+		if (Bukkit.isPrimaryThread()) {
 			return Bukkit.getPlayer(player) != null;
 		}
 		// Called asynchronously. To ensure thread safety we must issue a call on the server's main thread of execution.

@@ -167,8 +167,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			cacheManager.registerNewlyReceivedAchievement(player.getUniqueId(), event.getName());
 
 			if (serverVersion >= 12) {
-				Advancement advancement = Bukkit.getServer()
-						.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.getKey(event.getName())));
+				Advancement advancement = Bukkit.getAdvancement(new NamespacedKey(advancedAchievements,
+						AdvancementManager.getKey(event.getName())));
 				// Matching advancement might not exist if user has not called /aach generate.
 				if (advancement != null) {
 					player.getAdvancementProgress(advancement).awardCriteria(AchievementAdvancement.CRITERIA_NAME);

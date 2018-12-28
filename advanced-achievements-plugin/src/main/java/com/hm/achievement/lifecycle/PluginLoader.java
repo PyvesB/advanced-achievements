@@ -329,8 +329,8 @@ public class PluginLoader {
 		// Schedule a repeating task to group database queries when statistics are modified.
 		if (asyncCachedRequestsSenderTask == null) {
 			int configPooledRequestsTaskInterval = mainConfig.getInt("PooledRequestsTaskInterval", 10);
-			asyncCachedRequestsSenderTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(
-					advancedAchievements, asyncCachedRequestsSender, configPooledRequestsTaskInterval * 40L,
+			asyncCachedRequestsSenderTask = Bukkit.getScheduler().runTaskTimerAsynchronously(advancedAchievements,
+					asyncCachedRequestsSender, configPooledRequestsTaskInterval * 40L,
 					configPooledRequestsTaskInterval * 20L);
 		}
 
@@ -340,7 +340,7 @@ public class PluginLoader {
 		}
 		if (!disabledCategories.contains(NormalAchievements.PLAYEDTIME)) {
 			int configPlaytimeTaskInterval = mainConfig.getInt("PlaytimeTaskInterval", 60);
-			playedTimeTask = Bukkit.getServer().getScheduler().runTaskTimer(advancedAchievements, playTimeRunnable,
+			playedTimeTask = Bukkit.getScheduler().runTaskTimer(advancedAchievements, playTimeRunnable,
 					configPlaytimeTaskInterval * 10L, configPlaytimeTaskInterval * 20L);
 		}
 
@@ -356,7 +356,7 @@ public class PluginLoader {
 				|| !disabledCategories.contains(NormalAchievements.DISTANCEGLIDING)
 				|| !disabledCategories.contains(NormalAchievements.DISTANCELLAMA)) {
 			int configDistanceTaskInterval = mainConfig.getInt("DistanceTaskInterval", 5);
-			distanceTask = Bukkit.getServer().getScheduler().runTaskTimer(advancedAchievements, distanceRunnable,
+			distanceTask = Bukkit.getScheduler().runTaskTimer(advancedAchievements, distanceRunnable,
 					configDistanceTaskInterval * 40L, configDistanceTaskInterval * 20L);
 		}
 	}
@@ -387,7 +387,7 @@ public class PluginLoader {
 	private void registerPermissions() {
 		logger.info("Registering permissions...");
 
-		PluginManager pluginManager = Bukkit.getServer().getPluginManager();
+		PluginManager pluginManager = Bukkit.getPluginManager();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			for (String section : mainConfig.getShallowKeys(category.toString())) {
 				// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories and don't take

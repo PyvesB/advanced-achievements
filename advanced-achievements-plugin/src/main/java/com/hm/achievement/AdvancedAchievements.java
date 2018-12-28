@@ -51,7 +51,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		} catch (PluginLoadError e) {
 			getLogger().log(Level.SEVERE,
 					"A non recoverable error was encountered while loading the plugin, disabling it:", e);
-			Bukkit.getServer().getPluginManager().disablePlugin(this);
+			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
 
