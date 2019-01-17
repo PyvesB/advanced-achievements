@@ -70,6 +70,10 @@
 									<pattern>org.apache.commons</pattern>
 									<shadedPattern>com.hm.apache.commons</shadedPattern>
 								</relocation>
+								<relocation>
+									<pattern>dagger</pattern>
+									<shadedPattern>com.hm.dagger</shadedPattern>
+								</relocation>
 							</relocations>
 						</configuration>
 						<phase>package</phase>
