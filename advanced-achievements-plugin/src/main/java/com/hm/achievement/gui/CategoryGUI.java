@@ -97,8 +97,8 @@ public class CategoryGUI extends AbstractGUI {
 		configHideRewardDisplayInList = mainConfig.getBoolean("HideRewardDisplayInList", false);
 		configEnrichedProgressBars = mainConfig.getBoolean("EnrichedListProgressBars", true);
 		configNumberedItemsInList = mainConfig.getBoolean("NumberedItemsInList", false);
-		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0));
-		configListColorNotReceived = ChatColor.getByChar(mainConfig.getString("ListColorNotReceived", "8").charAt(0));
+		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5"));
+		configListColorNotReceived = ChatColor.getByChar(mainConfig.getString("ListColorNotReceived", "8"));
 
 		langListGUITitle = translateColorCodes(LangHelper.get(GuiLang.GUI_TITLE, langConfig));
 		langListAchievementReceived = StringEscapeUtils

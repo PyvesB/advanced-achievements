@@ -66,7 +66,7 @@ public class StatsCommand extends AbstractCommand {
 		super.extractConfigurationParameters();
 
 		// Load configuration parameters.
-		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0));
+		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5"));
 		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
 		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects", true);
 		configSound = mainConfig.getBoolean("Sound", true);

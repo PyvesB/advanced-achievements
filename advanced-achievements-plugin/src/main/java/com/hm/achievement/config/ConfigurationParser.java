@@ -126,7 +126,7 @@ public class ConfigurationParser {
 		pluginHeader.setLength(0);
 		String icon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
 		if (StringUtils.isNotBlank(icon)) {
-			String coloredIcon = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0)) + icon;
+			String coloredIcon = ChatColor.getByChar(mainConfig.getString("Color", "5")) + icon;
 			pluginHeader
 					.append(ChatColor.translateAlternateColorCodes('&',
 							StringUtils.replace(mainConfig.getString("ChatHeader", "&7[%ICON%&7]"), "%ICON%", coloredIcon)))

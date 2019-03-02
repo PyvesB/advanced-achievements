@@ -79,7 +79,7 @@ public class HelpCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5").charAt(0));
+		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5"));
 		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
 
 		langCommandList = header("/aach list") + LangHelper.get(HelpLang.LIST, langConfig);
