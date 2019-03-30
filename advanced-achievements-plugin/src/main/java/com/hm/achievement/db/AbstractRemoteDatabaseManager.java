@@ -27,20 +27,20 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 	volatile String databasePassword;
 	volatile String additionalConnectionOptions;
 
-	private final String oldConfigPath;
+	private final String databaseType;
 
 	public AbstractRemoteDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater, String driverPath,
-			String oldConfigPath) {
+			String databaseType) {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, driverPath);
-		this.oldConfigPath = oldConfigPath;
+		this.databaseType = databaseType;
 	}
 
 	@Override
 	void performPreliminaryTasks() throws ClassNotFoundException, UnsupportedEncodingException {
 		Class.forName(driverPath);
 
-		databaseAddress = getDatabaseConfig("DatabaseAddress", "Database", "");
+		databaseAddress = getDatabaseAddress();
 		databaseUser = URLEncoder.encode(getDatabaseConfig("DatabaseUser", "User", "root"), UTF_8.name());
 		databasePassword = URLEncoder.encode(getDatabaseConfig("DatabasePassword", "Password", "root"), UTF_8.name());
 		additionalConnectionOptions = mainConfig.getString("AdditionalConnectionOptions", "");
@@ -52,7 +52,20 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 				+ databaseUser + "&password=" + databasePassword);
 	}
 
+	private String getDatabaseAddress() {
+		String databaseAddress = getDatabaseConfig("DatabaseAddress", "Database", "");
+		// Attempt to deal with common address mistakes where prefixes such as jdbc: or jdbc:mysql:// are omitted.
+		if (!databaseAddress.startsWith("jdbc:")) {
+			if (databaseAddress.startsWith(databaseType + "://")) {
+				return "jdbc:" + databaseAddress;
+			} else {
+				return "jdbc:" + databaseType + "://" + databaseAddress;
+			}
+		}
+		return databaseAddress;
+	}
+
 	private String getDatabaseConfig(String newName, String oldName, String defaultValue) {
-		return mainConfig.getString(newName, mainConfig.getString(oldConfigPath + "." + oldName, defaultValue));
+		return mainConfig.getString(newName, mainConfig.getString(databaseType.toUpperCase() + "." + oldName, defaultValue));
 	}
 }

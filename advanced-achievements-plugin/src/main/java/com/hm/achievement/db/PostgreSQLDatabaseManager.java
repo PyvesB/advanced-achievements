@@ -25,7 +25,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
 	public PostgreSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
-		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "org.postgresql.Driver", "POSTGRESQL");
+		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "org.postgresql.Driver", "postgresql");
 	}
 
 	@Override

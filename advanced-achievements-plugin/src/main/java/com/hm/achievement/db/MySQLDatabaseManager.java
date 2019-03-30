@@ -18,7 +18,7 @@ public class MySQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
 	public MySQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
-		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "com.mysql.jdbc.Driver", "MYSQL");
+		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "com.mysql.jdbc.Driver", "mysql");
 	}
 
 	@Override
