@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -47,29 +48,14 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 		this.disabledCategories = disabledCategories;
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.MONITOR) // Do NOT set ignoreCancelled to true, see SPIGOT-4793.
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getItem() == null) {
+		if (event.useItemInHand() == Result.DENY) {
 			return;
 		}
 
-		NormalAchievements category;
-		Block clickedBlock = event.getClickedBlock();
-		if (event.getMaterial().name().contains("HOE") && canBePlowed(clickedBlock)) {
-			category = NormalAchievements.HOEPLOWING;
-		} else if (isBoneMeal(event.getItem())
-				&& (canBeFertilisedOnLand(clickedBlock) || canBeFertilisedUnderwater(clickedBlock))) {
-			category = NormalAchievements.FERTILISING;
-		} else if (isFirework(event.getMaterial())
-				&& canAccommodateFireworkLaunch(clickedBlock.getType(), event.getPlayer())) {
-			category = NormalAchievements.FIREWORKS;
-		} else if (event.getMaterial().isRecord() && clickedBlock.getType() == Material.JUKEBOX) {
-			category = NormalAchievements.MUSICDISCS;
-		} else {
-			return;
-		}
-
-		if (disabledCategories.contains(category)) {
+		NormalAchievements category = getCategory(event);
+		if (category == null || disabledCategories.contains(category)) {
 			return;
 		}
 
@@ -79,6 +65,30 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), category, 1);
+	}
+
+	/**
+	 * Determines which achievement category this event belongs to.
+	 * 
+	 * @param event
+	 * @return the achievement category or null if none match
+	 */
+	private NormalAchievements getCategory(PlayerInteractEvent event) {
+		Block clickedBlock = event.getClickedBlock();
+		Material materialInHand = event.getMaterial();
+		if (isFirework(materialInHand) && canAccommodateFireworkLaunch(clickedBlock, event.getPlayer(), event.getAction())) {
+			return NormalAchievements.FIREWORKS;
+		} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			if (materialInHand.name().contains("HOE") && canBePlowed(clickedBlock)) {
+				return NormalAchievements.HOEPLOWING;
+			} else if (isBoneMeal(event.getItem())
+					&& (canBeFertilisedOnLand(clickedBlock) || canBeFertilisedUnderwater(clickedBlock))) {
+				return NormalAchievements.FERTILISING;
+			} else if (materialInHand.isRecord() && clickedBlock.getType() == Material.JUKEBOX) {
+				return NormalAchievements.MUSICDISCS;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -168,14 +178,21 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 	/**
 	 * Determines whether a firework can be launched when interacting with this block.
 	 *
-	 * @param material
+	 * @param clickedBlock
 	 * @param player
+	 * @param action
 	 * @return true if the material can be used to launch a firework, false otherwise
 	 */
-	private boolean canAccommodateFireworkLaunch(Material material, Player player) {
+	private boolean canAccommodateFireworkLaunch(Block clickedBlock, Player player, Action action) {
+		// Players can launch fireworks without interacting with a block only if they're gliding.
+		if (serverVersion >= 9 && player.isGliding() && action == Action.RIGHT_CLICK_AIR) {
+			return true;
+		} else if (action != Action.RIGHT_CLICK_BLOCK) {
+			return false;
+		}
 		if (!player.isSneaking()) {
 			// The following materials only prevent firework launches whilst not sneaking.
-			switch (material.name()) {
+			switch (clickedBlock.getType().name()) {
 				case "FURNACE":
 				case "DISPENSER":
 				case "CHEST":
@@ -291,7 +308,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 			}
 		}
 		// The following materials prevent firework launches regardless of whether the player is sneaking or not.
-		switch (material.name()) {
+		switch (clickedBlock.getType().name()) {
 			case "PAINTING":
 			case "ITEM_FRAME":
 			case "MINECART":
