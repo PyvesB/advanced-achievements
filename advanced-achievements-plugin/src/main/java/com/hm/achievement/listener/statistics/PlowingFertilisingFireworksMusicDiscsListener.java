@@ -50,7 +50,7 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 
 	@EventHandler(priority = EventPriority.MONITOR) // Do NOT set ignoreCancelled to true, see SPIGOT-4793.
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (event.useItemInHand() == Result.DENY) {
+		if (event.useItemInHand() == Result.DENY || !event.hasItem()) {
 			return;
 		}
 
