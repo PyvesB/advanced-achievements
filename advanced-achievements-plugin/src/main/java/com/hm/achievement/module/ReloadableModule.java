@@ -22,6 +22,8 @@ import com.hm.achievement.listener.statistics.DeathsListener;
 import com.hm.achievement.listener.statistics.DropsListener;
 import com.hm.achievement.listener.statistics.EnchantmentsListener;
 import com.hm.achievement.listener.statistics.EnderPearlsDistancesListener;
+import com.hm.achievement.listener.statistics.FertilisingLegacyListener;
+import com.hm.achievement.listener.statistics.FertilisingListener;
 import com.hm.achievement.listener.statistics.ItemBreaksListener;
 import com.hm.achievement.listener.statistics.KillsListener;
 import com.hm.achievement.listener.statistics.LevelsListener;
@@ -30,7 +32,7 @@ import com.hm.achievement.listener.statistics.PetMasterGiveReceiveListener;
 import com.hm.achievement.listener.statistics.PickupsListener;
 import com.hm.achievement.listener.statistics.PlacesListener;
 import com.hm.achievement.listener.statistics.PlayerCommandsListener;
-import com.hm.achievement.listener.statistics.PlowingFertilisingFireworksMusicDiscsListener;
+import com.hm.achievement.listener.statistics.PlowingFireworksMusicDiscsListener;
 import com.hm.achievement.listener.statistics.ShearsListener;
 import com.hm.achievement.listener.statistics.SnowballsEggsListener;
 import com.hm.achievement.listener.statistics.TamesListener;
@@ -161,7 +163,15 @@ public interface ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindPlowingFertilisingFireworksMusicDiscsListener(
-			PlowingFertilisingFireworksMusicDiscsListener plowingFertilisingFireworksMusicDiscsListener);
+			PlowingFireworksMusicDiscsListener plowingFireworksMusicDiscsListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindFertilisingListener(FertilisingListener fertilisingListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindFertilisingLegacyListener(FertilisingLegacyListener fertilisingLegacyListener);
 
 	@Binds
 	@IntoSet

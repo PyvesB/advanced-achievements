@@ -47,6 +47,8 @@ import com.hm.achievement.listener.statistics.DeathsListener;
 import com.hm.achievement.listener.statistics.DropsListener;
 import com.hm.achievement.listener.statistics.EnchantmentsListener;
 import com.hm.achievement.listener.statistics.EnderPearlsDistancesListener;
+import com.hm.achievement.listener.statistics.FertilisingLegacyListener;
+import com.hm.achievement.listener.statistics.FertilisingListener;
 import com.hm.achievement.listener.statistics.ItemBreaksListener;
 import com.hm.achievement.listener.statistics.KillsListener;
 import com.hm.achievement.listener.statistics.LevelsListener;
@@ -55,7 +57,7 @@ import com.hm.achievement.listener.statistics.PetMasterGiveReceiveListener;
 import com.hm.achievement.listener.statistics.PickupsListener;
 import com.hm.achievement.listener.statistics.PlacesListener;
 import com.hm.achievement.listener.statistics.PlayerCommandsListener;
-import com.hm.achievement.listener.statistics.PlowingFertilisingFireworksMusicDiscsListener;
+import com.hm.achievement.listener.statistics.PlowingFireworksMusicDiscsListener;
 import com.hm.achievement.listener.statistics.ShearsListener;
 import com.hm.achievement.listener.statistics.SnowballsEggsListener;
 import com.hm.achievement.listener.statistics.TamesListener;
@@ -82,6 +84,7 @@ public class PluginLoader {
 	private final Logger logger;
 	private final Lazy<UpdateChecker> updateChecker;
 	private final ReloadCommand reloadCommand;
+	private final int serverVersion;
 
 	// Listeners, to monitor events and manage stats.
 	private final ConnectionsListener connectionsListener;
@@ -99,7 +102,9 @@ public class PluginLoader {
 	private final EnchantmentsListener enchantmentsListener;
 	private final DropsListener dropsListener;
 	private final PickupsListener pickupsListener;
-	private final PlowingFertilisingFireworksMusicDiscsListener plowingFertilisingFireworksMusicDiscsListener;
+	private final PlowingFireworksMusicDiscsListener plowingFireworksMusicDiscsListener;
+	private final FertilisingListener fertilisingListener;
+	private final FertilisingLegacyListener fertilisingLegacyListener;
 	private final TamesListener tamesListener;
 	private final BreedingListener breedingListener;
 	private final PlacesListener placesListener;
@@ -147,10 +152,11 @@ public class PluginLoader {
 			MilksLavaWaterBucketsListener milksLavaWaterBucketsListener, LevelsListener levelsListener,
 			TradesAnvilsBrewingSmeltingListener tradesAnvilsBrewingSmeltingListener, BedsListener bedsListener,
 			EnchantmentsListener enchantmentsListener, DropsListener dropsListener, PickupsListener pickupsListener,
-			PlowingFertilisingFireworksMusicDiscsListener plowingFertilisingFireworksMusicDiscsListener,
-			TamesListener tamesListener, BreedingListener breedingListener, PlacesListener placesListener,
-			BreaksListener breaksListener, KillsListener killsListener, CraftsListener craftsListener,
-			PlayerCommandsListener playerCommandsListener, EnderPearlsDistancesListener enderPearlsDistancesListener,
+			PlowingFireworksMusicDiscsListener plowingFireworksMusicDiscsListener, FertilisingListener fertilisingListener,
+			FertilisingLegacyListener fertilisingLegacyListener, TamesListener tamesListener,
+			BreedingListener breedingListener, PlacesListener placesListener, BreaksListener breaksListener,
+			KillsListener killsListener, CraftsListener craftsListener, PlayerCommandsListener playerCommandsListener,
+			EnderPearlsDistancesListener enderPearlsDistancesListener,
 			PetMasterGiveReceiveListener petMasterGiveReceiveListener, FireworkListener fireworkListener,
 			QuitListener quitListener, ListGUIListener listGUIListener,
 			PlayerAdvancedAchievementListener playerAdvancedAchievementListener,
@@ -160,7 +166,8 @@ public class PluginLoader {
 			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
 			Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
 			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
-			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand) {
+			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand,
+			int serverVersion) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.connectionsListener = connectionsListener;
@@ -178,7 +185,9 @@ public class PluginLoader {
 		this.enchantmentsListener = enchantmentsListener;
 		this.dropsListener = dropsListener;
 		this.pickupsListener = pickupsListener;
-		this.plowingFertilisingFireworksMusicDiscsListener = plowingFertilisingFireworksMusicDiscsListener;
+		this.plowingFireworksMusicDiscsListener = plowingFireworksMusicDiscsListener;
+		this.fertilisingListener = fertilisingListener;
+		this.fertilisingLegacyListener = fertilisingLegacyListener;
 		this.tamesListener = tamesListener;
 		this.breedingListener = breedingListener;
 		this.placesListener = placesListener;
@@ -205,6 +214,7 @@ public class PluginLoader {
 		this.playTimeRunnable = playTimeRunnable;
 		this.updateChecker = updateChecker;
 		this.reloadCommand = reloadCommand;
+		this.serverVersion = serverVersion;
 	}
 
 	/**
@@ -282,8 +292,10 @@ public class PluginLoader {
 		registerListener(dropsListener, NormalAchievements.DROPS);
 		registerListener(pickupsListener, NormalAchievements.PICKUPS);
 		registerListener(tamesListener, NormalAchievements.TAMES);
-		registerListener(plowingFertilisingFireworksMusicDiscsListener, NormalAchievements.HOEPLOWING,
-				NormalAchievements.FERTILISING, NormalAchievements.FIREWORKS, NormalAchievements.MUSICDISCS);
+		registerListener(plowingFireworksMusicDiscsListener, NormalAchievements.HOEPLOWING, NormalAchievements.FIREWORKS,
+				NormalAchievements.MUSICDISCS);
+		registerListener(serverVersion >= 13 ? fertilisingListener : fertilisingLegacyListener,
+				NormalAchievements.FERTILISING);
 		registerListener(enderPearlsDistancesListener, NormalAchievements.DISTANCEFOOT, NormalAchievements.DISTANCEPIG,
 				NormalAchievements.DISTANCEHORSE, NormalAchievements.DISTANCEMINECART, NormalAchievements.DISTANCEBOAT,
 				NormalAchievements.DISTANCEGLIDING, NormalAchievements.DISTANCELLAMA, NormalAchievements.ENDERPEARLS);

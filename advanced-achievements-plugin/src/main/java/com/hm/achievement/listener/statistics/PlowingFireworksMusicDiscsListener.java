@@ -18,7 +18,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.Category;
@@ -28,18 +27,18 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with HoePlowings, Fertilising, Fireworks and MusicDiscs achievements.
+ * Listener class to deal with HoePlowings, Fireworks and MusicDiscs achievements.
  *
  * @author Pyves
  *
  */
 @Singleton
-public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateLimitedListener {
+public class PlowingFireworksMusicDiscsListener extends AbstractRateLimitedListener {
 
 	private final Set<Category> disabledCategories;
 
 	@Inject
-	public PlowingFertilisingFireworksMusicDiscsListener(@Named("main") CommentedYamlConfiguration mainConfig,
+	public PlowingFireworksMusicDiscsListener(@Named("main") CommentedYamlConfiguration mainConfig,
 			int serverVersion, Map<String, List<Long>> sortedThresholds, CacheManager cacheManager,
 			RewardParser rewardParser, AdvancedAchievements advancedAchievements,
 			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger, Set<Category> disabledCategories) {
@@ -81,9 +80,6 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 		} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if (materialInHand.name().contains("HOE") && canBePlowed(clickedBlock)) {
 				return NormalAchievements.HOEPLOWING;
-			} else if (isBoneMeal(event.getItem())
-					&& (canBeFertilisedOnLand(clickedBlock) || canBeFertilisedUnderwater(clickedBlock))) {
-				return NormalAchievements.FERTILISING;
 			} else if (materialInHand.isRecord() && clickedBlock.getType() == Material.JUKEBOX) {
 				return NormalAchievements.MUSICDISCS;
 			}
@@ -102,67 +98,6 @@ public class PlowingFertilisingFireworksMusicDiscsListener extends AbstractRateL
 		return (serverVersion < 13 && block.getType() == Material.GRASS || block.getType() == Material.DIRT
 				|| serverVersion >= 13 && block.getType() == Material.GRASS_BLOCK)
 				&& block.getRelative(BlockFace.UP).getType() == Material.AIR;
-	}
-
-	/**
-	 * Determines whether the used item is bone meal.
-	 *
-	 * @param itemStack
-	 * @return true if the item is bone meal, false otherwise
-	 */
-	@SuppressWarnings("deprecation")
-	private boolean isBoneMeal(ItemStack itemStack) {
-		return serverVersion >= 13 ? itemStack.getType() == Material.BONE_MEAL
-				: itemStack.isSimilar(new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 15));
-	}
-
-	/**
-	 * Determines whether a material can be fertilised on the land.
-	 *
-	 * @param block
-	 *
-	 * @return true if the block can be fertilised, false otherwise
-	 */
-	@SuppressWarnings("deprecation")
-	private boolean canBeFertilisedOnLand(Block block) {
-		short durability = block.getState().getData().toItemStack(0).getDurability();
-		Material material = block.getType();
-		if ("DOUBLE_PLANT".equals(material.name())) {
-			if (durability == 10) {
-				// Upper part of double plant. We must look at the lower part to get the double plant type.
-				durability = block.getRelative(BlockFace.DOWN).getState().getData().toItemStack(0).getDurability();
-			}
-			// Fertilisation does not work on double tallgrass and large fern.
-			return durability != 2 && durability != 3;
-		}
-		return material == Material.GRASS || material.name().endsWith("SAPLING")
-				|| material == Material.POTATO && durability < 7
-				|| material == Material.CARROT && durability < 7
-				|| "CROPS".equals(material.name()) && durability < 7
-				|| material == Material.PUMPKIN_STEM && durability < 7
-				|| material == Material.MELON_STEM && durability < 7 || material == Material.BROWN_MUSHROOM
-				|| material == Material.RED_MUSHROOM || material == Material.COCOA && durability < 9
-				|| serverVersion >= 9 && "BEETROOT_BLOCK".equals(material.name()) && durability < 3
-				|| serverVersion >= 13 && (material == Material.BEETROOTS && durability < 3
-						|| material == Material.GRASS_BLOCK
-						|| material == Material.SUNFLOWER || material == Material.LILAC
-						|| material == Material.ROSE_BUSH || material == Material.PEONY);
-	}
-
-	/**
-	 * Determines whether a material can be fertilised underneath the water.
-	 *
-	 * @param block
-	 *
-	 * @return true if the block can be fertilised, false otherwise
-	 */
-	private boolean canBeFertilisedUnderwater(Block block) {
-		if (serverVersion < 13) {
-			return false;
-		}
-		return block.getType().isOccluding() && block.getRelative(BlockFace.UP).getType() == Material.WATER
-				|| block.getType() == Material.KELP || block.getType() == Material.SEAGRASS
-				|| block.getType() == Material.SEA_PICKLE;
 	}
 
 	/**

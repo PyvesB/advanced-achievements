@@ -6,7 +6,7 @@ import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.listener.statistics.BedsListener;
 import com.hm.achievement.listener.statistics.ConnectionsListener;
 import com.hm.achievement.listener.statistics.MilksLavaWaterBucketsListener;
-import com.hm.achievement.listener.statistics.PlowingFertilisingFireworksMusicDiscsListener;
+import com.hm.achievement.listener.statistics.PlowingFireworksMusicDiscsListener;
 import com.hm.achievement.listener.statistics.TradesAnvilsBrewingSmeltingListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 
@@ -28,7 +28,7 @@ public interface CleanableModule {
 	@Binds
 	@IntoSet
 	abstract Cleanable bindPlowingFertilisingFireworksMusicDiscsListener(
-			PlowingFertilisingFireworksMusicDiscsListener plowingFertilisingFireworksMusicDiscsListener);
+			PlowingFireworksMusicDiscsListener plowingFireworksMusicDiscsListener);
 
 	@Binds
 	@IntoSet
