@@ -24,6 +24,7 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.gui.AchievementInventoryHolder;
 import com.hm.achievement.gui.CategoryGUI;
+import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.MainGUI;
 
 /**
@@ -38,12 +39,15 @@ public class ListGUIListener implements Listener {
 	private final MainGUI mainGUI;
 	private final CategoryGUI categoryGUI;
 	private final Material lockedMaterial;
+	private final GUIItems guiItems;
 
 	@Inject
-	public ListGUIListener(int serverVersion, Set<Category> disabledCategories, MainGUI mainGUI, CategoryGUI categoryGUI) {
+	public ListGUIListener(int serverVersion, Set<Category> disabledCategories, MainGUI mainGUI, CategoryGUI categoryGUI,
+			GUIItems guiItems) {
 		this.disabledCategories = disabledCategories;
 		this.mainGUI = mainGUI;
 		this.categoryGUI = categoryGUI;
+		this.guiItems = guiItems;
 		lockedMaterial = serverVersion < 8 ? Material.OBSIDIAN : Material.BARRIER;
 	}
 
@@ -69,11 +73,11 @@ public class ListGUIListener implements Listener {
 
 		ItemStack categoryItem = inventory.getItem(0);
 		// Check whether a navigation button was clicked in a category GUI.
-		if (isButtonClicked(event, categoryGUI.getBackButton())) {
+		if (isButtonClicked(event, guiItems.getBackButton())) {
 			mainGUI.displayMainGUI(player);
-		} else if (isButtonClicked(event, categoryGUI.getPreviousButton())) {
+		} else if (isButtonClicked(event, guiItems.getPreviousButton())) {
 			categoryGUI.displayCategoryGUI(categoryItem, player, currentPage - 1);
-		} else if (isButtonClicked(event, categoryGUI.getNextButton())) {
+		} else if (isButtonClicked(event, guiItems.getNextButton())) {
 			categoryGUI.displayCategoryGUI(categoryItem, player, currentPage + 1);
 		}
 	}

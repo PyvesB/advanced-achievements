@@ -7,6 +7,7 @@ import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executor.PluginCommandExecutor;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.gui.CategoryGUI;
+import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.MainGUI;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
@@ -65,6 +66,10 @@ public interface ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindMainGUI(MainGUI mainGUI);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindGUIItems(GUIItems guiItems);
 
 	@Binds
 	@IntoSet

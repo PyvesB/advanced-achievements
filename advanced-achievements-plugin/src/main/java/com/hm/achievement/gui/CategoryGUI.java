@@ -30,7 +30,8 @@ import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.utils.MaterialHelper;
+import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.NumberHelper;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -41,17 +42,22 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
-public class CategoryGUI extends AbstractGUI {
+public class CategoryGUI implements Reloadable {
 
-	private static final int MAX_PER_PAGE = 50;
+	private static final int MAX_PAGE_SIZE = 54;
+	private static final int MAX_ACHIEVEMENTS_PER_PAGE = 50;
 	private static final long NO_STAT = -1L;
 	private static final String NO_SUBCATEGORY = "";
 	// Minecraft font, used to get size information in the progress bar.
 	private static final MinecraftFont FONT = MinecraftFont.Font;
 
+	private final CommentedYamlConfiguration mainConfig;
+	private final CommentedYamlConfiguration langConfig;
+	private final CacheManager cacheManager;
 	private final AbstractDatabaseManager databaseManager;
 	private final Map<String, List<Long>> sortedThresholds;
 	private final RewardParser rewardParser;
+	private final GUIItems guiItems;
 
 	private boolean configObfuscateNotReceived;
 	private boolean configObfuscateProgressiveAchievements;
@@ -69,29 +75,22 @@ public class CategoryGUI extends AbstractGUI {
 	private String langListProgress;
 	private String langListReward;
 
-	// Various item stacks displayed in the GUI.
-	private ItemStack previousButton;
-	private ItemStack nextButton;
-	private ItemStack backButton;
-	private ItemStack achievementNotStarted;
-	private ItemStack achievementStarted;
-	private ItemStack achievementReceived;
-
 	@Inject
 	public CategoryGUI(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			CacheManager cacheManager, AbstractDatabaseManager databaseManager, Map<String, List<Long>> sortedThresholds,
-			RewardParser rewardParser, MaterialHelper materialHelper) {
-		super(mainConfig, langConfig, guiConfig, cacheManager, materialHelper);
+			@Named("lang") CommentedYamlConfiguration langConfig, CacheManager cacheManager,
+			AbstractDatabaseManager databaseManager, Map<String, List<Long>> sortedThresholds, RewardParser rewardParser,
+			GUIItems guiItems) {
+		this.mainConfig = mainConfig;
+		this.langConfig = langConfig;
+		this.cacheManager = cacheManager;
 		this.databaseManager = databaseManager;
 		this.sortedThresholds = sortedThresholds;
 		this.rewardParser = rewardParser;
+		this.guiItems = guiItems;
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
-		super.extractConfigurationParameters();
-
 		configObfuscateNotReceived = mainConfig.getBoolean("ObfuscateNotReceived", true);
 		configObfuscateProgressiveAchievements = mainConfig.getBoolean("ObfuscateProgressiveAchievements", false);
 		configHideRewardDisplayInList = mainConfig.getBoolean("HideRewardDisplayInList", false);
@@ -110,25 +109,6 @@ public class CategoryGUI extends AbstractGUI {
 		langListGoal = translateColorCodes("&7&l" + LangHelper.get(GuiLang.GOAL, langConfig));
 		langListProgress = translateColorCodes("&7&l" + LangHelper.get(GuiLang.PROGRESS, langConfig));
 		langListReward = translateColorCodes("&7&l" + LangHelper.get(GuiLang.REWARD, langConfig));
-
-		achievementNotStarted = createItemStack("AchievementNotStarted");
-		achievementStarted = createItemStack("AchievementStarted");
-		achievementReceived = createItemStack("AchievementReceived");
-		previousButton = createButton("PreviousButton", GuiLang.PREVIOUS_MESSAGE, GuiLang.PREVIOUS_LORE);
-		nextButton = createButton("NextButton", GuiLang.NEXT_MESSAGE, GuiLang.NEXT_LORE);
-		backButton = createButton("BackButton", GuiLang.BACK_MESSAGE, GuiLang.BACK_LORE);
-	}
-
-	private ItemStack createButton(String category, GuiLang msg, GuiLang lore) {
-		ItemStack button = createItemStack(category);
-		ItemMeta meta = button.getItemMeta();
-		meta.setDisplayName(translateColorCodes(StringEscapeUtils.unescapeJava(LangHelper.get(msg, langConfig))));
-		String loreString = translateColorCodes(StringEscapeUtils.unescapeJava(LangHelper.get(lore, langConfig)));
-		if (!loreString.isEmpty()) {
-			meta.setLore(Collections.singletonList(loreString));
-		}
-		button.setItemMeta(meta);
-		return button;
 	}
 
 	/**
@@ -139,7 +119,7 @@ public class CategoryGUI extends AbstractGUI {
 	 * @param requestedPage
 	 */
 	public void displayCategoryGUI(ItemStack item, Player player, int requestedPage) {
-		for (Entry<MultipleAchievements, ItemStack> entry : multipleAchievementItems.entrySet()) {
+		for (Entry<MultipleAchievements, ItemStack> entry : guiItems.getMultipleAchievementItems().entrySet()) {
 			if (entry.getValue().isSimilar(item)) {
 				String categoryName = entry.getKey().toString();
 				List<String> achievementPaths = getSortedMultipleAchievementPaths(categoryName);
@@ -148,7 +128,7 @@ public class CategoryGUI extends AbstractGUI {
 				return;
 			}
 		}
-		for (Entry<NormalAchievements, ItemStack> entry : normalAchievementItems.entrySet()) {
+		for (Entry<NormalAchievements, ItemStack> entry : guiItems.getNormalAchievementItems().entrySet()) {
 			if (entry.getValue().isSimilar(item)) {
 				String categoryName = entry.getKey().toString();
 				List<String> achievementThresholds = getSortedNormalAchievementThresholds(categoryName);
@@ -176,13 +156,13 @@ public class CategoryGUI extends AbstractGUI {
 	private void displayPage(String categoryName, Player player, Map<String, Long> subcategoriesToStatistics,
 			int requestedIndex, ItemStack clickedItem, List<String> achievementPaths) {
 		int pageIndex = getPageIndex(requestedIndex, achievementPaths.size());
-		int pageStart = MAX_PER_PAGE * pageIndex;
-		int pageEnd = Math.min(MAX_PER_PAGE * (pageIndex + 1), achievementPaths.size());
-		int navigationItems = achievementPaths.size() > MAX_PER_PAGE ? 3 : 1;
+		int pageStart = MAX_ACHIEVEMENTS_PER_PAGE * pageIndex;
+		int pageEnd = Math.min(MAX_ACHIEVEMENTS_PER_PAGE * (pageIndex + 1), achievementPaths.size());
+		int navigationItems = achievementPaths.size() > MAX_ACHIEVEMENTS_PER_PAGE ? 3 : 1;
 
 		// Create a new chest-like inventory as small as possible whilst still containing the category item, all page
 		// achievements and the navigation items.
-		int guiSize = nextMultipleOf9(achievementPaths.size() + navigationItems + 1, MAX_PER_PAGE);
+		int guiSize = Math.min(NumberHelper.nextMultipleOf9(achievementPaths.size() + navigationItems + 1), MAX_PAGE_SIZE);
 		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder(pageIndex);
 		Inventory inventory = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
 		inventoryHolder.setInventory(inventory);
@@ -228,11 +208,11 @@ public class CategoryGUI extends AbstractGUI {
 		}
 		// Add navigation items.
 		if (navigationItems > 1) {
-			inventory.setItem(pageEnd - pageStart + 1, previousButton);
-			inventory.setItem(pageEnd - pageStart + 2, nextButton);
-			inventory.setItem(pageEnd - pageStart + 3, backButton);
+			inventory.setItem(pageEnd - pageStart + 1, guiItems.getPreviousButton());
+			inventory.setItem(pageEnd - pageStart + 2, guiItems.getNextButton());
+			inventory.setItem(pageEnd - pageStart + 3, guiItems.getBackButton());
 		} else {
-			inventory.setItem(pageEnd - pageStart + 1, backButton);
+			inventory.setItem(pageEnd - pageStart + 1, guiItems.getBackButton());
 		}
 
 		// Display page.
@@ -256,11 +236,11 @@ public class CategoryGUI extends AbstractGUI {
 		// Clone in order to work with an independent set of metadata.
 		ItemStack achItem;
 		if (date != null) {
-			achItem = achievementReceived.clone();
+			achItem = guiItems.getAchievementReceived().clone();
 		} else if (statistic > 0) {
-			achItem = achievementStarted.clone();
+			achItem = guiItems.getAchievementStarted().clone();
 		} else {
-			achItem = achievementNotStarted.clone();
+			achItem = guiItems.getAchievementNotStarted().clone();
 		}
 
 		// Set name of the achievement. The style depends whether it was received or not and whether the user has set
@@ -390,7 +370,7 @@ public class CategoryGUI extends AbstractGUI {
 	private int getPageIndex(int requestedPage, int totalAchievements) {
 		if (requestedPage <= 0) {
 			return 0;
-		} else if (totalAchievements <= MAX_PER_PAGE * requestedPage) {
+		} else if (totalAchievements <= MAX_ACHIEVEMENTS_PER_PAGE * requestedPage) {
 			return requestedPage - 1;
 		}
 		return requestedPage;
@@ -536,15 +516,8 @@ public class CategoryGUI extends AbstractGUI {
 		return randomisedText.substring(0, randomisedText.length() - 1);
 	}
 
-	public ItemStack getPreviousButton() {
-		return previousButton;
+	private String translateColorCodes(String translate) {
+		return ChatColor.translateAlternateColorCodes('&', translate);
 	}
 
-	public ItemStack getNextButton() {
-		return nextButton;
-	}
-
-	public ItemStack getBackButton() {
-		return backButton;
-	}
 }

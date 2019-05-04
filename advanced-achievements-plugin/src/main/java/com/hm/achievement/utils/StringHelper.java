@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 /**
- * Simple class providing a helper methods to process strings.
+ * Simple class providing helper methods to process strings.
  * 
  * @author Pyves
  */

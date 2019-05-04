@@ -1,5 +1,6 @@
 package com.hm.achievement.gui;
 
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -7,6 +8,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -20,7 +22,8 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.utils.MaterialHelper;
+import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.NumberHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
@@ -29,12 +32,14 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  * @author Pyves
  */
 @Singleton
-public class MainGUI extends AbstractGUI {
+public class MainGUI implements Reloadable {
 
-	private static final int MAX_PER_PAGE = 54;
-
+	private final CommentedYamlConfiguration mainConfig;
+	private final CommentedYamlConfiguration langConfig;
+	private final CacheManager cacheManager;
 	private final Set<Category> disabledCategories;
 	private final ItemStack lockedItem;
+	private final GUIItems guiItems;
 
 	private boolean configHideNotReceivedCategories;
 	private boolean configHideNoPermissionCategories;
@@ -43,24 +48,26 @@ public class MainGUI extends AbstractGUI {
 
 	@Inject
 	public MainGUI(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			CacheManager cacheManager, int serverVersion, Set<Category> disabledCategories, MaterialHelper materialHelper) {
-		super(mainConfig, langConfig, guiConfig, cacheManager, materialHelper);
+			@Named("lang") CommentedYamlConfiguration langConfig, CacheManager cacheManager, int serverVersion,
+			Set<Category> disabledCategories, GUIItems guiItems) {
+		this.mainConfig = mainConfig;
+		this.langConfig = langConfig;
+		this.cacheManager = cacheManager;
 		this.disabledCategories = disabledCategories;
+		this.guiItems = guiItems;
 		lockedItem = new ItemStack(serverVersion < 8 ? Material.OBSIDIAN : Material.BARRIER);
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
-		super.extractConfigurationParameters();
-
 		configHideNotReceivedCategories = mainConfig.getBoolean("HideNotReceivedCategories", false);
 		configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories", false);
 
-		langListGUITitle = translateColorCodes(LangHelper.get(GuiLang.GUI_TITLE, langConfig));
+		langListGUITitle = ChatColor.translateAlternateColorCodes('&', LangHelper.get(GuiLang.GUI_TITLE, langConfig));
 
 		ItemMeta itemMeta = lockedItem.getItemMeta();
-		itemMeta.setDisplayName(translateColorCodes("&8" + LangHelper.get(GuiLang.CATEGORY_NOT_UNLOCKED, langConfig)));
+		String displayName = "&8" + LangHelper.get(GuiLang.CATEGORY_NOT_UNLOCKED, langConfig);
+		itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
 		lockedItem.setItemMeta(itemMeta);
 	}
 
@@ -73,31 +80,33 @@ public class MainGUI extends AbstractGUI {
 		int totalEnabledCategories = MultipleAchievements.values().length + NormalAchievements.values().length + 1
 				- disabledCategories.size();
 		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder();
-		Inventory mainGUI = Bukkit.createInventory(inventoryHolder, nextMultipleOf9(totalEnabledCategories, MAX_PER_PAGE),
-				langListGUITitle);
+		int guiSize = NumberHelper.nextMultipleOf9(totalEnabledCategories);
+		Inventory mainGUI = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
 		inventoryHolder.setInventory(mainGUI);
 
 		int displayedSoFar = 0;
 		// Display Multiple categories in the GUI.
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			ItemStack item = multipleAchievementItems.get(category);
+		for (Entry<MultipleAchievements, ItemStack> multipleEntry : guiItems.getMultipleAchievementItems().entrySet()) {
+			ItemStack item = multipleEntry.getValue();
+			MultipleAchievements category = multipleEntry.getKey();
 			if (shouldDisplayCategory(item, player, category)) {
 				displayMultipleCategory(item, mainGUI, player, category.toString(), displayedSoFar);
 				++displayedSoFar;
 			}
 		}
 		// Display Normal categories in the GUI.
-		for (NormalAchievements category : NormalAchievements.values()) {
-			ItemStack item = normalAchievementItems.get(category);
+		for (Entry<NormalAchievements, ItemStack> normalEntry : guiItems.getNormalAchievementItems().entrySet()) {
+			ItemStack item = normalEntry.getValue();
+			NormalAchievements category = normalEntry.getKey();
 			if (shouldDisplayCategory(item, player, category)) {
 				displayNormalCategory(item, mainGUI, player, category.toString(), displayedSoFar);
 				++displayedSoFar;
 			}
 		}
 		// Display the Commands category.
-		if (shouldDisplayCategory(commandsAchievementsItem, player, CommandAchievements.COMMANDS)) {
-			displayNormalCategory(commandsAchievementsItem, mainGUI, player, CommandAchievements.COMMANDS.toString(),
-					displayedSoFar);
+		if (shouldDisplayCategory(guiItems.getCommandsAchievementsItem(), player, CommandAchievements.COMMANDS)) {
+			displayNormalCategory(guiItems.getCommandsAchievementsItem(), mainGUI, player,
+					CommandAchievements.COMMANDS.toString(), displayedSoFar);
 		}
 
 		// Display the main GUI to the player.

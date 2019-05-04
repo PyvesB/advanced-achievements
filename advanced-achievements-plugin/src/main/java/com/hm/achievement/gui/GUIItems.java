@@ -1,8 +1,13 @@
 package com.hm.achievement.gui;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -14,7 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lifecycle.Reloadable;
@@ -22,19 +27,28 @@ import com.hm.achievement.utils.MaterialHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Abstract class in charge of factoring out common functionality for the GUIs.
- *
+ * Class providing all the items displayed in the GUIs.
+ * 
  * @author Pyves
  */
-public abstract class AbstractGUI implements Reloadable {
+@Singleton
+public class GUIItems implements Reloadable {
 
-	final Map<MultipleAchievements, ItemStack> multipleAchievementItems = new EnumMap<>(MultipleAchievements.class);
-	final Map<NormalAchievements, ItemStack> normalAchievementItems = new EnumMap<>(NormalAchievements.class);
-	final CommentedYamlConfiguration mainConfig;
-	final CommentedYamlConfiguration langConfig;
-	final CacheManager cacheManager;
+	// Category items stacks.
+	private final Map<MultipleAchievements, ItemStack> multipleAchievementItems = new EnumMap<>(MultipleAchievements.class);
+	private final Map<NormalAchievements, ItemStack> normalAchievementItems = new EnumMap<>(NormalAchievements.class);
+	private ItemStack commandsAchievementsItem;
 
-	ItemStack commandsAchievementsItem;
+	// Various other item stacks displayed in the GUI.
+	private ItemStack previousButton;
+	private ItemStack nextButton;
+	private ItemStack backButton;
+	private ItemStack achievementNotStarted;
+	private ItemStack achievementStarted;
+	private ItemStack achievementReceived;
+
+	private final CommentedYamlConfiguration mainConfig;
+	private final CommentedYamlConfiguration langConfig;
 
 	private final CommentedYamlConfiguration guiConfig;
 	private final MaterialHelper materialHelper;
@@ -45,17 +59,18 @@ public abstract class AbstractGUI implements Reloadable {
 	private String langListAchievementsInCategoryPlural;
 	private String langListAchievementInCategorySingular;
 
-	AbstractGUI(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
-			CommentedYamlConfiguration guiConfig, CacheManager cacheManager, MaterialHelper materialHelper) {
+	@Inject
+	public GUIItems(@Named("main") CommentedYamlConfiguration mainConfig,
+			@Named("lang") CommentedYamlConfiguration langConfig,
+			@Named("gui") CommentedYamlConfiguration guiConfig, MaterialHelper materialHelper) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
-		this.cacheManager = cacheManager;
 		this.materialHelper = materialHelper;
 	}
 
 	@Override
-	public void extractConfigurationParameters() {
+	public void extractConfigurationParameters() throws PluginLoadError {
 		configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%");
 		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
 
@@ -87,22 +102,13 @@ public abstract class AbstractGUI implements Reloadable {
 		commandsAchievementsItem = createItemStack(CommandAchievements.COMMANDS.toString());
 		buildItemLore(commandsAchievementsItem, LangHelper.get(GuiLang.COMMANDS, langConfig),
 				mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString()).size());
-	}
 
-	/**
-	 * Inventory GUIs need a number of slots that is a multiple of 9. This simple function gets the smallest multiple of
-	 * 9 greater than its input value, in order for the GUI to contain all of its elements with minimum empty space.
-	 *
-	 * @param value
-	 * @param maxPerPage
-	 * @return closest multiple of 9 greater than value
-	 */
-	int nextMultipleOf9(int value, int maxPerPage) {
-		int multipleOfNine = 9;
-		while (multipleOfNine < value && multipleOfNine <= maxPerPage) {
-			multipleOfNine += 9;
-		}
-		return multipleOfNine;
+		achievementNotStarted = createItemStack("AchievementNotStarted");
+		achievementStarted = createItemStack("AchievementStarted");
+		achievementReceived = createItemStack("AchievementReceived");
+		previousButton = createButton("PreviousButton", GuiLang.PREVIOUS_MESSAGE, GuiLang.PREVIOUS_LORE);
+		nextButton = createButton("NextButton", GuiLang.NEXT_MESSAGE, GuiLang.NEXT_LORE);
+		backButton = createButton("BackButton", GuiLang.BACK_MESSAGE, GuiLang.BACK_LORE);
 	}
 
 	/**
@@ -112,12 +118,35 @@ public abstract class AbstractGUI implements Reloadable {
 	 * @return the item for the category
 	 */
 	@SuppressWarnings("deprecation")
-	ItemStack createItemStack(String categoryName) {
+	private ItemStack createItemStack(String categoryName) {
 		String path = categoryName + ".Item";
 		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BEDROCK,
 				"gui.yml (" + path + ")");
 		short metadata = (short) guiConfig.getInt(categoryName + ".Metadata", 0);
 		return new ItemStack(material, 1, metadata);
+	}
+
+	/**
+	 * Creates an ItemStack used as a button in the category GUI.
+	 * 
+	 * @param category
+	 * @param msg
+	 * @param lore
+	 * @return the item stack
+	 */
+	private ItemStack createButton(String category, GuiLang msg, GuiLang lore) {
+		ItemStack button = createItemStack(category);
+		ItemMeta meta = button.getItemMeta();
+		String displayName = ChatColor.translateAlternateColorCodes('&',
+				StringEscapeUtils.unescapeJava(LangHelper.get(msg, langConfig)));
+		meta.setDisplayName(displayName);
+		String loreString = ChatColor.translateAlternateColorCodes('&',
+				StringEscapeUtils.unescapeJava(LangHelper.get(lore, langConfig)));
+		if (!loreString.isEmpty()) {
+			meta.setLore(Collections.singletonList(loreString));
+		}
+		button.setItemMeta(meta);
+		return button;
 	}
 
 	/**
@@ -133,8 +162,9 @@ public abstract class AbstractGUI implements Reloadable {
 		if (StringUtils.isBlank(displayName)) {
 			itemMeta.setDisplayName("");
 		} else {
-			itemMeta.setDisplayName(translateColorCodes(StringUtils.replaceEach(configListAchievementFormat,
-					new String[] { "%ICON%", "%NAME%" }, new String[] { configIcon, "&l" + displayName + "&8" })));
+			String formattedDisplayName = StringUtils.replaceEach(configListAchievementFormat,
+					new String[] { "%ICON%", "%NAME%" }, new String[] { configIcon, "&l" + displayName + "&8" });
+			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', formattedDisplayName));
 		}
 
 		// Construct lore of the category item.
@@ -146,11 +176,44 @@ public abstract class AbstractGUI implements Reloadable {
 			amountMessage = StringUtils.replaceOnce(langListAchievementInCategorySingular, "AMOUNT",
 					Integer.toString(totalAchievements));
 		}
-		itemMeta.setLore(Arrays.asList(translateColorCodes("&8" + amountMessage)));
+		itemMeta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
 		item.setItemMeta(itemMeta);
 	}
 
-	String translateColorCodes(String translate) {
-		return ChatColor.translateAlternateColorCodes('&', translate);
+	public Map<MultipleAchievements, ItemStack> getMultipleAchievementItems() {
+		return multipleAchievementItems;
 	}
+
+	public Map<NormalAchievements, ItemStack> getNormalAchievementItems() {
+		return normalAchievementItems;
+	}
+
+	public ItemStack getCommandsAchievementsItem() {
+		return commandsAchievementsItem;
+	}
+
+	public ItemStack getPreviousButton() {
+		return previousButton;
+	}
+
+	public ItemStack getNextButton() {
+		return nextButton;
+	}
+
+	public ItemStack getBackButton() {
+		return backButton;
+	}
+
+	public ItemStack getAchievementNotStarted() {
+		return achievementNotStarted;
+	}
+
+	public ItemStack getAchievementStarted() {
+		return achievementStarted;
+	}
+
+	public ItemStack getAchievementReceived() {
+		return achievementReceived;
+	}
+
 }
