@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -125,9 +126,14 @@ public class PlowingFireworksMusicDiscsListener extends AbstractRateLimitedListe
 		} else if (action != Action.RIGHT_CLICK_BLOCK) {
 			return false;
 		}
+		Material clickedMaterial = clickedBlock.getType();
 		if (!player.isSneaking()) {
+			if (serverVersion >= 14 && clickedMaterial == Material.SWEET_BERRY_BUSH
+					&& ((Ageable) clickedBlock.getBlockData()).getAge() > 1) {
+				return false;
+			}
 			// The following materials only prevent firework launches whilst not sneaking.
-			switch (clickedBlock.getType().name()) {
+			switch (clickedMaterial.name()) {
 				case "FURNACE":
 				case "DISPENSER":
 				case "CHEST":
@@ -212,6 +218,14 @@ public class PlowingFireworksMusicDiscsListener extends AbstractRateLimitedListe
 				case "WHITE_SHULKER_BOX":
 				case "YELLOW_SHULKER_BOX":
 				case "SHULKER_BOX":
+				case "BARREL":
+				case "BELL":
+				case "BLAST_FURNACE":
+				case "CARTOGRAPHY_TABLE":
+				case "GRINDSTONE":
+				case "LOOM":
+				case "SMOKER":
+				case "STONECUTTER":
 					// Pre Minecraft 1.13":
 				case "WORKBENCH":
 				case "BURNING_FURNACE":
@@ -243,7 +257,7 @@ public class PlowingFireworksMusicDiscsListener extends AbstractRateLimitedListe
 			}
 		}
 		// The following materials prevent firework launches regardless of whether the player is sneaking or not.
-		switch (clickedBlock.getType().name()) {
+		switch (clickedMaterial.name()) {
 			case "PAINTING":
 			case "ITEM_FRAME":
 			case "MINECART":
