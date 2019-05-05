@@ -226,6 +226,21 @@ public class PlowingFireworksMusicDiscsListener extends AbstractRateLimitedListe
 				case "LOOM":
 				case "SMOKER":
 				case "STONECUTTER":
+				case "ACACIA_SIGN":
+				case "ACACIA_WALL_SIGN":
+				case "BIRCH_SIGN":
+				case "BIRCH_WALL_SIGN":
+				case "DARK_OAK_SIGN":
+				case "DARK_OAK_WALL_SIGN":
+				case "JUNGLE_SIGN":
+				case "JUNGLE_WALL_SIGN":
+				case "OAK_SIGN":
+				case "OAK_WALL_SIGN":
+				case "SPRUCE_SIGN":
+				case "SPRUCE_WALL_SIGN":
+					// Pre Minecraft 1.14":
+				case "SIGN":
+				case "WALL_SIGN":
 					// Pre Minecraft 1.13":
 				case "WORKBENCH":
 				case "BURNING_FURNACE":
@@ -251,6 +266,7 @@ public class PlowingFireworksMusicDiscsListener extends AbstractRateLimitedListe
 				case "COMMAND_REPEATING":
 				case "COMMAND_CHAIN":
 				case "SILVER_SHULKER_BOX":
+				case "SIGN_POST":
 					return false;
 				default:
 					break;
