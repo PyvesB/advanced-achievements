@@ -393,7 +393,7 @@ TargetsShot:
       DisplayName: The Stoner
   glass:
     100:
-      Goal: Try to brake granny's windows.
+      Goal: Try to break granny's windows.
       Message: You shot 100 projectiles at glass blocks!
       Name: targetsshot_100_glass
       DisplayName: Window Breaker
