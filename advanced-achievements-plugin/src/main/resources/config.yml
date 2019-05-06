@@ -287,7 +287,7 @@ Places:
           Display: Become the Stone God!
 
 # When a specific block is broken (available names: github.com/PyvesB/AdvancedAchievements/wiki/Material-names).
-# You can use notations such as sand:1 for pre-1.13 versions, which means sand item with metadata 1 (red sand) .
+# You can use notations such as sand:1 for pre-1.13 versions, which means sand item with metadata 1 (red sand).
 Breaks: 
   ice:
     10:
@@ -380,6 +380,23 @@ Breeding:
       Message: You bred your first sheep!
       Name: breeding_1_sheep
       DisplayName: Breeder
+      
+# When a specific target is shot (but not necessarily killed) with a projectile.
+# Available target block names: github.com/PyvesB/AdvancedAchievements/wiki/Material-names
+# Available target entity names: github.com/PyvesB/AdvancedAchievements/wiki/Entity-names
+TargetsShot:
+  villager:
+    10:
+      Goal: Throw things at villagers.
+      Message: You lapidated villagers 10 times.
+      Name: targetsshot_10_villager
+      DisplayName: The Stoner
+  glass:
+    100:
+      Goal: Try to brake granny's windows.
+      Message: You shot 100 projectiles at glass blocks!
+      Name: targetsshot_100_glass
+      DisplayName: Window Breaker
 
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #

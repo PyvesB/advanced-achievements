@@ -278,6 +278,9 @@ public class FileUpdater {
 		// Added in version 5.5:
 		updateSetting(gui, "Custom.Item", "feather");
 
+		// Added in version 5.12.0:
+		updateSetting(gui, "TargetsShot.Item", serverVersion >= 13 ? "firework_star" : "firework_charge");
+
 		if (serverVersion < 13) {
 			updateSetting(gui, "Breeding.Metadata", 0);
 			updateSetting(gui, "AchievementNotStarted.Metadata", 14);
@@ -287,6 +290,7 @@ public class FileUpdater {
 			updateSetting(gui, "PreviousButton.Metadata", 0);
 			updateSetting(gui, "NextButton.Metadata", 0);
 			updateSetting(gui, "Custom.Metadata", 0);
+			updateSetting(gui, "TargetsShot.Metadata", 0);
 		}
 
 		if (updatePerformed) {

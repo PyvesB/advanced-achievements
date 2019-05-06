@@ -37,6 +37,7 @@ import com.hm.achievement.listener.statistics.PlowingFireworksMusicDiscsListener
 import com.hm.achievement.listener.statistics.ShearsListener;
 import com.hm.achievement.listener.statistics.SnowballsEggsListener;
 import com.hm.achievement.listener.statistics.TamesListener;
+import com.hm.achievement.listener.statistics.TargetsShotListener;
 import com.hm.achievement.listener.statistics.TradesAnvilsBrewingSmeltingListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
@@ -103,6 +104,10 @@ public interface ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindBreedingListener(BreedingListener breedingListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindTargetsShotListener(TargetsShotListener targetsShotListener);
 
 	@Binds
 	@IntoSet

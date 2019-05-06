@@ -172,6 +172,9 @@ Commands:
 Custom:
   Item: feather
   Metadata: 0
+TargetsShot:
+  Item: firework_charge
+  Metadata: 0
 
 #============================================================#
 # +--------------------------------------------------------+ #

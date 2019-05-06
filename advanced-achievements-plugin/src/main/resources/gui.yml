@@ -118,6 +118,8 @@ DistanceLlama:
   Item: cyan_carpet
 Commands:
   Item: bookshelf
+TargetsShot:
+  Item: firework_star
 
 #============================================================#
 # +--------------------------------------------------------+ #

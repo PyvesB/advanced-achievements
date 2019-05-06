@@ -61,6 +61,7 @@ import com.hm.achievement.listener.statistics.PlowingFireworksMusicDiscsListener
 import com.hm.achievement.listener.statistics.ShearsListener;
 import com.hm.achievement.listener.statistics.SnowballsEggsListener;
 import com.hm.achievement.listener.statistics.TamesListener;
+import com.hm.achievement.listener.statistics.TargetsShotListener;
 import com.hm.achievement.listener.statistics.TradesAnvilsBrewingSmeltingListener;
 import com.hm.achievement.placeholder.AchievementCountBungeeTabListPlusVariable;
 import com.hm.achievement.placeholder.AchievementPlaceholderHook;
@@ -112,6 +113,7 @@ public class PluginLoader {
 	private final KillsListener killsListener;
 	private final CraftsListener craftsListener;
 	private final PlayerCommandsListener playerCommandsListener;
+	private final TargetsShotListener targetsShotListener;
 	private final EnderPearlsDistancesListener enderPearlsDistancesListener;
 	private final PetMasterGiveReceiveListener petMasterGiveReceiveListener;
 	private final FireworkListener fireworkListener;
@@ -156,7 +158,7 @@ public class PluginLoader {
 			FertilisingLegacyListener fertilisingLegacyListener, TamesListener tamesListener,
 			BreedingListener breedingListener, PlacesListener placesListener, BreaksListener breaksListener,
 			KillsListener killsListener, CraftsListener craftsListener, PlayerCommandsListener playerCommandsListener,
-			EnderPearlsDistancesListener enderPearlsDistancesListener,
+			TargetsShotListener targetsShotListener, EnderPearlsDistancesListener enderPearlsDistancesListener,
 			PetMasterGiveReceiveListener petMasterGiveReceiveListener, FireworkListener fireworkListener,
 			QuitListener quitListener, ListGUIListener listGUIListener,
 			PlayerAdvancedAchievementListener playerAdvancedAchievementListener,
@@ -195,6 +197,7 @@ public class PluginLoader {
 		this.killsListener = killsListener;
 		this.craftsListener = craftsListener;
 		this.playerCommandsListener = playerCommandsListener;
+		this.targetsShotListener = targetsShotListener;
 		this.enderPearlsDistancesListener = enderPearlsDistancesListener;
 		this.petMasterGiveReceiveListener = petMasterGiveReceiveListener;
 		this.fireworkListener = fireworkListener;
@@ -274,6 +277,7 @@ public class PluginLoader {
 		registerListener(craftsListener, MultipleAchievements.CRAFTS);
 		registerListener(playerCommandsListener, MultipleAchievements.PLAYERCOMMANDS);
 		registerListener(breedingListener, MultipleAchievements.BREEDING);
+		registerListener(targetsShotListener, MultipleAchievements.TARGETSSHOT);
 		registerListener(deathsListener, NormalAchievements.DEATHS);
 		registerListener(arrowsListener, NormalAchievements.ARROWS);
 		registerListener(snowballsEggsListener, NormalAchievements.SNOWBALLS, NormalAchievements.EGGS);

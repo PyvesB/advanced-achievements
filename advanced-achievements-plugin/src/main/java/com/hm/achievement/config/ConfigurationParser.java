@@ -167,12 +167,19 @@ public class ConfigurationParser {
 			logger.warning(
 					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in config.yml.");
 		}
-		// Breeding event introduced in Spigot 1319 (Minecraft 1.10.2).
+		// Breeding event introduced in Bukkit 1.10.2.
 		if (!disabledCategories.contains(MultipleAchievements.BREEDING) && serverVersion < 10) {
 			disabledCategories.add(MultipleAchievements.BREEDING);
 			logger.warning("Overriding configuration: disabling Breeding category.");
 			logger.warning(
 					"The breeding event is not available in your server version, please add Breeding to the DisabledCategories list in config.yml.");
+		}
+		// Proper ProjectileHitEvent introduced in Bukkit 1.11.
+		if (!disabledCategories.contains(MultipleAchievements.TARGETSSHOT) && serverVersion < 11) {
+			disabledCategories.add(MultipleAchievements.TARGETSSHOT);
+			logger.warning("Overriding configuration: disabling TargetsShot category.");
+			logger.warning(
+					"The projectile hit event is not fully available in your server version, please add TargetsShot to the DisabledCategories list in config.yml.");
 		}
 	}
 
