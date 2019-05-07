@@ -213,7 +213,7 @@ AdvancementsBackground: "minecraft:textures/item/book.png"
 DatabaseBackup: true
 
 # Database type, sqlite, h2, postgresql or mysql. Do a full server restart for this to take effect.
-DatabaseType: sqlite
+DatabaseType: h2
 
 # Prefix added to the tables in the database. If you switch from the default tables names (no prefix),
 # the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.
