@@ -346,6 +346,23 @@ Kills:
       Reward:
         IncreaseMaxHealth: 1
           
+# When a specific target is shot (but not necessarily killed) with a projectile.
+# Available target block names: github.com/PyvesB/AdvancedAchievements/wiki/Material-names
+# Available target entity names: github.com/PyvesB/AdvancedAchievements/wiki/Entity-names
+TargetsShot:
+  villager:
+    10:
+      Goal: Throw things at villagers.
+      Message: You lapidated villagers 10 times.
+      Name: targetsshot_10_villager
+      DisplayName: The Stoner
+  glass:
+    100:
+      Goal: Try to break granny's windows.
+      Message: You shot 100 projectiles at glass blocks!
+      Name: targetsshot_100_glass
+      DisplayName: Window Breaker
+
 # When a specific item is crafted (available names: github.com/PyvesB/AdvancedAchievements/wiki/Material-names).
 Crafts:
   diamond_sword:
@@ -381,23 +398,6 @@ Breeding:
       Name: breeding_1_sheep
       DisplayName: Breeder
       
-# When a specific target is shot (but not necessarily killed) with a projectile.
-# Available target block names: github.com/PyvesB/AdvancedAchievements/wiki/Material-names
-# Available target entity names: github.com/PyvesB/AdvancedAchievements/wiki/Entity-names
-TargetsShot:
-  villager:
-    10:
-      Goal: Throw things at villagers.
-      Message: You lapidated villagers 10 times.
-      Name: targetsshot_10_villager
-      DisplayName: The Stoner
-  glass:
-    100:
-      Goal: Try to break granny's windows.
-      Message: You shot 100 projectiles at glass blocks!
-      Name: targetsshot_100_glass
-      DisplayName: Window Breaker
-
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
 # |               Normal action achievements                | #
