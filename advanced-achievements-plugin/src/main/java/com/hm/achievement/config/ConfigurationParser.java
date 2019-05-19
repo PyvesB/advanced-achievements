@@ -312,6 +312,9 @@ public class ConfigurationParser {
 		} else if (namesToDisplayNames.containsKey(achName)) {
 			throw new PluginLoadError(
 					"Duplicate achievement Name (" + achName + "). " + "Please ensure each Name is unique in config.yml.");
+		} else if (mainConfig.getString(path + ".Message") == null) {
+			throw new PluginLoadError(
+					"Achievement with path (" + path + ") is missing its Message parameter in config.yml.");
 		} else {
 			namesToDisplayNames.put(achName, mainConfig.getString(path + ".DisplayName", ""));
 			String formattedDisplayName = StringHelper
