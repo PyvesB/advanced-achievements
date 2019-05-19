@@ -59,7 +59,7 @@ public class GiveCommand extends AbstractParsableCommand {
 	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		String achievementPath = CommandAchievements.COMMANDS + "." + args[1];
 
-		if (mainConfig.getString(achievementPath + ".Message", null) != null) {
+		if (mainConfig.contains(achievementPath)) {
 			// Check whether player has already received achievement and cannot receive it again.
 			String achievementName = mainConfig.getString(achievementPath + ".Name");
 			if (!configMultiCommand && cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {

@@ -118,8 +118,8 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 		if (!dateString.equals(databaseManager.getPlayerConnectionDate(player.getUniqueId()))) {
 			int connections = databaseManager.updateAndGetConnection(player.getUniqueId(), dateString);
 			String achievementPath = NormalAchievements.CONNECTIONS + "." + connections;
-			String rewardPath = achievementPath + ".Reward";
-			if (mainConfig.getString(achievementPath + ".Message", null) != null) {
+			if (mainConfig.contains(achievementPath)) {
+				String rewardPath = achievementPath + ".Reward";
 				// Fire achievement event.
 				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
 						.player(player).name(mainConfig.getString(achievementPath + ".Name"))
