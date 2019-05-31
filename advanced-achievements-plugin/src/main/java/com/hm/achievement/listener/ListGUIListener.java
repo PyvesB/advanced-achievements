@@ -90,7 +90,7 @@ public class ListGUIListener implements Listener {
 	 * @return true if the button is clicked, false otherwise
 	 */
 	private boolean isButtonClicked(InventoryClickEvent event, ItemStack button) {
-		if (event.getCurrentItem().isSimilar(button)) {
+		if (event.getCurrentItem() != null && event.getCurrentItem().isSimilar(button)) {
 			// Clicked item seems to be the button. But player could have clicked on item in his personal inventory that
 			// matches the properties of the button used by Advanced Achievements. The first item matching the
 			// properties of the button is the real one, check that this is indeed the clicked one.
