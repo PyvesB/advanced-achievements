@@ -267,8 +267,9 @@ public class DatabaseUpdater {
 							// have to get rid of them else parsing will fail.
 							if(date.matches("^[0-9]+$")) {
 								newDates.add(new Date(Long.parseLong(date)));
-							} else
-							newDates.add(new Date(oldFormat.parse(StringHelper.removeFormattingCodes(date)).getTime()));
+							} else {
+								newDates.add(new Date(oldFormat.parse(StringHelper.removeFormattingCodes(date)).getTime()));
+							}
 						}
 					} catch (ParseException e) {
 						logger.log(Level.SEVERE, "Database error while parsing dates:", e);
