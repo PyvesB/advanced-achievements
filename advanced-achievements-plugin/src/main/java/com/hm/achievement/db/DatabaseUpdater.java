@@ -265,7 +265,11 @@ public class DatabaseUpdater {
 						for (String date : oldDates) {
 							// Convert to SQL date format. Early versions of the plugin added colors to the date. We
 							// have to get rid of them else parsing will fail.
-							newDates.add(new Date(oldFormat.parse(StringHelper.removeFormattingCodes(date)).getTime()));
+							if (date.matches("^[0-9]+$")) {
+								newDates.add(new Date(Long.parseLong(date)));
+							} else {
+								newDates.add(new Date(oldFormat.parse(StringHelper.removeFormattingCodes(date)).getTime()));
+							}
 						}
 					} catch (ParseException e) {
 						logger.log(Level.SEVERE, "Database error while parsing dates:", e);
