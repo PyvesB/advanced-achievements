@@ -61,6 +61,11 @@ public class ListGUIListener implements Listener {
 		// Prevent players from taking items out of the GUI.
 		event.setCancelled(true);
 
+		// Clicking empty slots should do nothing
+		if (event.getCurrentItem() == null) {
+			return;
+		}
+
 		int currentPage = ((AchievementInventoryHolder) inventory.getHolder()).getPageIndex();
 		Player player = (Player) event.getWhoClicked();
 		if (currentPage == MAIN_GUI_PAGE) {
@@ -90,7 +95,7 @@ public class ListGUIListener implements Listener {
 	 * @return true if the button is clicked, false otherwise
 	 */
 	private boolean isButtonClicked(InventoryClickEvent event, ItemStack button) {
-		if (event.getCurrentItem() != null && event.getCurrentItem().isSimilar(button)) {
+		if (event.getCurrentItem().isSimilar(button)) {
 			// Clicked item seems to be the button. But player could have clicked on item in his personal inventory that
 			// matches the properties of the button used by Advanced Achievements. The first item matching the
 			// properties of the button is the real one, check that this is indeed the clicked one.
