@@ -108,7 +108,7 @@ public class DatabaseUpdater {
 
 			for (MultipleAchievements category : MultipleAchievements.values()) {
 				st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix() + category.toDBName()
-						+ " (playername char(36)," + category.toSubcategoryDBName() + " varchar(192)," + category.toDBName()
+						+ " (playername char(36)," + category.toSubcategoryDBName() + " varchar(191)," + category.toDBName()
 						+ " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 			}
 
@@ -173,7 +173,7 @@ public class DatabaseUpdater {
 		Connection conn = databaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			// Create new temporary table.
-			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(192),"
+			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(191),"
 					+ tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 			try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
 				ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "");
@@ -341,12 +341,12 @@ public class DatabaseUpdater {
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs = st.executeQuery("SELECT " + category.toSubcategoryDBName() + " FROM "
 						+ databaseManager.getPrefix() + category.toDBName() + " LIMIT 1");
-				if (rs.getMetaData().getPrecision(1) < 192) {
+				if (rs.getMetaData().getPrecision(1) < 191) {
 					logger.info("Updating " + category.toDBName() + " database table with extended column, please wait...");
 					// Increase size of table.
 					String alterOperation = databaseManager instanceof PostgreSQLDatabaseManager
-							? "ALTER COLUMN " + category.toSubcategoryDBName() + " TYPE varchar(192)"
-							: "MODIFY " + category.toSubcategoryDBName() + " varchar(192)";
+							? "ALTER COLUMN " + category.toSubcategoryDBName() + " TYPE varchar(191)"
+							: "MODIFY " + category.toSubcategoryDBName() + " varchar(191)";
 					st.execute("ALTER TABLE " + databaseManager.getPrefix() + category.toDBName() + " " + alterOperation);
 				}
 			} catch (SQLException e) {
@@ -367,7 +367,7 @@ public class DatabaseUpdater {
 		Connection conn = databaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			// Create new temporary table.
-			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(192),"
+			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(191),"
 					+ tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 			try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
 				ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "");
