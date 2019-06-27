@@ -54,7 +54,8 @@ public class BreaksListener extends AbstractListener {
 				&& player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
 				|| serverVersion < 9 && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
 
-		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player) || disableSilkTouchBreaks && silkTouchBreak) {
+		MultipleAchievements category = MultipleAchievements.BREAKS;
+		if (!shouldIncreaseBeTakenIntoAccount(player, category) || disableSilkTouchBreaks && silkTouchBreak) {
 			return;
 		}
 
@@ -62,8 +63,6 @@ public class BreaksListener extends AbstractListener {
 		if (disableSilkTouchOreBreaks && silkTouchBreak && isOre(block.getType().name())) {
 			return;
 		}
-
-		MultipleAchievements category = MultipleAchievements.BREAKS;
 
 		String blockName = block.getType().name().toLowerCase();
 		if (!player.hasPermission(category.toPermName() + '.' + blockName)) {

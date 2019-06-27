@@ -13,7 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.category.Category;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
@@ -108,7 +108,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 	 * @param category
 	 * @return true if the increase should be taken into account, false otherwise
 	 */
-	protected boolean shouldIncreaseBeTakenIntoAccount(Player player, NormalAchievements category) {
+	protected boolean shouldIncreaseBeTakenIntoAccount(Player player, Category category) {
 		boolean isNPC = player.hasMetadata("NPC");
 		boolean permission = player.hasPermission(category.toPermName());
 		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
@@ -119,19 +119,4 @@ public class StatisticIncreaseHandler implements Reloadable {
 		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !restrictedAdventure && !excludedWorld;
 	}
 
-	/**
-	 * Determines whether the statistic increase should be taken into account. Ignore permission check.
-	 * 
-	 * @param player
-	 * @return true if the increase should be taken into account, false otherwise
-	 */
-	protected boolean shouldIncreaseBeTakenIntoAccountNoPermissions(Player player) {
-		boolean isNPC = player.hasMetadata("NPC");
-		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
-		boolean restrictedSpectator = configRestrictSpectator && player.getGameMode() == GameMode.SPECTATOR;
-		boolean restrictedAdventure = configRestrictAdventure && player.getGameMode() == GameMode.ADVENTURE;
-		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
-
-		return !isNPC && !restrictedCreative && !restrictedSpectator && !restrictedAdventure && !excludedWorld;
-	}
 }

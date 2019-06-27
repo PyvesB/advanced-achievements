@@ -197,7 +197,31 @@ permissions:
   achievement.count.smelting:
     description: Allows smelting statistics in database to increase.
     default: true
-# Additional permissions are available for the Breaks, Places, Crafts, Kills, Breeding, PlayerCommands, Custom and TargetsShot categories.
+  achievement.count.places:
+    description: Allows places statistics in database to increase.
+    default: true
+  achievement.count.breaks:
+    description: Allows breaks statistics in database to increase.
+    default: true
+  achievement.count.kills:
+    description: Allows kills statistics in database to increase.
+    default: true
+  achievement.count.targetsshot:
+    description: Allows targets shot statistics in database to increase.
+    default: true
+  achievement.count.crafts:
+    description: Allows crafts statistics in database to increase.
+    default: true
+  achievement.count.breeding:
+    description: Allows breeding statistics in database to increase.
+    default: true
+  achievement.count.playercommands:
+    description: Allows player commands statistics in database to increase.
+    default: true
+  achievement.count.custom:
+    description: Allows custom statistics in database to increase.
+    default: true
+# More granular permissions are available for the Breaks, Places, Crafts, Kills, Breeding, PlayerCommands, Custom and TargetsShot categories.
 # They depend on the sub-categories defined; for instance for stone breaks: achievement.count.breaks.stone
 # For PlayerCommands, use lower case without spaces nor the initial slash: achievement.count.playercommands.aachbook
 # For Kills with a custom mob name you should also remove any whitespaces.

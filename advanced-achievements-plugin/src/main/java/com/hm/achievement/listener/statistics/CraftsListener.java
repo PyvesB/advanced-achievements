@@ -46,11 +46,10 @@ public class CraftsListener extends AbstractListener {
 		}
 
 		Player player = (Player) event.getWhoClicked();
-		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
+		MultipleAchievements category = MultipleAchievements.CRAFTS;
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
-
-		MultipleAchievements category = MultipleAchievements.CRAFTS;
 
 		ItemStack item = event.getCurrentItem();
 		String craftName = item.getType().name().toLowerCase();

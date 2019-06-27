@@ -86,11 +86,6 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 			return;
 		}
 
-		// If player is in restricted game mode or is in a blocked world, don't update distances.
-		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
-			return;
-		}
-
 		int difference = getDistanceDifference(player, previousLocation);
 		// Player has not moved.
 		if (difference == 0L) {
@@ -140,7 +135,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	 * @param category
 	 */
 	private void updateDistance(int difference, Player player, NormalAchievements category) {
-		if (!player.hasPermission(category.toPermName()) || disabledCategories.contains(category)) {
+		if (!shouldIncreaseBeTakenIntoAccount(player, category) || disabledCategories.contains(category)) {
 			return;
 		}
 

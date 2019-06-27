@@ -37,11 +37,10 @@ public class PlayerCommandsListener extends AbstractListener {
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
 
-		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
+		MultipleAchievements category = MultipleAchievements.PLAYERCOMMANDS;
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
-
-		MultipleAchievements category = MultipleAchievements.PLAYERCOMMANDS;
 
 		List<String> equivalentCommands = getEquivalentCommands(event.getMessage());
 		Set<String> foundAchievements = new HashSet<>();

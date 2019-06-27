@@ -37,13 +37,12 @@ public class BreedingListener extends AbstractListener {
 		}
 
 		Player player = (Player) event.getBreeder();
-		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
+		MultipleAchievements category = MultipleAchievements.BREEDING;
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 
 		String mobName = event.getMother().getType().name().toLowerCase();
-
-		MultipleAchievements category = MultipleAchievements.BREEDING;
 
 		if (!player.hasPermission(category.toPermName() + '.' + mobName)) {
 			return;

@@ -38,13 +38,12 @@ public class PlacesListener extends AbstractListener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
+		MultipleAchievements category = MultipleAchievements.PLACES;
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 
 		Block block = event.getBlock();
-
-		MultipleAchievements category = MultipleAchievements.PLACES;
 
 		String blockName = block.getType().name().toLowerCase();
 		if (!player.hasPermission(category.toPermName() + '.' + blockName)) {

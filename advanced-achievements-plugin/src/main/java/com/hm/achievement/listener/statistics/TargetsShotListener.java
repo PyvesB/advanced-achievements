@@ -34,7 +34,8 @@ public class TargetsShotListener extends AbstractListener {
 		}
 
 		Player player = (Player) event.getEntity().getShooter();
-		if (!shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
+		MultipleAchievements category = MultipleAchievements.TARGETSSHOT;
+		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 
@@ -46,8 +47,6 @@ public class TargetsShotListener extends AbstractListener {
 		} else {
 			return;
 		}
-
-		MultipleAchievements category = MultipleAchievements.TARGETSSHOT;
 
 		if (!player.hasPermission(category.toPermName() + '.' + targetName)) {
 			return;

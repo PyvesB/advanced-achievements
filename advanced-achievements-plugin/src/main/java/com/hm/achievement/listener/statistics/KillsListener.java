@@ -40,15 +40,14 @@ public class KillsListener extends AbstractListener {
 	public void onEntityDeath(EntityDeathEvent event) {
 		Player player = event.getEntity().getKiller();
 
-		if (player == null || !shouldIncreaseBeTakenIntoAccountNoPermissions(player)) {
+		MultipleAchievements category = MultipleAchievements.KILLS;
+		if (player == null || !shouldIncreaseBeTakenIntoAccount(player, category)) {
 			return;
 		}
 
 		Entity entity = event.getEntity();
 		String mobType = (entity instanceof Creeper && ((Creeper) entity).isPowered()) ? "poweredcreeper"
 				: entity.getType().name().toLowerCase();
-
-		MultipleAchievements category = MultipleAchievements.KILLS;
 
 		Set<String> foundAchievements = new HashSet<>();
 
