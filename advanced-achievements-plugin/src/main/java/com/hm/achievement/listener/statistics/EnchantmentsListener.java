@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.enchantment.EnchantItemEvent;
@@ -34,12 +33,6 @@ public class EnchantmentsListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEnchantItem(EnchantItemEvent event) {
-		Player player = event.getEnchanter();
-		NormalAchievements category = NormalAchievements.ENCHANTMENTS;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(event.getEnchanter(), NormalAchievements.ENCHANTMENTS, 1);
 	}
 }

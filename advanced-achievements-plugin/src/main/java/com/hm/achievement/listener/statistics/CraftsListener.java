@@ -47,10 +47,6 @@ public class CraftsListener extends AbstractListener {
 
 		Player player = (Player) event.getWhoClicked();
 		MultipleAchievements category = MultipleAchievements.CRAFTS;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
 		ItemStack item = event.getCurrentItem();
 		String craftName = item.getType().name().toLowerCase();
 		if (!player.hasPermission(category.toPermName() + '.' + craftName)) {
@@ -79,8 +75,6 @@ public class CraftsListener extends AbstractListener {
 			}
 		}
 
-		int incrementValue = eventAmount; // Effectively final variable needed.
-		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
-				achievement, incrementValue));
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, eventAmount);
 	}
 }

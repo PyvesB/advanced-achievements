@@ -33,12 +33,7 @@ public class FertilisingListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerInteract(BlockFertilizeEvent event) {
-		NormalAchievements category = NormalAchievements.FERTILISING;
-		if (!shouldIncreaseBeTakenIntoAccount(event.getPlayer(), category)) {
-			return;
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), category, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), NormalAchievements.FERTILISING, 1);
 	}
 
 }

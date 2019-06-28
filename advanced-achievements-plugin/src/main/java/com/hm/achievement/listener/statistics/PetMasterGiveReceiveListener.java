@@ -45,22 +45,14 @@ public class PetMasterGiveReceiveListener extends AbstractListener {
 			// /petm free command ignored.
 			return;
 		}
+
 		NormalAchievements categoryReceive = NormalAchievements.PETMASTERRECEIVE;
-
-		if (!shouldIncreaseBeTakenIntoAccount(receiverPlayer, categoryReceive)) {
-			return;
-		}
-
 		if (!disabledCategories.contains(categoryReceive)) {
 			updateStatisticAndAwardAchievementsIfAvailable(receiverPlayer, categoryReceive, 1);
 		}
 
 		Player giverPlayer = (Player) event.getOldOwner();
 		NormalAchievements categoryGive = NormalAchievements.PETMASTERGIVE;
-		if (!shouldIncreaseBeTakenIntoAccount(giverPlayer, categoryGive)) {
-			return;
-		}
-
 		if (!disabledCategories.contains(categoryGive)) {
 			updateStatisticAndAwardAchievementsIfAvailable(giverPlayer, categoryGive, 1);
 		}

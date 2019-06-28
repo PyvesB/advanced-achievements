@@ -73,10 +73,6 @@ public class EnderPearlsDistancesListener extends AbstractListener {
 			return;
 		}
 
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
 		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
 	}
 }

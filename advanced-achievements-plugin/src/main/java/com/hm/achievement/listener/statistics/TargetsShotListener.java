@@ -33,12 +33,6 @@ public class TargetsShotListener extends AbstractListener {
 			return;
 		}
 
-		Player player = (Player) event.getEntity().getShooter();
-		MultipleAchievements category = MultipleAchievements.TARGETSSHOT;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
 		String targetName;
 		if (event.getHitEntity() != null) {
 			targetName = event.getHitEntity().getType().name().toLowerCase();
@@ -48,12 +42,13 @@ public class TargetsShotListener extends AbstractListener {
 			return;
 		}
 
+		MultipleAchievements category = MultipleAchievements.TARGETSSHOT;
+		Player player = (Player) event.getEntity().getShooter();
 		if (!player.hasPermission(category.toPermName() + '.' + targetName)) {
 			return;
 		}
 
 		Set<String> foundAchievements = findAchievementsByCategoryAndName(category, targetName);
-		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
-				achievement, 1));
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, 1);
 	}
 }

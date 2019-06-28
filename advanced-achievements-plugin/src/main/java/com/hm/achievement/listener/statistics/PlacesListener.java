@@ -38,13 +38,8 @@ public class PlacesListener extends AbstractListener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		MultipleAchievements category = MultipleAchievements.PLACES;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
 		Block block = event.getBlock();
-
+		MultipleAchievements category = MultipleAchievements.PLACES;
 		String blockName = block.getType().name().toLowerCase();
 		if (!player.hasPermission(category.toPermName() + '.' + blockName)) {
 			return;
@@ -53,7 +48,6 @@ public class PlacesListener extends AbstractListener {
 		Set<String> foundAchievements = findAchievementsByCategoryAndName(
 				category, blockName + ':' + block.getState().getData().toItemStack(0).getDurability());
 		foundAchievements.addAll(findAchievementsByCategoryAndName(category, blockName));
-		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
-				achievement, 1));
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, 1);
 	}
 }

@@ -64,8 +64,7 @@ public class MilksLavaWaterBucketsListener extends AbstractRateLimitedListener {
 			return;
 		}
 
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)
-				|| isInCooldownPeriod(player, category.toString(), false, category)) {
+		if (isInCooldownPeriod(player, category.toString(), false, category)) {
 			return;
 		}
 

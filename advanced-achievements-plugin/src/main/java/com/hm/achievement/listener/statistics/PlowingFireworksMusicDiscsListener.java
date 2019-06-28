@@ -59,8 +59,7 @@ public class PlowingFireworksMusicDiscsListener extends AbstractRateLimitedListe
 			return;
 		}
 
-		if (!shouldIncreaseBeTakenIntoAccount(event.getPlayer(), category)
-				|| category == NormalAchievements.MUSICDISCS && isInCooldownPeriod(event.getPlayer(), true, category)) {
+		if (category == NormalAchievements.MUSICDISCS && isInCooldownPeriod(event.getPlayer(), true, category)) {
 			return;
 		}
 

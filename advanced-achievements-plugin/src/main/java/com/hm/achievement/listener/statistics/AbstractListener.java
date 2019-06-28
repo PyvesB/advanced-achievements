@@ -42,8 +42,10 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * @param incrementValue
 	 */
 	void updateStatisticAndAwardAchievementsIfAvailable(Player player, NormalAchievements category, int incrementValue) {
-		long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), incrementValue);
-		checkThresholdsAndAchievements(player, category.toString(), amount);
+		if (shouldIncreaseBeTakenIntoAccount(player, category)) {
+			long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), incrementValue);
+			checkThresholdsAndAchievements(player, category.toString(), amount);
+		}
 	}
 
 	/**
@@ -52,14 +54,18 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * 
 	 * @param player
 	 * @param category
-	 * @param subcategory
+	 * @param subcategories
 	 * @param incrementValue
 	 */
-	void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category, String subcategory,
-			int incrementValue) {
-		long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
-				incrementValue);
-		checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
+	void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category,
+			Set<String> subcategories, int incrementValue) {
+		if (shouldIncreaseBeTakenIntoAccount(player, category)) {
+			subcategories.forEach(subcategory -> {
+				long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
+						incrementValue);
+				checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
+			});
+		}
 	}
 
 	/**

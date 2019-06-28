@@ -37,12 +37,7 @@ public class LevelsListener extends AbstractListener {
 		Player player = event.getPlayer();
 
 		NormalAchievements category = NormalAchievements.LEVELS;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
 		int previousMaxLevel = (int) cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
-
 		if (event.getNewLevel() <= previousMaxLevel) {
 			return;
 		}

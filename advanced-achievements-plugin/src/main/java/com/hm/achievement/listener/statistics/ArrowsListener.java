@@ -38,12 +38,6 @@ public class ArrowsListener extends AbstractListener {
 			return;
 		}
 
-		Player player = (Player) event.getEntity();
-		NormalAchievements category = NormalAchievements.ARROWS;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+		updateStatisticAndAwardAchievementsIfAvailable((Player) event.getEntity(), NormalAchievements.ARROWS, 1);
 	}
 }

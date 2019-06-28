@@ -37,19 +37,13 @@ public class BreedingListener extends AbstractListener {
 		}
 
 		Player player = (Player) event.getBreeder();
-		MultipleAchievements category = MultipleAchievements.BREEDING;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
 		String mobName = event.getMother().getType().name().toLowerCase();
-
+		MultipleAchievements category = MultipleAchievements.BREEDING;
 		if (!player.hasPermission(category.toPermName() + '.' + mobName)) {
 			return;
 		}
 
 		Set<String> foundAchievements = findAchievementsByCategoryAndName(category, mobName);
-		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
-				achievement, 1));
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, 1);
 	}
 }

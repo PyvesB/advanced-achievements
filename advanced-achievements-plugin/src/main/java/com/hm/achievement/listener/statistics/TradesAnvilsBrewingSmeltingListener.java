@@ -65,7 +65,6 @@ public class TradesAnvilsBrewingSmeltingListener extends AbstractRateLimitedList
 			return;
 		}
 
-		Player player = (Player) event.getWhoClicked();
 		NormalAchievements category;
 		InventoryType inventoryType = event.getInventory().getType();
 		if (event.getRawSlot() == 2 && inventoryType == InventoryType.MERCHANT) {
@@ -83,9 +82,9 @@ public class TradesAnvilsBrewingSmeltingListener extends AbstractRateLimitedList
 			return;
 		}
 
-		if (disabledCategories.contains(category) || !shouldIncreaseBeTakenIntoAccount(player, category)
-				|| category == NormalAchievements.BREWING
-						&& isInCooldownPeriod(player, Integer.toString(event.getRawSlot()), false, category)) {
+		Player player = (Player) event.getWhoClicked();
+		if (disabledCategories.contains(category) || category == NormalAchievements.BREWING
+				&& isInCooldownPeriod(player, Integer.toString(event.getRawSlot()), false, category)) {
 			return;
 		}
 

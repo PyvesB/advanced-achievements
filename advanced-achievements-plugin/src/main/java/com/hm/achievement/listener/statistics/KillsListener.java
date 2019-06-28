@@ -39,9 +39,7 @@ public class KillsListener extends AbstractListener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityDeath(EntityDeathEvent event) {
 		Player player = event.getEntity().getKiller();
-
-		MultipleAchievements category = MultipleAchievements.KILLS;
-		if (player == null || !shouldIncreaseBeTakenIntoAccount(player, category)) {
+		if (player == null) {
 			return;
 		}
 
@@ -51,6 +49,7 @@ public class KillsListener extends AbstractListener {
 
 		Set<String> foundAchievements = new HashSet<>();
 
+		MultipleAchievements category = MultipleAchievements.KILLS;
 		if (player.hasPermission(category.toPermName() + '.' + mobType)) {
 			foundAchievements.addAll(findAchievementsByCategoryAndName(category, mobType));
 		}
@@ -66,7 +65,6 @@ public class KillsListener extends AbstractListener {
 			}
 		}
 
-		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
-				achievement, 1));
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, 1);
 	}
 }

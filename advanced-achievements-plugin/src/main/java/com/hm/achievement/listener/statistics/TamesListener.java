@@ -38,12 +38,6 @@ public class TamesListener extends AbstractListener {
 			return;
 		}
 
-		Player player = (Player) event.getOwner();
-		NormalAchievements category = NormalAchievements.TAMES;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+		updateStatisticAndAwardAchievementsIfAvailable((Player) event.getOwner(), NormalAchievements.TAMES, 1);
 	}
 }

@@ -36,12 +36,7 @@ public class PlayerCommandsListener extends AbstractListener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-
 		MultipleAchievements category = MultipleAchievements.PLAYERCOMMANDS;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
 		List<String> equivalentCommands = getEquivalentCommands(event.getMessage());
 		Set<String> foundAchievements = new HashSet<>();
 		for (String groupedPrefixes : mainConfig.getShallowKeys(category.toString())) {
@@ -55,8 +50,7 @@ public class PlayerCommandsListener extends AbstractListener {
 				}
 			}
 		}
-		foundAchievements.forEach(achievement -> updateStatisticAndAwardAchievementsIfAvailable(player, category,
-				achievement, 1));
+		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, 1);
 	}
 
 	/**

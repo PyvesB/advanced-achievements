@@ -39,11 +39,6 @@ public class DeathsListener extends AbstractListener {
 			return;
 		}
 
-		NormalAchievements category = NormalAchievements.DEATHS;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(player, NormalAchievements.DEATHS, 1);
 	}
 }

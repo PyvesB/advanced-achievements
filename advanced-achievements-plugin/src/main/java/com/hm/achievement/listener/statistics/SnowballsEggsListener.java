@@ -46,7 +46,6 @@ public class SnowballsEggsListener extends AbstractListener {
 			return;
 		}
 
-		Player player = (Player) event.getEntity().getShooter();
 		NormalAchievements category;
 		if (event.getEntity() instanceof Snowball) {
 			category = NormalAchievements.SNOWBALLS;
@@ -60,10 +59,6 @@ public class SnowballsEggsListener extends AbstractListener {
 			return;
 		}
 
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+		updateStatisticAndAwardAchievementsIfAvailable((Player) event.getEntity().getShooter(), category, 1);
 	}
 }

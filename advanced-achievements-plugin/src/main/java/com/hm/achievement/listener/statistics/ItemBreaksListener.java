@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerItemBreakEvent;
@@ -34,12 +33,6 @@ public class ItemBreaksListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerItemBreak(PlayerItemBreakEvent event) {
-		Player player = event.getPlayer();
-		NormalAchievements category = NormalAchievements.ITEMBREAKS;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), NormalAchievements.ITEMBREAKS, 1);
 	}
 }

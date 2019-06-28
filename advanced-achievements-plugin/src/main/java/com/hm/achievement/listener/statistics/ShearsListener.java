@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -39,12 +38,6 @@ public class ShearsListener extends AbstractListener {
 			return;
 		}
 
-		Player player = event.getPlayer();
-		NormalAchievements category = NormalAchievements.SHEARS;
-		if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
-			return;
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), NormalAchievements.SHEARS, 1);
 	}
 }
