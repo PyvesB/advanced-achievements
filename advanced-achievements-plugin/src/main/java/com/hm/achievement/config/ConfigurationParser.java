@@ -18,6 +18,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.plugin.Plugin;
 
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.CommandAchievements;
@@ -145,8 +146,7 @@ public class ConfigurationParser {
 		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
 		if ((!disabledCategories.contains(NormalAchievements.PETMASTERGIVE)
 				|| !disabledCategories.contains(NormalAchievements.PETMASTERRECEIVE))
-				&& (!Bukkit.getPluginManager().isPluginEnabled("PetMaster") || Integer.parseInt(Character.toString(
-						Bukkit.getPluginManager().getPlugin("PetMaster").getDescription().getVersion().charAt(2))) < 4)) {
+				&& (!Bukkit.getPluginManager().isPluginEnabled("PetMaster") || getPetMasterMinorVersion() < 4)) {
 			disabledCategories.add(NormalAchievements.PETMASTERGIVE);
 			disabledCategories.add(NormalAchievements.PETMASTERRECEIVE);
 			logger.warning("Overriding configuration: disabling PetMasterGive and PetMasterReceive categories.");
@@ -181,6 +181,17 @@ public class ConfigurationParser {
 			logger.warning(
 					"The projectile hit event is not fully available in your server version, please add TargetsShot to the DisabledCategories list in config.yml.");
 		}
+	}
+
+	/**
+	 * Retrieves Pet Master's minor version number (e.g. "1.4" -> 4).
+	 * 
+	 * @return Pet Master's minor version number
+	 */
+	private int getPetMasterMinorVersion() {
+		Plugin petMaster = Bukkit.getPluginManager().getPlugin("PetMaster");
+		String minorVersionString = StringUtils.split(petMaster.getDescription().getVersion(), '.')[1];
+		return Integer.parseInt(minorVersionString);
 	}
 
 	/**
