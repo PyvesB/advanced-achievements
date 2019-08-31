@@ -330,7 +330,7 @@ Kills:
       Reward:
         Money: 1         
         Item: diamond 1
-  # Mythic Mobs will change & to §.
+  # Mythic Mobs 'Display' parameter. Change & to §.
   §2Skeletal Knight:
     1:
       Goal: Kill the evil Skeletal Knight.
