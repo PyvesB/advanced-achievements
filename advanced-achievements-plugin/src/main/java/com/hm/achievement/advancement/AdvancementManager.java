@@ -41,6 +41,7 @@ import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 public class AdvancementManager implements Reloadable {
 
 	public static final String ADVANCED_ACHIEVEMENTS_PARENT = "advanced_achievements_parent";
+	private static final String MINECRAFT_BOOK_KEY = "minecraft:book";
 	// Pattern to produce keys for advancements.
 	private static final Pattern REGEX_PATTERN_KEYS = Pattern.compile("[^A-Za-z0-9_]");
 	// Strings related to Reflection.
@@ -151,7 +152,7 @@ public class AdvancementManager implements Reloadable {
 				unsafeValues.loadAdvancement(namespacedKey, AdvancementJsonHelper.toHiddenJson(configBackgroundTexture));
 			} else {
 				AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
-						.iconItem(getInternalName(new ItemStack(Material.BOOK, 1, (short) 0)))
+						.iconItem(MINECRAFT_BOOK_KEY)
 						.title(configRootAdvancementTitle)
 						.description("")
 						.background(configBackgroundTexture)
@@ -280,8 +281,9 @@ public class AdvancementManager implements Reloadable {
 			return "minecraft:" + PackageType.MINECRAFT_SERVER.getClass(CLASS_MINECRAFT_KEY).getMethod(METHOD_GET_KEY)
 					.invoke(minecraftKey);
 		} catch (Exception e) {
-			logger.warning("Failed to get internal item name for advancement icon. Using book instead.");
-			return "minecraft:book";
+			logger.warning("Failed to get internal " + item.getType().name().toLowerCase() + " name for advancement icon."
+					+ "Using book instead.");
+			return MINECRAFT_BOOK_KEY;
 		}
 	}
 
