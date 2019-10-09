@@ -32,7 +32,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	private final AdvancedAchievements advancedAchievements;
 	private final CommentedYamlConfiguration langConfig;
 	private final Logger logger;
-	
+
 	private List<Long> categoryThresholds;
 	private int categoryCooldown;
 	private long hardestCategoryThreshold;

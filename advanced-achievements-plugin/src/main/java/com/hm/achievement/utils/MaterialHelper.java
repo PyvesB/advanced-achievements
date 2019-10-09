@@ -63,7 +63,7 @@ public class MaterialHelper {
 		}
 		return material;
 	}
-	
+
 	/**
 	 * Determines whether an item is any Material.POTION apart from water.
 	 * 
