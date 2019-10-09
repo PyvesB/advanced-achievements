@@ -11,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionType;
 
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
@@ -72,21 +70,6 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 				checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
 			});
 		}
-	}
-
-	/**
-	 * Determines whether an item is a water potion.
-	 * 
-	 * @param item
-	 * @return true if the item is a water potion, false otherwise
-	 */
-	@SuppressWarnings("deprecation")
-	boolean isWaterPotion(ItemStack item) {
-		if (serverVersion >= 9) {
-			// Method getBasePotionData does not exist for versions prior to Minecraft 1.9.
-			return ((PotionMeta) (item.getItemMeta())).getBasePotionData().getType() == PotionType.WATER;
-		}
-		return item.getDurability() == 0;
 	}
 
 	/**

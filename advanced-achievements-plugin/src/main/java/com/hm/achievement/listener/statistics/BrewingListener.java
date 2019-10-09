@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -33,14 +34,18 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class BrewingListener extends AbstractRateLimitedListener {
 
+	private final MaterialHelper materialHelper;
+
 	@Inject
 	public BrewingListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger) {
+			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
+			MaterialHelper materialHelper) {
 		super(NormalAchievements.BREWING, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser,
 				advancedAchievements, langConfig, logger);
+		this.materialHelper = materialHelper;
 	}
-	
+
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (event.getInventory().getType() != InventoryType.BREWING || event.getAction() == InventoryAction.NOTHING
@@ -69,8 +74,7 @@ public class BrewingListener extends AbstractRateLimitedListener {
 	 */
 	private boolean isBrewablePotion(InventoryClickEvent event) {
 		ItemStack item = event.getCurrentItem();
-		return item != null
-				&& (item.getType() == Material.POTION || serverVersion >= 9 && item.getType() == Material.SPLASH_POTION)
-				&& !isWaterPotion(item);
+		return item != null &&
+				(materialHelper.isAnyPotionButWater(item) || serverVersion >= 9 && item.getType() == Material.SPLASH_POTION);
 	}
 }

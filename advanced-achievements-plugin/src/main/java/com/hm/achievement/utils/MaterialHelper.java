@@ -7,6 +7,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionType;
 
 /**
  * Class providing a few logging helper methods to retrieve Material instances via their names.
@@ -59,6 +62,24 @@ public class MaterialHelper {
 			material = defaultMaterial;
 		}
 		return material;
+	}
+	
+	/**
+	 * Determines whether an item is any Material.POTION apart from water.
+	 * 
+	 * @param itemStack
+	 * @return true if the item is a non-water potion, false otherwise
+	 */
+	@SuppressWarnings("deprecation")
+	public boolean isAnyPotionButWater(ItemStack itemStack) {
+		if (itemStack.getType() != Material.POTION) {
+			return false;
+		}
+		if (serverVersion >= 9) {
+			// Method getBasePotionData does not exist for versions prior to Minecraft 1.9.
+			return ((PotionMeta) (itemStack.getItemMeta())).getBasePotionData().getType() != PotionType.WATER;
+		}
+		return itemStack.getDurability() != 0;
 	}
 
 }

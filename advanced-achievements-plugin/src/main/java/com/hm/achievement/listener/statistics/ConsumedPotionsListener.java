@@ -7,14 +7,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -27,20 +26,20 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class ConsumedPotionsListener extends AbstractListener {
 
+	private final MaterialHelper materialHelper;
+
 	@Inject
 	public ConsumedPotionsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
+			MaterialHelper materialHelper) {
 		super(NormalAchievements.CONSUMEDPOTIONS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		this.materialHelper = materialHelper;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
-		ItemStack item = event.getItem();
-		// Don't count drinking water toward ConsumePotions; check the potion type.
-		if (item.getType() != Material.POTION || isWaterPotion(item)) {
-			return;
+		if (materialHelper.isAnyPotionButWater(event.getItem())) {
+			updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), 1);
 		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), 1);
 	}
 }
