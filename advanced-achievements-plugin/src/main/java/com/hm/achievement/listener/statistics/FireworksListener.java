@@ -2,8 +2,6 @@ package com.hm.achievement.listener.statistics;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -11,7 +9,6 @@ import javax.inject.Singleton;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -20,32 +17,24 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with HoePlowings, Fireworks and MusicDiscs achievements.
+ * Listener class to deal with Fireworks achievements.
  *
  * @author Pyves
  *
  */
 @Singleton
-public class PlowingFireworksMusicDiscsListener extends AbstractRateLimitedListener {
-
-	private final Set<Category> disabledCategories;
+public class FireworksListener extends AbstractListener {
 
 	@Inject
-	public PlowingFireworksMusicDiscsListener(@Named("main") CommentedYamlConfiguration mainConfig,
-			int serverVersion, Map<String, List<Long>> sortedThresholds, CacheManager cacheManager,
-			RewardParser rewardParser, AdvancedAchievements advancedAchievements,
-			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger, Set<Category> disabledCategories) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser, advancedAchievements, langConfig,
-				logger);
-		this.disabledCategories = disabledCategories;
+	public FireworksListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
+		super(NormalAchievements.FIREWORKS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR) // Do NOT set ignoreCancelled to true, see SPIGOT-4793.
@@ -54,50 +43,13 @@ public class PlowingFireworksMusicDiscsListener extends AbstractRateLimitedListe
 			return;
 		}
 
-		NormalAchievements category = getCategory(event);
-		if (category == null || disabledCategories.contains(category)) {
+		Player player = event.getPlayer();
+		if (!isFirework(event.getMaterial())
+				|| !canAccommodateFireworkLaunch(event.getClickedBlock(), player, event.getAction())) {
 			return;
 		}
 
-		if (category == NormalAchievements.MUSICDISCS && isInCooldownPeriod(event.getPlayer(), true, category)) {
-			return;
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), category, 1);
-	}
-
-	/**
-	 * Determines which achievement category this event belongs to.
-	 * 
-	 * @param event
-	 * @return the achievement category or null if none match
-	 */
-	private NormalAchievements getCategory(PlayerInteractEvent event) {
-		Block clickedBlock = event.getClickedBlock();
-		Material materialInHand = event.getMaterial();
-		if (isFirework(materialInHand) && canAccommodateFireworkLaunch(clickedBlock, event.getPlayer(), event.getAction())) {
-			return NormalAchievements.FIREWORKS;
-		} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			if (materialInHand.name().contains("HOE") && canBePlowed(clickedBlock)) {
-				return NormalAchievements.HOEPLOWING;
-			} else if (materialInHand.isRecord() && clickedBlock.getType() == Material.JUKEBOX) {
-				return NormalAchievements.MUSICDISCS;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Determines whether a material can be plowed with a hoe.
-	 *
-	 * @param block
-	 *
-	 * @return true if the block can be plowed, false otherwise
-	 */
-	private boolean canBePlowed(Block block) {
-		return (serverVersion < 13 && block.getType() == Material.GRASS || block.getType() == Material.DIRT
-				|| serverVersion >= 13 && block.getType() == Material.GRASS_BLOCK)
-				&& block.getRelative(BlockFace.UP).getType() == Material.AIR;
+		updateStatisticAndAwardAchievementsIfAvailable(player, 1);
 	}
 
 	/**

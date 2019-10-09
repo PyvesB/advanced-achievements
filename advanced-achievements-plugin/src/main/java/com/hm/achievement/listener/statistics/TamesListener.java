@@ -29,7 +29,7 @@ public class TamesListener extends AbstractListener {
 	@Inject
 	public TamesListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(NormalAchievements.TAMES, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -38,6 +38,6 @@ public class TamesListener extends AbstractListener {
 			return;
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable((Player) event.getOwner(), NormalAchievements.TAMES, 1);
+		updateStatisticAndAwardAchievementsIfAvailable((Player) event.getOwner(), 1);
 	}
 }

@@ -34,7 +34,7 @@ public class CraftsListener extends AbstractListener {
 	@Inject
 	public CraftsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(MultipleAchievements.CRAFTS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -46,15 +46,14 @@ public class CraftsListener extends AbstractListener {
 		}
 
 		Player player = (Player) event.getWhoClicked();
-		MultipleAchievements category = MultipleAchievements.CRAFTS;
 		ItemStack item = event.getCurrentItem();
 		String craftName = item.getType().name().toLowerCase();
 		if (!player.hasPermission(category.toPermName() + '.' + craftName)) {
 			return;
 		}
 
-		Set<String> foundAchievements = findAchievementsByCategoryAndName(category, craftName + ':' + item.getDurability());
-		foundAchievements.addAll(findAchievementsByCategoryAndName(category, craftName));
+		Set<String> foundAchievements = findAchievementsByCategoryAndName(craftName + ':' + item.getDurability());
+		foundAchievements.addAll(findAchievementsByCategoryAndName(craftName));
 
 		int eventAmount = event.getCurrentItem().getAmount();
 		if (event.isShiftClick()) {
@@ -75,6 +74,6 @@ public class CraftsListener extends AbstractListener {
 			}
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, eventAmount);
+		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, eventAmount);
 	}
 }

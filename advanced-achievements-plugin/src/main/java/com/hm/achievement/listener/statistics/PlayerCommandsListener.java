@@ -30,13 +30,12 @@ public class PlayerCommandsListener extends AbstractListener {
 	@Inject
 	public PlayerCommandsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(MultipleAchievements.PLAYERCOMMANDS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-		MultipleAchievements category = MultipleAchievements.PLAYERCOMMANDS;
 		List<String> equivalentCommands = getEquivalentCommands(event.getMessage());
 		Set<String> foundAchievements = new HashSet<>();
 		for (String groupedPrefixes : mainConfig.getShallowKeys(category.toString())) {
@@ -50,7 +49,7 @@ public class PlayerCommandsListener extends AbstractListener {
 				}
 			}
 		}
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
 	}
 
 	/**

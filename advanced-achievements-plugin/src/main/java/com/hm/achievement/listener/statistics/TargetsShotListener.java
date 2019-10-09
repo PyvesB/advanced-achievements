@@ -24,7 +24,7 @@ public class TargetsShotListener extends AbstractListener {
 	@Inject
 	public TargetsShotListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(MultipleAchievements.TARGETSSHOT, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -42,13 +42,12 @@ public class TargetsShotListener extends AbstractListener {
 			return;
 		}
 
-		MultipleAchievements category = MultipleAchievements.TARGETSSHOT;
 		Player player = (Player) event.getEntity().getShooter();
 		if (!player.hasPermission(category.toPermName() + '.' + targetName)) {
 			return;
 		}
 
-		Set<String> foundAchievements = findAchievementsByCategoryAndName(category, targetName);
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, 1);
+		Set<String> foundAchievements = findAchievementsByCategoryAndName(targetName);
+		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
 	}
 }

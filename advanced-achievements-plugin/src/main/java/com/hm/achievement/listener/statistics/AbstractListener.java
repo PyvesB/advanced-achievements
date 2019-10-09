@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -28,9 +29,16 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  */
 public abstract class AbstractListener extends StatisticIncreaseHandler implements Listener {
 
-	AbstractListener(CommentedYamlConfiguration mainConfig, int serverVersion, Map<String, List<Long>> sortedThresholds,
-			CacheManager cacheManager, RewardParser rewardParser) {
+	final Category category;
+
+	AbstractListener(Category category, CommentedYamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		this.category = category;
+	}
+
+	public Category getCategory() {
+		return category;
 	}
 
 	/**
@@ -38,12 +46,12 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * found.
 	 * 
 	 * @param player
-	 * @param category
 	 * @param incrementValue
 	 */
-	void updateStatisticAndAwardAchievementsIfAvailable(Player player, NormalAchievements category, int incrementValue) {
+	void updateStatisticAndAwardAchievementsIfAvailable(Player player, int incrementValue) {
 		if (shouldIncreaseBeTakenIntoAccount(player, category)) {
-			long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), incrementValue);
+			long amount = cacheManager.getAndIncrementStatisticAmount((NormalAchievements) category, player.getUniqueId(),
+					incrementValue);
 			checkThresholdsAndAchievements(player, category.toString(), amount);
 		}
 	}
@@ -53,16 +61,14 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * found.
 	 * 
 	 * @param player
-	 * @param category
 	 * @param subcategories
 	 * @param incrementValue
 	 */
-	void updateStatisticAndAwardAchievementsIfAvailable(Player player, MultipleAchievements category,
-			Set<String> subcategories, int incrementValue) {
+	void updateStatisticAndAwardAchievementsIfAvailable(Player player, Set<String> subcategories, int incrementValue) {
 		if (shouldIncreaseBeTakenIntoAccount(player, category)) {
 			subcategories.forEach(subcategory -> {
-				long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
-						incrementValue);
+				long amount = cacheManager.getAndIncrementStatisticAmount((MultipleAchievements) category, subcategory,
+						player.getUniqueId(), incrementValue);
 				checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
 			});
 		}
@@ -117,12 +123,12 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	/**
 	 * Returns all achievements that match the provided identifier.
 	 * 
-	 * @param category the category to search from
 	 * @param identifier the identifier to match
+	 * 
 	 * @return all matched achievements
 	 * @author tassu
 	 */
-	Set<String> findAchievementsByCategoryAndName(MultipleAchievements category, String identifier) {
+	Set<String> findAchievementsByCategoryAndName(String identifier) {
 		return mainConfig.getShallowKeys(category.toString()).stream()
 				.filter(keys -> ArrayUtils.contains(StringUtils.split(keys, '|'), identifier))
 				.collect(Collectors.toSet());

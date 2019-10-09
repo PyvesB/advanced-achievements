@@ -29,19 +29,19 @@ public class LevelsListener extends AbstractListener {
 	@Inject
 	public LevelsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(NormalAchievements.LEVELS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerExpChange(PlayerLevelChangeEvent event) {
 		Player player = event.getPlayer();
 
-		NormalAchievements category = NormalAchievements.LEVELS;
-		int previousMaxLevel = (int) cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
+		int previousMaxLevel = (int) cacheManager.getAndIncrementStatisticAmount(NormalAchievements.LEVELS,
+				player.getUniqueId(), 0);
 		if (event.getNewLevel() <= previousMaxLevel) {
 			return;
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, event.getNewLevel() - previousMaxLevel);
+		updateStatisticAndAwardAchievementsIfAvailable(player, event.getNewLevel() - previousMaxLevel);
 	}
 }

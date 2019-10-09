@@ -9,7 +9,7 @@ import javax.inject.Singleton;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -17,24 +17,26 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with ItemPickups achievements. Keep PlayerPickupItemEvent for now, as it was only introduced
- * in late Minecraft 1.12 versions.
+ * Listener class to deal with EnderPearls achievements.
  * 
  * @author Pyves
  *
  */
-@SuppressWarnings("deprecation")
 @Singleton
-public class PickupsListener extends AbstractListener {
+public class EnderPearlsListener extends AbstractListener {
 
 	@Inject
-	public PickupsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public EnderPearlsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(NormalAchievements.PICKUPS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(NormalAchievements.ENDERPEARLS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		if (event.getCause() != PlayerTeleportEvent.TeleportCause.ENDER_PEARL) {
+			return;
+		}
+
 		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), 1);
 	}
 }

@@ -8,9 +8,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -18,27 +20,27 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with Deaths achievements.
+ * Listener class to deal with Snowballsachievements.
  * 
  * @author Pyves
  *
  */
 @Singleton
-public class DeathsListener extends AbstractListener {
+public class SnowballsListener extends AbstractListener {
 
 	@Inject
-	public DeathsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public SnowballsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(NormalAchievements.DEATHS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(NormalAchievements.SNOWBALLS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerDeath(PlayerDeathEvent event) {
-		Player player = event.getEntity();
-		if (player == null) {
+	public void onProjectileLaunch(ProjectileLaunchEvent event) {
+		ProjectileSource shooter = event.getEntity().getShooter();
+		if (!(shooter instanceof Player) || !(event.getEntity() instanceof Snowball)) {
 			return;
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, 1);
+		updateStatisticAndAwardAchievementsIfAvailable((Player) shooter, 1);
 	}
 }

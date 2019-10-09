@@ -34,17 +34,17 @@ public class FertilisingLegacyListener extends AbstractListener {
 	@Inject
 	public FertilisingLegacyListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(NormalAchievements.FERTILISING, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR) // Do NOT set ignoreCancelled to true, see SPIGOT-4793.
+	@EventHandler(priority = EventPriority.MONITOR) // Do NOT set ignoreCancelled to true, deprecated for this event.
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.useItemInHand() == Result.DENY || event.getAction() != Action.RIGHT_CLICK_BLOCK
 				|| !isBoneMeal(event.getItem()) || !canBeFertilised(event.getClickedBlock())) {
 			return;
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), NormalAchievements.FERTILISING, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), 1);
 	}
 
 	/**

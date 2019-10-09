@@ -7,10 +7,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bukkit.entity.Sheep;
+import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -18,23 +19,29 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with Shear achievements (only sheep are taken into account).
+ * Listener class to deal with Fish achievements.
  * 
  * @author Pyves
  *
  */
 @Singleton
-public class ShearsListener extends AbstractListener {
+public class FishListener extends AbstractListener {
 
 	@Inject
-	public ShearsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public FishListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(NormalAchievements.SHEARS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(NormalAchievements.FISH, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerShearEntity(PlayerShearEntityEvent event) {
-		if (!(event.getEntity() instanceof Sheep)) {
+	public void onPlayerFish(PlayerFishEvent event) {
+		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) {
+			return;
+		}
+
+		Material caughtMaterial = ((Item) event.getCaught()).getItemStack().getType();
+		if (!caughtMaterial.name().endsWith("FISH")
+				&& (serverVersion < 13 || (caughtMaterial != Material.COD && caughtMaterial != Material.SALMON))) {
 			return;
 		}
 

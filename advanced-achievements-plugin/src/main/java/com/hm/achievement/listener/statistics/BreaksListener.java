@@ -35,7 +35,7 @@ public class BreaksListener extends AbstractListener {
 	@Inject
 	public BreaksListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(MultipleAchievements.BREAKS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@Override
@@ -64,15 +64,14 @@ public class BreaksListener extends AbstractListener {
 		}
 
 		String blockName = block.getType().name().toLowerCase();
-		MultipleAchievements category = MultipleAchievements.BREAKS;
 		if (!player.hasPermission(category.toPermName() + '.' + blockName)) {
 			return;
 		}
 
 		Set<String> foundAchievements = findAchievementsByCategoryAndName(
-				category, blockName + ':' + block.getState().getData().toItemStack().getDurability());
-		foundAchievements.addAll(findAchievementsByCategoryAndName(category, blockName));
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, 1);
+				blockName + ':' + block.getState().getData().toItemStack().getDurability());
+		foundAchievements.addAll(findAchievementsByCategoryAndName(blockName));
+		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
 	}
 
 	/**

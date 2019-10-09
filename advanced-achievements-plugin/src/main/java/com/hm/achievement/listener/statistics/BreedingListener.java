@@ -27,7 +27,7 @@ public class BreedingListener extends AbstractListener {
 	@Inject
 	public BreedingListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(MultipleAchievements.BREEDING, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -38,12 +38,11 @@ public class BreedingListener extends AbstractListener {
 
 		Player player = (Player) event.getBreeder();
 		String mobName = event.getMother().getType().name().toLowerCase();
-		MultipleAchievements category = MultipleAchievements.BREEDING;
 		if (!player.hasPermission(category.toPermName() + '.' + mobName)) {
 			return;
 		}
 
-		Set<String> foundAchievements = findAchievementsByCategoryAndName(category, mobName);
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, 1);
+		Set<String> foundAchievements = findAchievementsByCategoryAndName(mobName);
+		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
 	}
 }

@@ -29,7 +29,7 @@ public class ArrowsListener extends AbstractListener {
 	@Inject
 	public ArrowsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(NormalAchievements.ARROWS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -38,6 +38,6 @@ public class ArrowsListener extends AbstractListener {
 			return;
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable((Player) event.getEntity(), NormalAchievements.ARROWS, 1);
+		updateStatisticAndAwardAchievementsIfAvailable((Player) event.getEntity(), 1);
 	}
 }

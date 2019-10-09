@@ -28,11 +28,11 @@ public class DropsListener extends AbstractListener {
 	@Inject
 	public DropsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(NormalAchievements.DROPS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
-		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), NormalAchievements.DROPS, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), 1);
 	}
 }

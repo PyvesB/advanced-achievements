@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.LangHelper;
@@ -28,8 +29,8 @@ import com.hm.mcshared.particle.FancyMessageSender;
  */
 public class AbstractRateLimitedListener extends AbstractListener implements Cleanable {
 
-	final Map<String, Long> cooldownMap = new HashMap<>();
 
+	private final Map<Integer, Map<UUID, Long>> slotsToPlayersLastActionTimes = new HashMap<>();
 	private final AdvancedAchievements advancedAchievements;
 	private final CommentedYamlConfiguration langConfig;
 	private final Logger logger;
@@ -39,10 +40,10 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 
 	private String langStatisticCooldown;
 
-	AbstractRateLimitedListener(CommentedYamlConfiguration mainConfig, int serverVersion,
+	AbstractRateLimitedListener(Category category, CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
 			AdvancedAchievements advancedAchievements, CommentedYamlConfiguration langConfig, Logger logger) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(category, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.advancedAchievements = advancedAchievements;
 		this.langConfig = langConfig;
 		this.logger = logger;
@@ -74,7 +75,20 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 
 	@Override
 	public void cleanPlayerData(UUID uuid) {
-		cooldownMap.remove(uuid.toString());
+		slotsToPlayersLastActionTimes.values().forEach(m -> m.remove(uuid));
+	}
+
+	void updateStatisticAndAwardAchievementsIfAvailable(Player player, int incrementValue, int slotNumber) {
+		if (!isInCooldownPeriod(player, slotNumber)) {
+			super.updateStatisticAndAwardAchievementsIfAvailable(player, incrementValue);
+		}
+	}
+
+	@Override
+	void updateStatisticAndAwardAchievementsIfAvailable(Player player, int incrementValue) {
+		if (!isInCooldownPeriod(player, 0)) {
+			super.updateStatisticAndAwardAchievementsIfAvailable(player, incrementValue);
+		}
 	}
 
 	/**
@@ -82,35 +96,21 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * period.
 	 *
 	 * @param player
-	 * @param delay
-	 * @param category
+	 * @param slotNumber
 	 * @return true if the player is still in cooldown, false otherwise
 	 */
-	boolean isInCooldownPeriod(Player player, boolean delay, NormalAchievements category) {
-		return isInCooldownPeriod(player, "", delay, category);
-	}
-
-	/**
-	 * Determines whether a similar event was taken into account too recently and the player is still in the cooldown
-	 * period. Stores elements in the map with prefixes to enable several distinct entries for the same player.
-	 *
-	 * @param player
-	 * @param prefixInMap
-	 * @param delay
-	 * @param category
-	 * @return true if the player is still in cooldown, false otherwise
-	 */
-	boolean isInCooldownPeriod(Player player, String prefixInMap, boolean delay, NormalAchievements category) {
+	private boolean isInCooldownPeriod(Player player, int slotNumber) {
 		List<Long> categoryThresholds = sortedThresholds.get(category.toString());
 		long hardestAchievementThreshold = categoryThresholds.get(categoryThresholds.size() - 1);
-		long currentPlayerStatistic = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
+		long currentPlayerStatistic = cacheManager.getAndIncrementStatisticAmount((NormalAchievements) category,
+				player.getUniqueId(), 0);
 		// Ignore cooldown if player has received all achievements in the category.
 		if (currentPlayerStatistic >= hardestAchievementThreshold) {
 			return false;
 		}
 
-		String uuid = player.getUniqueId().toString();
-		Long lastEventTime = cooldownMap.get(prefixInMap + uuid);
+		Map<UUID, Long> playersLastActionTimes = slotsToPlayersLastActionTimes.computeIfAbsent(slotNumber, HashMap::new);
+		Long lastEventTime = playersLastActionTimes.get(player.getUniqueId());
 		if (lastEventTime == null) {
 			lastEventTime = 0L;
 		}
@@ -119,9 +119,8 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 			if (configCooldownActionBar) {
 				String message = "&o" + StringUtils.replaceOnce(langStatisticCooldown, "TIME",
 						String.format("%.1f", (double) timeToWait / 1000));
-				if (delay) {
-					// Display message with a delay to avoid it being overwritten by another message (typically disc
-					// name).
+				if (category == NormalAchievements.MUSICDISCS) {
+					// Display message with a delay to avoid it being overwritten by disc name message.s
 					Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements,
 							() -> displayActionBarMessage(player, message), 20);
 				} else {
@@ -130,7 +129,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 			}
 			return true;
 		}
-		cooldownMap.put(prefixInMap + uuid, System.currentTimeMillis());
+		playersLastActionTimes.put(player.getUniqueId(), System.currentTimeMillis());
 		return false;
 	}
 

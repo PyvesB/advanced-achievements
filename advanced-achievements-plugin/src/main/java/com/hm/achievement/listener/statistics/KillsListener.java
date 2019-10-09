@@ -33,7 +33,7 @@ public class KillsListener extends AbstractListener {
 	@Inject
 	public KillsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(MultipleAchievements.KILLS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -49,22 +49,21 @@ public class KillsListener extends AbstractListener {
 
 		Set<String> foundAchievements = new HashSet<>();
 
-		MultipleAchievements category = MultipleAchievements.KILLS;
 		if (player.hasPermission(category.toPermName() + '.' + mobType)) {
-			foundAchievements.addAll(findAchievementsByCategoryAndName(category, mobType));
+			foundAchievements.addAll(findAchievementsByCategoryAndName(mobType));
 		}
 
 		if (entity.getCustomName() != null && player.hasPermission(category.toPermName() + '.' + entity.getCustomName())) {
-			foundAchievements.addAll(findAchievementsByCategoryAndName(category, entity.getCustomName()));
+			foundAchievements.addAll(findAchievementsByCategoryAndName(entity.getCustomName()));
 		}
 
 		if (entity instanceof Player) {
 			String specificPlayer = "specificplayer-" + entity.getUniqueId().toString().toLowerCase();
 			if (player.hasPermission(category.toPermName() + '.' + specificPlayer)) {
-				foundAchievements.addAll(findAchievementsByCategoryAndName(category, specificPlayer));
+				foundAchievements.addAll(findAchievementsByCategoryAndName(specificPlayer));
 			}
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
 	}
 }

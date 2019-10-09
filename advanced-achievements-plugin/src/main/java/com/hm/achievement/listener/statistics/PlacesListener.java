@@ -31,7 +31,7 @@ public class PlacesListener extends AbstractListener {
 	@Inject
 	public PlacesListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(MultipleAchievements.PLACES, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -39,15 +39,14 @@ public class PlacesListener extends AbstractListener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
-		MultipleAchievements category = MultipleAchievements.PLACES;
 		String blockName = block.getType().name().toLowerCase();
 		if (!player.hasPermission(category.toPermName() + '.' + blockName)) {
 			return;
 		}
 
 		Set<String> foundAchievements = findAchievementsByCategoryAndName(
-				category, blockName + ':' + block.getState().getData().toItemStack(0).getDurability());
-		foundAchievements.addAll(findAchievementsByCategoryAndName(category, blockName));
-		updateStatisticAndAwardAchievementsIfAvailable(player, category, foundAchievements, 1);
+				blockName + ':' + block.getState().getData().toItemStack(0).getDurability());
+		foundAchievements.addAll(findAchievementsByCategoryAndName(blockName));
+		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
 	}
 }

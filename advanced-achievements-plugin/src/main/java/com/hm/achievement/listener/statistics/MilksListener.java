@@ -8,9 +8,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -19,24 +20,25 @@ import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
- * Listener class to deal with Beds achievements.
- * 
- * @author Pyves
+ * Listener class to deal with Milk achievements.
  *
+ * @author Pyves
  */
 @Singleton
-public class BedsListener extends AbstractRateLimitedListener {
+public class MilksListener extends AbstractRateLimitedListener {
 
 	@Inject
-	public BedsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public MilksListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
 			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger) {
-		super(NormalAchievements.BEDS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser,
+		super(NormalAchievements.MILKS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser,
 				advancedAchievements, langConfig, logger);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerBedEnter(PlayerBedEnterEvent event) {
-		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), 1);
+	public void onPlayerBucketFill(PlayerBucketFillEvent event) {
+		if (event.getItemStack().getType() == Material.MILK_BUCKET) {
+			updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), 1);
+		}
 	}
 }

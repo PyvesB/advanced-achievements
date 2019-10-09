@@ -28,11 +28,11 @@ public class EnchantmentsListener extends AbstractListener {
 	@Inject
 	public EnchantmentsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(NormalAchievements.ENCHANTMENTS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEnchantItem(EnchantItemEvent event) {
-		updateStatisticAndAwardAchievementsIfAvailable(event.getEnchanter(), NormalAchievements.ENCHANTMENTS, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(event.getEnchanter(), 1);
 	}
 }

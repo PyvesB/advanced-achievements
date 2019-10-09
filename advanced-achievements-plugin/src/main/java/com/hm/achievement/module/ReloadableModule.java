@@ -11,34 +11,45 @@ import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.MainGUI;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
+import com.hm.achievement.listener.statistics.AnvilsListener;
 import com.hm.achievement.listener.statistics.ArrowsListener;
 import com.hm.achievement.listener.statistics.BedsListener;
 import com.hm.achievement.listener.statistics.BreaksListener;
 import com.hm.achievement.listener.statistics.BreedingListener;
-import com.hm.achievement.listener.statistics.CaughtFishTreasuresListener;
+import com.hm.achievement.listener.statistics.BrewingListener;
 import com.hm.achievement.listener.statistics.ConnectionsListener;
-import com.hm.achievement.listener.statistics.ConsumedPotionsEatenItemsListener;
+import com.hm.achievement.listener.statistics.ConsumedPotionsListener;
 import com.hm.achievement.listener.statistics.CraftsListener;
 import com.hm.achievement.listener.statistics.DeathsListener;
 import com.hm.achievement.listener.statistics.DropsListener;
+import com.hm.achievement.listener.statistics.EatenItemsListener;
+import com.hm.achievement.listener.statistics.EggsListener;
 import com.hm.achievement.listener.statistics.EnchantmentsListener;
-import com.hm.achievement.listener.statistics.EnderPearlsDistancesListener;
+import com.hm.achievement.listener.statistics.EnderPearlsListener;
 import com.hm.achievement.listener.statistics.FertilisingLegacyListener;
 import com.hm.achievement.listener.statistics.FertilisingListener;
+import com.hm.achievement.listener.statistics.FireworksListener;
+import com.hm.achievement.listener.statistics.FishListener;
+import com.hm.achievement.listener.statistics.HoePlowingListener;
 import com.hm.achievement.listener.statistics.ItemBreaksListener;
 import com.hm.achievement.listener.statistics.KillsListener;
+import com.hm.achievement.listener.statistics.LavaBucketsListener;
 import com.hm.achievement.listener.statistics.LevelsListener;
-import com.hm.achievement.listener.statistics.MilksLavaWaterBucketsListener;
-import com.hm.achievement.listener.statistics.PetMasterGiveReceiveListener;
+import com.hm.achievement.listener.statistics.MilksListener;
+import com.hm.achievement.listener.statistics.MusicDiscsListener;
+import com.hm.achievement.listener.statistics.PetMasterGiveListener;
+import com.hm.achievement.listener.statistics.PetMasterReceiveListener;
 import com.hm.achievement.listener.statistics.PickupsListener;
 import com.hm.achievement.listener.statistics.PlacesListener;
 import com.hm.achievement.listener.statistics.PlayerCommandsListener;
-import com.hm.achievement.listener.statistics.PlowingFireworksMusicDiscsListener;
 import com.hm.achievement.listener.statistics.ShearsListener;
-import com.hm.achievement.listener.statistics.SnowballsEggsListener;
+import com.hm.achievement.listener.statistics.SmeltingListener;
+import com.hm.achievement.listener.statistics.SnowballsListener;
 import com.hm.achievement.listener.statistics.TamesListener;
 import com.hm.achievement.listener.statistics.TargetsShotListener;
-import com.hm.achievement.listener.statistics.TradesAnvilsBrewingSmeltingListener;
+import com.hm.achievement.listener.statistics.TradesListener;
+import com.hm.achievement.listener.statistics.TreasuresListener;
+import com.hm.achievement.listener.statistics.WaterBucketsListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 import com.hm.achievement.utils.RewardParser;
@@ -46,11 +57,19 @@ import com.hm.achievement.utils.StatisticIncreaseHandler;
 
 import dagger.Binds;
 import dagger.Module;
+import dagger.Provides;
 import dagger.multibindings.ElementsIntoSet;
 import dagger.multibindings.IntoSet;
 
 @Module
-public interface ReloadableModule {
+public abstract class ReloadableModule {
+
+	@Provides
+	@IntoSet
+	static Reloadable provideFertilisingListener(FertilisingListener fertilisingListener,
+			FertilisingLegacyListener fertilisingLegacyListener, int serverVersion) {
+		return serverVersion >= 13 ? fertilisingListener : fertilisingLegacyListener;
+	}
 
 	@Binds
 	@ElementsIntoSet
@@ -62,15 +81,11 @@ public interface ReloadableModule {
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindCategoryGUI(CategoryGUI categoryGUI);
+	abstract Reloadable bindAchieveDistanceRunnable(AchieveDistanceRunnable achieveDistanceRunnable);
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindMainGUI(MainGUI mainGUI);
-
-	@Binds
-	@IntoSet
-	abstract Reloadable bindGUIItems(GUIItems guiItems);
+	abstract Reloadable bindAchievePlayTimeRunnable(AchievePlayTimeRunnable achievePlayTimeRunnable);
 
 	@Binds
 	@IntoSet
@@ -78,16 +93,7 @@ public interface ReloadableModule {
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindPlayerAdvancedAchievementListener(
-			PlayerAdvancedAchievementListener playerAdvancedAchievementListener);
-
-	@Binds
-	@IntoSet
-	abstract Reloadable bindRewardParser(RewardParser rewardParser);
-
-	@Binds
-	@IntoSet
-	abstract Reloadable bindStatisticIncreaseHandler(StatisticIncreaseHandler statisticIncreaseHandler);
+	abstract Reloadable bindAnvilsListener(AnvilsListener anvilsListener);
 
 	@Binds
 	@IntoSet
@@ -107,11 +113,11 @@ public interface ReloadableModule {
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindTargetsShotListener(TargetsShotListener targetsShotListener);
+	abstract Reloadable bindBrewingListener(BrewingListener brewingListener);
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindCaughtFishTreasuresListener(CaughtFishTreasuresListener caughtFishTreasuresListener);
+	abstract Reloadable bindCategoryGUI(CategoryGUI categoryGUI);
 
 	@Binds
 	@IntoSet
@@ -119,8 +125,7 @@ public interface ReloadableModule {
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindConsumedPotionsEatenItemsListener(
-			ConsumedPotionsEatenItemsListener consumedPotionsEatenItemsListener);
+	abstract Reloadable bindConsumedPotionsListener(ConsumedPotionsListener consumedPotionsListener);
 
 	@Binds
 	@IntoSet
@@ -136,11 +141,35 @@ public interface ReloadableModule {
 
 	@Binds
 	@IntoSet
+	abstract Reloadable bindEatenItemsListener(EatenItemsListener eatenItemsListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindEggsListener(EggsListener eggsListener);
+
+	@Binds
+	@IntoSet
 	abstract Reloadable bindEnchantmentsListener(EnchantmentsListener enchantmentsListener);
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindEnderPearlsDistancesListener(EnderPearlsDistancesListener enderPearlsDistancesListener);
+	abstract Reloadable bindEnderPearlsListener(EnderPearlsListener enderPearlsListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindFireworksListener(FireworksListener fireworksListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindFishListener(FishListener fishListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindGUIItems(GUIItems guiItems);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindHoePlowingListener(HoePlowingListener hoePlowingListener);
 
 	@Binds
 	@IntoSet
@@ -152,15 +181,31 @@ public interface ReloadableModule {
 
 	@Binds
 	@IntoSet
+	abstract Reloadable bindLavaBucketsListener(LavaBucketsListener lavaBucketsListener);
+
+	@Binds
+	@IntoSet
 	abstract Reloadable bindLevelsListener(LevelsListener levelsListener);
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindMilksLavaWaterBucketsListener(MilksLavaWaterBucketsListener milksLavaWaterBucketsListener);
+	abstract Reloadable bindMainGUI(MainGUI mainGUI);
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindPetMasterGiveReceiveListener(PetMasterGiveReceiveListener petMasterGiveReceiveListener);
+	abstract Reloadable bindMilksListener(MilksListener milksListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindMusicDiscsListener(MusicDiscsListener musicDiscsListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindPetMasterGiveListener(PetMasterReceiveListener petMasterReceiveListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindPetMasterReceiveListener(PetMasterGiveListener petMasterGiveListener);
 
 	@Binds
 	@IntoSet
@@ -172,16 +217,8 @@ public interface ReloadableModule {
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindPlowingFertilisingFireworksMusicDiscsListener(
-			PlowingFireworksMusicDiscsListener plowingFireworksMusicDiscsListener);
-
-	@Binds
-	@IntoSet
-	abstract Reloadable bindFertilisingListener(FertilisingListener fertilisingListener);
-
-	@Binds
-	@IntoSet
-	abstract Reloadable bindFertilisingLegacyListener(FertilisingLegacyListener fertilisingLegacyListener);
+	abstract Reloadable bindPlayerAdvancedAchievementListener(
+			PlayerAdvancedAchievementListener playerAdvancedAchievementListener);
 
 	@Binds
 	@IntoSet
@@ -189,11 +226,27 @@ public interface ReloadableModule {
 
 	@Binds
 	@IntoSet
+	abstract Reloadable bindPluginCommandExecutor(PluginCommandExecutor pluginCommandExecutor);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindRewardParser(RewardParser rewardParser);
+
+	@Binds
+	@IntoSet
 	abstract Reloadable bindShearsListener(ShearsListener shearsListener);
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindSnowballsEggsListener(SnowballsEggsListener snowballsEggsListener);
+	abstract Reloadable bindSmeltingListener(SmeltingListener smeltingListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindSnowballsListener(SnowballsListener snowballsListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindStatisticIncreaseHandler(StatisticIncreaseHandler statisticIncreaseHandler);
 
 	@Binds
 	@IntoSet
@@ -201,18 +254,17 @@ public interface ReloadableModule {
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindTradesAnvilsBrewingSmeltingListener(
-			TradesAnvilsBrewingSmeltingListener tradesAnvilsBrewingSmeltingListener);
+	abstract Reloadable bindTargetsShotListener(TargetsShotListener targetsShotListener);
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindAchieveDistanceRunnable(AchieveDistanceRunnable achieveDistanceRunnable);
+	abstract Reloadable bindTradesListener(TradesListener tradesListener);
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindAchievePlayTimeRunnable(AchievePlayTimeRunnable achievePlayTimeRunnable);
+	abstract Reloadable bindTreasuresListener(TreasuresListener treasuresListener);
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindPluginCommandExecutor(PluginCommandExecutor pluginCommandExecutor);
+	abstract Reloadable bindWaterBucketsListener(WaterBucketsListener waterBucketsListener);
 }
