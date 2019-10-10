@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.utils.InventoryHelper;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -31,10 +32,14 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class CraftsListener extends AbstractListener {
 
+	private final InventoryHelper inventoryHelper;
+
 	@Inject
 	public CraftsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
+			InventoryHelper inventoryHelper) {
 		super(MultipleAchievements.CRAFTS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		this.inventoryHelper = inventoryHelper;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -68,7 +73,7 @@ public class CraftsListener extends AbstractListener {
 				}
 			}
 			eventAmount *= maxAmount;
-			eventAmount = Math.min(eventAmount, getInventoryAvailableSpace(player, event.getCurrentItem()));
+			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, event.getCurrentItem()));
 			if (eventAmount == 0) {
 				return;
 			}

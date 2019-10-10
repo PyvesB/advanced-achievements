@@ -1,6 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,7 +9,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
@@ -70,37 +68,6 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 				checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
 			});
 		}
-	}
-
-	/**
-	 * Calculates the space available to accommodate a new item stack. This method takes empty slots and existing item
-	 * stacks of the same type into account.
-	 * 
-	 * @param player
-	 * @param newItemStack
-	 * @return the available space for the item
-	 */
-	int getInventoryAvailableSpace(Player player, ItemStack newItemStack) {
-		int availableSpace = 0;
-		// Get all similar item stacks with a similar material in the player's inventory.
-		HashMap<Integer, ? extends ItemStack> inventoryItemStackMap = player.getInventory().all(newItemStack.getType());
-		// If matching item stack, add remaining space.
-		for (ItemStack currentItemStack : inventoryItemStackMap.values()) {
-			if (newItemStack.isSimilar(currentItemStack)) {
-				availableSpace += (newItemStack.getMaxStackSize() - currentItemStack.getAmount());
-			}
-		}
-
-		ItemStack[] storageContents = serverVersion >= 9 ? player.getInventory().getStorageContents()
-				: player.getInventory().getContents();
-		// Get all empty slots in the player's inventory.
-		for (ItemStack currentItemStack : storageContents) {
-			if (currentItemStack == null) {
-				availableSpace += newItemStack.getMaxStackSize();
-			}
-		}
-
-		return availableSpace;
 	}
 
 	/**

@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.utils.InventoryHelper;
 import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
@@ -35,15 +36,17 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class BrewingListener extends AbstractRateLimitedListener {
 
 	private final MaterialHelper materialHelper;
+	private final InventoryHelper inventoryHelper;
 
 	@Inject
 	public BrewingListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
 			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
-			MaterialHelper materialHelper) {
+			MaterialHelper materialHelper, InventoryHelper inventoryHelper) {
 		super(NormalAchievements.BREWING, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser,
 				advancedAchievements, langConfig, logger);
 		this.materialHelper = materialHelper;
+		this.inventoryHelper = inventoryHelper;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -57,7 +60,7 @@ public class BrewingListener extends AbstractRateLimitedListener {
 		Player player = (Player) event.getWhoClicked();
 		int eventAmount = event.getCurrentItem().getAmount();
 		if (event.isShiftClick()) {
-			eventAmount = Math.min(eventAmount, getInventoryAvailableSpace(player, event.getCurrentItem()));
+			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, event.getCurrentItem()));
 			if (eventAmount == 0) {
 				return;
 			}

@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.InventoryType;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.utils.InventoryHelper;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -30,10 +31,14 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class TradesListener extends AbstractListener {
 
+	private final InventoryHelper inventoryHelper;
+
 	@Inject
 	public TradesListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
+			InventoryHelper inventoryHelper) {
 		super(NormalAchievements.TRADES, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		this.inventoryHelper = inventoryHelper;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -48,7 +53,7 @@ public class TradesListener extends AbstractListener {
 
 		int eventAmount = event.getCurrentItem().getAmount();
 		if (event.isShiftClick()) {
-			eventAmount = Math.min(eventAmount, getInventoryAvailableSpace(player, event.getCurrentItem()));
+			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, event.getCurrentItem()));
 			if (eventAmount == 0) {
 				return;
 			}
