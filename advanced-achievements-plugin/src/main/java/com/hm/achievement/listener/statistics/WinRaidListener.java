@@ -24,7 +24,6 @@ public class WinRaidListener extends AbstractListener {
     public WinRaidListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
                           Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
         super(NormalAchievements.RAIDSWON, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
-        System.out.println("foo bar");
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
