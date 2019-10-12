@@ -50,6 +50,7 @@ import com.hm.achievement.listener.statistics.TargetsShotListener;
 import com.hm.achievement.listener.statistics.TradesListener;
 import com.hm.achievement.listener.statistics.TreasuresListener;
 import com.hm.achievement.listener.statistics.WaterBucketsListener;
+import com.hm.achievement.listener.statistics.WinRaidListener;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 import com.hm.achievement.utils.RewardParser;
@@ -267,4 +268,8 @@ public abstract class ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindWaterBucketsListener(WaterBucketsListener waterBucketsListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindsWinRaidListener(WinRaidListener winRaidListener);
 }
