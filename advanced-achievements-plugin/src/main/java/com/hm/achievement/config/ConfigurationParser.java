@@ -181,6 +181,13 @@ public class ConfigurationParser {
 			logger.warning(
 					"The projectile hit event is not fully available in your server version, please add TargetsShot to the DisabledCategories list in config.yml.");
 		}
+		// Raids introduced in 1.14.
+		if (!disabledCategories.contains(NormalAchievements.RAIDSWON) && serverVersion < 14) {
+			disabledCategories.add(NormalAchievements.RAIDSWON);
+			logger.warning("Overriding configuration: disabling RaidsWon category.");
+			logger.warning(
+					"Raids are not available in your server version, please add RaidsWon to the DisabledCategories list in config.yml.");
+		}
 	}
 
 	/**
