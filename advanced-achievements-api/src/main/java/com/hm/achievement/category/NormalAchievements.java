@@ -48,7 +48,8 @@ public enum NormalAchievements implements Category {
 	DISTANCEMINECART("DistanceMinecart", "list-distance-minecart", "Distance Travelled in a Minecart", "When a distance is traveled in a minecart."),
 	DISTANCEBOAT("DistanceBoat", "list-distance-boat", "Distance Travelled in a Boat", "When a distance is traveled in a boat."),
 	DISTANCEGLIDING("DistanceGliding", "list-distance-gliding", "Distance Travelled with Elytra", "When a distance is traveled with elytra."),
-	DISTANCELLAMA("DistanceLlama", "list-distance-llama", "Distance Travelled on a Llama", "When a distance is traveled on a llama.");
+	DISTANCELLAMA("DistanceLlama", "list-distance-llama", "Distance Travelled on a Llama", "When a distance is traveled on a llama."),
+	RAIDSWON("RaidsWon", "list-raids-won", "Raids Won", "When a raid is won.");
 
 	private static final Map<String, NormalAchievements> CATEGORY_NAMES_TO_ENUM = new HashMap<>();
 	static {

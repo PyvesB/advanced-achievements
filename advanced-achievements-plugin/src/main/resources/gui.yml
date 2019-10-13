@@ -120,6 +120,8 @@ Commands:
   Item: bookshelf
 TargetsShot:
   Item: firework_star
+RaidsWon:
+  Item: emerald
 
 #============================================================#
 # +--------------------------------------------------------+ #

@@ -221,6 +221,9 @@ permissions:
   achievement.count.custom:
     description: Allows custom statistics in database to increase.
     default: true
+  achievement.count.raidswon:
+    description: Allows raids won statistic in database to increase.
+    default: true
 # More granular permissions are available for the Breaks, Places, Crafts, Kills, Breeding, PlayerCommands, Custom and TargetsShot categories.
 # They depend on the sub-categories defined; for instance for stone breaks: achievement.count.breaks.stone
 # For PlayerCommands, use lower case without spaces nor the initial slash: achievement.count.playercommands.aachbook

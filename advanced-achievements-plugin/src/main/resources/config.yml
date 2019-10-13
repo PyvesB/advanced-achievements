@@ -729,6 +729,23 @@ Smelting:
     Message: 250 items smelt in a furnace!
     Name: smeltitems_250
     DisplayName: The Smelter
+
+# When a raid is won.
+RaidsWon:
+  1:
+    Goal: Win a raid.
+    Message: A raid won!
+    Name: raidswon_1
+    DisplayName: Accident or intentional?
+    Reward:
+      Item: emerald 8
+  10:
+    Goal: Win ten raids.
+    Message: Ten raids!
+    Name: raidswon_10
+    DisplayName: Village Protector
+    Reward:
+      Item: totem_of_undying 1
           
 #===========================OOOOOOO===========================#
 # VII-----------------------------------------------------VII #
