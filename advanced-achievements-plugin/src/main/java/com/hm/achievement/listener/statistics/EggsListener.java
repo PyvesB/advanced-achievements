@@ -7,12 +7,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bukkit.entity.Egg;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.event.player.PlayerEggThrowEvent;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -35,12 +32,7 @@ public class EggsListener extends AbstractListener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onProjectileLaunch(ProjectileLaunchEvent event) {
-		ProjectileSource shooter = event.getEntity().getShooter();
-		if (!(shooter instanceof Player) || !(event.getEntity() instanceof Egg)) {
-			return;
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable((Player) shooter, 1);
+	public void onProjectileLaunch(PlayerEggThrowEvent event) {
+		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), 1);
 	}
 }
