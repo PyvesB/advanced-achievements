@@ -281,6 +281,9 @@ public class FileUpdater {
 		// Added in version 5.12.0:
 		updateSetting(gui, "TargetsShot.Item", serverVersion >= 13 ? "firework_star" : "firework_charge");
 
+		// Added in version 5.13.0:
+		updateSetting(gui, "Riptides.Item", "trident");
+
 		if (serverVersion < 13) {
 			updateSetting(gui, "Breeding.Metadata", 0);
 			updateSetting(gui, "AchievementNotStarted.Metadata", 14);

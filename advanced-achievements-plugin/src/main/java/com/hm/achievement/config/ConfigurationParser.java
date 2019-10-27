@@ -188,6 +188,13 @@ public class ConfigurationParser {
 			logger.warning(
 					"Raids are not available in your server version, please add RaidsWon to the DisabledCategories list in config.yml.");
 		}
+		// Riptides introduced in 1.13.
+		if (!disabledCategories.contains(NormalAchievements.RIPTIDES) && serverVersion < 13) {
+			disabledCategories.add(NormalAchievements.RIPTIDES);
+			logger.warning("Overriding configuration: disabling Riptides category.");
+			logger.warning(
+					"Riptides are not available in your server version, please add Riptides to the DisabledCategories list in config.yml.");
+		}
 	}
 
 	/**

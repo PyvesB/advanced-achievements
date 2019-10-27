@@ -122,6 +122,8 @@ TargetsShot:
   Item: firework_star
 RaidsWon:
   Item: emerald
+Riptides:
+  Item: trident
 
 #============================================================#
 # +--------------------------------------------------------+ #

@@ -14,6 +14,7 @@ import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
 import com.hm.achievement.listener.statistics.AnvilsListener;
 import com.hm.achievement.listener.statistics.ArrowsListener;
 import com.hm.achievement.listener.statistics.BedsListener;
+import com.hm.achievement.listener.statistics.RiptidesListener;
 import com.hm.achievement.listener.statistics.BreaksListener;
 import com.hm.achievement.listener.statistics.BreedingListener;
 import com.hm.achievement.listener.statistics.BrewingListener;
@@ -272,4 +273,8 @@ public abstract class ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindsWinRaidListener(WinRaidListener winRaidListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindsRiptidesListener(RiptidesListener riptidesListener);
 }

@@ -746,7 +746,15 @@ RaidsWon:
     DisplayName: Village Protector
     Reward:
       Item: totem_of_undying 1
-          
+
+# When riptide is used with a trident.
+Riptides:
+  1:
+    Goal: Use a magical trident.
+    Message: You've mastered the powers of the sea!
+    Name: riptides_1
+    DisplayName: Poseidon
+  
 #===========================OOOOOOO===========================#
 # VII-----------------------------------------------------VII #
 # |               Command-based achievements                | #
