@@ -282,6 +282,7 @@ public class FileUpdater {
 		updateSetting(gui, "TargetsShot.Item", serverVersion >= 13 ? "firework_star" : "firework_charge");
 
 		// Added in version 5.13.0:
+		updateSetting(gui, "RaidsWon.Item", "gray_banner");
 		updateSetting(gui, "Riptides.Item", "trident");
 
 		if (serverVersion < 13) {

@@ -121,7 +121,7 @@ Commands:
 TargetsShot:
   Item: firework_star
 RaidsWon:
-  Item: emerald
+  Item: gray_banner
 Riptides:
   Item: trident
 
