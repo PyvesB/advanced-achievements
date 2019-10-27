@@ -83,9 +83,10 @@ public class RewardParser implements Reloadable {
 	 * Constructs the listing of an achievement's rewards with strings coming from language file.
 	 *
 	 * @param path achievement path
+	 * @param player
 	 * @return type(s) of the achievement reward as an array of strings
 	 */
-	public List<String> getRewardListing(String path) {
+	public List<String> getRewardListing(String path, Player player) {
 		List<String> rewardTypes = new ArrayList<>();
 		Set<String> keyNames = mainConfig.getKeys(true);
 
@@ -96,9 +97,9 @@ public class RewardParser implements Reloadable {
 
 		if (keyNames.contains(path + ".Item")) {
 			int amount = getItemAmount(path);
-			String name = getItemName(path);
+			String name = getItemName(path, player);
 			if (name.isEmpty()) {
-				name = getItemName(getItemReward(path));
+				name = getItemName(getItemReward(path, player));
 			}
 			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
 					new String[] { Integer.toString(amount), name }));
@@ -167,9 +168,10 @@ public class RewardParser implements Reloadable {
 	 * Returns an item reward for a given achievement (specified in configuration file).
 	 *
 	 * @param path achievement configuration path
+	 * @param player
 	 * @return ItemStack object corresponding to the reward
 	 */
-	public ItemStack getItemReward(String path) {
+	public ItemStack getItemReward(String path, Player player) {
 		int amount = getItemAmount(path);
 		if (amount <= 0) {
 			return null;
@@ -194,7 +196,7 @@ public class RewardParser implements Reloadable {
 			if (rewardMaterial.isPresent()) {
 				ItemStack item = new ItemStack(rewardMaterial.get(), amount);
 
-				String name = getItemName(path);
+				String name = getItemName(path, player);
 				if (!name.isEmpty()) {
 					ItemMeta meta = item.getItemMeta();
 					meta.setDisplayName(name);
@@ -223,13 +225,8 @@ public class RewardParser implements Reloadable {
 		if (commandReward == null) {
 			return new String[0];
 		}
-		commandReward = StringUtils.replaceEach(commandReward,
-				new String[] { "PLAYER_WORLD", "PLAYER_X", "PLAYER_Y", "PLAYER_Z", "PLAYER" },
-				new String[] { player.getWorld().getName(), Integer.toString(player.getLocation().getBlockX()),
-						Integer.toString(player.getLocation().getBlockY()),
-						Integer.toString(player.getLocation().getBlockZ()), player.getName() });
 		// Multiple reward commands can be set, separated by a semicolon and space. Extra parsing needed.
-		return MULTIPLE_REWARD_COMMANDS_SPLITTER.split(commandReward);
+		return MULTIPLE_REWARD_COMMANDS_SPLITTER.split(replacePlayerPlaceholders(commandReward, player));
 	}
 
 	/**
@@ -275,11 +272,28 @@ public class RewardParser implements Reloadable {
 	 * Extracts the item reward custom name from the configuration. Not supported for old config syntax.
 	 *
 	 * @param path achievement configuration path
+	 * @param player
 	 * @return the custom name for an item reward
 	 */
-	private String getItemName(String path) {
+	private String getItemName(String path, Player player) {
 		String configString = mainConfig.getString(path + ".Item", "");
 		String[] splittedString = StringUtils.split(configString);
-		return StringUtils.join(splittedString, " ", 2, splittedString.length).trim();
+		return replacePlayerPlaceholders(StringUtils.join(splittedString, " ", 2, splittedString.length).trim(), player);
+	}
+
+	/**
+	 * Replaces supported placeholders with player-specific information.
+	 * 
+	 * @param str
+	 * @param player
+	 * 
+	 * @return the input string with all placeholders resolved
+	 */
+	private String replacePlayerPlaceholders(String str, Player player) {
+		return StringUtils.replaceEach(str,
+				new String[] { "PLAYER_WORLD", "PLAYER_X", "PLAYER_Y", "PLAYER_Z", "PLAYER" },
+				new String[] { player.getWorld().getName(), Integer.toString(player.getLocation().getBlockX()),
+						Integer.toString(player.getLocation().getBlockY()),
+						Integer.toString(player.getLocation().getBlockZ()), player.getName() });
 	}
 }

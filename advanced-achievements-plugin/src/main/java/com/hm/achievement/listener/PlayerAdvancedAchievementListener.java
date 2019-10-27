@@ -527,7 +527,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		List<String> rewardTexts = giveRewardsAndPrepareTexts(player,
 				rewardParser.getCommandRewards("AllAchievementsReceivedRewards", player),
 				rewardParser.getCustomCommandMessages("AllAchievementsReceivedRewards"),
-				rewardParser.getItemReward("AllAchievementsReceivedRewards"),
+				rewardParser.getItemReward("AllAchievementsReceivedRewards", player),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "Money"),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "Experience"),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "IncreaseMaxHealth"),

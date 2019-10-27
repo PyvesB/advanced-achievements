@@ -86,7 +86,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 							.message(mainConfig.getString(achievementPath + ".Message"))
 							.commandRewards(rewardParser.getCommandRewards(rewardPath, player))
 							.commandMessage(rewardParser.getCustomCommandMessages(rewardPath))
-							.itemReward(rewardParser.getItemReward(rewardPath))
+							.itemReward(rewardParser.getItemReward(rewardPath, player))
 							.moneyReward(rewardParser.getRewardAmount(rewardPath, "Money"))
 							.experienceReward(rewardParser.getRewardAmount(rewardPath, "Experience"))
 							.maxHealthReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxHealth"))

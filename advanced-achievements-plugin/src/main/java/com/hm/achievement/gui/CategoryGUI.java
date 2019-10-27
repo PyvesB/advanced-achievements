@@ -199,7 +199,7 @@ public class CategoryGUI implements Reloadable {
 			String nameToDisplay = getNameToDisplay(categoryName, path, achName);
 			String descriptionToDisplay = getDescriptionToDisplay(categoryName, path, receptionDate != null);
 			List<String> lore = buildLore(categoryName, descriptionToDisplay, path, receptionDate, statistic,
-					ineligibleSeriesItem);
+					ineligibleSeriesItem, player);
 			insertAchievement(inventory, index - pageStart + 1, statistic, nameToDisplay, receptionDate,
 					ineligibleSeriesItem, lore);
 
@@ -386,10 +386,11 @@ public class CategoryGUI implements Reloadable {
 	 * @param date
 	 * @param statistic
 	 * @param ineligibleSeriesItem
+	 * @param player
 	 * @return the list representing the lore of a category item
 	 */
 	private List<String> buildLore(String categoryName, String description, String path, String date, long statistic,
-			boolean ineligibleSeriesItem) {
+			boolean ineligibleSeriesItem, Player player) {
 		List<String> lore = new ArrayList<>();
 		lore.add("");
 
@@ -419,7 +420,7 @@ public class CategoryGUI implements Reloadable {
 			}
 		}
 
-		List<String> rewards = rewardParser.getRewardListing(categoryName + '.' + path + ".Reward");
+		List<String> rewards = rewardParser.getRewardListing(categoryName + '.' + path + ".Reward", player);
 		// Add the rewards information.
 		if (!rewards.isEmpty() && !configHideRewardDisplayInList) {
 			lore.add(langListReward);
