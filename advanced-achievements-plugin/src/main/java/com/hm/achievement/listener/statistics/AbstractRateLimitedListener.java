@@ -33,7 +33,6 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	private final CommentedYamlConfiguration langConfig;
 	private final Logger logger;
 
-	private List<Long> categoryThresholds;
 	private int categoryCooldown;
 	private long hardestCategoryThreshold;
 	private boolean configCooldownActionBar;
@@ -53,8 +52,8 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		categoryThresholds = sortedThresholds.get(category.toString());
-		hardestCategoryThreshold = categoryThresholds.get(categoryThresholds.size() - 1);
+		List<Long> thresholds = sortedThresholds.get(category.toString());
+		hardestCategoryThreshold = thresholds == null ? Long.MAX_VALUE : thresholds.get(thresholds.size() - 1);
 		if (mainConfig.isInt("StatisticCooldown")) {
 			// Old configuration style for plugin versions up to version 5.4.
 			categoryCooldown = mainConfig.getInt("StatisticCooldown", 10) * 1000;
