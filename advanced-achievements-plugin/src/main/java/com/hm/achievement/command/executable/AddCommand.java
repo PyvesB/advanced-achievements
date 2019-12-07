@@ -1,6 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,6 +29,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 @CommandSpec(name = "add", permission = "add", minArgs = 4, maxArgs = 4)
 public class AddCommand extends AbstractParsableCommand {
+
+	private static final long MILLIS_PER_HOUR = TimeUnit.HOURS.toMillis(1);
 
 	private final CacheManager cacheManager;
 	private final StatisticIncreaseHandler statisticIncreaseHandler;
@@ -75,6 +78,9 @@ public class AddCommand extends AbstractParsableCommand {
 			} else if (!NormalAchievements.CONNECTIONS.toString().equals(args[2])) {
 				NormalAchievements category = NormalAchievements.getByName(args[2]);
 				long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd);
+				if (category == NormalAchievements.PLAYEDTIME) {
+					amount /= MILLIS_PER_HOUR; // Thresholds in the configuration are in hours.
+				}
 				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category.toString(), amount);
 				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
 						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
