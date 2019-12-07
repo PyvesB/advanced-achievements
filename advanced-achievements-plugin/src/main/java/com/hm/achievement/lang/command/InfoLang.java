@@ -9,6 +9,7 @@ import com.hm.achievement.lang.LangHelper;
  * @author Rsl1122
  */
 public enum InfoLang implements Lang {
+
 	DESCRIPTION("Description:"),
 	DESCRIPTION_DETAILS("Advanced Achievements enables unique and challenging achievements. "
 			+ "Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"),

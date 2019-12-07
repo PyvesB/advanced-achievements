@@ -9,6 +9,7 @@ import com.hm.achievement.lang.LangHelper;
  * @author Rsl1122
  */
 public enum CmdLang implements Lang {
+
 	NO_PERMISSIONS("You do not have the permission to do this."),
 	INVALID_COMMAND("Invalid command. Please type /aach to display the command help."),
 	PLAYER_OFFLINE("The player PLAYER is offline!"),

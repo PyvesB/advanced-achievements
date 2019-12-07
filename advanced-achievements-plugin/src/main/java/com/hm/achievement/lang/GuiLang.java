@@ -6,6 +6,7 @@ package com.hm.achievement.lang;
  * @author Rsl1122
  */
 public enum GuiLang implements Lang {
+
 	ACHIEVEMENTS_IN_CATEGORY_SINGULAR("AMOUNT achievement"),
 	ACHIEVEMENTS_IN_CATEGORY_PLURAL("AMOUNT achievements"),
 	COMMANDS("Other Achievements"),
