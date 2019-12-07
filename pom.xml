@@ -45,7 +45,7 @@
 					<compilerSource>${java.version}</compilerSource>
 					<compilerCompliance>${java.version}</compilerCompliance>
 					<compilerTargetPlatform>${java.version}</compilerTargetPlatform>
-					<lineEnding>LF</lineEnding>
+					<lineEnding>KEEP</lineEnding>
 				</configuration>
 			</plugin>
 			<plugin>

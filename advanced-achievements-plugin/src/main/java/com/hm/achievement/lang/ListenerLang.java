@@ -6,6 +6,7 @@ package com.hm.achievement.lang;
  * @author Rsl1122
  */
 public enum ListenerLang implements Lang {
+
 	STATISTIC_COOLDOWN("Achievements cooldown, wait TIME seconds before this action counts again."),
 	COMMAND_REWARD("Reward command carried out!"),
 	ACHIEVEMENT_RECEIVED("PLAYER received the achievement:"),

@@ -6,6 +6,7 @@ package com.hm.achievement.lang;
  * @author Rsl1122
  */
 public enum RewardLang implements Lang {
+
 	MONEY("receive AMOUNT"),
 	ITEM("receive AMOUNT ITEM"),
 	COMMAND("other"),

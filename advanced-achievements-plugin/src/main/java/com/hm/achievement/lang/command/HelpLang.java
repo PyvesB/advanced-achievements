@@ -10,6 +10,7 @@ import com.hm.achievement.lang.LangHelper;
  * @see HelpLang.Hover
  */
 public enum HelpLang implements Lang {
+
 	LIST("Display received and missing achievements."),
 	TOP("Display personal and global rankings."),
 	INFO("Display information about the plugin."),
@@ -47,6 +48,7 @@ public enum HelpLang implements Lang {
 	 * Lang implementation used for hover message translations used in HelpCommand.
 	 */
 	public enum Hover implements Lang {
+
 		LIST("Fancy GUI to get an overview of all achievements and your progress!"),
 		TOP("Who are the server's leaders and how do you compare to them?"),
 		INFO("Some extra info about the plugin and its awesome author!"),
