@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -26,11 +24,18 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public abstract class AbstractListener extends StatisticIncreaseHandler implements Listener {
 
 	final Category category;
+	Set<String> categoryKeys;
 
 	AbstractListener(Category category, CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.category = category;
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+		categoryKeys = mainConfig.getShallowKeys(category.toString());
 	}
 
 	public Category getCategory() {
@@ -71,16 +76,17 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	}
 
 	/**
-	 * Returns all achievements that match the provided identifier.
+	 * Returns all achievements that match the provided identifier. This methods accounts for groups of sub-categories,
+	 * e.g. 'zombie|pig_zombie|zombie_horse|zombie_villager'.
 	 * 
-	 * @param identifier the identifier to match
+	 * @param id the identifier to match
 	 * 
 	 * @return all matched achievements
 	 * @author tassu
 	 */
-	Set<String> findAchievementsByCategoryAndName(String identifier) {
-		return mainConfig.getShallowKeys(category.toString()).stream()
-				.filter(keys -> ArrayUtils.contains(StringUtils.split(keys, '|'), identifier))
+	Set<String> findAchievementsByCategoryAndName(String id) {
+		return categoryKeys.stream()
+				.filter(keys -> keys.startsWith(id + '|') || keys.contains('|' + id + '|') || keys.endsWith('|' + id))
 				.collect(Collectors.toSet());
 	}
 

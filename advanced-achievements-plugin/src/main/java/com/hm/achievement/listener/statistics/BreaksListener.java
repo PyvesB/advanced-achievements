@@ -1,5 +1,7 @@
 package com.hm.achievement.listener.statistics;
 
+import static org.bukkit.enchantments.Enchantment.SILK_TOUCH;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,11 +11,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.block.Block;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -50,17 +52,12 @@ public class BreaksListener extends AbstractListener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		boolean silkTouchBreak = (serverVersion >= 9
-				&& player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
-				|| serverVersion < 9 && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH);
-
-		if (disableSilkTouchBreaks && silkTouchBreak) {
-			return;
-		}
-
 		Block block = event.getBlock();
-		if (disableSilkTouchOreBreaks && silkTouchBreak && isOre(block.getType().name())) {
-			return;
+		if (disableSilkTouchBreaks || disableSilkTouchOreBreaks) {
+			ItemStack breakingTool = serverVersion >= 9 ? player.getInventory().getItemInMainHand() : player.getItemInHand();
+			if (breakingTool.containsEnchantment(SILK_TOUCH) && (disableSilkTouchBreaks || isOre(block.getType().name()))) {
+				return;
+			}
 		}
 
 		String blockName = block.getType().name().toLowerCase();

@@ -38,7 +38,7 @@ public class PlayerCommandsListener extends AbstractListener {
 		Player player = event.getPlayer();
 		List<String> equivalentCommands = getEquivalentCommands(event.getMessage());
 		Set<String> foundAchievements = new HashSet<>();
-		for (String groupedPrefixes : mainConfig.getShallowKeys(category.toString())) {
+		for (String groupedPrefixes : categoryKeys) {
 			for (String prefix : StringUtils.split(groupedPrefixes, '|')) {
 				if (player.hasPermission(category.toPermName() + '.' + StringUtils.deleteWhitespace(prefix))) {
 					for (String equivalentCommand : equivalentCommands) {

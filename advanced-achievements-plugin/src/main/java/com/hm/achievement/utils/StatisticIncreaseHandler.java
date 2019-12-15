@@ -109,14 +109,13 @@ public class StatisticIncreaseHandler implements Reloadable {
 	 * @return true if the increase should be taken into account, false otherwise
 	 */
 	protected boolean shouldIncreaseBeTakenIntoAccount(Player player, Category category) {
-		boolean isNPC = player.hasMetadata("NPC");
-		boolean permission = player.hasPermission(category.toPermName());
-		boolean restrictedCreative = configRestrictCreative && player.getGameMode() == GameMode.CREATIVE;
-		boolean restrictedSpectator = configRestrictSpectator && player.getGameMode() == GameMode.SPECTATOR;
-		boolean restrictedAdventure = configRestrictAdventure && player.getGameMode() == GameMode.ADVENTURE;
-		boolean excludedWorld = configExcludedWorlds.contains(player.getWorld().getName());
-
-		return !isNPC && permission && !restrictedCreative && !restrictedSpectator && !restrictedAdventure && !excludedWorld;
+		GameMode gameMode = player.getGameMode();
+		return !player.hasMetadata("NPC")
+				&& player.hasPermission(category.toPermName())
+				&& (!configRestrictCreative || gameMode != GameMode.CREATIVE)
+				&& (!configRestrictSpectator || gameMode != GameMode.SPECTATOR)
+				&& (!configRestrictAdventure || gameMode != GameMode.ADVENTURE)
+				&& !configExcludedWorlds.contains(player.getWorld().getName());
 	}
 
 }
