@@ -12,11 +12,7 @@ import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Boat;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Llama;
-import org.bukkit.entity.Minecart;
-import org.bukkit.entity.Pig;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 
@@ -77,8 +73,8 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	 * @param player
 	 */
 	private void validateMovementAndUpdateDistance(Player player) {
-		// Update new location.
-		Location previousLocation = playerLocations.put(player.getUniqueId(), player.getLocation());
+		Location currentLocation = player.getLocation();
+		Location previousLocation = playerLocations.put(player.getUniqueId(), currentLocation);
 
 		// If player location not found or if player has changed world, ignore previous location.
 		// Evaluating distance would give an exception.
@@ -86,22 +82,24 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 			return;
 		}
 
-		int difference = getDistanceDifference(player, previousLocation);
-		// Player has not moved.
-		if (difference == 0L) {
+		int difference = getDistanceDifference(previousLocation, currentLocation);
+		if (difference == 0L) { // Player has not moved.
 			return;
 		}
 
-		if (player.getVehicle() instanceof Horse) {
-			updateDistance(difference, player, NormalAchievements.DISTANCEHORSE);
-		} else if (player.getVehicle() instanceof Pig) {
-			updateDistance(difference, player, NormalAchievements.DISTANCEPIG);
-		} else if (player.getVehicle() instanceof Minecart) {
-			updateDistance(difference, player, NormalAchievements.DISTANCEMINECART);
-		} else if (player.getVehicle() instanceof Boat) {
-			updateDistance(difference, player, NormalAchievements.DISTANCEBOAT);
-		} else if (serverVersion >= 11 && player.getVehicle() instanceof Llama) {
-			updateDistance(difference, player, NormalAchievements.DISTANCELLAMA);
+		if (player.isInsideVehicle()) {
+			EntityType vehicleType = player.getVehicle().getType();
+			if (vehicleType == EntityType.HORSE) {
+				updateDistance(difference, player, NormalAchievements.DISTANCEHORSE);
+			} else if (vehicleType == EntityType.PIG) {
+				updateDistance(difference, player, NormalAchievements.DISTANCEPIG);
+			} else if (vehicleType == EntityType.MINECART) {
+				updateDistance(difference, player, NormalAchievements.DISTANCEMINECART);
+			} else if (vehicleType == EntityType.BOAT) {
+				updateDistance(difference, player, NormalAchievements.DISTANCEBOAT);
+			} else if (serverVersion >= 11 && vehicleType == EntityType.LLAMA) {
+				updateDistance(difference, player, NormalAchievements.DISTANCELLAMA);
+			}
 		} else if (serverVersion >= 9 && player.isGliding()) {
 			updateDistance(difference, player, NormalAchievements.DISTANCEGLIDING);
 		} else if (!player.isFlying()) {
@@ -113,17 +111,18 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	 * Calculates the difference between the player's last location and his current one. May ignore the vertical axis or
 	 * not depending on configuration..
 	 * 
-	 * @param player
 	 * @param previousLocation
+	 * @param currentLocation
+	 * 
 	 * @return difference
 	 */
-	private int getDistanceDifference(Player player, Location previousLocation) {
+	private int getDistanceDifference(Location previousLocation, Location currentLocation) {
 		if (configIgnoreVerticalDistance) {
-			double xSquared = NumberConversions.square(previousLocation.getX() - player.getLocation().getX());
-			double zSquared = NumberConversions.square(previousLocation.getZ() - player.getLocation().getZ());
+			double xSquared = NumberConversions.square(previousLocation.getX() - currentLocation.getX());
+			double zSquared = NumberConversions.square(previousLocation.getZ() - currentLocation.getZ());
 			return (int) Math.sqrt(xSquared + zSquared);
 		} else {
-			return (int) previousLocation.distance(player.getLocation());
+			return (int) previousLocation.distance(currentLocation);
 		}
 	}
 
