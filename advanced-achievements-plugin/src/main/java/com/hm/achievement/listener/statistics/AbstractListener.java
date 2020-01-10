@@ -86,7 +86,8 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 */
 	Set<String> findAchievementsByCategoryAndName(String id) {
 		return categoryKeys.stream()
-				.filter(keys -> keys.startsWith(id + '|') || keys.contains('|' + id + '|') || keys.endsWith('|' + id))
+				.filter(keys -> keys.equals(id) || keys.startsWith(id + '|') || keys.contains('|' + id + '|')
+						|| keys.endsWith('|' + id))
 				.collect(Collectors.toSet());
 	}
 
