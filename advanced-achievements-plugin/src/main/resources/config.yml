@@ -70,6 +70,9 @@ ActionBarNotify: true
 # Display achievement DisplayName and Message as screen titles. Ignored if using Minecraft 1.7.9 or 1.7.10.
 TitleScreen: true
 
+# Display chat messages when a player receives an achievement.
+ReceiverChatMessages: true
+
 # When a player receives an achievement, the DisplayName, Message and rewards of the achievement are displayed in
 # the chat. If HoverableReceiverChatText is true, a single hoverable text will be displayed to the receiver.
 # Otherwise texts will be displayed one after the other.

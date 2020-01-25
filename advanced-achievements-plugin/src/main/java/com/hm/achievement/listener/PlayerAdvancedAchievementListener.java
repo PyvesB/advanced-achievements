@@ -83,6 +83,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private boolean configNotifyOtherPlayers;
 	private boolean configActionBarNotify;
 	private boolean configHoverableReceiverChatText;
+	private boolean configReceiverChatMessages;
 
 	private String langCommandReward;
 	private String langAchievementReceived;
@@ -146,6 +147,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		if (configHoverableReceiverChatText && serverVersion < 8) {
 			configHoverableReceiverChatText = false;
 		}
+		configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages", true);
 
 		langCommandReward = LangHelper.get(ListenerLang.COMMAND_REWARD, langConfig);
 		langAchievementReceived = LangHelper.get(ListenerLang.ACHIEVEMENT_RECEIVED, langConfig) + " " + ChatColor.WHITE;
@@ -358,7 +360,9 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		}
 		String messageToShowUser = ChatColor.translateAlternateColorCodes('&', message);
 
-		displayReceiverMessages(player, nameToShowUser, messageToShowUser, rewardTexts);
+		if (configReceiverChatMessages) {
+			displayReceiverMessages(player, nameToShowUser, messageToShowUser, rewardTexts);
+		}
 
 		// Notify other online players that the player has received an achievement.
 		for (Player p : advancedAchievements.getServer().getOnlinePlayers()) {
