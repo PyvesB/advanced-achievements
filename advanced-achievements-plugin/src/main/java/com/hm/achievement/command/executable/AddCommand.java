@@ -77,9 +77,14 @@ public class AddCommand extends AbstractParsableCommand {
 						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
 			} else if (!NormalAchievements.CONNECTIONS.toString().equals(args[2])) {
 				NormalAchievements category = NormalAchievements.getByName(args[2]);
-				long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd);
+				long amount;
 				if (category == NormalAchievements.PLAYEDTIME) {
-					amount /= MILLIS_PER_HOUR; // Thresholds in the configuration are in hours.
+					// Thresholds in the configuration are in hours, underlying statistics are millis.
+					valueToAdd = (int) (valueToAdd * MILLIS_PER_HOUR);
+					amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd)
+							/ MILLIS_PER_HOUR;
+				} else {
+					amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd);
 				}
 				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category.toString(), amount);
 				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
