@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MinecraftFont;
 
+import com.hm.achievement.category.Category;
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -119,28 +120,26 @@ public class CategoryGUI implements Reloadable {
 	 * @param requestedPage
 	 */
 	public void displayCategoryGUI(ItemStack item, Player player, int requestedPage) {
-		for (Entry<MultipleAchievements, ItemStack> entry : guiItems.getMultipleAchievementItems().entrySet()) {
-			if (entry.getValue().isSimilar(item)) {
-				String categoryName = entry.getKey().toString();
-				List<String> achievementPaths = getSortedMultipleAchievementPaths(categoryName);
-				Map<String, Long> subcategoriesToStatistics = getMultipleStatisticsMapping(entry.getKey(), player);
-				displayPage(categoryName, player, subcategoriesToStatistics, requestedPage, item, achievementPaths);
+		for (Entry<OrderedCategory, ItemStack> achievementItem : guiItems.getOrderedAchievementItems().entrySet()) {
+			if (achievementItem.getValue().isSimilar(item)) {
+				Category category = achievementItem.getKey().getCategory();
+				List<String> achievementPaths;
+				Map<String, Long> subcategoriesToStatistics;
+				if (category instanceof MultipleAchievements) {
+					achievementPaths = getSortedMultipleAchievementPaths(category.toString());
+					subcategoriesToStatistics = getMultipleStatisticsMapping((MultipleAchievements) category, player);
+				} else if (category instanceof NormalAchievements) {
+					achievementPaths = getSortedNormalAchievementThresholds(category.toString());
+					long statistic = getNormalStatistic((NormalAchievements) category, player);
+					subcategoriesToStatistics = Collections.singletonMap(NO_SUBCATEGORY, statistic);
+				} else {
+					achievementPaths = new ArrayList<>(mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString()));
+					subcategoriesToStatistics = Collections.singletonMap(NO_SUBCATEGORY, NO_STAT);
+				}
+				displayPage(category.toString(), player, subcategoriesToStatistics, requestedPage, item, achievementPaths);
 				return;
 			}
 		}
-		for (Entry<NormalAchievements, ItemStack> entry : guiItems.getNormalAchievementItems().entrySet()) {
-			if (entry.getValue().isSimilar(item)) {
-				String categoryName = entry.getKey().toString();
-				List<String> achievementThresholds = getSortedNormalAchievementThresholds(categoryName);
-				long statistic = getNormalStatistic(entry.getKey(), player);
-				displayPage(categoryName, player, Collections.singletonMap(NO_SUBCATEGORY, statistic), requestedPage, item,
-						achievementThresholds);
-				return;
-			}
-		}
-		List<String> achievementPaths = new ArrayList<>(mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString()));
-		displayPage(CommandAchievements.COMMANDS.toString(), player, Collections.singletonMap(NO_SUBCATEGORY, NO_STAT),
-				requestedPage, item, achievementPaths);
 	}
 
 	/**

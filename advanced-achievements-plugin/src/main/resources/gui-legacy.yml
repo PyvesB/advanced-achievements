@@ -7,6 +7,7 @@
 # Do not use bedrock or barrier.
 # Do not use the same Item and Metadata pair twice.
 # If you are using a Minecraft version prior to 1.9, change grass_path of HoePlowings!
+# The order of the categories in the GUI will match the same order as in this file.
 
 # Items used to represent the achievements.
 AchievementNotStarted:
@@ -166,14 +167,14 @@ Smelting:
 PlayerCommands:
   Item: paper
   Metadata: 0
-Commands:
-  Item: bookshelf
+TargetsShot:
+  Item: firework_charge
   Metadata: 0
 Custom:
   Item: feather
   Metadata: 0
-TargetsShot:
-  Item: firework_charge
+Commands:
+  Item: bookshelf
   Metadata: 0
 
 #============================================================#

@@ -1,9 +1,11 @@
 package com.hm.achievement.gui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,10 +36,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class GUIItems implements Reloadable {
 
-	// Category items stacks.
-	private final Map<MultipleAchievements, ItemStack> multipleAchievementItems = new EnumMap<>(MultipleAchievements.class);
-	private final Map<NormalAchievements, ItemStack> normalAchievementItems = new EnumMap<>(NormalAchievements.class);
-	private ItemStack commandsAchievementsItem;
+	private final Map<OrderedCategory, ItemStack> orderedAchievementItems = new TreeMap<>();
 
 	// Various other item stacks displayed in the GUI.
 	private ItemStack previousButton;
@@ -77,6 +76,8 @@ public class GUIItems implements Reloadable {
 		langListAchievementsInCategoryPlural = LangHelper.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_PLURAL, langConfig);
 		langListAchievementInCategorySingular = LangHelper.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_SINGULAR, langConfig);
 
+		// getShallowKeys returns a LinkedHashSet, preserving the ordering specified in the file.
+		List<String> orderedCategories = new ArrayList<>(guiConfig.getShallowKeys(""));
 		// Prepare item stacks displayed in the GUI for Multiple achievements.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
@@ -87,7 +88,7 @@ public class GUIItems implements Reloadable {
 			}
 			ItemStack itemStack = createItemStack(categoryName);
 			buildItemLore(itemStack, LangHelper.get(category, langConfig), totalAchievements);
-			multipleAchievementItems.put(category, itemStack);
+			orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
 		}
 
 		// Prepare item stacks displayed in the GUI for Normal achievements.
@@ -95,13 +96,15 @@ public class GUIItems implements Reloadable {
 			String categoryName = category.toString();
 			ItemStack itemStack = createItemStack(categoryName);
 			buildItemLore(itemStack, LangHelper.get(category, langConfig), mainConfig.getShallowKeys(categoryName).size());
-			normalAchievementItems.put(category, itemStack);
+			orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
 		}
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
-		commandsAchievementsItem = createItemStack(CommandAchievements.COMMANDS.toString());
-		buildItemLore(commandsAchievementsItem, LangHelper.get(GuiLang.COMMANDS, langConfig),
+		ItemStack itemStack = createItemStack(CommandAchievements.COMMANDS.toString());
+		buildItemLore(itemStack, LangHelper.get(GuiLang.COMMANDS, langConfig),
 				mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString()).size());
+		orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(CommandAchievements.COMMANDS.toString()),
+				CommandAchievements.COMMANDS), itemStack);
 
 		achievementNotStarted = createItemStack("AchievementNotStarted");
 		achievementStarted = createItemStack("AchievementStarted");
@@ -180,16 +183,8 @@ public class GUIItems implements Reloadable {
 		item.setItemMeta(itemMeta);
 	}
 
-	public Map<MultipleAchievements, ItemStack> getMultipleAchievementItems() {
-		return multipleAchievementItems;
-	}
-
-	public Map<NormalAchievements, ItemStack> getNormalAchievementItems() {
-		return normalAchievementItems;
-	}
-
-	public ItemStack getCommandsAchievementsItem() {
-		return commandsAchievementsItem;
+	public Map<OrderedCategory, ItemStack> getOrderedAchievementItems() {
+		return orderedAchievementItems;
 	}
 
 	public ItemStack getPreviousButton() {

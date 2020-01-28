@@ -16,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.hm.achievement.category.Category;
-import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -85,28 +84,13 @@ public class MainGUI implements Reloadable {
 		inventoryHolder.setInventory(mainGUI);
 
 		int displayedSoFar = 0;
-		// Display Multiple categories in the GUI.
-		for (Entry<MultipleAchievements, ItemStack> multipleEntry : guiItems.getMultipleAchievementItems().entrySet()) {
-			ItemStack item = multipleEntry.getValue();
-			MultipleAchievements category = multipleEntry.getKey();
+		for (Entry<OrderedCategory, ItemStack> achievementItem : guiItems.getOrderedAchievementItems().entrySet()) {
+			Category category = achievementItem.getKey().getCategory();
+			ItemStack item = achievementItem.getValue();
 			if (shouldDisplayCategory(item, player, category)) {
-				displayMultipleCategory(item, mainGUI, player, category.toString(), displayedSoFar);
+				displayCategory(item, mainGUI, player, category, displayedSoFar);
 				++displayedSoFar;
 			}
-		}
-		// Display Normal categories in the GUI.
-		for (Entry<NormalAchievements, ItemStack> normalEntry : guiItems.getNormalAchievementItems().entrySet()) {
-			ItemStack item = normalEntry.getValue();
-			NormalAchievements category = normalEntry.getKey();
-			if (shouldDisplayCategory(item, player, category)) {
-				displayNormalCategory(item, mainGUI, player, category.toString(), displayedSoFar);
-				++displayedSoFar;
-			}
-		}
-		// Display the Commands category.
-		if (shouldDisplayCategory(guiItems.getCommandsAchievementsItem(), player, CommandAchievements.COMMANDS)) {
-			displayNormalCategory(guiItems.getCommandsAchievementsItem(), mainGUI, player,
-					CommandAchievements.COMMANDS.toString(), displayedSoFar);
 		}
 
 		// Display the main GUI to the player.
@@ -128,7 +112,7 @@ public class MainGUI implements Reloadable {
 	}
 
 	/**
-	 * Displays an item corresponding to a Multiple category, or a barrier if the category should be hidden.
+	 * Displays an item corresponding to a category, or a barrier if the category should be hidden.
 	 *
 	 * @param item
 	 * @param gui
@@ -136,30 +120,19 @@ public class MainGUI implements Reloadable {
 	 * @param category
 	 * @param position
 	 */
-	private void displayMultipleCategory(ItemStack item, Inventory gui, Player player, String category, int position) {
-		for (String subcategory : mainConfig.getShallowKeys(category)) {
-			if (!configHideNotReceivedCategories || hasReceivedInCategory(player, category + "." + subcategory)) {
-				gui.setItem(position, item);
-				return;
+	private void displayCategory(ItemStack item, Inventory gui, Player player, Category category, int position) {
+		if (category instanceof MultipleAchievements) {
+			for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
+				if (!configHideNotReceivedCategories || hasReceivedInCategory(player, category + "." + subcategory)) {
+					gui.setItem(position, item);
+					return;
+				}
 			}
-		}
-		gui.setItem(position, lockedItem);
-	}
-
-	/**
-	 * Displays an item corresponding to a Normal category, or a barrier if the category should be hidden.
-	 *
-	 * @param item
-	 * @param gui
-	 * @param player
-	 * @param category
-	 * @param position
-	 */
-	private void displayNormalCategory(ItemStack item, Inventory gui, Player player, String category, int position) {
-		if (configHideNotReceivedCategories && !hasReceivedInCategory(player, category)) {
 			gui.setItem(position, lockedItem);
-		} else {
+		} else if (!configHideNotReceivedCategories || hasReceivedInCategory(player, category.toString())) {
 			gui.setItem(position, item);
+		} else {
+			gui.setItem(position, lockedItem);
 		}
 	}
 
