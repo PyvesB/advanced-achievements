@@ -75,6 +75,7 @@ public class CategoryGUI implements Reloadable {
 	private String langListGoal;
 	private String langListProgress;
 	private String langListReward;
+	private String langListRewards;
 
 	@Inject
 	public CategoryGUI(@Named("main") CommentedYamlConfiguration mainConfig,
@@ -110,6 +111,7 @@ public class CategoryGUI implements Reloadable {
 		langListGoal = translateColorCodes("&7&l" + LangHelper.get(GuiLang.GOAL, langConfig));
 		langListProgress = translateColorCodes("&7&l" + LangHelper.get(GuiLang.PROGRESS, langConfig));
 		langListReward = translateColorCodes("&7&l" + LangHelper.get(GuiLang.REWARD, langConfig));
+		langListRewards = translateColorCodes("&7&l" + LangHelper.get(GuiLang.REWARDS, langConfig));
 	}
 
 	/**
@@ -422,7 +424,7 @@ public class CategoryGUI implements Reloadable {
 		List<String> rewards = rewardParser.getRewardListing(categoryName + '.' + path + ".Reward", player);
 		// Add the rewards information.
 		if (!rewards.isEmpty() && !configHideRewardDisplayInList) {
-			lore.add(langListReward);
+			lore.add(rewards.size() == 1 ? langListReward : langListRewards);
 			String dot;
 			if (date != null) {
 				dot = StringEscapeUtils.unescapeJava("&r\u25CF ");
