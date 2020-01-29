@@ -101,7 +101,7 @@ public class GUIItems implements Reloadable {
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
 		ItemStack itemStack = createItemStack(CommandAchievements.COMMANDS.toString());
-		buildItemLore(itemStack, LangHelper.get(GuiLang.COMMANDS, langConfig),
+		buildItemLore(itemStack, LangHelper.get(CommandAchievements.COMMANDS, langConfig),
 				mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString()).size());
 		orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(CommandAchievements.COMMANDS.toString()),
 				CommandAchievements.COMMANDS), itemStack);
