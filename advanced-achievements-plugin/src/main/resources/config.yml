@@ -376,6 +376,13 @@ Crafts:
       DisplayName: Blacksmith Apprentice
       Reward:
         Money: 2
+    100:      
+      Goal: Craft 100 swords.
+      Message: Next craft, Excalibur?
+      Name: craft_100_blade
+      DisplayName: Blacksmith Legend
+      Reward:
+        Experience: 500
         
 # When a player enters a specific command (specify command prefixes in lower case without initial slash).
 # For instance a command /awf add world from the AntiWorldFly plugin matches with subcategory 'awf add'.
@@ -578,7 +585,7 @@ PlayedTime:
 # When a distance is traveled by foot.
 DistanceFoot:
   1000:
-    Goal: Travel 100 Blocks with your feet.
+    Goal: Travel 1000 Blocks with your feet.
     Message: You traveled 1000 blocks by foot!
     Name: distancefoot_1000
     DisplayName: Big Walker 
