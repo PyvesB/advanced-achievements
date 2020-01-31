@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.map.MinecraftFont;
 
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.CommandAchievements;
@@ -49,8 +48,7 @@ public class CategoryGUI implements Reloadable {
 	private static final int MAX_ACHIEVEMENTS_PER_PAGE = 50;
 	private static final long NO_STAT = -1L;
 	private static final String NO_SUBCATEGORY = "";
-	// Minecraft font, used to get size information in the progress bar.
-	private static final MinecraftFont FONT = MinecraftFont.Font;
+	private static final int PROGRESS_BAR_SIZE = 90;
 
 	private final CommentedYamlConfiguration mainConfig;
 	private final CommentedYamlConfiguration langConfig;
@@ -416,7 +414,7 @@ public class CategoryGUI implements Reloadable {
 				String threshold = StringUtils.defaultIfEmpty(StringUtils.substringAfter(path, "."), path);
 				boolean timeStat = NormalAchievements.PLAYEDTIME.toString().equals(categoryName);
 				lore.add(langListProgress);
-				lore.add(translateColorCodes(constructProgressBar(strippedAchMessage, threshold, statistic, timeStat)));
+				lore.add(translateColorCodes(constructProgressBar(threshold, statistic, timeStat)));
 				lore.add("");
 			}
 		}
@@ -441,61 +439,44 @@ public class CategoryGUI implements Reloadable {
 	/**
 	 * Constructs the progress bar to be displayed in an achievement's item lore.
 	 *
-	 * @param achMessage
-	 * @param level
+	 * @param threshold
 	 * @param statistic
 	 * @param time
 	 * @return progress bar
 	 */
-	private String constructProgressBar(String achMessage, String level, long statistic, boolean time) {
-		StringBuilder barDisplay = new StringBuilder(configListColorNotReceived.toString()).append("[");
-		// Length of the progress bar; we make it the same size as Goal/Message.
-		int textSize;
-		// MinecraftFont essentially supports latin alphabet characters. If invalid characters are found just use
-		// number of chars.
-		if (FONT.isValid(achMessage)) {
-			textSize = FONT.getWidth(StringHelper.removeFormattingCodes(achMessage));
-		} else {
-			textSize = achMessage.length() * 3;
-		}
-
-		long levelInt = Long.parseLong(level);
+	private String constructProgressBar(String threshold, long statistic, boolean time) {
 		String middleText;
 		double statisticDouble;
 		if (time) {
-			// Convert from millis to hours.
-			statisticDouble = statistic / 3600000.0;
+			statisticDouble = statistic / 3600000.0; // Convert from millis to hours.
 			// Display one floating digit in the progress bar.
-			middleText = " " + String.format("%.1f", statisticDouble) + "/" + levelInt + " ";
+			middleText = String.format(" %s&o%.1f/%s ", configListColorNotReceived, statisticDouble, threshold);
 		} else {
-			middleText = " " + statistic + "/" + levelInt + " ";
-			// Cast to double.
-			statisticDouble = statistic;
+			statisticDouble = statistic; // Cast to double.
+			middleText = String.format(" %s&o%s/%s ", configListColorNotReceived, statistic, threshold);
 		}
-		int middleTextSize = FONT.getWidth(middleText);
-		middleText = configListColorNotReceived + "&o" + middleText;
 
+		StringBuilder barDisplay = new StringBuilder().append(configListColorNotReceived).append("[");
+		long numericalThreshold = Long.parseLong(threshold);
+		// Approximation: colours chars account for no size, spaces ~2 vertical bars, other chars ~3 vertical bars.
+		int middleTextSize = configEnrichedProgressBars ? (middleText.length() - 6) * 3 + 4 : 0;
 		boolean hasDisplayedMiddleText = false;
-		int i = 1;
-		while (i < textSize / 2) {
-			if (configEnrichedProgressBars && !hasDisplayedMiddleText && i >= (textSize - middleTextSize) / 4) {
+		int i = 0;
+		while (++i < PROGRESS_BAR_SIZE) {
+			if (configEnrichedProgressBars && !hasDisplayedMiddleText && i >= (PROGRESS_BAR_SIZE - middleTextSize) / 2) {
 				// Middle reached: append enriched statistic information.
 				barDisplay.append(middleText);
 				// Do not display middleText again.
 				hasDisplayedMiddleText = true;
 				// Iterate a number of times equal to the number of iterations so far to have the same number of
 				// vertical bars left and right from the middle text.
-				i = textSize / 2 + 1 - i;
+				i = PROGRESS_BAR_SIZE - i;
+			} else if (i < PROGRESS_BAR_SIZE * statisticDouble / numericalThreshold) {
+				// Standard color: progress by user.
+				barDisplay.append(configColor).append("|");
 			} else {
-				if (i < (((double) textSize / 2 - 1) * statisticDouble) / levelInt) {
-					// Standard color: progress by user.
-					barDisplay.append(configColor);
-				} else {
-					// Not received color: amount not yet reached by user.
-					barDisplay.append(configListColorNotReceived);
-				}
-				barDisplay.append("|");
-				i++;
+				// Not received color: amount not yet reached by user.
+				barDisplay.append(configListColorNotReceived).append("|");
 			}
 		}
 		return barDisplay.append(configListColorNotReceived).append("]").toString();
