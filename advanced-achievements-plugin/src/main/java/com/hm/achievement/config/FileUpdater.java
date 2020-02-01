@@ -202,6 +202,7 @@ public class FileUpdater {
 		updateSetting(config, "SoundRanking", statsRankingDefault,
 				"For /aach top, week, month when ranked in the top list. Possible values: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names");
 
+		// Added in 5.14.0:
 		updateSetting(config, "ReceiverChatMessages", true, "Display chat messages when a player receives an achievement.");
 
 		if (updatePerformed) {
