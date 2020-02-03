@@ -76,6 +76,7 @@ public class GUIItems implements Reloadable {
 		langListAchievementsInCategoryPlural = LangHelper.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_PLURAL, langConfig);
 		langListAchievementInCategorySingular = LangHelper.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_SINGULAR, langConfig);
 
+		orderedAchievementItems.clear();
 		// getShallowKeys returns a LinkedHashSet, preserving the ordering specified in the file.
 		List<String> orderedCategories = new ArrayList<>(guiConfig.getShallowKeys(""));
 		// Prepare item stacks displayed in the GUI for Multiple achievements.
