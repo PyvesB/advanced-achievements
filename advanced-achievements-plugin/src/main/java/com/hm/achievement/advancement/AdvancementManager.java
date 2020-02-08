@@ -237,8 +237,9 @@ public class AdvancementManager implements Reloadable {
 		int metadata = guiConfig.getInt(category + ".Metadata", 0);
 		String description = "";
 		if (configRegisterAdvancementDescriptions) {
-			// Give priority to the goal to stick with Vanilla naming of advancements.
-			description = mainConfig.getString(configAchievement + ".Goal", "");
+			// Give priority to the goal to stick with Vanilla naming of advancements. Advancement descriptions do not
+			// support multiline goals.
+			description = StringUtils.replace(mainConfig.getString(configAchievement + ".Goal", ""), "\\n", " ");
 			if (!StringUtils.isNotBlank(description)) {
 				description = mainConfig.getString(configAchievement + ".Message", "");
 			}

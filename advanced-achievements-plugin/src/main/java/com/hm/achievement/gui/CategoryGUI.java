@@ -1,6 +1,7 @@
 package com.hm.achievement.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -196,8 +197,8 @@ public class CategoryGUI implements Reloadable {
 			}
 
 			String nameToDisplay = getNameToDisplay(categoryName, path, achName);
-			String descriptionToDisplay = getDescriptionToDisplay(categoryName, path, receptionDate != null);
-			List<String> lore = buildLore(categoryName, descriptionToDisplay, path, receptionDate, statistic,
+			List<String> descriptions = getDescriptionsToDisplay(categoryName, path, receptionDate != null);
+			List<String> lore = buildLore(categoryName, descriptions, path, receptionDate, statistic,
 					ineligibleSeriesItem, player);
 			insertAchievement(inventory, index - pageStart + 1, statistic, nameToDisplay, receptionDate,
 					ineligibleSeriesItem, lore);
@@ -340,21 +341,19 @@ public class CategoryGUI implements Reloadable {
 	}
 
 	/**
-	 * Extracts the achievement message that should be shown in the item lore.
+	 * Extracts the achievement message/goals that should be shown in the item lore.
 	 *
 	 * @param category
 	 * @param path
 	 * @param completed
 	 * @return the description to display in the GUI
 	 */
-	private String getDescriptionToDisplay(String category, String path, boolean completed) {
+	private List<String> getDescriptionsToDisplay(String category, String path, boolean completed) {
 		String goal = mainConfig.getString(category + '.' + path + ".Goal", "");
 		if (StringUtils.isNotBlank(goal) && !completed) {
-			// Show the goal below the achievement name.
-			return goal;
+			return Arrays.asList(StringUtils.splitByWholeSeparator(goal, "\\n"));
 		}
-		// Show the achievement message below the achievement name.
-		return mainConfig.getString(category + '.' + path + ".Message", "");
+		return Collections.singletonList(mainConfig.getString(category + '.' + path + ".Message", ""));
 	}
 
 	/**
@@ -380,7 +379,7 @@ public class CategoryGUI implements Reloadable {
 	 * description, rewards.
 	 *
 	 * @param categoryName
-	 * @param description
+	 * @param descriptions
 	 * @param path
 	 * @param date
 	 * @param statistic
@@ -388,26 +387,28 @@ public class CategoryGUI implements Reloadable {
 	 * @param player
 	 * @return the list representing the lore of a category item
 	 */
-	private List<String> buildLore(String categoryName, String description, String path, String date, long statistic,
+	private List<String> buildLore(String categoryName, List<String> descriptions, String path, String date, long statistic,
 			boolean ineligibleSeriesItem, Player player) {
 		List<String> lore = new ArrayList<>();
 		lore.add("");
 
 		if (date != null) {
 			lore.add(langListDescription);
-			lore.add(translateColorCodes("&r" + description));
+			descriptions.forEach(d -> lore.add(translateColorCodes("&r" + d)));
 			lore.add("");
 			lore.add(langListReception);
 			lore.add(translateColorCodes("&r" + date));
 			lore.add("");
 		} else {
 			lore.add(langListGoal);
-			String strippedAchMessage = StringHelper.removeFormattingCodes(description);
-			if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-				lore.add(translateColorCodes(configListColorNotReceived + "&k" + randomiseParts(strippedAchMessage)));
-			} else {
-				lore.add(translateColorCodes(configListColorNotReceived + "&o" + strippedAchMessage));
-			}
+			descriptions.forEach(d -> {
+				String strippedAchMessage = StringHelper.removeFormattingCodes(d);
+				if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
+					lore.add(translateColorCodes(configListColorNotReceived + "&k" + randomiseParts(strippedAchMessage)));
+				} else {
+					lore.add(translateColorCodes(configListColorNotReceived + "&o" + strippedAchMessage));
+				}
+			});
 			lore.add("");
 			// Display progress if not Commands category.
 			if (!configObfuscateNotReceived && statistic != NO_STAT) {

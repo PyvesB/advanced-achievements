@@ -260,7 +260,7 @@ PooledRequestsTaskInterval: 10
 Places:  
   chest:
     5:
-      # Used in /aach list when achievement not yet received, and in advancements.
+      # Optional, used in /aach list when achievement not yet received, and in advancements.
       Goal: Place 5 chests.
       # Description; displayed when receiving achievement, and in /aach book and /aach list.
       Message: §6You have placed 5 chests!
@@ -778,6 +778,7 @@ MultiCommand: true
 # yourAch1 achievement to PLAYER. The /aach give command does NOT work with other achievements.
 Commands:
   yourAch1:
+    Goal: Take part in the special event!\nEvery Friday at 8pm!
     Message: You took part in the special event!
     Name: yourAch1
     DisplayName: Special Event Achievement!
@@ -786,7 +787,6 @@ Commands:
 Custom:
   votes:
     10:
-      Goal: Vote 10 times.
       Message: Voted 10 times for the server!
       Name: customs_votes_10
       DisplayName: Server fan
