@@ -105,7 +105,7 @@
 		</repository>
 		<repository>
 			<id>vault-repo</id>
-			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
+			<url>https://nexus.hc.to/content/repositories/pub_releases</url>
 		</repository>
 		<repository>
 			<id>mcshared-repo</id>
@@ -113,7 +113,7 @@
 		</repository>
 		<repository>
 			<id>codecrafter47-repo</id>
-			<url>http://nexus.codecrafter47.de/content/repositories/public/</url>
+			<url>https://nexus.codecrafter47.de/content/repositories/public/</url>
 		</repository>
 		<repository>
 			<id>ess-repo</id>
@@ -121,7 +121,7 @@
 		</repository>
 		<repository>
 			<id>placeholderapi-repo</id>
-			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
 		</repository>
 	</repositories>
 
