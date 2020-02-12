@@ -105,7 +105,7 @@
 		</repository>
 		<repository>
 			<id>vault-repo</id>
-			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
+			<url>https://jitpack.io</url>
 		</repository>
 		<repository>
 			<id>mcshared-repo</id>
