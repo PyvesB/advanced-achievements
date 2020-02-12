@@ -50,7 +50,8 @@ public enum NormalAchievements implements Category {
 	DISTANCEGLIDING("DistanceGliding", "list-distance-gliding", "Distance Travelled with Elytra", "When a distance is traveled with elytra."),
 	DISTANCELLAMA("DistanceLlama", "list-distance-llama", "Distance Travelled on a Llama", "When a distance is traveled on a llama."),
 	RAIDSWON("RaidsWon", "list-raids-won", "Raids Won", "When a raid is won."),
-	RIPTIDES("Riptides", "list-riptides", "Riptides Used", "When riptide is used with a trident");
+	RIPTIDES("Riptides", "list-riptides", "Riptides Used", "When riptide is used with a trident"),
+	ADVANCEMENTS("Advancements", "list-advancements", "Advancements Completed", "When a certain number of advancements have been completed.");
 
 	private static final Map<String, NormalAchievements> CATEGORY_NAMES_TO_ENUM = new HashMap<>();
 	static {
