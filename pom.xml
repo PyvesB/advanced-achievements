@@ -113,7 +113,7 @@
 		</repository>
 		<repository>
 			<id>codecrafter47-repo</id>
-			<url>https://nexus.codecrafter47.de/content/repositories/public/</url>
+			<url>http://nexus.codecrafter47.de/content/repositories/public/</url>
 		</repository>
 		<repository>
 			<id>ess-repo</id>
@@ -121,7 +121,7 @@
 		</repository>
 		<repository>
 			<id>placeholderapi-repo</id>
-			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
 		</repository>
 	</repositories>
 
