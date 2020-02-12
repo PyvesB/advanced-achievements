@@ -278,7 +278,7 @@ public abstract class ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindsRiptidesListener(RiptidesListener riptidesListener);
-
+	
 	@Binds
 	@IntoSet
 	abstract Reloadable bindAdvancementsListener(AdvancementsListener advancementsListener);
