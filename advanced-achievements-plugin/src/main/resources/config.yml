@@ -111,7 +111,8 @@ IgnoreVerticalDistance: false
 
 # Don't show these categories in the achievement GUI or in the stats output (delete the [] before adding values).
 # Also prevent obtaining achievements for these categories and prevent stats from increasing.
-DisabledCategories: []
+DisabledCategories:
+- Advancements
 #  - PetMasterGive
 #  - PetMasterReceive
 #  - DistanceLlama

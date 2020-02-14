@@ -286,6 +286,8 @@ public class FileUpdater {
 		// Added in version 5.13.0:
 		updateSetting(gui, "RaidsWon.Item", "gray_banner");
 		updateSetting(gui, "Riptides.Item", "trident");
+		
+		updateSetting(gui, "Advancements.Item", "gold_ingot");
 
 		if (serverVersion < 13) {
 			updateSetting(gui, "Breeding.Metadata", 0);
