@@ -104,24 +104,24 @@
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
-			<id>vault-repo</id>
-			<url>https://jitpack.io</url>
+			<id>bungeetablistplus-repo</id>
+			<url>https://nexus.codecrafter47.de/content/repositories/public/</url>
+		</repository>
+		<repository>
+			<id>essentials-repo</id>
+			<url>https://ci.ender.zone/plugin/repository/everything/</url>
 		</repository>
 		<repository>
 			<id>mcshared-repo</id>
 			<url>https://raw.github.com/PyvesB/MCShared/mvn-repo/</url>
 		</repository>
 		<repository>
-			<id>codecrafter47-repo</id>
-			<url>http://nexus.codecrafter47.de/content/repositories/public/</url>
-		</repository>
-		<repository>
-			<id>ess-repo</id>
-			<url>https://ci.ender.zone/plugin/repository/everything/</url>
-		</repository>
-		<repository>
 			<id>placeholderapi-repo</id>
 			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
+		<repository>
+			<id>vault-repo</id>
+			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 
