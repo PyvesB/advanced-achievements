@@ -11,6 +11,7 @@ import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.MainGUI;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
+import com.hm.achievement.listener.statistics.AdvancementsListener;
 import com.hm.achievement.listener.statistics.AnvilsListener;
 import com.hm.achievement.listener.statistics.ArrowsListener;
 import com.hm.achievement.listener.statistics.BedsListener;
@@ -277,4 +278,8 @@ public abstract class ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindsRiptidesListener(RiptidesListener riptidesListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindAdvancementsListener(AdvancementsListener advancementsListener);
 }

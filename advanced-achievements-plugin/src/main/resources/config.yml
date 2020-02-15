@@ -111,7 +111,8 @@ IgnoreVerticalDistance: false
 
 # Don't show these categories in the achievement GUI or in the stats output (delete the [] before adding values).
 # Also prevent obtaining achievements for these categories and prevent stats from increasing.
-DisabledCategories: []
+DisabledCategories:
+- Advancements
 #  - PetMasterGive
 #  - PetMasterReceive
 #  - DistanceLlama
@@ -764,6 +765,13 @@ Riptides:
     Message: You've mastered the powers of the sea!
     Name: riptides_1
     DisplayName: Poseidon
+# When an a certain amount of advancements are completed.
+Advancements:
+  20:
+    Goal: Complete 20 advancements.
+    Message: 20 advancements completed!
+    Name: advancements_20
+    DisplayName: Game Block Advance
   
 #===========================OOOOOOO===========================#
 # VII-----------------------------------------------------VII #

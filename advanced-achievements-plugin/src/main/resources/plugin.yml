@@ -83,6 +83,9 @@ permissions:
   achievement.count.connections:
     description: Allows connection statistics in database to increase.
     default: true
+  achievement.count.advancements:
+    description: Allows advancement statistics in database to increase.
+    default: true
   achievement.count.arrows:
     description: Allows arrow statistics in database to increase.
     default: true
