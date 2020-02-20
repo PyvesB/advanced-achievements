@@ -12,6 +12,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -263,7 +264,7 @@ public class RewardParser implements Reloadable {
 			// New config syntax. Name of item and quantity are on the same line, separated by a space.
 			String materialAndQty = StringUtils.normalizeSpace(mainConfig.getString(path + ".Item", ""));
 			String intString = StringUtils.substringBefore(StringUtils.substringAfter(materialAndQty, " "), " ");
-			itemAmount = Integer.parseInt(intString);
+			itemAmount = NumberUtils.toInt(intString, 1);
 		}
 		return itemAmount;
 	}
