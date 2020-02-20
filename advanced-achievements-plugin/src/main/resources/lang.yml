@@ -193,7 +193,7 @@ list-custom: "Custom Categories"
 list-targetsshot: "Targets Shot"
 list-raids-won: "Raids Won"
 list-riptides: "Riptides Used"
-list-advancements: "Advancements Completed"
+list-advancements-completed: "Advancements Completed"
 
 # Related to /aach toggle.
 toggle-displayed: "You will now be notified when other players get achievements."

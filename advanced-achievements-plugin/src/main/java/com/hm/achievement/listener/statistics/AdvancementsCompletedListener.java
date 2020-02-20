@@ -23,12 +23,13 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  *
  */
 @Singleton
-public class AdvancementsListener extends AbstractListener {
+public class AdvancementsCompletedListener extends AbstractListener {
 
 	@Inject
-	public AdvancementsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public AdvancementsCompletedListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(NormalAchievements.ADVANCEMENTS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(NormalAchievements.ADVANCEMENTSCOMPLETED, mainConfig, serverVersion, sortedThresholds, cacheManager,
+				rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

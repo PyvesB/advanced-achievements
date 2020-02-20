@@ -189,11 +189,11 @@ public class ConfigurationParser {
 					"Raids are not available in your server version, please add RaidsWon to the DisabledCategories list in config.yml.");
 		}
 		// Advancements introduced in 1.12.
-		if (!disabledCategories.contains(NormalAchievements.ADVANCEMENTS) && serverVersion < 12) {
-			disabledCategories.add(NormalAchievements.ADVANCEMENTS);
+		if (!disabledCategories.contains(NormalAchievements.ADVANCEMENTSCOMPLETED) && serverVersion < 12) {
+			disabledCategories.add(NormalAchievements.ADVANCEMENTSCOMPLETED);
 			logger.warning("Overriding configuration: disabling Advancements category.");
 			logger.warning(
-					"Advancements are not available in your server version, please add Advancements to the DisabledCategories list in config.yml.");
+					"Advancements are not available in your server version, please add AdvancementsCompleted to the DisabledCategories list in config.yml.");
 		}
 		// Riptides introduced in 1.13.
 		if (!disabledCategories.contains(NormalAchievements.RIPTIDES) && serverVersion < 13) {

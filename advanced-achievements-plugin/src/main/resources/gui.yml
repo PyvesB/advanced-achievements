@@ -121,7 +121,7 @@ RaidsWon:
   Item: gray_banner
 Riptides:
   Item: trident
-Advancements:
+AdvancementsCompleted:
   Item: gold_ingot
 Custom:
   Item: feather

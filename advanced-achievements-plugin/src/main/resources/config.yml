@@ -109,14 +109,10 @@ ExcludedWorlds: []
 # Ignore vertical dimension (Y axis) when calculating distance statistics.
 IgnoreVerticalDistance: false
 
-# Don't show these categories in the achievement GUI or in the stats output (delete the [] before adding values).
+# Don't show these categories in the achievement GUI or in the stats output.
 # Also prevent obtaining achievements for these categories and prevent stats from increasing.
 DisabledCategories:
-- Advancements
-#  - PetMasterGive
-#  - PetMasterReceive
-#  - DistanceLlama
-#  - DistanceGliding
+- AdvancementsCompleted
 
 # Obfuscate achievements that have not yet been received in /aach list.
 ObfuscateNotReceived: false
@@ -766,7 +762,7 @@ Riptides:
     Name: riptides_1
     DisplayName: Poseidon
 # When an a certain amount of advancements are completed.
-Advancements:
+AdvancementsCompleted:
   20:
     Goal: Complete 20 advancements.
     Message: 20 advancements completed!
