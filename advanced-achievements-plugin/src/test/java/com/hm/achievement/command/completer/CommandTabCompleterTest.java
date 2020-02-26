@@ -7,7 +7,6 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -74,7 +73,6 @@ public class CommandTabCompleterTest {
 	public void setUp() {
 		when(command.getName()).thenReturn("aach");
 
-		when(mainConfig.getShallowKeys(any())).thenReturn(singleton("someSubcategory"));
 		when(mainConfig.getShallowKeys("Commands")).thenReturn(singleton("myCommand"));
 
 		Set<AbstractCommand> commands = new HashSet<>();
