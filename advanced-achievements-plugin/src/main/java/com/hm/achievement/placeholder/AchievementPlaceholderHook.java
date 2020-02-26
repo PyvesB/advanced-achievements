@@ -64,7 +64,10 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 			for (NormalAchievements category : NormalAchievements.values()) {
 				if (category.toString().equalsIgnoreCase(identifier)) {
-					return Long.toString(cacheManager.getAndIncrementStatisticAmount(category, uuid, 0));
+					long statistic = cacheManager.getAndIncrementStatisticAmount(category, uuid, 0);
+					// If played time, convert from millis to hours and display one decimal.
+					return category == NormalAchievements.PLAYEDTIME ? String.format("%.1f", statistic / 3600000.0)
+							: Long.toString(statistic);
 				}
 			}
 
