@@ -1,10 +1,11 @@
 package com.hm.achievement.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
 import java.util.UUID;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -23,77 +24,77 @@ public class AdvancedAchievementsBukkitAPINullSafetyTest {
 	@InjectMocks
 	private AdvancedAchievementsBukkitAPI underTest;
 
-	@Rule
-	public final ExpectedException expectedException = ExpectedException.none();
-
 	@Test
 	public void itShouldThrowExceptionWhenCheckingForAchievementWithNullPlayer() {
-		expectIllegalArgumentExceptionWithMessage("Player cannot be null.");
-		underTest.hasPlayerReceivedAchievement(null, "achievement-name");
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.hasPlayerReceivedAchievement(null, "achievement-name"));
+		assertEquals("Player cannot be null.", e.getMessage());
 	}
 
 	@Test
 	public void itShouldThrowExceptionWhenCheckingForAchievementWithEmptyName() {
-		expectIllegalArgumentExceptionWithMessage("Achievement Name cannot be empty.");
-		underTest.hasPlayerReceivedAchievement(UUID.randomUUID(), "");
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.hasPlayerReceivedAchievement(UUID.randomUUID(), ""));
+		assertEquals("Achievement Name cannot be empty.", e.getMessage());
 	}
 
 	@Test
 	public void itShouldThrowExceptionWhenGettingAchievementListWithNullPlayer() {
-		expectIllegalArgumentExceptionWithMessage("Player cannot be null.");
-		underTest.getPlayerAchievementsList(null);
+		Exception e = assertThrows(IllegalArgumentException.class, () -> underTest.getPlayerAchievementsList(null));
+		assertEquals("Player cannot be null.", e.getMessage());
 	}
 
 	@Test
 	public void itShouldThrowExceptionWhenGettingTotalAchievementsWithNullPlayer() {
-		expectIllegalArgumentExceptionWithMessage("Player cannot be null.");
-		underTest.getPlayerTotalAchievements(null);
+		Exception e = assertThrows(IllegalArgumentException.class, () -> underTest.getPlayerTotalAchievements(null));
+		assertEquals("Player cannot be null.", e.getMessage());
 	}
 
 	@Test
 	public void itShouldThrowExceptionWhenGettingRankWithNullPlayer() {
-		expectIllegalArgumentExceptionWithMessage("Player cannot be null.");
-		underTest.getPlayerRank(null, 0);
+		Exception e = assertThrows(IllegalArgumentException.class, () -> underTest.getPlayerRank(null, 0));
+		assertEquals("Player cannot be null.", e.getMessage());
 	}
 
 	@Test
 	public void itShouldThrowExceptionWhenGettingNormalStatisticWithNullPlayer() {
-		expectIllegalArgumentExceptionWithMessage("Player cannot be null.");
-		underTest.getStatisticForNormalCategory(null, NormalAchievements.ARROWS);
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.getStatisticForNormalCategory(null, NormalAchievements.ARROWS));
+		assertEquals("Player cannot be null.", e.getMessage());
 	}
 
 	@Test
 	public void itShouldThrowExceptionWhenGettingNormalStatisticWithNullCategory() {
-		expectIllegalArgumentExceptionWithMessage("Category cannot be null.");
-		underTest.getStatisticForNormalCategory(UUID.randomUUID(), null);
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.getStatisticForNormalCategory(UUID.randomUUID(), null));
+		assertEquals("Category cannot be null.", e.getMessage());
 	}
 
 	@Test
 	public void itShouldThrowExceptionWhenGettingMultipleStatisticWithNullPlayer() {
-		expectIllegalArgumentExceptionWithMessage("Player cannot be null.");
-		underTest.getStatisticForMultipleCategory(null, MultipleAchievements.KILLS, "skeleton");
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.getStatisticForMultipleCategory(null, MultipleAchievements.KILLS, "skeleton"));
+		assertEquals("Player cannot be null.", e.getMessage());
+
 	}
 
 	@Test
 	public void itShouldThrowExceptionWhenGettingMultipleStatisticWithNullCategory() {
-		expectIllegalArgumentExceptionWithMessage("Category cannot be null.");
-		underTest.getStatisticForMultipleCategory(UUID.randomUUID(), null, "skeleton");
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.getStatisticForMultipleCategory(UUID.randomUUID(), null, "skeleton"));
+		assertEquals("Category cannot be null.", e.getMessage());
 	}
 
 	@Test
 	public void itShouldThrowExceptionWhenGettingMultipleStatisticWithEmptySubcategory() {
-		expectIllegalArgumentExceptionWithMessage("Sub-category cannot be empty.");
-		underTest.getStatisticForMultipleCategory(UUID.randomUUID(), MultipleAchievements.KILLS, "");
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.getStatisticForMultipleCategory(UUID.randomUUID(), MultipleAchievements.KILLS, ""));
+		assertEquals("Sub-category cannot be empty.", e.getMessage());
 	}
 
 	@Test
 	public void itShouldThrowExceptionWhenGettingDisplayNameWithEmptyName() {
-		expectIllegalArgumentExceptionWithMessage("Achievement Name cannot be empty.");
-		underTest.getDisplayNameForName("");
-	}
-
-	private void expectIllegalArgumentExceptionWithMessage(String message) {
-		expectedException.expect(IllegalArgumentException.class);
-		expectedException.expectMessage(message);
+		Exception e = assertThrows(IllegalArgumentException.class, () -> underTest.getDisplayNameForName(""));
+		assertEquals("Achievement Name cannot be empty.", e.getMessage());
 	}
 }
