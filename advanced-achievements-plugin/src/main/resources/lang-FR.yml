@@ -1,14 +1,17 @@
 #=====================================================================#
 # +-----------------------------------------------------------------+ #
 # | Advanced Achievements French translation by DarkPyves/Taehyuun  | #
-# |                 ~ Valid as of version 5.2.7 ~                   | #
+# |                 ~ Valid as of version 5.15.0 ~                   | #
 # |       Newer plugin versions will automatically append new       | #
 # |         untranslated parameters to the end of the file.         | #
 # +-----------------------------------------------------------------+ #
 #=====================================================================#
 
 no-permissions: "Vous n'avez pas la permission de faire cela."
-statistic-cooldown: "Achievements: attendre TIME secondes avant que cette action ne compte à nouveau."
+statistic-cooldown: "Achievements : Veuillez attendre TIME secondes avant que cette action ne compte à nouveau."
+category-does-not-exist: "La catégorie ou la sous-catégories CAT n'existe pas. Voulez-vous dire CLOSEST_MATCH ?"
+all-achievements-received: "Félicitations, tu as obtenu tous les succès !"
+invalid-command: "Commande invalide. Faites /aach pour afficher l'aide sur la commande."
 
 # Related to /aach reload.
 configuration-successfully-reloaded: "Configuration rechargée avec succès."
@@ -20,6 +23,8 @@ player-rank: "Classement actuel :"
 week-achievement: "Joueurs ayant obtenu le plus de succès cette semaine :"
 month-achievement: "Joueurs ayant obtenu le plus de succès ce mois :"
 not-ranked: "Vous n'êtes pas classé sur cette période."
+pagination-header: "&7> &5Page PAGE/MAX"
+pagination-footer: "&7>"
 
 # Related to /aach stats.
 number-achievements: "Nombre de succès obtenus :"
@@ -28,22 +33,26 @@ number-achievements: "Nombre de succès obtenus :"
 book-received: "Vous avez reçu votre livre de succès!"
 book-delay: "Vous devez attendre TIME secondes entre chaque obtention de livre !"
 book-name: "Livre de Succès"
-book-date: "Créé le DATE."
+book-date: "Livre créé le DATE."
 book-not-received: "Vous n'avez pas encore reçu de succès."
 
 # Related to /aach give.
 player-offline: "Le joueur PLAYER n'est pas en ligne !"
 achievement-already-received: "Le joueur PLAYER possède déjà ce succès !"
+achievement-not-found: "Le succès spécifié n'a pas été trouvé dans la catégorie Commandes. Voulez-vous dire CLOSEST_MATCH ?"
 achievement-given: "Succès donné !"
-list-back-message: "&7Retour"
+
+# Related to /aach add.
+error-value: "La valeur VALUE doit être un nombre entier !"
+statistic-increased: "La statistique ACH de PLAYER a été augmentée de AMOUNT !"
 
 # Related to achievement reception.
 achievement-received: "PLAYER a reçu le succès :"
 achievement-new: "Nouveau succès :"
 
 # Related to /aach check.
-check-achievement-true: "PLAYER a reçu le succès ACH!"
-check-achievements-false: "PLAYER n'a pas reçu ACH!"
+check-achievement-true: "PLAYER a reçu le succès ACH !"
+check-achievements-false: "PLAYER n'a pas reçu ACH !"
 
 # Related to /aach delete.
 delete-achievements: "Le succès ACH a été supprimé du joueur PLAYER."
@@ -52,8 +61,10 @@ delete-achievements: "Le succès ACH a été supprimé du joueur PLAYER."
 item-reward-received: "Vous avez reçu une récompense :"
 money-reward-received: "Vous avez gagné : AMOUNT !"
 command-reward: "Commande de récompense exécutée !"
+custom-command-reward: "Tu as reçu ta récompense : MESSAGE"
 experience-reward-received: "Vous recevez: AMOUNT points d'EXP!"
 increase-max-health-reward-received: "Votre vie max. a été augmentée de AMOUNT!"
+increase-max-oxygen-reward-received: "Votre oxygène max. a été augmenté de AMOUNT!"
 
 # Related to /aach help.
 aach-command-book: "Obtenir votre livre de succès."
@@ -66,6 +77,8 @@ aach-command-top: "Afficher le classement des succès."
 aach-command-top-hover: "Qui sont les meilleurs joueurs du serveur ?"
 aach-command-give: "Donner le succès ACH à NAME."
 aach-command-give-hover: "Le joueur doit être en ligne. Supporte les succès de la catégorie Commands."
+aach-command-add: "Augmente la valeur d'une statistique."
+aach-command-add-hover: "Le joueur doit être en ligne. Fréquemment utilisé pour la catégorie Personnalisée."
 aach-command-reload: "Recharger la configuration du plugin."
 aach-command-reload-hover: "Recharge la plupart des paramètres de gui.yml, lang.yml et config.yml."
 aach-command-info: "Afficher des informations à propos du plugin."
@@ -84,10 +97,11 @@ aach-command-reset: "Réinitialiser la stat pour CAT."
 aach-command-reset-hover: "Pour les catégories avec sous-catégories, elles sont toutes réinitialisées."
 aach-command-generate: "Générer les avancements."
 aach-command-generate-hover: "La commande rique de prendre du temps, à utiliser avec précaution!"
+aach-command-inspect: "Montre les joueurs ayant obtenu le succès ACH."
+aach-command-inspect-hover: "Liste les joueurs ayant obtenu le succès le plus récemment, max 1000."
 aach-tip: "&lASTUCE &7&n&oCliquez&8 ou &7&n&opassez votre curseur&8 sur les commandes !"
 
 # Related to /aach info.
-version-command-name: "Nom :"
 version-command-version: "Version :"
 version-command-website: "Site :"
 version-command-author: "Auteur :"
@@ -96,6 +110,8 @@ version-command-description-details: "Advanced Achievements ajoute des succès u
 version-command-vault: "Intégration avec Vault :"
 version-command-petmaster: "Intégration avec Pet Master :"
 version-command-btlp: "Intégration avec BungeeTabListPlus :"
+version-command-essentials: "Intégration d'Essentials :"
+version-command-placeholderapi: "Intégration de PlaceholderAPI :"
 version-command-database: "Type de la BDD :"
 
 # Related to /aach list.
@@ -111,10 +127,16 @@ list-reward-item: "objet"
 list-reward-command: "objet spécial"
 list-reward-experience: "recevez AMOUNT points d'EXP"
 list-reward-increase-max-health: "vie max. augmentée de AMOUNT"
+list-reward-increase-max-oxygen: "Oxygène max. augmenté de AMOUNT"
 list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "
 list-category-not-unlocked: "Vous n'avez pas encore déverrouillé cette catégorie."
 list-back-message: "&7Retour"
+list-back-lore: ""
+list-previous-message: "&7Précédent"
+list-previous-lore: ""
+list-next-message: "&7Suivant"
+list-next-lore: ""
 list-achievements-in-category-singular: "AMOUNT succès"
 list-achievements-in-category-plural: "AMOUNT succès"
 
@@ -138,7 +160,7 @@ list-shear: "Moutons Tondus"
 list-milk: "Vaches Traites"
 list-lavabuckets: "Seaux remplis de Lave"
 list-waterbuckets: "Seaux remplis d'Eau"
-list-trades: "Commerce avec Villageois"
+list-trades: "Echanges avec Villageois"
 list-anvils: "Enclumes Utilisées"
 list-enchantments: "Objets Enchantés"
 list-beds: "Lits Utilisés"
@@ -166,6 +188,11 @@ list-petmastergive: "Animaux donnés à un autre Joueur"
 list-petmasterreceive: "Animaux reçus d'un autre Joueur"
 list-smelting: "Objets Fondus"
 list-commands: "Autres succès"
+list-custom: "Catégorie Personnalisée"
+list-targetsshot: "Cibles Touchées"
+list-raids-won: "Raids gagnés"
+list-riptides: "Impulsions Utilisées"
+list-advancements-completed: "Succès Obtenu"
 
 # Related to /aach toggle.
 toggle-displayed: "Vous serez notifié quand d'autres joueurs recevront des succès."
@@ -173,11 +200,13 @@ toggle-hidden: "Vous ne serez plus notifié quand d'autres joueurs recevront des
 
 # Related to /aach reset.
 reset-successful: " statistique réinitialisée pour joueur PLAYER."
-category-does-not-exist: "Cette catégorie n'existe pas."
 
 # Related to /aach generate.
 advancements-generated: "Avancements générés avec succès."
 minecraft-not-supported: "Les avancements ne sont pas supportés avec votre version de Minecraft. (1.12+)"
+
+# Related to /aach inspect
+achievement-not-recognized: "Le succès 'NAME' n'existe pas. Voulez-vous dire CLOSEST_MATCH ?"
 
 #============================================================#
 # +--------------------------------------------------------+ #
