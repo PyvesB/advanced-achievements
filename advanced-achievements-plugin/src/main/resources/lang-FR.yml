@@ -1,7 +1,7 @@
 #=====================================================================#
 # +-----------------------------------------------------------------+ #
 # | Advanced Achievements French translation by DarkPyves/Taehyuun  | #
-# |                 ~ Valid as of version ${project.version} ~                   | #
+# |                 ~ Valid as of version 5.15.0 ~                   | #
 # |       Newer plugin versions will automatically append new       | #
 # |         untranslated parameters to the end of the file.         | #
 # +-----------------------------------------------------------------+ #
@@ -10,7 +10,7 @@
 no-permissions: "Vous n'avez pas la permission de faire cela."
 statistic-cooldown: "Achievements : Veuillez attendre TIME secondes avant que cette action ne compte à nouveau."
 category-does-not-exist: "La catégorie ou la sous-catégories CAT n'existe pas. Voulez-vous dire CLOSEST_MATCH ?"
-all-achievements-received: "Félicitations, Tu as obtenu tout les succès !"
+all-achievements-received: "Félicitations, tu as obtenu tous les succès !"
 invalid-command: "Commande invalide. Faites /aach pour afficher l'aide sur la commande."
 
 # Related to /aach reload.
@@ -127,7 +127,7 @@ list-reward-item: "objet"
 list-reward-command: "objet spécial"
 list-reward-experience: "recevez AMOUNT points d'EXP"
 list-reward-increase-max-health: "vie max. augmentée de AMOUNT"
-list-reward-increase-max-oxygen: "Oxigène max. augmenté de AMOUNT"
+list-reward-increase-max-oxygen: "Oxygène max. augmenté de AMOUNT"
 list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "
 list-category-not-unlocked: "Vous n'avez pas encore déverrouillé cette catégorie."
@@ -188,10 +188,10 @@ list-petmastergive: "Animaux donnés à un autre Joueur"
 list-petmasterreceive: "Animaux reçus d'un autre Joueur"
 list-smelting: "Objets Fondus"
 list-commands: "Autres succès"
-list-custom: "Cétagorie Personnalisée"
+list-custom: "Catégorie Personnalisée"
 list-targetsshot: "Cibles Touchées"
 list-raids-won: "Raids gagnés"
-list-riptides: "Impulsion Utilisées"
+list-riptides: "Impulsions Utilisées"
 list-advancements-completed: "Succès Obtenu"
 
 # Related to /aach toggle.
