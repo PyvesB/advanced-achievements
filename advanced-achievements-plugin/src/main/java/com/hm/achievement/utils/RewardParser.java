@@ -161,8 +161,11 @@ public class RewardParser implements Reloadable {
 	 * @return the reward amount
 	 */
 	public int getRewardAmount(String path, String type) {
-		// Supports both old and new plugin syntax (Amount used to be a separate sub-category).
-		return Math.max(mainConfig.getInt(path + "." + type, 0), mainConfig.getInt(path + "." + type + ".Amount", 0));
+		int newSyntaxAmount = mainConfig.getInt(path + "." + type);
+		if (newSyntaxAmount != 0) {
+			return newSyntaxAmount;
+		}
+		return mainConfig.getInt(path + "." + type + ".Amount"); // Old syntax: amount used to be a separate element.
 	}
 
 	/**

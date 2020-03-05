@@ -211,16 +211,16 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		if (item != null) {
 			rewardTexts.add(rewardItem(player, item));
 		}
-		if (money > 0) {
+		if (money != 0) {
 			rewardTexts.add(rewardMoney(player, money));
 		}
-		if (experience > 0) {
+		if (experience != 0) {
 			rewardTexts.add(rewardExperience(player, experience));
 		}
-		if (health > 0) {
+		if (health != 0) {
 			rewardTexts.add(rewardMaxHealth(player, health));
 		}
-		if (oxygen > 0) {
+		if (oxygen != 0) {
 			rewardTexts.add(rewardMaxOxygen(player, oxygen));
 		}
 		return rewardTexts;
