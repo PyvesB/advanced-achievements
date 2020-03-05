@@ -122,7 +122,7 @@ public class CacheManager implements Cleanable {
 			statistic = new CachedStatistic(databaseManager.getNormalAchievementAmount(player, category), true);
 			getHashMap(category).put(player.toString(), statistic);
 		}
-		if (value > 0) {
+		if (value != 0) {
 			long newValue = statistic.getValue() + value;
 			statistic.setValue(newValue);
 			return newValue;
@@ -148,7 +148,7 @@ public class CacheManager implements Cleanable {
 					subcategoryDBName), true);
 			getHashMap(category).put(getMultipleCategoryCacheKey(player, subcategory), statistic);
 		}
-		if (value > 0) {
+		if (value != 0) {
 			long newValue = statistic.getValue() + value;
 			statistic.setValue(newValue);
 			return newValue;

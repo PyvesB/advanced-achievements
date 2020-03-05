@@ -61,7 +61,7 @@ public class AddCommand extends AbstractParsableCommand {
 
 	@Override
 	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
-		if (!NumberUtils.isDigits(args[1])) {
+		if (!NumberUtils.isCreatable(args[1])) {
 			sender.sendMessage(StringUtils.replaceOnce(langErrorValue, "VALUE", args[1]));
 			return;
 		}
