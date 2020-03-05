@@ -50,7 +50,7 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configIgnoreAFKPlayedTime = essentials != null && mainConfig.getBoolean("IgnoreAFKPlayedTime", false);
+		configIgnoreAFKPlayedTime = essentials != null && mainConfig.getBoolean("IgnoreAFKPlayedTime");
 	}
 
 	@Override

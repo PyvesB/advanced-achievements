@@ -59,8 +59,8 @@ public class MainGUI implements Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		configHideNotReceivedCategories = mainConfig.getBoolean("HideNotReceivedCategories", false);
-		configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories", false);
+		configHideNotReceivedCategories = mainConfig.getBoolean("HideNotReceivedCategories");
+		configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories");
 
 		langListGUITitle = ChatColor.translateAlternateColorCodes('&', LangHelper.get(GuiLang.GUI_TITLE, langConfig));
 

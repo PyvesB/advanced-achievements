@@ -51,9 +51,9 @@ public class StatisticIncreaseHandler implements Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		configRestrictCreative = mainConfig.getBoolean("RestrictCreative", false);
+		configRestrictCreative = mainConfig.getBoolean("RestrictCreative");
 		configRestrictSpectator = mainConfig.getBoolean("RestrictSpectator", true);
-		configRestrictAdventure = mainConfig.getBoolean("RestrictAdventure", false);
+		configRestrictAdventure = mainConfig.getBoolean("RestrictAdventure");
 		// Spectator mode introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configRestrictSpectator && serverVersion < 8) {
 			configRestrictSpectator = false;

@@ -126,7 +126,7 @@ public class GUIItems implements Reloadable {
 		String path = categoryName + ".Item";
 		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BEDROCK,
 				"gui.yml (" + path + ")");
-		short metadata = (short) guiConfig.getInt(categoryName + ".Metadata", 0);
+		short metadata = (short) guiConfig.getInt(categoryName + ".Metadata");
 		return new ItemStack(material, 1, metadata);
 	}
 

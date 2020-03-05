@@ -50,7 +50,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configIgnoreVerticalDistance = mainConfig.getBoolean("IgnoreVerticalDistance", false);
+		configIgnoreVerticalDistance = mainConfig.getBoolean("IgnoreVerticalDistance");
 	}
 
 	@Override

@@ -127,14 +127,14 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 					+ "ball_large, ball, burst, creeper, star or random.");
 		}
 		configFirework = mainConfig.getBoolean("Firework", true);
-		configSimplifiedReception = mainConfig.getBoolean("SimplifiedReception", false);
+		configSimplifiedReception = mainConfig.getBoolean("SimplifiedReception");
 		configTitleScreen = mainConfig.getBoolean("TitleScreen", true);
 		// Title screens introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configTitleScreen && serverVersion < 8) {
 			configTitleScreen = false;
 		}
-		configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers", false);
-		configActionBarNotify = mainConfig.getBoolean("ActionBarNotify", false);
+		configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers");
+		configActionBarNotify = mainConfig.getBoolean("ActionBarNotify");
 		// Action bars introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configActionBarNotify && serverVersion < 8) {
 			configActionBarNotify = false;
@@ -142,7 +142,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
 		// a player is notified in case of a command reward.
 		configRewardCommandNotif = mainConfig.getBoolean("RewardCommandNotif", true);
-		configHoverableReceiverChatText = mainConfig.getBoolean("HoverableReceiverChatText", false);
+		configHoverableReceiverChatText = mainConfig.getBoolean("HoverableReceiverChatText");
 		// Hoverable chat messages introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configHoverableReceiverChatText && serverVersion < 8) {
 			configHoverableReceiverChatText = false;

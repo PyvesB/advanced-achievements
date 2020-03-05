@@ -44,8 +44,8 @@ public class BreaksListener extends AbstractListener {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		disableSilkTouchBreaks = mainConfig.getBoolean("DisableSilkTouchBreaks", false);
-		disableSilkTouchOreBreaks = mainConfig.getBoolean("DisableSilkTouchOreBreaks", false);
+		disableSilkTouchBreaks = mainConfig.getBoolean("DisableSilkTouchBreaks");
+		disableSilkTouchOreBreaks = mainConfig.getBoolean("DisableSilkTouchOreBreaks");
 	}
 
 	@SuppressWarnings("deprecation")

@@ -92,7 +92,7 @@ public class AdvancementManager implements Reloadable {
 	@Override
 	public void extractConfigurationParameters() {
 		configRegisterAdvancementDescriptions = mainConfig.getBoolean("RegisterAdvancementDescriptions", true);
-		configHideAdvancements = mainConfig.getBoolean("HideAdvancements", false);
+		configHideAdvancements = mainConfig.getBoolean("HideAdvancements");
 		configRootAdvancementTitle = mainConfig.getString("RootAdvancementTitle", "Advanced Achievements");
 		configBackgroundTexture = parseBackgroundTexture();
 	}
@@ -234,7 +234,7 @@ public class AdvancementManager implements Reloadable {
 
 		String achKey = getKey(achName);
 		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, achKey);
-		int metadata = guiConfig.getInt(category + ".Metadata", 0);
+		int metadata = guiConfig.getInt(category + ".Metadata");
 		String description = "";
 		if (configRegisterAdvancementDescriptions) {
 			// Give priority to the goal to stick with Vanilla naming of advancements. Advancement descriptions do not

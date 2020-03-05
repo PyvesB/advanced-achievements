@@ -84,7 +84,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configTimeBook = mainConfig.getInt("TimeBook", 0) * 1000;
+		configTimeBook = mainConfig.getInt("TimeBook") * 1000;
 		configBookSeparator = "\n&r" + mainConfig.getString("BookSeparator", "") + "\n&r";
 		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects", true);
 		configSound = mainConfig.getBoolean("Sound", true);

@@ -42,7 +42,7 @@ public class ToggleCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers", false);
+		configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers");
 
 		langToggleDisplayed = pluginHeader + LangHelper.get(CmdLang.TOGGLE_DISPLAYED, langConfig);
 		langToggleHidden = pluginHeader + LangHelper.get(CmdLang.TOGGLE_HIDDEN, langConfig);

@@ -91,7 +91,7 @@ public class InfoCommand extends AbstractCommand {
 
 		// Display whether Advanced Achievements is linked to Essentials.
 		boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials")
-				&& mainConfig.getBoolean("IgnoreAFKPlayedTime", false);
+				&& mainConfig.getBoolean("IgnoreAFKPlayedTime");
 		String essentialsState = essentialsUsed ? "&a\u2714" : "&4\u2718";
 		langVersionCommandEssentials = pluginHeader.toString() + configColor
 				+ LangHelper.get(InfoLang.ESSENTIALS, langConfig)

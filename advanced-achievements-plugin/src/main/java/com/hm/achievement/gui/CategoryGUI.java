@@ -93,10 +93,10 @@ public class CategoryGUI implements Reloadable {
 	@Override
 	public void extractConfigurationParameters() {
 		configObfuscateNotReceived = mainConfig.getBoolean("ObfuscateNotReceived", true);
-		configObfuscateProgressiveAchievements = mainConfig.getBoolean("ObfuscateProgressiveAchievements", false);
-		configHideRewardDisplayInList = mainConfig.getBoolean("HideRewardDisplayInList", false);
+		configObfuscateProgressiveAchievements = mainConfig.getBoolean("ObfuscateProgressiveAchievements");
+		configHideRewardDisplayInList = mainConfig.getBoolean("HideRewardDisplayInList");
 		configEnrichedProgressBars = mainConfig.getBoolean("EnrichedListProgressBars", true);
-		configNumberedItemsInList = mainConfig.getBoolean("NumberedItemsInList", false);
+		configNumberedItemsInList = mainConfig.getBoolean("NumberedItemsInList");
 		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5"));
 		configListColorNotReceived = ChatColor.getByChar(mainConfig.getString("ListColorNotReceived", "8"));
 

@@ -262,7 +262,7 @@ public class RewardParser implements Reloadable {
 		int itemAmount = 0;
 		if (mainConfig.getKeys(true).contains(path + ".Item.Amount")) {
 			// Old config syntax.
-			itemAmount = mainConfig.getInt(path + ".Item.Amount", 0);
+			itemAmount = mainConfig.getInt(path + ".Item.Amount");
 		} else if (mainConfig.getKeys(true).contains(path + ".Item")) {
 			// New config syntax. Name of item and quantity are on the same line, separated by a space.
 			String materialAndQty = StringUtils.normalizeSpace(mainConfig.getString(path + ".Item", ""));

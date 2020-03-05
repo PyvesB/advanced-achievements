@@ -72,7 +72,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	public void extractConfigurationParameters() {
 		configBookChronologicalOrder = mainConfig.getBoolean("BookChronologicalOrder", true);
 		String localeString = mainConfig.getString("DateLocale", "en");
-		boolean dateDisplayTime = mainConfig.getBoolean("DateDisplayTime", false);
+		boolean dateDisplayTime = mainConfig.getBoolean("DateDisplayTime");
 		Locale locale = new Locale(localeString);
 		if (dateDisplayTime) {
 			dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
