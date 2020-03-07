@@ -5,26 +5,26 @@
 
 # Advanced Achievements
 
-<a href="https://travis-ci.com/PyvesB/AdvancedAchievements/">
-<img src ="https://img.shields.io/travis/com/PyvesB/AdvancedAchievements.svg" />
+<a href="https://github.com/PyvesB/AdvancedAchievements/actions?query=workflow%3A%22Build+project+and+validate+formatting%22">
+<img src ="https://img.shields.io/github/workflow/status/PyvesB/AdvancedAchievements/Build%20project%20and%20validate%20formatting" />
 </a>
 <a href="https://github.com/PyvesB/AdvancedAchievements/blob/master/LICENSE">
-<img src ="https://img.shields.io/github/license/PyvesB/AdvancedAchievements.svg" />
+<img src ="https://img.shields.io/github/license/PyvesB/AdvancedAchievements" />
 </a>
   <a href="https://github.com/PyvesB/AdvancedAchievements/releases">
-<img src ="https://img.shields.io/github/release/PyvesB/AdvancedAchievements.svg" />
+<img src ="https://img.shields.io/github/release/PyvesB/AdvancedAchievements" />
 </a>
 <a href="https://github.com/PyvesB/AdvancedAchievements/issues">
-<img src ="https://img.shields.io/github/issues/PyvesB/AdvancedAchievements.svg" />
+<img src ="https://img.shields.io/github/issues/PyvesB/AdvancedAchievements" />
 </a>
 <a href="https://github.com/PyvesB/AdvancedAchievements/stargazers">
-<img src ="https://img.shields.io/github/stars/PyvesB/AdvancedAchievements.svg" />
+<img src ="https://img.shields.io/github/stars/PyvesB/AdvancedAchievements" />
 </a>
 <a href="https://github.com/PyvesB/AdvancedAchievements/network">
-<img src ="https://img.shields.io/github/forks/PyvesB/AdvancedAchievements.svg" />
+<img src ="https://img.shields.io/github/forks/PyvesB/AdvancedAchievements" />
 </a>
 <a href="https://github.com/PyvesB/AdvancedAchievements/contributors">
-<img src ="https://img.shields.io/github/contributors/PyvesB/AdvancedAchievements.svg" />
+<img src ="https://img.shields.io/github/contributors/PyvesB/AdvancedAchievements" />
 </a>
 
 **Advanced Achievements enables unique and challenging achievements on Minecraft servers. Collect as many as you can, earn rewards, climb the rankings and receive RP books! The plugin supports SQLite, MySQL, H2 and PostgreSQL, manages an extensive statistics system, handles YAML configuration files and features fancy in-game GUIs and effects!**
