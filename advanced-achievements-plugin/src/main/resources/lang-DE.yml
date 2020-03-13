@@ -1,7 +1,7 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
 # |   Advanced Achievements German translation by           | #
-# |        YtKater.de | PlayInfected.de | Minecityelan.net  | #
+# |        YtKater.de | PlayInfected.de | Adelion.net  | #
 # |             ~ Valid as of version 5.11.2 ~              | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
@@ -22,7 +22,7 @@ top-achievement: "Meiste Erfolge:"
 player-rank: "Aktueller Rang:"
 week-achievement: "Meiste Erfolge (In dieser Woche):"
 month-achievement: "Meiste Erfolge (In diesem Monat):"
-not-ranked: "Du bist derzeit nicht für diesen Zeitraum geordnet."
+not-ranked: "Du bist derzeit nicht für diesen Zeitraum gelistet."
 pagination-header: "&7> &5Seite PAGE/MAX"
 pagination-footer: "&7>"
 
@@ -93,10 +93,12 @@ aach-command-month: Monats Rangliste anzeigen
 aach-command-month-hover: Beste Erfolgsjäger seit Beginn des Monats!
 aach-command-toggle: Wechselt die Erfolge von anderen Spielern.
 aach-command-toggle-hover: Deine Wahl wird bis zum nächsten Neustart des Servers gespeichert!
+aach-command-reset: 'Setzt die Statistik für die Kategorie &7CAT zurück.'
+aach-command-reset-hover: 'Der Spieler muss online sein; Beispiel: reset Places.stone enterih'
+aach-command-generate: "Generiere Erungenschaften."
+aach-command-generate-hover: "Kann ein langsamer Befehl sein; Geniesse ihn mit Vorsicht!"
 aach-command-inspect: "Überprüfe den Empfänger von ACH."
 aach-command-inspect-hover: "Lists most recent recipients of an achievement, max 1000."
-aach-command-reset: 'Setzt die Statistik für die Kategorie &7CAT zurück.'
-aach-command-reset-hover: 'Der Spieler muss online sein; beispiel: reset Places.stone Chakuroo'
 aach-tip: '&lHinweis&8Du kannst &7&nüber&8 oder &7&n&oauf&8 AACH-Befehle klicken!'
 
 # Related to /aach info.
@@ -107,13 +109,13 @@ version-command-description: 'Beschreibung:'
 version-command-description-details: Advanced Achievements ermöglichen einzigartige und herausfordernde Leistungen. Versuch doch, so viele zu sammeln, wie du kannst. Verdiene wertvolle Belohnungen, erklimme die Spitze der Rangliste und erhalte RP-Bücher.
 version-command-vault: 'Vault integriert:'
 version-command-petmaster: 'Pet Master integriert:'
+version-command-btlp: 'BungeeTabListPlus integriert:'
 version-command-essentials: "Essentials integriert:"
 version-command-placeholderapi: "PlaceholderAPI integriert:"
-version-command-btlp: 'BungeeTabListPlus integriert:'
 version-command-database: 'Datenbank Typ:'
 
 # Related to /aach list.
-list-gui-title: "&5Alle Erfolge - (ProjectX)"
+list-gui-title: "&5Liste der Erfolge"
 list-delay: "Bitte warte noch TIME Sekunde/n!"
 list-description: 'Beschreibung:'
 list-goal: 'Ziel:'
@@ -187,6 +189,10 @@ list-petmasterreceive: "Haustiere von einem anderen Spieler bekommen"
 list-smelting: "Erze geschmolzen"
 list-commands: "Sonstige Erfolge"
 list-custom: "Benutzerdefinierte Kategorien"
+list-targetsshot: "Ziele erschossen"
+list-raids-won: "Raids gewonnen"
+list-riptides: "Springfluten benutzt"
+list-advancements-completed: "Errungenschaft abgeschlossen"
 
 # Related to /aach toggle.
 toggle-displayed: "Du wirst nun informiert wenn andere Spieler Erfolge erreichen."
@@ -200,7 +206,7 @@ reset-successful: "Die Statistik von Spieler wurde zurückgesetzt."
 advancements-generated: "Fortschritte wurden erfolgreich generiert."
 aach-command-generate: "Generiere Fortschritte."
 aach-command-generate-hover: "Das ist möglicherweise ein langsamer Befehl; Verwende ihn bedacht!"
-minecraft-not-supported: Fortschritte sind mit der Minecraftversion 1.12+ verfügbar.
+minecraft-not-supported: Fortschritte sind ab der Minecraftversion 1.12+ verfügbar.
 
 # Related to /aach inspect
 achievement-not-recognized: "Der Erfolg mit dem namen 'NAME' wurde nicht erkannt. Meintest du CLOSEST_MATCH?"
