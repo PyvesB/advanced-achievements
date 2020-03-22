@@ -1,125 +1,216 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
-# |  Advanced Achievements Chinese translation by DoloStar  | #
-# |             ~ Valid as of version 2.5.4 ~               | #
-# |   Newer plugin versions will automatically append new   | #
-# |     untranslated parameters to the end of the file.     | #
+# | Advanced Achievements 中文翻译 by Fur_Xia(mcbbs)        | #
+# |                 适用插件版本：5.15.1                    | #
+# |     更新的插件版本将自动添加未翻译部分到本文件末尾      | #
+# |               翻译时间2020年3月21日                     | #
 # +---------------------------------------------------------+ #
 #=============================================================#
 
-no-permissions: "你没有权限这么做"
+no-permissions: "您没有这样做的权限"
+statistic-cooldown: "成就冷却中: 请等待 TIME 秒之后，您的行为才会再次被统计"
+category-does-not-exist: "类别： CAT 或其子类不存在。您的意思是 CLOSEST_MATCH 吗？"
+all-achievements-received: "恭喜，您已经获得了所有的成就。"
+invalid-command: "无效指令。请输入/aach查询指令帮助列表。"
 
-# Related to /aach reload.
-configuration-successfully-reloaded: "配置加载成功"
-configuration-reload-failed: "加载失败 请查看log"
+# 与 /aach reload 相关
+configuration-successfully-reloaded: "恭喜，插件配置文件已经成功重载。 汉化by Fur_Xia"
+configuration-reload-failed: "加载配置文件时发现错误。请检查logs以获得详细信息。"
 
-# Related to /aach top.
-top-achievement: "成就排行榜"
-player-rank: "现在的排名:"
+# 与 /aach top week and month 相关
+top-achievement: "Top 成就获得者:"
+player-rank: "当前排名:"
+week-achievement: "每周成就排名:"
+month-achievement: "每月成就排名:"
+not-ranked: "你现在还没有排名。请加油！"
+pagination-header: "&7> &5页码 PAGE/MAX"
+pagination-footer: "&7>"
 
-# Related to /aach stats.
-number-achievements: "已获得的成就:"
+# 与 /aach stats 相关
+number-achievements: "已获得成就:"
 
-# Related to /aach book.
-book-received: "你获得了你的成就书"
-book-delay: "指令冷却中"
-book-name: "成就记录书"
+# 与 /aach book 相关
+book-received: "你获得了你的成就统计书!"
+book-delay: "你需要等待 TIME 秒才可获得另一本统计书!"
+book-name: "成就统计"
+book-date: "截止到 DATE"
+book-not-received: "你还没有获得成就呢！快加油！"
 
-# Related to /aach give.
-player-offline: "该玩家不在线"
-achievement-already-received: "该玩家已获得该成就"
-achievement-not-found: "未找到指定的成就"
-achievement-given: "已给予成就"
+# 与 /aach give 相关
+player-offline: "玩家 PLAYER 不在线!"
+achievement-already-received: "玩家 PLAYER 已经拥有这项成就!"
+achievement-not-found: "在对应的指令类别中找不到指定的成就，您的意思是 CLOSEST_MATCH 吗？"
+achievement-given: "成功给予成就!"
 
-# Related to achievement reception.
+# 与 /aach add 相关
+error-value: "给定值： VALUE 必须是一个整数!"
+statistic-increased: "玩家 PLAYER 的 ACH 成就统计增加了 AMOUNT!"
+
+# 与获得成就相关
 achievement-received: "该玩家已获得成就"
 achievement-new: "新成就:"
 
-# Related to /aach check.
-check-achievement-true: "该玩家已获得该成就"
-check-achievements-false: "该玩家未获得该成就"
+# 与 /aach check 相关
+check-achievement-true: "PLAYER 已经拥有这项成就： ACH!"
+check-achievements-false: "PLAYER 没有这项成就： ACH!"
 
-# Related to /aach delete.
-delete-achievements: "已删除玩家该玩家的该成就"
+# 与 /aach delete 相关
+delete-achievements: "玩家 PLAYER 的成就 ACH 已被删除。"
 
-# Related to achievement rewards.
-item-reward-received: "你获得了物品奖励"
-money-reward-received: "你获得了金钱奖励:AMOUNT"
-command-reward: "指令奖励"
+# 与成就奖励相关
+item-reward-received: "你获得了物品奖励："
+money-reward-received: "你获得了: AMOUNT!"
+command-reward: "指令奖励已颁发!"
+custom-command-reward: "你收到了奖励: MESSAGE"
+experience-reward-received: "你获得了奖励: AMOUNT 经验值!"
+increase-max-health-reward-received: "你的最大血量增加了 AMOUNT!"
+increase-max-oxygen-reward-received: "你的最大氧气值增加了 AMOUNT!"
 
-# Related to /aach help.
-aach-command-book: "获取记录成就的书本"
-aach-command-stats: "查看你已获得的成就"
-aach-command-list: "显示所有成就"
-aach-command-top: "查看成就排行榜"
-aach-command-give: "给予玩家一个成就"
-aach-command-reload: "重载插件"
-aach-command-info: "查看插件信息"
-aach-command-check: "检测玩家该玩家是否获得该成就"
-aach-command-delete: "已删除玩家的该玩家的该成就"
+# 与 /aach help 相关
+aach-command-book: "获得你的成就书."
+aach-command-book-hover: "你可以用来收集或交换的 RP 物品！基于时间列出."
+aach-command-stats: "显示获得成就的数量"
+aach-command-stats-hover: "进度条. 再加油就能获得他们了!"
+aach-command-list: "显示已获得和未获得的成就."
+aach-command-list-hover: "用漂亮的GUI查看所有成就的概况!"
+aach-command-top: "显示个人与全服的排名."
+aach-command-top-hover: "看看谁是服务器的领♂导♂者，看看你还差多少能和他们媲♂美?"
+aach-command-give: "给予 NAME 成就 ACH ."
+aach-command-give-hover: "玩家必须在线; 只允许使用Commands成就."
+aach-command-add: "增加统计."
+aach-command-add-hover: "玩家必须在线; 主要用于自定义类."
+aach-command-reload: "重载插件设定 汉化by Fur_Xia."
+aach-command-reload-hover: "重载 config.yml, gui.yml 和 lang.yml 的更改和设置."
+aach-command-info: "展示关于这个插件的信息."
+aach-command-info-hover: "关于插件的额外信息和它的作者!"
+aach-command-check: "查看玩家 NAME 拥有成就 ACH."
+aach-command-check-hover: "使用设定文件中的所有名称参数."
+aach-command-delete: "从 NAME 删除成就 ACH ."
+aach-command-delete-hover: "玩家必须在线; 不会重设相关的成就统计."
+aach-command-week: "显示每周排名."
+aach-command-week-hover: "看看这周最好的成就猎人是谁呢~!"
+aach-command-month: "显示每月排名."
+aach-command-month-hover: "看看本月最好的成就猎人是谁呢~!"
+aach-command-toggle: "切换为是否显示其他玩家的成就."
+aach-command-toggle-hover: "你的决定会被储存到下一次服务器重启!"
+aach-command-reset: "重置类别 CAT 的统计内容."
+aach-command-reset-hover: "玩家必须在线; 例如: reset Places.stone DarkPyves"
+aach-command-generate: "生成成就."
+aach-command-generate-hover: "可能会导致卡顿; 请小心使用!"
+aach-command-inspect: "看看最近哪些人获得了成就 ACH."
+aach-command-inspect-hover: "列出最近获得该成就的人，最多 1000 人."
+aach-tip: "&l提示 &8你可以 &7&n&o将鼠标移到指令上&8 或 &7&n&o直接点击&8 这些指令!"
 
-# Related to /aach info.
-version-command-name: "名字:"
-version-command-version: "版本:"
+# 与 /aach info 相关
+version-command-version: "版本号:"
 version-command-website: "网站:"
 version-command-author: "作者:"
-version-command-description: "介绍:"
-version-command-description-details: "功能强大,配置简单\  的自定义成就插件"
-version-command-vault: 'vault integration:'
+version-command-description: "描述:"
+version-command-description-details: "Advanced Achievements 可以带来特别的和有挑战性的成就. 尝试去收集，获得奖励，争取排名并获得 RP 书籍吧!"
+version-command-vault: "Vault 整合:"
+version-command-petmaster: "Pet Master 整合:"
+version-command-btlp: "BungeeTabListPlus 整合:"
+version-command-essentials: "Essentials 整合:"
+version-command-placeholderapi: "PlaceholderAPI 整合:"
 version-command-database: "数据库类型:"
 
-# Related to /aach list.
-list-gui-title: "&5&l成就列表"
-list-delay: "你必须等待time秒来再次使用指令"
-list-reward: "奖励: "
-list-reward-money: "金币"
-list-reward-item: "物品"
+# 与 /aach list 相关
+list-gui-title: "&5&l成就系统"
+list-delay: "你必须等待 TIME 秒以使用 list 指令!"
+list-description: "描述:"
+list-goal: "目标:"
+list-reception: "获得日期:"
+list-progress: "进度:"
+list-reward: "奖励:"
+list-rewards: "奖励:"
+list-reward-money: "获得 AMOUNT"
+list-reward-item: "获得 AMOUNT ITEM"
 list-reward-command: "其他"
-list-amount: "lvl: "
-list-achievement-received: "&a√&f "
-list-achievement-not-received: "&4X&8 "
+list-reward-experience: "获得 AMOUNT 经验值"
+list-reward-increase-max-health: "最大生命值提升了 AMOUNT"
+list-reward-increase-max-oxygen: "最大氧气值提升了 AMOUNT"
+list-achievement-received: "&5\u2714&f "
+list-achievement-not-received: "&4\u2718 "
+list-category-not-unlocked: "你还没有解锁此类别."
+list-back-message: "&7返回"
+list-back-lore: ""
+list-previous-message: "&7上一页"
+list-previous-lore: ""
+list-next-message: "&7下一页"
+list-next-lore: ""
+list-achievements-in-category-singular: "AMOUNT 个成就"
+list-achievements-in-category-plural: "AMOUNT 个成就"
 
-# Related to category names in /aach list.
+# 与 /aach list 中类别名相关
 # Set a parameter to "" to hide it from /aach list (but not disable the category).
-list-connections: "链接服务器"
+list-connections: "登录"
 list-places: "放置方块"
 list-breaks: "破坏方块"
 list-kills: "击杀实体"
 list-crafts: "合成物品"
+list-playercommands: "输入指令"
 list-deaths: "死亡次数"
-list-arrows: "发射箭支"
+list-arrows: "发射箭矢"
 list-snowballs: "投掷雪球"
 list-eggs: "投掷鸡蛋"
 list-fish: "钓鱼"
-list-itembreaks: "物品损坏"
+list-treasure: "钓到珍宝"
+list-itembreaks: "破坏物品"
 list-eatenitems: "吃东西"
 list-shear: "剪羊毛"
 list-milk: "挤牛奶"
+list-lavabuckets: "用铁桶装岩浆"
+list-waterbuckets: "用铁桶装水"
 list-trades: "交易次数"
-list-anvils: "使用铁毡"
+list-anvils: "使用铁砧"
 list-enchantments: "附魔物品"
-list-beds: "上床"
-list-maxlevel: "达到指定等级"
-list-potions: "药水消耗"
-list-playedtime: "在线时间"
-list-distance-foot: "徒步行走距离"
-list-distance-pig: "骑猪行走距离"
-list-distance-horse: "骑马行走距离"
-list-distance-minecart: "矿车行驶距离"
-list-distance-boat: "船行驶距离"
-list-distance-gliding: "滑翔翼飞行距离"
-list-itemdrops: "物品掉落"
+list-beds: "躺上床"
+list-maxlevel: "达到的最高等级"
+list-potions: "使用药水"
+list-playedtime: "游玩时间"
+list-distance-foot: "步行移动距离"
+list-distance-pig: "骑猪移动距离"
+list-distance-horse: "骑马移动距离"
+list-distance-minecart: "坐矿车移动距离"
+list-distance-boat: "坐船移动距离"
+list-distance-gliding: "鞘翅飞行距离"
+list-distance-llama: "骑羊驼移动距离"
+list-itemdrops: "丢物品"
+list-itempickups: "捡起物品"
 list-hoeplowings: "耕地"
 list-fertilising: "施肥"
 list-taming: "驯服动物"
+list-breeding: "繁殖动物"
 list-brewing: "酿造药水"
-list-fireworks: "发射烟花"
-list-musicdiscs: "播放音乐唱片"
+list-fireworks: "发射烟火"
+list-musicdiscs: "播放唱片"
 list-enderpearls: "使用末影珍珠传送"
+list-petmastergive: "给另一位玩家宠物"
+list-petmasterreceive: "从另一位玩家那里获得宠物"
+list-smelting: "熔炼物品"
 list-commands: "其他成就"
+list-custom: "自定义类"
+list-targetsshot: "射中目标"
+list-raids-won: "赢得袭击"
+list-riptides: "使用激流"
+list-advancements-completed: "获得成就"
+
+# 与 /aach toggle 相关
+toggle-displayed: "当其他玩家获得成就时，你会获得通知."
+toggle-hidden: "当其他玩家获得成就时，你不再获得通知"
+
+# 与 /aach reset 相关
+reset-successful: " 玩家 PLAYER 的统计数据已经被清除."
+
+# 与 /aach generate 相关
+advancements-generated: "成功生成成就."
+minecraft-not-supported: "你的Minecraft版本不支持成就，请升级到 1.12+."
+
+# 与 /aach inspect 相关
+achievement-not-recognized: 名称为 'NAME' 的成就无法识别，您的意思是 CLOSEST_MATCH 吗?"
 
 #============================================================#
 # +--------------------------------------------------------+ #
-# |         Parameters to appear in future versions        | #
+# | 新插件版本更新的参数将会添加在这里  汉化by Fur_Xia     | #
 # +--------------------------------------------------------+ #
 #============================================================#
