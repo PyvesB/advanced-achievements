@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,8 +29,6 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
 	private final String url;
 	private final String filename;
 
-	private boolean configDatabaseBackup;
-
 	public AbstractFileDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
 			AdvancedAchievements advancedAchievements, String driverPath, String url, String filename) {
@@ -40,20 +39,12 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
 	}
 
 	@Override
-	public void extractConfigurationParameters() {
-		super.extractConfigurationParameters();
-
-		configDatabaseBackup = mainConfig.getBoolean("DatabaseBackup", true);
-	}
-
-	@Override
 	void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError {
 		Class.forName(driverPath);
 
-		if (configDatabaseBackup) {
+		if (mainConfig.getBoolean("DatabaseBackup", true)) {
 			File backup = new File(advancedAchievements.getDataFolder(), filename + ".bak");
-			// Only do a daily backup for the .db file.
-			if (System.currentTimeMillis() - backup.lastModified() > 86400000L || backup.length() == 0L) {
+			if (System.currentTimeMillis() - backup.lastModified() > TimeUnit.DAYS.toMillis(1) || backup.length() == 0L) {
 				logger.info("Backing up database file...");
 				try {
 					FileManager fileManager = new FileManager(filename, advancedAchievements);
