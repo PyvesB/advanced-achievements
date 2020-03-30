@@ -195,6 +195,11 @@
 				<version>1.4.200</version>
 				<scope>runtime</scope>
 			</dependency>
+			<dependency>
+				<groupId>com.zaxxer</groupId>
+				<artifactId>HikariCP</artifactId>
+				<version>3.4.2</version>
+			</dependency>
 
 			<!-- Test dependencies -->
 			<dependency>
