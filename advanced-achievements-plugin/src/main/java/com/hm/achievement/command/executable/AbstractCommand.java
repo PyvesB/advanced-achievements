@@ -43,7 +43,8 @@ public abstract class AbstractCommand implements Reloadable {
 	public void execute(CommandSender sender, String[] args) {
 		if (sender instanceof Player) {
 			final Player player = (Player) sender;
-			if (player.isSleeping()) return;
+			if (player.isSleeping())
+				return;
 		}
 		final String permission = getClass().getAnnotation(CommandSpec.class).permission();
 		if (!permission.isEmpty() && !sender.hasPermission("achievement." + permission)) {
