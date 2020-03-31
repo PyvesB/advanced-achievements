@@ -7,6 +7,7 @@ import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.entity.Player;
 
 /**
  * Abstract class in charge of factoring out common functionality for commands.
@@ -40,7 +41,11 @@ public abstract class AbstractCommand implements Reloadable {
 	 * @param args
 	 */
 	public void execute(CommandSender sender, String[] args) {
-		String permission = getClass().getAnnotation(CommandSpec.class).permission();
+		if (sender instanceof Player) {
+			final Player player = (Player) sender;
+			if (player.isSleeping()) return;
+		}
+		final String permission = getClass().getAnnotation(CommandSpec.class).permission();
 		if (!permission.isEmpty() && !sender.hasPermission("achievement." + permission)) {
 			sender.sendMessage(langNoPermissions);
 			return;
