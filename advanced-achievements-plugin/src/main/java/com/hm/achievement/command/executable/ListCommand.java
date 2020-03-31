@@ -4,6 +4,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.hm.achievement.lang.GuiLang;
+import com.hm.achievement.lang.LangHelper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -35,6 +37,11 @@ public class ListCommand extends AbstractCommand {
 		}
 
 		Player player = (Player) sender;
+
+		if (player.isSleeping()) {
+			sender.sendMessage(LangHelper.get(GuiLang.UNAVAILABLE_WHILST_SLEEPING, langConfig));
+			return;
+		}
 
 		mainGUI.displayMainGUI(player);
 	}

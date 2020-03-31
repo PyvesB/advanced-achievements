@@ -140,6 +140,7 @@ list-next-message: "&7Next"
 list-next-lore: ""
 list-achievements-in-category-singular: "AMOUNT achievement"
 list-achievements-in-category-plural: "AMOUNT achievements"
+list-unavailable-whilst-sleeping: "&c&lYou cannot open the Achievements List whilst sleeping."
 
 # Related to category names in /aach list.
 # Set a parameter to "" to hide it from /aach list (but not disable the category).
