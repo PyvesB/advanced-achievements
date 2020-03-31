@@ -72,7 +72,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 
 		((SQLWriteOperation) () -> {
 			try (final Connection conn = databaseManager.getDataSource().getConnection();
-				 final Statement st = conn.createStatement()) {
+					final Statement st = conn.createStatement()) {
 				for (String request : batchedRequests) {
 					st.addBatch(request);
 				}

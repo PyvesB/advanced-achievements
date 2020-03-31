@@ -138,7 +138,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			logger.log(Level.SEVERE, "Error while waiting for database write operations to complete:", e);
 			Thread.currentThread().interrupt();
 		} finally {
-			if (!dataSource.isClosed()) dataSource.close();
+			if (!dataSource.isClosed())
+				dataSource.close();
 		}
 	}
 
@@ -153,7 +154,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<List<String>>) () -> {
 			List<String> achievementNamesList = new ArrayList<>();
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setFetchSize(1000);
 				ResultSet rs = ps.executeQuery();
@@ -182,7 +183,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				: "SELECT date FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<String>) () -> {
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				if (achName.contains("'")) {
@@ -208,7 +209,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Map<UUID, Integer>>) () -> {
 			Map<UUID, Integer> achievementAmounts = new HashMap<>();
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setFetchSize(1000);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
@@ -233,7 +234,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String sql = "SELECT COUNT(*) FROM " + prefix + "achievements WHERE playername = ?";
 		return ((SQLReadOperation<Integer>) () -> {
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				rs.next();
@@ -257,7 +258,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Map<String, Integer>>) () -> {
 			Map<String, Integer> topList = new LinkedHashMap<>();
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				if (start > 0L) {
 					ps.setTimestamp(1, new Timestamp(start));
 				}
@@ -294,7 +295,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String sql = "REPLACE INTO " + prefix + "achievements VALUES (?,?,?,?)";
 		((SQLWriteOperation) () -> {
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				ps.setString(3, achMessage == null ? "" : achMessage);
@@ -320,7 +321,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				: "SELECT achievement FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<Boolean>) () -> {
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				if (achName.contains("'")) {
@@ -343,7 +344,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<Long>) () -> {
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
@@ -368,7 +369,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				+ category.toSubcategoryDBName() + " = ?";
 		return ((SQLReadOperation<Long>) () -> {
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, subcategory);
 				ResultSet rs = ps.executeQuery();
@@ -391,7 +392,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<Integer>) () -> {
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
@@ -413,7 +414,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String sql = "SELECT date FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<String>) () -> {
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
@@ -437,7 +438,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String sqlRead = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<Integer>) () -> {
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sqlRead)) {
+					final PreparedStatement ps = conn.prepareStatement(sqlRead)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
@@ -469,7 +470,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				: "DELETE FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		((SQLWriteOperation) () -> {
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				if (achName.contains("'")) {
@@ -489,7 +490,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String sql = "DELETE FROM " + prefix + "connections WHERE playername = '" + uuid + "'";
 		((SQLWriteOperation) () -> {
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.execute();
 			}
 		}).executeOperation(pool, logger, "clearing connection statistics");
@@ -512,7 +513,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<List<AwardedDBAchievement>>) () -> {
 			List<AwardedDBAchievement> achievements = new ArrayList<>();
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setFetchSize(1000);
 				ps.setObject(1, uuid, Types.CHAR);
 				try (ResultSet rs = ps.executeQuery()) {
@@ -550,7 +551,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<List<AwardedDBAchievement>>) () -> {
 			List<AwardedDBAchievement> achievements = new ArrayList<>();
 			try (final Connection conn = dataSource.getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setFetchSize(1000);
 				ps.setString(1, achievementName);
 				try (ResultSet rs = ps.executeQuery()) {

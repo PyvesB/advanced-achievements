@@ -29,7 +29,8 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 	private final String databaseType;
 
 	public AbstractRemoteDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
-			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater, String dataSourceClassName,
+			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
+			String dataSourceClassName,
 			String databaseType) {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, dataSourceClassName);
 		this.databaseType = databaseType;
@@ -37,7 +38,8 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 
 	@Override
 	void performPreliminaryTasks() throws PluginLoadError, ClassNotFoundException {
-		if (dataSourceClassName != null) Class.forName(dataSourceClassName);
+		if (dataSourceClassName != null)
+			Class.forName(dataSourceClassName);
 
 		jdbcUrl = getJdbcUrl();
 		try {
@@ -69,7 +71,8 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 	@Override
 	HikariConfig getConfig() {
 		HikariConfig config = new HikariConfig();
-		if (dataSourceClassName != null) config.setDataSourceClassName(dataSourceClassName);
+		if (dataSourceClassName != null)
+			config.setDataSourceClassName(dataSourceClassName);
 		config.setJdbcUrl(jdbcUrl);
 		config.setUsername(username);
 		config.setPassword(password);

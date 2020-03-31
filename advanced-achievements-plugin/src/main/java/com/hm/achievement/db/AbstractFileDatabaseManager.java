@@ -38,7 +38,8 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
 
 	@Override
 	void performPreliminaryTasks() throws ClassNotFoundException {
-		if (dataSourceClassName != null) Class.forName(dataSourceClassName);
+		if (dataSourceClassName != null)
+			Class.forName(dataSourceClassName);
 
 		if (mainConfig.getBoolean("DatabaseBackup", true)) {
 			File backup = new File(advancedAchievements.getDataFolder(), filename + ".bak");

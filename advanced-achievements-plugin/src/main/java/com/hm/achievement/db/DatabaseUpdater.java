@@ -70,7 +70,7 @@ public class DatabaseUpdater {
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
 		if (StringUtils.isNotBlank(databaseManager.getPrefix())) {
 			try (final Connection conn = databaseManager.getDataSource().getConnection();
-				 final Statement st = conn.createStatement()) {
+					final Statement st = conn.createStatement()) {
 				ResultSet rs = conn.getMetaData().getTables(null, null, "achievements", null);
 				// If the achievements table still has its default name (ie. no prefix), but a prefix is set in the
 				// configuration, do a renaming of all tables.
@@ -102,7 +102,7 @@ public class DatabaseUpdater {
 	 */
 	void initialiseTables(AbstractDatabaseManager databaseManager) throws PluginLoadError {
 		try (final Connection conn = databaseManager.getDataSource().getConnection();
-			 final Statement st = conn.createStatement()) {
+				final Statement st = conn.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix()
 					+ "achievements (playername char(36),achievement varchar(64),description varchar(128),date TIMESTAMP,PRIMARY KEY (playername, achievement))");
 
@@ -139,7 +139,7 @@ public class DatabaseUpdater {
 	void updateOldDBToMaterial(AbstractDatabaseManager databaseManager) throws PluginLoadError {
 		String type = "";
 		try (final Connection conn = databaseManager.getDataSource().getConnection();
-			 final Statement st = conn.createStatement()) {
+				final Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT blockid FROM " + databaseManager.getPrefix()
 					+ MultipleAchievements.BREAKS.toDBName() + " LIMIT 1");
 			type = rs.getMetaData().getColumnTypeName(1);
@@ -171,7 +171,7 @@ public class DatabaseUpdater {
 	private void updateOldDBToMaterial(AbstractDatabaseManager databaseManager, MultipleAchievements category) {
 		String tableName = databaseManager.getPrefix() + category.toDBName();
 		try (final Connection conn = databaseManager.getDataSource().getConnection();
-			 final Statement st = conn.createStatement()) {
+				final Statement st = conn.createStatement()) {
 			// Create new temporary table.
 			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(191),"
 					+ tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
@@ -229,7 +229,7 @@ public class DatabaseUpdater {
 	 */
 	void updateOldDBToDates(AbstractDatabaseManager databaseManager) {
 		try (final Connection conn = databaseManager.getDataSource().getConnection();
-			 final Statement st = conn.createStatement()) {
+				final Statement st = conn.createStatement()) {
 			ResultSet rs = st.executeQuery("SELECT date FROM " + databaseManager.getPrefix() + "achievements LIMIT 1");
 			String type = rs.getMetaData().getColumnTypeName(1);
 			// Old column type for versions prior to 3.0 was text for SQLite, char for MySQL and varchar for PostgreSQL
@@ -310,7 +310,7 @@ public class DatabaseUpdater {
 		// SQLite unaffected by this change, H2 support added with timestamp from the start.
 		if (databaseManager instanceof AbstractRemoteDatabaseManager) {
 			try (final Connection conn = databaseManager.getDataSource().getConnection();
-				 final Statement st = conn.createStatement()) {
+					final Statement st = conn.createStatement()) {
 				ResultSet rs = st.executeQuery("SELECT date FROM " + databaseManager.getPrefix() + "achievements LIMIT 1");
 				String type = rs.getMetaData().getColumnTypeName(1);
 				// Old column type for versions prior to 5.11.0 was date.
@@ -338,7 +338,7 @@ public class DatabaseUpdater {
 		// SQLite ignores size for varchar datatype. H2 support was added after this was an issue.
 		if (!(databaseManager instanceof AbstractFileDatabaseManager)) {
 			try (final Connection conn = databaseManager.getDataSource().getConnection();
-				 final Statement st = conn.createStatement()) {
+					final Statement st = conn.createStatement()) {
 				ResultSet rs = st.executeQuery("SELECT " + category.toSubcategoryDBName() + " FROM "
 						+ databaseManager.getPrefix() + category.toDBName() + " LIMIT 1");
 				if (rs.getMetaData().getPrecision(1) < 191) {
@@ -365,7 +365,7 @@ public class DatabaseUpdater {
 	private void updateOldMaterialsToNewOnes(AbstractDatabaseManager databaseManager, MultipleAchievements category) {
 		String tableName = databaseManager.getPrefix() + category.toDBName();
 		try (final Connection conn = databaseManager.getDataSource().getConnection();
-			 final Statement st = conn.createStatement()) {
+				final Statement st = conn.createStatement()) {
 			// Create new temporary table.
 			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(191),"
 					+ tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");

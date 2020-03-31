@@ -52,7 +52,7 @@ public class SQLiteDatabaseTest {
 
 		((SQLWriteOperation) () -> {
 			try (final Connection conn = db.getDataSource().getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.execute();
 			}
 		}).executeOperation(db.pool, null, "Clearing achievements table");

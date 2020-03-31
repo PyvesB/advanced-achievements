@@ -88,7 +88,7 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 
 		((SQLWriteOperation) () -> {
 			try (final Connection conn = db.getDataSource().getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, null);
 				ps.setString(2, testAchievement);
 				ps.setString(3, testAchievementMsg);

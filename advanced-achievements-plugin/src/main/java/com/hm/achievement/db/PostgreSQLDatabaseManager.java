@@ -21,7 +21,8 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
 	public PostgreSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
-		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "org.postgresql.ds.PGSimpleDataSource", "postgresql");
+		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "org.postgresql.ds.PGSimpleDataSource",
+				"postgresql");
 	}
 
 	@Override
@@ -32,7 +33,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 				+ " ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)";
 		((SQLWriteOperation) () -> {
 			try (final Connection conn = getDataSource().getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sql)) {
+					final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				ps.setString(3, achMessage);
@@ -50,7 +51,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 		String sqlRead = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<Integer>) () -> {
 			try (final Connection conn = getDataSource().getConnection();
-				 final PreparedStatement ps = conn.prepareStatement(sqlRead)) {
+					final PreparedStatement ps = conn.prepareStatement(sqlRead)) {
 				ps.setString(1, uuid.toString());
 				ResultSet rs = ps.executeQuery();
 				int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
