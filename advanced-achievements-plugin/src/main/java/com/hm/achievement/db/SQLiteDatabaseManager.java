@@ -20,7 +20,7 @@ public class SQLiteDatabaseManager extends AbstractFileDatabaseManager {
 	public SQLiteDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
 			AdvancedAchievements advancedAchievements) {
-		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, advancedAchievements, "org.sqlite.JDBC",
+		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, advancedAchievements, "org.sqlite.SQLiteDataSource",
 				"jdbc:sqlite:" + new File(advancedAchievements.getDataFolder(), "achievements.db"), "achievements.db");
 	}
 }

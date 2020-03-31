@@ -20,7 +20,7 @@ public class H2DatabaseManager extends AbstractFileDatabaseManager {
 	public H2DatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
 			AdvancedAchievements advancedAchievements) {
-		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, advancedAchievements, "org.h2.Driver",
+		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, advancedAchievements, "org.h2.jdbcx.JdbcDataSource",
 				"jdbc:h2:./" + new File(advancedAchievements.getDataFolder(), "achievements")
 						+ ";DATABASE_TO_UPPER=false;MODE=MySQL",
 				"achievements.mv.db");

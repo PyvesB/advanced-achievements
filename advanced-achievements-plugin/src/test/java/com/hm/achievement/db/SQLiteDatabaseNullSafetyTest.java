@@ -87,8 +87,8 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 		String sql = "REPLACE INTO achievements VALUES (?,?,?,?)";
 
 		((SQLWriteOperation) () -> {
-			Connection conn = db.getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = db.getDataSource().getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, null);
 				ps.setString(2, testAchievement);
 				ps.setString(3, testAchievementMsg);

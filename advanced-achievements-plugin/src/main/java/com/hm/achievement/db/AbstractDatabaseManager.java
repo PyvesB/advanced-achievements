@@ -1,11 +1,9 @@
 package com.hm.achievement.db;
 
-import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.DateFormat;
@@ -20,10 +18,11 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 
 import com.hm.achievement.category.MultipleAchievements;
@@ -42,11 +41,13 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 
 	// Used to do perform the database write operations asynchronously.
 	ExecutorService pool;
-	// Connection to the database; remains opened and shared.
-	final AtomicReference<Connection> sqlConnection = new AtomicReference<>();
+
+	// Database Connection Pool
+	private HikariDataSource dataSource;
+
 	final CommentedYamlConfiguration mainConfig;
 	final Logger logger;
-	final String driverPath;
+	final String dataSourceClassName;
 
 	volatile String prefix;
 
@@ -57,12 +58,12 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	private boolean configBookChronologicalOrder;
 
 	public AbstractDatabaseManager(CommentedYamlConfiguration mainConfig, Logger logger,
-			Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater, String driverPath) {
+			Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater, String dataSourceClassName) {
 		this.mainConfig = mainConfig;
 		this.logger = logger;
 		this.namesToDisplayNames = namesToDisplayNames;
 		this.databaseUpdater = databaseUpdater;
-		this.driverPath = driverPath;
+		this.dataSourceClassName = dataSourceClassName;
 		// We expect to execute many short writes to the database. The pool can grow dynamically under high load and
 		// allows to reuse threads.
 		pool = Executors.newCachedThreadPool();
@@ -81,6 +82,12 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		}
 	}
 
+	abstract HikariConfig getConfig();
+
+	public HikariDataSource getDataSource() {
+		return dataSource;
+	}
+
 	/**
 	 * Initialises the database system by extracting settings, performing setup tasks and updating schemas if necessary.
 	 *
@@ -95,16 +102,11 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			performPreliminaryTasks();
 		} catch (ClassNotFoundException e) {
 			logger.severe("The JBDC driver for the chosen database type was not found.");
-		} catch (UnsupportedEncodingException e) {
-			logger.log(Level.SEVERE, "Error while encoding the database URL:", e);
 		}
 
-		// Try to establish connection with database; stays opened until explicitly closed by the plugin.
-		Connection conn = getSQLConnection();
-
-		if (conn == null) {
-			throw new PluginLoadError("Failed to establish database connection. Please verify your settings in config.yml.");
-		}
+		// Try to establish connection pool with database
+		final HikariConfig config = getConfig();
+		dataSource = new HikariDataSource(config);
 
 		databaseUpdater.renameExistingTables(this);
 		databaseUpdater.initialiseTables(this);
@@ -119,9 +121,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 *
 	 * @throws ClassNotFoundException
 	 * @throws PluginLoadError
-	 * @throws UnsupportedEncodingException
 	 */
-	abstract void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError, UnsupportedEncodingException;
+	abstract void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError;
 
 	/**
 	 * Shuts the thread pool down and closes connection to database.
@@ -137,45 +138,9 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			logger.log(Level.SEVERE, "Error while waiting for database write operations to complete:", e);
 			Thread.currentThread().interrupt();
 		} finally {
-			try {
-				Connection connection = sqlConnection.get();
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				logger.log(Level.SEVERE, "Error while closing connection to the database:", e);
-			}
+			if (!dataSource.isClosed()) dataSource.close();
 		}
 	}
-
-	/**
-	 * Retrieves SQL connection to MySQL, PostgreSQL, H2 or SQLite database.
-	 *
-	 * @return the cached SQL connection or a new one
-	 */
-	Connection getSQLConnection() {
-		Connection oldConnection = sqlConnection.get();
-		try {
-			// Check if Connection was not previously closed.
-			if (oldConnection == null || oldConnection.isClosed()) {
-				Connection newConnection = createSQLConnection();
-				if (!sqlConnection.compareAndSet(oldConnection, newConnection)) {
-					newConnection.close();
-				}
-			}
-		} catch (SQLException e) {
-			logger.log(Level.SEVERE, "Error while attempting to retrieve a connection to the database:", e);
-		}
-		return sqlConnection.get();
-	}
-
-	/**
-	 * Creates a new Connection object to the database.
-	 *
-	 * @return connection object to database
-	 * @throws SQLException
-	 */
-	abstract Connection createSQLConnection() throws SQLException;
 
 	/**
 	 * Gets the list of names of all the achievements of a player.
@@ -187,8 +152,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String sql = "SELECT achievement FROM " + prefix + "achievements WHERE playername = ?";
 		return ((SQLReadOperation<List<String>>) () -> {
 			List<String> achievementNamesList = new ArrayList<>();
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setFetchSize(1000);
 				ResultSet rs = ps.executeQuery();
@@ -216,8 +181,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				? "SELECT date FROM " + prefix + "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
 				: "SELECT date FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<String>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				if (achName.contains("'")) {
@@ -242,8 +207,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String sql = "SELECT playername, COUNT(*) FROM " + prefix + "achievements GROUP BY playername";
 		return ((SQLReadOperation<Map<UUID, Integer>>) () -> {
 			Map<UUID, Integer> achievementAmounts = new HashMap<>();
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setFetchSize(1000);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
@@ -267,8 +232,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	public int getPlayerAchievementsAmount(UUID uuid) {
 		String sql = "SELECT COUNT(*) FROM " + prefix + "achievements WHERE playername = ?";
 		return ((SQLReadOperation<Integer>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				rs.next();
@@ -291,8 +256,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 						+ "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC";
 		return ((SQLReadOperation<Map<String, Integer>>) () -> {
 			Map<String, Integer> topList = new LinkedHashMap<>();
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				if (start > 0L) {
 					ps.setTimestamp(1, new Timestamp(start));
 				}
@@ -328,8 +293,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	void registerAchievement(UUID uuid, String achName, String achMessage, long epochMs) {
 		String sql = "REPLACE INTO " + prefix + "achievements VALUES (?,?,?,?)";
 		((SQLWriteOperation) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				ps.setString(3, achMessage == null ? "" : achMessage);
@@ -354,8 +319,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 						+ "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
 				: "SELECT achievement FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		return ((SQLReadOperation<Boolean>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				if (achName.contains("'")) {
@@ -377,8 +342,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String dbName = category.toDBName();
 		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<Long>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
@@ -402,8 +367,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ? AND "
 				+ category.toSubcategoryDBName() + " = ?";
 		return ((SQLReadOperation<Long>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, subcategory);
 				ResultSet rs = ps.executeQuery();
@@ -425,8 +390,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String dbName = NormalAchievements.CONNECTIONS.toDBName();
 		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<Integer>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
@@ -447,8 +412,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String dbName = NormalAchievements.CONNECTIONS.toDBName();
 		String sql = "SELECT date FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<String>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
@@ -471,15 +436,14 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		String dbName = NormalAchievements.CONNECTIONS.toDBName();
 		String sqlRead = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<Integer>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sqlRead)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sqlRead)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
 				int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
 				String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES (?,?,?)";
 				((SQLWriteOperation) () -> {
-					Connection writeConn = getSQLConnection();
-					try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
+					try (final PreparedStatement writePrep = conn.prepareStatement(sqlWrite)) {
 						writePrep.setObject(1, uuid, Types.CHAR);
 						writePrep.setInt(2, connections);
 						writePrep.setString(3, date);
@@ -504,8 +468,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				? "DELETE FROM " + prefix + "achievements WHERE playername = ? AND (achievement = ? OR achievement = ?)"
 				: "DELETE FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
 		((SQLWriteOperation) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ps.setString(2, achName);
 				if (achName.contains("'")) {
@@ -524,8 +488,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	public void clearConnection(UUID uuid) {
 		String sql = "DELETE FROM " + prefix + "connections WHERE playername = '" + uuid + "'";
 		((SQLWriteOperation) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.execute();
 			}
 		}).executeOperation(pool, logger, "clearing connection statistics");
@@ -547,8 +511,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				+ (configBookChronologicalOrder ? "ASC" : "DESC");
 		return ((SQLReadOperation<List<AwardedDBAchievement>>) () -> {
 			List<AwardedDBAchievement> achievements = new ArrayList<>();
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setFetchSize(1000);
 				ps.setObject(1, uuid, Types.CHAR);
 				try (ResultSet rs = ps.executeQuery()) {
@@ -585,8 +549,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				" ORDER BY date DESC LIMIT 1000";
 		return ((SQLReadOperation<List<AwardedDBAchievement>>) () -> {
 			List<AwardedDBAchievement> achievements = new ArrayList<>();
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = dataSource.getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setFetchSize(1000);
 				ps.setString(1, achievementName);
 				try (ResultSet rs = ps.executeQuery()) {

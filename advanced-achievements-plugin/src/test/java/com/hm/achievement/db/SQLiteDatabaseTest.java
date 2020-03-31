@@ -51,8 +51,8 @@ public class SQLiteDatabaseTest {
 		String sql = "DELETE FROM achievements";
 
 		((SQLWriteOperation) () -> {
-			Connection conn = db.getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (final Connection conn = db.getDataSource().getConnection();
+				 final PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.execute();
 			}
 		}).executeOperation(db.pool, null, "Clearing achievements table");
