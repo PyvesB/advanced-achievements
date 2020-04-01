@@ -434,26 +434,29 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @return connections statistic
 	 */
 	public int updateAndGetConnection(UUID uuid, String date) {
-		String dbName = NormalAchievements.CONNECTIONS.toDBName();
-		String sqlRead = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
-		return ((SQLReadOperation<Integer>) () -> {
+		final String dbName = NormalAchievements.CONNECTIONS.toDBName();
+		final String sqlRead = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
+		final int connections = ((SQLReadOperation<Integer>) () -> {
 			try (final Connection conn = dataSource.getConnection();
 					final PreparedStatement ps = conn.prepareStatement(sqlRead)) {
 				ps.setObject(1, uuid, Types.CHAR);
 				ResultSet rs = ps.executeQuery();
-				int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
-				String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES (?,?,?)";
-				((SQLWriteOperation) () -> {
-					try (final PreparedStatement writePrep = conn.prepareStatement(sqlWrite)) {
-						writePrep.setObject(1, uuid, Types.CHAR);
-						writePrep.setInt(2, connections);
-						writePrep.setString(3, date);
-						writePrep.execute();
-					}
-				}).executeOperation(pool, logger, "updating connection date and count");
-				return connections;
+				return rs.next() ? rs.getInt(dbName) + 1 : 1;
 			}
 		}).executeOperation("handling connection event");
+
+		String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES (?,?,?)";
+		((SQLWriteOperation) () -> {
+			try (final Connection conn = dataSource.getConnection();
+					final PreparedStatement ps = conn.prepareStatement(sqlWrite)) {
+				ps.setObject(1, uuid, Types.CHAR);
+				ps.setInt(2, connections);
+				ps.setString(3, date);
+				ps.execute();
+			}
+		}).executeOperation(pool, logger, "updating connection date and count");
+
+		return connections;
 	}
 
 	/**
