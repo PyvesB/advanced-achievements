@@ -61,6 +61,7 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
 		if (dataSourceClassName != null)
 			config.setDataSourceClassName(dataSourceClassName);
 		config.setJdbcUrl(jdbcUrl);
+		config.setMaximumPoolSize(1); // Limit file based databases to 1 connection for compatibility
 		return config;
 	}
 }
