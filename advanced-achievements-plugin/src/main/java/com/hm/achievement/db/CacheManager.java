@@ -1,5 +1,6 @@
 package com.hm.achievement.db;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -224,16 +225,51 @@ public class CacheManager implements Cleanable {
 	}
 
 	/**
-	 * Removes an achievement from the achievement received cache and adds it to the not received cache. A call to
-	 * {@link #hasPlayerAchievement(UUID, String)} is expected to have been made made beforehand for the same player.
+	 * Removes achievements from the received achievement cache and adds them to the not received cache.
 	 *
 	 * @param player
-	 * @param achievementName
+	 * @param achievementNames
 	 */
-	public void removePreviouslyReceivedAchievement(UUID player, String achievementName) {
-		receivedAchievementsCache.get(player).remove(achievementName);
-		notReceivedAchievementsCache.get(player).add(achievementName);
-		totalPlayerAchievementsCache.put(player, getPlayerTotalAchievements(player) - 1);
+	public void removePreviouslyReceivedAchievements(UUID player, Collection<String> achievementNames) {
+		receivedAchievementsCache.computeIfAbsent(player, s -> new HashSet<>()).removeAll(achievementNames);
+		notReceivedAchievementsCache.computeIfAbsent(player, s -> new HashSet<>()).addAll(achievementNames);
+		totalPlayerAchievementsCache.put(player, Math.max(0, getPlayerTotalAchievements(player) - achievementNames.size()));
+	}
+
+	/**
+	 * Resets a player's statistics to 0.
+	 * 
+	 * @param uuid
+	 * @param categoriesWithSubcategories
+	 */
+	public void resetPlayerStatistics(UUID uuid, Collection<String> categoriesWithSubcategories) {
+		categoriesWithSubcategories.forEach(categoryWithSubcategory -> {
+			if (categoryWithSubcategory.contains(".")) {
+				MultipleAchievements category = MultipleAchievements
+						.getByName(StringUtils.substringBefore(categoryWithSubcategory, "."));
+				String subcategory = StringUtils.substringAfter(categoryWithSubcategory, ".");
+				CachedStatistic statistic = getHashMap(category).get(getMultipleCategoryCacheKey(uuid, subcategory));
+				if (statistic == null) {
+					getHashMap(category).put(getMultipleCategoryCacheKey(uuid,
+							subcategory), new CachedStatistic(0L, false));
+				} else {
+					statistic.setValue(0L);
+				}
+			} else {
+				NormalAchievements category = NormalAchievements.getByName(categoryWithSubcategory);
+				if (category == NormalAchievements.CONNECTIONS) {
+					// Not handled by a database cache.
+					databaseManager.clearConnection(uuid);
+				} else {
+					CachedStatistic statistic = getHashMap(category).get(uuid.toString());
+					if (statistic == null) {
+						getHashMap(category).put(uuid.toString(), new CachedStatistic(0L, false));
+					} else {
+						statistic.setValue(0L);
+					}
+				}
+			}
+		});
 	}
 
 }

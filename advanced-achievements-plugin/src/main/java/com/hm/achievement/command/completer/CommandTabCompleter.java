@@ -2,6 +2,7 @@ package com.hm.achievement.command.completer;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,8 +20,10 @@ import org.bukkit.command.TabCompleter;
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.CommandSpec;
+import com.hm.achievement.command.executable.DeleteCommand;
 import com.hm.achievement.command.executable.EasterEggCommand;
 import com.hm.achievement.command.executable.GenerateCommand;
+import com.hm.achievement.command.executable.ResetCommand;
 import com.hm.achievement.command.executable.Upgrade13Command;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
@@ -67,11 +70,15 @@ public class CommandTabCompleter implements TabCompleter {
 		String aachCommand = args[0];
 		Collection<String> options = Collections.emptyList();
 		if (args.length == 2 && "reset".equalsIgnoreCase(aachCommand)) {
-			options = enabledCategoriesWithSubcategories;
+			options = new HashSet<>(enabledCategoriesWithSubcategories);
+			options.add(ResetCommand.WILDCARD);
 		} else if (args.length == 2 && "give".equalsIgnoreCase(aachCommand)) {
 			options = mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString());
-		} else if (args.length == 2 && StringUtils.equalsAnyIgnoreCase(aachCommand, "check", "delete")) {
+		} else if (args.length == 2 && "check".equalsIgnoreCase(aachCommand)) {
 			options = namesToDisplayNames.keySet();
+		} else if (args.length == 2 && "delete".equalsIgnoreCase(aachCommand)) {
+			options = new HashSet<>(namesToDisplayNames.keySet());
+			options.add(DeleteCommand.WILDCARD);
 		} else if (args.length == 2 && "inspect".equalsIgnoreCase(aachCommand)) {
 			options = displayNamesToNames.keySet();
 		} else if (args.length == 2 && "add".equalsIgnoreCase(aachCommand)) {
