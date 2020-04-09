@@ -13,9 +13,6 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.bukkit.Bukkit;
-
-import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 
@@ -28,28 +25,24 @@ import com.hm.achievement.category.NormalAchievements;
 @Singleton
 public class AsyncCachedRequestsSender implements Runnable {
 
-	private final AdvancedAchievements advancedAchievements;
 	private final Logger logger;
 	private final CacheManager cacheManager;
 	private final AbstractDatabaseManager databaseManager;
 
 	@Inject
-	public AsyncCachedRequestsSender(AdvancedAchievements advancedAchievements, Logger logger, CacheManager cacheManager,
-			AbstractDatabaseManager databaseManager) {
-		this.advancedAchievements = advancedAchievements;
+	public AsyncCachedRequestsSender(Logger logger, CacheManager cacheManager, AbstractDatabaseManager databaseManager) {
 		this.logger = logger;
 		this.cacheManager = cacheManager;
 		this.databaseManager = databaseManager;
 	}
 
 	/**
-	 * Writes cached statistics to the database and cleans up the no longer relevant cached statistics.
-	 * 
+	 * Writes cached statistics to the database, with batched writes for efficiency purposes. If a failure occurs, the
+	 * same queries will be attempted again.
 	 */
 	@Override
 	public void run() {
 		sendBatchedRequests();
-		cleanUpCaches();
 	}
 
 	/**
@@ -65,22 +58,20 @@ public class AsyncCachedRequestsSender implements Runnable {
 			addRequestsForNormalCategory(batchedRequests, category);
 		}
 
-		if (batchedRequests.isEmpty()) {
-			return;
-		}
-
-		((SQLWriteOperation) () -> {
-			Connection conn = databaseManager.getSQLConnection();
-			try (Statement st = conn.createStatement()) {
-				for (String request : batchedRequests) {
-					st.addBatch(request);
+		if (!batchedRequests.isEmpty()) {
+			((SQLWriteOperation) () -> {
+				Connection conn = databaseManager.getSQLConnection();
+				try (Statement st = conn.createStatement()) {
+					for (String request : batchedRequests) {
+						st.addBatch(request);
+					}
+					st.executeBatch();
+				} catch (BatchUpdateException e) { // Attempt to solve issue #309.
+					conn.close();
+					throw e;
 				}
-				st.executeBatch();
-			} catch (BatchUpdateException e) { // Attempt to solve issue #309.
-				conn.close();
-				throw e;
-			}
-		}).attemptWrites(logger, "batching statistic updates");
+			}).attemptWrites(logger, "batching statistic updates");
+		}
 	}
 
 	/**
@@ -93,20 +84,22 @@ public class AsyncCachedRequestsSender implements Runnable {
 	 * @param category
 	 */
 	private void addRequestsForMultipleCategory(List<String> batchedRequests, MultipleAchievements category) {
-		Map<String, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
-		for (Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
-			if (!entry.getValue().isDatabaseConsistent()) {
+		Map<SubcategoryUUID, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
+		for (Entry<SubcategoryUUID, CachedStatistic> entry : categoryMap.entrySet()) {
+			CachedStatistic statistic = entry.getValue();
+			if (!statistic.isDatabaseConsistent()) {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
-				entry.getValue().prepareDatabaseWrite();
+				statistic.prepareDatabaseWrite();
+				UUID uuid = entry.getKey().getUUID();
+				String subcategory = entry.getKey().getSubcategory();
 				if (databaseManager instanceof PostgreSQLDatabaseManager) {
 					batchedRequests.add("INSERT INTO " + databaseManager.getPrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-							+ entry.getValue().getValue() + ") ON CONFLICT (playername, " + category.toSubcategoryDBName()
-							+ ") DO UPDATE SET (" + category.toDBName() + ")=(" + entry.getValue().getValue() + ")");
+							+ uuid + "', '" + subcategory + "', " + statistic.getValue() + ") ON CONFLICT (playername, "
+							+ category.toSubcategoryDBName() + ") DO UPDATE SET (" + category.toDBName() + ")=("
+							+ statistic.getValue() + ")");
 				} else {
 					batchedRequests.add("REPLACE INTO " + databaseManager.getPrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey().substring(0, 36) + "', '" + entry.getKey().substring(36) + "', "
-							+ entry.getValue().getValue() + ")");
+							+ uuid + "', '" + subcategory + "', " + statistic.getValue() + ")");
 				}
 			}
 		}
@@ -122,65 +115,23 @@ public class AsyncCachedRequestsSender implements Runnable {
 	 * @param category
 	 */
 	private void addRequestsForNormalCategory(List<String> batchedRequests, NormalAchievements category) {
-		Map<String, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
-		for (Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
-			if (!entry.getValue().isDatabaseConsistent()) {
+		Map<UUID, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
+		for (Entry<UUID, CachedStatistic> entry : categoryMap.entrySet()) {
+			CachedStatistic statistic = entry.getValue();
+			if (!statistic.isDatabaseConsistent()) {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
-				entry.getValue().prepareDatabaseWrite();
+				statistic.prepareDatabaseWrite();
+				UUID uuid = entry.getKey();
 				if (databaseManager instanceof PostgreSQLDatabaseManager) {
 					batchedRequests.add("INSERT INTO " + databaseManager.getPrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey() + "', " + entry.getValue().getValue()
-							+ ") ON CONFLICT (playername) DO UPDATE SET (" + category.toDBName() + ")=("
-							+ entry.getValue().getValue() + ")");
+							+ uuid + "', " + statistic.getValue() + ") ON CONFLICT (playername) DO UPDATE SET ("
+							+ category.toDBName() + ")=(" + statistic.getValue() + ")");
 				} else {
 					batchedRequests.add("REPLACE INTO " + databaseManager.getPrefix() + category.toDBName() + " VALUES ('"
-							+ entry.getKey() + "', " + entry.getValue().getValue() + ")");
+							+ uuid + "', " + statistic.getValue() + ")");
 				}
 			}
 		}
 	}
 
-	/**
-	 * Removes the cached statistics that have been written to the database and for which the player is no longer
-	 * connected.
-	 */
-	private void cleanUpCaches() {
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			Map<String, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
-			cleanUpCache(categoryMap);
-		}
-		for (NormalAchievements category : NormalAchievements.values()) {
-			Map<String, CachedStatistic> categoryMap = cacheManager.getHashMap(category);
-			cleanUpCache(categoryMap);
-		}
-	}
-
-	/**
-	 * Performs the aformentioned removals for a given category.
-	 * 
-	 * @param categoryMap
-	 */
-	private void cleanUpCache(Map<String, CachedStatistic> categoryMap) {
-		for (Entry<String, CachedStatistic> entry : categoryMap.entrySet()) {
-			if (entry.getValue().didPlayerDisconnect() && entry.getValue().isDatabaseConsistent()) {
-				// Player was disconnected at some point in the recent past. Hand over the cleaning to the main server
-				// thread.
-				Bukkit.getScheduler().callSyncMethod(advancedAchievements, () -> {
-					// Check again whether statistic has been written to the database. This is necessary to cover
-					// cases where the player may have reconnected in the meantime.
-					if (entry.getValue().isDatabaseConsistent()) {
-						categoryMap.remove(entry.getKey());
-					} else {
-						// Get player UUID, which always corresponds to the 36 first characters of the key
-						// regardless of the category type.
-						UUID player = UUID.fromString(entry.getKey().substring(0, 36));
-						if (Bukkit.getPlayer(player) != null) {
-							entry.getValue().resetDisconnection();
-						}
-					}
-					return null;
-				});
-			}
-		}
-	}
 }
