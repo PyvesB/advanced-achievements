@@ -181,7 +181,7 @@ public class CacheManager implements Cleanable {
 	 * @return the updated statistic value
 	 */
 	public long getAndIncrementStatisticAmount(MultipleAchievements category, String subcategory, UUID player, int value) {
-		SubcategoryUUID key = new SubcategoryUUID(StringUtils.deleteWhitespace(subcategory), player);
+		SubcategoryUUID key = new SubcategoryUUID(subcategory, player);
 		Map<SubcategoryUUID, CachedStatistic> cache = getHashMap(category);
 		CachedStatistic statistic = cache.get(key);
 		if (statistic == null) {

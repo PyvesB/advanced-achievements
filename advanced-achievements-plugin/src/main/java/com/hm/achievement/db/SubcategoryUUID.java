@@ -3,13 +3,15 @@ package com.hm.achievement.db;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class SubcategoryUUID {
 
 	private final String subcategory;
 	private final UUID uuid;
 
 	public SubcategoryUUID(String subcategory, UUID uuid) {
-		this.subcategory = subcategory;
+		this.subcategory = StringUtils.deleteWhitespace(subcategory);
 		this.uuid = uuid;
 	}
 
