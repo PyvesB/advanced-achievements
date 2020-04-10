@@ -485,6 +485,22 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
+	 * Deletes all achievements from a player.
+	 *
+	 * @param uuid
+	 */
+	public void deleteAllPlayerAchievements(UUID uuid) {
+		String sql = "DELETE FROM " + prefix + "achievements WHERE playername = ?";
+		((SQLWriteOperation) () -> {
+			Connection conn = getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setObject(1, uuid, Types.CHAR);
+				ps.execute();
+			}
+		}).executeOperation(pool, logger, "deleting all achievements");
+	}
+
+	/**
 	 * Clears Connection statistics for a given player.
 	 *
 	 * @param uuid

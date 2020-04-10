@@ -109,6 +109,16 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 	}
 
 	@Test
+	public void testDeleteAllAchievements() {
+		registerAchievement(testUUID, testAchievement, testAchievementMsg);
+		registerAchievement(testUUID, testAchievement + "2", testAchievementMsg);
+
+		db.deleteAllPlayerAchievements(testUUID);
+
+		assertEquals(0, db.getPlayerAchievementsAmount(testUUID));
+	}
+
+	@Test
 	public void testDeleteAchievementQuotes() {
 		registerAchievement(testUUID, "'" + testAchievement + "'", testAchievementMsg);
 

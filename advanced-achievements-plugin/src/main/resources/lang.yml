@@ -56,6 +56,7 @@ check-achievements-false: "PLAYER has not received the achievement ACH!"
 
 # Related to /aach delete.
 delete-achievements: "The achievement ACH was deleted from PLAYER."
+delete-all-achievements: "All achievements were deleted from PLAYER."
 
 # Related to achievement rewards.
 item-reward-received: "You received an item reward:"
@@ -200,7 +201,8 @@ toggle-displayed: "You will now be notified when other players get achievements.
 toggle-hidden: "You will no longer be notified when other players get achievements."
 
 # Related to /aach reset.
-reset-successful: " statistics were cleared for PLAYER."
+reset-successful: "CAT statistics were cleared for PLAYER."
+reset-all-successful: "All statistics were cleared for PLAYER."
 
 # Related to /aach generate.
 advancements-generated: "Advancements were successfully generated."
