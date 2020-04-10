@@ -2,7 +2,7 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
 # |   Advanced Achievements Polish translation by KapceRBLX | #
-# |             ~ Valid as of version 5.12.5 ~              | #
+# |             ~ Valid as of version 5.15.1 ~              | #
 # |   Newer plugin versions will automatically append new   | #
 # |     untranslated parameters to the end of the file.     | #
 # +---------------------------------------------------------+ #
@@ -125,7 +125,8 @@ list-description: '&eOpis:'
 list-goal: '&eCel:'
 list-reception: '&eData wykonania:'
 list-progress: '&ePostep:'
-list-reward: 'Nagroda(y):'
+list-reward: 'Nagroda:'
+list-rewards: 'Nagrody:'
 list-reward-money: '&ePieniadze &aAMOUNT&e$'
 list-reward-item: '&eOtrzymasz &aAMOUNT&6ITEM'
 list-reward-command: '&eInne'
@@ -192,8 +193,11 @@ list-petmastergive: '&6Zwierzat Podarowanych Innym Graczom'
 list-petmasterreceive: '&6Zwierzat Otrzymanych od Innych Graczy'
 list-smelting: '&6Przepalone Surowce'
 list-commands: '&6Inne Osiagniecia'
-list-targetsshot: '&6Strzelone Cele'
 list-custom: '&6Inne'
+list-targetsshot: '&6Strzelone Cele'
+list-raids-won: '&6Wygrane Raidy'
+list-riptides: '&6Uzyte Prady'
+list-advancements-completed: '&6Wykonane Osiagniecia'
 
 # Related to /aach toggle.
 toggle-displayed: Od teraz bedziesz otrzymywac powiadomienia, gdy jakis gracz otrzyma
@@ -221,7 +225,3 @@ achievement-not-recognized: Nie odnaleziono osiagniecia. Czy chodzilo ci o CLOSE
 # | Parameters in future plugin versions will  appear here | #
 # +--------------------------------------------------------+ #
 #============================================================#
-list-raids-won: '&6Wygrane Raidy'
-list-riptides: '&6Uzyte Prady'
-list-rewards: 'Nagrody:'
-list-advancements-completed: '&6Wykonane Osiagniecia'
