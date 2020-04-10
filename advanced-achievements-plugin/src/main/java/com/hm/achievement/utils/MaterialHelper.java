@@ -77,7 +77,7 @@ public class MaterialHelper {
 		}
 		if (serverVersion >= 9) {
 			// Method getBasePotionData does not exist for versions prior to Minecraft 1.9.
-			return ((PotionMeta) (itemStack.getItemMeta())).getBasePotionData().getType() != PotionType.WATER;
+			return ((PotionMeta) itemStack.getItemMeta()).getBasePotionData().getType() != PotionType.WATER;
 		}
 		return itemStack.getDurability() != 0;
 	}

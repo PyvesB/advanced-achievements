@@ -58,7 +58,7 @@ public class KillsListener extends AbstractListener {
 		}
 
 		if (entity instanceof Player) {
-			String specificPlayer = "specificplayer-" + entity.getUniqueId().toString().toLowerCase();
+			String specificPlayer = "specificplayer-" + entity.getUniqueId();
 			if (player.hasPermission(category.toPermName() + '.' + specificPlayer)) {
 				foundAchievements.addAll(findAchievementsByCategoryAndName(specificPlayer));
 			}

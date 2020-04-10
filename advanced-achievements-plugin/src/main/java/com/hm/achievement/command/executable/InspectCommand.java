@@ -115,7 +115,7 @@ public class InspectCommand extends AbstractCommand {
 		String achievementName = displayNamesToNames.get(achievementDisplayName);
 		if (achievementName == null) {
 			String whiteSpaceRemovedName = achievementDisplayName.replace(' ', '_');
-			if (displayNamesToNames.values().contains(whiteSpaceRemovedName)) {
+			if (displayNamesToNames.containsValue(whiteSpaceRemovedName)) {
 				achievementName = whiteSpaceRemovedName;
 			}
 		}

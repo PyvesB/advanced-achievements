@@ -107,7 +107,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		}
 
 		if (sender instanceof Player) {
-			Integer achievementsCount = cachedSortedRankings.get((((Player) sender).getUniqueId().toString()));
+			Integer achievementsCount = cachedSortedRankings.get(((Player) sender).getUniqueId().toString());
 			// If not entry in the map, player has not yet received an achievement for this period, not ranked.
 			if (achievementsCount == null) {
 				sender.sendMessage(langNotRanked);

@@ -21,42 +21,42 @@ public interface CleanableModule {
 
 	@Binds
 	@IntoSet
-	abstract Cleanable bindAchieveDistanceRunnable(AchieveDistanceRunnable achieveDistanceRunnable);
+	Cleanable bindAchieveDistanceRunnable(AchieveDistanceRunnable achieveDistanceRunnable);
 
 	@Binds
 	@IntoSet
-	abstract Cleanable bindBedsListener(BedsListener bedsListener);
+	Cleanable bindBedsListener(BedsListener bedsListener);
 
 	@Binds
 	@IntoSet
-	abstract Cleanable bindBookCommand(BookCommand bookCommand);
+	Cleanable bindBookCommand(BookCommand bookCommand);
 
 	@Binds
 	@IntoSet
-	abstract Cleanable bindCacheManager(CacheManager cacheManager);
+	Cleanable bindCacheManager(CacheManager cacheManager);
 
 	@Binds
 	@IntoSet
-	abstract Cleanable bindConnectionsListener(ConnectionsListener connectionsListener);
+	Cleanable bindConnectionsListener(ConnectionsListener connectionsListener);
 
 	@Binds
 	@IntoSet
-	abstract Cleanable bindJoinListener(JoinListener joinListener);
+	Cleanable bindJoinListener(JoinListener joinListener);
 
 	@Binds
 	@IntoSet
-	abstract Cleanable bindLavaBucketsListener(LavaBucketsListener lavaBucketsListener);
+	Cleanable bindLavaBucketsListener(LavaBucketsListener lavaBucketsListener);
 
 	@Binds
 	@IntoSet
-	abstract Cleanable bindMilksListener(MilksListener milksListener);
+	Cleanable bindMilksListener(MilksListener milksListener);
 
 	@Binds
 	@IntoSet
-	abstract Cleanable bindMusicDiscsListener(MusicDiscsListener musicDiscsListener);
+	Cleanable bindMusicDiscsListener(MusicDiscsListener musicDiscsListener);
 
 	@Binds
 	@IntoSet
-	abstract Cleanable bindWaterBucketsListener(WaterBucketsListener waterBucketsListener);
+	Cleanable bindWaterBucketsListener(WaterBucketsListener waterBucketsListener);
 
 }
