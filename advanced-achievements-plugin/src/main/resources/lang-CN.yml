@@ -1,9 +1,9 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
 # | Advanced Achievements 中文翻译 by Fur_Xia(mcbbs)        | #
-# |                 适用插件版本：5.15.1                    | #
+# |                 适用插件版本：5.16.0                    | #
 # |     更新的插件版本将自动添加未翻译部分到本文件末尾      | #
-# |               翻译时间2020年3月21日                     | #
+# |               翻译时间2020年4月11日                     | #
 # +---------------------------------------------------------+ #
 #=============================================================#
 
@@ -56,6 +56,7 @@ check-achievements-false: "PLAYER 没有这项成就： ACH!"
 
 # 与 /aach delete 相关
 delete-achievements: "玩家 PLAYER 的成就 ACH 已被删除。"
+delete-all-achievements: "已清除玩家 PLAYER 的所有成就。"
 
 # 与成就奖励相关
 item-reward-received: "你获得了物品奖励："
@@ -142,7 +143,7 @@ list-achievements-in-category-singular: "AMOUNT 个成就"
 list-achievements-in-category-plural: "AMOUNT 个成就"
 
 # 与 /aach list 中类别名相关
-# Set a parameter to "" to hide it from /aach list (but not disable the category).
+# 将一项设置为 "" 以将其从 /aach list 中隐藏(但并不会禁用那一类成就).
 list-connections: "登录"
 list-places: "放置方块"
 list-breaks: "破坏方块"
@@ -200,7 +201,8 @@ toggle-displayed: "当其他玩家获得成就时，你会获得通知."
 toggle-hidden: "当其他玩家获得成就时，你不再获得通知"
 
 # 与 /aach reset 相关
-reset-successful: " 玩家 PLAYER 的统计数据已经被清除."
+reset-successful: "玩家 PLAYER 的 CAT 类成就统计数据已清除。"
+reset-all-successful: " 玩家 PLAYER 的所有统计数据已经被清除。"
 
 # 与 /aach generate 相关
 advancements-generated: "成功生成成就."
