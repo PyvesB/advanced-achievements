@@ -51,6 +51,10 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	void onExecute(CommandSender sender, String[] args) {
 		String searchedName = args[args.length - 1];
 		Entity[] entities = CommandUtils.getTargets(sender, searchedName);
+		if(entities == null){
+			sender.sendMessage(pluginHeader + langEntityNotPlayer);
+			return;
+		}
 		for(int i = 0; i < entities.length;i++){
 			if(entities[i]==null) {
 				sender.sendMessage(pluginHeader + StringUtils.replaceOnce(langPlayerOffline, "PLAYER", searchedName));
@@ -59,7 +63,7 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 			try {
 				onExecuteForPlayer(sender, args, (Player) entities[i]);
 			} catch (ClassCastException e) {
-				sender.sendMessage(pluginHeader + langPlayerOffline);
+				sender.sendMessage(pluginHeader + langEntityNotPlayer);
 			}
 		}
 
