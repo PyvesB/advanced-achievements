@@ -1,13 +1,18 @@
 package com.hm.achievement.command.executable;
 
+import com.hm.achievement.utils.CommandUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Abstract class in charge of factoring out common functionality for commands with more than one argument (/aach give,
@@ -18,6 +23,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public abstract class AbstractParsableCommand extends AbstractCommand {
 
 	private String langPlayerOffline;
+	private String langEntityNotPlayer;
 
 	AbstractParsableCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
 			StringBuilder pluginHeader) {
@@ -29,6 +35,7 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 		super.extractConfigurationParameters();
 
 		langPlayerOffline = LangHelper.get(CmdLang.PLAYER_OFFLINE, langConfig);
+		langEntityNotPlayer = LangHelper.get(CmdLang.NOT_A_PLAYER, langConfig);
 	}
 
 	/**
@@ -43,16 +50,19 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	@Override
 	void onExecute(CommandSender sender, String[] args) {
 		String searchedName = args[args.length - 1];
-		Player player = Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().equalsIgnoreCase(searchedName))
-				.findFirst().orElse(null);
-
-		// If player not found or is offline.
-		if (player == null) {
-			sender.sendMessage(pluginHeader + StringUtils.replaceOnce(langPlayerOffline, "PLAYER", searchedName));
-			return;
+		Entity[] entities = CommandUtils.getTargets(sender, searchedName);
+		for(int i = 0; i < entities.length;i++){
+			if(entities[i]==null) {
+				sender.sendMessage(pluginHeader + StringUtils.replaceOnce(langPlayerOffline, "PLAYER", searchedName));
+				break;
+			}
+			try {
+				onExecuteForPlayer(sender, args, (Player) entities[i]);
+			} catch (ClassCastException e) {
+				sender.sendMessage(pluginHeader + langPlayerOffline);
+			}
 		}
 
-		onExecuteForPlayer(sender, args, player);
 	}
 
 	/**
@@ -72,4 +82,23 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 		}
 		return achievementName.toString();
 	}
+
+//	private boolean startsWithSelector(String arg) {
+//		List<String> selectors = Arrays.asList("@a", "@p", "@s", "@r");
+//		for(String selector : selectors) {
+//			if(arg.startsWith(selector)) return true;
+//		}
+//		return false;
+//
+//				String argsString = arg;
+//				for(int i = 2; i < args.length; i++) {
+//					argsString += " " + args[i];
+//				}
+//				//boolean opBefore = sender.isOp();//Only needed if Command should be useable by non-ops
+//				//sender.setOp(true);
+//				Bukkit.dispatchCommand(sender, "minecraft:execute " + args[0] + " ~ ~ ~ " + label + " self " + argsString);
+//				//sender.setOp(opBefore);
+//				return true;
+//		return false;
+//	}
 }
