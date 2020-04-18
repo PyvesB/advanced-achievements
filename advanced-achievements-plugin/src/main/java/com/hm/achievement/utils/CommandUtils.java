@@ -41,6 +41,13 @@ import java.util.concurrent.ThreadLocalRandom;
 public class CommandUtils {
 
     /**
+     * The CommandUtils class is used for selector support in commands (@p, @a etc.)
+     * Originally made by ZombieStriker
+     * https://github.com/ZombieStriker/PsudoCommands/blob/master/src/me/zombie_striker/psudocommands/CommandUtils.java
+     * https://github.com/ZombieStriker/CommandUtils/blob/master/src/CommandUtils.java
+     * */
+
+    /**
      * Use this if you are unsure if a player provided the "@a" tag. This will allow
      * multiple entities to be retrieved.
      * <p>
