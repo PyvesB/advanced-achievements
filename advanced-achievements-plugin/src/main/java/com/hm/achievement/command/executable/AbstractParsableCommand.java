@@ -51,12 +51,12 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	void onExecute(CommandSender sender, String[] args) {
 		String searchedName = args[args.length - 1];
 		Entity[] entities = CommandUtils.getTargets(sender, searchedName);
-		if(entities == null){
+		if (entities == null) {
 			sender.sendMessage(pluginHeader + langEntityNotPlayer);
 			return;
 		}
-		for(int i = 0; i < entities.length;i++){
-			if(entities[i]==null) {
+		for (int i = 0; i < entities.length; i++) {
+			if (entities[i] == null) {
 				sender.sendMessage(pluginHeader + StringUtils.replaceOnce(langPlayerOffline, "PLAYER", searchedName));
 				break;
 			}
@@ -86,23 +86,4 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 		}
 		return achievementName.toString();
 	}
-
-//	private boolean startsWithSelector(String arg) {
-//		List<String> selectors = Arrays.asList("@a", "@p", "@s", "@r");
-//		for(String selector : selectors) {
-//			if(arg.startsWith(selector)) return true;
-//		}
-//		return false;
-//
-//				String argsString = arg;
-//				for(int i = 2; i < args.length; i++) {
-//					argsString += " " + args[i];
-//				}
-//				//boolean opBefore = sender.isOp();//Only needed if Command should be useable by non-ops
-//				//sender.setOp(true);
-//				Bukkit.dispatchCommand(sender, "minecraft:execute " + args[0] + " ~ ~ ~ " + label + " self " + argsString);
-//				//sender.setOp(opBefore);
-//				return true;
-//		return false;
-//	}
 }
