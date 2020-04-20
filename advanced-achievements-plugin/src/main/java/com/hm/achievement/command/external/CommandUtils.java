@@ -1,23 +1,4 @@
-package com.hm.achievement.utils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.command.BlockCommandSender;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.minecart.CommandMinecart;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Team;
+package com.hm.achievement.command.external;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -43,7 +24,6 @@ public class CommandUtils {
 	/**
 	 * The CommandUtils class is used for selector support in commands (@p, @a etc.) Originally made by ZombieStriker
 	 * https://github.com/ZombieStriker/PsudoCommands/blob/master/src/me/zombie_striker/psudocommands/CommandUtils.java
-	 * https://github.com/ZombieStriker/CommandUtils/blob/master/src/CommandUtils.java
 	 */
 
 	/**

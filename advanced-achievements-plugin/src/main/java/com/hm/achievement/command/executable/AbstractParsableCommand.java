@@ -1,8 +1,7 @@
 package com.hm.achievement.command.executable;
 
-import com.hm.achievement.utils.CommandUtils;
+import com.hm.achievement.command.external.CommandUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -10,9 +9,6 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Abstract class in charge of factoring out common functionality for commands with more than one argument (/aach give,
@@ -60,13 +56,13 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 				sender.sendMessage(pluginHeader + StringUtils.replaceOnce(langPlayerOffline, "PLAYER", searchedName));
 				break;
 			}
-			try {
+			if (entities[i] instanceof Player) {
 				onExecuteForPlayer(sender, args, (Player) entities[i]);
-			} catch (ClassCastException e) {
-				sender.sendMessage(pluginHeader + langEntityNotPlayer);
+			} else {
+				sender.sendMessage(
+						pluginHeader + StringUtils.replaceOnce(langEntityNotPlayer, "ENTITY", entities[i].getType().name()));
 			}
 		}
-
 	}
 
 	/**
