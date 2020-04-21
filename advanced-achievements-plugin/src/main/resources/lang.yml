@@ -38,6 +38,7 @@ book-not-received: "You have not yet received any achievements."
 
 # Related to /aach give.
 player-offline: "The player PLAYER is offline!"
+not-a-player: "You cannot give achievements to ENTITY, it is not a player!"
 achievement-already-received: "The player PLAYER has already received this achievement!"
 achievement-not-found: "The specified achievement was not found in Commands category. Did you mean CLOSEST_MATCH?"
 achievement-given: "Achievement given!"

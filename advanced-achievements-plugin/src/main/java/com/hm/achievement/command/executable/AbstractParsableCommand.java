@@ -1,8 +1,9 @@
 package com.hm.achievement.command.executable;
 
+import com.hm.achievement.command.external.CommandUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.lang.LangHelper;
@@ -18,6 +19,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public abstract class AbstractParsableCommand extends AbstractCommand {
 
 	private String langPlayerOffline;
+	private String langEntityNotPlayer;
 
 	AbstractParsableCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
 			StringBuilder pluginHeader) {
@@ -29,6 +31,7 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 		super.extractConfigurationParameters();
 
 		langPlayerOffline = LangHelper.get(CmdLang.PLAYER_OFFLINE, langConfig);
+		langEntityNotPlayer = LangHelper.get(CmdLang.NOT_A_PLAYER, langConfig);
 	}
 
 	/**
@@ -43,16 +46,23 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	@Override
 	void onExecute(CommandSender sender, String[] args) {
 		String searchedName = args[args.length - 1];
-		Player player = Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().equalsIgnoreCase(searchedName))
-				.findFirst().orElse(null);
-
-		// If player not found or is offline.
-		if (player == null) {
-			sender.sendMessage(pluginHeader + StringUtils.replaceOnce(langPlayerOffline, "PLAYER", searchedName));
+		Entity[] entities = CommandUtils.getTargets(sender, searchedName);
+		if (entities == null) {
+			sender.sendMessage(pluginHeader + langEntityNotPlayer);
 			return;
 		}
-
-		onExecuteForPlayer(sender, args, player);
+		for (int i = 0; i < entities.length; i++) {
+			if (entities[i] == null) {
+				sender.sendMessage(pluginHeader + StringUtils.replaceOnce(langPlayerOffline, "PLAYER", searchedName));
+				break;
+			}
+			if (entities[i] instanceof Player) {
+				onExecuteForPlayer(sender, args, (Player) entities[i]);
+			} else {
+				sender.sendMessage(
+						pluginHeader + StringUtils.replaceOnce(langEntityNotPlayer, "ENTITY", entities[i].getType().name()));
+			}
+		}
 	}
 
 	/**
