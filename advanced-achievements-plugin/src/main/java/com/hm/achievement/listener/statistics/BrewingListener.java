@@ -1,5 +1,6 @@
 package com.hm.achievement.listener.statistics;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -9,13 +10,12 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
+import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -25,10 +25,11 @@ import com.hm.achievement.utils.InventoryHelper;
 import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  * Listener class to deal with Brewing achievements.
- * 
+ *
  * @author Pyves
  *
  */
@@ -48,30 +49,24 @@ public class BrewingListener extends AbstractRateLimitedListener {
 		this.materialHelper = materialHelper;
 		this.inventoryHelper = inventoryHelper;
 	}
-
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onInventoryClick(InventoryClickEvent event) {
-		if (event.getInventory().getType() != InventoryType.BREWING || event.getAction() == InventoryAction.NOTHING
-				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD
-				|| !isBrewablePotion(event)) {
-			return;
-		}
-
-		Player player = (Player) event.getWhoClicked();
-		int eventAmount = event.getCurrentItem().getAmount();
-		if (event.isShiftClick()) {
-			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, event.getCurrentItem()));
-			if (eventAmount == 0) {
-				return;
+	public void onBrew(BrewEvent event) {
+		for(HumanEntity he : event.getContents().getViewers()){
+			if(he instanceof Player){
+				Player p = (Player)he;
+				BrewerInventory inv = event.getContents();
+				for (int i = 0; i <= 2; ++i) {
+					if(inv.getItem(i) == null) continue;
+					Integer amount = inv.getItem(i).getAmount();
+					updateStatisticAndAwardAchievementsIfAvailable(p, amount, i);
+				}
 			}
 		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(player, eventAmount, event.getRawSlot());
 	}
 
 	/**
 	 * Determine whether the event corresponds to a brewable potion, i.e. not water.
-	 * 
+	 *
 	 * @param event
 	 * @return true if for any brewable potion
 	 */
