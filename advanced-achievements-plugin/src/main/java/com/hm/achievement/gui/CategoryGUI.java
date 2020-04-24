@@ -59,6 +59,7 @@ public class CategoryGUI implements Reloadable {
 	private final RewardParser rewardParser;
 	private final GUIItems guiItems;
 
+	private boolean configGrayOutNotReceived;
 	private boolean configObfuscateNotReceived;
 	private boolean configObfuscateProgressiveAchievements;
 	private boolean configHideRewardDisplayInList;
@@ -92,6 +93,7 @@ public class CategoryGUI implements Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
+		configGrayOutNotReceived = mainConfig.getBoolean("GrayOutNotReceived", true);
 		configObfuscateNotReceived = mainConfig.getBoolean("ObfuscateNotReceived", true);
 		configObfuscateProgressiveAchievements = mainConfig.getBoolean("ObfuscateProgressiveAchievements");
 		configHideRewardDisplayInList = mainConfig.getBoolean("HideRewardDisplayInList");
@@ -246,14 +248,15 @@ public class CategoryGUI implements Reloadable {
 		// Set name of the achievement. The style depends whether it was received or not and whether the user has set
 		// obfuscateNotReceived and/or obfuscateProgressiveAchievements in the config.
 		ItemMeta itemMeta = achItem.getItemMeta();
-		if (date != null) {
-			itemMeta.setDisplayName(translateColorCodes(langListAchievementReceived + name));
-		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
+		boolean notReceived = (date == null);
+		if (notReceived && (configObfuscateNotReceived || configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
 			itemMeta.setDisplayName(translateColorCodes(langListAchievementNotReceived
 					+ "&k" + StringHelper.removeFormattingCodes(name)));
-		} else {
+		} else if (notReceived && configGrayOutNotReceived) {
 			itemMeta.setDisplayName(translateColorCodes(StringEscapeUtils.unescapeJava(langListAchievementNotReceived
 					+ "&o" + StringHelper.removeFormattingCodes(name))));
+		} else {
+			itemMeta.setDisplayName(translateColorCodes(langListAchievementReceived + name));
 		}
 
 		itemMeta.setLore(lore);

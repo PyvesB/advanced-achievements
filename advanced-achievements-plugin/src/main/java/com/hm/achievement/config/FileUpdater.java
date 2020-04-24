@@ -205,6 +205,11 @@ public class FileUpdater {
 		// Added in 5.14.0:
 		updateSetting(config, "ReceiverChatMessages", true, "Display chat messages when a player receives an achievement.");
 
+		// Added in 5.17.0:
+		updateSetting(config, "GrayOutNotReceived", true,
+				"Gray out achievements that have not yet been received in /aach list.",
+				"Ignored if the achievement is covered by ObfuscateNotReceived or ObfuscateProgressiveAchievements.");
+
 		if (updatePerformed) {
 			// Changes in the configuration: save and do a fresh load.
 			try {

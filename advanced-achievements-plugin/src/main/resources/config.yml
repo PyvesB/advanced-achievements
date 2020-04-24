@@ -125,6 +125,10 @@ ObfuscateNotReceived: false
 # the 500 stone achievement will become legible.
 ObfuscateProgressiveAchievements: false
 
+# Gray out achievements that have not yet been received in /aach list.
+# Ignored if the achievement is covered by ObfuscateNotReceived or ObfuscateProgressiveAchievements.
+GrayOutNotReceived: true
+
 # Hide categories for which a player has not yet received achievements by marking them as locked in /aach list.
 HideNotReceivedCategories: false
 
