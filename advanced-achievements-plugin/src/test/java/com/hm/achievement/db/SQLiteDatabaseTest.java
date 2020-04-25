@@ -21,7 +21,7 @@ public class SQLiteDatabaseTest {
 	static void initDB(MockUtility mockUtility) throws Exception {
 		Logger logger = Logger.getLogger("DBTestLogger");
 		db = new SQLiteDatabaseManager(mockUtility.getLoadedConfig("config.yml"), logger, Collections.emptyMap(),
-				new DatabaseUpdater(logger, 11, null), mockUtility.getPluginMock()) {
+				new DatabaseUpdater(logger, null), mockUtility.getPluginMock()) {
 
 			@Override
 			public void extractConfigurationParameters() {

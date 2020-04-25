@@ -108,8 +108,6 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 
 		databaseUpdater.renameExistingTables(this);
 		databaseUpdater.initialiseTables(this);
-		databaseUpdater.updateOldDBToMaterial(this);
-		databaseUpdater.updateOldDBToDates(this);
 		databaseUpdater.updateOldDBToTimestamps(this);
 		Arrays.stream(MultipleAchievements.values()).forEach(m -> databaseUpdater.updateOldDBColumnSize(this, m));
 	}
