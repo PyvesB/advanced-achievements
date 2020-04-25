@@ -159,11 +159,7 @@ public class RewardParser implements Reloadable {
 	 * @return the reward amount
 	 */
 	public int getRewardAmount(String path, String type) {
-		int newSyntaxAmount = mainConfig.getInt(path + "." + type);
-		if (newSyntaxAmount != 0) {
-			return newSyntaxAmount;
-		}
-		return mainConfig.getInt(path + "." + type + ".Amount"); // Old syntax: amount used to be a separate element.
+		return mainConfig.getInt(path + "." + type);
 	}
 
 	/**
