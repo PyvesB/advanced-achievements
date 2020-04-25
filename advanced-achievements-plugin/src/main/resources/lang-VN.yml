@@ -57,7 +57,7 @@ check-achievements-false: Người chơi PLAYER chưa nhận được thành t�
 delete-achievements: Thành tựu ACH đã được xóa từ người chơi PLAYER.
 
 # Related to achievement rewards.
-item-reward-received: 'Bạn nhận được vật phẩm là:'
+item-reward-received: 'Bạn nhận được vật phẩm là: AMOUNT ITEM'
 money-reward-received: 'Bạn nhận được số tiền là: AMOUNT !'
 command-reward: Lệnh thưởng thực hiện!
 custom-command-reward: 'Bạn đã nhận phẩn thưởng của bạn: MESSAGE'

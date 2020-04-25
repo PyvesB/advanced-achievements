@@ -43,7 +43,7 @@ check-achievements-false: "PLAYER nu a primit realizarea ACH!"
 delete-achievements: "Realizarea ACH a fost stearsa pentru PLAYER."
 
 # Related to achievement rewards.
-item-reward-received: "Ai primit un obiect recompensa:"
+item-reward-received: "Ai primit un obiect recompensa: AMOUNT ITEM"
 money-reward-received: "Ai primit: AMOUNT !"
 command-reward: "Comanda recompensa executata!"
 

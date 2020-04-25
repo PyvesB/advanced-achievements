@@ -57,7 +57,7 @@ check-achievements-false: "Hrac PLAYER nedostal uspech ACH!"
 delete-achievements: "The achievement ACH was deleted from PLAYER."
 
 # Related to achievement rewards.
-item-reward-received: "Obdrzel jste odmenu:"
+item-reward-received: "Obdrzel jste odmenu: AMOUNT ITEM"
 money-reward-received: "Obdrzel jste: AMOUNT!"
 command-reward: "Odmena byla provedena!"
 custom-command-reward: "Ziskal jste svou odmenu: MESSAGE"

@@ -61,7 +61,7 @@ check-achievements-false: PLAYER adlı oyuncu ACH adlı başarıma ulaşmadı!
 delete-achievements: ACH adlı başarım PLAYER oyuncusundan silindi.
 
 # Related to achievement rewards.
-item-reward-received: 'Aldığınız Eşya Ödülü:'
+item-reward-received: 'Aldığınız Eşya Ödülü: AMOUNT ITEM'
 money-reward-received: 'Aldığınız Para Ödülü: AMOUNT!'
 command-reward: Ödülünüz Komut İle Verildi!
 custom-command-reward: 'Şu Ödüllere Sahip Oldun: MESSAGE'

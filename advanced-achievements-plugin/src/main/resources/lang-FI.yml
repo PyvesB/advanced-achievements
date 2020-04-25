@@ -58,7 +58,7 @@ check-achievements-false: "PLAYER ei ole avannut saavutusta ACH!"
 delete-achievements: "Saavutus ACH poistettiin pelaajalta PLAYER."
 
 # Related to achievement rewards.
-item-reward-received: "Olet saanut tavara-palkinnon:"
+item-reward-received: "Olet saanut tavara-palkinnon: AMOUNT ITEM"
 money-reward-received: "Sait: AMOUNT!"
 command-reward: "Palkinto-komento suoritettiin!"
 custom-command-reward: "Sait palkinnon: MESSAGE"

@@ -58,7 +58,7 @@ check-achievements-false: "PLAYER besitzt den Erfolg ACH nicht!"
 delete-achievements: "Der Erfolg ACH wurde von PLAYER entfernt."
 
 # Related to achievement rewards.
-item-reward-received: "Du hast eine Itembelohnung erhalten:"
+item-reward-received: "Du hast eine Itembelohnung erhalten: AMOUNT ITEM"
 money-reward-received: "Du erhälst: AMOUNT!"
 command-reward: "Die Belohnung wurde überliefert!"
 custom-command-reward: "Du erhälst deine Belohnung: MESSAGE"

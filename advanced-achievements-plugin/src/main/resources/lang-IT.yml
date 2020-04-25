@@ -43,7 +43,7 @@ check-achievements-false: "PLAYER non ha ottenuto l'obiettivo ACH!"
 delete-achievements: "L'obiettivo ACH è stato tolto a PLAYER."
 
 # Related to achievement rewards.
-item-reward-received: Hai ricevuto un oggetto per ricompensa!
+item-reward-received: "Hai ricevuto un oggetto per ricompensa: AMOUNT ITEM"
 money-reward-received: 'Hai ricevuto: AMOUNT !'
 command-reward: Comando ricompensa eseguito!
 

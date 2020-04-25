@@ -58,7 +58,7 @@ check-achievements-false: "PLAYER n'a pas reçu ACH !"
 delete-achievements: "Le succès ACH a été supprimé du joueur PLAYER."
 
 # Related to achievement rewards.
-item-reward-received: "Vous avez reçu une récompense :"
+item-reward-received: "Vous avez reçu une récompense : AMOUNT ITEM"
 money-reward-received: "Vous avez gagné : AMOUNT !"
 command-reward: "Commande de récompense exécutée !"
 custom-command-reward: "Tu as reçu ta récompense : MESSAGE"

@@ -60,7 +60,7 @@ delete-achievements: "The achievement ACH was deleted from PLAYER."
 delete-all-achievements: "All achievements were deleted from PLAYER."
 
 # Related to achievement rewards.
-item-reward-received: "You received an item reward:"
+item-reward-received: "You received an item reward: AMOUNT ITEM"
 money-reward-received: "You received: AMOUNT!"
 command-reward: "Reward command carried out!"
 custom-command-reward: "You received your reward: MESSAGE"

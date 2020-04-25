@@ -59,7 +59,7 @@ check-achievements-false: "PLAYER nem kapta meg az ACH küldetést!"
 delete-achievements: "Az ACH küldetését törölték PLAYER."
 
 # Related to achievement rewards.
-item-reward-received: "Kaptál tárgy jutalmakat:"
+item-reward-received: "Kaptál tárgy jutalmakat: AMOUNT ITEM"
 money-reward-received: "Kaptál: AMOUNT!"
 command-reward: "A jutalom parancs végrehajtása!"
 custom-command-reward: "Megkaptad a jutalmadat: MESSAGE"

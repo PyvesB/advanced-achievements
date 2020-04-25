@@ -58,7 +58,7 @@ check-achievements-false: "O Jogador PLAYER não recebeu a conquista ACH!"
 delete-achievements: "A Conquista ACH foi deletada de PLAYER"
 
 # Related to achievement rewards.
-item-reward-received: "Você recebeu um item como prêmio:"
+item-reward-received: "Você recebeu um item como prêmio: AMOUNT ITEM"
 money-reward-received: "Você recebeu uma Quantia de: AMOUNT dinheiros!"
 command-reward: "comando recompensa realizado ! "
 custom-command-reward: "Você recebeu sua recompensa: MESSAGE"

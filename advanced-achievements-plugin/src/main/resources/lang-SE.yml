@@ -47,7 +47,7 @@ check-achievements-false: "PLAYER har inte mottagit prestationen ACH!"
 delete-achievements: "Prestationen ACH togs bort från PLAYER."
 
 # Related to achievement rewards.
-item-reward-received: "Du mottog ett objekt som belöning:"
+item-reward-received: "Du mottog ett objekt som belöning: AMOUNT ITEM"
 money-reward-received: "Du mottog: AMOUNT !"
 command-reward: "Belöningskommando utfört!"
 

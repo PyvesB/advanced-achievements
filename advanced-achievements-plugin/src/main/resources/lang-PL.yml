@@ -55,7 +55,7 @@ check-achievements-false: Gracz PLAYER nie otrzymal osiagniecia o nazwie ACH!
 delete-achievements: Gracz PLAYER ponownie musi wykonac osiagniecie o nazwie ACH.
 
 # Related to achievement rewards.
-item-reward-received: '&eOtrzymano nagrode:'
+item-reward-received: '&eOtrzymano nagrode: AMOUNT ITEM'
 money-reward-received: '&eOtrzymano &aAMOUNT&e$'
 command-reward: Komenda Reward zostala wykonana!
 custom-command-reward: '&eOtrzymano nagrode: MESSAGE'

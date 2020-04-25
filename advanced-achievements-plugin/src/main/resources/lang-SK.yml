@@ -58,7 +58,7 @@ check-achievements-false: "Hrač PLAYER nezískal úspech ACH!"
 delete-achievements: "Úspech ACH bol odstránený hračovy PLAYER."
 
 # Related to achievement rewards.
-item-reward-received: "Obdržal si odmenu:"
+item-reward-received: "Obdržal si odmenu: AMOUNT ITEM"
 money-reward-received: "Obdržal si: AMOUNT!"
 command-reward: "Odmena bola prevedená!"
 custom-command-reward: "Získal si odmenu: MESSAGE"

@@ -32,6 +32,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement;
@@ -262,13 +263,10 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		} else {
 			player.getWorld().dropItem(player.getLocation(), item);
 		}
-
-		String name = item.getItemMeta().getDisplayName();
-		if (name == null || name.isEmpty()) {
-			name = rewardParser.getItemName(item);
-		}
-
-		return langItemRewardReceived + name;
+		ItemMeta itemMeta = item.getItemMeta();
+		String name = itemMeta.hasDisplayName() ? itemMeta.getDisplayName() : rewardParser.getItemName(item);
+		return StringUtils.replaceEach(langItemRewardReceived, new String[] { "AMOUNT", "ITEM" },
+				new String[] { Integer.toString(item.getAmount()), name });
 	}
 
 	/**

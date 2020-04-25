@@ -61,7 +61,7 @@ check-achievements-false: PLAYER еще не получал(а) достижен
 delete-achievements: Достижение ACH отобрано у игрока PLAYER.
 
 # Награды за достижение.
-item-reward-received: '&aПолучена награда за достижение:&a'
+item-reward-received: '&aПолучена награда за достижение:&a AMOUNT ITEM'
 money-reward-received: '&aПолучено &6&l© &eAMOUNTкрон&a.' # &6&l© &eAMOUNTкрон может быть заменено на вашу валюту. Например, &2$AMOUNT
 command-reward: Получена награда за достижение.
 custom-command-reward: 'Получена награда за достижение: MESSAGE'
