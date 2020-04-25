@@ -787,7 +787,7 @@ Commands:
   yourAch1:
     Goal: Take part in the special event!\nEvery Friday at 8pm!
     Message: You took part in the special event!
-    Name: yourAch1
+    Name: your_ach1
     DisplayName: Special Event Achievement!
     
 # When the command /aach add is called for this category.
