@@ -140,8 +140,11 @@ EnrichedListProgressBars: true
 # Annotate each achievement displayed in a /aach list category with a number.
 NumberedItemsInList: false
 
-# Color used for Goals and progress bars in /aach list when an achievement is not yet received.
+# Color used for not yet received achievements in /aach list.
 ListColorNotReceived: 8
+
+# Italicise not yet received achievements in /aach list. Obfuscated achievements are not affected.
+ListItaliciseNotReceived: true
 
 # Sort pages of the book in chronological order (false for reverse chronological order).
 BookChronologicalOrder: true

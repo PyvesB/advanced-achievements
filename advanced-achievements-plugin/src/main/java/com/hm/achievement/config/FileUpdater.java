@@ -175,8 +175,7 @@ public class FileUpdater {
 				"Otherwise texts will be displayed one after the other.");
 
 		// Added in version 5.5:
-		updateSetting(config, "ListColorNotReceived", 8,
-				"Color used for Goals and progress bars in /aach list when an achievement is not yet received.");
+		updateSetting(config, "ListColorNotReceived", 8, "Color used for not yet received achievements in /aach list.");
 
 		// Added in version 5.6:
 		if (!config.isConfigurationSection("AllAchievementsReceivedRewards")) {
@@ -204,6 +203,9 @@ public class FileUpdater {
 
 		// Added in 5.14.0:
 		updateSetting(config, "ReceiverChatMessages", true, "Display chat messages when a player receives an achievement.");
+
+		updateSetting(config, "ListItaliciseNotReceived", true,
+				"Italicise not yet received achievements in /aach list. Obfuscated achievements are not affected.");
 
 		if (updatePerformed) {
 			// Changes in the configuration: save and do a fresh load.

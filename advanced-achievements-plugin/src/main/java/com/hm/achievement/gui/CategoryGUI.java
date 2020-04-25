@@ -67,6 +67,7 @@ public class CategoryGUI implements Reloadable {
 	private boolean configNumberedItemsInList;
 	private ChatColor configColor;
 	private ChatColor configListColorNotReceived;
+	private String configFormatNotReceived;
 	private String langListGUITitle;
 	private String langListAchievementReceived;
 	private String langListAchievementNotReceived;
@@ -100,6 +101,7 @@ public class CategoryGUI implements Reloadable {
 		configNumberedItemsInList = mainConfig.getBoolean("NumberedItemsInList");
 		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5"));
 		configListColorNotReceived = ChatColor.getByChar(mainConfig.getString("ListColorNotReceived", "8"));
+		configFormatNotReceived = mainConfig.getBoolean("ListItaliciseNotReceived", true) ? "&o" : "";
 
 		langListGUITitle = translateColorCodes(LangHelper.get(GuiLang.GUI_TITLE, langConfig));
 		langListAchievementReceived = StringEscapeUtils
@@ -181,9 +183,9 @@ public class CategoryGUI implements Reloadable {
 			String currentSubcategory = extractSubcategory(achievementPaths.get(pageStart));
 			if (currentSubcategory != NO_SUBCATEGORY) {
 				seriesStart = IntStream.range(0, achievementPaths.size())
-					    .filter(i -> achievementPaths.get(i).startsWith(currentSubcategory + "."))
-					    .findFirst()
-					    .getAsInt();
+						.filter(i -> achievementPaths.get(i).startsWith(currentSubcategory + "."))
+						.findFirst()
+						.getAsInt();
 			}
 		}
 		// Populate the current GUI page with all of the achievements for the category.
@@ -259,19 +261,10 @@ public class CategoryGUI implements Reloadable {
 			achItem = guiItems.getAchievementNotStarted().clone();
 		}
 
-		// Set name of the achievement. The style depends whether it was received or not and whether the user has set
-		// obfuscateNotReceived and/or obfuscateProgressiveAchievements in the config.
+		String displayName = date == null ? langListAchievementNotReceived + notReceivedStyle(name, ineligibleSeriesItem)
+				: langListAchievementReceived + name;
 		ItemMeta itemMeta = achItem.getItemMeta();
-		if (date != null) {
-			itemMeta.setDisplayName(translateColorCodes(langListAchievementReceived + name));
-		} else if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-			itemMeta.setDisplayName(translateColorCodes(langListAchievementNotReceived
-					+ "&k" + StringHelper.removeFormattingCodes(name)));
-		} else {
-			itemMeta.setDisplayName(translateColorCodes(StringEscapeUtils.unescapeJava(langListAchievementNotReceived
-					+ "&o" + StringHelper.removeFormattingCodes(name))));
-		}
-
+		itemMeta.setDisplayName(translateColorCodes(displayName));
 		itemMeta.setLore(lore);
 		achItem.setItemMeta(itemMeta);
 		if (configNumberedItemsInList) {
@@ -417,14 +410,7 @@ public class CategoryGUI implements Reloadable {
 			lore.add("");
 		} else {
 			lore.add(langListGoal);
-			descriptions.forEach(d -> {
-				String strippedAchMessage = StringHelper.removeFormattingCodes(d);
-				if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
-					lore.add(translateColorCodes(configListColorNotReceived + "&k" + randomiseParts(strippedAchMessage)));
-				} else {
-					lore.add(translateColorCodes(configListColorNotReceived + "&o" + strippedAchMessage));
-				}
-			});
+			descriptions.forEach(d -> lore.add(translateColorCodes(notReceivedStyle(d, ineligibleSeriesItem))));
 			lore.add("");
 			// Display progress if not Commands category.
 			if (!configObfuscateNotReceived && statistic != NO_STAT) {
@@ -444,7 +430,7 @@ public class CategoryGUI implements Reloadable {
 			if (date != null) {
 				dot = StringEscapeUtils.unescapeJava("&r\u25CF ");
 			} else {
-				dot = StringEscapeUtils.unescapeJava(configListColorNotReceived + "\u25CF &o");
+				dot = StringEscapeUtils.unescapeJava(configListColorNotReceived + "\u25CF " + configFormatNotReceived);
 			}
 			for (String reward : rewards) {
 				lore.add(translateColorCodes(dot + reward));
@@ -467,10 +453,12 @@ public class CategoryGUI implements Reloadable {
 		if (time) {
 			statisticDouble = statistic / 3600000.0; // Convert from millis to hours.
 			// Display one floating digit in the progress bar.
-			middleText = String.format(" %s&o%.1f/%s ", configListColorNotReceived, statisticDouble, threshold);
+			middleText = String.format(" %s%s%.1f/%s ", configListColorNotReceived,
+					configFormatNotReceived, statisticDouble, threshold);
 		} else {
 			statisticDouble = statistic; // Cast to double.
-			middleText = String.format(" %s&o%s/%s ", configListColorNotReceived, statistic, threshold);
+			middleText = String.format(" %s%s%s/%s ", configListColorNotReceived, configFormatNotReceived,
+					statistic, threshold);
 		}
 
 		StringBuilder barDisplay = new StringBuilder().append(configListColorNotReceived).append("[");
@@ -514,6 +502,14 @@ public class CategoryGUI implements Reloadable {
 			randomisedText.append(RandomStringUtils.randomAlphabetic(part.length())).append(' ');
 		}
 		return randomisedText.substring(0, randomisedText.length() - 1);
+	}
+
+	private String notReceivedStyle(String input, boolean ineligibleSeriesItem) {
+		if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
+			return configListColorNotReceived + "&k" + randomiseParts(StringHelper.removeFormattingCodes(input));
+		} else {
+			return configListColorNotReceived + configFormatNotReceived + StringHelper.removeFormattingCodes(input);
+		}
 	}
 
 	private String translateColorCodes(String translate) {
