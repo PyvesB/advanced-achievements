@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -173,26 +174,36 @@ public class CategoryGUI implements Reloadable {
 
 		String previousItemDate = null;
 		String previousSubcategory = NO_SUBCATEGORY;
+		int seriesStart = 0;
 		if (pageStart > 0) {
 			String previousAchievement = achievementPaths.get(pageStart - 1);
 			String achName = mainConfig.getString(categoryName + '.' + previousAchievement + ".Name", "");
 			previousItemDate = databaseManager.getPlayerAchievementDate(player.getUniqueId(), achName);
-			if (previousAchievement.contains(".")) {
-				previousSubcategory = StringUtils.substringBefore(previousAchievement, ".");
+			previousSubcategory = extractSubcategory(previousAchievement);
+			String currentSubcategory = extractSubcategory(achievementPaths.get(pageStart));
+			if (currentSubcategory != NO_SUBCATEGORY) {
+				seriesStart = IntStream.range(0, achievementPaths.size())
+					    .filter(i -> achievementPaths.get(i).startsWith(currentSubcategory + "."))
+					    .findFirst()
+					    .getAsInt();
 			}
 		}
 		// Populate the current GUI page with all of the achievements for the category.
 		for (int index = pageStart; index < pageEnd; ++index) {
 			// Path can either be a threshold (eg '10', or a subcategory and threshold (eg 'skeleton.10').
 			String path = achievementPaths.get(index);
-			String subcategory = path.contains(".") ? StringUtils.substringBefore(path, ".") : NO_SUBCATEGORY;
+			String subcategory = extractSubcategory(path);
 			long statistic = subcategoriesToStatistics.get(subcategory);
 			String achName = mainConfig.getString(categoryName + '.' + path + ".Name", "");
 			String receptionDate = databaseManager.getPlayerAchievementDate(player.getUniqueId(), achName);
 
+			boolean differentSubcategory = !previousSubcategory.equals(subcategory);
+			if (differentSubcategory) {
+				seriesStart = index;
+			}
 			boolean ineligibleSeriesItem = true;
 			if (statistic == NO_STAT || receptionDate != null || previousItemDate != null
-					|| index == pageStart && pageStart == 0 || !previousSubcategory.equals(subcategory)) {
+					|| index == pageStart && pageStart == 0 || differentSubcategory) {
 				// Commands achievement OR achievement has been completed OR previous achievement has been completed OR
 				// first achievement in the category OR different subcategory.
 				ineligibleSeriesItem = false;
@@ -203,7 +214,7 @@ public class CategoryGUI implements Reloadable {
 			List<String> lore = buildLore(categoryName, descriptions, path, receptionDate, statistic,
 					ineligibleSeriesItem, player);
 			insertAchievement(inventory, index - pageStart + 1, statistic, nameToDisplay, receptionDate,
-					ineligibleSeriesItem, lore);
+					ineligibleSeriesItem, index - seriesStart + 1, lore);
 
 			previousItemDate = receptionDate;
 			previousSubcategory = subcategory;
@@ -221,6 +232,10 @@ public class CategoryGUI implements Reloadable {
 		player.openInventory(inventory);
 	}
 
+	private String extractSubcategory(String path) {
+		return path.contains(".") ? StringUtils.substringBefore(path, ".") : NO_SUBCATEGORY;
+	}
+
 	/**
 	 * Creates a GUI item for a given achievement.
 	 *
@@ -230,10 +245,11 @@ public class CategoryGUI implements Reloadable {
 	 * @param name
 	 * @param date
 	 * @param ineligibleSeriesItem
+	 * @param seriesNumber
 	 * @param lore
 	 */
 	private void insertAchievement(Inventory gui, int position, long statistic, String name, String date,
-			boolean ineligibleSeriesItem, List<String> lore) {
+			boolean ineligibleSeriesItem, int seriesNumber, List<String> lore) {
 		// Display an item depending on whether the achievement was received or not, or whether progress was started.
 		// Clone in order to work with an independent set of metadata.
 		ItemStack achItem;
@@ -262,7 +278,7 @@ public class CategoryGUI implements Reloadable {
 		itemMeta.setLore(lore);
 		achItem.setItemMeta(itemMeta);
 		if (configNumberedItemsInList) {
-			achItem.setAmount(position);
+			achItem.setAmount(seriesNumber);
 		}
 		gui.setItem(position, achItem);
 	}
