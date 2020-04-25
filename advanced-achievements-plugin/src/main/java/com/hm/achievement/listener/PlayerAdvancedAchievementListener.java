@@ -76,7 +76,6 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private final FireworkListener fireworkListener;
 	private final SoundPlayer soundPlayer;
 
-	private boolean configRewardCommandNotif;
 	private String configFireworkStyle;
 	private boolean configFirework;
 	private boolean configSimplifiedReception;
@@ -140,9 +139,6 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		if (configActionBarNotify && serverVersion < 8) {
 			configActionBarNotify = false;
 		}
-		// No longer available in default config, kept for compatibility with versions prior to 2.1; defines whether
-		// a player is notified in case of a command reward.
-		configRewardCommandNotif = mainConfig.getBoolean("RewardCommandNotif", true);
 		configHoverableReceiverChatText = mainConfig.getBoolean("HoverableReceiverChatText");
 		// Hoverable chat messages introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configHoverableReceiverChatText && serverVersion < 8) {
@@ -238,8 +234,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		for (String command : commands) {
 			advancedAchievements.getServer().dispatchCommand(advancedAchievements.getServer().getConsoleSender(), command);
 		}
-		if (!configRewardCommandNotif || langCommandReward.length() == 0) {
-			return new ArrayList<>();
+		if (langCommandReward.isEmpty()) {
+			return Collections.emptyList();
 		}
 
 		if (messages.isEmpty()) {
