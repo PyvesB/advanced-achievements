@@ -31,9 +31,7 @@ public class TeleportListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		// Update location of player if he respawns after dying.
-		if (distanceRunnable != null) {
-			distanceRunnable.updateLocation(event.getPlayer().getUniqueId(), event.getRespawnLocation());
-		}
+		distanceRunnable.updateLocation(event.getPlayer().getUniqueId(), event.getRespawnLocation());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -47,8 +45,6 @@ public class TeleportListener implements Listener {
 		}
 
 		// Update location of player if he teleports somewhere else.
-		if (distanceRunnable != null) {
-			distanceRunnable.updateLocation(event.getPlayer().getUniqueId(), event.getTo());
-		}
+		distanceRunnable.updateLocation(event.getPlayer().getUniqueId(), event.getTo());
 	}
 }
