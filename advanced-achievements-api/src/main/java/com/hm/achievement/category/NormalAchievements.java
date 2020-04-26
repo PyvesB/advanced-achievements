@@ -64,12 +64,16 @@ public enum NormalAchievements implements Category {
 	private final String langName;
 	private final String langDefault;
 	private final String configComment;
+	private final String dbName;
+	private final String permName;
 
 	NormalAchievements(String categoryName, String langName, String langDefault, String configComment) {
 		this.categoryName = categoryName;
 		this.langName = langName;
 		this.langDefault = langDefault;
 		this.configComment = configComment;
+		this.dbName = name().toLowerCase();
+		this.permName = "achievement.count." + categoryName.toLowerCase();
 	}
 
 	/**
@@ -92,7 +96,7 @@ public enum NormalAchievements implements Category {
 	 */
 	@Override
 	public String toDBName() {
-		return name().toLowerCase();
+		return dbName;
 	}
 
 	/**
@@ -100,7 +104,7 @@ public enum NormalAchievements implements Category {
 	 */
 	@Override
 	public String toPermName() {
-		return "achievement.count." + categoryName.toLowerCase();
+		return permName;
 	}
 
 	/**
