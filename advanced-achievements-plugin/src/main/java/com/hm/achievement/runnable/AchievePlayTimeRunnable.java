@@ -30,7 +30,7 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 	private static final long MILLIS_PER_HOUR = TimeUnit.HOURS.toMillis(1);
 
 	private Essentials essentials;
-	private long previousRunMillis;
+	private long previousTimeMillis;
 
 	private boolean configIgnoreAFKPlayedTime;
 
@@ -43,7 +43,7 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 			essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 		}
 
-		previousRunMillis = System.currentTimeMillis();
+		previousTimeMillis = System.currentTimeMillis();
 	}
 
 	@Override
@@ -55,18 +55,19 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 
 	@Override
 	public void run() {
-		long currentTime = System.currentTimeMillis();
-		Bukkit.getOnlinePlayers().stream().forEach(p -> updateTime(p, currentTime));
-		previousRunMillis = currentTime;
+		long currentTimeMillis = System.currentTimeMillis();
+		int millisSincePreviousRun = (int) (currentTimeMillis - previousTimeMillis);
+		Bukkit.getOnlinePlayers().stream().forEach(p -> updateTime(p, millisSincePreviousRun));
+		previousTimeMillis = currentTimeMillis;
 	}
 
 	/**
 	 * Updates play time if all conditions are met and awards achievements if necessary.
 	 * 
 	 * @param player
-	 * @param currentTime
+	 * @param millisSincePreviousRun
 	 */
-	private void updateTime(Player player, long currentTime) {
+	private void updateTime(Player player, int millisSincePreviousRun) {
 		if (!shouldIncreaseBeTakenIntoAccount(player, NormalAchievements.PLAYEDTIME)) {
 			return;
 		}
@@ -78,9 +79,8 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 			}
 		}
 
-		int millisSinceLastRun = (int) (currentTime - previousRunMillis);
 		long totalMillis = cacheManager.getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME, player.getUniqueId(),
-				millisSinceLastRun);
+				millisSincePreviousRun);
 		// Thresholds in the configuration are in hours.
 		checkThresholdsAndAchievements(player, NormalAchievements.PLAYEDTIME.toString(), totalMillis / MILLIS_PER_HOUR);
 	}
