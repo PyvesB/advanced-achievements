@@ -158,6 +158,7 @@ public class FileUpdater {
 		// Added in 5.14.0:
 		updateSetting(config, "ReceiverChatMessages", true, "Display chat messages when a player receives an achievement.");
 
+		// Added in 6.0.0:
 		updateSetting(config, "ListItaliciseNotReceived", true,
 				"Italicise not yet received achievements in /aach list. Obfuscated achievements are not affected.");
 
