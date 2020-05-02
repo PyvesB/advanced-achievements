@@ -162,6 +162,10 @@ public class FileUpdater {
 		updateSetting(config, "ListItaliciseNotReceived", true,
 				"Italicise not yet received achievements in /aach list. Obfuscated achievements are not affected.");
 
+		// Added in 6.1.0:
+		updateSetting(config, "HideProgressiveAchievements", false,
+				"Similar to ObfuscateProgressiveAchievements, but displays not received achievements as locked in /aach list.");
+
 		if (updatePerformed) {
 			// Changes in the configuration: save and do a fresh load.
 			try {
@@ -246,6 +250,10 @@ public class FileUpdater {
 		// Added in version 5.15.0:
 		updateSetting(gui, "AdvancementsCompleted.Item", "gold_ingot");
 
+		// Added in version 6.1.0:
+		updateSetting(gui, "AchievementLock.Item", serverVersion >= 13 ? "black_terracotta" : "stained_clay");
+		updateSetting(gui, "CategoryLock.Item", serverVersion >= 13 ? "barrier" : "bedrock");
+
 		if (serverVersion < 13) {
 			updateSetting(gui, "Breeding.Metadata", 0);
 			updateSetting(gui, "AchievementNotStarted.Metadata", 14);
@@ -256,6 +264,8 @@ public class FileUpdater {
 			updateSetting(gui, "NextButton.Metadata", 0);
 			updateSetting(gui, "Custom.Metadata", 0);
 			updateSetting(gui, "TargetsShot.Metadata", 0);
+			updateSetting(gui, "AchievementLock.Metadata", 15);
+			updateSetting(gui, "CategoryLock.Metadata", 0);
 		}
 
 		if (updatePerformed) {

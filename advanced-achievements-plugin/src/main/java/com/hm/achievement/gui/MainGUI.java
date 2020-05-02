@@ -9,11 +9,9 @@ import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
@@ -37,7 +35,6 @@ public class MainGUI implements Reloadable {
 	private final CommentedYamlConfiguration langConfig;
 	private final CacheManager cacheManager;
 	private final Set<Category> disabledCategories;
-	private final ItemStack lockedItem;
 	private final GUIItems guiItems;
 
 	private boolean configHideNotReceivedCategories;
@@ -47,14 +44,13 @@ public class MainGUI implements Reloadable {
 
 	@Inject
 	public MainGUI(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, CacheManager cacheManager, int serverVersion,
+			@Named("lang") CommentedYamlConfiguration langConfig, CacheManager cacheManager,
 			Set<Category> disabledCategories, GUIItems guiItems) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.cacheManager = cacheManager;
 		this.disabledCategories = disabledCategories;
 		this.guiItems = guiItems;
-		lockedItem = new ItemStack(serverVersion < 8 ? Material.OBSIDIAN : Material.BARRIER);
 	}
 
 	@Override
@@ -63,11 +59,6 @@ public class MainGUI implements Reloadable {
 		configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories");
 
 		langListGUITitle = ChatColor.translateAlternateColorCodes('&', LangHelper.get(GuiLang.GUI_TITLE, langConfig));
-
-		ItemMeta itemMeta = lockedItem.getItemMeta();
-		String displayName = "&8" + LangHelper.get(GuiLang.CATEGORY_NOT_UNLOCKED, langConfig);
-		itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
-		lockedItem.setItemMeta(itemMeta);
 	}
 
 	/**
@@ -128,11 +119,11 @@ public class MainGUI implements Reloadable {
 					return;
 				}
 			}
-			gui.setItem(position, lockedItem);
+			gui.setItem(position, guiItems.getCategoryLock());
 		} else if (!configHideNotReceivedCategories || hasReceivedInCategory(player, category.toString())) {
 			gui.setItem(position, item);
 		} else {
-			gui.setItem(position, lockedItem);
+			gui.setItem(position, guiItems.getCategoryLock());
 		}
 	}
 

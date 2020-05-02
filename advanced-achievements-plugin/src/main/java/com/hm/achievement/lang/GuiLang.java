@@ -24,6 +24,7 @@ public enum GuiLang implements Lang {
 	NEXT_LORE(""),
 	BACK_MESSAGE("&7Back"),
 	BACK_LORE(""),
+	ACHIEVEMENT_NOT_UNLOCKED("You have not yet unlocked this achievement."),
 	CATEGORY_NOT_UNLOCKED("You have not yet unlocked this category."),
 	UNAVAILABLE_WHILST_SLEEPING("&c&lYou cannot open the Achievements List whilst sleeping.");
 

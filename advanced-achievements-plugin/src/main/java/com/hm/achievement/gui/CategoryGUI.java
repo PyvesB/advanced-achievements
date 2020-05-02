@@ -62,6 +62,7 @@ public class CategoryGUI implements Reloadable {
 
 	private boolean configObfuscateNotReceived;
 	private boolean configObfuscateProgressiveAchievements;
+	private boolean configHideProgressiveAchievements;
 	private boolean configHideRewardDisplayInList;
 	private boolean configEnrichedProgressBars;
 	private boolean configNumberedItemsInList;
@@ -96,6 +97,7 @@ public class CategoryGUI implements Reloadable {
 	public void extractConfigurationParameters() {
 		configObfuscateNotReceived = mainConfig.getBoolean("ObfuscateNotReceived", true);
 		configObfuscateProgressiveAchievements = mainConfig.getBoolean("ObfuscateProgressiveAchievements");
+		configHideProgressiveAchievements = mainConfig.getBoolean("HideProgressiveAchievements");
 		configHideRewardDisplayInList = mainConfig.getBoolean("HideRewardDisplayInList");
 		configEnrichedProgressBars = mainConfig.getBoolean("EnrichedListProgressBars", true);
 		configNumberedItemsInList = mainConfig.getBoolean("NumberedItemsInList");
@@ -209,12 +211,16 @@ public class CategoryGUI implements Reloadable {
 				ineligibleSeriesItem = false;
 			}
 
-			String nameToDisplay = getNameToDisplay(categoryName, path, achName);
-			List<String> descriptions = getDescriptionsToDisplay(categoryName, path, receptionDate != null);
-			List<String> lore = buildLore(categoryName, descriptions, path, receptionDate, statistic,
-					ineligibleSeriesItem, player);
-			insertAchievement(inventory, index - pageStart + 1, statistic, nameToDisplay, receptionDate,
-					ineligibleSeriesItem, index - seriesStart + 1, lore);
+			if (configHideProgressiveAchievements && ineligibleSeriesItem) {
+				inventory.setItem(index - pageStart + 1, guiItems.getAchievementLock());
+			} else {
+				String nameToDisplay = getNameToDisplay(categoryName, path, achName);
+				List<String> descriptions = getDescriptionsToDisplay(categoryName, path, receptionDate != null);
+				List<String> lore = buildLore(categoryName, descriptions, path, receptionDate, statistic,
+						ineligibleSeriesItem, player);
+				insertAchievement(inventory, index - pageStart + 1, statistic, nameToDisplay, receptionDate,
+						ineligibleSeriesItem, index - seriesStart + 1, lore);
+			}
 
 			previousItemDate = receptionDate;
 			previousSubcategory = subcategory;

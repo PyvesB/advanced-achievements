@@ -4,7 +4,6 @@
 # +----------------------------------------------------------+ #
 #==============================================================#
 # Possible items: github.com/PyvesB/AdvancedAchievements/wiki/Material-names
-# Do not use bedrock or barrier.
 # Do not use the same Item and Metadata pair twice.
 # If you are using a Minecraft version prior to 1.9, change grass_path of HoePlowings!
 # The order of the categories in the GUI will match the same order as in this file.
@@ -19,6 +18,14 @@ AchievementStarted:
 AchievementReceived:
   Item: stained_clay
   Metadata: 5
+
+# Locks for HideProgressiveAchievements and HideNotReceivedCategories.
+AchievementLock:
+  Item: stained_clay
+  Metadata: 15
+CategoryLock:
+  Item: bedrock
+  Metadata: 0
 
 # Buttons when navigating in a category.
 BackButton:

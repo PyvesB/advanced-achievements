@@ -44,6 +44,9 @@ public class GUIItems implements Reloadable {
 	private ItemStack backButton;
 	private ItemStack achievementNotStarted;
 	private ItemStack achievementStarted;
+	private ItemStack achievementLock;
+	private ItemStack categoryLock;
+
 	private ItemStack achievementReceived;
 
 	private final CommentedYamlConfiguration mainConfig;
@@ -113,6 +116,8 @@ public class GUIItems implements Reloadable {
 		previousButton = createButton("PreviousButton", GuiLang.PREVIOUS_MESSAGE, GuiLang.PREVIOUS_LORE);
 		nextButton = createButton("NextButton", GuiLang.NEXT_MESSAGE, GuiLang.NEXT_LORE);
 		backButton = createButton("BackButton", GuiLang.BACK_MESSAGE, GuiLang.BACK_LORE);
+		achievementLock = createButton("AchievementLock", GuiLang.ACHIEVEMENT_NOT_UNLOCKED, null);
+		categoryLock = createButton("CategoryLock", GuiLang.CATEGORY_NOT_UNLOCKED, null);
 	}
 
 	/**
@@ -144,10 +149,12 @@ public class GUIItems implements Reloadable {
 		String displayName = ChatColor.translateAlternateColorCodes('&',
 				StringEscapeUtils.unescapeJava(LangHelper.get(msg, langConfig)));
 		meta.setDisplayName(displayName);
-		String loreString = ChatColor.translateAlternateColorCodes('&',
-				StringEscapeUtils.unescapeJava(LangHelper.get(lore, langConfig)));
-		if (!loreString.isEmpty()) {
-			meta.setLore(Collections.singletonList(loreString));
+		if (lore != null) {
+			String loreString = ChatColor.translateAlternateColorCodes('&',
+					StringEscapeUtils.unescapeJava(LangHelper.get(lore, langConfig)));
+			if (!loreString.isEmpty()) {
+				meta.setLore(Collections.singletonList(loreString));
+			}
 		}
 		button.setItemMeta(meta);
 		return button;
@@ -210,6 +217,14 @@ public class GUIItems implements Reloadable {
 
 	public ItemStack getAchievementReceived() {
 		return achievementReceived;
+	}
+
+	public ItemStack getAchievementLock() {
+		return achievementLock;
+	}
+
+	public ItemStack getCategoryLock() {
+		return categoryLock;
 	}
 
 }

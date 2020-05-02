@@ -10,7 +10,6 @@ import java.util.TreeMap;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -38,17 +37,14 @@ public class ListGUIListener implements Listener {
 	private final Set<Category> disabledCategories;
 	private final MainGUI mainGUI;
 	private final CategoryGUI categoryGUI;
-	private final Material lockedMaterial;
 	private final GUIItems guiItems;
 
 	@Inject
-	public ListGUIListener(int serverVersion, Set<Category> disabledCategories, MainGUI mainGUI, CategoryGUI categoryGUI,
-			GUIItems guiItems) {
+	public ListGUIListener(Set<Category> disabledCategories, MainGUI mainGUI, CategoryGUI categoryGUI, GUIItems guiItems) {
 		this.disabledCategories = disabledCategories;
 		this.mainGUI = mainGUI;
 		this.categoryGUI = categoryGUI;
 		this.guiItems = guiItems;
-		lockedMaterial = serverVersion < 8 ? Material.OBSIDIAN : Material.BARRIER;
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -70,7 +66,8 @@ public class ListGUIListener implements Listener {
 		Player player = (Player) event.getWhoClicked();
 		if (currentPage == MAIN_GUI_PAGE) {
 			// Main GUI, check whether player can interact with the selected item.
-			if (event.getCurrentItem().getType() != lockedMaterial && event.getRawSlot() < getMainGUIItemCount()) {
+			if (!event.getCurrentItem().isSimilar(guiItems.getCategoryLock())
+					&& event.getRawSlot() < getMainGUIItemCount()) {
 				categoryGUI.displayCategoryGUI(event.getCurrentItem(), player, 0);
 			}
 			return;
