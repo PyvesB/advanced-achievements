@@ -4,4 +4,8 @@ updates:
   directory: "/"
   schedule:
     interval: weekly
-  open-pull-requests-limit: 10
+# For dagger-compiler annotation processor.
+- package-ecosystem: maven
+  directory: "/advanced-achievements-plugin"
+  schedule:
+    interval: weekly
