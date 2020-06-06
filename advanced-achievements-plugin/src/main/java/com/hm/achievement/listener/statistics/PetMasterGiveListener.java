@@ -34,8 +34,8 @@ public class PetMasterGiveListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onChangeOwnership(PlayerChangeAnimalOwnershipEvent event) {
-		if ((Player) event.getNewOwner() == null) {
-			// /petm free command ignored.
+		// New owner null is /petm free invoked. Check that old owner is a connected player.
+		if (event.getNewOwner() == null || !(event.getOldOwner() instanceof Player)) {
 			return;
 		}
 
