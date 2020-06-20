@@ -2,9 +2,9 @@
 # +---------------------------------------------------------+ #
 # |        Advanced Achievements Spanish translation        | #
 # |                    By Arciniegasdiaz                    | #
-# |             ~ Valid as of version 5.14.1 ~              | #
-# |   Newer plugin versions will automatically append new   | #
-# |     untranslated parameters to the end of the file.     | #
+# |             ~ Valid as of version 6.1.1 ~               | #
+# |       Las versiones más nuevas del Plugin agregarán     | #
+# |    nuevos parámetros sin traducir al final del archivo  | #
 # +---------------------------------------------------------+ #
 #=============================================================#
 
@@ -39,6 +39,7 @@ book-not-received: "Aún no has recibido ningún logro."
 
 # Related to /aach give.
 player-offline: "¡El jugador PLAYER está desconectado!"
+not-a-player: "¡No puedes dar ningun logro a un ENTITY, ya que no es un jugador!"
 achievement-already-received: "¡El jugador PLAYER ya ha recibido este logro!"
 achievement-not-found: "El logro especificado no se encontró en la categoría Comandos. Tal vez quisiste decir CLOSEST_MATCH?"
 achievement-given: "Logro dado!"
@@ -57,6 +58,7 @@ check-achievements-false: "PLAYER no ha recibido el logro ACH!"
 
 # Related to /aach delete.
 delete-achievements: "El logro ACH fue eliminado del jugador PLAYER."
+delete-all-achievements: "Todos los Logros fueron eliminados de PLAYER."
 
 # Related to achievement rewards.
 item-reward-received: "Recibiste una recompensa de item: AMOUNT ITEM"
@@ -104,15 +106,15 @@ aach-tip: "&lTIP: &8Puedes &7&n&odesplazarte &8o dar un &7&n&oclick&8 sobre el c
 
 # Related to /aach info.
 version-command-version: "Version:"
-version-command-website: "Website:"
+version-command-website: "Sitio Web:"
 version-command-author: "Autor:"
 version-command-description: "Descripción:"
 version-command-description-details: "Advanced Achievements permite logros únicos y desafiantes. ¡Intenta recoger tantos como puedas, gana recompensas, sube en el ranking y recibe libros de RP!"
-version-command-vault: "Vault integration:"
-version-command-petmaster: "Pet Master integration:"
-version-command-btlp: "BungeeTabListPlus integration:"
-version-command-essentials: "Essentials integration:"
-version-command-placeholderapi: "PlaceholderAPI integration:"
+version-command-vault: "Integración con Vault:"
+version-command-petmaster: "Integración con Pet Master:"
+version-command-btlp: "Integración con BungeeTabListPlus:"
+version-command-essentials: "Integración con Essentials:"
+version-command-placeholderapi: "Integración con PlaceholderAPI:"
 version-command-database: "Tipo de base de datos:"
 
 # Related to /aach list.
@@ -133,6 +135,7 @@ list-reward-increase-max-oxygen: "aumentar el oxígeno máximo en AMOUNT"
 list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718 "
 list-category-not-unlocked: "Aún no has desbloqueado esta categoría."
+list-achievement-not-unlocked: "Aun no has desbloqueado este Logro."
 list-back-message: "&7Atras"
 list-back-lore: ""
 list-previous-message: "&7Previo"
@@ -141,6 +144,7 @@ list-next-message: "&7Próximo"
 list-next-lore: ""
 list-achievements-in-category-singular: "AMOUNT logro"
 list-achievements-in-category-plural: "AMOUNT logros"
+list-unavailable-whilst-sleeping: "&c&lNo puedes abrir la Lista de logros mientras duermes."
 
 # Related to category names in /aach list.
 # Set a parameter to "" to hide it from /aach list (but not disable the category).
@@ -194,13 +198,15 @@ list-custom: "Categorías personalizadas"
 list-targetsshot: "Objetivos alcanzados"
 list-raids-won: "Incursiones ganadas"
 list-riptides: "Mareas rotas Usadas"
+list-advancements-completed: "Avances completados"
 
 # Related to /aach toggle.
 toggle-displayed: "Ahora se te notificará cuando otros jugadores obtengan logros."
 toggle-hidden: "Ya no se te notificará cuando otros jugadores obtengan logros."
 
 # Related to /aach reset.
-reset-successful: " Se borraron las estadísticas para PLAYER."
+reset-successful: " Se borraron las estadísticas de CAT para PLAYER."
+reset-all-successful: "Se borraron todas las estadísticas para PLAYER."
 
 # Related to /aach generate.
 advancements-generated: "Los avances se generaron con éxito."
