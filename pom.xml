@@ -100,10 +100,6 @@
 
 	<repositories>
 		<repository>
-			<id>bukkit-repo</id>
-			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-		</repository>
-		<repository>
 			<id>bungeetablistplus-repo</id>
 			<url>https://nexus.codecrafter47.de/content/repositories/public/</url>
 		</repository>
@@ -118,6 +114,10 @@
 		<repository>
 			<id>placeholderapi-repo</id>
 			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
+		<repository>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
 			<id>vault-repo</id>
@@ -148,9 +148,9 @@
 				<version>1.8</version>
 			</dependency>
 			<dependency>
-				<groupId>org.bukkit</groupId>
-				<artifactId>bukkit</artifactId>
-				<version>1.15-R0.1-SNAPSHOT</version>
+				<groupId>org.spigotmc</groupId>
+				<artifactId>spigot-api</artifactId>
+				<version>1.16.1-R0.1-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
