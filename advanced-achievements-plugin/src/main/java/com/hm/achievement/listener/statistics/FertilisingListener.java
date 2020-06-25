@@ -32,7 +32,7 @@ public class FertilisingListener extends AbstractListener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerInteract(BlockFertilizeEvent event) {
+	public void onBlockFertilize(BlockFertilizeEvent event) {
 		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), 1);
 	}
 
