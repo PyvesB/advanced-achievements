@@ -85,6 +85,8 @@ public class FireworksListener extends AbstractListener {
 			}
 			// The following materials only prevent firework launches whilst not sneaking.
 			switch (clickedMaterial.name()) {
+				case "POLISHED_BLACKSTONE_BUTTON":
+					// Pre Minecraft 1.16:
 				case "FURNACE":
 				case "DISPENSER":
 				case "CHEST":
@@ -189,10 +191,10 @@ public class FireworksListener extends AbstractListener {
 				case "OAK_WALL_SIGN":
 				case "SPRUCE_SIGN":
 				case "SPRUCE_WALL_SIGN":
-					// Pre Minecraft 1.14":
+					// Pre Minecraft 1.14:
 				case "SIGN":
 				case "WALL_SIGN":
-					// Pre Minecraft 1.13":
+					// Pre Minecraft 1.13:
 				case "WORKBENCH":
 				case "BURNING_FURNACE":
 				case "WOOD_BUTTON":
@@ -233,7 +235,7 @@ public class FireworksListener extends AbstractListener {
 			case "COMMAND_BLOCK_MINECART":
 			case "FURNACE_MINECART":
 			case "CHEST_MINECART":
-				// Pre Minecraft 1.13":
+				// Pre Minecraft 1.13:
 			case "EXPLOSIVE_MINECART":
 			case "COMMAND_MINECART":
 			case "POWERED_MINECART":
