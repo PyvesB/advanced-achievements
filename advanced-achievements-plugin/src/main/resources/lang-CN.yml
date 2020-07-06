@@ -1,9 +1,9 @@
 #=============================================================#
 # +---------------------------------------------------------+ #
 # | Advanced Achievements 中文翻译 by Fur_Xia(mcbbs)        | #
-# |                 适用插件版本：5.16.0                    | #
+# |                 适用插件版本： 6.1.2                    | #
 # |     更新的插件版本将自动添加未翻译部分到本文件末尾      | #
-# |               翻译时间2020年4月11日                     | #
+# |              翻译时间2020年07月06日                     | #
 # +---------------------------------------------------------+ #
 #=============================================================#
 
@@ -38,6 +38,7 @@ book-not-received: "你还没有获得成就呢！快加油！"
 
 # 与 /aach give 相关
 player-offline: "玩家 PLAYER 不在线!"
+not-a-player: "您不能给予 ENTITY 成就，它不是一名玩家！"
 achievement-already-received: "玩家 PLAYER 已经拥有这项成就!"
 achievement-not-found: "在对应的指令类别中找不到指定的成就，您的意思是 CLOSEST_MATCH 吗？"
 achievement-given: "成功给予成就!"
@@ -133,6 +134,7 @@ list-reward-increase-max-oxygen: "最大氧气值提升了 AMOUNT"
 list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718 "
 list-category-not-unlocked: "你还没有解锁此类别."
+list-achievement-not-unlocked: "您还没有解锁此成就。"
 list-back-message: "&7返回"
 list-back-lore: ""
 list-previous-message: "&7上一页"
@@ -141,6 +143,7 @@ list-next-message: "&7下一页"
 list-next-lore: ""
 list-achievements-in-category-singular: "AMOUNT 个成就"
 list-achievements-in-category-plural: "AMOUNT 个成就"
+list-unavailable-whilst-sleeping: "&c&l您不能在睡觉时打开成就列表。"
 
 # 与 /aach list 中类别名相关
 # 将一项设置为 "" 以将其从 /aach list 中隐藏(但并不会禁用那一类成就).
