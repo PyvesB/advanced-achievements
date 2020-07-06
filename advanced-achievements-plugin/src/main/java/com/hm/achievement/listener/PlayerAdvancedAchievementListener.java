@@ -200,13 +200,13 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @return all the reward texts to be displayed to the user
 	 */
 	private List<String> giveRewardsAndPrepareTexts(Player player, String[] commands, List<String> commandMessages,
-													ItemStack[] item, int money, int experience, int health, int oxygen) {
+													ItemStack[] items, int money, int experience, int health, int oxygen) {
 		List<String> rewardTexts = new ArrayList<>();
 		if (commands != null && commands.length > 0) {
 			rewardTexts.addAll(rewardCommands(commands, commandMessages));
 		}
-		if (item != null) {
-			rewardTexts.addAll(rewardItem(player, item));
+		if (items != null) {
+			rewardTexts.addAll(rewardItems(player, items));
 		}
 		if (money != 0) {
 			rewardTexts.add(rewardMoney(player, money));
@@ -253,7 +253,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @param items
 	 * @return the reward text to display to the player
 	 */
-	private List<String> rewardItem(Player player, ItemStack[] items) {
+	private List<String> rewardItems(Player player, ItemStack[] items) {
 		List<String> itemNames = new ArrayList<>();
 		for (ItemStack item : items) {
 			if (player.getInventory().firstEmpty() != -1) {
