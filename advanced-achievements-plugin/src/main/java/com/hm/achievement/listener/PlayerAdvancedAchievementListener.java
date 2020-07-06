@@ -200,13 +200,13 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @return all the reward texts to be displayed to the user
 	 */
 	private List<String> giveRewardsAndPrepareTexts(Player player, String[] commands, List<String> commandMessages,
-			ItemStack item, int money, int experience, int health, int oxygen) {
+													ItemStack[] item, int money, int experience, int health, int oxygen) {
 		List<String> rewardTexts = new ArrayList<>();
 		if (commands != null && commands.length > 0) {
 			rewardTexts.addAll(rewardCommands(commands, commandMessages));
 		}
 		if (item != null) {
-			rewardTexts.add(rewardItem(player, item));
+			rewardTexts.addAll(rewardItem(player, item));
 		}
 		if (money != 0) {
 			rewardTexts.add(rewardMoney(player, money));
@@ -250,19 +250,23 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * Gives an item reward to a player.
 	 *
 	 * @param player
-	 * @param item
+	 * @param itemArray
 	 * @return the reward text to display to the player
 	 */
-	private String rewardItem(Player player, ItemStack item) {
-		if (player.getInventory().firstEmpty() != -1) {
-			player.getInventory().addItem(item);
-		} else {
-			player.getWorld().dropItem(player.getLocation(), item);
+	private List<String> rewardItem(Player player, ItemStack[] itemArray) {
+		List<String> itemNames = new ArrayList<>();
+		for (ItemStack item : itemArray) {
+			if (player.getInventory().firstEmpty() != -1) {
+				player.getInventory().addItem(item);
+			} else {
+				player.getWorld().dropItem(player.getLocation(), item);
+			}
+			ItemMeta itemMeta = item.getItemMeta();
+			String name = itemMeta.hasDisplayName() ? itemMeta.getDisplayName() : rewardParser.getItemName(item);
+			itemNames.add(StringUtils.replaceEach(langItemRewardReceived, new String[] { "AMOUNT", "ITEM" },
+					new String[] { Integer.toString(item.getAmount()), name }));
 		}
-		ItemMeta itemMeta = item.getItemMeta();
-		String name = itemMeta.hasDisplayName() ? itemMeta.getDisplayName() : rewardParser.getItemName(item);
-		return StringUtils.replaceEach(langItemRewardReceived, new String[] { "AMOUNT", "ITEM" },
-				new String[] { Integer.toString(item.getAmount()), name });
+		return itemNames;
 	}
 
 	/**
