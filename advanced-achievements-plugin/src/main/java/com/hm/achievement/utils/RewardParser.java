@@ -97,8 +97,8 @@ public class RewardParser implements Reloadable {
 		}
 
 		if (keyNames.contains(path + ".Item")) {
-			ItemStack[] itemReward = getItemReward(path, player);
-			for (ItemStack item: itemReward) {
+			ItemStack[] items = getItemRewards(path, player);
+			for (ItemStack item: items) {
 				ItemMeta itemMeta = item.getItemMeta();
 				String name = itemMeta.hasDisplayName() ? itemMeta.getDisplayName() : getItemName(item);
 				rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
@@ -172,7 +172,7 @@ public class RewardParser implements Reloadable {
 	 * @param player
 	 * @return ItemStack object corresponding to the reward
 	 */
-	public ItemStack[] getItemReward(String path, Player player) {
+	public ItemStack[] getItemRewards(String path, Player player) {
 		String itemString = StringUtils.normalizeSpace(mainConfig.getString(path + ".Item", ""));
 		if (!itemString.contains(" ")) {
 			return null;

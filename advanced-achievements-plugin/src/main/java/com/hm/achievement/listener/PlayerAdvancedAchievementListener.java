@@ -177,7 +177,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		databaseManager.registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 
 		List<String> rewardTexts = giveRewardsAndPrepareTexts(player, event.getCommandRewards(), event.getCommandMessages(),
-				event.getItemReward(), event.getMoneyReward(), event.getExperienceReward(), event.getMaxHealthReward(),
+				event.getItemRewards(), event.getMoneyReward(), event.getExperienceReward(), event.getMaxHealthReward(),
 				event.getMaxOxygenReward());
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage(), rewardTexts);
 
@@ -250,12 +250,12 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * Gives an item reward to a player.
 	 *
 	 * @param player
-	 * @param itemArray
+	 * @param items
 	 * @return the reward text to display to the player
 	 */
-	private List<String> rewardItem(Player player, ItemStack[] itemArray) {
+	private List<String> rewardItem(Player player, ItemStack[] items) {
 		List<String> itemNames = new ArrayList<>();
-		for (ItemStack item : itemArray) {
+		for (ItemStack item : items) {
 			if (player.getInventory().firstEmpty() != -1) {
 				player.getInventory().addItem(item);
 			} else {
@@ -529,7 +529,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		List<String> rewardTexts = giveRewardsAndPrepareTexts(player,
 				rewardParser.getCommandRewards("AllAchievementsReceivedRewards", player),
 				rewardParser.getCustomCommandMessages("AllAchievementsReceivedRewards"),
-				rewardParser.getItemReward("AllAchievementsReceivedRewards", player),
+				rewardParser.getItemRewards("AllAchievementsReceivedRewards", player),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "Money"),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "Experience"),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "IncreaseMaxHealth"),
