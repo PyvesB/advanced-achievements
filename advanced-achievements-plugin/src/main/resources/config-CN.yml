@@ -1,0 +1,810 @@
+#==============================O==============================#
+# I---------------------------------------------------------I #
+# |  Advanced Achievements  6.1.2 配置文件 - 使用前请阅读   | #
+# 1---------------------------------------------------------1 #
+#==============================o==============================#
+
+# 请使用空格，禁止使用Tab缩进，请不要忘记缩进 (每级缩进使用两个空格)。 汉化by Fur_xia
+# 可以使用此网站检查格式是否错误: https://yaml-online-parser.appspot.com
+# 初始设置(英文): https://github.com/PyvesB/AdvancedAchievements/blob/master/advanced-achievements-plugin/src/main/resources/config.yml
+# 如果您希望帮助这个插件做的更好，请前往GitHub来帮助我们把: https://github.com/PyvesB/AdvancedAchievements
+# 您也可以查看我们的wiki来获得关于配置插件有价值的额外文档: https://github.com/PyvesB/AdvancedAchievements/wiki
+# 如果您愿意给我们经济上的捐献请使用: https://www.paypal.com/cgi-bin/webscr?hosted_button_id=7KTQYC4YT52NQ&cmd=_s-xclick
+
+#=============================O=O=============================#
+# II-------------------------------------------------------II #
+# |                       总体设置                        | #
+# 2---------------------------------------------------------2 #
+#=============================o=o=============================#
+
+# 使用指令/aach book 之间的间隔（除非拥有权限：achievement.*）
+TimeBook: 900
+
+# 在插件启动时检查插件更新并且当OP登录游戏时提醒他们
+CheckForUpdate: true
+
+# 设置为true以启用玩家获得成就时的烟火效果
+Firework: true
+
+# 选择烟火的种类，请填写：ball_large(大型球状), ball(小型球状), burst(爆裂型), creeper(苦力怕脸型), star(星型) or random(随机形状).
+FireworkStyle: ball_large
+
+# 设置为true以启用玩家获得成就时的简单效果和音效
+# 若Firework项设置为true本项的true将会被忽略
+SimplifiedReception: false
+
+# 在/aach top, week, month 指令中显示的玩家数量
+TopList: 5
+
+# 设置为true以启用当获得所有成就的玩家使用指令 /aach book 或 /aach stat 显示粒子效果
+# 在排名榜单上玩家输入/aach top,week,month 时也会有粒子效果
+AdditionalEffects: true
+
+# 设置为true以启用当获得所有成就的玩家使用指令 /aach book 或 /aach stat 播放音效
+# 在排名榜单上玩家输入/aach top,week,month 时也会播放音效
+Sound: true
+
+# 当使用指令 /aach book 时播放的音效。 可用值: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names
+SoundBook: entity_player_levelup
+
+# 当拥有所有成就的玩家使用指令 /aach stats 时播放的音效。 可用值: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names
+SoundStats: entity_firework_rocket_blast
+
+# 在排名榜单上玩家输入/aach top,week,month 时播放的音效。 可用值: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names
+SoundRanking: entity_firework_rocket_blast
+
+# 设置插件的图标/前缀 (默认: 三叶草, \u2618).
+Icon: \u2618
+
+# 插件部分信息的颜色 (默认: 5, 深紫色).
+Color: 5
+
+# 当一个玩家获得一项成就时，告知其他玩家
+# 这里设置的为初始设置，玩家可以通过指令“/aach toggle”来选择其是否接受消息
+NotifyOtherPlayers: false
+
+# 当 NotifyOtherPlayers 被启用，ActionBarNotify为true则会使用action bar来通知其他玩家
+# 若 ActionBarNotify 为 false 则会通过聊天栏通知其他玩家。
+ActionBarNotify: true
+
+# 使用title显示成就的显示名称和信息，在Minecraft 1.7.9或1.7.10 不会生效。
+TitleScreen: true
+
+# 当玩家获得一项成就时在聊天框显示成就信息
+ReceiverChatMessages: true
+
+# 当一个玩家获得一项成就时，成就名称，信息，奖励会被显示在聊天框中
+# 若 HoverableReceiverChatText 为 true ，一条可用鼠标悬浮显示信息的消息将会直接展现给接受者
+# 否则信息将会被一条一条的发送
+HoverableReceiverChatText: false
+
+# 在书页中，名称，简介，日期之间的分隔符
+BookSeparator: ""
+
+# 设置在/aach list中成就名称的格式 (默认: "%ICON% %NAME% %ICON%" [图标 名称 图标])
+ListAchievementFormat: "%ICON% %NAME% %ICON%"
+
+# 设置大部分聊天框信息的前缀格式
+ChatHeader: "§7[%ICON%§7]"
+
+# 当玩家在创造模式时停止一切数据的统计，包括 PlayedTime(游玩时间)
+# 连接相关成就也只会在玩家调整为非创造模式时才会被计算
+RestrictCreative: false
+
+# 停止当玩家在观察者模式时一切数据的统计，包括游玩时间。
+# 连接相关成就也只会在玩家调整为非观察者模式时才会被计算
+# 在 Minecraft 版本 1.7.9或1.7.10中本设置无效
+RestrictSpectator: true
+
+# 停止玩家在冒险模式时一切数据的统计，包括游玩时间。
+# 连接相关成就也只会在玩家调整为非冒险模式时才会被计算
+RestrictAdventure: false
+
+# 停止玩家在指定世界中一切数据的统计，包括游玩时间。（在加入有效值之前请删除[]
+# 连接相关成就也只会在玩家进入非例外世界时才会被计算
+ExcludedWorlds: []
+#  - yourWorld1
+#  - yourWorld2
+
+# 在计算移动距离时，忽略垂直方向 (Y axis) 的数据计算。
+IgnoreVerticalDistance: false
+
+# 在GUI或其他统计输出中不展示成就种类
+# 同时也阻止玩家获得该类成就/该类成就统计数据增加
+DisabledCategories:
+- AdvancementsCompleted
+
+# 在 /aach list 中隐藏未获得的成就。
+ObfuscateNotReceived: false
+
+# 对于那些每次成就只是在时间发生次数上变化的成就类，
+# 当前一项成就完成时展示下一项成就，但是隐藏其余的成就
+# 例如，在Places stone类中
+# 第一个成就可能是100个石头，第二个是500个石头，第三个成就是1000个石头
+# 当 ObfuscateProgressiveAchievements 为 true 时，最初只会在GUI中显示100石头的成就，
+# 直到这个成就被获得后，500石头的成就才会被显示
+ObfuscateProgressiveAchievements: false
+
+# 与 ObfuscateProgressiveAchievements 类似，但在/aach list中显示为锁定
+HideProgressiveAchievements: false
+
+# 隐藏玩家还未获得其中成就的成就类别（在/aach list中显示为锁定）
+HideNotReceivedCategories: false
+
+# 完全隐藏玩家没有相应权限的成就类别
+HideNoPermissionCategories: false
+
+# 在/aach list 中隐藏成就奖励
+HideRewardDisplayInList: false
+
+# 在/aach list进度条中显示准确的统计信息
+EnrichedListProgressBars: true
+
+# Annotate each achievement displayed in a /aach list category with a number. 给 /aach list 中显示的每一个成就标注一个数字 （不确定）
+NumberedItemsInList: false
+
+# 当一个成就还未获得时，在/aach list中显示目标和进度条的颜色
+ListColorNotReceived: 8
+
+# 将未获得成就在/aach list中字体改为斜体. 被混淆的成就则不会被影响。
+ListItaliciseNotReceived: true
+
+# 在成就书中按照时间排列树叶 （false则为按照时间倒序）
+BookChronologicalOrder: true
+
+# 不将使用精准采集工具破坏的物品计入Breaks相关成就
+DisableSilkTouchBreaks: false
+
+# 不将使用精准采集工具破坏的矿物计入Breaks相关成就
+# DisableSilkTouchBreaks 为true将忽略本项。 不适用于破坏铁矿或金矿
+DisableSilkTouchOreBreaks: false
+
+# 使用的预言文件名称。可用值：lang.yml, lang-BP.yml, lang-CN.yml, lang-CZ.yml, lang-DE.yml, lang-ES.yml, lang-FI.yml
+# lang-FR.yml, lang-HU.yml, lang-IT.yml, lang-PL.yml, lang-RO.yml, lang-RU.yml, lang-SE.yml, lang-TR.yml, lang-TW.yml, lang-VN.yml
+LanguageFileName: lang-CN.yml
+
+# 每一次计入成就统计之间间隔（冷却时间）。现仅支持限制列出项
+StatisticCooldown:
+  LavaBuckets: 10      #岩浆桶
+  WaterBuckets: 10     #水桶
+  Milk: 10             #牛奶
+  Beds: 30             #床
+  Brewing: 5           #酿造
+  MusicDiscs: 30       #唱片
+
+# 当玩家在冷却时间内进行相应行为，显示一个action bar
+# 在Minecraft 1.7.9 或 1.7.10 中无效
+CooldownActionBar: true
+
+# 设置用于规范显示在/aach book和/aach list的日期格式的Locale。您必须选择一个 ISO 639 语言代码
+# 可用语言代码请前往网页： www.loc.gov/standards/iso639-2/php/code_list.php  查看
+DateLocale: zh
+
+# 在 /aach book 和 /aach list 中显示成就的获取时间
+# 仅适用于显示插件版本3.0以上时获得的成就，不会显示具体的时间，只会显示为如 “midnight”这种
+DateDisplayTime: true
+
+# 用与每个成就的目标参数相对应的描述来注册成就。
+# 如果改变，使用/aach generate来重新生成成就的参数值
+# 使用Minecraft 1.12以前的版本中，本项设置无效
+RegisterAdvancementDescriptions: true
+
+# 若为true，隐藏成就GUI中的成就。获得成就时仍然会显示获取成就的信息
+# 使用Minecraft 1.12以前的版本中，本项设置无效
+HideAdvancements: false
+
+# 当为true时，PlayedTime(游玩时间)将不会再玩家挂机时增加。需要Essentials作为前置插件以使用本功能
+IgnoreAFKPlayedTime: false
+
+# 当玩家获得所有成就时给予玩家的奖励，与成就奖励设置格式相同
+# 请查看 https://github.com/PyvesB/AdvancedAchievements/wiki/Rewards
+AllAchievementsReceivedRewards:
+  IncreaseMaxOxygen: 30
+  Experience: 100
+
+# Title shown on the root advancement. 根成就标题（不明白）
+RootAdvancementTitle: Advanced Achievements
+
+# 成就页背景
+# 必须是材质包中的任意一个图片的路径
+AdvancementsBackground: "minecraft:textures/item/book.png"
+
+#=============================OOO=============================#
+# III-----------------------------------------------------III #
+# |                    Database settings                    | #
+# 3---------------------------------------------------------3 #
+#=============================ooo=============================#
+
+# 每日备份本地数据库（如果为 sqlite 或 h2）
+DatabaseBackup: true
+
+# 数据库类型 可用值：sqlite, h2, postgresql 或 mysql. 请重启以使本项设置生效
+DatabaseType: h2
+
+# 数据库表格的前缀，如果您更改了初始表格名，
+# 插件将会自动尝试更改表明。否则您必须手动重命名您的表格名
+# 请重启以使本项设置生效
+TablePrefix: ""
+
+# 当连接到MySQL或PostgreSQL数据库时的一些特别的设置，每一项将以&开头
+# 例如 "&useUnicode=yes&characterEncoding=UTF-8" Make sure the key-value pairs themselves are URL encoded. 确保关键值对本身是URL编码的（没看懂）
+AdditionalConnectionOptions: ""
+
+# 连接到MySQL或PostgreSQL数据库的设置
+# 一个PostgreSQL数据库应当使用类似于：jdbc:postgresql://localhost:5432/minecraft 的地址 
+DatabaseAddress: "jdbc:mysql://localhost:3306/minecraft"
+DatabaseUser: root
+DatabasePassword: root
+  
+#============================OO=OO============================#
+# IV-------------------------------------------------------IV #
+# |                      表现上的设置                       | #
+# |       如果您了解服务器运行机制，欢迎您根据需求修改      | #
+# 4---------------------------------------------------------4 #
+#============================oo=oo============================#
+
+# 检查玩家游玩时间的频率（单位：秒）。更小的值会使游玩时间更精准，但是会消耗更多CPU资源
+PlaytimeTaskInterval: 60
+
+# 计算玩家移动距离的频率（单位：秒）。更小的值会使距离计算更精准，但是会消耗更多CPU资源
+DistanceTaskInterval: 5
+
+# 一些统计数据写入数据库的频率（单位：秒）。请重启以使本项设置生效
+PooledRequestsTaskInterval: 10
+
+#============================OOOOO============================#
+# V---------------------------------------------------------V #
+# |                       多行为成就                        | #
+# |                  这些成就拥有子类或阈值                 | #
+# 5---------------------------------------------------------5 #
+#============================ooooo============================#
+
+# 当一个特定的方块被放置 （可用材料名称：github.com/PyvesB/AdvancedAchievements/wiki/Material-names）
+Places:  
+  chest:
+    5:
+      # 可选，当未获得成就时使用/aach list 或在成就详情中显示。
+      Goal: 放置5个箱子
+      # 介绍；当获取成就时或在/aach book和/aach list中显示。
+      Message: §6你已经放置了5个箱子！
+      # 数据库名称，也必须在/aach delete和/aach check中使用。
+      Name: place_5_chest
+      # 当获得成就时或在/aach book和/aach list中显示。
+      DisplayName: 储存专家
+    50:
+      Goal: 放置50个箱子
+      Message: §6你已经放置了50个箱子！
+      Name: place_50_chest
+      DisplayName: 存储大师
+  stone:
+    100:
+      Goal: 放置100个石头
+      Message: 你已经放置了100个石头！
+      Name: place_100_stone
+      DisplayName: 逐渐上头
+    1000:
+      Goal: 放置1000个石头
+      Message: 你已经放置了1000个石头！
+      Name: place_1000_stone
+      DisplayName: 石头之神
+      Reward:
+        Command:
+          Execute: "say §7ALERT: §4PLAYER§7成为了 §4石头之神§7!"
+          Display: 成为石头之神！
+
+# 当一种特定方块被破坏（可用材料名称：github.com/PyvesB/AdvancedAchievements/wiki/Material-names）
+# 你可以在1.13之前的Minecraft版本使用如sand:1这样的编辑来给予带有值1的沙子（红沙）
+Breaks: 
+  ice:
+    10:
+      Goal: 破坏10个冰块
+      Message: 你已经破坏了10个冰块了！
+      Name: break_10_ice
+      DisplayName: 冷饮供应商
+  # 使用下列格式以统计多种物品。
+  # 当你加入/移除已有成就中的一项与其他物品用|隔开的物品时，本子类将会重置进度为0。
+  snow|snow_block|ice:
+    32:
+      Goal: 破坏32个冰/雪
+      Message: 真棒！你已经破坏了32个冰/雪了！
+      Name: break_32_ice_any
+      DisplayName: 祈祷夏天来临
+  stone:
+    1:
+      Goal: 破坏一个石头
+      Message: §1这是你第一次下矿！加油！
+      Name: break_1_stone
+      DisplayName: 初入Minecraft
+      # 使用分号以执行多条奖励指令，PLAYER 将会被玩家名代替。
+      Reward:
+        Command:
+          Execute: give PLAYER dispenser 10; give PLAYER lever 5
+
+# 当一些实体被击杀，你可以用以下判断类型
+# - 一个实体类型 （可用实体名称：github.com/PyvesB/AdvancedAchievements/wiki/Entity-names）
+# - 高压苦力怕
+# - 一个有特定名称的怪物 （名称/插件 如 Mythic Mobs）
+# - player 以将击杀所有玩家当做一个事件
+# - specificplayer-后面加上玩家的UUID来检测一个特定玩家被击杀数量
+Kills:
+  zombie:
+    1:
+      Goal: 杀死一只僵尸
+      Message: 你第一次杀死了一只僵尸
+      Name: kills_1_zombie
+      DisplayName: 活 死 人
+      Reward:
+        Money: 1         
+        Item: diamond 1
+  # Mythic Mobs 精英怪 'Display' 参数. 将 & 改为 §.
+  §2Skeletal Knight:
+    1:
+      Goal: 杀死邪恶的骷髅骑士。
+      Message: §e你杀死了一只精英怪！
+      Name: kills_1_skeletal_night
+      DisplayName: 精英猎手
+  specificplayer-56c79b19-4500-466c-94ea-514a755fdd09:
+    1:
+      Goal: 杀死邪恶的插件作者！
+      Message: 哇哦！你杀死了插件的作者！
+      Name: kills_1_darkpyves
+      DisplayName:  作 者 不 再
+      Reward:
+        IncreaseMaxHealth: 1
+          
+# 当一个指定目标被投掷物射击（但是没必要杀死）
+# 有效方块类型: github.com/PyvesB/AdvancedAchievements/wiki/Material-names
+# 有效实体类型: github.com/PyvesB/AdvancedAchievements/wiki/Entity-names
+TargetsShot:
+  villager:
+    10:
+      Goal: 朝着奸商丢东西。
+      Message: 你射中了奸商10次。
+      Name: targetsshot_10_villager
+      DisplayName: 加入掠夺者
+  glass:
+    100:
+      Goal: 尝试打坏奶奶的窗子。
+      Message: 你射♂中了100个玻璃方块！
+      Name: targetsshot_100_glass
+      DisplayName: 破窗者
+
+# 一个特定物品被合成 （可用材料名称： github.com/PyvesB/AdvancedAchievements/wiki/Material-names）
+Crafts:
+  diamond_sword:
+    1:      
+      Goal: 合成一把钻石剑
+      Message: 你第一次合成一把钻石剑
+      Name: craft_1_blade
+      DisplayName: 武器大师
+      Reward:
+        Money: 2
+    100:      
+      Goal: 合成100把钻石剑
+      Message: 下一次造啥？Excalibur？
+      Name: craft_100_blade
+      DisplayName: 无 限 剑 制
+      Reward:
+        Experience: 500
+        
+# 当一个玩家使用一项特定指令时 （指定不带斜杠的小写命令前缀）
+# 如一个指令 /awf add world 来自 AntiWorldFly 插件 就可以使用子类 “awf add”
+# 给定指令的缩写也会被计入
+PlayerCommands:
+  aach stats:
+    10:
+      Goal: 检查你成就数据10次
+      Message: 你检查了10次你的成就统计，现在成为成就大师了吗？
+      Name: playercommand_aachstats_10
+      DisplayName: 统 计 学 家
+      Rewards:
+        Commands:
+          Execute: say §7PLAYER 成为了 带 统 计 学 家
+          Display: Broadcast
+          
+# 喂动物 (可用实体名称: github.com/PyvesB/AdvancedAchievements/wiki/Entity-names).
+Breeding:
+  sheep:
+    1:
+      Goal: 繁殖一只羊
+      Message: 你第一次繁殖羊！
+      Name: breeding_1_sheep
+      DisplayName: 春天来了
+      
+#===========================OOO=OOO===========================#
+# VI-------------------------------------------------------VI #
+# |                      简单行为成就                       | #
+# |               只存在次数判断的简单成就                  | #
+# 6---------------------------------------------------------6 #
+#===========================ooo=ooo===========================#
+
+# 当一个玩家在一天中加入游戏；统计数据每天最多计算一次
+Connections:
+  1:
+    Message: 第一次来到服务器！
+    Name: connect_1
+    DisplayName: 明智之举
+
+# 当玩家当场去世时
+Deaths:
+  1:
+    Goal: 第一次死
+    Message: 你第一次死！
+    Name: deaths_1
+    DisplayName: 永远安息
+    Reward:
+        # 在材料名称和数量后的文字为材料的自定义名称，会显示在/aach list和真正受到奖励时
+        Item: stone 5 垫脚石
+    
+# 当射出箭矢
+Arrows:
+  50:
+    Goal: 射出50个箭矢
+    Message: 什么嘛，你射的还挺准的
+    Name: arrows_50
+    DisplayName: 希望の花
+    
+# 当雪球被丢出时
+Snowballs:
+  1000:
+    Goal: 丢1000个雪球
+    Message: 丢了1000个雪球了！你就是PVP king！
+    Name: snowballs_1000
+    DisplayName: PVP 带佬
+    Reward:
+        # 30代表氧气条中的1个气泡
+        IncreaseMaxOxygen: 30
+    
+# 当鸡蛋被丢出时  
+Eggs:
+  1000:
+    Goal: 丢1000个鸡蛋
+    Message: 你丢了1000个鸡蛋！母鸡哭了
+    Name: eggs_1000
+    DisplayName: 蛋蛋的忧伤
+    
+# 当抓到一条鱼
+Fish:
+  1:
+    Goal: 钓一条鱼
+    Message: 你第一次钓到鱼
+    Name: fish_1
+    DisplayName: 是时候做炸鱼薯条了！ #译者注：作者是英国人
+    
+# 当用鱼竿获得一个宝藏
+Treasures:
+  1:
+    Goal: 获得大海的宝藏
+    Message: 你获得来自大海的第一个宝物！
+    Name: treasure_1
+    DisplayName: 宝物猎人
+
+# 当工具/防具/武器 被用坏
+ItemBreaks:
+  1:
+    Goal: 把一个工具用坏掉吧
+    Message: 你用坏了你的第一个工具！
+    Name: itembreaks_1
+    DisplayName: §4工具破坏者
+
+# 吃一个东西（除药水和牛奶）
+EatenItems:
+  1:
+    Goal: 吃点啥
+    Message: 吃点零食吧！
+    Name: eatenitems_1
+    DisplayName: 第一个零食  
+    
+# 剪羊毛
+Shear:
+  100:
+    Goal: 剪100只羊的羊毛
+    Message: 剪了100只羊的毛！
+    Name: shear_100
+    DisplayName: §1羊毛上瘾
+
+# 挤奶
+Milk:
+  1:
+    Goal: 挤一次奶
+    Message: §e从牛上挤了一次奶！.... §cMOOW
+    Name: milk_1
+    DisplayName: 第一次挤奶
+    Reward:
+      Experience: 100
+    
+# 用桶接岩浆
+LavaBuckets:
+  10:
+    Goal: 接10桶岩浆
+    Message: 接了10桶岩浆！
+    Name: lavabuckets_10
+    DisplayName: 多喝岩浆！
+    
+# 用桶接水
+WaterBuckets:
+  15:
+    Goal: 接15桶水
+    Message: 接了15桶水
+    Name: waterbuckets_15
+    DisplayName: 消防员  
+    
+# 和村民交易
+Trades:
+  1:
+    Goal: 和村民交易
+    Message: 和村民第一次交易！
+    Name: trades_1
+    DisplayName: 首次被宰 
+    
+# 使用铁砧
+AnvilsUsed:
+  1:
+    Goal: 修复一样物品
+    Message: 你第一次修复了一样物品
+    Name: anvilsused_1
+    DisplayName: 初次修复
+    
+# 附魔
+Enchantments:
+  5:
+    Goal: 附魔5样东西
+    Message: 给5样东西附魔了！
+    Name: enchantments_5
+    DisplayName: §5巫师        #事英式幽默
+    
+# 使用床
+Beds:  
+  5:
+    Goal: 睡5觉
+    Message: 你睡了五觉
+    Name: bed_5
+    DisplayName: 好困 
+    
+# 最大等级    
+MaxLevel:  
+  10:
+    Goal: 达到10级
+    Message: 10级啦！
+    Name: maxlevel_10
+    DisplayName: §4加油升级！
+    
+# 使用药水
+ConsumedPotions:
+  100:
+    Goal: 喝100瓶药水
+    Message: 喝了100瓶药水
+    Name: consumedpotions_100
+    DisplayName: 酒鬼！ 
+    
+# 在服务器中玩的时间（单位：小时，且为整数）
+PlayedTime:
+  1:
+    Goal: 玩一个小时
+    Message: 在服务器的第一个小时
+    Name: playedtime_1
+    DisplayName: 第一个小时
+    
+# 步行的距离
+DistanceFoot:
+  1000:
+    Goal: 步行1000格
+    Message: 你步行了一千格！
+    Name: distancefoot_1000
+    DisplayName: 抱歉,今天步行
+    
+# 骑猪的距离
+DistancePig:
+  100:
+    Goal: 骑猪走过100格
+    Message: 你骑猪走过了100格！
+    Name: distancepig_100
+    DisplayName: 猪 突 猛 进
+    
+# 骑马的距离
+DistanceHorse:
+  500:
+    Goal: 骑马走过500格
+    Message: 你骑马走过了500格！
+    Name: distancehorse_500
+    DisplayName: 爱 马 仕
+    
+# 坐矿车的距离
+DistanceMinecart:
+  100:
+    Goal: 坐矿车移动100格
+    Message: 你做矿车移动了100格！
+    Name: distanceminecart_100
+    DisplayName: 火车王
+
+# 坐船的距离
+DistanceBoat:
+  200:
+    Goal: 坐船移动200格
+    Message: 你坐船移动200格！
+    Name: distanceboat_200
+    DisplayName: 水手
+
+# 使用鞘翅移动的距离
+# 1.9之前版本请忽略本项
+DistanceGliding:
+  100:
+    Goal: 用鞘翅飞100格
+    Message: 你用鞘翅飞了100格！
+    Name: distancegliding_100
+    DisplayName: 鸟 人
+    
+# 坐在羊驼上移动的距离
+# 1.11之前版本请忽略本项
+DistanceLlama:
+  150:
+    Goal: 坐在羊驼身上移动150格！
+    Message: 你在羊驼身上移动了150格！
+    Name: distancellama_150
+    DisplayName: 羊驼行者
+
+# 当一个东西丢到地上
+ItemDrops:
+  15:
+    Goal: 丢15个东西到地上
+    Message: §c你在乱丢垃圾！罚款！
+    Name: itemdrops_15
+    DisplayName: 污染者
+    
+# 从地上捡起东西
+ItemPickups:
+  40:
+    Goal: 捡起40个东西
+    Message: 保护环境√
+    Name: itempickups_40
+    DisplayName: 环保主义者
+    
+# 耕地
+HoePlowings:
+  10:
+    Goal: 耕地10次
+    Message: 你耕地了10次！
+    Name: hoeplowings_10
+    DisplayName: 农民
+    Reward:                 
+        Item: cookie 15
+    
+# 使用骨粉催熟植物
+Fertilising:
+  15:
+    Goal: 催熟15次
+    Message: 你用骨粉催熟了15次！
+    Name: fertilising_15
+    DisplayName: 辣骨催花
+    
+# 驯服动物
+Taming:
+  1:
+    Goal: 驯服一个动物
+    Message: 你驯服了第一只小动物
+    Name: taming_1
+    DisplayName: 铲屎官      
+
+# 酿造药水
+Brewing:
+  1:
+    Goal: 酿造一个药水
+    Message: 你酿造了一瓶药水！
+    Name: brewing_1
+    DisplayName: 炼金术师
+    
+# 发射烟火
+Fireworks:
+  10:
+    Goal: 发射十次烟火
+    Message: 你发射了十次烟火
+    Name: fireworks_10
+    DisplayName: 社保
+    Reward:
+      Experience: 200
+
+# 播放唱片
+MusicDiscs:
+  1:
+    Goal: 使用唱片机
+    Message: 使用了唱片机！效果显著！
+    Name: musicdiscs_1
+    DisplayName: DJ
+
+# 用末影珍珠传送
+EnderPearls:
+  10:
+    Goal: 用末影珍珠传送10次
+    Message: 已经用末影珍珠传送10次了！
+    Name: enderpearls_10
+    DisplayName: 小心脚下
+    
+# 当一个玩家把宠物交给另一个玩家 (需要前置插件Pet Master版本1.4以上)
+PetMasterGive:
+  3:
+    Goal: 给予3只宠物给他人
+    Message: 已经送出了三只宠物！
+    Name: petmastergive_3
+    DisplayName: 捐献佬
+
+# 当一个玩家收到宠物 (需要前置插件Pet Master版本1.4以上)
+PetMasterReceive:
+  10:
+    Goal: 收到10只宠物
+    Message: 从朋友那里得到了10只宠物
+    Name: petmasterreceive_10
+    DisplayName: 白嫖怪
+    
+# 用熔炉熔炼
+Smelting:
+  250:
+    Goal: 熔炼250个东西
+    Message: 已经熔炼了250个东西
+    Name: smeltitems_250
+    DisplayName: 冶 炼 大 师
+
+# 赢得袭击
+RaidsWon:
+  1:
+    Goal: 赢得一场袭击
+    Message: 袭击胜利！
+    Name: raidswon_1
+    DisplayName: 保卫羊村
+    Reward:
+      Item: emerald 8
+  10:
+    Goal: 赢得十场袭击
+    Message: 获胜十次！
+    Name: raidswon_10
+    DisplayName: 奸商保护者
+    Reward:
+      Item: totem_of_undying 1
+
+# 使用激流
+Riptides:
+  1:
+    Goal: 使用激流魔法！！
+    Message: 你掌握了大海！
+    Name: riptides_1
+    DisplayName: 海 王
+# 完成指定数量成就
+AdvancementsCompleted:
+  20:
+    Goal: 完成20个成就
+    Message: 成功完成20个成就！
+    Name: advancements_20
+    DisplayName: 
+  
+#===========================OOOOOOO===========================#
+# VII-----------------------------------------------------VII #
+# |                      指令给予成就                       | #
+# 7---------------------------------------------------------7 #
+#===========================ooooooo===========================#
+    
+# 允许多次奖励指令成就
+MultiCommand: true
+    
+# 拥有 achievement.give 权限的玩家（后台） 可以使用/aach give yourAch1 PLAYER来给予
+# yourAch1 成就给 PLAYER。 /aach give指令对其他类型成就无效
+Commands:
+  yourAch1:
+    Goal: 参加了活动!\nWDNMD
+    Message: 你参加了活动-WDNMD
+    Name: yourAch1
+    DisplayName: 特别活动成就！
+    
+# 当用指令 /aach add 调用这项成就
+Custom:
+  votes:
+    10:
+      Message: 为服务器投票十次！
+      Name: customs_votes_10
+      DisplayName: 超级粉丝
+      Reward:
+        Money: 5
+    
+#==========================OOOO=OOOO==========================#
+# VIII-------------------------0-------------------------VIII #
+# |   新插件版本更新的参数将会添加在这里   汉化by Fur_Xia   | #
+# 8----------------------------0----------------------------8 #
+#==========================oooo=oooo==========================#
