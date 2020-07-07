@@ -323,7 +323,7 @@ Breaks:
 # When "something" is killed. You can use any of the following:
 # - an entity type (available names: github.com/PyvesB/AdvancedAchievements/wiki/Entity-names).
 # - poweredcreeper.
-# - a mob's custom name (name tag/plugins such as Mythic Mobs).
+# - a mob's custom name (name tag/plugins such as Mythic Mobs) for Minecraft 1.8 or more recent.
 # - player to track player kills as a whole.
 # - specificplayer- followed by player UUID to track how many times a specific player has been killed.
 Kills:
