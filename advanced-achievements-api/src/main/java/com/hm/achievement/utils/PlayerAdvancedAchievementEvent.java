@@ -185,10 +185,10 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		 */
 		@Deprecated
 		public PlayerAdvancedAchievementEventBuilder itemReward(ItemStack itemReward) {
-			this.itemRewards = new ItemStack[]{ itemReward };
+			this.itemRewards = new ItemStack[] { itemReward };
 			return this;
 		}
-		
+
 		public PlayerAdvancedAchievementEventBuilder itemRewards(ItemStack[] itemRewards) {
 			this.itemRewards = itemRewards;
 			return this;
