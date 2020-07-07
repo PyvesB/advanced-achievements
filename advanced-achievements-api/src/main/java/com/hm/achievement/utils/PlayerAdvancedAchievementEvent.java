@@ -99,6 +99,14 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		return commandRewards;
 	}
 
+	/**
+	 * @deprecated use {@link #getItemRewards()} instead
+	 */
+	@Deprecated
+	public ItemStack getItemReward() {
+		return itemRewards == null || itemRewards.length == 0 ? null : itemRewards[0];
+	}
+
 	public ItemStack[] getItemRewards() {
 		return itemRewards;
 	}
@@ -172,6 +180,15 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 			return this;
 		}
 
+		/**
+		 * @deprecated use {@link #itemRewards(ItemStack[])} instead
+		 */
+		@Deprecated
+		public PlayerAdvancedAchievementEventBuilder itemReward(ItemStack itemReward) {
+			this.itemRewards = new ItemStack[]{ itemReward };
+			return this;
+		}
+		
 		public PlayerAdvancedAchievementEventBuilder itemRewards(ItemStack[] itemRewards) {
 			this.itemRewards = itemRewards;
 			return this;
