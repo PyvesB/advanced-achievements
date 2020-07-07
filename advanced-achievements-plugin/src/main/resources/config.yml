@@ -776,7 +776,7 @@ AdvancementsCompleted:
     DisplayName: Game Block Advance
     # Use semicolons for multiple item rewards as well. The below example will reward 8 diamond and 1 cake
     Reward:
-      Item: diamond 8;cake 1
+      Item: diamond 8; cake 1
   
 #===========================OOOOOOO===========================#
 # VII-----------------------------------------------------VII #
