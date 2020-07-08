@@ -90,7 +90,7 @@ public class PlayerAdvancedAchievementListenerTest {
 
 		PlayerAdvancedAchievementEvent event = new PlayerAdvancedAchievementEventBuilder().player(player)
 				.name("connect_1").displayName("Good Choice").message("Connected for the first time!")
-				.commandRewards(new String[0]).commandMessage(Collections.emptyList()).itemReward(null)
+				.commandRewards(new String[0]).commandMessage(Collections.emptyList()).itemRewards(null)
 				.moneyReward(0).experienceReward(0).maxHealthReward(0).maxOxygenReward(0).build();
 
 		underTest.onPlayerAdvancedAchievementReception(event);
@@ -107,7 +107,7 @@ public class PlayerAdvancedAchievementListenerTest {
 
 		PlayerAdvancedAchievementEvent event = new PlayerAdvancedAchievementEventBuilder().player(player)
 				.name("connect_1").displayName("Good Choice").message("Connected for the first time!")
-				.commandRewards(new String[0]).commandMessage(Collections.emptyList()).itemReward(null)
+				.commandRewards(new String[0]).commandMessage(Collections.emptyList()).itemRewards(null)
 				.moneyReward(0).experienceReward(0).maxHealthReward(0).maxOxygenReward(0).build();
 
 		underTest.onPlayerAdvancedAchievementReception(event);

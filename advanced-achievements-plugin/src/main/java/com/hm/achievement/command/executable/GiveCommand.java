@@ -74,7 +74,7 @@ public class GiveCommand extends AbstractParsableCommand {
 					.message(mainConfig.getString(achievementPath + ".Message"))
 					.commandRewards(rewardParser.getCommandRewards(rewardPath, player))
 					.commandMessage(rewardParser.getCustomCommandMessages(rewardPath))
-					.itemReward(rewardParser.getItemReward(rewardPath, player))
+					.itemRewards(rewardParser.getItemRewards(rewardPath, player))
 					.moneyReward(rewardParser.getRewardAmount(rewardPath, "Money"))
 					.experienceReward(rewardParser.getRewardAmount(rewardPath, "Experience"))
 					.maxHealthReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxHealth"))

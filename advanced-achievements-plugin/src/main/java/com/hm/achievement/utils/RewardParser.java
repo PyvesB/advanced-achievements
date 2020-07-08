@@ -36,7 +36,7 @@ import net.milkbowl.vault.economy.Economy;
 @Singleton
 public class RewardParser implements Reloadable {
 
-	private static final Pattern MULTIPLE_REWARD_COMMANDS_SPLITTER = Pattern.compile(";\\s*");
+	private static final Pattern MULTIPLE_REWARDS_SPLITTER = Pattern.compile(";\\s*");
 
 	private final CommentedYamlConfiguration mainConfig;
 	private final CommentedYamlConfiguration langConfig;
@@ -97,11 +97,13 @@ public class RewardParser implements Reloadable {
 		}
 
 		if (keyNames.contains(path + ".Item")) {
-			ItemStack itemReward = getItemReward(path, player);
-			ItemMeta itemMeta = itemReward.getItemMeta();
-			String name = itemMeta.hasDisplayName() ? itemMeta.getDisplayName() : getItemName(itemReward);
-			rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
-					new String[] { Integer.toString(itemReward.getAmount()), name }));
+			ItemStack[] items = getItemRewards(path, player);
+			for (ItemStack item : items) {
+				ItemMeta itemMeta = item.getItemMeta();
+				String name = itemMeta.hasDisplayName() ? itemMeta.getDisplayName() : getItemName(item);
+				rewardTypes.add(StringUtils.replaceEach(langListRewardItem, new String[] { "AMOUNT", "ITEM" },
+						new String[] { Integer.toString(item.getAmount()), name }));
+			}
 		}
 
 		if (keyNames.contains(path + ".Experience")) {
@@ -170,25 +172,32 @@ public class RewardParser implements Reloadable {
 	 * @param player
 	 * @return ItemStack object corresponding to the reward
 	 */
-	public ItemStack getItemReward(String path, Player player) {
-		String itemReward = StringUtils.normalizeSpace(mainConfig.getString(path + ".Item", ""));
-		if (!itemReward.contains(" ")) {
+	public ItemStack[] getItemRewards(String path, Player player) {
+		String itemString = StringUtils.normalizeSpace(mainConfig.getString(path + ".Item", ""));
+		if (!itemString.contains(" ")) {
 			return null;
 		}
 
-		String[] parts = StringUtils.split(itemReward);
-		Optional<Material> rewardMaterial = materialHelper.matchMaterial(parts[0], "config.yml (" + (path + ".Item") + ")");
-		if (rewardMaterial.isPresent()) {
-			ItemStack item = new ItemStack(rewardMaterial.get(), NumberUtils.toInt(parts[1], 1));
-			ItemMeta meta = item.getItemMeta();
-			String name = replacePlayerPlaceholders(StringUtils.join(parts, " ", 2, parts.length), player);
-			if (!name.isEmpty()) {
-				meta.setDisplayName(name);
+		String[] itemStrings = MULTIPLE_REWARDS_SPLITTER.split(itemString);
+		ItemStack[] itemData = new ItemStack[itemStrings.length];
+		for (int i = 0; i < itemStrings.length; i++) {
+			String[] parts = StringUtils.split(itemStrings[i]);
+			Optional<Material> rewardMaterial = materialHelper.matchMaterial(parts[0],
+					"config.yml (" + (path + ".Item") + ")");
+			if (rewardMaterial.isPresent()) {
+				ItemStack item = new ItemStack(rewardMaterial.get(), NumberUtils.toInt(parts[1], 1));
+				ItemMeta meta = item.getItemMeta();
+				String name = replacePlayerPlaceholders(StringUtils.join(parts, " ", 2, parts.length), player);
+				if (!name.isEmpty()) {
+					meta.setDisplayName(name);
+				}
+				item.setItemMeta(meta);
+				itemData[i] = item;
+			} else {
+				return null;
 			}
-			item.setItemMeta(meta);
-			return item;
 		}
-		return null;
+		return itemData;
 	}
 
 	/**
@@ -209,7 +218,7 @@ public class RewardParser implements Reloadable {
 			return new String[0];
 		}
 		// Multiple reward commands can be set, separated by a semicolon and space. Extra parsing needed.
-		return MULTIPLE_REWARD_COMMANDS_SPLITTER.split(replacePlayerPlaceholders(commandReward, player));
+		return MULTIPLE_REWARDS_SPLITTER.split(replacePlayerPlaceholders(commandReward, player));
 	}
 
 	/**

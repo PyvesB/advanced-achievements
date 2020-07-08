@@ -25,7 +25,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private final String message;
 	private final List<String> commandMessages;
 	private final String[] commandRewards;
-	private final ItemStack itemReward;
+	private final ItemStack[] itemRewards;
 	private final int moneyReward;
 	private final int experienceReward;
 	private final int maxHealthReward;
@@ -34,7 +34,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private boolean cancelled;
 
 	private PlayerAdvancedAchievementEvent(Player receiver, String name, String displayName, String message,
-			List<String> commandMessages, String[] commandRewards, ItemStack itemReward, int moneyReward,
+			List<String> commandMessages, String[] commandRewards, ItemStack[] itemRewards, int moneyReward,
 			int experienceReward, int maxHealthReward, int maxOxygenReward) {
 		player = receiver;
 		this.name = name;
@@ -42,7 +42,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		this.message = message;
 		this.commandMessages = commandMessages;
 		this.commandRewards = commandRewards;
-		this.itemReward = itemReward;
+		this.itemRewards = itemRewards;
 		this.moneyReward = moneyReward;
 		this.experienceReward = experienceReward;
 		this.maxHealthReward = maxHealthReward;
@@ -99,8 +99,16 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		return commandRewards;
 	}
 
+	/**
+	 * @deprecated use {@link #getItemRewards()} instead
+	 */
+	@Deprecated
 	public ItemStack getItemReward() {
-		return itemReward;
+		return itemRewards == null || itemRewards.length == 0 ? null : itemRewards[0];
+	}
+
+	public ItemStack[] getItemRewards() {
+		return itemRewards;
 	}
 
 	public int getMoneyReward() {
@@ -127,7 +135,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		private String message;
 		private List<String> commandMessage;
 		private String[] commandRewards;
-		private ItemStack itemReward;
+		private ItemStack[] itemRewards;
 		private int moneyReward;
 		private int experienceReward;
 		private int maxHealthReward;
@@ -172,8 +180,17 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 			return this;
 		}
 
+		/**
+		 * @deprecated use {@link #itemRewards(ItemStack[])} instead
+		 */
+		@Deprecated
 		public PlayerAdvancedAchievementEventBuilder itemReward(ItemStack itemReward) {
-			this.itemReward = itemReward;
+			this.itemRewards = new ItemStack[] { itemReward };
+			return this;
+		}
+
+		public PlayerAdvancedAchievementEventBuilder itemRewards(ItemStack[] itemRewards) {
+			this.itemRewards = itemRewards;
 			return this;
 		}
 
@@ -199,7 +216,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 
 		public PlayerAdvancedAchievementEvent build() {
 			return new PlayerAdvancedAchievementEvent(player, name, displayName, message, commandMessage, commandRewards,
-					itemReward, moneyReward, experienceReward, maxHealthReward, maxOxygenReward);
+					itemRewards, moneyReward, experienceReward, maxHealthReward, maxOxygenReward);
 		}
 	}
 }

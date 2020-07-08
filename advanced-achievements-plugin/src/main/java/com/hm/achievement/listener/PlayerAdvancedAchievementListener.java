@@ -177,7 +177,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		databaseManager.registerAchievement(player.getUniqueId(), event.getName(), event.getMessage());
 
 		List<String> rewardTexts = giveRewardsAndPrepareTexts(player, event.getCommandRewards(), event.getCommandMessages(),
-				event.getItemReward(), event.getMoneyReward(), event.getExperienceReward(), event.getMaxHealthReward(),
+				event.getItemRewards(), event.getMoneyReward(), event.getExperienceReward(), event.getMaxHealthReward(),
 				event.getMaxOxygenReward());
 		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage(), rewardTexts);
 
@@ -200,13 +200,13 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @return all the reward texts to be displayed to the user
 	 */
 	private List<String> giveRewardsAndPrepareTexts(Player player, String[] commands, List<String> commandMessages,
-			ItemStack item, int money, int experience, int health, int oxygen) {
+			ItemStack[] items, int money, int experience, int health, int oxygen) {
 		List<String> rewardTexts = new ArrayList<>();
 		if (commands != null && commands.length > 0) {
 			rewardTexts.addAll(rewardCommands(commands, commandMessages));
 		}
-		if (item != null) {
-			rewardTexts.add(rewardItem(player, item));
+		if (items != null) {
+			rewardTexts.addAll(rewardItems(player, items));
 		}
 		if (money != 0) {
 			rewardTexts.add(rewardMoney(player, money));
@@ -250,19 +250,23 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * Gives an item reward to a player.
 	 *
 	 * @param player
-	 * @param item
+	 * @param items
 	 * @return the reward text to display to the player
 	 */
-	private String rewardItem(Player player, ItemStack item) {
-		if (player.getInventory().firstEmpty() != -1) {
-			player.getInventory().addItem(item);
-		} else {
-			player.getWorld().dropItem(player.getLocation(), item);
+	private List<String> rewardItems(Player player, ItemStack[] items) {
+		List<String> itemNames = new ArrayList<>();
+		for (ItemStack item : items) {
+			if (player.getInventory().firstEmpty() != -1) {
+				player.getInventory().addItem(item);
+			} else {
+				player.getWorld().dropItem(player.getLocation(), item);
+			}
+			ItemMeta itemMeta = item.getItemMeta();
+			String name = itemMeta.hasDisplayName() ? itemMeta.getDisplayName() : rewardParser.getItemName(item);
+			itemNames.add(StringUtils.replaceEach(langItemRewardReceived, new String[] { "AMOUNT", "ITEM" },
+					new String[] { Integer.toString(item.getAmount()), name }));
 		}
-		ItemMeta itemMeta = item.getItemMeta();
-		String name = itemMeta.hasDisplayName() ? itemMeta.getDisplayName() : rewardParser.getItemName(item);
-		return StringUtils.replaceEach(langItemRewardReceived, new String[] { "AMOUNT", "ITEM" },
-				new String[] { Integer.toString(item.getAmount()), name });
+		return itemNames;
 	}
 
 	/**
@@ -525,7 +529,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		List<String> rewardTexts = giveRewardsAndPrepareTexts(player,
 				rewardParser.getCommandRewards("AllAchievementsReceivedRewards", player),
 				rewardParser.getCustomCommandMessages("AllAchievementsReceivedRewards"),
-				rewardParser.getItemReward("AllAchievementsReceivedRewards", player),
+				rewardParser.getItemRewards("AllAchievementsReceivedRewards", player),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "Money"),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "Experience"),
 				rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "IncreaseMaxHealth"),
