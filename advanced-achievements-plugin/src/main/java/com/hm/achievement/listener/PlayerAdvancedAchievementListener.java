@@ -192,7 +192,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @param player
 	 * @param commands
 	 * @param commandMessages
-	 * @param item
+	 * @param items
 	 * @param money
 	 * @param experience
 	 * @param health
