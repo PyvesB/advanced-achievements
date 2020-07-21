@@ -43,6 +43,9 @@ public enum MultipleAchievements implements Category {
 		this.permName = "achievement.count." + categoryName.toLowerCase();
 		this.langKey = "list-" + name().toLowerCase();
 	}
+	public String getCategoryName() {
+		return categoryName;
+	}
 
 	/**
 	 * Finds the category matching the provided name.

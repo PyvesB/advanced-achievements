@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 import javax.inject.Singleton;
 
+import com.hm.achievement.module.*;
+import dagger.Provides;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,13 +14,6 @@ import com.hm.achievement.api.AdvancedAchievementsAPI;
 import com.hm.achievement.api.AdvancedAchievementsBukkitAPI;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.PluginLoader;
-import com.hm.achievement.module.CleanableModule;
-import com.hm.achievement.module.CommandModule;
-import com.hm.achievement.module.ConfigModule;
-import com.hm.achievement.module.DatabaseModule;
-import com.hm.achievement.module.ReloadableModule;
-import com.hm.achievement.module.ServerVersionModule;
-import com.hm.achievement.module.UpdateCheckerModule;
 
 import dagger.BindsInstance;
 import dagger.Component;
@@ -79,6 +74,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		ServerVersionModule.class,
 		UpdateCheckerModule.class
 })
+
 interface AdvancedAchievementsComponent {
 
 	PluginLoader pluginLoader();

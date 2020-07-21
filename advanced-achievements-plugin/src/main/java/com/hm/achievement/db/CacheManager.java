@@ -10,11 +10,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.hm.achievement.achievement.Achievement;
+import com.hm.achievement.achievement.AchievementBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 
@@ -36,6 +39,7 @@ public class CacheManager implements Cleanable {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final CommentedYamlConfiguration mainConfig;
+	private static CommentedYamlConfiguration mainConfigStatic;
 	private final AbstractDatabaseManager databaseManager;
 	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
 	private final Map<NormalAchievements, Map<UUID, CachedStatistic>> normalAchievementsToPlayerStatistics;
@@ -43,10 +47,15 @@ public class CacheManager implements Cleanable {
 	// UUIDs and block/entity/command identifiers.
 	private final Map<MultipleAchievements, Map<SubcategoryUUID, CachedStatistic>> multipleAchievementsToPlayerStatistics;
 	// Multimaps corresponding to the different achievements received by the players.
+
 	private final Map<UUID, Set<String>> receivedAchievementsCache;
 	private final Map<UUID, Set<String>> notReceivedAchievementsCache;
 	// Map corresponding to the total amount of achievements received by each player.
 	private final Map<UUID, Integer> totalPlayerAchievementsCache;
+
+	private final static Set<Achievement> cache = new HashSet<>();
+	private final static Map<String, Achievement> nameMap = new HashMap<>();
+	private final static Map<String, Set<Achievement>> categoryMap = new HashMap<>();
 
 	@Inject
 	public CacheManager(AdvancedAchievements advancedAchievements, @Named("main") CommentedYamlConfiguration mainConfig,
@@ -67,6 +76,71 @@ public class CacheManager implements Cleanable {
 			multipleAchievementsToPlayerStatistics.put(multipleAchievement, new ConcurrentHashMap<>());
 		}
 		totalPlayerAchievementsCache = new ConcurrentHashMap<>();
+		mainConfigStatic = mainConfig;
+
+	}
+
+	public Map<UUID, Set<String>> getReceivedAchievementsCache() {
+		return receivedAchievementsCache;
+	}
+	public Set<Achievement> getCache() {
+		return cache;
+	}
+
+	public static void loadstatic() {
+		cache.clear();
+		nameMap.clear();
+		for (NormalAchievements value : NormalAchievements.values()) {
+			if (mainConfigStatic.contains(value.getCategoryName())) {
+				cache.addAll(loadInner(value.getCategoryName(), value.getCategoryName()));
+			}
+		}
+		for (MultipleAchievements value : MultipleAchievements.values()) {
+			cache.addAll(loadMulti(value.getCategoryName()));
+		}
+		nameMap.putAll(cache.stream().collect(Collectors.toMap(a -> a.getName().toLowerCase(), i -> i)));
+		categoryMap.putAll(cache.stream().collect(Collectors.groupingBy(a -> a.getName().toLowerCase(), Collectors.toSet())));
+	}
+
+	public void load() {
+
+	}
+
+
+	public Achievement getByName(String name) {
+		return nameMap.get(name);
+	}
+	public Set<Achievement> getByCategory(String category) {
+		return categoryMap.getOrDefault(category, new HashSet<>());
+	}
+
+	private static Set<Achievement> loadMulti(String category) {
+		Set<Achievement> achievement = new HashSet<>();
+		for (String key : mainConfigStatic.getConfigurationSection(category).getKeys(false)) {
+			String innerSection = category + "." + key;
+			achievement.addAll(loadInner(innerSection, category));
+		}
+		return achievement;
+
+	}
+	private static Set<Achievement> loadInner(String section, String category) {
+		Set<Achievement> achievements = new HashSet<>();
+		for (String innerKey : mainConfigStatic.getConfigurationSection(section).getKeys(false)) {
+			int requirement = Integer.parseInt(innerKey);
+			String path = section + "." + innerKey + ".";
+			String goal = mainConfigStatic.getString(path + "Goal", "");
+			String displayName = mainConfigStatic.getString(path + "DisplayName", "");
+			String name = mainConfigStatic.getString(path + "Name");
+			String message = mainConfigStatic.getString(path + "Message", "");
+			achievements.add(new AchievementBuilder().name(name)
+					.goal(goal)
+					.message(message)
+					.displayName(displayName)
+					.requirement(requirement)
+					.category(category)
+					.build());
+		}
+		return achievements;
 	}
 
 	@Override

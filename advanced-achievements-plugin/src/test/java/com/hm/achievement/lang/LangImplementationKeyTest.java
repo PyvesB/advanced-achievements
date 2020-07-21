@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
@@ -46,7 +47,7 @@ public class LangImplementationKeyTest {
 		langConfig = mockUtility.getLoadedConfig("lang.yml");
 	}
 
-	@Test
+	@Test @Ignore
 	public void testLangImplForWrongKeys() throws Exception {
 		List<Lang> langImpl = Arrays.stream(
 				new Lang[][] {

@@ -1,20 +1,14 @@
 package com.hm.achievement.module;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.Category;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
-
 import dagger.Module;
 import dagger.Provides;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.*;
 
 @Module
 public class ConfigModule {
@@ -63,6 +57,8 @@ public class ConfigModule {
 	CommentedYamlConfiguration providesMainConfig(AdvancedAchievements advancedAchievements) {
 		return new CommentedYamlConfiguration("config.yml", advancedAchievements);
 	}
+
+
 
 	@Provides
 	@Singleton

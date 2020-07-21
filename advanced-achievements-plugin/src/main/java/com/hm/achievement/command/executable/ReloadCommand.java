@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.hm.achievement.db.CacheManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -42,17 +43,19 @@ public class ReloadCommand extends AbstractCommand {
 	private String langConfigReloadFailed;
 	private String langConfigSuccessfullyReloaded;
 
+
 	@Inject
 	public ReloadCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, Logger logger,
-			Lazy<PluginLoader> pluginLoader, Lazy<Set<Reloadable>> reloadables) {
+						 @Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
+						 StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, Logger logger,
+						 Lazy<PluginLoader> pluginLoader, Lazy<Set<Reloadable>> reloadables) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.guiConfig = guiConfig;
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.pluginLoader = pluginLoader;
 		this.reloadables = reloadables;
+
 	}
 
 	@Override
@@ -84,6 +87,8 @@ public class ReloadCommand extends AbstractCommand {
 			langConfig.loadConfiguration();
 			guiConfig.loadConfiguration();
 			pluginLoader.get().loadAdvancedAchievements(false);
+			CacheManager.loadstatic();
+			System.out.println("Reloaded CacheManager");
 		} catch (PluginLoadError | IOException | InvalidConfigurationException e) {
 			if (sender instanceof Player) {
 				sender.sendMessage(langConfigReloadFailed);

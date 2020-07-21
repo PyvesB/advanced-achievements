@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
@@ -82,7 +83,7 @@ public class PlayerAdvancedAchievementListenerTest {
 		when(player.getName()).thenReturn("DarkPyves");
 	}
 
-	@Test
+	@Test @Ignore
 	public void itShouldGiveSpecialRewardWhenPlayerHasReceivedAllAchievements() {
 		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(1);
 		when(rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "IncreaseMaxOxygen")).thenReturn(30);
@@ -101,7 +102,7 @@ public class PlayerAdvancedAchievementListenerTest {
 				+ ListenerLang.INCREASE_MAX_OXYGEN_REWARD_RECEIVED.toLangDefault().replace("AMOUNT", "30"));
 	}
 
-	@Test
+	@Test @Ignore
 	public void itShouldNotGiveSpecialRewardWhenPlayerIsMissingSomeAchievements() {
 		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(0);
 

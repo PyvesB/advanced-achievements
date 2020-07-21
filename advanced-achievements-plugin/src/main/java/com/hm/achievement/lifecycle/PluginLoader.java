@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.hm.achievement.db.CacheManager;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -84,6 +85,7 @@ public class PluginLoader {
 	private final CommentedYamlConfiguration mainConfig;
 	private final ConfigurationParser configurationParser;
 
+
 	// Plugin runnable classes.
 	private final AchieveDistanceRunnable distanceRunnable;
 	private final AchievePlayTimeRunnable playTimeRunnable;
@@ -93,17 +95,18 @@ public class PluginLoader {
 	private BukkitTask playedTimeTask;
 	private BukkitTask distanceTask;
 
+
 	@Inject
 	public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger, Set<Reloadable> reloadables,
-			FireworkListener fireworkListener, JoinListener joinListener, ListGUIListener listGUIListener,
-			PlayerAdvancedAchievementListener playerAdvancedAchievementListener, QuitListener quitListener,
-			TeleportListener teleportListener, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
-			Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
-			AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
-			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
-			Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
-			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
-			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand) {
+						FireworkListener fireworkListener, JoinListener joinListener, ListGUIListener listGUIListener,
+						PlayerAdvancedAchievementListener playerAdvancedAchievementListener, QuitListener quitListener,
+						TeleportListener teleportListener, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
+						Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
+						AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
+						PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
+						Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
+						ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
+						AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.reloadables = reloadables;
@@ -126,6 +129,7 @@ public class PluginLoader {
 		this.playTimeRunnable = playTimeRunnable;
 		this.updateChecker = updateChecker;
 		this.reloadCommand = reloadCommand;
+
 	}
 
 	/**
@@ -140,6 +144,7 @@ public class PluginLoader {
 		if (firstLoad) {
 			databaseManager.initialise();
 			initialiseCommands();
+			Bukkit.getScheduler().runTaskLater(advancedAchievements, () -> CacheManager.loadstatic(), 20);
 		}
 		launchScheduledTasks();
 		launchUpdateChecker();
