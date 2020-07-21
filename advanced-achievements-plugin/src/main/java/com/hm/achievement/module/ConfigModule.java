@@ -58,8 +58,6 @@ public class ConfigModule {
 		return new CommentedYamlConfiguration("config.yml", advancedAchievements);
 	}
 
-
-
 	@Provides
 	@Singleton
 	@Named("lang")

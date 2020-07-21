@@ -43,12 +43,11 @@ public class ReloadCommand extends AbstractCommand {
 	private String langConfigReloadFailed;
 	private String langConfigSuccessfullyReloaded;
 
-
 	@Inject
 	public ReloadCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-						 @Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-						 StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, Logger logger,
-						 Lazy<PluginLoader> pluginLoader, Lazy<Set<Reloadable>> reloadables) {
+			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
+			StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, Logger logger,
+			Lazy<PluginLoader> pluginLoader, Lazy<Set<Reloadable>> reloadables) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.guiConfig = guiConfig;
 		this.advancedAchievements = advancedAchievements;

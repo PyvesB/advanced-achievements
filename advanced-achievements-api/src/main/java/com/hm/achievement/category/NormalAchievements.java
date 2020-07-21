@@ -60,16 +60,12 @@ public enum NormalAchievements implements Category {
 		}
 	}
 
-
-
 	private final String categoryName;
 	private final String langName;
 	private final String langDefault;
 	private final String configComment;
 	private final String dbName;
 	private final String permName;
-
-
 
 	NormalAchievements(String categoryName, String langName, String langDefault, String configComment) {
 		this.categoryName = categoryName;
@@ -83,6 +79,7 @@ public enum NormalAchievements implements Category {
 	public String getCategoryName() {
 		return categoryName;
 	}
+
 	/**
 	 * Finds the category matching the provided name.
 	 * 

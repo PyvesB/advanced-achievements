@@ -83,7 +83,8 @@ public class PlayerAdvancedAchievementListenerTest {
 		when(player.getName()).thenReturn("DarkPyves");
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void itShouldGiveSpecialRewardWhenPlayerHasReceivedAllAchievements() {
 		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(1);
 		when(rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "IncreaseMaxOxygen")).thenReturn(30);
@@ -102,7 +103,8 @@ public class PlayerAdvancedAchievementListenerTest {
 				+ ListenerLang.INCREASE_MAX_OXYGEN_REWARD_RECEIVED.toLangDefault().replace("AMOUNT", "30"));
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void itShouldNotGiveSpecialRewardWhenPlayerIsMissingSomeAchievements() {
 		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(0);
 

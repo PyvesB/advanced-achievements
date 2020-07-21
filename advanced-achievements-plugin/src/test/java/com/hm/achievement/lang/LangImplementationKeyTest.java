@@ -47,7 +47,8 @@ public class LangImplementationKeyTest {
 		langConfig = mockUtility.getLoadedConfig("lang.yml");
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testLangImplForWrongKeys() throws Exception {
 		List<Lang> langImpl = Arrays.stream(
 				new Lang[][] {

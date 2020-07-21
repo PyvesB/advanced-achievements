@@ -85,7 +85,6 @@ public class PluginLoader {
 	private final CommentedYamlConfiguration mainConfig;
 	private final ConfigurationParser configurationParser;
 
-
 	// Plugin runnable classes.
 	private final AchieveDistanceRunnable distanceRunnable;
 	private final AchievePlayTimeRunnable playTimeRunnable;
@@ -95,18 +94,17 @@ public class PluginLoader {
 	private BukkitTask playedTimeTask;
 	private BukkitTask distanceTask;
 
-
 	@Inject
 	public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger, Set<Reloadable> reloadables,
-						FireworkListener fireworkListener, JoinListener joinListener, ListGUIListener listGUIListener,
-						PlayerAdvancedAchievementListener playerAdvancedAchievementListener, QuitListener quitListener,
-						TeleportListener teleportListener, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
-						Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
-						AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
-						PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
-						Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
-						ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
-						AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand) {
+			FireworkListener fireworkListener, JoinListener joinListener, ListGUIListener listGUIListener,
+			PlayerAdvancedAchievementListener playerAdvancedAchievementListener, QuitListener quitListener,
+			TeleportListener teleportListener, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
+			Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
+			AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
+			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
+			Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
+			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
+			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.reloadables = reloadables;

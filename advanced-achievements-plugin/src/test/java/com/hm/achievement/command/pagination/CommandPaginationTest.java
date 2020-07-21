@@ -50,7 +50,8 @@ public class CommandPaginationTest {
 		langConfig = mockUtility.getLoadedConfig("lang.yml");
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testPagination() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
@@ -66,7 +67,8 @@ public class CommandPaginationTest {
 		assertEquals(expected, result);
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testPaginationPage2() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
@@ -82,7 +84,8 @@ public class CommandPaginationTest {
 		assertEquals(expected, result);
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testPaginationPage3() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
@@ -98,7 +101,8 @@ public class CommandPaginationTest {
 		assertEquals(expected, result);
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testPaginationPage4() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
@@ -113,7 +117,8 @@ public class CommandPaginationTest {
 		assertEquals(expected, result);
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testPaginationPage5WhenOnly4Pages() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
@@ -128,7 +133,8 @@ public class CommandPaginationTest {
 		assertEquals(expected, result);
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testPaginationPageSinglePage() {
 		CommandPagination pagination = new CommandPagination(Collections.singletonList("1"), 18, langConfig);
 
@@ -143,7 +149,8 @@ public class CommandPaginationTest {
 		assertEquals(expected, result);
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testEmptyPagination() {
 		CommandPagination pagination = new CommandPagination(Collections.emptyList(), 18, langConfig);
 

@@ -83,6 +83,7 @@ public class CacheManager implements Cleanable {
 	public Map<UUID, Set<String>> getReceivedAchievementsCache() {
 		return receivedAchievementsCache;
 	}
+
 	public Set<Achievement> getCache() {
 		return cache;
 	}
@@ -99,17 +100,18 @@ public class CacheManager implements Cleanable {
 			cache.addAll(loadMulti(value.getCategoryName()));
 		}
 		nameMap.putAll(cache.stream().collect(Collectors.toMap(a -> a.getName().toLowerCase(), i -> i)));
-		categoryMap.putAll(cache.stream().collect(Collectors.groupingBy(a -> a.getName().toLowerCase(), Collectors.toSet())));
+		categoryMap
+				.putAll(cache.stream().collect(Collectors.groupingBy(a -> a.getName().toLowerCase(), Collectors.toSet())));
 	}
 
 	public void load() {
 
 	}
 
-
 	public Achievement getByName(String name) {
 		return nameMap.get(name);
 	}
+
 	public Set<Achievement> getByCategory(String category) {
 		return categoryMap.getOrDefault(category, new HashSet<>());
 	}
@@ -123,6 +125,7 @@ public class CacheManager implements Cleanable {
 		return achievement;
 
 	}
+
 	private static Set<Achievement> loadInner(String section, String category) {
 		Set<Achievement> achievements = new HashSet<>();
 		for (String innerKey : mainConfigStatic.getConfigurationSection(section).getKeys(false)) {

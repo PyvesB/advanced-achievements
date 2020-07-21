@@ -36,13 +36,12 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 	private final Map<String, BiFunction<UUID, String, String>> placeholderWithSingleArgs = new HashMap<>();
 	private final Map<String, Function<UUID, String>> placeholderWithoutArgs = new HashMap<>();
 
-
 	@Inject
 	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements,
-									  @Named("main") CommentedYamlConfiguration mainConfig,
-									  AbstractDatabaseManager databaseManager,
-									  CacheManager cacheManager,
-									  @Named("ntd") Map<String, String> namesToDisplayNames) {
+			@Named("main") CommentedYamlConfiguration mainConfig,
+			AbstractDatabaseManager databaseManager,
+			CacheManager cacheManager,
+			@Named("ntd") Map<String, String> namesToDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.mainConfig = mainConfig;
 		this.cacheManager = cacheManager;
@@ -61,7 +60,6 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		placeholderWithSingleArgs.put("receivedDate_", this::getCompletedDate);
 
 	}
-
 
 	@Override
 	public boolean persist() {
@@ -92,7 +90,8 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		String[] splitId = checkIdentifier.split("_");
 		for (String argument : placeholderWithSingleArgs.keySet()) {
 			if (checkIdentifier.startsWith(argument)) {
-				return placeholderWithSingleArgs.get(argument).apply(uuid, checkIdentifier.replaceFirst("(?i)" + argument, ""));
+				return placeholderWithSingleArgs.get(argument).apply(uuid,
+						checkIdentifier.replaceFirst("(?i)" + argument, ""));
 			}
 		}
 		if (placeholderWithArgs.containsKey(splitId[0])) {
@@ -115,9 +114,10 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 			return null;
 		String regex = args[0].replace("-", "_");
 		String category = args[1].replace("-", "_");
-		long[] count = {0};
+		long[] count = { 0 };
 		cacheManager.getByCategory(category).stream().filter(i -> i.getName().matches(regex)).forEach(achievement -> {
-			count[0] = cacheManager.getReceivedAchievementsCache().get(uuid).stream().filter(i -> i.equalsIgnoreCase(achievement.getName())).count();
+			count[0] = cacheManager.getReceivedAchievementsCache().get(uuid).stream()
+					.filter(i -> i.equalsIgnoreCase(achievement.getName())).count();
 		});
 		return "" + count[0];
 	}
@@ -150,15 +150,13 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 			return null;
 		return "" + a.getRequirement();
 	}
+
 	public String getCompletedDate(UUID uuid, String aName) {
 		if (cacheManager.hasPlayerAchievement(uuid, aName)) {
 			return abstractDatabaseManager.getPlayerAchievementDate(uuid, aName);
 		}
 		return null;
 	}
-
-
-
 
 	private String getTotalAchievements() {
 		return Integer.toString(namesToDisplayNames.size());
@@ -176,8 +174,6 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 	private String unlockedPlaceholder(UUID uuid, String name) {
 		return Boolean.toString(cacheManager.hasPlayerAchievement(uuid, name));
 	}
-
-
 
 	private String getNormalAchievements(String identifier, UUID uuid) {
 		for (NormalAchievements category : NormalAchievements.values()) {
