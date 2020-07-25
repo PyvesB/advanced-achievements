@@ -1,13 +1,8 @@
 package com.hm.achievement.db;
 
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,7 +34,6 @@ public class CacheManager implements Cleanable {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final CommentedYamlConfiguration mainConfig;
-	private static CommentedYamlConfiguration mainConfigStatic;
 	private final AbstractDatabaseManager databaseManager;
 	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
 	private final Map<NormalAchievements, Map<UUID, CachedStatistic>> normalAchievementsToPlayerStatistics;
@@ -76,7 +70,6 @@ public class CacheManager implements Cleanable {
 			multipleAchievementsToPlayerStatistics.put(multipleAchievement, new ConcurrentHashMap<>());
 		}
 		totalPlayerAchievementsCache = new ConcurrentHashMap<>();
-		mainConfigStatic = mainConfig;
 
 	}
 
@@ -88,62 +81,12 @@ public class CacheManager implements Cleanable {
 		return cache;
 	}
 
-	public static void loadstatic() {
-		cache.clear();
-		nameMap.clear();
-		for (NormalAchievements value : NormalAchievements.values()) {
-			if (mainConfigStatic.contains(value.getCategoryName())) {
-				cache.addAll(loadInner(value.getCategoryName(), value.getCategoryName()));
-			}
-		}
-		for (MultipleAchievements value : MultipleAchievements.values()) {
-			cache.addAll(loadMulti(value.getCategoryName()));
-		}
-		nameMap.putAll(cache.stream().collect(Collectors.toMap(a -> a.getName().toLowerCase(), i -> i)));
-		categoryMap
-				.putAll(cache.stream().collect(Collectors.groupingBy(a -> a.getName().toLowerCase(), Collectors.toSet())));
-	}
+	public void populateCache(UUID uuid) {
+		CompletableFuture.runAsync(() -> {
+			List<String> playerAchievementNamesList = databaseManager.getPlayerAchievementNamesList(uuid);
+			receivedAchievementsCache.put(uuid, new HashSet<>(playerAchievementNamesList));
+		});
 
-	public void load() {
-
-	}
-
-	public Achievement getByName(String name) {
-		return nameMap.get(name);
-	}
-
-	public Set<Achievement> getByCategory(String category) {
-		return categoryMap.getOrDefault(category, new HashSet<>());
-	}
-
-	private static Set<Achievement> loadMulti(String category) {
-		Set<Achievement> achievement = new HashSet<>();
-		for (String key : mainConfigStatic.getConfigurationSection(category).getKeys(false)) {
-			String innerSection = category + "." + key;
-			achievement.addAll(loadInner(innerSection, category));
-		}
-		return achievement;
-
-	}
-
-	private static Set<Achievement> loadInner(String section, String category) {
-		Set<Achievement> achievements = new HashSet<>();
-		for (String innerKey : mainConfigStatic.getConfigurationSection(section).getKeys(false)) {
-			int requirement = Integer.parseInt(innerKey);
-			String path = section + "." + innerKey + ".";
-			String goal = mainConfigStatic.getString(path + "Goal", "");
-			String displayName = mainConfigStatic.getString(path + "DisplayName", "");
-			String name = mainConfigStatic.getString(path + "Name");
-			String message = mainConfigStatic.getString(path + "Message", "");
-			achievements.add(new AchievementBuilder().name(name)
-					.goal(goal)
-					.message(message)
-					.displayName(displayName)
-					.requirement(requirement)
-					.category(category)
-					.build());
-		}
-		return achievements;
 	}
 
 	@Override
