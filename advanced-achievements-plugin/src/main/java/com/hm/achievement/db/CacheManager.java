@@ -48,8 +48,6 @@ public class CacheManager implements Cleanable {
 	private final Map<UUID, Integer> totalPlayerAchievementsCache;
 
 	private final static Set<Achievement> cache = new HashSet<>();
-	private final static Map<String, Achievement> nameMap = new HashMap<>();
-	private final static Map<String, Set<Achievement>> categoryMap = new HashMap<>();
 
 	@Inject
 	public CacheManager(AdvancedAchievements advancedAchievements, @Named("main") CommentedYamlConfiguration mainConfig,
