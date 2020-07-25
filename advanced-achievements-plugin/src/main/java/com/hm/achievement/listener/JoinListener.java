@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.hm.achievement.db.CacheManager;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
@@ -36,15 +37,18 @@ public class JoinListener implements Listener, Cleanable {
 	private final Set<UUID> playersConnectionProcessed = new HashSet<>();
 	private final AdvancedAchievements advancedAchievements;
 	private final AbstractDatabaseManager databaseManager;
+	private final CacheManager cacheManager;
 
 	private final int serverVersion;
 
 	@Inject
 	public JoinListener(int serverVersion, AdvancedAchievements advancedAchievements,
-			AbstractDatabaseManager databaseManager) {
+			AbstractDatabaseManager databaseManager,
+						CacheManager cacheManager) {
 		this.serverVersion = serverVersion;
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;
+		this.cacheManager = cacheManager;
 	}
 
 	@Override
@@ -54,6 +58,7 @@ public class JoinListener implements Listener, Cleanable {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		cacheManager.populateCache(event.getPlayer().getUniqueId());
 		if (serverVersion >= 12) {
 			scheduleAwardAdvancements(event.getPlayer());
 		}
