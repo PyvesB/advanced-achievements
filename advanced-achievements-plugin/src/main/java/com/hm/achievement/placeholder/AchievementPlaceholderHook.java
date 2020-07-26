@@ -115,7 +115,6 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 	public String getGoal(UUID uuid, String[] args) {
 		String aName = String.join("_", args);
-		System.out.println("aname: " + aName);
 		Achievement a = achievementCache.getByName(aName);
 		if (a == null)
 			return null;
