@@ -44,7 +44,7 @@ public class JoinListener implements Listener, Cleanable {
 	@Inject
 	public JoinListener(int serverVersion, AdvancedAchievements advancedAchievements,
 			AbstractDatabaseManager databaseManager,
-						CacheManager cacheManager) {
+			CacheManager cacheManager) {
 		this.serverVersion = serverVersion;
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;

@@ -89,16 +89,16 @@ public class PluginLoader {
 
 	@Inject
 	public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger, Set<Reloadable> reloadables,
-						FireworkListener fireworkListener, JoinListener joinListener, ListGUIListener listGUIListener,
-						PlayerAdvancedAchievementListener playerAdvancedAchievementListener, QuitListener quitListener,
-						TeleportListener teleportListener, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
-						Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
-						AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
-						PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
-						Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
-						ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
-						AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand,
-						AchievementCache achievementCache) {
+			FireworkListener fireworkListener, JoinListener joinListener, ListGUIListener listGUIListener,
+			PlayerAdvancedAchievementListener playerAdvancedAchievementListener, QuitListener quitListener,
+			TeleportListener teleportListener, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
+			Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
+			AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
+			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
+			Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
+			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
+			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand,
+			AchievementCache achievementCache) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.reloadables = reloadables;

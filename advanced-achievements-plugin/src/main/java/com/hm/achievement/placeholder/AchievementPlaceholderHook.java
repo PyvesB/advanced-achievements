@@ -40,11 +40,11 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 	@Inject
 	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements,
-									  @Named("main") CommentedYamlConfiguration mainConfig,
-									  AbstractDatabaseManager databaseManager,
-									  CacheManager cacheManager,
-									  AchievementCache achievementCache,
-									  @Named("ntd") Map<String, String> namesToDisplayNames) {
+			@Named("main") CommentedYamlConfiguration mainConfig,
+			AbstractDatabaseManager databaseManager,
+			CacheManager cacheManager,
+			AchievementCache achievementCache,
+			@Named("ntd") Map<String, String> namesToDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.mainConfig = mainConfig;
 		this.cacheManager = cacheManager;
@@ -102,7 +102,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 		String regex = String.join("_", Arrays.copyOfRange(args, 2, args.length));
 		String category = args[0];
-		long[] count = {0};
+		long[] count = { 0 };
 		achievementCache.getByCategory(category).stream().filter(i -> i.getName().matches(regex)).forEach(achievement -> {
 
 			count[0] += cacheManager.getReceivedAchievementsCache().getOrDefault(uuid, new HashSet<>()).stream()

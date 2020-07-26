@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AchievementCache implements Reloadable {
+
 	private final Set<Achievement> cache = new HashSet<>();
 	private final Map<String, Achievement> nameMap = new HashMap<>();
 	private final Map<String, Set<Achievement>> categoryMap = new HashMap<>();
@@ -26,7 +27,6 @@ public class AchievementCache implements Reloadable {
 	public AchievementCache(@Named("main") CommentedYamlConfiguration mainConfig) {
 		this.mainConfig = mainConfig;
 	}
-
 
 	public Achievement getByName(String name) {
 		return nameMap.get(name.toLowerCase());
@@ -49,7 +49,8 @@ public class AchievementCache implements Reloadable {
 		}
 		nameMap.putAll(cache.stream().collect(Collectors.toMap(a -> a.getName().toLowerCase(), i -> i)));
 		categoryMap
-				.putAll(cache.stream().collect(Collectors.groupingBy(a -> a.getCategory().toLowerCase(), Collectors.toSet())));
+				.putAll(cache.stream()
+						.collect(Collectors.groupingBy(a -> a.getCategory().toLowerCase(), Collectors.toSet())));
 	}
 
 	private Set<Achievement> loadMulti(String category) {
