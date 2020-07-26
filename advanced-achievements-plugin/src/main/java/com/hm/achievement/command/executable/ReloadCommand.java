@@ -1,29 +1,26 @@
 package com.hm.achievement.command.executable;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import com.hm.achievement.db.CacheManager;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.Player;
-
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.db.AchievementCache;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lifecycle.PluginLoader;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
-
 import dagger.Lazy;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.Player;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.io.IOException;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class in charge of handling the /aach reload command, which reloads the plugin's configuration files.
@@ -39,6 +36,7 @@ public class ReloadCommand extends AbstractCommand {
 	private final Logger logger;
 	private final Lazy<PluginLoader> pluginLoader;
 	private final Lazy<Set<Reloadable>> reloadables;
+	private final AchievementCache achievementCache;
 
 	private String langConfigReloadFailed;
 	private String langConfigSuccessfullyReloaded;
@@ -47,13 +45,14 @@ public class ReloadCommand extends AbstractCommand {
 	public ReloadCommand(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
 			StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, Logger logger,
-			Lazy<PluginLoader> pluginLoader, Lazy<Set<Reloadable>> reloadables) {
+			Lazy<PluginLoader> pluginLoader, Lazy<Set<Reloadable>> reloadables, AchievementCache achievementCache) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.guiConfig = guiConfig;
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.pluginLoader = pluginLoader;
 		this.reloadables = reloadables;
+		this.achievementCache = achievementCache;
 
 	}
 
@@ -86,7 +85,7 @@ public class ReloadCommand extends AbstractCommand {
 			langConfig.loadConfiguration();
 			guiConfig.loadConfiguration();
 			pluginLoader.get().loadAdvancedAchievements(false);
-			CacheManager.loadstatic();
+			achievementCache.load();
 			System.out.println("Reloaded CacheManager");
 		} catch (PluginLoadError | IOException | InvalidConfigurationException e) {
 			if (sender instanceof Player) {

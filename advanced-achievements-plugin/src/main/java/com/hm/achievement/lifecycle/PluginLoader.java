@@ -1,13 +1,27 @@
 package com.hm.achievement.lifecycle;
 
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import com.hm.achievement.db.CacheManager;
+import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.Category;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.command.completer.CommandTabCompleter;
+import com.hm.achievement.command.executable.ReloadCommand;
+import com.hm.achievement.command.executor.PluginCommandExecutor;
+import com.hm.achievement.config.ConfigurationParser;
+import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.db.AchievementCache;
+import com.hm.achievement.db.AsyncCachedRequestsSender;
+import com.hm.achievement.exception.PluginLoadError;
+import com.hm.achievement.listener.*;
+import com.hm.achievement.listener.statistics.AbstractListener;
+import com.hm.achievement.placeholder.AchievementCountBungeeTabListPlusVariable;
+import com.hm.achievement.placeholder.AchievementPlaceholderHook;
+import com.hm.achievement.runnable.AchieveDistanceRunnable;
+import com.hm.achievement.runnable.AchievePlayTimeRunnable;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.mcshared.update.UpdateChecker;
+import dagger.Lazy;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -19,33 +33,11 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.Category;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.command.completer.CommandTabCompleter;
-import com.hm.achievement.command.executable.ReloadCommand;
-import com.hm.achievement.command.executor.PluginCommandExecutor;
-import com.hm.achievement.config.ConfigurationParser;
-import com.hm.achievement.db.AbstractDatabaseManager;
-import com.hm.achievement.db.AsyncCachedRequestsSender;
-import com.hm.achievement.exception.PluginLoadError;
-import com.hm.achievement.listener.FireworkListener;
-import com.hm.achievement.listener.JoinListener;
-import com.hm.achievement.listener.ListGUIListener;
-import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
-import com.hm.achievement.listener.QuitListener;
-import com.hm.achievement.listener.TeleportListener;
-import com.hm.achievement.listener.statistics.AbstractListener;
-import com.hm.achievement.placeholder.AchievementCountBungeeTabListPlusVariable;
-import com.hm.achievement.placeholder.AchievementPlaceholderHook;
-import com.hm.achievement.runnable.AchieveDistanceRunnable;
-import com.hm.achievement.runnable.AchievePlayTimeRunnable;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
-import com.hm.mcshared.update.UpdateChecker;
-
-import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
-import dagger.Lazy;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Class in charge of loading/reloading the plugin. Orchestrates the different plugin components together.
@@ -60,6 +52,7 @@ public class PluginLoader {
 	private final Lazy<UpdateChecker> updateChecker;
 	private final ReloadCommand reloadCommand;
 	private final Set<Reloadable> reloadables;
+	private final AchievementCache achievementCache;
 
 	// Listeners, to monitor various events.
 	private final FireworkListener fireworkListener;
@@ -96,15 +89,16 @@ public class PluginLoader {
 
 	@Inject
 	public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger, Set<Reloadable> reloadables,
-			FireworkListener fireworkListener, JoinListener joinListener, ListGUIListener listGUIListener,
-			PlayerAdvancedAchievementListener playerAdvancedAchievementListener, QuitListener quitListener,
-			TeleportListener teleportListener, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
-			Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
-			AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
-			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
-			Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
-			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
-			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand) {
+						FireworkListener fireworkListener, JoinListener joinListener, ListGUIListener listGUIListener,
+						PlayerAdvancedAchievementListener playerAdvancedAchievementListener, QuitListener quitListener,
+						TeleportListener teleportListener, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
+						Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
+						AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
+						PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
+						Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
+						ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
+						AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand,
+						AchievementCache achievementCache) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.reloadables = reloadables;
@@ -127,6 +121,7 @@ public class PluginLoader {
 		this.playTimeRunnable = playTimeRunnable;
 		this.updateChecker = updateChecker;
 		this.reloadCommand = reloadCommand;
+		this.achievementCache = achievementCache;
 
 	}
 
@@ -142,11 +137,13 @@ public class PluginLoader {
 		if (firstLoad) {
 			databaseManager.initialise();
 			initialiseCommands();
-			Bukkit.getScheduler().runTaskLater(advancedAchievements, () -> CacheManager.loadstatic(), 20);
+
 		}
 		launchScheduledTasks();
 		launchUpdateChecker();
 		registerPermissions();
+		achievementCache.load();
+
 		reloadCommand.notifyObservers();
 		if (firstLoad) {
 			linkPlaceholders();

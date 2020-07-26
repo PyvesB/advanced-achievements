@@ -4,27 +4,32 @@ import com.hm.achievement.achievement.Achievement;
 import com.hm.achievement.achievement.AchievementBuilder;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.exception.PluginLoadError;
+import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AchievementCache {
+public class AchievementCache implements Reloadable {
 	private final Set<Achievement> cache = new HashSet<>();
 	private final Map<String, Achievement> nameMap = new HashMap<>();
 	private final Map<String, Set<Achievement>> categoryMap = new HashMap<>();
 	private final CommentedYamlConfiguration mainConfig;
 
-	public AchievementCache(CommentedYamlConfiguration mainConfig) {
+	@Inject
+	public AchievementCache(@Named("main") CommentedYamlConfiguration mainConfig) {
 		this.mainConfig = mainConfig;
 	}
 
 
 	public Achievement getByName(String name) {
-		return nameMap.get(name);
+		return nameMap.get(name.toLowerCase());
 	}
 
 	public Set<Achievement> getByCategory(String category) {
@@ -74,5 +79,10 @@ public class AchievementCache {
 					.build());
 		}
 		return achievements;
+	}
+
+	@Override
+	public void extractConfigurationParameters() {
+		load();
 	}
 }

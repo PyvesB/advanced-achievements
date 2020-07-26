@@ -1,22 +1,18 @@
 package com.hm.achievement;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.inject.Singleton;
-
-import com.hm.achievement.module.*;
-import dagger.Provides;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.hm.achievement.api.AdvancedAchievementsAPI;
 import com.hm.achievement.api.AdvancedAchievementsBukkitAPI;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.PluginLoader;
-
+import com.hm.achievement.module.*;
 import dagger.BindsInstance;
 import dagger.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import javax.inject.Singleton;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Bukkit instantiates an instance of this class and calls the onEnable and onDisable methods when relevant. This class
@@ -72,7 +68,8 @@ public class AdvancedAchievements extends JavaPlugin {
 		DatabaseModule.class,
 		ReloadableModule.class,
 		ServerVersionModule.class,
-		UpdateCheckerModule.class
+		UpdateCheckerModule.class,
+		CacheModule.class
 })
 
 interface AdvancedAchievementsComponent {
