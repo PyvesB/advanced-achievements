@@ -467,27 +467,36 @@ public class CategoryGUI implements Reloadable {
 					statistic, threshold);
 		}
 
-		StringBuilder barDisplay = new StringBuilder().append(configListColorNotReceived).append("[");
+		StringBuilder barDisplay = new StringBuilder().append(configListColorNotReceived).append("[").append(configColor);
 		long numericalThreshold = Long.parseLong(threshold);
 		// Approximation: colours chars account for no size, spaces ~2 vertical bars, other chars ~3 vertical bars.
 		int middleTextSize = configEnrichedProgressBars ? (middleText.length() - 6) * 3 + 4 : 0;
 		boolean hasDisplayedMiddleText = false;
+		boolean hasDisplayedNotReceivedColor = false;
 		int i = 0;
 		while (++i < PROGRESS_BAR_SIZE) {
 			if (configEnrichedProgressBars && !hasDisplayedMiddleText && i >= (PROGRESS_BAR_SIZE - middleTextSize) / 2) {
 				// Middle reached: append enriched statistic information.
 				barDisplay.append(middleText);
+				if (!hasDisplayedNotReceivedColor) {
+					barDisplay.append(configColor);
+				}
 				// Do not display middleText again.
 				hasDisplayedMiddleText = true;
+				hasDisplayedNotReceivedColor = false;
 				// Iterate a number of times equal to the number of iterations so far to have the same number of
 				// vertical bars left and right from the middle text.
 				i = PROGRESS_BAR_SIZE - i;
 			} else if (i < PROGRESS_BAR_SIZE * statisticDouble / numericalThreshold) {
 				// Standard color: progress by user.
-				barDisplay.append(configColor).append("|");
+				barDisplay.append("|");
 			} else {
 				// Not received color: amount not yet reached by user.
-				barDisplay.append(configListColorNotReceived).append("|");
+				if (!hasDisplayedNotReceivedColor) {
+					hasDisplayedNotReceivedColor = true;
+					barDisplay.append(configListColorNotReceived);
+				}
+				barDisplay.append("|");
 			}
 		}
 		return barDisplay.append(configListColorNotReceived).append("]").toString();
