@@ -5,9 +5,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -49,10 +48,9 @@ public class MockUtility {
 
 	public MockUtility withPluginDescription() {
 		try {
-			File pluginYml = new File(getClass().getResource("/plugin.yml").getPath());
-			PluginDescriptionFile desc = new PluginDescriptionFile(new FileInputStream(pluginYml));
-			when(pluginMock.getDescription()).thenReturn(desc);
-		} catch (FileNotFoundException | InvalidDescriptionException e) {
+			InputStream pluginYml = getClass().getClassLoader().getResourceAsStream("plugin.yml");
+			when(pluginMock.getDescription()).thenReturn(new PluginDescriptionFile(pluginYml));
+		} catch (InvalidDescriptionException e) {
 			System.out.println("Error while setting plugin description");
 		}
 		return this;
@@ -62,12 +60,7 @@ public class MockUtility {
 		if (pluginMock.getDataFolder() == null) {
 			throw new IllegalStateException("withDataFolder needs to be called before setting configuration files");
 		}
-		try {
-			File file = new File(getClass().getResource("/" + fileName).getPath());
-			when(pluginMock.getResource(fileName)).thenReturn(new FileInputStream(file));
-		} catch (NullPointerException e) {
-			System.out.println("File is missing! " + fileName + " (MockUtility.withPluginFile)");
-		}
+		when(pluginMock.getResource(fileName)).thenReturn(getClass().getClassLoader().getResourceAsStream(fileName));
 		return this;
 	}
 
