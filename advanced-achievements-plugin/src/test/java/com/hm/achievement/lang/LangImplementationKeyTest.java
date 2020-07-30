@@ -48,7 +48,6 @@ public class LangImplementationKeyTest {
 	}
 
 	@Test
-	@Ignore
 	public void testLangImplForWrongKeys() throws Exception {
 		List<Lang> langImpl = Arrays.stream(
 				new Lang[][] {

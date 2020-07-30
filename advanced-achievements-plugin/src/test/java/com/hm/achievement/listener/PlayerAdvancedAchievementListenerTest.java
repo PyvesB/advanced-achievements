@@ -84,7 +84,6 @@ public class PlayerAdvancedAchievementListenerTest {
 	}
 
 	@Test
-	@Ignore
 	public void itShouldGiveSpecialRewardWhenPlayerHasReceivedAllAchievements() {
 		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(1);
 		when(rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "IncreaseMaxOxygen")).thenReturn(30);
@@ -104,7 +103,6 @@ public class PlayerAdvancedAchievementListenerTest {
 	}
 
 	@Test
-	@Ignore
 	public void itShouldNotGiveSpecialRewardWhenPlayerIsMissingSomeAchievements() {
 		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(0);
 
