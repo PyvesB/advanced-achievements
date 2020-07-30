@@ -7,6 +7,7 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.command.Command;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -55,6 +56,9 @@ public class AchievementCache implements Reloadable {
 				cache.addAll(loadMulti(value.getCategoryName()));
 			}
 		}
+		if (mainConfig.contains(CommandAchievements.COMMANDS.toString())) {
+			cache.addAll(loadInner(CommandAchievements.COMMANDS.toString(), CommandAchievements.COMMANDS.toString()));
+		}
 
 		nameMap.putAll(cache.stream().collect(Collectors.toMap(a -> a.getName().toLowerCase(), i -> i)));
 		categoryMap
@@ -65,7 +69,7 @@ public class AchievementCache implements Reloadable {
 
 	private Set<Achievement> loadMulti(String category) {
 		Set<Achievement> achievement = new HashSet<>();
-		for (String key : mainConfig.getConfigurationSection(category).getKeys(false)) {
+		for (String key : mainConfig.getShallowKeys(category)) {
 			String innerSection = category + "." + key;
 			achievement.addAll(loadInner(innerSection, category, key));
 		}
@@ -75,7 +79,10 @@ public class AchievementCache implements Reloadable {
 	private Set<Achievement> loadInner(String section, String category) {
 		Set<Achievement> achievements = new HashSet<>();
 		for (String inner : mainConfig.getShallowKeys(section)) {
-			int requirement = Integer.parseInt(inner);
+			int requirement = 1;
+			if (inner.matches("\\d+")) {
+				requirement = Integer.parseInt(inner);
+			}
 			String path = section + "." + inner + ".";
 			String goal = mainConfig.getString(path + "Goal", "");
 			String displayName = mainConfig.getString(path + "DisplayName", "");
