@@ -6,6 +6,7 @@ import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executor.PluginCommandExecutor;
 import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.db.AchievementCache;
 import com.hm.achievement.gui.CategoryGUI;
 import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.MainGUI;
@@ -89,6 +90,9 @@ public abstract class ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindAchievePlayTimeRunnable(AchievePlayTimeRunnable achievePlayTimeRunnable);
+
+	@Binds
+	abstract Reloadable bindAchievementCache(AchievementCache achievementCache);
 
 	@Binds
 	@IntoSet

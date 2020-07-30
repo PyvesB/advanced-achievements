@@ -1,14 +1,20 @@
 package com.hm.achievement.module;
 
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.category.Category;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
-import dagger.Module;
-import dagger.Provides;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.*;
+
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.Category;
+import com.hm.mcshared.file.CommentedYamlConfiguration;
+
+import dagger.Module;
+import dagger.Provides;
 
 @Module
 public class ConfigModule {

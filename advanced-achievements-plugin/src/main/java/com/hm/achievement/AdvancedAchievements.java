@@ -69,7 +69,6 @@ public class AdvancedAchievements extends JavaPlugin {
 		ReloadableModule.class,
 		ServerVersionModule.class,
 		UpdateCheckerModule.class,
-		CacheModule.class
 })
 
 interface AdvancedAchievementsComponent {
