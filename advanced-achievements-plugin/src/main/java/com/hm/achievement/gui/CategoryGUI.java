@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.hm.achievement.config.MainConfigController;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -446,7 +445,7 @@ public class CategoryGUI implements Reloadable {
 	 * @param time
 	 * @return progress bar
 	 */
-	private String constructProgressBar(String threshold, long statistic, boolean time) {
+	public String constructProgressBar(String threshold, long statistic, boolean time) {
 		String middleText;
 		double statisticDouble;
 		if (time) {
