@@ -8,14 +8,16 @@ public class Achievement {
 	private final String goal;
 	private final int requirement;
 	private final String category;
+	private final String subCategory;
 
-	public Achievement(String name, String displayName, String message, String goal, int requirement, String category) {
+	public Achievement(String name, String displayName, String message, String goal, int requirement, String category, String subCategory) {
 		this.name = name;
 		this.displayName = displayName;
 		this.message = message;
 		this.goal = goal;
 		this.requirement = requirement;
 		this.category = category;
+		this.subCategory = subCategory;
 	}
 
 	public String getName() {
@@ -40,5 +42,9 @@ public class Achievement {
 
 	public String getCategory() {
 		return category;
+	}
+
+	public String getSubCategory() {
+		return subCategory;
 	}
 }

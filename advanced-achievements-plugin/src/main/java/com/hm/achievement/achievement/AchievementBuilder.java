@@ -8,6 +8,7 @@ public class AchievementBuilder {
 	private String goal;
 	private int requirement;
 	private String category;
+	private String subCategory;
 
 	public AchievementBuilder name(String name) {
 		this.name = name;
@@ -38,9 +39,13 @@ public class AchievementBuilder {
 		this.category = category;
 		return this;
 	}
+	public AchievementBuilder subCategory(String subCategory) {
+		this.subCategory = subCategory;
+		return this;
+	}
 
 	public Achievement build() {
-		return new Achievement(name, displayName, message, goal, requirement, category);
+		return new Achievement(name, displayName, message, goal, requirement, category, subCategory);
 	}
 
 }
