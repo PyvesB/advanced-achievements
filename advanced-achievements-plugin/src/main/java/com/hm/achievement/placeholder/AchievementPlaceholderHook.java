@@ -98,22 +98,17 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		return returnValue;
 	}
 
-	public String getCompleted(UUID uuid, String[] args) {
+	private String getCompleted(UUID uuid, String[] args) {
 
-		String regex = String.join("_", Arrays.copyOfRange(args, 2, args.length));
+		String regex = String.join("_", Arrays.copyOfRange(args, 1, args.length));
 		String category = args[0];
-		long[] count = { 0 };
-		achievementCache.getByCategory(category).stream().filter(i -> i.getName().matches(regex)).forEach(achievement -> {
-
-			count[0] += cacheManager.getReceivedAchievementsCache().getOrDefault(uuid, new HashSet<>()).stream()
-					.filter(i -> {
-						return i.equalsIgnoreCase(achievement.getName());
-					}).count();
-		});
-		return "" + count[0];
+		return "" + achievementCache.getByCategory(category).stream()
+				.filter(achievement -> achievement.getName().matches(regex) &&
+						cacheManager.getReceivedAchievementsCache().getOrDefault(uuid, new HashSet<>()).contains(achievement.getName()))
+				.count();
 	}
 
-	public String getGoal(UUID uuid, String[] args) {
+	private String getGoal(UUID uuid, String[] args) {
 		String aName = String.join("_", args);
 		Achievement a = achievementCache.getByName(aName);
 		if (a == null)
@@ -121,7 +116,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		return a.getGoal();
 	}
 
-	public String getMessage(UUID uuid, String[] args) {
+	private String getMessage(UUID uuid, String[] args) {
 		String aName = String.join("_", args);
 		Achievement a = achievementCache.getByName(aName);
 		if (a == null)
@@ -129,7 +124,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		return a.getMessage();
 	}
 
-	public String getDisplayName(UUID uuid, String[] args) {
+	private String getDisplayName(UUID uuid, String[] args) {
 		String aName = String.join("_", args);
 		Achievement a = achievementCache.getByName(aName);
 		if (a == null)
@@ -137,7 +132,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		return a.getDisplayName();
 	}
 
-	public String getRequirement(UUID uuid, String[] args) {
+	private String getRequirement(UUID uuid, String[] args) {
 		String aName = String.join("_", args);
 		Achievement a = achievementCache.getByName(aName);
 		if (a == null)
@@ -145,7 +140,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		return "" + a.getRequirement();
 	}
 
-	public String getCompletedDate(UUID uuid, String[] args) {
+	private String getCompletedDate(UUID uuid, String[] args) {
 		String aName = String.join("_", args);
 		if (cacheManager.hasPlayerAchievement(uuid, aName)) {
 			return abstractDatabaseManager.getPlayerAchievementDate(uuid, aName);
@@ -171,6 +166,8 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		return Boolean.toString(cacheManager.hasPlayerAchievement(uuid, name));
 	}
 
+
+
 	private String getNormalAchievements(String identifier, UUID uuid) {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			if (identifier.equalsIgnoreCase(category.toString())) {
@@ -194,6 +191,8 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		}
 		return null;
 	}
+
+
 
 	@Override
 	public String getIdentifier() {
