@@ -47,8 +47,6 @@ public class CacheManager implements Cleanable {
 	// Map corresponding to the total amount of achievements received by each player.
 	private final Map<UUID, Integer> totalPlayerAchievementsCache;
 
-	private final static Set<Achievement> cache = new HashSet<>();
-
 	@Inject
 	public CacheManager(AdvancedAchievements advancedAchievements, @Named("main") CommentedYamlConfiguration mainConfig,
 			AbstractDatabaseManager databaseManager) {
@@ -57,7 +55,7 @@ public class CacheManager implements Cleanable {
 		this.databaseManager = databaseManager;
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
-		receivedAchievementsCache = new HashMap<>();
+		receivedAchievementsCache = new ConcurrentHashMap<>();
 		notReceivedAchievementsCache = new HashMap<>();
 
 		// ConcurrentHashMaps are necessary to guarantee thread safety.
@@ -75,11 +73,10 @@ public class CacheManager implements Cleanable {
 		return receivedAchievementsCache;
 	}
 
-	public Set<Achievement> getCache() {
-		return cache;
-	}
 
 	public void populateCache(UUID uuid) {
+		if (receivedAchievementsCache.containsKey(uuid))
+			return;
 		CompletableFuture.runAsync(() -> {
 			List<String> playerAchievementNamesList = databaseManager.getPlayerAchievementNamesList(uuid);
 			receivedAchievementsCache.put(uuid, new HashSet<>(playerAchievementNamesList));
