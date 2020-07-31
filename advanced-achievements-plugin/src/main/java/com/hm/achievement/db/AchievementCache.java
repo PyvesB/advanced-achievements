@@ -66,7 +66,6 @@ public class AchievementCache implements Reloadable {
 						.collect(Collectors.groupingBy(a -> a.getCategory().toLowerCase(), Collectors.toSet())));
 	}
 
-
 	private Set<Achievement> loadMulti(String category) {
 		Set<Achievement> achievement = new HashSet<>();
 		for (String key : mainConfig.getShallowKeys(category)) {
@@ -98,6 +97,7 @@ public class AchievementCache implements Reloadable {
 		}
 		return achievements;
 	}
+
 	private Set<Achievement> loadInner(String section, String category, String subCategory) {
 		Set<Achievement> achievements = new HashSet<>();
 		for (String inner : mainConfig.getShallowKeys(section)) {

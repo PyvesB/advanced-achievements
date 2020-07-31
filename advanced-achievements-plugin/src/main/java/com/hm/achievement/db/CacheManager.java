@@ -73,7 +73,6 @@ public class CacheManager implements Cleanable {
 		return receivedAchievementsCache;
 	}
 
-
 	public void populateCache(UUID uuid) {
 		if (receivedAchievementsCache.containsKey(uuid))
 			return;

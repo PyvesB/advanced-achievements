@@ -13,8 +13,8 @@ import utilities.MockUtility;
 import java.util.Set;
 
 public class AchievementCacheTest {
-	private AchievementCache uut;
 
+	private AchievementCache uut;
 
 	@ClassRule
 	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -36,6 +36,7 @@ public class AchievementCacheTest {
 
 		Assert.assertTrue(uut.getCache().size() > 0);
 	}
+
 	@Test
 	public void getByCategory_categoryExists_SetOfAchievementsReturned() {
 		uut.load();
@@ -54,6 +55,7 @@ public class AchievementCacheTest {
 
 		Assert.assertEquals(0, doesNotExist.size());
 	}
+
 	@Test
 	public void getByName_nameExists_AchievementReturned() {
 		uut.load();
@@ -62,6 +64,7 @@ public class AchievementCacheTest {
 
 		Assert.assertNotNull(achievement);
 	}
+
 	public void getByName_nameDoesntExist_NullReturned() {
 		uut.load();
 

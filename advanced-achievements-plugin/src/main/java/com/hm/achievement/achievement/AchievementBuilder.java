@@ -39,6 +39,7 @@ public class AchievementBuilder {
 		this.category = category;
 		return this;
 	}
+
 	public AchievementBuilder subCategory(String subCategory) {
 		this.subCategory = subCategory;
 		return this;

@@ -43,12 +43,12 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 	@Inject
 	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements,
-									  @Named("main") CommentedYamlConfiguration mainConfig,
-									  AbstractDatabaseManager databaseManager,
-									  CacheManager cacheManager,
-									  AchievementCache achievementCache,
-									  @Named("ntd") Map<String, String> namesToDisplayNames,
-									  CategoryGUI categoryGUI) {
+			@Named("main") CommentedYamlConfiguration mainConfig,
+			AbstractDatabaseManager databaseManager,
+			CacheManager cacheManager,
+			AchievementCache achievementCache,
+			@Named("ntd") Map<String, String> namesToDisplayNames,
+			CategoryGUI categoryGUI) {
 		this.advancedAchievements = advancedAchievements;
 		this.mainConfig = mainConfig;
 		this.cacheManager = cacheManager;
@@ -110,7 +110,8 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		String category = args[0];
 		return "" + achievementCache.getByCategory(category).stream()
 				.filter(achievement -> achievement.getName().matches(regex) &&
-						cacheManager.getReceivedAchievementsCache().getOrDefault(uuid, new HashSet<>()).contains(achievement.getName()))
+						cacheManager.getReceivedAchievementsCache().getOrDefault(uuid, new HashSet<>())
+								.contains(achievement.getName()))
 				.count();
 	}
 
@@ -134,7 +135,8 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 	}
 
 	private long getProgress(UUID uuid, Achievement achievement) {
-		return cacheManager.getAndIncrementStatisticAmount(NormalAchievements.getByName(achievement.getCategory().toUpperCase()), uuid, 0);
+		return cacheManager.getAndIncrementStatisticAmount(
+				NormalAchievements.getByName(achievement.getCategory().toUpperCase()), uuid, 0);
 	}
 
 	private long getProgress(UUID uuid, MultipleAchievements multipleAchievements, Achievement achievement) {

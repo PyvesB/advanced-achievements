@@ -35,7 +35,6 @@ public class PlaceholderTest {
 	private Map<String, String> displayNames;
 	private CategoryGUI categoryGUI;
 
-
 	@ClassRule
 	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -56,16 +55,20 @@ public class PlaceholderTest {
 		displayNames = new HashMap<>();
 		player = mock(Player.class);
 		uuid = UUID.randomUUID();
-		uut = new AchievementPlaceholderHook(advancedAchievements, mainConfig, dbManager, cacheManager, achievementCache, displayNames, categoryGUI);
+		uut = new AchievementPlaceholderHook(advancedAchievements, mainConfig, dbManager, cacheManager, achievementCache,
+				displayNames, categoryGUI);
 
 	}
 
 	@Test
 	public void getCompleted_regexAndCategoryMatchesSingleAndIsCompleted_returnsOne() {
 		String category = "breakCategory";
-		Achievement match = new Achievement("breakTest", "breakDisplay", "a message", "Break test x times", 10, category, "");
-		Achievement noMatch = new Achievement("soulsand", "fishingDisplay", "a message", "fishing test x times", 3, category, "");
-		Achievement notCompleted = new Achievement("breakTest3", "breakDisplay", "a message", "Break test x times", 10, category, "");
+		Achievement match = new Achievement("breakTest", "breakDisplay", "a message", "Break test x times", 10, category,
+				"");
+		Achievement noMatch = new Achievement("soulsand", "fishingDisplay", "a message", "fishing test x times", 3, category,
+				"");
+		Achievement notCompleted = new Achievement("breakTest3", "breakDisplay", "a message", "Break test x times", 10,
+				category, "");
 		Map<UUID, Set<String>> completedAchievmenetCache = new HashMap<>();
 		Set<String> completed = new HashSet<>();
 		completed.add("breakTest");
@@ -74,7 +77,8 @@ public class PlaceholderTest {
 
 		when(player.getUniqueId()).thenReturn(uuid);
 		when(cacheManager.getReceivedAchievementsCache()).thenReturn(completedAchievmenetCache);
-		when(achievementCache.getByCategory(category)).thenReturn(new HashSet<>(Arrays.asList(match, noMatch, notCompleted)));
+		when(achievementCache.getByCategory(category))
+				.thenReturn(new HashSet<>(Arrays.asList(match, noMatch, notCompleted)));
 		String regex = "^break.*";
 		String result = uut.onPlaceholderRequest(player, "goalscompleted_" + category + "_" + regex);
 
@@ -96,12 +100,16 @@ public class PlaceholderTest {
 
 		Assert.assertEquals("0", result);
 	}
+
 	@Test
 	public void getCompleted_regexDoesntMatch_returnsZero() {
 		String category = "breakCategory";
-		Achievement match = new Achievement("SomebreakTest", "breakDisplay", "a message", "Break test x times", 10, category, "");
-		Achievement noMatch = new Achievement("soulsand", "fishingDisplay", "a message", "fishing test x times", 3, category, "");
-		Achievement notCompleted = new Achievement("AnotherbreakTest", "breakDisplay", "a message", "Break test x times", 10, category, "");
+		Achievement match = new Achievement("SomebreakTest", "breakDisplay", "a message", "Break test x times", 10, category,
+				"");
+		Achievement noMatch = new Achievement("soulsand", "fishingDisplay", "a message", "fishing test x times", 3, category,
+				"");
+		Achievement notCompleted = new Achievement("AnotherbreakTest", "breakDisplay", "a message", "Break test x times", 10,
+				category, "");
 		Map<UUID, Set<String>> completedAchievmenetCache = new HashMap<>();
 		Set<String> completed = new HashSet<>();
 		completed.add("SomebreakTest");
@@ -111,7 +119,8 @@ public class PlaceholderTest {
 
 		when(player.getUniqueId()).thenReturn(uuid);
 		when(cacheManager.getReceivedAchievementsCache()).thenReturn(completedAchievmenetCache);
-		when(achievementCache.getByCategory(category)).thenReturn(new HashSet<>(Arrays.asList(match, noMatch, notCompleted)));
+		when(achievementCache.getByCategory(category))
+				.thenReturn(new HashSet<>(Arrays.asList(match, noMatch, notCompleted)));
 		String regex = "^break.*";
 		String result = uut.onPlaceholderRequest(player, "goalscompleted_" + category + "_" + regex);
 
@@ -121,9 +130,12 @@ public class PlaceholderTest {
 	@Test
 	public void getCompleted_isNotCompleted_returnsZero() {
 		String category = "breakCategory";
-		Achievement match = new Achievement("breakTest", "breakDisplay", "a message", "Break test x times", 10, category, "");
-		Achievement noMatch = new Achievement("soulsand", "fishingDisplay", "a message", "fishing test x times", 3, category, "");
-		Achievement notCompleted = new Achievement("breakTest", "breakDisplay", "a message", "Break test x times", 10, category, "");
+		Achievement match = new Achievement("breakTest", "breakDisplay", "a message", "Break test x times", 10, category,
+				"");
+		Achievement noMatch = new Achievement("soulsand", "fishingDisplay", "a message", "fishing test x times", 3, category,
+				"");
+		Achievement notCompleted = new Achievement("breakTest", "breakDisplay", "a message", "Break test x times", 10,
+				category, "");
 		Map<UUID, Set<String>> completedAchievmenetCache = new HashMap<>();
 		Set<String> completed = new HashSet<>();
 		completed.add("soulsand");
@@ -131,7 +143,8 @@ public class PlaceholderTest {
 
 		when(player.getUniqueId()).thenReturn(uuid);
 		when(cacheManager.getReceivedAchievementsCache()).thenReturn(completedAchievmenetCache);
-		when(achievementCache.getByCategory(category)).thenReturn(new HashSet<>(Arrays.asList(match, noMatch, notCompleted)));
+		when(achievementCache.getByCategory(category))
+				.thenReturn(new HashSet<>(Arrays.asList(match, noMatch, notCompleted)));
 		String regex = "^break.*";
 		String result = uut.onPlaceholderRequest(player, "goalscompleted_" + category + "_" + regex);
 
