@@ -1,5 +1,6 @@
 package com.hm.achievement.lifecycle;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -59,6 +60,7 @@ public class PluginLoader {
 	private final Lazy<UpdateChecker> updateChecker;
 	private final ReloadCommand reloadCommand;
 	private final Set<Reloadable> reloadables;
+	private final Map<String, String> namesToDisplayNames;
 
 	// Listeners, to monitor various events.
 	private final FireworkListener fireworkListener;
@@ -103,7 +105,8 @@ public class PluginLoader {
 			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
 			Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
 			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
-			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand) {
+			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand,
+			@Named("ntd") Map<String, String> namesToDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.reloadables = reloadables;
@@ -126,6 +129,7 @@ public class PluginLoader {
 		this.playTimeRunnable = playTimeRunnable;
 		this.updateChecker = updateChecker;
 		this.reloadCommand = reloadCommand;
+		this.namesToDisplayNames = namesToDisplayNames;
 	}
 
 	/**
@@ -276,6 +280,9 @@ public class PluginLoader {
 	/**
 	 * Registers permissions that depend on the user's configuration file (for MultipleAchievements; for instance for
 	 * stone breaks, achievement.count.breaks.stone will be registered).
+	 * 
+	 * Bukkit only allows permissions to be set once, check that the permission node is null to ensure it was not
+	 * previously set, before an /aach reload for example.
 	 */
 	private void registerPermissions() {
 		logger.info("Registering permissions...");
@@ -287,14 +294,19 @@ public class PluginLoader {
 				// spaces into account.
 				section = StringUtils.deleteWhitespace(StringUtils.substringBefore(section, ":"));
 
-				// Bukkit only allows permissions to be set once, check to ensure they were not previously set when
-				// performing /aach reload.
 				for (String groupElement : StringUtils.split(section, '|')) {
 					String permissionNode = category.toPermName() + "." + groupElement;
 					if (pluginManager.getPermission(permissionNode) == null) {
 						pluginManager.addPermission(new Permission(permissionNode, PermissionDefault.TRUE));
 					}
 				}
+			}
+		}
+
+		for (String name : namesToDisplayNames.keySet()) {
+			String permissionNode = "achievement." + name;
+			if (pluginManager.getPermission(permissionNode) == null) {
+				pluginManager.addPermission(new Permission(permissionNode, PermissionDefault.TRUE));
 			}
 		}
 	}

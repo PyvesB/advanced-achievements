@@ -39,6 +39,7 @@ public enum CmdLang implements Lang {
 	ACHIEVEMENT_ALREADY_RECEIVED("The player PLAYER has already received this achievement!"),
 	ACHIEVEMENT_GIVEN("Achievement given!"),
 	ACHIEVEMENT_NOT_FOUND("The specified achievement was not found in Commands category. Did you mean CLOSEST_MATCH?"),
+	ACHIEVEMENT_NO_PERMISSION("The player PLAYER does not have permission to receive this achievement!"),
 	// HelpCommand, check out HelpLang for more.
 	AACH_TIP("&lHINT &8You can &7&n&ohover &8or &7&n&oclick &8on the commands!"),
 	CONFIGURATION_RELOAD_FAILED("Errors while reloading configuration. Please view logs for more details."),

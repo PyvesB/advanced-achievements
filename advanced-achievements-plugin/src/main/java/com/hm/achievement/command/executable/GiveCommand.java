@@ -34,6 +34,7 @@ public class GiveCommand extends AbstractParsableCommand {
 	private String langAchievementAlreadyReceived;
 	private String langAchievementGiven;
 	private String langAchievementNotFound;
+	private String langAchievementNoPermission;
 
 	@Inject
 	public GiveCommand(@Named("main") CommentedYamlConfiguration mainConfig,
@@ -53,6 +54,7 @@ public class GiveCommand extends AbstractParsableCommand {
 		langAchievementAlreadyReceived = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_ALREADY_RECEIVED, langConfig);
 		langAchievementGiven = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_GIVEN, langConfig);
 		langAchievementNotFound = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_NOT_FOUND, langConfig);
+		langAchievementNoPermission = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_NO_PERMISSION, langConfig);
 	}
 
 	@Override
@@ -64,6 +66,9 @@ public class GiveCommand extends AbstractParsableCommand {
 			String achievementName = mainConfig.getString(achievementPath + ".Name");
 			if (!configMultiCommand && cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
 				sender.sendMessage(StringUtils.replaceOnce(langAchievementAlreadyReceived, "PLAYER", args[2]));
+				return;
+			} else if (!player.hasPermission("achievement." + achievementName)) {
+				sender.sendMessage(StringUtils.replaceOnce(langAchievementNoPermission, "PLAYER", args[2]));
 				return;
 			}
 

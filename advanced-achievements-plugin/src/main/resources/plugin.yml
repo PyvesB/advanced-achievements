@@ -234,3 +234,4 @@ permissions:
 # They depend on the sub-categories defined; for instance for stone breaks: achievement.count.breaks.stone
 # For PlayerCommands, use lower case without spaces nor the initial slash: achievement.count.playercommands.aachbook
 # For Kills with a custom mob name you should also remove any whitespaces.
+# For individual achievements, simply use the Name property: achievement.place_100_stone

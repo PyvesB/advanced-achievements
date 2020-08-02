@@ -42,6 +42,7 @@ not-a-player: "You cannot give achievements to ENTITY, it is not a player!"
 achievement-already-received: "The player PLAYER has already received this achievement!"
 achievement-not-found: "The specified achievement was not found in Commands category. Did you mean CLOSEST_MATCH?"
 achievement-given: "Achievement given!"
+achievement-no-permission: "The player PLAYER does not have permission to receive this achievement!"
 
 # Related to /aach add.
 error-value: "The value VALUE must to be an integer!"

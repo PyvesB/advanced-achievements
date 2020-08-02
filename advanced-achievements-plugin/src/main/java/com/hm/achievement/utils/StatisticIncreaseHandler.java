@@ -76,8 +76,9 @@ public class StatisticIncreaseHandler implements Reloadable {
 			if (currentValue >= threshold) {
 				String achievementPath = categorySubcategory + "." + threshold;
 				String achievementName = mainConfig.getString(achievementPath + ".Name");
-				// Check whether player has received the achievement.
-				if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
+				// Check whether player has received the achievement and has permission to do so.
+				if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)
+						&& player.hasPermission("achievement." + achievementName)) {
 					String rewardPath = achievementPath + ".Reward";
 					// Fire achievement event.
 					PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
