@@ -135,7 +135,7 @@ public class FileUpdater {
 		if (!config.isConfigurationSection("AllAchievementsReceivedRewards")) {
 			updateSetting(config, "AllAchievementsReceivedRewards.Money", 30,
 					"Awarded when a player has received all the achievements. Use the same reward pattern as with achievements.",
-					"See https://github.com/PyvesB/AdvancedAchievements/wiki/Rewards");
+					"See https://github.com/PyvesB/advanced-achievements/wiki/Rewards");
 		}
 
 		// Added in 5.9.0:
@@ -147,13 +147,13 @@ public class FileUpdater {
 		// Added in 5.10.0:
 		String bookDefault = serverVersion < 9 ? "level_up" : "entity_player_levelup";
 		updateSetting(config, "SoundBook", bookDefault,
-				"For /aach book. Possible values: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names");
+				"For /aach book. Possible values: github.com/PyvesB/advanced-achievements/wiki/Sound-names");
 		String statsRankingDefault = serverVersion < 9 ? "firework_blast"
 				: serverVersion < 13 ? "entity_firework_large_blast" : "entity_firework_rocket_blast";
 		updateSetting(config, "SoundStats", statsRankingDefault,
-				"For /aach stats with all achievements. Possible values: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names");
+				"For /aach stats with all achievements. Possible values: github.com/PyvesB/advanced-achievements/wiki/Sound-names");
 		updateSetting(config, "SoundRanking", statsRankingDefault,
-				"For /aach top, week, month when ranked in the top list. Possible values: github.com/PyvesB/AdvancedAchievements/wiki/Sound-names");
+				"For /aach top, week, month when ranked in the top list. Possible values: github.com/PyvesB/advanced-achievements/wiki/Sound-names");
 
 		// Added in 5.14.0:
 		updateSetting(config, "ReceiverChatMessages", true, "Display chat messages when a player receives an achievement.");

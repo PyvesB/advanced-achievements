@@ -10,8 +10,8 @@ labels: 'bug'
 
 * Advanced Achievements version: <!-- Please fill in. -->
 * Minecraft version: <!-- Please fill in. -->
-* [Wiki](https://github.com/PyvesB/AdvancedAchievements/wiki) read: <!-- Fill in yes if you have read the Wiki. -->
-* [Existing issues](https://github.com/PyvesB/AdvancedAchievements/issues) searched: <!-- Fill in yes if you have searched through existing issues. -->
+* [Wiki](https://github.com/PyvesB/advanced-achievements/wiki) read: <!-- Fill in yes if you have read the Wiki. -->
+* [Existing issues](https://github.com/PyvesB/advanced-achievements/issues) searched: <!-- Fill in yes if you have searched through existing issues. -->
 
 :beetle: **Description**
 

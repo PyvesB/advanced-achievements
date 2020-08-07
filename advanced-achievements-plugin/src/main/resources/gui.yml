@@ -3,7 +3,7 @@
 # |      Advanced Achievements ${project.version} GUI configuration      | #
 # +----------------------------------------------------------+ #
 #==============================================================#
-# Possible items: github.com/PyvesB/AdvancedAchievements/wiki/Material-names
+# Possible items: github.com/PyvesB/advanced-achievements/wiki/Material-names
 # Do not use the same Item twice.
 # The order of the categories in the GUI will match the same order as in this file.
 
