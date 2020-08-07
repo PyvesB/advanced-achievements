@@ -9,8 +9,8 @@ import org.bukkit.plugin.PluginLogger;
 /**
  * Class allowing developers to easily retrieve instances of the Advanced Achievements API. It is only shipped with
  * plugin versions from 5.8.0 onwards; however, if shaded/copied within your own plugin, its methods will operate on
- * plugin versions 5.7.0 onwards. Open an issue on GitHub (https://github.com/PyvesB/advanced-achievements/issues) if you
- * need any help or have inquiries.
+ * plugin versions 5.7.0 onwards. Open an issue on GitHub (https://github.com/PyvesB/advanced-achievements/issues) if
+ * you need any help or have inquiries.
  * 
  * @author Pyves
  */
