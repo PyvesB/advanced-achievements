@@ -46,7 +46,7 @@ public class QuitListener implements Listener {
 			}
 
 			// Notify all observers.
-			cleanables.stream().forEach(cleanable -> cleanable.cleanPlayerData(uuid));
+			cleanables.forEach(cleanable -> cleanable.cleanPlayerData(uuid));
 		}, 200);
 	}
 }

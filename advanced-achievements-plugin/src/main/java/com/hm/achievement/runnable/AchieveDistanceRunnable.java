@@ -60,7 +60,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 
 	@Override
 	public void run() {
-		Bukkit.getOnlinePlayers().stream().forEach(this::validateMovementAndUpdateDistance);
+		Bukkit.getOnlinePlayers().forEach(this::validateMovementAndUpdateDistance);
 	}
 
 	public void updateLocation(UUID uuid, Location location) {
