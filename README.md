@@ -36,9 +36,7 @@
 
 ## :earth_americas: Useful links
 
-* [Spigot](https://www.spigotmc.org/resources/advanced-achievements.6239/), homepage of the plugin.
-
-* [Bukkit](http://dev.bukkit.org/bukkit-plugins/advanced-achievements/), another homepage.
+* [Spigot](https://www.spigotmc.org/resources/advanced-achievements.83466), homepage of the plugin.
 
 * [Wiki](https://github.com/PyvesB/advanced-achievements/wiki), a lot of valuable information on how to set the plugin up and use it properly.
 
