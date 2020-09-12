@@ -34,19 +34,7 @@
 <br/>
 </p>
 
-# Getting started
-
-#### :cd: Setup
-
-Ensure you have the JDK and Maven installed, and simply run the following commands in a terminal:
-````
-git clone https://github.com/PyvesB/advanced-achievements.git
-cd advanced-achievements
-mvn clean install
-````
-Your generated `advanced-achievements.jar` can be found in the `target` folder.
-
-#### :earth_americas: Useful links
+## :earth_americas: Useful links
 
 * [Spigot](https://www.spigotmc.org/resources/advanced-achievements.6239/), homepage of the plugin.
 
@@ -56,20 +44,16 @@ Your generated `advanced-achievements.jar` can be found in the `target` folder.
 
 * [Translations](https://github.com/PyvesB/advanced-achievements/tree/master/advanced-achievements-plugin/src/main/resources), 18 languages available, feel free to improve them!
 
-# Contributing
-
-#### `$ code`
-
-Want to make Advanced Achievements better, faster, stronger? Contributions are more than welcome, open a **pull request** and share your code! Simply **fork** the repository by clicking on the icon on the top right of this page and refer to the [Wiki](https://github.com/PyvesB/advanced-achievements/wiki/Developers) to get your copy up and running and interact with the plugin.
-
-#### :speech_balloon: Support
+## :star: Support and feedback
 
 Thought of a cool idea? Found a problem or need some help? Simply open an [**issue**](https://github.com/PyvesB/advanced-achievements/issues)!
 
-#### :star: Thanks
-
 Find the project useful, fun or interesting? **Star** the repository by clicking on the icon on the top right of this page!
 
-# License 
+## :computer: Code contributions
+
+Want to make Advanced Achievements better, faster, stronger? Contributions are more than welcome, open a **pull request** and share your code! Simply **fork** the repository by clicking on the icon on the top right of this page and refer to the [Wiki](https://github.com/PyvesB/advanced-achievements/wiki/Developers) to get your copy up and running and interact with the plugin.
+
+## :balance_scale: License 
 
 GNU General Public License v3.0
