@@ -1,5 +1,6 @@
 package com.hm.achievement.db;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,6 +27,17 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 	public PostgreSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "org.postgresql.Driver", "postgresql");
+	}
+
+	@Override
+	void performPreliminaryTasks() throws ClassNotFoundException, UnsupportedEncodingException {
+		super.performPreliminaryTasks();
+
+		// Make Maven Shade think that PostgreSQL is used to prevent full exclusion during minimisation.
+		@SuppressWarnings("unused")
+		Class<?>[] classes = new Class<?>[] {
+				org.postgresql.Driver.class
+		};
 	}
 
 	@Override
