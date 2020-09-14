@@ -166,6 +166,10 @@ public class FileUpdater {
 		updateSetting(config, "HideProgressiveAchievements", false,
 				"Similar to ObfuscateProgressiveAchievements, but displays not received achievements as locked in /aach list.");
 
+		// Added in 6.3.0:
+		updateSetting(config, "BungeeMode", false,
+				"Set to true if you use BungeeCord or if your database is shared by multiple servers. Do a full server restart.");
+
 		if (updatePerformed) {
 			// Changes in the configuration: save and do a fresh load.
 			try {

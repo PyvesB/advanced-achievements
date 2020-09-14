@@ -11,6 +11,7 @@ import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.MainGUI;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
+import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.listener.statistics.AdvancementsCompletedListener;
 import com.hm.achievement.listener.statistics.AnvilsListener;
 import com.hm.achievement.listener.statistics.ArrowsListener;
@@ -230,6 +231,10 @@ public abstract class ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindPluginCommandExecutor(PluginCommandExecutor pluginCommandExecutor);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindQuitListener(QuitListener quitListener);
 
 	@Binds
 	@IntoSet

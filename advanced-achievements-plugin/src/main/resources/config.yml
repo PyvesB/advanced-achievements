@@ -235,7 +235,7 @@ AdditionalConnectionOptions: ""
 DatabaseAddress: "jdbc:mysql://localhost:3306/minecraft"
 DatabaseUser: root
 DatabasePassword: root
-  
+
 #============================OO=OO============================#
 # IV-------------------------------------------------------IV #
 # |                  Performance settings                   | #
@@ -249,8 +249,8 @@ PlaytimeTaskInterval: 60
 # Calculates distance traveled by players (seconds). Smaller values give more precision but more CPU usage.
 DistanceTaskInterval: 5
 
-# Frequency of some statistics writes to the database (seconds). Do a full server restart, and not just /aach reload.
-PooledRequestsTaskInterval: 10
+# Set to true if you use BungeeCord or if your database is shared by multiple servers. Do a full server restart.
+BungeeMode: false
 
 #============================OOOOO============================#
 # V---------------------------------------------------------V #

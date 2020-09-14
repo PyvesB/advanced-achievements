@@ -225,10 +225,9 @@ public class PluginLoader {
 
 		// Schedule a repeating task to group database queries when statistics are modified.
 		if (asyncCachedRequestsSenderTask == null) {
-			int configPooledRequestsTaskInterval = mainConfig.getInt("PooledRequestsTaskInterval", 10);
+			long taskPeriod = mainConfig.getBoolean("BungeeMode") ? 40L : 1200L;
 			asyncCachedRequestsSenderTask = Bukkit.getScheduler().runTaskTimerAsynchronously(advancedAchievements,
-					asyncCachedRequestsSender, configPooledRequestsTaskInterval * 40L,
-					configPooledRequestsTaskInterval * 20L);
+					asyncCachedRequestsSender, taskPeriod, taskPeriod);
 		}
 
 		// Schedule a repeating task to monitor played time for each player (not directly related to an event).
