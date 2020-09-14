@@ -43,6 +43,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 	@Override
 	public void run() {
 		sendBatchedRequests();
+		cacheManager.cleanStaleCaches();
 	}
 
 	/**
