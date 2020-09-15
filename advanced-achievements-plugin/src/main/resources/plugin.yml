@@ -10,9 +10,9 @@ api-version: 1.13
 commands:
   aach:
     description: Main Advanced Achievements command, use it to list sub-commands. 
-    aliases: [advancedachievements,aachievements,aa]  
+    aliases: [advancedachievements,aachievements,aa]
     usage: /<command>
-permissions:  
+permissions:
   achievement.book:
     description: Allows to receive achievements books.
     default: true
@@ -64,7 +64,7 @@ permissions:
   achievement.*:
     description: Star notation of permissions, includes all the above ones and disables book command cooldowns.
     default: op
-    children:      
+    children:
       achievement.book: true
       achievement.list: true
       achievement.top: true
@@ -75,11 +75,67 @@ permissions:
       achievement.easteregg: true
       achievement.reload: true
       achievement.give: true
+      achievement.add: true
       achievement.check: true
       achievement.delete: true
       achievement.reset: true
       achievement.generate: true
-      achievement.update: true  
+      achievement.update: true
+      achievement.count.*: true
+  achievement.count.*:
+    description: Star notation of statistic count permissions.
+    default: true
+    children:
+      achievement.count.connections: true
+      achievement.count.advancementscompleted: true
+      achievement.count.arrows: true
+      achievement.count.beds: true
+      achievement.count.consumedpotions: true
+      achievement.count.eatenitems: true
+      achievement.count.deaths: true
+      achievement.count.itemdrops: true
+      achievement.count.enchantments: true
+      achievement.count.fish: true
+      achievement.count.hoeplowings: true
+      achievement.count.fertilising: true
+      achievement.count.fireworks: true
+      achievement.count.musicdiscs: true
+      achievement.count.enderpearls: true
+      achievement.count.itembreaks: true
+      achievement.count.milk: true
+      achievement.count.shear: true
+      achievement.count.snowballs: true
+      achievement.count.eggs: true
+      achievement.count.taming: true
+      achievement.count.trades: true
+      achievement.count.anvilsused: true
+      achievement.count.brewing: true
+      achievement.count.maxlevel: true
+      achievement.count.playedtime: true
+      achievement.count.distancefoot: true
+      achievement.count.distanceboat: true
+      achievement.count.distanceminecart: true
+      achievement.count.distancehorse: true
+      achievement.count.distancepig: true
+      achievement.count.distancegliding: true
+      achievement.count.distancellama: true
+      achievement.count.treasures: true
+      achievement.count.lavabuckets: true
+      achievement.count.waterbuckets: true
+      achievement.count.itempickups: true
+      achievement.count.petmastergive: true
+      achievement.count.petmasterreceive: true
+      achievement.count.smelting: true
+      achievement.count.raidswon: true
+      achievement.count.riptides: true
+      achievement.count.places: true
+      achievement.count.breaks: true
+      achievement.count.kills: true
+      achievement.count.targetsshot: true
+      achievement.count.crafts: true
+      achievement.count.breeding: true
+      achievement.count.playercommands: true
+      achievement.count.custom: true
   achievement.count.connections:
     description: Allows connection statistics in database to increase.
     default: true
