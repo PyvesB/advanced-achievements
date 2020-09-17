@@ -1,14 +1,14 @@
-#=================================================================#
-# +-------------------------------------------------------------+ #
-# |    Advanced Achievements. Russian translation by Shanzji    | #
-# |              ~ Актуально для версии 5.11.2 ~                 | #
-# |        Новое обновление плагина автоматически добавит       | #
-# |               недостающие строки в конец файла.             | #
-# |               Если вам не лень, можете заменить             | #
-# |                   сообщения на удобные вам.                 | #
-# +-------------------------------------------------------------+ #
-#=================================================================#
 
+#=================================================================#
+# +-------------------------------------------------------------+ #
+# | Advanced Achievements. Russian translation by Doctor_Wratch | #
+# |              ~ Актуально для версии 6.3.0 ~                 | #
+# |       Новое обновление плагина автоматически добавит        | #
+# |              недостающие строки в конец файла.              | #
+# |              Если вам не лень, можете заменить              | #
+# |                  сообщения на удобные вам.                  | #
+# +-------------------------------------------------------------+ #
+#=================================================================#
 # Общее.
 no-permissions: У вас нет прав на эту команду.
 statistic-cooldown: Подождите TIME сек.
@@ -41,28 +41,31 @@ book-not-received: Вы еще не получали достижений.
 
 # Команда /aach give.
 player-offline: PLAYER не в сети.
+not-a-player: Указанное существо не может получать достижения. Существо не заслужило.
 achievement-already-received: PLAYER уже получил(а) это достижение.
 achievement-not-found: Достижение не найдено.
 achievement-given: Достижение получено.
+achievement-no-permission: У игрока PLAYER нет прав на получение данного достижения.
 
 # Команда /aach add.
 error-value: Значение VALUE должно быть целым числом!
-statistic-increased: Значение достижения ACH увеличено на AMOUNT ед. для игрока PLAYER!
+statistic-increased: Значение достижения [ACH] увеличено на AMOUNT ед. для игрока PLAYER!
 
 # Получение достижения.
-achievement-received: PLAYER заслужил(а) достижение
-achievement-new: Вы заслужили достижение
+achievement-received: 'PLAYER заслужил(а) достижение:'
+achievement-new: 'Вы заслужили достижение:'
 
 # Команда /aach check.
-check-achievement-true: PLAYER получал(а) достижение ACH!
-check-achievements-false: PLAYER еще не получал(а) достижение ACH!
+check-achievement-true: PLAYER получал(а) достижение [ACH]!
+check-achievements-false: PLAYER еще не получал(а) достижение [ACH]!
 
 # Команда /aach delete.
-delete-achievements: Достижение ACH отобрано у игрока PLAYER.
+delete-achievements: Достижение [ACH] отобрано у игрока PLAYER.
+delete-all-achievements: Все достижения PLAYER были убраны.
 
 # Награды за достижение.
-item-reward-received: '&aПолучена награда за достижение:&a AMOUNT ITEM'
-money-reward-received: '&aПолучено &6&l© &eAMOUNTкрон&a.' # &6&l© &eAMOUNTкрон может быть заменено на вашу валюту. Например, &2$AMOUNT
+item-reward-received: '&aПолучена награда за достижение:&a'
+money-reward-received: '&aПолучено &6&l⬤ &eAMOUNTчеканных монет&a.' # "&6&l⬤ &eAMOUNTчеканных монет" может быть заменено на вашу валюту. Например, &2$AMOUNT
 command-reward: Получена награда за достижение.
 custom-command-reward: 'Получена награда за достижение: MESSAGE'
 experience-reward-received: '&aПолучено &9AMOUNT очков опыта&a.'
@@ -100,9 +103,9 @@ aach-command-reset: Сбросить достижения игрока в опр
 aach-command-reset-hover: Сбрасывает значения категории до 0, но не забирает сами достижения.
 aach-command-generate: Сгенерировать достижения для стандартного окна достижений Minecraft (необходима версия сервера 1.12 или выше).
 aach-command-generate-hover: Позволяет скопировать достижения из /aach list в окно достижений игры.
-aach-command-inspect: Найти достижение по указанному названию.
-aach-command-inspect-hover: Ищет по заданному названию/части названия достижение и выдает список подходящих (до 1000 шт.)
-aach-tip: '&lПримечание: &7Вы можете &f&n&oнавести&7 и/или &f&n&oкликнуть&7 по команде.'
+aach-command-inspect: Показать владельцев достижения ACH.
+aach-command-inspect-hover: Показывает список игроков, которые получили достижение.
+aach-tip: '&lПримечание: &7Вы можете &f&n&oнавести &7или &f&n&oкликнуть &7по команде.'
 
 # Команда /aach info.
 version-command-version: 'Версия плагина:'
@@ -125,26 +128,29 @@ list-goal: 'Описание:'
 list-reception: Достижение получено
 list-progress: 'Прогресс достижения:'
 list-reward: 'Награда:'
-list-reward-money: '&6&l© &eAMOUNTкрон' #&6&l© &eAMOUNTкрон может быть заменено на вашу валюту. Например, &2$AMOUNT
+list-rewards: 'Награда:'
+list-reward-money: '&6&l⬤ &eAMOUNTчеканных монет' # "&6&l⬤ &eAMOUNTчеканных монет" может быть заменено на вашу валюту. Например, &2$AMOUNT
 list-reward-item: '&aITEM (хAMOUNT)'
-list-reward-command: '&3Наградное звание'
+list-reward-command: '&3Наградное звание' # Может быть заменено на вашу кастомную награду. Например, '&3Привилегия' или '&7Какая-то дичь'
 list-reward-experience: '&9AMOUNT очков опыта'
 list-reward-increase-max-health: '&2Повышение здоровья на AMOUNT ед.'
-list-reward-increase-max-oxygen: "&2Повышение запаса кислорода на AMOUNT ед."
-list-achievement-received: '&2✔&f '
-list-achievement-not-received: '&c✘&8 '
+list-reward-increase-max-oxygen: '&2Повышение запаса кислорода на AMOUNT ед.'
+list-achievement-received: '&f'
+list-achievement-not-received: '&8'
 list-category-not-unlocked: Вы еще не получали достижений из этой категории.
+list-achievement-not-unlocked: Вы еще не получили данное достижение.
 list-previous-message: '&7Пред. страница'
-list-previous-lore: ''
 list-next-message: '&7След. страница'
-list-next-lore: ''
 list-back-message: '&7Назад'
-list-back-lore: ''
+list-previous-lore: '&aНажмите, чтобы перейти на пред. страницу'
+list-next-lore: '&aНажмите, чтобы перейти на след. страницу'
+list-back-lore: '&aНажмите, чтобы перейти к категориям достижений'
 list-achievements-in-category-singular: '&7AMOUNT достижение' # 1 достижение
 list-achievements-in-category-plural: '&7AMOUNT достижений(я)' # 2 достижений(я) / 5 достижений(я) и т.д.
+list-unavailable-whilst-sleeping: '&c&lВы спите... Какие команды?'
 
 # Команда /aach list.
-# Вы можете заменить название категории на '', чтобы скрыть ее из /aach list, но не отключая саму категорию.
+# Вы можете заменить название категории на "", чтобы скрыть ее из /aach list, но не отключая саму категорию.
 # Можете заменить названия категорий на свои, если вам не лень.
 list-connections: Входы на сервер
 list-places: Поставленные блоки
@@ -191,21 +197,26 @@ list-enderpearls: Использованный жемчуг Края
 list-petmastergive: Переданные питомцы
 list-petmasterreceive: Полученные питомцы
 list-smelting: Расплавленные предметы
+list-targetsshot: Брошенные в цель предметы
+list-raids-won: Налеты
+list-riptides: Использованные трезубцы
 list-commands: Другие достижения
 list-custom: Другие категории
+list-advancements-completed: Полученные достижения
 
 # Команда /aach toggle.
 toggle-displayed: Вы теперь будете получать оповещения о получении достижений другими игроками.
 toggle-hidden: Вы теперь не будете получать оповещения о получении достижений другими игроками.
 
 # Команда /aach reset.
-reset-successful: ': Статистика сброшена у игрока PLAYER.' #В чате отображается как "НазваниеКатегории: Статистика сброшена у игрока PLAYER."
+reset-successful: 'Статистика достижений PLAYER сброшена.' #В чате отображается как "НазваниеКатегории: Статистика сброшена у игрока PLAYER."
+reset-all-successful: 'Статистика достижений PLAYER сброшена.'
 
 # Команда /aach generate.
 advancements-generated: Достижения успешно скопированы в окно достижений игры.
 minecraft-not-supported: Окно достижений игры не поддерживается вашей версией. Обновитесь до 1.12 или выше.
 
-# Команда /aach inspect
+# Команда /aach inspect.
 achievement-not-recognized: Достижение NAME не найдено. Возможно, вы имели ввиду CLOSEST_MATCH?
 
 # =============================================================#
