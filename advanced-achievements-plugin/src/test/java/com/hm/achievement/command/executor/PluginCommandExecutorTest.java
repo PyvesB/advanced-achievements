@@ -72,7 +72,7 @@ public class PluginCommandExecutorTest {
 
 	@Test
 	public void itShouldDisplayErrorMessageIfNoCommandCouldBeMapped() {
-		String[] args = new String[] { "list", "unexpected_arg" };
+		String[] args = new String[] { "book", "unexpected_arg" };
 		underTest.onCommand(sender, null, null, args);
 
 		verify(sender).sendMessage(PLUGIN_HEADER + ERROR_MESSAGE);
