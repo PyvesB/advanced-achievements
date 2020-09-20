@@ -50,7 +50,7 @@ Find the project useful, fun or interesting? **Star** the repository by clicking
 
 ## :computer: Code contributions
 
-Want to make Advanced Achievements better, faster, stronger? Contributions are more than welcome, open a **pull request** and share your code! Simply **fork** the repository by clicking on the icon on the top right of this page and refer to the [Wiki](https://github.com/PyvesB/advanced-achievements/wiki/Developers) to get your copy up and running and interact with the plugin.
+Want to make Advanced Achievements better, faster, stronger? Contributions are welcome, open a **pull request** and share your code! Simply **fork** the repository by clicking on the icon on the top right of this page and check out the [developers Wiki section](https://github.com/PyvesB/advanced-achievements/wiki/Developers).
 
 ## :balance_scale: License 
 
