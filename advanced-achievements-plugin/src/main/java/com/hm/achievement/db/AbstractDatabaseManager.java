@@ -87,7 +87,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @throws PluginLoadError
 	 */
 	public void initialise() throws PluginLoadError {
-		logger.info("Initialising database...");
+		logger.info("Initialising " + mainConfig.getString("DatabaseType", "sqlite") + " database...");
 
 		prefix = mainConfig.getString("TablePrefix", "");
 
