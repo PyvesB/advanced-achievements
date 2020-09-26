@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -54,7 +55,8 @@ public class KillsListener extends AbstractListener {
 		}
 
 		if (serverVersion >= 8 && entity.getCustomName() != null
-				&& player.hasPermission(category.toPermName() + '.' + entity.getCustomName())) {
+				&& player.hasPermission(category.toPermName() + '.' +
+						StringUtils.deleteWhitespace(entity.getCustomName()))) {
 			foundAchievements.addAll(findAchievementsByCategoryAndName(entity.getCustomName()));
 		}
 
