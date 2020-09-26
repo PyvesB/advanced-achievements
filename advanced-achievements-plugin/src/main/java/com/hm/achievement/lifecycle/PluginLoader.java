@@ -287,8 +287,8 @@ public class PluginLoader {
 		logger.info("Registering permissions...");
 
 		PluginManager pluginManager = Bukkit.getPluginManager();
-		Permission countParent = new Permission("achievement.count.*", PermissionDefault.TRUE);
 		for (MultipleAchievements category : MultipleAchievements.values()) {
+			Permission categoryParent = new Permission(category.toPermName() + ".*", PermissionDefault.TRUE);
 			for (String section : mainConfig.getShallowKeys(category.toString())) {
 				// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories and don't take
 				// spaces into account.
@@ -298,7 +298,7 @@ public class PluginLoader {
 					String permissionNode = category.toPermName() + "." + groupElement;
 					if (pluginManager.getPermission(permissionNode) == null) {
 						Permission perm = new Permission(permissionNode, PermissionDefault.TRUE);
-						perm.addParent(countParent, true);
+						perm.addParent(categoryParent, true);
 						pluginManager.addPermission(perm);
 					}
 				}
