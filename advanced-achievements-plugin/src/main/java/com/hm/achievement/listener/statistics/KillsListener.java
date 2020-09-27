@@ -50,19 +50,18 @@ public class KillsListener extends AbstractListener {
 
 		Set<String> foundAchievements = new HashSet<>();
 
-		if (player.hasPermission(category.toPermName() + '.' + mobType)) {
+		if (player.hasPermission(category.toChildPermName(mobType))) {
 			foundAchievements.addAll(findAchievementsByCategoryAndName(mobType));
 		}
 
 		if (serverVersion >= 8 && entity.getCustomName() != null
-				&& player.hasPermission(category.toPermName() + '.' +
-						StringUtils.deleteWhitespace(entity.getCustomName()))) {
+				&& player.hasPermission(category.toChildPermName(StringUtils.deleteWhitespace(entity.getCustomName())))) {
 			foundAchievements.addAll(findAchievementsByCategoryAndName(entity.getCustomName()));
 		}
 
 		if (entity instanceof Player) {
 			String specificPlayer = "specificplayer-" + entity.getUniqueId();
-			if (player.hasPermission(category.toPermName() + '.' + specificPlayer)) {
+			if (player.hasPermission(category.toChildPermName(specificPlayer))) {
 				foundAchievements.addAll(findAchievementsByCategoryAndName(specificPlayer));
 			}
 		}

@@ -38,7 +38,7 @@ public class BreedingListener extends AbstractListener {
 
 		Player player = (Player) event.getBreeder();
 		String mobName = event.getMother().getType().name().toLowerCase();
-		if (!player.hasPermission(category.toPermName() + '.' + mobName)) {
+		if (!player.hasPermission(category.toChildPermName(mobName))) {
 			return;
 		}
 

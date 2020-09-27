@@ -61,7 +61,7 @@ public class BreaksListener extends AbstractListener {
 		}
 
 		String blockName = block.getType().name().toLowerCase();
-		if (!player.hasPermission(category.toPermName() + '.' + blockName)) {
+		if (!player.hasPermission(category.toChildPermName(blockName))) {
 			return;
 		}
 

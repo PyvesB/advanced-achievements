@@ -40,7 +40,7 @@ public class PlacesListener extends AbstractListener {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		String blockName = block.getType().name().toLowerCase();
-		if (!player.hasPermission(category.toPermName() + '.' + blockName)) {
+		if (!player.hasPermission(category.toChildPermName(blockName))) {
 			return;
 		}
 

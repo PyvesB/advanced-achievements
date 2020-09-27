@@ -40,7 +40,7 @@ public class PlayerCommandsListener extends AbstractListener {
 		Set<String> foundAchievements = new HashSet<>();
 		for (String groupedPrefixes : categoryKeys) {
 			for (String prefix : StringUtils.split(groupedPrefixes, '|')) {
-				if (player.hasPermission(category.toPermName() + '.' + StringUtils.deleteWhitespace(prefix))) {
+				if (player.hasPermission(category.toChildPermName(StringUtils.deleteWhitespace(prefix)))) {
 					for (String equivalentCommand : equivalentCommands) {
 						if (equivalentCommand.startsWith(prefix)) {
 							foundAchievements.add(groupedPrefixes);
