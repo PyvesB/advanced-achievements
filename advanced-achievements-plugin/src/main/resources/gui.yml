@@ -119,7 +119,7 @@ DistanceBoat:
 DistanceGliding:
   Item: elytra
 DistanceLlama:
-  Item: cyan_carpet
+  Item: llama_spawn_egg
 DistanceSneaking:
   Item: leather_helmet
 TargetsShot:
