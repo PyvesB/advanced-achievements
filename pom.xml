@@ -130,7 +130,7 @@
 			<dependency>
 				<groupId>com.hm.achievement</groupId>
 				<artifactId>advanced-achievements-api</artifactId>
-				<version>1.5.0</version>
+				<version>6.3.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.dagger</groupId>
