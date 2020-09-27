@@ -1,0 +1,4 @@
+jdk:
+  - openjdk8
+install:
+   - mvn -pl advanced-achievements-api -am clean install
