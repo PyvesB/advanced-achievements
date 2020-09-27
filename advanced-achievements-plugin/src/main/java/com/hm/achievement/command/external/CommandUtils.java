@@ -1,5 +1,10 @@
 package com.hm.achievement.command.external;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -13,11 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Team;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class CommandUtils {
 
@@ -100,7 +100,7 @@ public class CommandUtils {
 					break;
 				}
 			}
-			List<Entity> ea = new ArrayList<Entity>(Bukkit.getOnlinePlayers());
+			List<Entity> ea = new ArrayList<>(Bukkit.getOnlinePlayers());
 			if (!usePlayers) {
 				ea.clear();
 				for (World w : getAcceptedWorldsFullString(loc, arg)) {
@@ -154,7 +154,7 @@ public class CommandUtils {
 			}
 			ents[0] = closest;
 		} else if (arg.startsWith("@e")) {
-			List<Entity> entities = new ArrayList<Entity>();
+			List<Entity> entities = new ArrayList<>();
 			int C = getLimit(arg);
 			for (World w : getAcceptedWorldsFullString(loc, arg)) {
 				for (Entity e : w.getEntities()) {
@@ -321,7 +321,7 @@ public class CommandUtils {
 			return true;
 		if (hasTag(SelectorType.H, arg) && isH(arg, e))
 			return true;
-		if (hasTag(SelectorType.World, arg) && isW(arg, loc, e))
+		if (hasTag(SelectorType.World, arg) && isW(arg))
 			return true;
 		if (hasTag(SelectorType.R, arg) && isR(arg, loc, e))
 			return true;
@@ -440,10 +440,6 @@ public class CommandUtils {
 		return arg.toLowerCase().replace("!", "").split("=")[1];
 	}
 
-	private static float getValueAsFloat(String arg) {
-		return Float.parseFloat(arg.replace("!", "").split("=")[1]);
-	}
-
 	private static int getValueAsInteger(String arg) {
 		return Integer.parseInt(arg.replace("!", "").split("=")[1]);
 	}
@@ -475,7 +471,7 @@ public class CommandUtils {
 			}
 		}
 		if (string == null) {
-			List<World> worlds = new ArrayList<World>();
+			List<World> worlds = new ArrayList<>();
 			if (loc == null || loc.getWorld() == null) {
 				worlds.addAll(Bukkit.getWorlds());
 			} else {
@@ -487,7 +483,7 @@ public class CommandUtils {
 	}
 
 	private static List<World> getAcceptedWorlds(String string) {
-		List<World> worlds = new ArrayList<World>(Bukkit.getWorlds());
+		List<World> worlds = new ArrayList<>(Bukkit.getWorlds());
 		if (isInverted(string)) {
 			worlds.remove(getW(string));
 		} else {
@@ -510,12 +506,10 @@ public class CommandUtils {
 	}
 
 	private static boolean isWithinPitch(String arg, Entity e) {
-		float pitch = getValueAsFloat(arg);
 		return isWithinDoubleValue(isInverted(arg), arg, e.getLocation().getPitch());
 	}
 
 	private static boolean isWithinYaw(String arg, Entity e) {
-		float pitch = getValueAsFloat(arg);
 		return isWithinDoubleValue(isInverted(arg), arg, e.getLocation().getYaw());
 	}
 
@@ -678,7 +672,7 @@ public class CommandUtils {
 		return false;
 	}
 
-	private static boolean isW(String arg, Location loc, Entity e) {
+	private static boolean isW(String arg) {
 		if (getW(arg) == null) {
 			return true;
 		} else if ((isInverted(arg) != getAcceptedWorlds(arg).contains(getW(arg))))
