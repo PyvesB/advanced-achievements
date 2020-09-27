@@ -120,6 +120,8 @@ DistanceGliding:
   Item: elytra
 DistanceLlama:
   Item: cyan_carpet
+DistanceSneaking:
+  Item: leather_helmet
 TargetsShot:
   Item: firework_star
 RaidsWon:

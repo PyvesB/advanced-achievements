@@ -49,6 +49,7 @@ public enum NormalAchievements implements Category {
 	DISTANCEBOAT("DistanceBoat", "list-distance-boat", "Distance Travelled in a Boat", "When a distance is traveled in a boat."),
 	DISTANCEGLIDING("DistanceGliding", "list-distance-gliding", "Distance Travelled with Elytra", "When a distance is traveled with elytra."),
 	DISTANCELLAMA("DistanceLlama", "list-distance-llama", "Distance Travelled on a Llama", "When a distance is traveled on a llama."),
+	DISTANCESNEAKING("DistanceSneaking", "list-distance-sneaking", "Distance Travelled whilst Sneaking", "When a distance is traveled whilst sneaking."),
 	RAIDSWON("RaidsWon", "list-raids-won", "Raids Won", "When a raid is won."),
 	RIPTIDES("Riptides", "list-riptides", "Riptides Used", "When riptide is used with a trident"),
 	ADVANCEMENTSCOMPLETED("AdvancementsCompleted", "list-advancements-completed", "Advancements Completed", "When a certain number of advancements have been completed.");

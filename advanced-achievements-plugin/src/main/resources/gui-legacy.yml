@@ -132,6 +132,9 @@ DistanceGliding:
 DistanceLlama:
   Item: carpet
   Metadata: 9
+DistanceSneaking:
+  Item: leather_helmet
+  Metadata: 0
 ItemDrops:
   Item: hopper
   Metadata: 0

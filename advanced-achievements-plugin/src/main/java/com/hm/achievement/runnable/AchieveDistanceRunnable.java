@@ -102,6 +102,8 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 			}
 		} else if (serverVersion >= 9 && player.isGliding()) {
 			updateDistance(difference, player, NormalAchievements.DISTANCEGLIDING);
+		} else if (player.isSneaking()) {
+			updateDistance(difference, player, NormalAchievements.DISTANCESNEAKING);
 		} else if (!player.isFlying()) {
 			updateDistance(difference, player, NormalAchievements.DISTANCEFOOT);
 		}

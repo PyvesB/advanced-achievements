@@ -250,7 +250,8 @@ public class PluginLoader {
 				|| !disabledCategories.contains(NormalAchievements.DISTANCEMINECART)
 				|| !disabledCategories.contains(NormalAchievements.DISTANCEBOAT)
 				|| !disabledCategories.contains(NormalAchievements.DISTANCEGLIDING)
-				|| !disabledCategories.contains(NormalAchievements.DISTANCELLAMA)) {
+				|| !disabledCategories.contains(NormalAchievements.DISTANCELLAMA)
+				|| !disabledCategories.contains(NormalAchievements.DISTANCESNEAKING)) {
 			int configDistanceTaskInterval = mainConfig.getInt("DistanceTaskInterval", 5);
 			distanceTask = Bukkit.getScheduler().runTaskTimer(advancedAchievements, distanceRunnable,
 					configDistanceTaskInterval * 40L, configDistanceTaskInterval * 20L);

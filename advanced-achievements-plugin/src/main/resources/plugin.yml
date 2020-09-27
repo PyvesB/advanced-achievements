@@ -119,6 +119,7 @@ permissions:
       achievement.count.distancepig: true
       achievement.count.distancegliding: true
       achievement.count.distancellama: true
+      achievement.count.distancesneaking: true
       achievement.count.treasures: true
       achievement.count.lavabuckets: true
       achievement.count.waterbuckets: true
@@ -234,6 +235,9 @@ permissions:
     default: true
   achievement.count.distancellama:
     description: Allows distance llama statistics in database to increase.
+    default: true
+  achievement.count.distancesneaking:
+    description: Allows distance sneaking statistics in database to increase.
     default: true
   achievement.count.treasures:
     description: Allows treasure statistics in database to increase.

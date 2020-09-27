@@ -258,6 +258,9 @@ public class FileUpdater {
 		updateSetting(gui, "AchievementLock.Item", serverVersion >= 13 ? "black_terracotta" : "stained_clay");
 		updateSetting(gui, "CategoryLock.Item", serverVersion >= 13 ? "barrier" : "bedrock");
 
+		// Added in version 6.4.0:
+		updateSetting(gui, "DistanceSneaking.Item", "leather_helmet");
+
 		if (serverVersion < 13) {
 			updateSetting(gui, "Breeding.Metadata", 0);
 			updateSetting(gui, "AchievementNotStarted.Metadata", 14);
@@ -270,6 +273,7 @@ public class FileUpdater {
 			updateSetting(gui, "TargetsShot.Metadata", 0);
 			updateSetting(gui, "AchievementLock.Metadata", 15);
 			updateSetting(gui, "CategoryLock.Metadata", 0);
+			updateSetting(gui, "DistanceSneaking.Metadata", 0);
 		}
 
 		if (updatePerformed) {

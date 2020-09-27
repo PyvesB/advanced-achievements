@@ -638,10 +638,18 @@ DistanceGliding:
 # Ignored on Minecraft versions prior to 1.11.
 DistanceLlama:
   150:
-    Goal: Travel 150 Blocks with a llama.
+    Goal: Travel 150 blocks with a llama.
     Message: You traveled 150 blocks on a llama!
     Name: distancellama_150
     DisplayName: Llama Rider
+
+# When a distance is traveled whilst sneaking.
+DistanceSneaking:
+  500:
+    Goal: Travel 500 blocks whilst sneaking.
+    Message: You traveled 500 blocks whilst sneaking!
+    Name: distancesneaking_500
+    DisplayName: Ninja
 
 # When an item is dropped on the ground.
 ItemDrops:
