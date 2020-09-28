@@ -112,8 +112,8 @@
 			<artifactId>VaultAPI</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.hm.mcshared</groupId>
-			<artifactId>MCShared</artifactId>
+			<groupId>com.github.pyvesb</groupId>
+			<artifactId>mcshared</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>codecrafter47.bungeetablistplus</groupId>

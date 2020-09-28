@@ -66,10 +66,6 @@
 			<url>https://ci.ender.zone/plugin/repository/everything/</url>
 		</repository>
 		<repository>
-			<id>mcshared-repo</id>
-			<url>https://raw.github.com/PyvesB/MCShared/mvn-repo/</url>
-		</repository>
-		<repository>
 			<id>placeholderapi-repo</id>
 			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
 		</repository>
@@ -78,7 +74,7 @@
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
-			<id>vault-repo</id>
+			<id>jitpack-repo</id>
 			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
@@ -119,8 +115,8 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.hm.mcshared</groupId>
-				<artifactId>MCShared</artifactId>
+				<groupId>com.github.pyvesb</groupId>
+				<artifactId>mcshared</artifactId>
 				<version>1.1.7</version>
 			</dependency>
 			<dependency>
