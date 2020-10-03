@@ -231,11 +231,11 @@ TablePrefix: ""
 AdditionalConnectionOptions: ""
 
 # 连接到MySQL或PostgreSQL数据库的设置
-# 一个PostgreSQL数据库应当使用类似于：jdbc:postgresql://localhost:5432/minecraft 的地址 
+# 一个PostgreSQL数据库应当使用类似于：jdbc:postgresql://localhost:5432/minecraft 的地址
 DatabaseAddress: "jdbc:mysql://localhost:3306/minecraft"
 DatabaseUser: root
 DatabasePassword: root
-  
+
 #============================OO=OO============================#
 # IV-------------------------------------------------------IV #
 # |                      表现上的设置                       | #
@@ -257,7 +257,7 @@ DistanceTaskInterval: 5
 #============================ooooo============================#
 
 # 当一个特定的方块被放置 （可用材料名称：github.com/PyvesB/advanced-achievements/wiki/Material-names）
-Places:  
+Places:
   chest:
     5:
       # 可选，当未获得成就时使用/aach list 或在成就详情中显示。
@@ -291,7 +291,7 @@ Places:
 
 # 当一种特定方块被破坏（可用材料名称：github.com/PyvesB/advanced-achievements/wiki/Material-names）
 # 你可以在1.13之前的Minecraft版本使用如sand:1这样的编辑来给予带有值1的沙子（红沙）
-Breaks: 
+Breaks:
   ice:
     10:
       Goal: 破坏10个冰块
@@ -331,7 +331,7 @@ Kills:
       Name: kills_1_zombie
       DisplayName: 活 死 人
       Reward:
-        Money: 1         
+        Money: 1
         Item: diamond 1
   # Mythic Mobs 精英怪 'Display' 参数. 将 & 改为 §.
   §2Skeletal Knight:
@@ -348,7 +348,7 @@ Kills:
       DisplayName:  作 者 不 再
       Reward:
         IncreaseMaxHealth: 1
-          
+
 # 当一个指定目标被投掷物射击（但是没必要杀死）
 # 有效方块类型: github.com/PyvesB/advanced-achievements/wiki/Material-names
 # 有效实体类型: github.com/PyvesB/advanced-achievements/wiki/Entity-names
@@ -369,21 +369,21 @@ TargetsShot:
 # 一个特定物品被合成 （可用材料名称： github.com/PyvesB/advanced-achievements/wiki/Material-names）
 Crafts:
   diamond_sword:
-    1:      
+    1:
       Goal: 合成一把钻石剑
       Message: 你第一次合成一把钻石剑
       Name: craft_1_blade
       DisplayName: 武器大师
       Reward:
         Money: 2
-    100:      
+    100:
       Goal: 合成100把钻石剑
       Message: 下一次造啥？Excalibur？
       Name: craft_100_blade
       DisplayName: 无 限 剑 制
       Reward:
         Experience: 500
-        
+
 # 当一个玩家使用一项特定指令时 （指定不带斜杠的小写命令前缀）
 # 如一个指令 /awf add world 来自 AntiWorldFly 插件 就可以使用子类 “awf add”
 # 给定指令的缩写也会被计入
@@ -398,7 +398,7 @@ PlayerCommands:
         Commands:
           Execute: say §7PLAYER 成为了 带 统 计 学 家
           Display: Broadcast
-          
+
 # 喂动物 (可用实体名称: github.com/PyvesB/advanced-achievements/wiki/Entity-names).
 Breeding:
   sheep:
@@ -407,7 +407,7 @@ Breeding:
       Message: 你第一次繁殖羊！
       Name: breeding_1_sheep
       DisplayName: 春天来了
-      
+
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
 # |                      简单行为成就                       | #
@@ -432,7 +432,7 @@ Deaths:
     Reward:
         # 在材料名称和数量后的文字为材料的自定义名称，会显示在/aach list和真正受到奖励时
         Item: stone 5 垫脚石
-    
+
 # 当射出箭矢
 Arrows:
   50:
@@ -440,7 +440,7 @@ Arrows:
     Message: 什么嘛，你射的还挺准的
     Name: arrows_50
     DisplayName: 希望の花
-    
+
 # 当雪球被丢出时
 Snowballs:
   1000:
@@ -451,15 +451,15 @@ Snowballs:
     Reward:
         # 30代表氧气条中的1个气泡
         IncreaseMaxOxygen: 30
-    
-# 当鸡蛋被丢出时  
+
+# 当鸡蛋被丢出时
 Eggs:
   1000:
     Goal: 丢1000个鸡蛋
     Message: 你丢了1000个鸡蛋！母鸡哭了
     Name: eggs_1000
     DisplayName: 蛋蛋的忧伤
-    
+
 # 当抓到一条鱼
 Fish:
   1:
@@ -467,7 +467,7 @@ Fish:
     Message: 你第一次钓到鱼
     Name: fish_1
     DisplayName: 是时候做炸鱼薯条了！ #译者注：作者是英国人
-    
+
 # 当用鱼竿获得一个宝藏
 Treasures:
   1:
@@ -490,8 +490,8 @@ EatenItems:
     Goal: 吃点啥
     Message: 吃点零食吧！
     Name: eatenitems_1
-    DisplayName: 第一个零食  
-    
+    DisplayName: 第一个零食
+
 # 剪羊毛
 Shear:
   100:
@@ -509,7 +509,7 @@ Milk:
     DisplayName: 第一次挤奶
     Reward:
       Experience: 100
-    
+
 # 用桶接岩浆
 LavaBuckets:
   10:
@@ -517,23 +517,23 @@ LavaBuckets:
     Message: 接了10桶岩浆！
     Name: lavabuckets_10
     DisplayName: 多喝岩浆！
-    
+
 # 用桶接水
 WaterBuckets:
   15:
     Goal: 接15桶水
     Message: 接了15桶水
     Name: waterbuckets_15
-    DisplayName: 消防员  
-    
+    DisplayName: 消防员
+
 # 和村民交易
 Trades:
   1:
     Goal: 和村民交易
     Message: 和村民第一次交易！
     Name: trades_1
-    DisplayName: 首次被宰 
-    
+    DisplayName: 首次被宰
+
 # 使用铁砧
 AnvilsUsed:
   1:
@@ -541,7 +541,7 @@ AnvilsUsed:
     Message: 你第一次修复了一样物品
     Name: anvilsused_1
     DisplayName: 初次修复
-    
+
 # 附魔
 Enchantments:
   5:
@@ -549,31 +549,31 @@ Enchantments:
     Message: 给5样东西附魔了！
     Name: enchantments_5
     DisplayName: §5巫师        #事英式幽默
-    
+
 # 使用床
-Beds:  
+Beds:
   5:
     Goal: 睡5觉
     Message: 你睡了五觉
     Name: bed_5
-    DisplayName: 好困 
-    
-# 最大等级    
-MaxLevel:  
+    DisplayName: 好困
+
+# 最大等级
+MaxLevel:
   10:
     Goal: 达到10级
     Message: 10级啦！
     Name: maxlevel_10
     DisplayName: §4加油升级！
-    
+
 # 使用药水
 ConsumedPotions:
   100:
     Goal: 喝100瓶药水
     Message: 喝了100瓶药水
     Name: consumedpotions_100
-    DisplayName: 酒鬼！ 
-    
+    DisplayName: 酒鬼！
+
 # 在服务器中玩的时间（单位：小时，且为整数）
 PlayedTime:
   1:
@@ -581,7 +581,7 @@ PlayedTime:
     Message: 在服务器的第一个小时
     Name: playedtime_1
     DisplayName: 第一个小时
-    
+
 # 步行的距离
 DistanceFoot:
   1000:
@@ -589,7 +589,7 @@ DistanceFoot:
     Message: 你步行了一千格！
     Name: distancefoot_1000
     DisplayName: 抱歉,今天步行
-    
+
 # 骑猪的距离
 DistancePig:
   100:
@@ -597,7 +597,7 @@ DistancePig:
     Message: 你骑猪走过了100格！
     Name: distancepig_100
     DisplayName: 猪 突 猛 进
-    
+
 # 骑马的距离
 DistanceHorse:
   500:
@@ -605,7 +605,7 @@ DistanceHorse:
     Message: 你骑马走过了500格！
     Name: distancehorse_500
     DisplayName: 爱 马 仕
-    
+
 # 坐矿车的距离
 DistanceMinecart:
   100:
@@ -630,7 +630,7 @@ DistanceGliding:
     Message: 你用鞘翅飞了100格！
     Name: distancegliding_100
     DisplayName: 鸟 人
-    
+
 # 坐在羊驼上移动的距离
 # 1.11之前版本请忽略本项
 DistanceLlama:
@@ -647,7 +647,7 @@ ItemDrops:
     Message: §c你在乱丢垃圾！罚款！
     Name: itemdrops_15
     DisplayName: 污染者
-    
+
 # 从地上捡起东西
 ItemPickups:
   40:
@@ -655,7 +655,7 @@ ItemPickups:
     Message: 保护环境√
     Name: itempickups_40
     DisplayName: 环保主义者
-    
+
 # 耕地
 HoePlowings:
   10:
@@ -663,9 +663,9 @@ HoePlowings:
     Message: 你耕地了10次！
     Name: hoeplowings_10
     DisplayName: 农民
-    Reward:                 
+    Reward:
         Item: cookie 15
-    
+
 # 使用骨粉催熟植物
 Fertilising:
   15:
@@ -673,14 +673,14 @@ Fertilising:
     Message: 你用骨粉催熟了15次！
     Name: fertilising_15
     DisplayName: 辣骨催花
-    
+
 # 驯服动物
 Taming:
   1:
     Goal: 驯服一个动物
     Message: 你驯服了第一只小动物
     Name: taming_1
-    DisplayName: 铲屎官      
+    DisplayName: 铲屎官
 
 # 酿造药水
 Brewing:
@@ -689,7 +689,7 @@ Brewing:
     Message: 你酿造了一瓶药水！
     Name: brewing_1
     DisplayName: 炼金术师
-    
+
 # 发射烟火
 Fireworks:
   10:
@@ -715,7 +715,7 @@ EnderPearls:
     Message: 已经用末影珍珠传送10次了！
     Name: enderpearls_10
     DisplayName: 小心脚下
-    
+
 # 当一个玩家把宠物交给另一个玩家 (需要前置插件Pet Master版本1.4以上)
 PetMasterGive:
   3:
@@ -731,7 +731,7 @@ PetMasterReceive:
     Message: 从朋友那里得到了10只宠物
     Name: petmasterreceive_10
     DisplayName: 白嫖怪
-    
+
 # 用熔炉熔炼
 Smelting:
   250:
@@ -770,19 +770,19 @@ AdvancementsCompleted:
     Goal: 完成20个成就
     Message: 成功完成20个成就！
     Name: advancements_20
-    DisplayName: 
+    DisplayName:
     Reward:
       Item: diamond 8; cake 1
-  
+
 #===========================OOOOOOO===========================#
 # VII-----------------------------------------------------VII #
 # |                      指令给予成就                       | #
 # 7---------------------------------------------------------7 #
 #===========================ooooooo===========================#
-    
+
 # 允许多次奖励指令成就
 MultiCommand: true
-    
+
 # 拥有 achievement.give 权限的玩家（后台） 可以使用/aach give yourAch1 PLAYER来给予
 # yourAch1 成就给 PLAYER。 /aach give指令对其他类型成就无效
 Commands:
@@ -791,7 +791,7 @@ Commands:
     Message: 你参加了活动-WDNMD
     Name: yourAch1
     DisplayName: 特别活动成就！
-    
+
 # 当用指令 /aach add 调用这项成就
 Custom:
   votes:
@@ -801,7 +801,7 @@ Custom:
       DisplayName: 超级粉丝
       Reward:
         Money: 5
-    
+
 #==========================OOOO=OOOO==========================#
 # VIII-------------------------0-------------------------VIII #
 # |   新插件版本更新的参数将会添加在这里   汉化by Fur_Xia   | #

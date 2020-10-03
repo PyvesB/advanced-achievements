@@ -9,7 +9,7 @@ website: https://github.com/PyvesB/advanced-achievements
 api-version: 1.13
 commands:
   aach:
-    description: Main Advanced Achievements command, use it to list sub-commands. 
+    description: Main Advanced Achievements command, use it to list sub-commands.
     aliases: [advancedachievements,aachievements,aa]
     usage: /<command>
 permissions:
@@ -151,7 +151,7 @@ permissions:
     default: true
   achievement.count.consumedpotions:
     description: Allows consumed potions statistics in database to increase.
-    default: true 
+    default: true
   achievement.count.eatenitems:
     description: Allows eaten item statistics in database to increase.
     default: true
