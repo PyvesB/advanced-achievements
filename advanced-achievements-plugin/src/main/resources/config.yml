@@ -259,7 +259,10 @@ BungeeMode: false
 # 5---------------------------------------------------------5 #
 #============================ooooo============================#
 
-# When a specific block is placed (available names: github.com/PyvesB/advanced-achievements/wiki/Material-names).
+# When a specific block is placed. You can use any of the following:
+# - a block name (available names: github.com/PyvesB/advanced-achievements/wiki/Material-names).
+# - notations such as sand:1 for pre-1.13 versions, which means sand item with metadata 1 (red sand).
+# - an item's custom display name (e.g. the name of a player's head).
 Places:
   chest:
     5:
@@ -291,6 +294,13 @@ Places:
         Command:
           Execute: "say §7ALERT: §4PLAYER§7 has become the §4STONE GOD§7!"
           Display: Become the Stone God!
+  # Item custom display name, for example Mario's head from the Custom Heads plugin.
+  §eMario:
+    1:
+      Goal: Place Mario's head.
+      Message: Mario's head is on the ground!
+      Name: place_1_mario
+      DisplayName: It's-a me, Mario!
 
 # When a specific block is broken (available names: github.com/PyvesB/advanced-achievements/wiki/Material-names).
 # You can use notations such as sand:1 for pre-1.13 versions, which means sand item with metadata 1 (red sand).

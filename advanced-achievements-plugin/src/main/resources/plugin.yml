@@ -300,3 +300,4 @@ permissions:
 # - use the sub-category key: for example for stone breaks, achievement.count.breaks.stone
 # - for PlayerCommands, use lower case without spaces nor the initial slash, e.g. achievement.count.playercommands.aachbook
 # - for Kills with a custom mob name you should remove any whitespaces, e.g. achievement.count.kills.§2SkeletalKnight
+# - for Places with a custom item display name you should also remove any whitespaces.
