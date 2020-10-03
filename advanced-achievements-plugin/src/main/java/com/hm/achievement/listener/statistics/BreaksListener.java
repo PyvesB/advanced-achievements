@@ -83,6 +83,7 @@ public class BreaksListener extends AbstractListener {
 			case "DIAMOND_ORE":
 			case "EMERALD_ORE":
 			case "LAPIS_ORE":
+			case "NETHER_GOLD_ORE":
 			case "NETHER_QUARTZ_ORE":
 			case "REDSTONE_ORE":
 				// Pre Minecraft 1.13:
