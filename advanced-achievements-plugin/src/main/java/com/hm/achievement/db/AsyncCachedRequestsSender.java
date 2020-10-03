@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 
@@ -92,7 +94,7 @@ public class AsyncCachedRequestsSender implements Runnable {
 				// Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
 				statistic.prepareDatabaseWrite();
 				UUID uuid = entry.getKey().getUUID();
-				String subcategory = entry.getKey().getSubcategory();
+				String subcategory = StringUtils.replace(entry.getKey().getSubcategory(), "'", "''");
 				if (databaseManager instanceof PostgreSQLDatabaseManager) {
 					batchedRequests.add("INSERT INTO " + databaseManager.getPrefix() + category.toDBName() + " VALUES ('"
 							+ uuid + "', '" + subcategory + "', " + statistic.getValue() + ") ON CONFLICT (playername, "
