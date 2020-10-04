@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.hm.achievement.utils.StatisticIncreaseHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -25,6 +26,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
+import org.bukkit.entity.Player;
 
 /**
  * Underlying implementation of the AdvancedAchievementsAPI interface.
@@ -37,16 +39,19 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	private final AdvancedAchievements advancedAchievements;
 	private final CacheManager cacheManager;
 	private final AbstractDatabaseManager databaseManager;
+	private final StatisticIncreaseHandler statisticIncreaseHandler;
 	private final Map<String, String> namesToDisplayNames;
 	private final Logger logger;
 
 	@Inject
 	AdvancedAchievementsBukkitAPI(AdvancedAchievements advancedAchievements, Logger logger, CacheManager cacheManager,
-			AbstractDatabaseManager databaseManager, @Named("ntd") Map<String, String> namesToDisplayNames) {
+			AbstractDatabaseManager databaseManager, StatisticIncreaseHandler statisticIncreaseHandler,
+			@Named("ntd") Map<String, String> namesToDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.cacheManager = cacheManager;
 		this.databaseManager = databaseManager;
+		this.statisticIncreaseHandler = statisticIncreaseHandler;
 		this.namesToDisplayNames = namesToDisplayNames;
 	}
 
@@ -173,6 +178,26 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	@Override
 	public Map<UUID, Integer> getPlayersTotalAchievements() {
 		return databaseManager.getPlayersAchievementsAmount();
+	}
+
+	@Override
+	public void incrementCategoryForPlayer(NormalAchievements category, Player player, int valueToAdd) {
+		validateNotNull(category, "category");
+		validateNotNull(player, "player");
+
+		long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd);
+		statisticIncreaseHandler.checkThresholdsAndAchievements(player, category.toString(), amount);
+	}
+
+	@Override
+	public void incrementCategoryForPlayer(MultipleAchievements category, String subcategory, Player player,
+			int valueToAdd) {
+		validateNotNull(category, "category");
+		validateNotEmpty(subcategory, "subcategory");
+		validateNotNull(player, "player");
+
+		long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(), valueToAdd);
+		statisticIncreaseHandler.checkThresholdsAndAchievements(player, category.toString() + "." + subcategory, amount);
 	}
 
 	/**

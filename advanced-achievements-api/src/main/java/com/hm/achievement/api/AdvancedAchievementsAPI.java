@@ -2,6 +2,7 @@ package com.hm.achievement.api;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
@@ -127,6 +128,27 @@ public interface AdvancedAchievementsAPI {
 	 * @since 1.0.0
 	 */
 	Map<UUID, Integer> getPlayersTotalAchievements();
+
+	/**
+	 * Increments the given category for the given player.
+	 *
+	 * @param category should not be null
+	 * @param player should not be null
+	 * @param valueToAdd should be positive
+	 * @since INSERT VERSION
+	 */
+	void incrementCategoryForPlayer(NormalAchievements category, Player player, int valueToAdd);
+
+	/**
+	 * Increments the given category for the given player.
+	 *
+	 * @param category should not be null
+	 * @param subcategory within the main multiple category
+	 * @param player should not be null
+	 * @param valueToAdd should be positive
+	 * @since INSERT VERSION
+	 */
+	void incrementCategoryForPlayer(MultipleAchievements category, String subcategory, Player player, int valueToAdd);
 
 	final class Rank {
 

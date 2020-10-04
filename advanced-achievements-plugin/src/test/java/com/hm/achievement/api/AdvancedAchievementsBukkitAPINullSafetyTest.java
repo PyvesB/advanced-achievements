@@ -97,4 +97,39 @@ public class AdvancedAchievementsBukkitAPINullSafetyTest {
 		Exception e = assertThrows(IllegalArgumentException.class, () -> underTest.getDisplayNameForName(""));
 		assertEquals("Achievement Name cannot be empty.", e.getMessage());
 	}
+
+	@Test
+	public void itShouldThrowExceptionWhenIncrementingNormalCategoryWithNullCategory() {
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.incrementCategoryForPlayer(null, null, 1));
+		assertEquals("category cannot be null.", e.getMessage());
+	}
+
+	@Test
+	public void itShouldThrowExceptionWhenIncrementingNormalCategoryWithNullPlayer() {
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.incrementCategoryForPlayer(NormalAchievements.ANVILS, null, 1));
+		assertEquals("player cannot be null.", e.getMessage());
+	}
+
+	@Test
+	public void itShouldThrowExceptionWhenIncrementingMultipleCategoryWithNullCategory() {
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.incrementCategoryForPlayer(null, "skeleton", null, 1));
+		assertEquals("category cannot be null.", e.getMessage());
+	}
+
+	@Test
+	public void itShouldThrowExceptionWhenIncrementingMultipleCategoryWithEmptySubcategory() {
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.incrementCategoryForPlayer(MultipleAchievements.KILLS, "", null, 1));
+		assertEquals("subcategory cannot be empty.", e.getMessage());
+	}
+
+	@Test
+	public void itShouldThrowExceptionWhenIncrementingMultipleCategoryWithNullPlayer() {
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> underTest.incrementCategoryForPlayer(MultipleAchievements.KILLS, "skeleton", null, 1));
+		assertEquals("player cannot be null.", e.getMessage());
+	}
 }
