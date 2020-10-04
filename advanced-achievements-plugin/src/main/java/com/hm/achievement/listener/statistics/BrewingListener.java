@@ -51,16 +51,17 @@ public class BrewingListener extends AbstractRateLimitedListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
+		ItemStack item = event.getCurrentItem();
 		if (event.getInventory().getType() != InventoryType.BREWING || event.getAction() == InventoryAction.NOTHING
 				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD
-				|| !isBrewablePotion(event)) {
+				|| !isBrewablePotion(item)) {
 			return;
 		}
 
 		Player player = (Player) event.getWhoClicked();
-		int eventAmount = event.getCurrentItem().getAmount();
+		int eventAmount = item.getAmount();
 		if (event.isShiftClick()) {
-			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, event.getCurrentItem()));
+			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, item));
 			if (eventAmount == 0) {
 				return;
 			}
@@ -72,11 +73,10 @@ public class BrewingListener extends AbstractRateLimitedListener {
 	/**
 	 * Determine whether the event corresponds to a brewable potion, i.e. not water.
 	 * 
-	 * @param event
+	 * @param item
 	 * @return true if for any brewable potion
 	 */
-	private boolean isBrewablePotion(InventoryClickEvent event) {
-		ItemStack item = event.getCurrentItem();
+	private boolean isBrewablePotion(ItemStack item) {
 		return item != null &&
 				(materialHelper.isAnyPotionButWater(item) || serverVersion >= 9 && item.getType() == Material.SPLASH_POTION);
 	}

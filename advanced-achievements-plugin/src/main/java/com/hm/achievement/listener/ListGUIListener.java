@@ -57,8 +57,9 @@ public class ListGUIListener implements Listener {
 		// Prevent players from taking items out of the GUI.
 		event.setCancelled(true);
 
+		ItemStack clickedItem = event.getCurrentItem();
 		// Clicking empty slots should do nothing
-		if (event.getCurrentItem() == null) {
+		if (clickedItem == null) {
 			return;
 		}
 
@@ -66,20 +67,20 @@ public class ListGUIListener implements Listener {
 		Player player = (Player) event.getWhoClicked();
 		if (currentPage == MAIN_GUI_PAGE) {
 			// Main GUI, check whether player can interact with the selected item.
-			if (!event.getCurrentItem().isSimilar(guiItems.getCategoryLock())
+			if (!clickedItem.isSimilar(guiItems.getCategoryLock())
 					&& event.getRawSlot() < getMainGUIItemCount()) {
-				categoryGUI.displayCategoryGUI(event.getCurrentItem(), player, 0);
+				categoryGUI.displayCategoryGUI(clickedItem, player, 0);
 			}
 			return;
 		}
 
 		ItemStack categoryItem = inventory.getItem(0);
 		// Check whether a navigation button was clicked in a category GUI.
-		if (isButtonClicked(event, guiItems.getBackButton())) {
+		if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getBackButton())) {
 			mainGUI.displayMainGUI(player);
-		} else if (isButtonClicked(event, guiItems.getPreviousButton())) {
+		} else if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getPreviousButton())) {
 			categoryGUI.displayCategoryGUI(categoryItem, player, currentPage - 1);
-		} else if (isButtonClicked(event, guiItems.getNextButton())) {
+		} else if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getNextButton())) {
 			categoryGUI.displayCategoryGUI(categoryItem, player, currentPage + 1);
 		}
 	}
@@ -87,21 +88,22 @@ public class ListGUIListener implements Listener {
 	/**
 	 * Verifies whether the user has clicked on the given navigation button.
 	 *
-	 * @param event
+	 * @param inventory
+	 * @param clickedItem
+	 * @param rawSlot
 	 * @param button
 	 * @return true if the button is clicked, false otherwise
 	 */
-	private boolean isButtonClicked(InventoryClickEvent event, ItemStack button) {
-		if (event.getCurrentItem().isSimilar(button)) {
+	private boolean isButtonClicked(Inventory inventory, ItemStack clickedItem, int rawSlot, ItemStack button) {
+		if (clickedItem.isSimilar(button)) {
 			// Clicked item seems to be the button. But player could have clicked on item in his personal inventory that
 			// matches the properties of the button used by Advanced Achievements. The first item matching the
 			// properties of the button is the real one, check that this is indeed the clicked one.
-			Map<Integer, ItemStack> backButtonCandidates = new TreeMap<>(
-					event.getInventory().all(event.getCurrentItem().getType()));
+			Map<Integer, ItemStack> backButtonCandidates = new TreeMap<>(inventory.all(clickedItem.getType()));
 			for (Entry<Integer, ItemStack> entry : backButtonCandidates.entrySet()) {
-				if (event.getCurrentItem().isSimilar(entry.getValue())) {
+				if (clickedItem.isSimilar(entry.getValue())) {
 					// Found real button. Did the player click on it?
-					if (entry.getKey() == event.getRawSlot()) {
+					if (entry.getKey() == rawSlot) {
 						return true;
 					}
 					break;

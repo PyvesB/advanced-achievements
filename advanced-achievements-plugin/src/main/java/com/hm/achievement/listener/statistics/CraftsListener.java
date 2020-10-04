@@ -60,7 +60,7 @@ public class CraftsListener extends AbstractListener {
 		Set<String> foundAchievements = findAchievementsByCategoryAndName(craftName + ':' + item.getDurability());
 		foundAchievements.addAll(findAchievementsByCategoryAndName(craftName));
 
-		int eventAmount = event.getCurrentItem().getAmount();
+		int eventAmount = item.getAmount();
 		if (event.isShiftClick()) {
 			int maxAmount = event.getInventory().getMaxStackSize();
 			ItemStack[] matrix = event.getInventory().getMatrix();
@@ -73,7 +73,7 @@ public class CraftsListener extends AbstractListener {
 				}
 			}
 			eventAmount *= maxAmount;
-			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, event.getCurrentItem()));
+			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, item));
 			if (eventAmount == 0) {
 				return;
 			}

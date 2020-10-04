@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -38,9 +39,9 @@ public class AnvilsListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
-		if (event.getRawSlot() != 2 || event.getInventory().getType() != InventoryType.ANVIL
-				|| event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR
-				|| event.getAction() == InventoryAction.NOTHING
+		ItemStack item = event.getCurrentItem();
+		if (event.getRawSlot() != 2 || event.getInventory().getType() != InventoryType.ANVIL || item == null
+				|| item.getType() == Material.AIR || event.getAction() == InventoryAction.NOTHING
 				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
 			return;
 		}
