@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,8 +36,7 @@ public class FireworkListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		Entity damager = event.getDamager();
-		if (damager != null && fireworksLaunchedByPlugin.contains(damager.getUniqueId())) {
+		if (fireworksLaunchedByPlugin.contains(event.getDamager().getUniqueId())) {
 			event.setCancelled(true);
 		}
 	}

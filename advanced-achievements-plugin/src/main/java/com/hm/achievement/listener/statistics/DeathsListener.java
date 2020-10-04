@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -34,11 +33,6 @@ public class DeathsListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDeath(PlayerDeathEvent event) {
-		Player player = event.getEntity();
-		if (player == null) {
-			return;
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(player, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(event.getEntity(), 1);
 	}
 }
