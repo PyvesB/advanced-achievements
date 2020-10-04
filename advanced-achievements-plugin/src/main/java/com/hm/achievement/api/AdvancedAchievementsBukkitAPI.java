@@ -45,7 +45,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 
 	@Inject
 	AdvancedAchievementsBukkitAPI(AdvancedAchievements advancedAchievements, Logger logger, CacheManager cacheManager,
-			AbstractDatabaseManager databaseManager, StatisticIncreaseHandler statisticIncreaseHandler, @Named("ntd") Map<String, String> namesToDisplayNames) {
+			AbstractDatabaseManager databaseManager, StatisticIncreaseHandler statisticIncreaseHandler,
+			@Named("ntd") Map<String, String> namesToDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.cacheManager = cacheManager;
@@ -189,7 +190,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	}
 
 	@Override
-	public void incrementCategoryForPlayer(MultipleAchievements category, String subcategory, Player player, int valueToAdd) {
+	public void incrementCategoryForPlayer(MultipleAchievements category, String subcategory, Player player,
+			int valueToAdd) {
 		validateNotNull(category, "category");
 		validateNotEmpty(subcategory, "subcategory");
 		validateNotNull(player, "player");
