@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,13 +37,12 @@ public class BreedingListener extends AbstractListener {
 			return;
 		}
 
-		Player player = (Player) event.getBreeder();
 		String mobName = event.getMother().getType().name().toLowerCase();
-		if (!player.hasPermission(category.toChildPermName(mobName))) {
+		if (!event.getBreeder().hasPermission(category.toChildPermName(mobName))) {
 			return;
 		}
 
 		Set<String> foundAchievements = findAchievementsByCategoryAndName(mobName);
-		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
+		updateStatisticAndAwardAchievementsIfAvailable((Player) event.getBreeder(), foundAchievements, 1);
 	}
 }
