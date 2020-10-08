@@ -21,7 +21,7 @@ public interface AdvancedAchievementsAPI {
 	 *
 	 * @deprecated use {@link #getAdvancedAchievementsVersion()} instead
 	 * @return version code
-	 * @since 1.0.0
+	 * @since 5.8.0
 	 */
 	@Deprecated
 	int getAdvancedAchievementsVersionCode();
@@ -31,18 +31,19 @@ public interface AdvancedAchievementsAPI {
 	 * 10 and patch version 1.
 	 *
 	 * @return version object
-	 * @since 1.1.0
+	 * @since 5.10.0
 	 */
 	Version getAdvancedAchievementsVersion();
 
 	/**
-	 * Checks whether player has received achievement {@code achievementName}. Implementation benefits from Advanced
-	 * Achievements caching when player is online and if method called from server thread.
+	 * Checks whether player has received achievement {@code achievementName}. The underlying implementation of this API
+	 * method benefits from Advanced Achievements caching when the player is online and if method called from the main
+	 * server thread.
 	 *
 	 * @param player should not be null
 	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml, should not be empty
 	 * @return true if player has received the achievement, false otherwise
-	 * @since 1.0.0
+	 * @since 5.8.0
 	 */
 	boolean hasPlayerReceivedAchievement(UUID player, String achievementName);
 
@@ -51,17 +52,17 @@ public interface AdvancedAchievementsAPI {
 	 *
 	 * @param player should not be null
 	 * @return list of {@code Achievement} objects received by the player
-	 * @since 1.0.0
+	 * @since 5.8.0
 	 */
 	List<Achievement> getPlayerAchievementsList(UUID player);
 
 	/**
-	 * Retrieves the total number of achievements received by the player. Implementation benefits from Advanced
-	 * Achievements caching when player is online.
+	 * Retrieves the total number of achievements received by the player. The underlying implementation of this API
+	 * method benefits from Advanced Achievements caching when the player is online.
 	 *
 	 * @param player should not be null
 	 * @return total achievements by the player
-	 * @since 1.0.0
+	 * @since 5.8.0
 	 */
 	int getPlayerTotalAchievements(UUID player);
 
@@ -72,7 +73,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param rankingPeriodStart time in millis since epoch; rank will be calculated for achievements received between
 	 *            that starting point and now
 	 * @return rank of the player; if no achievements were received over the period, his rank will be Integer.MAX_VALUE
-	 * @since 1.0.0
+	 * @since 5.8.0
 	 */
 	Rank getPlayerRank(UUID player, long rankingPeriodStart);
 
@@ -83,30 +84,30 @@ public interface AdvancedAchievementsAPI {
 	 * @param rankingPeriodStart time in millis since epoch; ranks will be calculated for achievements received between
 	 *            that starting point and now
 	 * @return list of players, ordered from best to worst
-	 * @since 1.0.0
+	 * @since 5.8.0
 	 */
 	List<UUID> getTopPlayers(int numOfPlayers, long rankingPeriodStart);
 
 	/**
-	 * Retrieves a statistic for a normal category. Implementation benefits from Advanced Achievements caching when
-	 * player is online and if method called from server thread.
+	 * Retrieves a statistic for a normal category. The underlying implementation of this API method benefits from
+	 * Advanced Achievements caching when the player is online and if method called from the main server thread.
 	 *
 	 * @param player should not be null
 	 * @param category should not be null
 	 * @return the statistic for the normal category
-	 * @since 1.0.0
+	 * @since 5.8.0
 	 */
 	long getStatisticForNormalCategory(UUID player, NormalAchievements category);
 
 	/**
-	 * Retrieves a statistic for a multiple category. Implementation benefits from Advanced Achievements caching when
-	 * player is online and if method called from server thread.
+	 * Retrieves a statistic for a multiple category. The underlying implementation of this API method benefits from
+	 * Advanced Achievements caching when the player is online and if method called from the main server thread.
 	 *
 	 * @param player should not be null
 	 * @param category should not be null
 	 * @param subcategory within the main multiple category
 	 * @return the statistic for the multiple category
-	 * @since 1.0.0
+	 * @since 5.8.0
 	 */
 	long getStatisticForMultipleCategory(UUID player, MultipleAchievements category, String subcategory);
 
@@ -117,7 +118,7 @@ public interface AdvancedAchievementsAPI {
 	 *
 	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml, should not be empty
 	 * @return the DisplayName parameter of an achievement or "" or null
-	 * @since 1.0.0
+	 * @since 5.8.0
 	 */
 	String getDisplayNameForName(String achievementName);
 
@@ -125,7 +126,7 @@ public interface AdvancedAchievementsAPI {
 	 * Retrieves the total numbers of achievements received by every player who has at least one achievement.
 	 *
 	 * @return map containing total achievements for every player
-	 * @since 1.0.0
+	 * @since 5.8.0
 	 */
 	Map<UUID, Integer> getPlayersTotalAchievements();
 
@@ -135,7 +136,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param category should not be null
 	 * @param player should not be null
 	 * @param valueToAdd should be positive
-	 * @since INSERT VERSION
+	 * @since 6.6.0
 	 */
 	void incrementCategoryForPlayer(NormalAchievements category, Player player, int valueToAdd);
 
@@ -146,7 +147,7 @@ public interface AdvancedAchievementsAPI {
 	 * @param subcategory within the main multiple category
 	 * @param player should not be null
 	 * @param valueToAdd should be positive
-	 * @since INSERT VERSION
+	 * @since 6.6.0
 	 */
 	void incrementCategoryForPlayer(MultipleAchievements category, String subcategory, Player player, int valueToAdd);
 
