@@ -1,0 +1,223 @@
+#=============================================================#
+# +---------------------------------------------------------+ #
+# | Advanced Achievements English translation by KondzioSvk | #
+# |             ~ Valid as of version 6.5.0 ~               | #
+# |   Newer plugin versions will automatically append new   | #
+# |     untranslated parameters to the end of the file.     | #
+# +---------------------------------------------------------+ #
+#=============================================================#
+
+no-permissions: "Nemáš dostatok práv k vykonaniu tejto akcie."
+statistic-cooldown: "Počkaj TIME sek., až sa akcia vykoná znova."
+category-does-not-exist: "Kategoria alebo podkategoria CAT neexistuje. Myslel si CLOSEST_MATCH?"
+all-achievements-received: "Gratulujem, splnil jsi všetky úspechy!"
+invalid-command: "Neplatný príkaz. Zadaj /aach pre zobrazenie príkazov v plugine."
+
+# Related to /aach reload.
+configuration-successfully-reloaded: "Konfigurácia bola úspešne obnovená."
+configuration-reload-failed: "Chyba pri obnovení konfigurácie. Pozri sa do konzole pre viac informácií."
+
+# Related to /aach top week and month.
+top-achievement: "Najlepšie úspechy majiteľov:"
+player-rank: "Aktuálny rank:"
+week-achievement: "Týždenné hodnotenie úspechov:"
+month-achievement: "Mesačné hodnotenie úspechov:"
+not-ranked: "Nie si v tejto chvíli hodnotený."
+pagination-header: "&7> &5Stránka PAGE/MAX"
+pagination-footer: "&7>"
+
+# Related to /aach stats.
+number-achievements: "Dosiahnuté úspechy:"
+
+# Related to /aach book.
+book-received: "Obdržal si knihu úspechov!"
+book-delay: "Musíš počkať TIME sek. medzi každym obdržaním knihy!"
+book-name: "Kniha Úspechov"
+book-date: "Vytvorenie knihy: DATE."
+book-not-received: "Zatiaľ si nedosiahol žiadny úspech."
+
+# Related to /aach give.
+player-offline: "Hrač PLAYER je offline!"
+not-a-player: "Nemôžeš dať úspech ENTITY, nie je to hráč!"
+achievement-already-received: "Hrač PLAYER už dosiahol tento úspech!"
+achievement-not-found: "Špecifikovaný úspech sa nenašiel. Myslel si CLOSEST_MATCH?"
+achievement-given: "Úspech darovaný!"
+achievement-no-permission: "Hráč PLAYER nemá právo, aby mohol obdržať tento úspech!"
+
+# Related to /aach add.
+error-value: "Hodnota VALUE musí byť integer!"
+statistic-increased: "Štatistika ACH sa zvýšila o AMOUNT pre hrača PLAYER!"
+
+# Related to achievement reception.
+achievement-received: "Hrač PLAYER získal úspech:"
+achievement-new: "Nový Úspech:"
+
+# Related to /aach check.
+check-achievement-true: "Hrač PLAYER už získal úspech ACH!"
+check-achievements-false: "Hrač PLAYER ešte nezískal úspech ACH!"
+
+# Related to /aach delete.
+delete-achievements: "Úspech ACH bol odstránený pre hráča PLAYER."
+delete-all-achievements: "Všetky úspechy boli odstránené pre hráča PLAYER."
+
+# Related to achievement rewards.
+item-reward-received: "Získal si predmet: AMOUNT ITEM"
+money-reward-received: "Získal si peniaze: AMOUNT!"
+command-reward: "Odmena bola odovzdaná!"
+custom-command-reward: "Získal si odmenu: MESSAGE"
+experience-reward-received: "Získal si skúsenosti: AMOUNT ex!"
+increase-max-health-reward-received: "Tvoje zdravie sa zvýšilo o AMOUNT AMOUNT!"
+increase-max-oxygen-reward-received: "Tvoja výdrž pod vodou sa zvýšila o AMOUNT!"
+
+# Related to /aach help.
+aach-command-book: "Dostaneš predmet 'Kniha Úspechov'."
+aach-command-book-hover: "Predmety RP môžeš zhromaždiť a vymeniť s ostanými!"
+aach-command-stats: "Zobrazí štatistiku tvojích úspechov."
+aach-command-stats-hover: "Ukazateľ postupu."
+aach-command-list: "Zobrazí obdržané a chýbajúce úspechy."
+aach-command-list-hover: "Pekné menu pre získanie prehľadu všetkých úspechov a tvojho pokroku!"
+aach-command-top: "Zobrazí osobné a globálne hodnotenie."
+aach-command-top-hover: "Kto je majster servera, a ako sa od nich líšim?"
+aach-command-give: "Dať úspech ACH na NAME."
+aach-command-give-hover: "Hrač musí byť online; dajú sa použiť iba príkazy úspechov."
+aach-command-add: "Zvýši štatistiku."
+aach-command-add-hover: "Hrač musí byť online; používa sa hlavne na vlastnú kategóriu."
+aach-command-reload: "Obnoví konfiguráciu."
+aach-command-reload-hover: "Obnoví nastavenia v config.yml, gui.yml a lang.yml súborov."
+aach-command-info: "Zobrazí informácie o plugine."
+aach-command-info-hover: "Extra info o plugine a o jeho úžasného autora!"
+aach-command-check: "Skontroluj, či NAME má ACH."
+aach-command-check-hover: "Použi parameter Name uvedený v konfigurácii."
+aach-command-delete: "Vymaže ACH z NAME."
+aach-command-delete-hover: "Hrač musí byť online; neresetuje žiadne súvisiace štatistiky."
+aach-command-week: "Zobrazí týždenné hodnotenie."
+aach-command-week-hover: "Najlepší lovci úspechov od začiatku týždňa!"
+aach-command-month: "Zobrazí mesačné hodnotenie."
+aach-command-month-hover: "Najlepší lovci úspechov od začiatku mesiaca!"
+aach-command-toggle: "Zobrazí úspechy ostatných hračov."
+aach-command-toggle-hover: "Tvoja voľba je uložená až do ďalšieho reštartu servera!"
+aach-command-reset: "Resetovanie štatistík pre kategóriu CAT."
+aach-command-reset-hover: "Hrač musí byť online; príklad: reset Places.stone KondzioSvk"
+aach-command-generate: "Vytvorenie úspechu."
+aach-command-generate-hover: "Potencionálne spomalý príkaz; používať s opatrnosťou!"
+aach-command-inspect: "Skontroluje príjemcov z ACH."
+aach-command-inspect-hover: "List posledných príjemcov úspechu, max 1000."
+aach-tip: "&lTIP &8Môžeš &7&n&oukázať&8 alebo &7&n&okliknúť&8 na príkaz!"
+
+# Related to /aach info.
+version-command-version: "Verzia:"
+version-command-website: "Webstránka:"
+version-command-author: "Autor:"
+version-command-description: "Popis:"
+version-command-description-details: "Advanced Achievements umožnuje unikátne a náročne úspechy. Pokus sa zhromaždiť čo najviac, získaj odmeny, vylez na vrchol rebríčku a získaj RP knihy!"
+version-command-vault: "Vault integrácia:"
+version-command-petmaster: "Pet Master integrácia:"
+version-command-btlp: "BungeeTabListPlus integrácia:"
+version-command-essentials: "Essentials integrácia:"
+version-command-placeholderapi: "PlaceholderAPI integrácia:"
+version-command-database: "Typ databázy:"
+
+# Related to /aach list.
+list-gui-title: "&5&lZoznam Úspechov"
+list-delay: "Musíš počkať TIME sek. medzi každým príkazom zoznamu!"
+list-description: "Popis:"
+list-goal: "Cieľ:"
+list-reception: "Dátum prijatia:"
+list-progress: "Pokrok:"
+list-reward: "Odmena:"
+list-rewards: "Odmeny:"
+list-reward-money: "$ AMOUNT"
+list-reward-item: "AMOUNTx ITEM"
+list-reward-command: "Ukrytá Odmena"
+list-reward-experience: "AMOUNT xp"
+list-reward-increase-max-health: "zvyšenie max. života o AMOUNT"
+list-reward-increase-max-oxygen: "zvyšenie max. výdrže pod vodou o AMOUNT"
+list-achievement-received: "&5\u2714&f "
+list-achievement-not-received: "&4\u2718 "
+list-category-not-unlocked: "Zatiaľ si neodomkol túto kategóriu."
+list-achievement-not-unlocked: "Zatiaľ si neodomkol tento úspech."
+list-back-message: "&7Späť"
+list-back-lore: ""
+list-previous-message: "&7Predchádzajúca"
+list-previous-lore: ""
+list-next-message: "&7Ďalej"
+list-next-lore: ""
+list-achievements-in-category-singular: "AMOUNT úspech"
+list-achievements-in-category-plural: "AMOUNT úspech-ov"
+list-unavailable-whilst-sleeping: "&c&lNemôžěs otvoriť Zoznam Úspechov, pokiaľ spiš."
+
+# Related to category names in /aach list.
+# Set a parameter to "" to hide it from /aach list (but not disable the category).
+list-connections: "Pripojenia"
+list-places: "Položené Bloky"
+list-breaks: "Zničené Bloky"
+list-kills: "Zabitý Mobovia"
+list-crafts: "Vyrobené Predmety"
+list-playercommands: "Zadané Príkazy"
+list-deaths: "Počet úmrtí"
+list-arrows: "Vystrelené Šípi"
+list-snowballs: "Hodené Snehové Gule"
+list-eggs: "Hodené Vajíčka"
+list-fish: "Chytené Ryby"
+list-treasure: "Vylovené Poklady"
+list-itembreaks: "Zničené Predmety"
+list-eatenitems: "Zjedené Predmety"
+list-shear: "Ostrihané Ovečky"
+list-milk: "Podojené Kravy"
+list-lavabuckets: "Vedrá Naplnené Lávou"
+list-waterbuckets: "Vedrá Naplnené Vodou"
+list-trades: "Počet Obchodovaní"
+list-anvils: "Použité Kovadliny"
+list-enchantments: "Očarované Predmety"
+list-beds: "Použité Postele"
+list-maxlevel: "Dosiahnutá Maximálna Úroveň"
+list-potions: "Použité Elixíry"
+list-playedtime: "Odohraný Čaš"
+list-distance-foot: "Vzdialenosť Prejdená Pešo"
+list-distance-pig: "Vzdialenosť Prejdená na Prasati"
+list-distance-horse: "Vzdialenosť Prejdená na Koňovi"
+list-distance-minecart: "Vzdialenosť Prejdená v Minecarte"
+list-distance-boat: "Vzdialenosť Prejdená v Člne"
+list-distance-gliding: "Vzdialenosť Prejdená na Elytre"
+list-distance-llama: "Vzdialenosť Prejdená na Lame"
+list-distance-sneaking: "Vzdialenosť Prejdená Plížením"
+list-itemdrops: "Odhodené Predmety"
+list-itempickups: "Zdvihnuté Predmety"
+list-hoeplowings: "Pooraný Povrch"
+list-fertilising: "Pohnojené Rastliny"
+list-taming: "Skrotené Zvierata"
+list-breeding: "Chované Zvierata"
+list-brewing: "Varené Elixíry"
+list-fireworks: "Spustený Ohnostroj"
+list-musicdiscs: "Prehrané Hudobné Platne"
+list-enderpearls: "Teleportácie s Ender Perlou"
+list-petmastergive: "Petovia Darovaný inému Hračovy"
+list-petmasterreceive: "Petovia Prijatý od iného Hrača"
+list-smelting: "Roztavené Predmety"
+list-commands: "Ďalšie Úspechy"
+list-custom: "Vlastné Kategórie"
+list-targetsshot: "Zastrelené Ciele"
+list-raids-won: "Vyhrané Raidy"
+list-riptides: "Príliv"
+list-advancements-completed: "Splnené Úspechy"
+
+# Related to /aach toggle.
+toggle-displayed: "Budeš informovaní, keď ostatní hráči dosiahnu úspechy."
+toggle-hidden: "Nebudeš informovaní, keď ostatní hráči dosiahnu úspechy."
+
+# Related to /aach reset.
+reset-successful: "CAT štatistiky pre hrača PLAYER boli vyčistené."
+reset-all-successful: "Všetky štatistiky pre hráča PLAYER boli vyčistené."
+
+# Related to /aach generate.
+advancements-generated: "Úspechy boli úspešne vygenerované."
+minecraft-not-supported: "Úspechy nefunguju na vašej verzii servera. Použi prosím verziu 1.12+."
+
+# Related to /aach inspect
+achievement-not-recognized: "Úspech s názvom 'NAME' nebol rozpoznaný. Myslel si CLOSEST_MATCH?"
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# | Parameters in future plugin versions will  appear here | #
+# +--------------------------------------------------------+ #
+#============================================================#
