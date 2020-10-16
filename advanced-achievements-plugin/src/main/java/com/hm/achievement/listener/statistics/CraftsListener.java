@@ -16,6 +16,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapelessRecipe;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.db.CacheManager;
@@ -46,7 +48,8 @@ public class CraftsListener extends AbstractListener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(CraftItemEvent event) {
 		if (!(event.getWhoClicked() instanceof Player) || event.getAction() == InventoryAction.NOTHING
-				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
+				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD
+				|| isCraftingIngotFromBlock(event.getRecipe())) {
 			return;
 		}
 
@@ -80,5 +83,29 @@ public class CraftsListener extends AbstractListener {
 		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, eventAmount);
+	}
+
+	/**
+	 * Metal blocks can be used for repeated crafts of ingots (e.g. iron block -> 9 iron ingots -> iron block -> ...).
+	 * Detect and prevent this.
+	 * 
+	 * @param recipe
+	 * @return true if the player is trying to craft ingots from a block of the same metal
+	 */
+	private boolean isCraftingIngotFromBlock(Recipe recipe) {
+		if (recipe instanceof ShapelessRecipe) {
+			ShapelessRecipe shapelessRecipe = (ShapelessRecipe) recipe;
+			List<ItemStack> ingredientList = shapelessRecipe.getIngredientList();
+			if (ingredientList.size() == 1) {
+				Material resultMaterial = shapelessRecipe.getResult().getType();
+				Material ingredientMaterial = ingredientList.get(0).getType();
+				if (resultMaterial == Material.GOLD_INGOT && ingredientMaterial == Material.GOLD_BLOCK
+						|| resultMaterial == Material.NETHERITE_INGOT && ingredientMaterial == Material.NETHERITE_BLOCK
+						|| resultMaterial == Material.IRON_INGOT && ingredientMaterial == Material.IRON_BLOCK) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
