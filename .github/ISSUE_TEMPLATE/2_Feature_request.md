@@ -3,7 +3,12 @@ name: 💡 Feature Request
 about: Ideas for new features or improvements
 ---
 
-<!-- Don't forget to star the repository, leave a review on Spigot and donate to support the project! -->
+<!-- Don't forget to star the repository or leave a review on Spigot to boost the project! -->
+
+:information_source: **Basic information**
+
+* [Existing issues](https://github.com/PyvesB/advanced-achievements/issues) searched: <!-- Fill in yes if you have searched existing issues. -->
+* Spigot username: <!-- Please fill in. -->
 
 :clipboard: **Description**
 

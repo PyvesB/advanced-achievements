@@ -4,15 +4,14 @@ about: Request help
 labels: 'general support'
 ---
 
-<!-- Don't forget to star the repository, leave a review on Spigot and donate to support the project! -->
-
+<!-- Don't forget to star the repository or leave a review on Spigot to boost the project! -->
 
 :information_source: **Basic information**
 
 * Advanced Achievements version: <!-- Please fill in. -->
 * Minecraft version: <!-- Please fill in. -->
 * [Wiki](https://github.com/PyvesB/advanced-achievements/wiki) read: <!-- Fill in yes if you have read the Wiki. -->
-* [Existing issues](https://github.com/PyvesB/advanced-achievements/issues) searched: <!-- Fill in yes if you have searched through existing issues. -->
+* [Existing issues](https://github.com/PyvesB/advanced-achievements/issues) searched: <!-- Fill in yes if you have searched existing issues. -->
 
 :question: **Help request**
 
