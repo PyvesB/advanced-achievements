@@ -1,5 +1,6 @@
 package com.hm.achievement.listener.statistics;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +18,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 
 import com.hm.achievement.category.MultipleAchievements;
@@ -93,19 +95,20 @@ public class CraftsListener extends AbstractListener {
 	 * @return true if the player is trying to craft ingots from a block of the same metal
 	 */
 	private boolean isCraftingIngotFromBlock(Recipe recipe) {
+		Material ingredient = Material.AIR;
 		if (recipe instanceof ShapelessRecipe) {
 			ShapelessRecipe shapelessRecipe = (ShapelessRecipe) recipe;
 			List<ItemStack> ingredientList = shapelessRecipe.getIngredientList();
 			if (ingredientList.size() == 1) {
-				Material resultMaterial = shapelessRecipe.getResult().getType();
-				Material ingredientMaterial = ingredientList.get(0).getType();
-				if (resultMaterial == Material.GOLD_INGOT && ingredientMaterial == Material.GOLD_BLOCK
-						|| resultMaterial == Material.NETHERITE_INGOT && ingredientMaterial == Material.NETHERITE_BLOCK
-						|| resultMaterial == Material.IRON_INGOT && ingredientMaterial == Material.IRON_BLOCK) {
-					return true;
-				}
+				ingredient = ingredientList.get(0).getType();
+			}
+		} else if (recipe instanceof ShapedRecipe) {
+			ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
+			Collection<ItemStack> ingredients = shapedRecipe.getIngredientMap().values();
+			if (ingredients.size() == 1) {
+				ingredient = ingredients.iterator().next().getType();
 			}
 		}
-		return false;
+		return ingredient.name().endsWith("_BLOCK") && recipe.getResult().getType().name().endsWith("_INGOT");
 	}
 }
