@@ -110,12 +110,18 @@ public class CategoryGUI implements Reloadable {
 				.unescapeJava(LangHelper.get(GuiLang.ACHIEVEMENT_RECEIVED, langConfig));
 		langListAchievementNotReceived = StringEscapeUtils
 				.unescapeJava(LangHelper.get(GuiLang.ACHIEVEMENT_NOT_RECEIVED, langConfig) + configListColorNotReceived);
-		langListDescription = translateColorCodes("&7&l" + LangHelper.get(GuiLang.DESCRIPTION, langConfig));
-		langListReception = translateColorCodes("&7&l" + LangHelper.get(GuiLang.RECEPTION, langConfig));
-		langListGoal = translateColorCodes("&7&l" + LangHelper.get(GuiLang.GOAL, langConfig));
-		langListProgress = translateColorCodes("&7&l" + LangHelper.get(GuiLang.PROGRESS, langConfig));
-		langListReward = translateColorCodes("&7&l" + LangHelper.get(GuiLang.REWARD, langConfig));
-		langListRewards = translateColorCodes("&7&l" + LangHelper.get(GuiLang.REWARDS, langConfig));
+		String description = LangHelper.get(GuiLang.DESCRIPTION, langConfig);
+		langListDescription = description.isEmpty() ? "" : translateColorCodes("&7&l" + description);
+		String reception = LangHelper.get(GuiLang.RECEPTION, langConfig);
+		langListReception = reception.isEmpty() ? "" : translateColorCodes("&7&l" + reception);
+		String goal = LangHelper.get(GuiLang.GOAL, langConfig);
+		langListGoal = goal.isEmpty() ? "" : translateColorCodes("&7&l" + goal);
+		String progress = LangHelper.get(GuiLang.PROGRESS, langConfig);
+		langListProgress = progress.isEmpty() ? "" : translateColorCodes("&7&l" + progress);
+		String reward = LangHelper.get(GuiLang.REWARD, langConfig);
+		langListReward = reward.isEmpty() ? "" : translateColorCodes("&7&l" + reward);
+		String rewards = LangHelper.get(GuiLang.REWARDS, langConfig);
+		langListRewards = rewards.isEmpty() ? "" : translateColorCodes("&7&l" + rewards);
 	}
 
 	/**
@@ -410,21 +416,29 @@ public class CategoryGUI implements Reloadable {
 		lore.add("");
 
 		if (date != null) {
-			lore.add(langListDescription);
+			if (!langListDescription.isEmpty()) {
+				lore.add(langListDescription);
+			}
 			descriptions.forEach(d -> lore.add(translateColorCodes("&r" + d)));
 			lore.add("");
-			lore.add(langListReception);
+			if (!langListReception.isEmpty()) {
+				lore.add(langListReception);
+			}
 			lore.add(translateColorCodes("&r" + date));
 			lore.add("");
 		} else {
-			lore.add(langListGoal);
+			if (!langListGoal.isEmpty()) {
+				lore.add(langListGoal);
+			}
 			descriptions.forEach(d -> lore.add(translateColorCodes(notReceivedStyle(d, ineligibleSeriesItem))));
 			lore.add("");
 			// Display progress if not Commands category.
 			if (!configObfuscateNotReceived && statistic != NO_STAT) {
 				String threshold = StringUtils.defaultIfEmpty(StringUtils.substringAfter(path, "."), path);
 				boolean timeStat = NormalAchievements.PLAYEDTIME.toString().equals(categoryName);
-				lore.add(langListProgress);
+				if (!langListProgress.isEmpty()) {
+					lore.add(langListProgress);
+				}
 				lore.add(translateColorCodes(constructProgressBar(threshold, statistic, timeStat)));
 				lore.add("");
 			}
@@ -433,7 +447,11 @@ public class CategoryGUI implements Reloadable {
 		List<String> rewards = rewardParser.getRewardListing(categoryName + '.' + path + ".Reward", player);
 		// Add the rewards information.
 		if (!rewards.isEmpty() && !configHideRewardDisplayInList) {
-			lore.add(rewards.size() == 1 ? langListReward : langListRewards);
+			if (rewards.size() == 1 && !langListReward.isEmpty()) {
+				lore.add(langListReward);
+			} else if (rewards.size() > 1 && !langListRewards.isEmpty()) {
+				lore.add(langListRewards);
+			}
 			String dot;
 			if (date != null) {
 				dot = StringEscapeUtils.unescapeJava("&r\u25CF ");
