@@ -218,8 +218,9 @@ public class CategoryGUI implements Reloadable {
 				List<String> descriptions = getDescriptionsToDisplay(categoryName, path, receptionDate != null);
 				List<String> lore = buildLore(categoryName, descriptions, path, receptionDate, statistic,
 						ineligibleSeriesItem, player);
+				String type = mainConfig.getString(categoryName + '.' + path + ".Type", "");
 				insertAchievement(inventory, index - pageStart + 1, statistic, nameToDisplay, receptionDate,
-						ineligibleSeriesItem, index - seriesStart + 1, lore);
+						ineligibleSeriesItem, index - seriesStart + 1, lore, type);
 			}
 
 			previousItemDate = receptionDate;
@@ -253,18 +254,19 @@ public class CategoryGUI implements Reloadable {
 	 * @param ineligibleSeriesItem
 	 * @param seriesNumber
 	 * @param lore
+	 * @param type
 	 */
 	private void insertAchievement(Inventory gui, int position, long statistic, String name, String date,
-			boolean ineligibleSeriesItem, int seriesNumber, List<String> lore) {
+			boolean ineligibleSeriesItem, int seriesNumber, List<String> lore, String type) {
 		// Display an item depending on whether the achievement was received or not, or whether progress was started.
 		// Clone in order to work with an independent set of metadata.
 		ItemStack achItem;
 		if (date != null) {
-			achItem = guiItems.getAchievementReceived().clone();
+			achItem = guiItems.getAchievementReceived(type).clone();
 		} else if (statistic > 0) {
-			achItem = guiItems.getAchievementStarted().clone();
+			achItem = guiItems.getAchievementStarted(type).clone();
 		} else {
-			achItem = guiItems.getAchievementNotStarted().clone();
+			achItem = guiItems.getAchievementNotStarted(type).clone();
 		}
 
 		String displayName = date == null ? langListAchievementNotReceived + notReceivedStyle(name, ineligibleSeriesItem)

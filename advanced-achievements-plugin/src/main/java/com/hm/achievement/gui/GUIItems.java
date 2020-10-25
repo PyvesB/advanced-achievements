@@ -3,6 +3,7 @@ package com.hm.achievement.gui;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -42,18 +43,20 @@ public class GUIItems implements Reloadable {
 	private ItemStack previousButton;
 	private ItemStack nextButton;
 	private ItemStack backButton;
-	private ItemStack achievementNotStarted;
-	private ItemStack achievementStarted;
+	private ItemStack achievementNotStartedDefault;
+	private final Map<String, ItemStack> achievementNotStarted = new HashMap<>();
+	private ItemStack achievementStartedDefault;
+	private final Map<String, ItemStack> achievementStarted = new HashMap<>();
+	private ItemStack achievementReceivedDefault;
+	private final Map<String, ItemStack> achievementReceived = new HashMap<>();
 	private ItemStack achievementLock;
 	private ItemStack categoryLock;
 
-	private ItemStack achievementReceived;
-
 	private final CommentedYamlConfiguration mainConfig;
 	private final CommentedYamlConfiguration langConfig;
-
 	private final CommentedYamlConfiguration guiConfig;
 	private final MaterialHelper materialHelper;
+	private int serverVersion;
 
 	private String configListAchievementFormat;
 	private String configIcon;
@@ -64,11 +67,12 @@ public class GUIItems implements Reloadable {
 	@Inject
 	public GUIItems(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig,
-			@Named("gui") CommentedYamlConfiguration guiConfig, MaterialHelper materialHelper) {
+			@Named("gui") CommentedYamlConfiguration guiConfig, MaterialHelper materialHelper, int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
 		this.materialHelper = materialHelper;
+		this.serverVersion = serverVersion;
 	}
 
 	@Override
@@ -110,9 +114,24 @@ public class GUIItems implements Reloadable {
 		orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(CommandAchievements.COMMANDS.toString()),
 				CommandAchievements.COMMANDS), itemStack);
 
-		achievementNotStarted = createItemStack("AchievementNotStarted");
-		achievementStarted = createItemStack("AchievementStarted");
-		achievementReceived = createItemStack("AchievementReceived");
+		if (serverVersion >= 13) {
+			achievementNotStartedDefault = createItemStack("AchievementNotStarted", "red_terracotta", 0);
+			achievementStartedDefault = createItemStack("AchievementStarted", "yellow_terracotta", 0);
+			achievementReceivedDefault = createItemStack("AchievementReceived", "lime_terracotta", 0);
+		} else {
+			achievementNotStartedDefault = createItemStack("AchievementNotStarted", "stained_clay", 14);
+			achievementStartedDefault = createItemStack("AchievementStarted", "stained_clay", 4);
+			achievementReceivedDefault = createItemStack("AchievementReceived", "stained_clay", 5);
+		}
+		for (String type : guiConfig.getShallowKeys("AchievementNotStarted")) {
+			achievementNotStarted.put(type, createItemStack("AchievementNotStarted." + type));
+		}
+		for (String type : guiConfig.getShallowKeys("AchievementStarted")) {
+			achievementStarted.put(type, createItemStack("AchievementStarted." + type));
+		}
+		for (String type : guiConfig.getShallowKeys("AchievementReceived")) {
+			achievementReceived.put(type, createItemStack("AchievementReceived." + type));
+		}
 		previousButton = createButton("PreviousButton", GuiLang.PREVIOUS_MESSAGE, GuiLang.PREVIOUS_LORE);
 		nextButton = createButton("NextButton", GuiLang.NEXT_MESSAGE, GuiLang.NEXT_LORE);
 		backButton = createButton("BackButton", GuiLang.BACK_MESSAGE, GuiLang.BACK_LORE);
@@ -126,12 +145,24 @@ public class GUIItems implements Reloadable {
 	 * @param categoryName
 	 * @return the item for the category
 	 */
-	@SuppressWarnings("deprecation")
 	private ItemStack createItemStack(String categoryName) {
+		return createItemStack(categoryName, null, 0);
+	}
+
+	/**
+	 * Creates an ItemStack based on information extracted from gui.yml or default values if not found.
+	 *
+	 * @param categoryName
+	 * @param defaultMaterial
+	 * @param defaultMetadata
+	 * @return the item for the category
+	 */
+	@SuppressWarnings("deprecation")
+	private ItemStack createItemStack(String categoryName, String defaultMaterial, int defaultMetadata) {
 		String path = categoryName + ".Item";
-		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BEDROCK,
+		Material material = materialHelper.matchMaterial(guiConfig.getString(path, defaultMaterial), Material.BEDROCK,
 				"gui.yml (" + path + ")");
-		short metadata = (short) guiConfig.getInt(categoryName + ".Metadata");
+		short metadata = (short) guiConfig.getInt(categoryName + ".Metadata", defaultMetadata);
 		return new ItemStack(material, 1, metadata);
 	}
 
@@ -191,6 +222,18 @@ public class GUIItems implements Reloadable {
 		item.setItemMeta(itemMeta);
 	}
 
+	public ItemStack getAchievementNotStarted(String type) {
+		return achievementNotStarted.getOrDefault(type, achievementNotStartedDefault);
+	}
+
+	public ItemStack getAchievementStarted(String type) {
+		return achievementStarted.getOrDefault(type, achievementStartedDefault);
+	}
+
+	public ItemStack getAchievementReceived(String type) {
+		return achievementReceived.getOrDefault(type, achievementReceivedDefault);
+	}
+
 	public Map<OrderedCategory, ItemStack> getOrderedAchievementItems() {
 		return orderedAchievementItems;
 	}
@@ -205,18 +248,6 @@ public class GUIItems implements Reloadable {
 
 	public ItemStack getBackButton() {
 		return backButton;
-	}
-
-	public ItemStack getAchievementNotStarted() {
-		return achievementNotStarted;
-	}
-
-	public ItemStack getAchievementStarted() {
-		return achievementStarted;
-	}
-
-	public ItemStack getAchievementReceived() {
-		return achievementReceived;
 	}
 
 	public ItemStack getAchievementLock() {

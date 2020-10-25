@@ -8,16 +8,28 @@
 # If you are using a Minecraft version prior to 1.9, change grass_path of HoePlowings!
 # The order of the categories in the GUI will match the same order as in this file.
 
-# Items used to represent the achievements.
+# Items used to represent the achievements depending on their Type parameter.
 AchievementNotStarted:
-  Item: stained_clay
-  Metadata: 14
+  normal:
+   Item: stained_clay
+   Metadata: 14
+  rare:
+   Item: stained_glass
+   Metadata: 14
 AchievementStarted:
-  Item: stained_clay
-  Metadata: 4
+  normal:
+   Item: stained_clay
+   Metadata: 4
+  rare:
+   Item: stained_glass
+   Metadata: 4
 AchievementReceived:
-  Item: stained_clay
-  Metadata: 5
+  normal:
+   Item: stained_clay
+   Metadata: 5
+  rare:
+   Item: stained_glass
+   Metadata: 5
 
 # Locks for HideProgressiveAchievements and HideNotReceivedCategories.
 AchievementLock:

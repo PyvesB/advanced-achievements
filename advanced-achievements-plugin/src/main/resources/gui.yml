@@ -7,13 +7,22 @@
 # Do not use the same Item twice.
 # The order of the categories in the GUI will match the same order as in this file.
 
-# Items used to represent the achievements.
+# Items used to represent the achievements depending on their Type parameter.
 AchievementNotStarted:
-  Item: red_terracotta
+  normal:
+    Item: red_terracotta
+  rare:
+    Item: red_glazed_terracotta
 AchievementStarted:
-  Item: yellow_terracotta
+  normal:
+    Item: yellow_terracotta
+  rare:
+    Item: yellow_glazed_terracotta
 AchievementReceived:
-  Item: lime_terracotta
+  normal:
+    Item: lime_terracotta
+  rare:
+    Item: lime_glazed_terracotta
 
 # Locks for HideProgressiveAchievements and HideNotReceivedCategories.
 AchievementLock:

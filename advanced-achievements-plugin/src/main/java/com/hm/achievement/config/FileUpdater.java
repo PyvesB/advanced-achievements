@@ -234,9 +234,6 @@ public class FileUpdater {
 		updateSetting(gui, "Breeding.Item", "wheat");
 
 		// Added in version 5.3:
-		updateSetting(gui, "AchievementNotStarted.Item", "stained_clay");
-		updateSetting(gui, "AchievementStarted.Item", "stained_clay");
-		updateSetting(gui, "AchievementReceived.Item", "stained_clay");
 		updateSetting(gui, "BackButton.Item", "book");
 		updateSetting(gui, "PreviousButton.Item", "wood_button");
 		updateSetting(gui, "NextButton.Item", "stone_button");
@@ -263,9 +260,6 @@ public class FileUpdater {
 
 		if (serverVersion < 13) {
 			updateSetting(gui, "Breeding.Metadata", 0);
-			updateSetting(gui, "AchievementNotStarted.Metadata", 14);
-			updateSetting(gui, "AchievementStarted.Metadata", 4);
-			updateSetting(gui, "AchievementReceived.Metadata", 5);
 			updateSetting(gui, "BackButton.Metadata", 0);
 			updateSetting(gui, "PreviousButton.Metadata", 0);
 			updateSetting(gui, "NextButton.Metadata", 0);

@@ -274,22 +274,27 @@ Places:
       Name: place_5_chest
       # Displayed when receiving achievement, and in /aach book and /aach list.
       DisplayName: Storage Expert
+      # Used to select the display item for this achievement in gui.yml.
+      Type: normal
     50:
       Goal: Place 50 chests.
       Message: §6You have placed 50 chests!
       Name: place_50_chest
       DisplayName: Tetris Master
+      Type: normal
   stone:
     100:
       Goal: Place 100 Stones.
       Message: One hundred placed stones!
       Name: place_100_stone
       DisplayName: Stone Addict
+      Type: normal
     1000:
       Goal: Place 1000 stones.
       Message: One thousand placed stones!
       Name: place_1000_stone
       DisplayName: Stone God
+      Type: normal
       Reward:
         Command:
           Execute: "say §7ALERT: §4PLAYER§7 has become the §4STONE GOD§7!"
@@ -301,6 +306,7 @@ Places:
       Message: Mario's head is on the ground!
       Name: place_1_mario
       DisplayName: It's-a me, Mario!
+      Type: rare
 
 # When a specific block is broken (available names: github.com/PyvesB/advanced-achievements/wiki/Material-names).
 # You can use notations such as sand:1 for pre-1.13 versions, which means sand item with metadata 1 (red sand).
@@ -311,6 +317,7 @@ Breaks:
       Message: You have broken 10 ice blocks!
       Name: break_10_ice
       DisplayName: Cold Drink Supplier
+      Type: normal
   # Use the following construct to track multiple types. Note that if ever you add/remove a type grouped to others with |,
   # progress for this sub-category group will start back at 0.
   snow|snow_block|ice:
@@ -319,12 +326,14 @@ Breaks:
       Message: You have broken 32 ice and snow, Woo!
       Name: break_32_ice_any
       DisplayName: Praying for Summer
+      Type: normal
   stone:
     1:
       Goal: Break a block.
       Message: §1The first time you went mining!
       Name: break_1_stone
       DisplayName: Cobble Gobble!
+      Type: normal
       # Use semicolons for multiple command rewards. PLAYER will be replaced by players name.
       Reward:
         Command:
@@ -343,6 +352,7 @@ Kills:
       Message: The first time you killed a zombie!
       Name: kills_1_zombie
       DisplayName: The Walking Dead
+      Type: normal
       Reward:
         Money: 1
         Item: diamond 1
@@ -353,12 +363,14 @@ Kills:
       Message: §eYou killed a Mythic Mob!
       Name: kills_1_skeletal_night
       DisplayName: Mythic Killer
+      Type: rare
   specificplayer-56c79b19-4500-466c-94ea-514a755fdd09:
     1:
       Goal: Kill the evil Author.
       Message: Yippie! You killed the author of the plugin!
       Name: kills_1_darkpyves
       DisplayName:  No More DarkPyves
+      Type: rare
       Reward:
         IncreaseMaxHealth: 1
 
@@ -372,12 +384,14 @@ TargetsShot:
       Message: You lapidated villagers 10 times.
       Name: targetsshot_10_villager
       DisplayName: The Stoner
+      Type: normal
   glass:
     100:
       Goal: Try to break granny's windows.
       Message: You shot 100 projectiles at glass blocks!
       Name: targetsshot_100_glass
       DisplayName: Window Breaker
+      Type: normal
 
 # When a specific item is crafted (available names: github.com/PyvesB/advanced-achievements/wiki/Material-names).
 Crafts:
@@ -387,6 +401,7 @@ Crafts:
       Message: The first time you crafted a blade!
       Name: craft_1_blade
       DisplayName: Blacksmith Apprentice
+      Type: normal
       Reward:
         Money: 2
     100:
@@ -394,6 +409,7 @@ Crafts:
       Message: Next craft, Excalibur?
       Name: craft_100_blade
       DisplayName: Blacksmith Legend
+      Type: rare
       Reward:
         Experience: 500
 
@@ -407,6 +423,7 @@ PlayerCommands:
       Message: Run the stats command 10 times!
       Name: playercommand_aachstats_10
       DisplayName: Statistician
+      Type: normal
       Rewards:
         Commands:
           Execute: say §7PLAYER is now a statistician
@@ -420,6 +437,7 @@ Breeding:
       Message: You bred your first sheep!
       Name: breeding_1_sheep
       DisplayName: Breeder
+      Type: normal
 
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
@@ -434,6 +452,7 @@ Connections:
     Message: You connected to our server for the first time!
     Name: connect_1
     DisplayName: Good Choice
+    Type: normal
 
 # When the player dies.
 Deaths:
@@ -442,6 +461,7 @@ Deaths:
     Message: The first time you died!
     Name: deaths_1
     DisplayName: Rest in Peace
+    Type: normal
     Reward:
         # Text after the material and quantity is interpreted as a custom name, shown in /aach list and when receiving the reward.
         Item: stone 5 Tombstone
@@ -453,6 +473,7 @@ Arrows:
     Message: 50 arrows shot!
     Name: arrows_50
     DisplayName: Arrows Around the Place
+    Type: normal
 
 # When a snowball is thrown.
 Snowballs:
@@ -461,6 +482,7 @@ Snowballs:
     Message: 1000 snowballs thrown. That's the spirit!
     Name: snowballs_1000
     DisplayName: Winter Addict
+    Type: normal
     Reward:
         # 30 corresponds to one bubble in the oxygen bar.
         IncreaseMaxOxygen: 30
@@ -472,6 +494,7 @@ Eggs:
     Message: 1000 eggs thrown!
     Name: eggs_1000
     DisplayName: Omelet Addict
+    Type: normal
 
 # When a fish is caught.
 Fish:
@@ -480,6 +503,7 @@ Fish:
     Message: The first time you caught a fish!
     Name: fish_1
     DisplayName: Time for Fish and Chips
+    Type: normal
 
 # When a treasure is caught with a fishing rod.
 Treasures:
@@ -488,6 +512,7 @@ Treasures:
     Message: Your first treasure from the sea!
     Name: treasure_1
     DisplayName: Treasure Hunter
+    Type: normal
 
 # When a tool/armor/weapon is broken.
 ItemBreaks:
@@ -496,6 +521,7 @@ ItemBreaks:
     Message: You broke your favorite tool!
     Name: itembreaks_1
     DisplayName: §4Clumsy Guy
+    Type: normal
 
 # When an item is eaten (excludes potions and milk).
 EatenItems:
@@ -504,6 +530,7 @@ EatenItems:
     Message: Just had a snack!
     Name: eatenitems_1
     DisplayName: First Snack
+    Type: normal
 
 # When a sheep is sheared.
 Shear:
@@ -512,6 +539,7 @@ Shear:
     Message: 100 sheep sheared!
     Name: shear_100
     DisplayName: §1Wool Addict
+    Type: normal
 
 # When a cow is milked.
 Milk:
@@ -520,6 +548,7 @@ Milk:
     Message: §eJust milked a cow!.... §cMOOW
     Name: milk_1
     DisplayName: First Milk
+    Type: normal
     Reward:
       Experience: 100
 
@@ -530,6 +559,7 @@ LavaBuckets:
     Message: 10 buckets filled with lava!
     Name: lavabuckets_10
     DisplayName: Pyroman
+    Type: normal
 
 # When a bucket is filled with water.
 WaterBuckets:
@@ -538,6 +568,7 @@ WaterBuckets:
     Message: 15 buckets filled with water!
     Name: waterbuckets_15
     DisplayName: Fireman
+    Type: normal
 
 # When a trade with a villager is made.
 Trades:
@@ -546,6 +577,7 @@ Trades:
     Message: Doing business with your first villager!
     Name: trades_1
     DisplayName: First Trade
+    Type: normal
 
 # When an anvil is used.
 AnvilsUsed:
@@ -554,6 +586,7 @@ AnvilsUsed:
     Message: You just repaired your first item!
     Name: anvilsused_1
     DisplayName: First Repair
+    Type: normal
 
 # When an enchantment is performed.
 Enchantments:
@@ -562,6 +595,7 @@ Enchantments:
     Message: 5 objects enchanted!
     Name: enchantments_5
     DisplayName: §5Wizard
+    Type: normal
 
 # When a bed is entered.
 Beds:
@@ -570,6 +604,7 @@ Beds:
     Message: You entered a bed 5 times!
     Name: bed_5
     DisplayName: Sleepy Guy
+    Type: normal
 
 # Maximum level reached.
 MaxLevel:
@@ -578,6 +613,7 @@ MaxLevel:
     Message: Level 10 reached!
     Name: maxlevel_10
     DisplayName: §4Rookie
+    Type: normal
 
 # When a potion is consumed.
 ConsumedPotions:
@@ -586,6 +622,7 @@ ConsumedPotions:
     Message: Drinking weird beverages all the time...
     Name: consumedpotions_100
     DisplayName: Alcoholic
+    Type: normal
 
 # Amount of time played on the server (in hours, use integers).
 PlayedTime:
@@ -594,6 +631,7 @@ PlayedTime:
     Message: You played for one hour on the server!
     Name: playedtime_1
     DisplayName: First Hour
+    Type: normal
 
 # When a distance is traveled by foot.
 DistanceFoot:
@@ -602,6 +640,7 @@ DistanceFoot:
     Message: You traveled 1000 blocks by foot!
     Name: distancefoot_1000
     DisplayName: Big Walker
+    Type: normal
 
 # When a distance is traveled on a pig.
 DistancePig:
@@ -610,6 +649,7 @@ DistancePig:
     Message: You traveled 100 blocks on a pig!
     Name: distancepig_100
     DisplayName: Carrot on a Stick Master
+    Type: rare
 
 # When a distance is traveled on a horse.
 DistanceHorse:
@@ -618,6 +658,7 @@ DistanceHorse:
     Message: You traveled 500 blocks on a horse!
     Name: distancehorse_500
     DisplayName: The Avener
+    Type: normal
 
 # When a distance is traveled in a minecart.
 DistanceMinecart:
@@ -626,6 +667,7 @@ DistanceMinecart:
     Message: You traveled 100 blocks in a minecart!
     Name: distanceminecart_100
     DisplayName: Carting Fan
+    Type: normal
 
 # When a distance is traveled in a boat.
 DistanceBoat:
@@ -634,6 +676,7 @@ DistanceBoat:
     Message: You traveled 200 blocks in a boat!
     Name: distanceboat_200
     DisplayName: Great Sailor
+    Type: normal
 
 # When a distance is traveled with elytra.
 # Ignored on Minecraft versions prior to 1.9.
@@ -643,6 +686,7 @@ DistanceGliding:
     Message: You traveled 100 blocks with elytra!
     Name: distancegliding_100
     DisplayName: Angel
+    Type: rare
 
 # When a distance is traveled on a llama.
 # Ignored on Minecraft versions prior to 1.11.
@@ -652,6 +696,7 @@ DistanceLlama:
     Message: You traveled 150 blocks on a llama!
     Name: distancellama_150
     DisplayName: Llama Rider
+    Type: rare
 
 # When a distance is traveled whilst sneaking.
 DistanceSneaking:
@@ -660,6 +705,7 @@ DistanceSneaking:
     Message: You traveled 500 blocks whilst sneaking!
     Name: distancesneaking_500
     DisplayName: Ninja
+    Type: normal
 
 # When an item is dropped on the ground.
 ItemDrops:
@@ -668,6 +714,7 @@ ItemDrops:
     Message: §cYou're killing the planet!
     Name: itemdrops_15
     DisplayName: Polluter
+    Type: normal
 
 # When an item is picked up from the ground.
 ItemPickups:
@@ -676,6 +723,7 @@ ItemPickups:
     Message: You're saving the planet!
     Name: itempickups_40
     DisplayName: Environmentalist
+    Type: normal
 
 # When soil is plowed with a hoe.
 HoePlowings:
@@ -684,6 +732,7 @@ HoePlowings:
     Message: You plowed the ground 10 times!
     Name: hoeplowings_10
     DisplayName: Farmer
+    Type: normal
     Reward:
         Item: cookie 15
 
@@ -694,6 +743,7 @@ Fertilising:
     Message: You used bone meal on plants 15 times!
     Name: fertilising_15
     DisplayName: Gardener
+    Type: normal
 
 # When an animal is tamed.
 Taming:
@@ -702,6 +752,7 @@ Taming:
     Message: You tamed your first animal!
     Name: taming_1
     DisplayName: Tamer
+    Type: normal
 
 # When a potion is brewed.
 Brewing:
@@ -710,6 +761,7 @@ Brewing:
     Message: You brewed your first potion!
     Name: brewing_1
     DisplayName: Alchemist
+    Type: normal
 
 # When a firework is launched.
 Fireworks:
@@ -718,6 +770,7 @@ Fireworks:
     Message: You launched 10 fireworks!
     Name: fireworks_10
     DisplayName: Pyrotechnist
+    Type: normal
     Reward:
       Experience: 200
 
@@ -728,6 +781,7 @@ MusicDiscs:
     Message: One jukebox used!
     Name: musicdiscs_1
     DisplayName: DJ
+    Type: normal
 
 # When a player teleports with an enderpearl.
 EnderPearls:
@@ -736,6 +790,7 @@ EnderPearls:
     Message: 10 teleportations with ender pearls!
     Name: enderpearls_10
     DisplayName: Teleport Man
+    Type: normal
 
 # When a player gives a pet to another player (requires Pet Master plugin version 1.4 or above).
 PetMasterGive:
@@ -744,6 +799,7 @@ PetMasterGive:
     Message: 3 pets given to friends!
     Name: petmastergive_3
     DisplayName: Donator
+    Type: rare
 
 # When a player receives a pet from another player (requires Pet Master plugin version 1.4 or above).
 PetMasterReceive:
@@ -752,6 +808,7 @@ PetMasterReceive:
     Message: 10 pets received from friends!
     Name: petmasterreceive_10
     DisplayName: Receiver
+    Type: rare
 
 # When an item is smelt in a furnace.
 Smelting:
@@ -760,6 +817,7 @@ Smelting:
     Message: 250 items smelt in a furnace!
     Name: smeltitems_250
     DisplayName: The Smelter
+    Type: normal
 
 # When a raid is won.
 RaidsWon:
@@ -768,6 +826,7 @@ RaidsWon:
     Message: A raid won!
     Name: raidswon_1
     DisplayName: Accident or intentional?
+    Type: normal
     Reward:
       Item: emerald 8
   10:
@@ -775,6 +834,7 @@ RaidsWon:
     Message: Ten raids!
     Name: raidswon_10
     DisplayName: Village Protector
+    Type: rare
     Reward:
       Item: totem_of_undying 1
 
@@ -785,6 +845,7 @@ Riptides:
     Message: You've mastered the powers of the sea!
     Name: riptides_1
     DisplayName: Poseidon
+    Type: normal
 
 # When an a certain amount of advancements are completed.
 AdvancementsCompleted:
@@ -793,6 +854,7 @@ AdvancementsCompleted:
     Message: 20 advancements completed!
     Name: advancements_20
     DisplayName: Game Block Advance
+    Type: normal
     # Use semicolons for multiple item rewards as well. The below example will reward 8 diamond and 1 cake
     Reward:
       Item: diamond 8; cake 1
@@ -814,6 +876,7 @@ Commands:
     Message: You took part in the special event!
     Name: your_ach1
     DisplayName: Special Event Achievement!
+    Type: rare
 
 # When the command /aach add is called for this category.
 Custom:
@@ -822,6 +885,7 @@ Custom:
       Message: Voted 10 times for the server!
       Name: customs_votes_10
       DisplayName: Server fan
+      Type: normal
       Reward:
         Money: 5
 
