@@ -425,28 +425,27 @@ public class CategoryGUI implements Reloadable {
 				lore.add(langListReception);
 			}
 			lore.add(translateColorCodes("&r&f" + date));
-			lore.add("");
 		} else {
 			if (!langListGoal.isEmpty()) {
 				lore.add(langListGoal);
 			}
 			descriptions.forEach(d -> lore.add(translateColorCodes(notReceivedStyle(d, ineligibleSeriesItem))));
-			lore.add("");
 			// Display progress if not Commands category.
 			if (!configObfuscateNotReceived && statistic != NO_STAT) {
+				lore.add("");
 				String threshold = StringUtils.defaultIfEmpty(StringUtils.substringAfter(path, "."), path);
 				boolean timeStat = NormalAchievements.PLAYEDTIME.toString().equals(categoryName);
 				if (!langListProgress.isEmpty()) {
 					lore.add(langListProgress);
 				}
 				lore.add(translateColorCodes(constructProgressBar(threshold, statistic, timeStat)));
-				lore.add("");
 			}
 		}
 
 		List<String> rewards = rewardParser.getRewardListing(categoryName + '.' + path + ".Reward", player);
 		// Add the rewards information.
 		if (!rewards.isEmpty() && !configHideRewardDisplayInList) {
+			lore.add("");
 			if (rewards.size() == 1 && !langListReward.isEmpty()) {
 				lore.add(langListReward);
 			} else if (rewards.size() > 1 && !langListRewards.isEmpty()) {
