@@ -419,12 +419,12 @@ public class CategoryGUI implements Reloadable {
 			if (!langListDescription.isEmpty()) {
 				lore.add(langListDescription);
 			}
-			descriptions.forEach(d -> lore.add(translateColorCodes("&r" + d)));
+			descriptions.forEach(d -> lore.add(translateColorCodes("&r&f" + d)));
 			lore.add("");
 			if (!langListReception.isEmpty()) {
 				lore.add(langListReception);
 			}
-			lore.add(translateColorCodes("&r" + date));
+			lore.add(translateColorCodes("&r&f" + date));
 			lore.add("");
 		} else {
 			if (!langListGoal.isEmpty()) {
@@ -454,7 +454,7 @@ public class CategoryGUI implements Reloadable {
 			}
 			String dot;
 			if (date != null) {
-				dot = StringEscapeUtils.unescapeJava("&r\u25CF ");
+				dot = StringEscapeUtils.unescapeJava("&r&f\u25CF ");
 			} else {
 				dot = StringEscapeUtils.unescapeJava(configListColorNotReceived + "\u25CF " + configFormatNotReceived);
 			}
