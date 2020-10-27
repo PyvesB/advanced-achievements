@@ -35,6 +35,7 @@ import com.hm.achievement.listener.statistics.FireworksListener;
 import com.hm.achievement.listener.statistics.FishListener;
 import com.hm.achievement.listener.statistics.HoePlowingListener;
 import com.hm.achievement.listener.statistics.ItemBreaksListener;
+import com.hm.achievement.listener.statistics.JobsRebornListener;
 import com.hm.achievement.listener.statistics.KillsListener;
 import com.hm.achievement.listener.statistics.LavaBucketsListener;
 import com.hm.achievement.listener.statistics.LevelsListener;
@@ -179,6 +180,10 @@ public abstract class ReloadableModule {
 	@IntoSet
 	abstract Reloadable bindItemBreaksListener(ItemBreaksListener itemBreaksListener);
 
+	@Binds
+	@IntoSet
+	abstract Reloadable bindJobsRebornListener(bindJobsRebornListener bindJobsRebornListener);
+	
 	@Binds
 	@IntoSet
 	abstract Reloadable bindKillsListener(KillsListener killsListener);
