@@ -182,7 +182,7 @@ public abstract class ReloadableModule {
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindJobsRebornListener(bindJobsRebornListener bindJobsRebornListener);
+	abstract Reloadable bindJobsRebornListener(JobsRebornListener bindJobsRebornListener);
 	
 	@Binds
 	@IntoSet
