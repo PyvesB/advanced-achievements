@@ -37,8 +37,6 @@ public class JobsRebornListener extends AbstractListener {
         if(player == null)
             return;
 
-        MultipleAchievements category = MultipleAchievements.JOBSREBORN;
-
         if (!shouldIncreaseBeTakenIntoAccount(player, category)) {
             return;
         }
