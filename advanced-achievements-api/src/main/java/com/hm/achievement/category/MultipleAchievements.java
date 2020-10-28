@@ -17,7 +17,8 @@ public enum MultipleAchievements implements Category {
 	CRAFTS("Crafts", "Items Crafted", "When a specific item is crafted (specify material name, lower case).", "item"),
 	BREEDING("Breeding", "Animals Bred", "When animals breed (specify an entity name, lower case).", "mobname"),
 	PLAYERCOMMANDS("PlayerCommands", "Commands Entered", "When a player enters a specific command (specify command prefixes in lower case without spaces).", "command"),
-	CUSTOM("Custom", "Custom Categories", "When the command /aach add is called for this category.", "customname");
+	CUSTOM("Custom", "Custom Categories", "When the command /aach add is called for this category.", "customname"),
+	JOBSREBORN("JobsReborn", "Level Jobs", "At each level up of a job.", "Job name");
 
 	private static final Map<String, MultipleAchievements> CATEGORY_NAMES_TO_ENUM = new HashMap<>();
 	static {
