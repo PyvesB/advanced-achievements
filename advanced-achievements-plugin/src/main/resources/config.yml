@@ -439,7 +439,7 @@ Breeding:
       DisplayName: Breeder
       Type: normal
 
-# When you level up in a job.
+# When you level up in a job (job name lower case).
 JobsReborn:
   hunter:
    1:
