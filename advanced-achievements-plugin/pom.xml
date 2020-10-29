@@ -126,6 +126,10 @@
 			<artifactId>bungeetablistplus-api-bukkit</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.github.Zrips</groupId>
+			<artifactId>Jobs</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>net.ess3</groupId>
 			<artifactId>EssentialsX</artifactId>
 			<exclusions>
@@ -147,11 +151,7 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.github.Zrips</groupId>
-			<artifactId>Jobs</artifactId>
-		</dependency>
-		
+
 		<!-- Test dependencies -->
 		<dependency>
 			<groupId>org.mockito</groupId>
