@@ -143,7 +143,8 @@ Custom:
   Item: feather
 Commands:
   Item: bookshelf
-
+Commands:
+  Item: netherite_scrap
 #============================================================#
 # +--------------------------------------------------------+ #
 # | Parameters in future plugin versions will  appear here | #
