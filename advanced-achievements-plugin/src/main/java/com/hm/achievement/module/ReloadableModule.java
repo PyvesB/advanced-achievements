@@ -16,7 +16,6 @@ import com.hm.achievement.listener.statistics.AdvancementsCompletedListener;
 import com.hm.achievement.listener.statistics.AnvilsListener;
 import com.hm.achievement.listener.statistics.ArrowsListener;
 import com.hm.achievement.listener.statistics.BedsListener;
-import com.hm.achievement.listener.statistics.RiptidesListener;
 import com.hm.achievement.listener.statistics.BreaksListener;
 import com.hm.achievement.listener.statistics.BreedingListener;
 import com.hm.achievement.listener.statistics.BrewingListener;
@@ -46,6 +45,7 @@ import com.hm.achievement.listener.statistics.PetMasterReceiveListener;
 import com.hm.achievement.listener.statistics.PickupsListener;
 import com.hm.achievement.listener.statistics.PlacesListener;
 import com.hm.achievement.listener.statistics.PlayerCommandsListener;
+import com.hm.achievement.listener.statistics.RiptidesListener;
 import com.hm.achievement.listener.statistics.ShearsListener;
 import com.hm.achievement.listener.statistics.SmeltingListener;
 import com.hm.achievement.listener.statistics.SnowballsListener;
@@ -182,8 +182,8 @@ public abstract class ReloadableModule {
 
 	@Binds
 	@IntoSet
-	abstract Reloadable bindJobsRebornListener(JobsRebornListener bindJobsRebornListener);
-	
+	abstract Reloadable bindJobsRebornListener(JobsRebornListener jobsRebornListener);
+
 	@Binds
 	@IntoSet
 	abstract Reloadable bindKillsListener(KillsListener killsListener);
