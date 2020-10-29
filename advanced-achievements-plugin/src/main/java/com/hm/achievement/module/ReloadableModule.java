@@ -1,6 +1,9 @@
 package com.hm.achievement.module;
 
+import java.util.Collections;
 import java.util.Set;
+
+import org.bukkit.Bukkit;
 
 import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.command.executable.AbstractCommand;
@@ -74,6 +77,13 @@ public abstract class ReloadableModule {
 	static Reloadable provideFertilisingListener(FertilisingListener fertilisingListener,
 			FertilisingLegacyListener fertilisingLegacyListener, int serverVersion) {
 		return serverVersion >= 13 ? fertilisingListener : fertilisingLegacyListener;
+	}
+
+	@Provides
+	@ElementsIntoSet
+	static Set<Reloadable> bindJobsRebornListener(JobsRebornListener jobsRebornListener) {
+		return Bukkit.getPluginManager().isPluginEnabled("Jobs") ? Collections.singleton(jobsRebornListener)
+				: Collections.emptySet();
 	}
 
 	@Binds
@@ -179,10 +189,6 @@ public abstract class ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindItemBreaksListener(ItemBreaksListener itemBreaksListener);
-
-	@Binds
-	@IntoSet
-	abstract Reloadable bindJobsRebornListener(JobsRebornListener jobsRebornListener);
 
 	@Binds
 	@IntoSet
