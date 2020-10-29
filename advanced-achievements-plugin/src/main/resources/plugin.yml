@@ -289,7 +289,7 @@ permissions:
     description: Allows player commands statistics in database to increase.
     default: true
   achievement.count.jobsreborn.*:
-    description: Allows player commands statistics in database to increase.
+    description: Allows jobs reborn statistics in database to increase.
     default: true
   achievement.count.custom.*:
     description: Allows custom statistics in database to increase.
