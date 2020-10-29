@@ -439,6 +439,16 @@ Breeding:
       DisplayName: Breeder
       Type: normal
 
+# When you level up in a job.
+JobsReborn:
+  hunter:
+   1:
+     Goal: Level up as a hunter!
+     Message: You have reached hunter level 2!
+     Name: jobsreborn_1_hunter
+     DisplayName: Hunter
+     Type: normal
+
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
 # |               Normal action achievements                | #
@@ -859,16 +869,6 @@ AdvancementsCompleted:
     Reward:
       Item: diamond 8; cake 1
 
-
-# When riptide is used with a trident.
-jobsreborn:
-  1:
-    Goal: Level up in your job!.
-    Message: You have reached level 2 in your jobs !
-    Name: jobs_1
-    DisplayName: Worker
-    Type: normal
-      
 #===========================OOOOOOO===========================#
 # VII-----------------------------------------------------VII #
 # |               Command-based achievements                | #
