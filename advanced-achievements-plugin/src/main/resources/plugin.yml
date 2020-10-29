@@ -136,6 +136,7 @@ permissions:
       achievement.count.crafts.*: true
       achievement.count.breeding.*: true
       achievement.count.playercommands.*: true
+      achievement.count.jobsreborn.*: true
       achievement.count.custom.*: true
   achievement.count.connections:
     description: Allows connection statistics in database to increase.
@@ -285,6 +286,9 @@ permissions:
     description: Allows breeding statistics in database to increase.
     default: true
   achievement.count.playercommands.*:
+    description: Allows player commands statistics in database to increase.
+    default: true
+  achievement.count.jobsreborn.*:
     description: Allows player commands statistics in database to increase.
     default: true
   achievement.count.custom.*:
