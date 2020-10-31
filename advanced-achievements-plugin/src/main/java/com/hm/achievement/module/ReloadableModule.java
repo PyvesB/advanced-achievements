@@ -1,6 +1,9 @@
 package com.hm.achievement.module;
 
+import java.util.Collections;
 import java.util.Set;
+
+import org.bukkit.Bukkit;
 
 import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.command.executable.AbstractCommand;
@@ -16,7 +19,6 @@ import com.hm.achievement.listener.statistics.AdvancementsCompletedListener;
 import com.hm.achievement.listener.statistics.AnvilsListener;
 import com.hm.achievement.listener.statistics.ArrowsListener;
 import com.hm.achievement.listener.statistics.BedsListener;
-import com.hm.achievement.listener.statistics.RiptidesListener;
 import com.hm.achievement.listener.statistics.BreaksListener;
 import com.hm.achievement.listener.statistics.BreedingListener;
 import com.hm.achievement.listener.statistics.BrewingListener;
@@ -35,6 +37,7 @@ import com.hm.achievement.listener.statistics.FireworksListener;
 import com.hm.achievement.listener.statistics.FishListener;
 import com.hm.achievement.listener.statistics.HoePlowingListener;
 import com.hm.achievement.listener.statistics.ItemBreaksListener;
+import com.hm.achievement.listener.statistics.JobsRebornListener;
 import com.hm.achievement.listener.statistics.KillsListener;
 import com.hm.achievement.listener.statistics.LavaBucketsListener;
 import com.hm.achievement.listener.statistics.LevelsListener;
@@ -45,6 +48,7 @@ import com.hm.achievement.listener.statistics.PetMasterReceiveListener;
 import com.hm.achievement.listener.statistics.PickupsListener;
 import com.hm.achievement.listener.statistics.PlacesListener;
 import com.hm.achievement.listener.statistics.PlayerCommandsListener;
+import com.hm.achievement.listener.statistics.RiptidesListener;
 import com.hm.achievement.listener.statistics.ShearsListener;
 import com.hm.achievement.listener.statistics.SmeltingListener;
 import com.hm.achievement.listener.statistics.SnowballsListener;
@@ -73,6 +77,13 @@ public abstract class ReloadableModule {
 	static Reloadable provideFertilisingListener(FertilisingListener fertilisingListener,
 			FertilisingLegacyListener fertilisingLegacyListener, int serverVersion) {
 		return serverVersion >= 13 ? fertilisingListener : fertilisingLegacyListener;
+	}
+
+	@Provides
+	@ElementsIntoSet
+	static Set<Reloadable> bindJobsRebornListener(JobsRebornListener jobsRebornListener) {
+		return Bukkit.getPluginManager().isPluginEnabled("Jobs") ? Collections.singleton(jobsRebornListener)
+				: Collections.emptySet();
 	}
 
 	@Binds

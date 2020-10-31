@@ -258,6 +258,9 @@ public class FileUpdater {
 		// Added in version 6.4.0:
 		updateSetting(gui, "DistanceSneaking.Item", "leather_helmet");
 
+		// Added in version 6.7.0:
+		updateSetting(gui, "JobsReborn.Item", serverVersion >= 13 ? "netherite_scrap" : "iron_ingot");
+
 		if (serverVersion < 13) {
 			updateSetting(gui, "Breeding.Metadata", 0);
 			updateSetting(gui, "BackButton.Metadata", 0);
@@ -268,6 +271,7 @@ public class FileUpdater {
 			updateSetting(gui, "AchievementLock.Metadata", 15);
 			updateSetting(gui, "CategoryLock.Metadata", 0);
 			updateSetting(gui, "DistanceSneaking.Metadata", 0);
+			updateSetting(gui, "JobsReborn.Metadata", 0);
 		}
 
 		if (updatePerformed) {

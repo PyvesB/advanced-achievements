@@ -51,6 +51,8 @@ Breeding:
   Item: wheat
 PlayerCommands:
   Item: paper
+JobsReborn:
+  Item: netherite_scrap
 Connections:
   Item: writable_book
 Deaths:
@@ -143,7 +145,6 @@ Custom:
   Item: feather
 Commands:
   Item: bookshelf
-
 #============================================================#
 # +--------------------------------------------------------+ #
 # | Parameters in future plugin versions will  appear here | #
