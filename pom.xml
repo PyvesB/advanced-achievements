@@ -128,7 +128,10 @@
 			<dependency>
 				<groupId>com.github.Zrips</groupId>
 				<artifactId>Jobs</artifactId>
-				<version>master-SNAPSHOT</version>
+				<!-- Pin down commit hash to work around absence of tags on the JobsReborn 
+					repository. Whilst opaque, this ensures that builds are reproducible and 
+					that JitPack is able to serve cached builds immediately. See https://github.com/Zrips/Jobs/issues/982 -->
+				<version>master-47c9fc4724-1</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
