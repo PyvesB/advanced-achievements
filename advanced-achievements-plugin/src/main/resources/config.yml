@@ -442,12 +442,12 @@ Breeding:
 # When you level up in a job (job name lower case).
 JobsReborn:
   hunter:
-   1:
-     Goal: Level up as a hunter!
-     Message: You have reached hunter level 2!
-     Name: jobsreborn_1_hunter
-     DisplayName: Hunter
-     Type: normal
+    1:
+      Goal: Level up as a hunter!
+      Message: You have reached hunter level 2!
+      Name: jobsreborn_1_hunter
+      DisplayName: Hunter
+      Type: normal
 
 #===========================OOO=OOO===========================#
 # VI-------------------------------------------------------VI #
