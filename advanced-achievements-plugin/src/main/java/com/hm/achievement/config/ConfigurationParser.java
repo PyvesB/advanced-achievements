@@ -153,6 +153,14 @@ public class ConfigurationParser {
 			logger.warning(
 					"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in config.yml.");
 		}
+		// Need Jobs for JobsReborn category.
+		if (!disabledCategories.contains(MultipleAchievements.JOBSREBORN)
+				&& !Bukkit.getPluginManager().isPluginEnabled("Jobs")) {
+			disabledCategories.add(MultipleAchievements.JOBSREBORN);
+			logger.warning("Overriding configuration: disabling JobsReborn category.");
+			logger.warning(
+					"Ensure you have placed JobsReborn in your plugins folder or add JobsReborn to the DisabledCategories list in config.yml.");
+		}
 		// Elytras introduced in Minecraft 1.9.
 		if (!disabledCategories.contains(NormalAchievements.DISTANCEGLIDING) && serverVersion < 9) {
 			disabledCategories.add(NormalAchievements.DISTANCEGLIDING);
