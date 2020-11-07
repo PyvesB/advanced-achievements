@@ -124,13 +124,19 @@ public class GUIItems implements Reloadable {
 			achievementReceivedDefault = createItemStack("AchievementReceived", "stained_clay", 5);
 		}
 		for (String type : guiConfig.getShallowKeys("AchievementNotStarted")) {
-			achievementNotStarted.put(type, createItemStack("AchievementNotStarted." + type));
+			if (!"Item".equals(type)) {
+				achievementNotStarted.put(type, createItemStack("AchievementNotStarted." + type));
+			}
 		}
 		for (String type : guiConfig.getShallowKeys("AchievementStarted")) {
-			achievementStarted.put(type, createItemStack("AchievementStarted." + type));
+			if (!"Item".equals(type)) {
+				achievementStarted.put(type, createItemStack("AchievementStarted." + type));
+			}
 		}
 		for (String type : guiConfig.getShallowKeys("AchievementReceived")) {
-			achievementReceived.put(type, createItemStack("AchievementReceived." + type));
+			if (!"Item".equals(type)) {
+				achievementReceived.put(type, createItemStack("AchievementReceived." + type));
+			}
 		}
 		previousButton = createButton("PreviousButton", GuiLang.PREVIOUS_MESSAGE, GuiLang.PREVIOUS_LORE);
 		nextButton = createButton("NextButton", GuiLang.NEXT_MESSAGE, GuiLang.NEXT_LORE);
