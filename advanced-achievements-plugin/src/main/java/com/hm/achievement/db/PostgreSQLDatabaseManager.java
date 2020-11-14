@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -49,7 +48,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ps.setString(2, achName);
 				ps.setString(3, achMessage);
 				ps.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
@@ -77,7 +76,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 				((SQLWriteOperation) () -> {
 					Connection writeConn = getSQLConnection();
 					try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
-						writePrep.setObject(1, uuid, Types.CHAR);
+						writePrep.setString(1, uuid.toString());
 						writePrep.setInt(2, connections);
 						writePrep.setString(3, date);
 						writePrep.setInt(4, connections);

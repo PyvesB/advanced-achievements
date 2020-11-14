@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -187,7 +186,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			List<String> achievementNamesList = new ArrayList<>();
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ps.setFetchSize(1000);
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
@@ -210,7 +209,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<String>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ps.setString(2, achName);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
@@ -258,7 +257,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Integer>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ResultSet rs = ps.executeQuery();
 				rs.next();
 				return rs.getInt(1);
@@ -319,7 +318,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ps.setString(2, achName);
 				ps.setString(3, achMessage == null ? "" : achMessage);
 				ps.setTimestamp(4, new Timestamp(epochMs));
@@ -340,7 +339,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Boolean>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ps.setString(2, achName);
 				return ps.executeQuery().next();
 			}
@@ -360,7 +359,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Long>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
 					return rs.getLong(dbName);
@@ -385,7 +384,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Long>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ps.setString(2, subcategory);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
@@ -408,7 +407,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Integer>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
 					return rs.getInt(dbName);
@@ -430,7 +429,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<String>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ResultSet rs = ps.executeQuery();
 				if (rs.next()) {
 					return rs.getString("date");
@@ -454,14 +453,14 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		return ((SQLReadOperation<Integer>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sqlRead)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ResultSet rs = ps.executeQuery();
 				int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
 				String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES (?,?,?)";
 				((SQLWriteOperation) () -> {
 					Connection writeConn = getSQLConnection();
 					try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
-						writePrep.setObject(1, uuid, Types.CHAR);
+						writePrep.setString(1, uuid.toString());
 						writePrep.setInt(2, connections);
 						writePrep.setString(3, date);
 						writePrep.execute();
@@ -483,7 +482,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ps.setString(2, achName);
 				ps.execute();
 			}
@@ -500,7 +499,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				ps.execute();
 			}
 		}).executeOperation(pool, logger, "deleting all achievements");
@@ -540,7 +539,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setFetchSize(1000);
-				ps.setObject(1, uuid, Types.CHAR);
+				ps.setString(1, uuid.toString());
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
 						String achName = rs.getString(2);

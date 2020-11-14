@@ -1,13 +1,8 @@
 package com.hm.achievement.db;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -56,46 +51,6 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 		if (db != null) {
 			db.shutdown();
 		}
-	}
-
-	@Test
-	public void testRegisterNullUUID() {
-		registerAchievement(null, testAchievement, testAchievementMsg);
-
-		List<AwardedDBAchievement> list = db.getPlayerAchievementsList(testUUID);
-		Map<UUID, Integer> map = db.getPlayersAchievementsAmount();
-
-		System.out.println("Saved Achievements: " + list);
-		System.out.println("Saved Achievements Map: " + map);
-
-		assertTrue("An achievement was saved for null UUID", list.isEmpty());
-		assertFalse(map.containsKey(null));
-	}
-
-	@Test
-	public void testGetMethodsForNullUUIDExceptions() {
-		addNullUUIDtoDB();
-
-		db.getPlayerAchievementsList(null);
-		db.getPlayersAchievementsAmount();
-		db.getPlayerAchievementsAmount(null);
-		db.getPlayerAchievementNamesList(null);
-		db.getPlayerAchievementDate(null, testAchievement);
-	}
-
-	private void addNullUUIDtoDB() {
-		String sql = "REPLACE INTO achievements VALUES (?,?,?,?)";
-
-		((SQLWriteOperation) () -> {
-			Connection conn = db.getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setObject(1, null);
-				ps.setString(2, testAchievement);
-				ps.setString(3, testAchievementMsg);
-				ps.setDate(4, new Date(System.currentTimeMillis()));
-				ps.execute();
-			}
-		}).executeOperation(db.pool, null, "registering an achievement with null UUID");
 	}
 
 	@Test
