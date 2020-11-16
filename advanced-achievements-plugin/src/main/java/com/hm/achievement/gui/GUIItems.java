@@ -124,17 +124,17 @@ public class GUIItems implements Reloadable {
 			achievementReceivedDefault = createItemStack("AchievementReceived", "stained_clay", 5);
 		}
 		for (String type : guiConfig.getShallowKeys("AchievementNotStarted")) {
-			if (!"Item".equals(type)) {
+			if (!"Item".equals(type) && !"Metadata".equals(type)) {
 				achievementNotStarted.put(type, createItemStack("AchievementNotStarted." + type));
 			}
 		}
 		for (String type : guiConfig.getShallowKeys("AchievementStarted")) {
-			if (!"Item".equals(type)) {
+			if (!"Item".equals(type) && !"Metadata".equals(type)) {
 				achievementStarted.put(type, createItemStack("AchievementStarted." + type));
 			}
 		}
 		for (String type : guiConfig.getShallowKeys("AchievementReceived")) {
-			if (!"Item".equals(type)) {
+			if (!"Item".equals(type) && !"Metadata".equals(type)) {
 				achievementReceived.put(type, createItemStack("AchievementReceived." + type));
 			}
 		}
