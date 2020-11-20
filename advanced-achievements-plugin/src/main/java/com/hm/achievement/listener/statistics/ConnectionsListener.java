@@ -110,9 +110,11 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 				String rewardPath = achievementPath + ".Reward";
 				// Fire achievement event.
 				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
-						.player(player).name(achievementName)
+						.player(player)
+						.name(achievementName)
 						.displayName(mainConfig.getString(achievementPath + ".DisplayName"))
 						.message(mainConfig.getString(achievementPath + ".Message"))
+						.type(mainConfig.getString(achievementPath + ".Type"))
 						.commandRewards(rewardParser.getCommandRewards(rewardPath, player))
 						.commandMessage(rewardParser.getCustomCommandMessages(rewardPath))
 						.itemRewards(rewardParser.getItemRewards(rewardPath, player))

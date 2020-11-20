@@ -1,14 +1,14 @@
 package com.hm.achievement.utils;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Class representing an event fired when a player receives an achievement.
@@ -23,6 +23,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private final String name;
 	private final String displayName;
 	private final String message;
+	private final String type;
 	private final List<String> commandMessages;
 	private final String[] commandRewards;
 	private final ItemStack[] itemRewards;
@@ -34,12 +35,13 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 	private boolean cancelled;
 
 	private PlayerAdvancedAchievementEvent(Player receiver, String name, String displayName, String message,
-			List<String> commandMessages, String[] commandRewards, ItemStack[] itemRewards, int moneyReward,
+			String type, List<String> commandMessages, String[] commandRewards, ItemStack[] itemRewards, int moneyReward,
 			int experienceReward, int maxHealthReward, int maxOxygenReward) {
 		player = receiver;
 		this.name = name;
 		this.displayName = displayName;
 		this.message = message;
+		this.type = type;
 		this.commandMessages = commandMessages;
 		this.commandRewards = commandRewards;
 		this.itemRewards = itemRewards;
@@ -81,6 +83,10 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 
 	public String getMessage() {
 		return message;
+	}
+
+	public String getType() {
+		return type;
 	}
 
 	/**
@@ -133,6 +139,7 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		private String name;
 		private String displayName;
 		private String message;
+		private String type;
 		private List<String> commandMessage;
 		private String[] commandRewards;
 		private ItemStack[] itemRewards;
@@ -158,6 +165,11 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 
 		public PlayerAdvancedAchievementEventBuilder message(String message) {
 			this.message = message;
+			return this;
+		}
+
+		public PlayerAdvancedAchievementEventBuilder type(String type) {
+			this.type = type;
 			return this;
 		}
 
@@ -215,8 +227,8 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		}
 
 		public PlayerAdvancedAchievementEvent build() {
-			return new PlayerAdvancedAchievementEvent(player, name, displayName, message, commandMessage, commandRewards,
-					itemRewards, moneyReward, experienceReward, maxHealthReward, maxOxygenReward);
+			return new PlayerAdvancedAchievementEvent(player, name, displayName, message, type, commandMessage,
+					commandRewards, itemRewards, moneyReward, experienceReward, maxHealthReward, maxOxygenReward);
 		}
 	}
 }
