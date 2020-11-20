@@ -179,7 +179,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		List<String> rewardTexts = giveRewardsAndPrepareTexts(player, event.getCommandRewards(), event.getCommandMessages(),
 				event.getItemRewards(), event.getMoneyReward(), event.getExperienceReward(), event.getMaxHealthReward(),
 				event.getMaxOxygenReward());
-		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage(), rewardTexts);
+		displayAchievement(player, event.getName(), event.getDisplayName(), event.getMessage(), event.getType(),
+				rewardTexts);
 
 		if (cacheManager.getPlayerTotalAchievements(player.getUniqueId()) == namesToDisplayNames.size()) {
 			handleAllAchievementsReceived(player);
@@ -341,10 +342,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @param name
 	 * @param displayName
 	 * @param message
+	 * @param type
 	 * @param rewardTexts
 	 */
 	private void displayAchievement(Player player, String name, String displayName, String message,
-			List<String> rewardTexts) {
+			String type, List<String> rewardTexts) {
 		String nameToShowUser;
 		if (StringUtils.isNotBlank(displayName)) {
 			// Display name is defined; use it.
@@ -366,7 +368,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		for (Player p : advancedAchievements.getServer().getOnlinePlayers()) {
 			// Notify other players only if NotifyOtherPlayers is enabled and player has not used /aach toggle, or if
 			// NotifyOtherPlayers is disabled and player has used /aach toggle.
-			if (!p.getName().equals(player.getName()) && (configNotifyOtherPlayers ^ toggleCommand.isPlayerToggled(p))) {
+			if (!p.getName().equals(player.getName())
+					&& (configNotifyOtherPlayers ^ toggleCommand.isPlayerToggled(p, type))) {
 				displayNotification(player, nameToShowUser, p);
 			}
 		}
