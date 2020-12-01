@@ -3,6 +3,7 @@ package com.hm.achievement.advancement;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -13,9 +14,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.UnsafeValues;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,9 +23,9 @@ import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancem
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.gui.GUIItems;
+import com.hm.achievement.gui.OrderedCategory;
 import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.StringHelper;
 import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
@@ -58,14 +57,12 @@ public class AdvancementManager implements Reloadable {
 	private static final String METHOD_B = "b";
 
 	private final CommentedYamlConfiguration mainConfig;
-	private final CommentedYamlConfiguration guiConfig;
+	private final GUIItems guiItems;
 	private final AdvancedAchievements advancedAchievements;
 	private final Logger logger;
 	private final Map<String, List<Long>> sortedThresholds;
 	private final Set<Category> disabledCategories;
-	private final MaterialHelper materialHelper;
 	private final int serverVersion;
-	private final UnsafeValues unsafeValues;
 
 	private boolean configRegisterAdvancementDescriptions;
 	private boolean configHideAdvancements;
@@ -74,19 +71,16 @@ public class AdvancementManager implements Reloadable {
 	private int generatedAdvancements;
 
 	@Inject
-	public AdvancementManager(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("gui") CommentedYamlConfiguration guiConfig, AdvancedAchievements advancedAchievements, Logger logger,
-			Map<String, List<Long>> sortedThresholds, Set<Category> disabledCategories, MaterialHelper materialHelper,
-			int serverVersion) {
+	public AdvancementManager(@Named("main") CommentedYamlConfiguration mainConfig, GUIItems guiItems,
+			AdvancedAchievements advancedAchievements, Logger logger, Map<String, List<Long>> sortedThresholds,
+			Set<Category> disabledCategories, int serverVersion) {
 		this.mainConfig = mainConfig;
-		this.guiConfig = guiConfig;
+		this.guiItems = guiItems;
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.sortedThresholds = sortedThresholds;
 		this.disabledCategories = disabledCategories;
-		this.materialHelper = materialHelper;
 		this.serverVersion = serverVersion;
-		unsafeValues = Bukkit.getUnsafe();
 	}
 
 	@Override
@@ -134,7 +128,7 @@ public class AdvancementManager implements Reloadable {
 			NamespacedKey namespacedKey = advancements.next().getKey();
 			if ("advancedachievements".equals(namespacedKey.getNamespace())) {
 				++achievementsCleaned;
-				unsafeValues.removeAdvancement(namespacedKey);
+				Bukkit.getUnsafe().removeAdvancement(namespacedKey);
 			}
 		}
 		Bukkit.reloadData();
@@ -149,7 +143,8 @@ public class AdvancementManager implements Reloadable {
 		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_PARENT);
 		if (Bukkit.getAdvancement(namespacedKey) == null) {
 			if (configHideAdvancements) {
-				unsafeValues.loadAdvancement(namespacedKey, AdvancementJsonHelper.toHiddenJson(configBackgroundTexture));
+				Bukkit.getUnsafe().loadAdvancement(namespacedKey,
+						AdvancementJsonHelper.toHiddenJson(configBackgroundTexture));
 			} else {
 				AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
 						.iconItem(MINECRAFT_BOOK_KEY)
@@ -157,9 +152,10 @@ public class AdvancementManager implements Reloadable {
 						.description("")
 						.background(configBackgroundTexture)
 						.type(AdvancementType.GOAL);
-
-				AchievementAdvancement aa = (serverVersion == 12 ? builder.iconData(Integer.toString(0)) : builder).build();
-				unsafeValues.loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(aa));
+				if (serverVersion == 12) {
+					builder.iconData("0");
+				}
+				Bukkit.getUnsafe().loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(builder.build()));
 			}
 		}
 	}
@@ -169,21 +165,23 @@ public class AdvancementManager implements Reloadable {
 	 */
 	private void registerOtherAdvancements() {
 		generatedAdvancements = 1; // Already generated 1 for parent.
-		if (!disabledCategories.contains(CommandAchievements.COMMANDS)) {
-			String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
-			for (String ach : mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString())) {
-				parentKey = registerAdvancement(CommandAchievements.COMMANDS, CommandAchievements.COMMANDS + "." + ach,
-						parentKey, true);
+		for (Entry<OrderedCategory, ItemStack> categoryItemPair : guiItems.getOrderedAchievementItems().entrySet()) {
+			Category category = categoryItemPair.getKey().getCategory();
+			if (disabledCategories.contains(category)) {
+				continue;
 			}
-		}
-
-		for (NormalAchievements category : NormalAchievements.values()) {
-			registerCategoryAdvancements(category, "");
-		}
-
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			for (String section : mainConfig.getShallowKeys(category.toString())) {
-				registerCategoryAdvancements(category, "." + section);
+			ItemStack item = categoryItemPair.getValue();
+			if (category == CommandAchievements.COMMANDS) {
+				String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
+				for (String ach : mainConfig.getShallowKeys(category.toString())) {
+					parentKey = registerAdvancement(item, category + "." + ach, parentKey, true);
+				}
+			} else if (category instanceof MultipleAchievements) {
+				for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
+					registerCategoryAdvancements(item, category + "." + subcategory);
+				}
+			} else {
+				registerCategoryAdvancements(item, category.toString());
 			}
 		}
 		Bukkit.reloadData();
@@ -193,37 +191,29 @@ public class AdvancementManager implements Reloadable {
 	/**
 	 * Registers all advancements for a given category or subcategory.
 	 * 
-	 * @param category
-	 * @param subcategory
+	 * @param item
+	 * @param categorySubcategory
 	 */
-	private void registerCategoryAdvancements(Category category, String subcategory) {
-		if (disabledCategories.contains(category)) {
-			// Ignore this type.
-			return;
-		}
-
-		List<Long> orderedThresholds = subcategory.isEmpty() ? sortedThresholds.get(category.toString())
-				: sortedThresholds.get(category + subcategory);
+	private void registerCategoryAdvancements(ItemStack item, String categorySubcategory) {
+		List<Long> orderedThresholds = sortedThresholds.get(categorySubcategory);
 		String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
 		// Advancements are registered as a branch with increasing threshold values.
 		for (int i = 0; i < orderedThresholds.size(); ++i) {
 			boolean last = (i == orderedThresholds.size() - 1);
-			parentKey = registerAdvancement(category, category + subcategory + "." + orderedThresholds.get(i), parentKey,
-					last);
+			parentKey = registerAdvancement(item, categorySubcategory + "." + orderedThresholds.get(i), parentKey, last);
 		}
 	}
 
 	/**
 	 * Registers an individual advancement.
 	 * 
-	 * @param category
+	 * @param item
 	 * @param configAchievement
 	 * @param parentKey
 	 * @param lastAchievement
 	 * @return the key of the registered achievement
 	 */
-	private String registerAdvancement(Category category, String configAchievement, String parentKey,
-			boolean lastAchievement) {
+	private String registerAdvancement(ItemStack item, String configAchievement, String parentKey, boolean lastAchievement) {
 		String achName = mainConfig.getString(configAchievement + ".Name", "");
 		String achDisplayName = mainConfig.getString(configAchievement + ".DisplayName", "");
 		if (StringUtils.isEmpty(achDisplayName)) {
@@ -234,7 +224,6 @@ public class AdvancementManager implements Reloadable {
 
 		String achKey = getKey(achName);
 		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, achKey);
-		int metadata = guiConfig.getInt(category + ".Metadata");
 		String description = "";
 		if (configRegisterAdvancementDescriptions) {
 			// Give priority to the goal to stick with Vanilla naming of advancements. Advancement descriptions do not
@@ -246,19 +235,16 @@ public class AdvancementManager implements Reloadable {
 			description = StringHelper.removeFormattingCodes(description);
 		}
 
-		String path = category + ".Item";
-		Material material = materialHelper.matchMaterial(guiConfig.getString(path), Material.BOOK, "gui.yml (" + path + ")");
-		String icon = serverVersion == 12 ? getInternalName(new ItemStack(material, 1, (short) metadata))
-				: material.name().toLowerCase();
 		AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
-				.iconItem(icon)
+				.iconItem(serverVersion == 12 ? getInternalName(item) : item.getType().name().toLowerCase())
 				.title(achDisplayName)
 				.description(description)
 				.parent("advancedachievements:" + parentKey)
 				.type(lastAchievement ? AdvancementType.CHALLENGE : AdvancementType.TASK);
-
-		AchievementAdvancement aa = (serverVersion == 12 ? builder.iconData(Integer.toString(metadata)) : builder).build();
-		unsafeValues.loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(aa));
+		if (serverVersion == 12) {
+			builder.iconData(Short.toString(item.getDurability()));
+		}
+		Bukkit.getUnsafe().loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(builder.build()));
 		++generatedAdvancements;
 		return achKey;
 	}
