@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -106,10 +105,9 @@ public class CategoryGUI implements Reloadable {
 		configFormatNotReceived = mainConfig.getBoolean("ListItaliciseNotReceived", true) ? "&o" : "";
 
 		langListGUITitle = translateColorCodes(LangHelper.get(GuiLang.GUI_TITLE, langConfig));
-		langListAchievementReceived = StringEscapeUtils
-				.unescapeJava(LangHelper.get(GuiLang.ACHIEVEMENT_RECEIVED, langConfig));
-		langListAchievementNotReceived = StringEscapeUtils
-				.unescapeJava(LangHelper.get(GuiLang.ACHIEVEMENT_NOT_RECEIVED, langConfig) + configListColorNotReceived);
+		langListAchievementReceived = LangHelper.get(GuiLang.ACHIEVEMENT_RECEIVED, langConfig);
+		langListAchievementNotReceived = LangHelper.get(GuiLang.ACHIEVEMENT_NOT_RECEIVED, langConfig)
+				+ configListColorNotReceived;
 		String description = LangHelper.get(GuiLang.DESCRIPTION, langConfig);
 		langListDescription = description.isEmpty() ? "" : translateColorCodes("&7&l" + description);
 		String reception = LangHelper.get(GuiLang.RECEPTION, langConfig);
@@ -451,12 +449,7 @@ public class CategoryGUI implements Reloadable {
 			} else if (rewards.size() > 1 && !langListRewards.isEmpty()) {
 				lore.add(langListRewards);
 			}
-			String dot;
-			if (date != null) {
-				dot = StringEscapeUtils.unescapeJava("&r&f\u25CF ");
-			} else {
-				dot = StringEscapeUtils.unescapeJava(configListColorNotReceived + "\u25CF " + configFormatNotReceived);
-			}
+			String dot = date == null ? configListColorNotReceived + "\u25CF " + configFormatNotReceived : "&r&f\u25CF ";
 			for (String reward : rewards) {
 				lore.add(translateColorCodes(dot + reward));
 			}

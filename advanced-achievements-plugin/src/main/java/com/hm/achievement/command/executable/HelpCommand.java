@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -80,7 +79,7 @@ public class HelpCommand extends AbstractCommand {
 		super.extractConfigurationParameters();
 
 		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5"));
-		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon", "\u2618"));
+		configIcon = mainConfig.getString("Icon", "\u2618");
 
 		langCommandList = header("/aach list") + LangHelper.get(HelpLang.LIST, langConfig);
 		langCommandListHover = LangHelper.get(HelpLang.Hover.LIST, langConfig);
