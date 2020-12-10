@@ -1,0 +1,9 @@
+#=============================================================#
+
+# Time in seconds between each /aach book (unless user has permission achievement.*).
+TimeBook: 900
+
+# Set to true to activate firework effects when a player receives an achievement.
+Firework: true
+book-not-received: "You have not yet received any achievements."
+#=============================================================#

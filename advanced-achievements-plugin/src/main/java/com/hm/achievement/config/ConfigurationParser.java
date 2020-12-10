@@ -1,6 +1,9 @@
 package com.hm.achievement.config;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +22,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.Plugin;
 
+import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
@@ -39,7 +43,6 @@ public class ConfigurationParser {
 	private final CommentedYamlConfiguration mainConfig;
 	private final CommentedYamlConfiguration langConfig;
 	private final CommentedYamlConfiguration guiConfig;
-	private final FileUpdater fileUpdater;
 	private final Map<String, String> namesToDisplayNames;
 	private final Map<String, String> displayNamesToNames;
 	private final Map<String, List<Long>> sortedThresholds;
@@ -48,18 +51,19 @@ public class ConfigurationParser {
 	private final StringBuilder pluginHeader;
 	private final Logger logger;
 	private final int serverVersion;
+	private final YamlUpdater yamlUpdater;
+	private final AdvancedAchievements plugin;
 
 	@Inject
 	public ConfigurationParser(@Named("main") CommentedYamlConfiguration mainConfig,
 			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			FileUpdater fileUpdater, @Named("ntd") Map<String, String> namesToDisplayNames,
-			@Named("dtn") Map<String, String> displayNamesToNames, Map<String, List<Long>> sortedThresholds,
-			Set<Category> disabledCategories, Set<String> enabledCategoriesWithSubcategories, StringBuilder pluginHeader,
-			Logger logger, int serverVersion) {
+			@Named("ntd") Map<String, String> namesToDisplayNames, @Named("dtn") Map<String, String> displayNamesToNames,
+			Map<String, List<Long>> sortedThresholds, Set<Category> disabledCategories,
+			Set<String> enabledCategoriesWithSubcategories, StringBuilder pluginHeader, Logger logger, int serverVersion,
+			YamlUpdater yamlUpdater, AdvancedAchievements plugin) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
-		this.fileUpdater = fileUpdater;
 		this.namesToDisplayNames = namesToDisplayNames;
 		this.displayNamesToNames = displayNamesToNames;
 		this.sortedThresholds = sortedThresholds;
@@ -68,6 +72,8 @@ public class ConfigurationParser {
 		this.pluginHeader = pluginHeader;
 		this.logger = logger;
 		this.serverVersion = serverVersion;
+		this.yamlUpdater = yamlUpdater;
+		this.plugin = plugin;
 	}
 
 	/**
@@ -78,10 +84,10 @@ public class ConfigurationParser {
 	 */
 	public void loadAndParseConfiguration() throws PluginLoadError {
 		logger.info("Loading and backing up configuration files...");
-		loadAndBackupConfiguration(mainConfig);
-		loadAndBackupConfiguration(langConfig);
-		loadAndBackupConfiguration(guiConfig);
-		updateOldConfigurations();
+		backupAndLoadConfiguration("config.yml", "config.yml", mainConfig);
+		String langName = mainConfig.getString("LanguageFileName", "lang.yml");
+		backupAndLoadConfiguration(langName, langName, langConfig);
+		backupAndLoadConfiguration(serverVersion < 13 ? "gui-legacy.yml" : "gui.yml", "gui.yml", guiConfig);
 		parseHeader();
 		parseDisabledCategories();
 		parseEnabledCategoriesWithSubcategories();
@@ -92,31 +98,36 @@ public class ConfigurationParser {
 	/**
 	 * Loads and backs up a configuration file.
 	 *
-	 * @param configuration
+	 * @param defaultConfigName
+	 * @param userConfigName
+	 * @param userConfig
+	 *
 	 * @throws PluginLoadError
 	 */
-	private void loadAndBackupConfiguration(CommentedYamlConfiguration configuration) throws PluginLoadError {
+	private void backupAndLoadConfiguration(String defaultConfigName, String userConfigName,
+			CommentedYamlConfiguration userConfig) throws PluginLoadError {
+		File configFile = new File(plugin.getDataFolder(), userConfigName);
 		try {
-			configuration.loadConfiguration();
+			File backupFile = new File(plugin.getDataFolder(), userConfigName + ".bak");
+			// Overwrite previous backup only if a newer version of the file exists.
+			if (configFile.lastModified() > backupFile.lastModified()) {
+				Files.copy(configFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			}
+		} catch (IOException e) {
+			logger.log(Level.SEVERE, "Failed to back up " + userConfigName + ":", e);
+		}
+
+		try {
+			if (!configFile.exists()) {
+				configFile.getParentFile().mkdir();
+				Files.copy(plugin.getResource(defaultConfigName), configFile.toPath());
+			}
+			userConfig.load(configFile);
+			yamlUpdater.update(defaultConfigName, userConfigName, userConfig);
 		} catch (IOException | InvalidConfigurationException e) {
-			throw new PluginLoadError("Failed to load " + configuration.getName()
+			throw new PluginLoadError("Failed to load " + userConfigName
 					+ ". Verify its syntax on yaml-online-parser.appspot.com and use the following logs.", e);
 		}
-
-		try {
-			configuration.backupConfiguration();
-		} catch (IOException e) {
-			logger.log(Level.SEVERE, "Error while backing up " + configuration.getName() + ":", e);
-		}
-	}
-
-	/**
-	 * Calls the FileUpdater instance on the various configuration files.
-	 */
-	private void updateOldConfigurations() {
-		fileUpdater.updateOldConfiguration(mainConfig);
-		fileUpdater.updateOldLanguage(langConfig);
-		fileUpdater.updateOldGUI(guiConfig);
 	}
 
 	/**
