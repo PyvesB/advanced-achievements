@@ -8,6 +8,7 @@ package com.hm.achievement.lang;
  *
  * @author Rsl1122
  */
+@Deprecated
 public interface Lang {
 
 	/**
@@ -20,8 +21,10 @@ public interface Lang {
 	/**
 	 * Converts to the default message that is returned, if key is not found in the configuration.
 	 *
+	 * @deprecated language default values should be extracted from the default configuration files instead.
 	 * @return the language configuration default value
 	 */
+	@Deprecated
 	String toLangDefault();
 
 }

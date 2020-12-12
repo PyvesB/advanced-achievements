@@ -10,15 +10,15 @@ import java.util.Map;
  */
 public enum MultipleAchievements implements Category {
 
-	PLACES("Places", "Blocks Placed", "When a specific block is placed (specify material name, lower case).", "blockid"),
-	BREAKS("Breaks", "Blocks Broken", "When a specific block is broken (specify material name, lower case).", "blockid"),
-	KILLS("Kills", "Entities Killed", "When a specific mob is killed (specify an entity name or poweredcreeper or player, lower case).", "mobname"),
-	TARGETSSHOT("TargetsShot", "Targets Shot", "When a specific target is shot (but not necessarily killed) with a projectile (specify an entity or block name, lower case).", "targetname"),
-	CRAFTS("Crafts", "Items Crafted", "When a specific item is crafted (specify material name, lower case).", "item"),
-	BREEDING("Breeding", "Animals Bred", "When animals breed (specify an entity name, lower case).", "mobname"),
-	PLAYERCOMMANDS("PlayerCommands", "Commands Entered", "When a player enters a specific command (specify command prefixes in lower case without spaces).", "command"),
-	CUSTOM("Custom", "Custom Categories", "When the command /aach add is called for this category.", "customname"),
-	JOBSREBORN("JobsReborn", "Jobs Level-Up", "When you level up in a job (job name lower case).", "jobname");
+	PLACES("Places", "blockid"),
+	BREAKS("Breaks", "blockid"),
+	KILLS("Kills", "mobname"),
+	TARGETSSHOT("TargetsShot", "targetname"),
+	CRAFTS("Crafts", "item"),
+	BREEDING("Breeding", "mobname"),
+	PLAYERCOMMANDS("PlayerCommands", "command"),
+	CUSTOM("Custom", "customname"),
+	JOBSREBORN("JobsReborn", "jobname");
 
 	private static final Map<String, MultipleAchievements> CATEGORY_NAMES_TO_ENUM = new HashMap<>();
 	static {
@@ -28,18 +28,14 @@ public enum MultipleAchievements implements Category {
 	}
 
 	private final String categoryName;
-	private final String langDefault;
-	private final String configComment;
 	private final String subcategoryDBName;
 	private final String dbName;
 	private final String permNamePrefix;
 	private final String permName;
 	private final String langKey;
 
-	MultipleAchievements(String categoryName, String langDefault, String configComment, String subcategoryDBName) {
+	MultipleAchievements(String categoryName, String subcategoryDBName) {
 		this.categoryName = categoryName;
-		this.langDefault = langDefault;
-		this.configComment = configComment;
 		this.subcategoryDBName = subcategoryDBName;
 		this.dbName = name().toLowerCase();
 		this.permNamePrefix = "achievement.count." + categoryName.toLowerCase() + '.';
@@ -92,22 +88,6 @@ public enum MultipleAchievements implements Category {
 	@Override
 	public String toLangKey() {
 		return langKey;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toLangDefault() {
-		return langDefault;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toConfigComment() {
-		return configComment;
 	}
 
 	/**

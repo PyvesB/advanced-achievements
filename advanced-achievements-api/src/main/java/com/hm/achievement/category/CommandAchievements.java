@@ -41,20 +41,4 @@ public class CommandAchievements implements Category {
 	public String toLangKey() {
 		return "list-commands";
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toLangDefault() {
-		return "Other Achievements";
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toConfigComment() {
-		return "/aach give yourAch1 PLAYER can be used to give the yourAch1 achievement to PLAYER.";
-	}
 }

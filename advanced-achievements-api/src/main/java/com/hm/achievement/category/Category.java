@@ -1,11 +1,9 @@
 package com.hm.achievement.category;
 
-import com.hm.achievement.lang.Lang;
-
 /**
  * Interface for Achievement Category Enums.
  */
-public interface Category extends Lang {
+public interface Category {
 
 	/**
 	 * Converts to database name: name of the enum in lower case.
@@ -34,8 +32,30 @@ public interface Category extends Lang {
 
 	/**
 	 * Converts to the comment that is inserted about the category name in the configuration file.
-	 *
+	 * 
+	 * @deprecated category comments should be extracted from the default configuration files instead.
 	 * @return the configuration comment
 	 */
-	String toConfigComment();
+	@Deprecated
+	default String toConfigComment() {
+		return "";
+	}
+
+	/**
+	 * Converts to the key in the language file.
+	 *
+	 * @return the language configuration key
+	 */
+	String toLangKey();
+
+	/**
+	 * Converts to the default message that is returned, if key is not found in the configuration.
+	 *
+	 * @deprecated language default values should be extracted from the default configuration files instead.
+	 * @return the language configuration default value
+	 */
+	@Deprecated
+	default String toLangDefault() {
+		return "";
+	}
 }
