@@ -29,8 +29,7 @@ public class GenerateCommand extends AbstractCommand {
 
 	@Inject
 	public GenerateCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			StringBuilder pluginHeader, int serverVersion,
-			AdvancementManager advancementManager) {
+			StringBuilder pluginHeader, int serverVersion, AdvancementManager advancementManager) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.serverVersion = serverVersion;
 		this.advancementManager = advancementManager;

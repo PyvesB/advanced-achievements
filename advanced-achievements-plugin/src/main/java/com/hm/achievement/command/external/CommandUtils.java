@@ -447,14 +447,11 @@ public class CommandUtils {
 	private static GameMode getM(String arg) {
 		String[] split = arg.replace("!", "").toLowerCase().split("=");
 		String returnType = split[1];
-		if (returnType.equalsIgnoreCase("0") || returnType.equalsIgnoreCase("s")
-				|| returnType.equalsIgnoreCase("survival"))
+		if (returnType.equalsIgnoreCase("0") || returnType.equalsIgnoreCase("s") || returnType.equalsIgnoreCase("survival"))
 			return GameMode.SURVIVAL;
-		if (returnType.equalsIgnoreCase("1") || returnType.equalsIgnoreCase("c")
-				|| returnType.equalsIgnoreCase("creative"))
+		if (returnType.equalsIgnoreCase("1") || returnType.equalsIgnoreCase("c") || returnType.equalsIgnoreCase("creative"))
 			return GameMode.CREATIVE;
-		if (returnType.equalsIgnoreCase("2") || returnType.equalsIgnoreCase("a")
-				|| returnType.equalsIgnoreCase("adventure"))
+		if (returnType.equalsIgnoreCase("2") || returnType.equalsIgnoreCase("a") || returnType.equalsIgnoreCase("adventure"))
 			return GameMode.ADVENTURE;
 		if (returnType.equalsIgnoreCase("3") || returnType.equalsIgnoreCase("sp")
 				|| returnType.equalsIgnoreCase("spectator"))

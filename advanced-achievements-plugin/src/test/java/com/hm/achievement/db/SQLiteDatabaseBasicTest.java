@@ -152,8 +152,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 		assertEquals(expected, topList);
 
 		Map<String, Integer> topListFirst = db.getTopList(firstSave);
-		assertEquals("Top list from first save & all top list should be the same",
-				topList, topListFirst);
+		assertEquals("Top list from first save & all top list should be the same", topList, topListFirst);
 
 		expected.remove(testUUID.toString());
 

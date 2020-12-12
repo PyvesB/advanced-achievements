@@ -98,11 +98,10 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 	@Inject
 	public PlayerAdvancedAchievementListener(@Named("main") YamlConfiguration mainConfig,
-			@Named("lang") YamlConfiguration langConfig, int serverVersion, Logger logger,
-			StringBuilder pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements,
-			RewardParser rewardParser, @Named("ntd") Map<String, String> namesToDisplayNames,
-			AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener,
-			SoundPlayer soundPlayer) {
+			@Named("lang") YamlConfiguration langConfig, int serverVersion, Logger logger, StringBuilder pluginHeader,
+			CacheManager cacheManager, AdvancedAchievements advancedAchievements, RewardParser rewardParser,
+			@Named("ntd") Map<String, String> namesToDisplayNames, AbstractDatabaseManager databaseManager,
+			ToggleCommand toggleCommand, FireworkListener fireworkListener, SoundPlayer soundPlayer) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.serverVersion = serverVersion;

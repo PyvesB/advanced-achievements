@@ -164,8 +164,7 @@ public class CommandPaginationTest {
 	}
 
 	private String getPaginationFooter() {
-		return ChatColor.translateAlternateColorCodes('&',
-				LangHelper.get(CmdLang.PAGINATION_FOOTER, langConfig));
+		return ChatColor.translateAlternateColorCodes('&', LangHelper.get(CmdLang.PAGINATION_FOOTER, langConfig));
 	}
 
 }
