@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
@@ -17,7 +18,6 @@ import org.bukkit.projectiles.ProjectileSource;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Snowballsachievements.
@@ -29,7 +29,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class SnowballsListener extends AbstractListener {
 
 	@Inject
-	public SnowballsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public SnowballsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(NormalAchievements.SNOWBALLS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}

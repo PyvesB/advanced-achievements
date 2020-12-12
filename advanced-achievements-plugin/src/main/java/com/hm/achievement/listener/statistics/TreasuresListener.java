@@ -8,6 +8,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,7 +17,6 @@ import org.bukkit.event.player.PlayerFishEvent;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Treasures achievements.
@@ -28,7 +28,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class TreasuresListener extends AbstractListener {
 
 	@Inject
-	public TreasuresListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public TreasuresListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(NormalAchievements.TREASURES, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}

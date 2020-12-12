@@ -5,20 +5,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
-import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.mockito.Mockito;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Utility class for Mocking the main AdvancedAchievements in order to complete testing.
@@ -88,10 +87,9 @@ public class MockUtility {
 		return pluginMock;
 	}
 
-	public CommentedYamlConfiguration getLoadedConfig(String name) throws IOException, InvalidConfigurationException {
-		CommentedYamlConfiguration config = new CommentedYamlConfiguration(name, pluginMock);
-		config.loadConfiguration();
-		return config;
+	public YamlConfiguration getLoadedConfig(String name) {
+		InputStream resource = pluginMock.getResource(name);
+		return YamlConfiguration.loadConfiguration(new InputStreamReader(resource));
 	}
 
 }

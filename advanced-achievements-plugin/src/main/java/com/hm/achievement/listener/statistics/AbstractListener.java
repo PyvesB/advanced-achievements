@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -14,7 +15,6 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Abstract class in charge of factoring out common functionality for the listener classes.
@@ -26,7 +26,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	final Category category;
 	Set<String> categoryKeys;
 
-	AbstractListener(Category category, CommentedYamlConfiguration mainConfig, int serverVersion,
+	AbstractListener(Category category, YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.category = category;
@@ -35,7 +35,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
-		categoryKeys = mainConfig.getShallowKeys(category.toString());
+		categoryKeys = mainConfig.getConfigurationSection(category.toString()).getKeys(false);
 	}
 
 	public Category getCategory() {

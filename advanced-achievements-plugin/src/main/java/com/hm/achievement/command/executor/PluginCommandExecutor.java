@@ -12,13 +12,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.CommandSpec;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling /aach commands and dispatching to the different command modules.
@@ -28,14 +28,14 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class PluginCommandExecutor implements CommandExecutor, Reloadable {
 
-	private final CommentedYamlConfiguration langConfig;
+	private final YamlConfiguration langConfig;
 	private final Set<AbstractCommand> commands;
 	private final StringBuilder pluginHeader;
 
 	private String langInvalidCommand;
 
 	@Inject
-	public PluginCommandExecutor(@Named("lang") CommentedYamlConfiguration langConfig, Set<AbstractCommand> commands,
+	public PluginCommandExecutor(@Named("lang") YamlConfiguration langConfig, Set<AbstractCommand> commands,
 			StringBuilder pluginHeader) {
 		this.langConfig = langConfig;
 		this.commands = commands;

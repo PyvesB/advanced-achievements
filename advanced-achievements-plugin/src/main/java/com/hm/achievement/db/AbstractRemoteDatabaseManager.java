@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 import javax.inject.Named;
 
-import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Class used to handle a remote (in the sense not managed by the plugin) database.
@@ -29,7 +29,7 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 
 	private final String databaseType;
 
-	public AbstractRemoteDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
+	public AbstractRemoteDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater, String driverPath,
 			String databaseType) {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, driverPath);
@@ -41,9 +41,9 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 		Class.forName(driverPath);
 
 		databaseAddress = getDatabaseAddress();
-		databaseUser = URLEncoder.encode(getDatabaseConfig("DatabaseUser", "User", "root"), UTF_8.name());
-		databasePassword = URLEncoder.encode(getDatabaseConfig("DatabasePassword", "Password", "root"), UTF_8.name());
-		additionalConnectionOptions = mainConfig.getString("AdditionalConnectionOptions", "");
+		databaseUser = URLEncoder.encode(getDatabaseConfig("DatabaseUser", "User"), UTF_8.name());
+		databasePassword = URLEncoder.encode(getDatabaseConfig("DatabasePassword", "Password"), UTF_8.name());
+		additionalConnectionOptions = mainConfig.getString("AdditionalConnectionOptions");
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 	}
 
 	private String getDatabaseAddress() {
-		String databaseAddress = getDatabaseConfig("DatabaseAddress", "Database", "");
+		String databaseAddress = getDatabaseConfig("DatabaseAddress", "Database");
 		// Attempt to deal with common address mistakes where prefixes such as jdbc: or jdbc:mysql:// are omitted.
 		if (!databaseAddress.startsWith("jdbc:")) {
 			if (databaseAddress.startsWith(databaseType + "://")) {
@@ -65,7 +65,7 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 		return databaseAddress;
 	}
 
-	private String getDatabaseConfig(String newName, String oldName, String defaultValue) {
-		return mainConfig.getString(newName, mainConfig.getString(databaseType.toUpperCase() + "." + oldName, defaultValue));
+	private String getDatabaseConfig(String newName, String oldName) {
+		return mainConfig.getString(newName, mainConfig.getString(databaseType.toUpperCase() + "." + oldName));
 	}
 }

@@ -9,6 +9,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -17,7 +18,6 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with WaterBuckets achievements.
@@ -28,9 +28,9 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class WaterBucketsListener extends AbstractRateLimitedListener {
 
 	@Inject
-	public WaterBucketsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public WaterBucketsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger) {
+			AdvancedAchievements advancedAchievements, @Named("lang") YamlConfiguration langConfig, Logger logger) {
 		super(NormalAchievements.WATERBUCKETS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser,
 				advancedAchievements, langConfig, logger);
 	}

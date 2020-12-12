@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +20,6 @@ import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.HelpCommand;
 import com.hm.achievement.command.executable.InspectCommand;
 import com.hm.achievement.command.executable.ListCommand;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class for testing the command executor.
@@ -36,7 +36,7 @@ public class PluginCommandExecutorTest {
 	private CommandSender sender;
 
 	@Mock
-	private CommentedYamlConfiguration langConfig;
+	private YamlConfiguration langConfig;
 
 	@Mock
 	private HelpCommand helpCommand;

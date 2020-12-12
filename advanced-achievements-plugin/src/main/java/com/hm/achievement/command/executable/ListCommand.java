@@ -9,13 +9,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.hm.achievement.lang.GuiLang;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
-import com.hm.achievement.utils.StringHelper;
-
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,7 +19,10 @@ import com.hm.achievement.gui.CategoryGUI;
 import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.MainGUI;
 import com.hm.achievement.gui.OrderedCategory;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.achievement.lang.GuiLang;
+import com.hm.achievement.lang.LangHelper;
+import com.hm.achievement.lang.command.CmdLang;
+import com.hm.achievement.utils.StringHelper;
 
 /**
  * Class in charge of handling the /aach list command, which displays interactive GUIs.
@@ -41,9 +40,8 @@ public class ListCommand extends AbstractCommand {
 	private String langCategoryDoesNotExist;
 
 	@Inject
-	public ListCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, MainGUI mainGUI,
-			CategoryGUI categoryGUI, GUIItems guiItems) {
+	public ListCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader, MainGUI mainGUI, CategoryGUI categoryGUI, GUIItems guiItems) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.mainGUI = mainGUI;
 		this.categoryGUI = categoryGUI;

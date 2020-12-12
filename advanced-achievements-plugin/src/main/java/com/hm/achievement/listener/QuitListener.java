@@ -8,6 +8,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -17,7 +18,6 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Distance and PlayedTime achievements.
@@ -28,14 +28,14 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class QuitListener implements Listener, Reloadable {
 
-	private final CommentedYamlConfiguration mainConfig;
+	private final YamlConfiguration mainConfig;
 	private final AdvancedAchievements advancedAchievements;
 	private final Set<Cleanable> cleanables;
 
 	private long cleanDelay;
 
 	@Inject
-	public QuitListener(@Named("main") CommentedYamlConfiguration mainConfig, AdvancedAchievements advancedAchievements,
+	public QuitListener(@Named("main") YamlConfiguration mainConfig, AdvancedAchievements advancedAchievements,
 			Set<Cleanable> cleanables) {
 		this.mainConfig = mainConfig;
 		this.advancedAchievements = advancedAchievements;

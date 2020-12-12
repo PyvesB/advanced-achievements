@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerEggThrowEvent;
@@ -14,7 +15,6 @@ import org.bukkit.event.player.PlayerEggThrowEvent;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Eggs achievements.
@@ -26,7 +26,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class EggsListener extends AbstractListener {
 
 	@Inject
-	public EggsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public EggsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(NormalAchievements.EGGS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}

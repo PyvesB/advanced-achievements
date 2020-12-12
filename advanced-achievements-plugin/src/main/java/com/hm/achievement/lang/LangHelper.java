@@ -1,8 +1,7 @@
 package com.hm.achievement.lang;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Utility functions to help formatting strings extracted from the language configuration file.
@@ -18,7 +17,7 @@ public class LangHelper {
 	 * @param langConfig Language file configuration
 	 * @return value in lang file or default value in Lang impl.
 	 */
-	public static String get(Lang lang, CommentedYamlConfiguration langConfig) {
+	public static String get(Lang lang, YamlConfiguration langConfig) {
 		return langConfig.getString(lang.toLangKey(), lang.toLangDefault());
 	}
 
@@ -31,7 +30,7 @@ public class LangHelper {
 	 * @param langConfig Language file configuration
 	 * @return value in lang file or default value in Lang impl.
 	 */
-	public static String getReplacedOnce(Lang lang, String replace, String with, CommentedYamlConfiguration langConfig) {
+	public static String getReplacedOnce(Lang lang, String replace, String with, YamlConfiguration langConfig) {
 		return StringUtils.replaceOnce(get(lang, langConfig), replace, with);
 	}
 
@@ -44,7 +43,7 @@ public class LangHelper {
 	 * @param langConfig Language file configuration
 	 * @return value in lang file or default value in Lang impl.
 	 */
-	public static String getEachReplaced(Lang lang, CommentedYamlConfiguration langConfig, String[] replace, String[] with) {
+	public static String getEachReplaced(Lang lang, YamlConfiguration langConfig, String[] replace, String[] with) {
 		return StringUtils.replaceEach(get(lang, langConfig), replace, with);
 	}
 

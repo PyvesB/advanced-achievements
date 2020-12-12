@@ -12,11 +12,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach toggle command, which allows a player to override the default behaviour of the
@@ -37,8 +37,8 @@ public class ToggleCommand extends AbstractCommand {
 	private String langToggleHidden;
 
 	@Inject
-	public ToggleCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader) {
+	public ToggleCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader) {
 		super(mainConfig, langConfig, pluginHeader);
 	}
 

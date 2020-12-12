@@ -5,11 +5,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach generate command, which creates advancements for the achievements defined in
@@ -28,8 +28,8 @@ public class GenerateCommand extends AbstractCommand {
 	private String langMinecraftNotSupported;
 
 	@Inject
-	public GenerateCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, int serverVersion,
+	public GenerateCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader, int serverVersion,
 			AdvancementManager advancementManager) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.serverVersion = serverVersion;

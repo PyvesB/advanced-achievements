@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -15,7 +16,6 @@ import org.junit.rules.TemporaryFolder;
 
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 import utilities.MockUtility;
 
@@ -37,7 +37,7 @@ public class CommandPaginationTest {
 	@ClassRule
 	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private CommentedYamlConfiguration langConfig;
+	private YamlConfiguration langConfig;
 
 	@Before
 	public void setUp() throws Exception {

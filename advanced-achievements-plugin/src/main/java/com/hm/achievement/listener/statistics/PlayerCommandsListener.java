@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,13 +23,12 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 @Singleton
 public class PlayerCommandsListener extends AbstractListener {
 
 	@Inject
-	public PlayerCommandsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public PlayerCommandsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(MultipleAchievements.PLAYERCOMMANDS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}

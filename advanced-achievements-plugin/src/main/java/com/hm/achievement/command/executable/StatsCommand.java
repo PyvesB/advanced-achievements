@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
 
@@ -17,7 +18,6 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.SoundPlayer;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ParticleEffect;
 
 /**
@@ -48,10 +48,9 @@ public class StatsCommand extends AbstractCommand {
 	private String langNumberAchievements;
 
 	@Inject
-	public StatsCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger,
-			int serverVersion, CacheManager cacheManager, @Named("ntd") Map<String, String> namesToDisplayNames,
-			SoundPlayer soundPlayer) {
+	public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader, Logger logger, int serverVersion, CacheManager cacheManager,
+			@Named("ntd") Map<String, String> namesToDisplayNames, SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.serverVersion = serverVersion;
 		this.logger = logger;
@@ -65,11 +64,11 @@ public class StatsCommand extends AbstractCommand {
 		super.extractConfigurationParameters();
 
 		// Load configuration parameters.
-		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5"));
-		configIcon = mainConfig.getString("Icon", "\u2618");
-		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects", true);
-		configSound = mainConfig.getBoolean("Sound", true);
-		configSoundStats = mainConfig.getString("SoundStats", "ENTITY_FIREWORK_ROCKET_BLAST").toUpperCase();
+		configColor = ChatColor.getByChar(mainConfig.getString("Color"));
+		configIcon = mainConfig.getString("Icon");
+		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
+		configSound = mainConfig.getBoolean("Sound");
+		configSoundStats = mainConfig.getString("SoundStats").toUpperCase();
 
 		langNumberAchievements = pluginHeader + LangHelper.get(CmdLang.NUMBER_ACHIEVEMENTS, langConfig) + " " + configColor;
 	}

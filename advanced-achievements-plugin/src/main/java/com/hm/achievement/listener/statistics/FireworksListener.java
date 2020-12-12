@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -20,7 +21,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Fireworks achievements.
@@ -32,7 +32,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class FireworksListener extends AbstractListener {
 
 	@Inject
-	public FireworksListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public FireworksListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(NormalAchievements.FIREWORKS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}

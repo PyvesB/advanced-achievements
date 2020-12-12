@@ -7,10 +7,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.SoundPlayer;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach month command, which displays monthly rankings.
@@ -22,9 +23,9 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class MonthCommand extends AbstractRankingCommand {
 
 	@Inject
-	public MonthCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger,
-			int serverVersion, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
+	public MonthCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader, Logger logger, int serverVersion, AbstractDatabaseManager databaseManager,
+			SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader, logger, serverVersion, CmdLang.MONTH_ACHIEVEMENT, databaseManager,
 				soundPlayer);
 	}

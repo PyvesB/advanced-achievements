@@ -11,8 +11,9 @@ import java.util.logging.Logger;
 
 import javax.inject.Named;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class used to handle a PosgreSQL database. Note that some query methods are overriden as the SQL syntax is different
@@ -23,7 +24,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  */
 public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
-	public PostgreSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
+	public PostgreSQLDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "org.postgresql.Driver", "postgresql");
 	}

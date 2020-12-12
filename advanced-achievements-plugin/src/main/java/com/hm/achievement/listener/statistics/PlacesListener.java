@@ -10,6 +10,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,7 +21,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Places achievements.
@@ -32,7 +32,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class PlacesListener extends AbstractListener {
 
 	@Inject
-	public PlacesListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public PlacesListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(MultipleAchievements.PLACES, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}

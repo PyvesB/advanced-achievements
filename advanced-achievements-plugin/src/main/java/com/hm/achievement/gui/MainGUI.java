@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +22,6 @@ import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.NumberHelper;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Represents the main GUI, corresponding to all the different available categories and their names.
@@ -31,8 +31,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class MainGUI implements Reloadable {
 
-	private final CommentedYamlConfiguration mainConfig;
-	private final CommentedYamlConfiguration langConfig;
+	private final YamlConfiguration mainConfig;
+	private final YamlConfiguration langConfig;
 	private final CacheManager cacheManager;
 	private final Set<Category> disabledCategories;
 	private final GUIItems guiItems;
@@ -43,9 +43,8 @@ public class MainGUI implements Reloadable {
 	private String langListGUITitle;
 
 	@Inject
-	public MainGUI(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, CacheManager cacheManager,
-			Set<Category> disabledCategories, GUIItems guiItems) {
+	public MainGUI(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			CacheManager cacheManager, Set<Category> disabledCategories, GUIItems guiItems) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.cacheManager = cacheManager;
@@ -113,7 +112,7 @@ public class MainGUI implements Reloadable {
 	 */
 	private void displayCategory(ItemStack item, Inventory gui, Player player, Category category, int position) {
 		if (category instanceof MultipleAchievements) {
-			for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
+			for (String subcategory : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
 				if (!configHideNotReceivedCategories || hasReceivedInCategory(player, category + "." + subcategory)) {
 					gui.setItem(position, item);
 					return;
@@ -135,9 +134,9 @@ public class MainGUI implements Reloadable {
 	 * @return true if the player has received at least one achievement in the category, false otherwise
 	 */
 	private boolean hasReceivedInCategory(Player player, String configPath) {
-		for (String threshold : mainConfig.getShallowKeys(configPath)) {
+		for (String threshold : mainConfig.getConfigurationSection(configPath).getKeys(false)) {
 			if (cacheManager.hasPlayerAchievement(player.getUniqueId(),
-					mainConfig.getString(configPath + '.' + threshold + ".Name", ""))) {
+					mainConfig.getString(configPath + '.' + threshold + ".Name"))) {
 				// At least one achievement was received in the current category: it is unlocked.
 				return true;
 			}

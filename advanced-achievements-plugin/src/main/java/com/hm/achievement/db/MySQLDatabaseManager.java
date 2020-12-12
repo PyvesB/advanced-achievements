@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 import javax.inject.Named;
 
-import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Class used to handle a MySQL database.
@@ -16,7 +16,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  */
 public class MySQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
-	public MySQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
+	public MySQLDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "com.mysql.jdbc.Driver", "mysql");
 	}

@@ -1,18 +1,20 @@
 package com.hm.achievement.listener.statistics;
 
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.raid.RaidFinishEvent;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.List;
-import java.util.Map;
+
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.raid.RaidFinishEvent;
+
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.utils.RewardParser;
 
 /**
  * Processes raid win event.
@@ -23,7 +25,7 @@ import java.util.Map;
 public class WinRaidListener extends AbstractListener {
 
 	@Inject
-	public WinRaidListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public WinRaidListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(NormalAchievements.RAIDSWON, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}

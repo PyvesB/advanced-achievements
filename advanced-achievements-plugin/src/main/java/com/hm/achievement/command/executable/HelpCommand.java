@@ -8,12 +8,12 @@ import javax.inject.Singleton;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lang.command.HelpLang;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.FancyMessageSender;
 
 /**
@@ -66,9 +66,8 @@ public class HelpCommand extends AbstractCommand {
 	private String langTip;
 
 	@Inject
-	public HelpCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, int serverVersion,
-			Logger logger) {
+	public HelpCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader, int serverVersion, Logger logger) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.serverVersion = serverVersion;
 		this.logger = logger;
@@ -78,8 +77,8 @@ public class HelpCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5"));
-		configIcon = mainConfig.getString("Icon", "\u2618");
+		configColor = ChatColor.getByChar(mainConfig.getString("Color"));
+		configIcon = mainConfig.getString("Icon");
 
 		langCommandList = header("/aach list") + LangHelper.get(HelpLang.LIST, langConfig);
 		langCommandListHover = LangHelper.get(HelpLang.Hover.LIST, langConfig);

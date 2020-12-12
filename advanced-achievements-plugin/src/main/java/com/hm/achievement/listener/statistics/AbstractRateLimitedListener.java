@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -18,7 +19,6 @@ import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.ListenerLang;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.FancyMessageSender;
 
 /**
@@ -30,7 +30,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 
 	private final Map<Integer, Map<UUID, Long>> slotsToPlayersLastActionTimes = new HashMap<>();
 	private final AdvancedAchievements advancedAchievements;
-	private final CommentedYamlConfiguration langConfig;
+	private final YamlConfiguration langConfig;
 	private final Logger logger;
 
 	private int categoryCooldown;
@@ -39,9 +39,9 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 
 	private String langStatisticCooldown;
 
-	AbstractRateLimitedListener(Category category, CommentedYamlConfiguration mainConfig, int serverVersion,
+	AbstractRateLimitedListener(Category category, YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, CommentedYamlConfiguration langConfig, Logger logger) {
+			AdvancedAchievements advancedAchievements, YamlConfiguration langConfig, Logger logger) {
 		super(category, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 		this.advancedAchievements = advancedAchievements;
 		this.langConfig = langConfig;
@@ -56,11 +56,11 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 		hardestCategoryThreshold = thresholds == null ? Long.MAX_VALUE : thresholds.get(thresholds.size() - 1);
 		if (mainConfig.isInt("StatisticCooldown")) {
 			// Old configuration style for plugin versions up to version 5.4.
-			categoryCooldown = mainConfig.getInt("StatisticCooldown", 10) * 1000;
+			categoryCooldown = mainConfig.getInt("StatisticCooldown") * 1000;
 		} else {
-			categoryCooldown = mainConfig.getInt("StatisticCooldown." + category, 10) * 1000;
+			categoryCooldown = mainConfig.getInt("StatisticCooldown." + category) * 1000;
 		}
-		configCooldownActionBar = mainConfig.getBoolean("CooldownActionBar", true);
+		configCooldownActionBar = mainConfig.getBoolean("CooldownActionBar");
 		// Action bars introduced in Minecraft 1.8. Automatically disable for older versions.
 		if (configCooldownActionBar && serverVersion < 8) {
 			configCooldownActionBar = false;

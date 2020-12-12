@@ -17,12 +17,12 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lifecycle.Cleanable;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class used to provide a cache wrapper for various database statistics, in order to reduce load of database and enable
@@ -35,7 +35,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class CacheManager implements Cleanable {
 
 	private final AdvancedAchievements advancedAchievements;
-	private final CommentedYamlConfiguration mainConfig;
+	private final YamlConfiguration mainConfig;
 	private final AbstractDatabaseManager databaseManager;
 	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
 	private final Map<NormalAchievements, Map<UUID, CachedStatistic>> normalAchievementsToPlayerStatistics;
@@ -49,7 +49,7 @@ public class CacheManager implements Cleanable {
 	private final Map<UUID, Integer> totalPlayerAchievementsCache;
 
 	@Inject
-	public CacheManager(AdvancedAchievements advancedAchievements, @Named("main") CommentedYamlConfiguration mainConfig,
+	public CacheManager(AdvancedAchievements advancedAchievements, @Named("main") YamlConfiguration mainConfig,
 			AbstractDatabaseManager databaseManager) {
 		this.advancedAchievements = advancedAchievements;
 		this.mainConfig = mainConfig;
@@ -79,7 +79,7 @@ public class CacheManager implements Cleanable {
 		// Indicate to the relevant cached statistics that the player has disconnected.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Map<SubcategoryUUID, CachedStatistic> categoryMap = getHashMap(category);
-			for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
+			for (String subcategory : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
 				CachedStatistic statistic = categoryMap.get(new SubcategoryUUID(subcategory, uuid));
 				if (statistic != null) {
 					statistic.signalPlayerDisconnection();

@@ -2,6 +2,8 @@ package com.hm.achievement.db;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,10 +14,10 @@ import java.util.logging.Logger;
 
 import javax.inject.Named;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.exception.PluginLoadError;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
-import com.hm.mcshared.file.FileManager;
 
 /**
  * Class used to handle a file-backed database.
@@ -29,7 +31,7 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
 	private final String url;
 	private final String filename;
 
-	public AbstractFileDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
+	public AbstractFileDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
 			AdvancedAchievements advancedAchievements, String driverPath, String url, String filename) {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, driverPath);
@@ -42,13 +44,13 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
 	void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError {
 		Class.forName(driverPath);
 
-		if (mainConfig.getBoolean("DatabaseBackup", true)) {
+		if (mainConfig.getBoolean("DatabaseBackup")) {
 			File backup = new File(advancedAchievements.getDataFolder(), filename + ".bak");
-			if (System.currentTimeMillis() - backup.lastModified() > TimeUnit.DAYS.toMillis(1) || backup.length() == 0L) {
+			File database = new File(advancedAchievements.getDataFolder(), filename);
+			if (database.lastModified() - backup.lastModified() > TimeUnit.DAYS.toMillis(1)) {
 				logger.info("Backing up database file...");
 				try {
-					FileManager fileManager = new FileManager(filename, advancedAchievements);
-					fileManager.backupFile();
+					Files.copy(database.toPath(), backup.toPath(), StandardCopyOption.REPLACE_EXISTING);
 				} catch (IOException e) {
 					logger.log(Level.SEVERE, "Error while backing up database file:", e);
 				}

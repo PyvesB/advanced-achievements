@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
@@ -41,7 +42,6 @@ import com.hm.achievement.placeholder.AchievementCountBungeeTabListPlusVariable;
 import com.hm.achievement.placeholder.AchievementPlaceholderHook;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.update.UpdateChecker;
 
 import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
@@ -83,7 +83,7 @@ public class PluginLoader {
 	private final PluginCommandExecutor pluginCommandExecutor;
 	private final CommandTabCompleter commandTabCompleter;
 	private final Set<Category> disabledCategories;
-	private final CommentedYamlConfiguration mainConfig;
+	private final YamlConfiguration mainConfig;
 	private final ConfigurationParser configurationParser;
 
 	// Plugin runnable classes.
@@ -103,7 +103,7 @@ public class PluginLoader {
 			Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
 			AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
 			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
-			Set<Category> disabledCategories, @Named("main") CommentedYamlConfiguration mainConfig,
+			Set<Category> disabledCategories, @Named("main") YamlConfiguration mainConfig,
 			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
 			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand,
 			@Named("ntd") Map<String, String> namesToDisplayNames) {
@@ -235,7 +235,7 @@ public class PluginLoader {
 			playedTimeTask.cancel();
 		}
 		if (!disabledCategories.contains(NormalAchievements.PLAYEDTIME)) {
-			int configPlaytimeTaskInterval = mainConfig.getInt("PlaytimeTaskInterval", 60);
+			int configPlaytimeTaskInterval = mainConfig.getInt("PlaytimeTaskInterval");
 			playedTimeTask = Bukkit.getScheduler().runTaskTimer(advancedAchievements, playTimeRunnable,
 					configPlaytimeTaskInterval * 10L, configPlaytimeTaskInterval * 20L);
 		}
@@ -252,7 +252,7 @@ public class PluginLoader {
 				|| !disabledCategories.contains(NormalAchievements.DISTANCEGLIDING)
 				|| !disabledCategories.contains(NormalAchievements.DISTANCELLAMA)
 				|| !disabledCategories.contains(NormalAchievements.DISTANCESNEAKING)) {
-			int configDistanceTaskInterval = mainConfig.getInt("DistanceTaskInterval", 5);
+			int configDistanceTaskInterval = mainConfig.getInt("DistanceTaskInterval");
 			distanceTask = Bukkit.getScheduler().runTaskTimer(advancedAchievements, distanceRunnable,
 					configDistanceTaskInterval * 40L, configDistanceTaskInterval * 20L);
 		}
@@ -263,7 +263,7 @@ public class PluginLoader {
 	 * again. If CheckForUpdate switched to false unregisters listener.
 	 */
 	private void launchUpdateChecker() {
-		if (!mainConfig.getBoolean("CheckForUpdate", true)) {
+		if (!mainConfig.getBoolean("CheckForUpdate")) {
 			PlayerJoinEvent.getHandlerList().unregister(updateChecker.get());
 		} else {
 			for (RegisteredListener registeredListener : PlayerJoinEvent.getHandlerList().getRegisteredListeners()) {
@@ -290,7 +290,7 @@ public class PluginLoader {
 		PluginManager pluginManager = Bukkit.getPluginManager();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Permission categoryParent = new Permission(category.toPermName(), PermissionDefault.TRUE);
-			for (String section : mainConfig.getShallowKeys(category.toString())) {
+			for (String section : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
 				// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories and don't take
 				// spaces into account.
 				section = StringUtils.deleteWhitespace(StringUtils.substringBefore(section, ":"));

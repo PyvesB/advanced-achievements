@@ -9,6 +9,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.Essentials;
@@ -16,7 +17,6 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class used to monitor players' played times.
@@ -35,7 +35,7 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 	private boolean configIgnoreAFKPlayedTime;
 
 	@Inject
-	public AchievePlayTimeRunnable(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public AchievePlayTimeRunnable(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 

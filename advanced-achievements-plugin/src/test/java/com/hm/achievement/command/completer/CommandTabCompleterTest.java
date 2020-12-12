@@ -21,9 +21,11 @@ import java.util.stream.IntStream;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -33,7 +35,6 @@ import com.hm.achievement.command.executable.EasterEggCommand;
 import com.hm.achievement.command.executable.GenerateCommand;
 import com.hm.achievement.command.executable.HelpCommand;
 import com.hm.achievement.command.executable.Upgrade13Command;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class for testing the command tab completer.
@@ -43,8 +44,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @RunWith(MockitoJUnitRunner.class)
 public class CommandTabCompleterTest {
 
-	@Mock
-	private CommentedYamlConfiguration mainConfig;
+	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
+	private YamlConfiguration mainConfig;
 
 	@Mock
 	private Command command;
@@ -73,7 +74,7 @@ public class CommandTabCompleterTest {
 	public void setUp() {
 		when(command.getName()).thenReturn("aach");
 
-		when(mainConfig.getShallowKeys("Commands")).thenReturn(singleton("myCommand"));
+		when(mainConfig.getConfigurationSection("Commands").getKeys(false)).thenReturn(singleton("myCommand"));
 
 		Set<AbstractCommand> commands = new HashSet<>();
 		commands.add(bookCommand);
@@ -239,7 +240,7 @@ public class CommandTabCompleterTest {
 	public void shoudTruncateCompletionListOnOldServerVersionsIfOverFiftyElements() {
 		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptyMap(), emptySet(), emptySet(), 12);
 		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
-		when(mainConfig.getShallowKeys("Commands")).thenReturn(commands);
+		when(mainConfig.getConfigurationSection("Commands").getKeys(false)).thenReturn(commands);
 
 		String[] args = new String[] { "give", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
@@ -251,7 +252,7 @@ public class CommandTabCompleterTest {
 	@Test
 	public void shoudNotTruncateCompletionListIfRecentServerVersion() {
 		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
-		when(mainConfig.getShallowKeys("Commands")).thenReturn(commands);
+		when(mainConfig.getConfigurationSection("Commands").getKeys(false)).thenReturn(commands);
 
 		String[] args = new String[] { "give", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);

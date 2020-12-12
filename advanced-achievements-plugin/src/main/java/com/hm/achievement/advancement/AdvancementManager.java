@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -27,7 +28,6 @@ import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.OrderedCategory;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.StringHelper;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
@@ -56,7 +56,7 @@ public class AdvancementManager implements Reloadable {
 	private static final String METHOD_GET_KEY = "getKey";
 	private static final String METHOD_B = "b";
 
-	private final CommentedYamlConfiguration mainConfig;
+	private final YamlConfiguration mainConfig;
 	private final GUIItems guiItems;
 	private final AdvancedAchievements advancedAchievements;
 	private final Logger logger;
@@ -71,7 +71,7 @@ public class AdvancementManager implements Reloadable {
 	private int generatedAdvancements;
 
 	@Inject
-	public AdvancementManager(@Named("main") CommentedYamlConfiguration mainConfig, GUIItems guiItems,
+	public AdvancementManager(@Named("main") YamlConfiguration mainConfig, GUIItems guiItems,
 			AdvancedAchievements advancedAchievements, Logger logger, Map<String, List<Long>> sortedThresholds,
 			Set<Category> disabledCategories, int serverVersion) {
 		this.mainConfig = mainConfig;
@@ -85,9 +85,9 @@ public class AdvancementManager implements Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		configRegisterAdvancementDescriptions = mainConfig.getBoolean("RegisterAdvancementDescriptions", true);
+		configRegisterAdvancementDescriptions = mainConfig.getBoolean("RegisterAdvancementDescriptions");
 		configHideAdvancements = mainConfig.getBoolean("HideAdvancements");
-		configRootAdvancementTitle = mainConfig.getString("RootAdvancementTitle", "Advanced Achievements");
+		configRootAdvancementTitle = mainConfig.getString("RootAdvancementTitle");
 		configBackgroundTexture = parseBackgroundTexture();
 	}
 
@@ -110,7 +110,7 @@ public class AdvancementManager implements Reloadable {
 	 * @return the background texture path
 	 */
 	private String parseBackgroundTexture() {
-		String configTexture = mainConfig.getString("AdvancementsBackground", "minecraft:textures/item/book.png");
+		String configTexture = mainConfig.getString("AdvancementsBackground");
 		if (serverVersion == 12) {
 			return StringUtils.replace(configTexture, "/item/", "/items/");
 		}
@@ -173,11 +173,11 @@ public class AdvancementManager implements Reloadable {
 			ItemStack item = categoryItemPair.getValue();
 			if (category == CommandAchievements.COMMANDS) {
 				String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
-				for (String ach : mainConfig.getShallowKeys(category.toString())) {
+				for (String ach : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
 					parentKey = registerAdvancement(item, category + "." + ach, parentKey, true);
 				}
 			} else if (category instanceof MultipleAchievements) {
-				for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
+				for (String subcategory : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
 					registerCategoryAdvancements(item, category + "." + subcategory);
 				}
 			} else {
@@ -214,8 +214,8 @@ public class AdvancementManager implements Reloadable {
 	 * @return the key of the registered achievement
 	 */
 	private String registerAdvancement(ItemStack item, String configAchievement, String parentKey, boolean lastAchievement) {
-		String achName = mainConfig.getString(configAchievement + ".Name", "");
-		String achDisplayName = mainConfig.getString(configAchievement + ".DisplayName", "");
+		String achName = mainConfig.getString(configAchievement + ".Name");
+		String achDisplayName = mainConfig.getString(configAchievement + ".DisplayName");
 		if (StringUtils.isEmpty(achDisplayName)) {
 			achDisplayName = achName;
 		}
@@ -228,9 +228,9 @@ public class AdvancementManager implements Reloadable {
 		if (configRegisterAdvancementDescriptions) {
 			// Give priority to the goal to stick with Vanilla naming of advancements. Advancement descriptions do not
 			// support multiline goals.
-			description = StringUtils.replace(mainConfig.getString(configAchievement + ".Goal", ""), "\\n", " ");
+			description = StringUtils.replace(mainConfig.getString(configAchievement + ".Goal"), "\\n", " ");
 			if (!StringUtils.isNotBlank(description)) {
-				description = mainConfig.getString(configAchievement + ".Message", "");
+				description = mainConfig.getString(configAchievement + ".Message");
 			}
 			description = StringHelper.removeFormattingCodes(description);
 		}

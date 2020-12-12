@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,13 +17,12 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 @Singleton
 public class TargetsShotListener extends AbstractListener {
 
 	@Inject
-	public TargetsShotListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public TargetsShotListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(MultipleAchievements.TARGETSSHOT, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}

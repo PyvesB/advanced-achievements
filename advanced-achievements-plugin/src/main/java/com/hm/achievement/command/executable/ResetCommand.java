@@ -9,13 +9,13 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.StringHelper;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach reset command, which resets the statistics for a given player and achievement
@@ -37,9 +37,8 @@ public class ResetCommand extends AbstractParsableCommand {
 	private String langCategoryDoesNotExist;
 
 	@Inject
-	public ResetCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
-			Set<String> enabledCategoriesWithSubcategories) {
+	public ResetCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader, CacheManager cacheManager, Set<String> enabledCategoriesWithSubcategories) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;

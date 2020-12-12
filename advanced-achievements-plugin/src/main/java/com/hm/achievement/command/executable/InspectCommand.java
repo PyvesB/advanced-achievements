@@ -19,6 +19,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.TextStringBuilder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.command.pagination.SupplierCommandPagination;
@@ -27,7 +28,6 @@ import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.StringHelper;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of displaying recipients of an achievement (/aach inspect).
@@ -49,9 +49,8 @@ public class InspectCommand extends AbstractCommand {
 	private final Map<String, SupplierCommandPagination> cachedPaginations;
 
 	@Inject
-	public InspectCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
-			AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager,
+	public InspectCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager,
 			@Named("dtn") Map<String, String> displayNamesToNames) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.advancedAchievements = advancedAchievements;

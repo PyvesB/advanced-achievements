@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
@@ -22,7 +23,6 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class used to monitor distances travelled by players for the different available categories.
@@ -39,7 +39,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	private boolean configIgnoreVerticalDistance;
 
 	@Inject
-	public AchieveDistanceRunnable(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public AchieveDistanceRunnable(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
 			Set<Category> disabledCategories) {
 		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);

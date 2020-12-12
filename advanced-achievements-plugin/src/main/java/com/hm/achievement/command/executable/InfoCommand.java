@@ -7,12 +7,12 @@ import javax.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.InfoLang;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of displaying the plugin's extra information (/aach info).
@@ -41,9 +41,8 @@ public class InfoCommand extends AbstractCommand {
 	private String langVersionCommandDatabase;
 
 	@Inject
-	public InfoCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader,
-			AdvancedAchievements advancedAchievements, RewardParser rewardParser) {
+	public InfoCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, RewardParser rewardParser) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.advancedAchievements = advancedAchievements;
 		this.rewardParser = rewardParser;
@@ -53,9 +52,9 @@ public class InfoCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		ChatColor configColor = ChatColor.getByChar(mainConfig.getString("Color", "5"));
-		String configIcon = mainConfig.getString("Icon", "\u2618");
-		configDatabaseType = mainConfig.getString("DatabaseType", "sqlite");
+		ChatColor configColor = ChatColor.getByChar(mainConfig.getString("Color"));
+		String configIcon = mainConfig.getString("Icon");
+		configDatabaseType = mainConfig.getString("DatabaseType");
 
 		header = configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ") + configColor
 				+ configIcon + configColor + " ------------";

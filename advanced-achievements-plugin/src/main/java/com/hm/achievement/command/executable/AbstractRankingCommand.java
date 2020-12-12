@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.command.pagination.CommandPagination;
@@ -21,7 +22,6 @@ import com.hm.achievement.lang.Lang;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.SoundPlayer;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ParticleEffect;
 
 /**
@@ -58,9 +58,9 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private List<Integer> cachedAchievementCounts;
 	private long lastCacheUpdate = 0L;
 
-	AbstractRankingCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
-			StringBuilder pluginHeader, Logger logger, int serverVersion, Lang languageHeader,
-			AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
+	AbstractRankingCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, StringBuilder pluginHeader,
+			Logger logger, int serverVersion, Lang languageHeader, AbstractDatabaseManager databaseManager,
+			SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.logger = logger;
 		this.serverVersion = serverVersion;
@@ -73,11 +73,11 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configColor = ChatColor.getByChar(mainConfig.getString("Color", "5"));
-		configTopList = mainConfig.getInt("TopList", 5);
-		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects", true);
-		configSound = mainConfig.getBoolean("Sound", true);
-		configSoundRanking = mainConfig.getString("SoundRanking", "ENTITY_FIREWORK_ROCKET_BLAST").toUpperCase();
+		configColor = ChatColor.getByChar(mainConfig.getString("Color"));
+		configTopList = mainConfig.getInt("TopList");
+		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
+		configSound = mainConfig.getBoolean("Sound");
+		configSoundRanking = mainConfig.getString("SoundRanking").toUpperCase();
 
 		langPeriodAchievement = pluginHeader + LangHelper.get(languageHeader, langConfig);
 		langPlayerRank = pluginHeader + LangHelper.get(CmdLang.PLAYER_RANK, langConfig) + " " + configColor;

@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,7 +16,6 @@ import org.bukkit.event.player.PlayerLevelChangeEvent;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with MaxLevel achievements.
@@ -27,7 +27,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class LevelsListener extends AbstractListener {
 
 	@Inject
-	public LevelsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public LevelsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(NormalAchievements.LEVELS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}

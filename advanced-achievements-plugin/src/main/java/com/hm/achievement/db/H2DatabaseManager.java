@@ -6,8 +6,9 @@ import java.util.logging.Logger;
 
 import javax.inject.Named;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class used to handle a H2 database.
@@ -17,7 +18,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  */
 public class H2DatabaseManager extends AbstractFileDatabaseManager {
 
-	public H2DatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
+	public H2DatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
 			AdvancedAchievements advancedAchievements) {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, advancedAchievements, "org.h2.Driver",

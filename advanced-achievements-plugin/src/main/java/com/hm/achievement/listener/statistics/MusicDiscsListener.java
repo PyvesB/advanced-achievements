@@ -9,6 +9,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,7 +20,6 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with MusicDiscs achievements.
@@ -31,10 +31,9 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class MusicDiscsListener extends AbstractRateLimitedListener {
 
 	@Inject
-	public MusicDiscsListener(@Named("main") CommentedYamlConfiguration mainConfig,
-			int serverVersion, Map<String, List<Long>> sortedThresholds, CacheManager cacheManager,
-			RewardParser rewardParser, AdvancedAchievements advancedAchievements,
-			@Named("lang") CommentedYamlConfiguration langConfig, Logger logger) {
+	public MusicDiscsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
+			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
+			AdvancedAchievements advancedAchievements, @Named("lang") YamlConfiguration langConfig, Logger logger) {
 		super(NormalAchievements.MUSICDISCS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser,
 				advancedAchievements, langConfig, logger);
 	}

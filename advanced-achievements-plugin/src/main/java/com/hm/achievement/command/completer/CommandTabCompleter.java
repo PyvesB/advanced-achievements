@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.command.executable.AbstractCommand;
@@ -25,7 +26,6 @@ import com.hm.achievement.command.executable.EasterEggCommand;
 import com.hm.achievement.command.executable.GenerateCommand;
 import com.hm.achievement.command.executable.ResetCommand;
 import com.hm.achievement.command.executable.Upgrade13Command;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling auto-completion for achievements and categories when using /aach check, /aach reset,
@@ -38,7 +38,7 @@ public class CommandTabCompleter implements TabCompleter {
 
 	private static final int MAX_LIST_LENGTH = 50;
 
-	private final CommentedYamlConfiguration mainConfig;
+	private final YamlConfiguration mainConfig;
 	private final Map<String, String> namesToDisplayNames;
 	private final Map<String, String> displayNamesToNames;
 	private final Set<String> enabledCategoriesWithSubcategories;
@@ -46,7 +46,7 @@ public class CommandTabCompleter implements TabCompleter {
 	private final int serverVersion;
 
 	@Inject
-	public CommandTabCompleter(@Named("main") CommentedYamlConfiguration mainConfig,
+	public CommandTabCompleter(@Named("main") YamlConfiguration mainConfig,
 			@Named("ntd") Map<String, String> namesToDisplayNames, @Named("dtn") Map<String, String> displayNamesToNames,
 			Set<String> enabledCategoriesWithSubcategories, Set<AbstractCommand> commands, int serverVersion) {
 		this.mainConfig = mainConfig;
@@ -73,7 +73,7 @@ public class CommandTabCompleter implements TabCompleter {
 			options = new HashSet<>(enabledCategoriesWithSubcategories);
 			options.add(ResetCommand.WILDCARD);
 		} else if (args.length == 2 && "give".equalsIgnoreCase(aachCommand)) {
-			options = mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString());
+			options = mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString()).getKeys(false);
 		} else if (args.length == 2 && "check".equalsIgnoreCase(aachCommand)) {
 			options = namesToDisplayNames.keySet();
 		} else if (args.length == 2 && "delete".equalsIgnoreCase(aachCommand)) {

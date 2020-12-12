@@ -6,10 +6,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Utility for paginating command messages.
@@ -25,12 +25,12 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class SupplierCommandPagination extends CommandPagination {
 
 	private final List<Supplier<String>> toPaginate;
-	private final CommentedYamlConfiguration langConfig;
+	private final YamlConfiguration langConfig;
 	private final int perPage;
 	private final int size;
 	private final int maxPage;
 
-	public SupplierCommandPagination(List<Supplier<String>> toPaginate, int perPage, CommentedYamlConfiguration langConfig) {
+	public SupplierCommandPagination(List<Supplier<String>> toPaginate, int perPage, YamlConfiguration langConfig) {
 		super(new ArrayList<>(), perPage, langConfig);
 		this.toPaginate = toPaginate;
 		size = toPaginate.size();

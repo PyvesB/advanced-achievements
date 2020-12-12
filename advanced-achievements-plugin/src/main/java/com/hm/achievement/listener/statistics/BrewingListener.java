@@ -9,6 +9,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,7 +25,6 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.InventoryHelper;
 import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Brewing achievements.
@@ -39,9 +39,9 @@ public class BrewingListener extends AbstractRateLimitedListener {
 	private final InventoryHelper inventoryHelper;
 
 	@Inject
-	public BrewingListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public BrewingListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, @Named("lang") CommentedYamlConfiguration langConfig, Logger logger,
+			AdvancedAchievements advancedAchievements, @Named("lang") YamlConfiguration langConfig, Logger logger,
 			MaterialHelper materialHelper, InventoryHelper inventoryHelper) {
 		super(NormalAchievements.BREWING, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser,
 				advancedAchievements, langConfig, logger);

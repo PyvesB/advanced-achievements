@@ -11,13 +11,13 @@ import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.Category;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Abstract class in charge of factoring out common functionality for classes which track statistic increases (such as
@@ -28,7 +28,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class StatisticIncreaseHandler implements Reloadable {
 
-	protected final CommentedYamlConfiguration mainConfig;
+	protected final YamlConfiguration mainConfig;
 	protected final int serverVersion;
 	protected final Map<String, List<Long>> sortedThresholds;
 	protected final CacheManager cacheManager;
@@ -40,7 +40,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 	private Set<String> configExcludedWorlds;
 
 	@Inject
-	public StatisticIncreaseHandler(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public StatisticIncreaseHandler(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		this.mainConfig = mainConfig;
 		this.serverVersion = serverVersion;
@@ -52,13 +52,13 @@ public class StatisticIncreaseHandler implements Reloadable {
 	@Override
 	public void extractConfigurationParameters() {
 		configRestrictCreative = mainConfig.getBoolean("RestrictCreative");
-		configRestrictSpectator = mainConfig.getBoolean("RestrictSpectator", true);
+		configRestrictSpectator = mainConfig.getBoolean("RestrictSpectator");
 		configRestrictAdventure = mainConfig.getBoolean("RestrictAdventure");
 		// Spectator mode introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configRestrictSpectator && serverVersion < 8) {
 			configRestrictSpectator = false;
 		}
-		configExcludedWorlds = new HashSet<>(mainConfig.getList("ExcludedWorlds"));
+		configExcludedWorlds = new HashSet<>(mainConfig.getStringList("ExcludedWorlds"));
 	}
 
 	/**

@@ -2,11 +2,11 @@ package com.hm.achievement.command.executable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Abstract class in charge of factoring out common functionality for commands.
@@ -15,14 +15,13 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  */
 public abstract class AbstractCommand implements Reloadable {
 
-	final CommentedYamlConfiguration mainConfig;
-	final CommentedYamlConfiguration langConfig;
+	final YamlConfiguration mainConfig;
+	final YamlConfiguration langConfig;
 	final StringBuilder pluginHeader;
 
 	private String langNoPermissions;
 
-	AbstractCommand(CommentedYamlConfiguration mainConfig, CommentedYamlConfiguration langConfig,
-			StringBuilder pluginHeader) {
+	AbstractCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, StringBuilder pluginHeader) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.pluginHeader = pluginHeader;

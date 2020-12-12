@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.CommandAchievements;
@@ -16,7 +17,6 @@ import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StringHelper;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of handling the /aach give command, which gives an achievement from the Commands category.
@@ -37,9 +37,8 @@ public class GiveCommand extends AbstractParsableCommand {
 	private String langAchievementNoPermission;
 
 	@Inject
-	public GiveCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
-			RewardParser rewardParser) {
+	public GiveCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader, CacheManager cacheManager, RewardParser rewardParser) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.rewardParser = rewardParser;
@@ -49,7 +48,7 @@ public class GiveCommand extends AbstractParsableCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configMultiCommand = mainConfig.getBoolean("MultiCommand", true);
+		configMultiCommand = mainConfig.getBoolean("MultiCommand");
 
 		langAchievementAlreadyReceived = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_ALREADY_RECEIVED, langConfig);
 		langAchievementGiven = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_GIVEN, langConfig);
@@ -94,7 +93,7 @@ public class GiveCommand extends AbstractParsableCommand {
 		} else {
 			sender.sendMessage(StringUtils.replaceOnce(langAchievementNotFound, "CLOSEST_MATCH",
 					StringHelper.getClosestMatch(args[1],
-							mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString()))));
+							mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString()).getKeys(false))));
 		}
 	}
 }

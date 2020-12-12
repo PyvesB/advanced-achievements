@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.DatabaseUpdater;
@@ -13,7 +15,6 @@ import com.hm.achievement.db.H2DatabaseManager;
 import com.hm.achievement.db.MySQLDatabaseManager;
 import com.hm.achievement.db.PostgreSQLDatabaseManager;
 import com.hm.achievement.db.SQLiteDatabaseManager;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 import dagger.Module;
 import dagger.Provides;
@@ -23,7 +24,7 @@ public class DatabaseModule {
 
 	@Provides
 	@Singleton
-	AbstractDatabaseManager provideSQLDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
+	AbstractDatabaseManager provideSQLDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
 			AdvancedAchievements advancedAchievements) {
 		String databaseType = advancedAchievements.getConfig().getString("DatabaseType", "sqlite");

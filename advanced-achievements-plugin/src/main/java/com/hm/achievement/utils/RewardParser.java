@@ -16,6 +16,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -24,7 +25,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.RewardLang;
 import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -38,8 +38,8 @@ public class RewardParser implements Reloadable {
 
 	private static final Pattern MULTIPLE_REWARDS_SPLITTER = Pattern.compile(";\\s*");
 
-	private final CommentedYamlConfiguration mainConfig;
-	private final CommentedYamlConfiguration langConfig;
+	private final YamlConfiguration mainConfig;
+	private final YamlConfiguration langConfig;
 	private final MaterialHelper materialHelper;
 
 	private String langListRewardMoney;
@@ -52,8 +52,8 @@ public class RewardParser implements Reloadable {
 	private Economy economy;
 
 	@Inject
-	public RewardParser(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, MaterialHelper materialHelper) {
+	public RewardParser(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			MaterialHelper materialHelper) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.materialHelper = materialHelper;
@@ -213,7 +213,7 @@ public class RewardParser implements Reloadable {
 			searchFrom += ".Execute";
 		}
 
-		String commandReward = mainConfig.getString(searchFrom, null);
+		String commandReward = mainConfig.getString(searchFrom);
 		if (commandReward == null) {
 			return new String[0];
 		}

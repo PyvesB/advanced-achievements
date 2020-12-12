@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.MultipleAchievements;
@@ -19,7 +20,6 @@ import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
 import com.hm.achievement.utils.StringHelper;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of increase a statistic of an achievement by command.
@@ -41,9 +41,9 @@ public class AddCommand extends AbstractParsableCommand {
 	private final Set<String> enabledCategoriesWithSubcategories;
 
 	@Inject
-	public AddCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager,
-			StatisticIncreaseHandler statisticIncreaseHandler, Set<String> enabledCategoriesWithSubcategories) {
+	public AddCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader, CacheManager cacheManager, StatisticIncreaseHandler statisticIncreaseHandler,
+			Set<String> enabledCategoriesWithSubcategories) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.statisticIncreaseHandler = statisticIncreaseHandler;

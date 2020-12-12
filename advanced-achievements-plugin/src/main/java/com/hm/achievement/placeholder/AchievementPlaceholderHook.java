@@ -7,13 +7,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
@@ -26,14 +26,13 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 	private final AdvancedAchievements advancedAchievements;
-	private final CommentedYamlConfiguration mainConfig;
+	private final YamlConfiguration mainConfig;
 	private final CacheManager cacheManager;
 	private final Map<String, String> namesToDisplayNames;
 
 	@Inject
-	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements,
-			@Named("main") CommentedYamlConfiguration mainConfig, CacheManager cacheManager,
-			@Named("ntd") Map<String, String> namesToDisplayNames) {
+	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements, @Named("main") YamlConfiguration mainConfig,
+			CacheManager cacheManager, @Named("ntd") Map<String, String> namesToDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.mainConfig = mainConfig;
 		this.cacheManager = cacheManager;
@@ -72,7 +71,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 			}
 
 			for (MultipleAchievements category : MultipleAchievements.values()) {
-				for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
+				for (String subcategory : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
 					String categoryPath = category + "_" + subcategory;
 					if (categoryPath.equalsIgnoreCase(identifier)) {
 						return Long.toString(cacheManager.getAndIncrementStatisticAmount(category, subcategory, uuid, 0));

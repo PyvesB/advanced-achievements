@@ -1,6 +1,9 @@
 # Set to true to activate firework effects when a player receives an achievement.
 Firework: false
 
+# Choose ball_large, ball, burst, creeper, star or random.
+FireworkStyle: ball_large
+
 # When a player receives an achievement, the Name, Message and rewards of the achievement are displayed in
 # the chat. If HoverableReceiverChatText is true, a single hoverable text will be displayed to the receiver.
 # Otherwise texts will be displayed one after the other.

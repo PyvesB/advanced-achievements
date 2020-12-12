@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -28,7 +29,6 @@ import com.hm.achievement.lang.ListenerLang;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 import utilities.MockUtility;
 
@@ -64,15 +64,13 @@ public class PlayerAdvancedAchievementListenerTest {
 		namesToDisplayNames.put("place_500_smooth_brick", "Stone Brick Layer");
 		MockUtility mockUtility = MockUtility.setUp()
 				.mockServer()
-				.withLogger()
 				.withOnlinePlayers(player)
-				.withPluginDescription()
 				.withDataFolder(temporaryFolder.getRoot())
 				.withPluginFile("config-reward-reception.yml")
 				.withPluginFile("lang.yml");
 		plugin = mockUtility.getPluginMock();
 
-		CommentedYamlConfiguration mainConfig = mockUtility.getLoadedConfig("config-reward-reception.yml");
+		YamlConfiguration mainConfig = mockUtility.getLoadedConfig("config-reward-reception.yml");
 		underTest = new PlayerAdvancedAchievementListener(mainConfig, mockUtility.getLoadedConfig("lang.yml"), 11,
 				mock(Logger.class), new StringBuilder(PLUGIN_HEADER),
 				new CacheManager(plugin, mainConfig, abstractDatabaseManager),

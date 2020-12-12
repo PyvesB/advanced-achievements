@@ -5,8 +5,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.command.CommandSender;
-
-import com.hm.mcshared.file.CommentedYamlConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Class in charge of handling the /aach hcaa command, which displays a small easter egg in the in-game chat. Run it and
@@ -19,8 +18,8 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class EasterEggCommand extends AbstractCommand {
 
 	@Inject
-	public EasterEggCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader) {
+	public EasterEggCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader) {
 		super(mainConfig, langConfig, pluginHeader);
 	}
 

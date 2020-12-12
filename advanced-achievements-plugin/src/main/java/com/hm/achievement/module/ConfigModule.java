@@ -9,9 +9,10 @@ import java.util.Set;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.hm.achievement.AdvancedAchievements;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import com.hm.achievement.category.Category;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
+import com.hm.achievement.config.ReloadableYamlConfiguration;
 
 import dagger.Module;
 import dagger.Provides;
@@ -60,24 +61,22 @@ public class ConfigModule {
 	@Provides
 	@Singleton
 	@Named("main")
-	CommentedYamlConfiguration providesMainConfig(AdvancedAchievements advancedAchievements) {
-		return new CommentedYamlConfiguration("config.yml", advancedAchievements);
+	YamlConfiguration providesMainConfig() {
+		return new ReloadableYamlConfiguration();
 	}
 
 	@Provides
 	@Singleton
 	@Named("lang")
-	CommentedYamlConfiguration providesLangConfig(AdvancedAchievements advancedAchievements) {
-		String languageFileName = advancedAchievements.getConfig().getString("LanguageFileName", "lang.yml");
-		return new CommentedYamlConfiguration(languageFileName, advancedAchievements);
+	YamlConfiguration providesLangConfig() {
+		return new ReloadableYamlConfiguration();
 	}
 
 	@Provides
 	@Singleton
 	@Named("gui")
-	CommentedYamlConfiguration providesGuiConfig(AdvancedAchievements advancedAchievements, int serverVersion) {
-		String pluginResourceName = serverVersion < 13 ? "gui-legacy.yml" : "gui.yml";
-		return new CommentedYamlConfiguration("gui.yml", pluginResourceName, advancedAchievements);
+	YamlConfiguration providesGuiConfig() {
+		return new ReloadableYamlConfiguration();
 	}
 
 }

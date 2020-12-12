@@ -11,6 +11,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,7 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Breaks achievements.
@@ -35,7 +35,7 @@ public class BreaksListener extends AbstractListener {
 	private boolean disableSilkTouchOreBreaks;
 
 	@Inject
-	public BreaksListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public BreaksListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(MultipleAchievements.BREAKS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}

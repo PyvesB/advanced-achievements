@@ -25,6 +25,7 @@ import org.bukkit.Particle;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,7 +47,6 @@ import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.SoundPlayer;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.FancyMessageSender;
 import com.hm.mcshared.particle.ParticleEffect;
 
@@ -62,8 +62,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 	private static final Random RANDOM = new Random();
 
-	private final CommentedYamlConfiguration mainConfig;
-	private final CommentedYamlConfiguration langConfig;
+	private final YamlConfiguration mainConfig;
+	private final YamlConfiguration langConfig;
 	private final int serverVersion;
 	private final Logger logger;
 	private final StringBuilder pluginHeader;
@@ -97,8 +97,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private String langAllAchievementsReceived;
 
 	@Inject
-	public PlayerAdvancedAchievementListener(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, int serverVersion, Logger logger,
+	public PlayerAdvancedAchievementListener(@Named("main") YamlConfiguration mainConfig,
+			@Named("lang") YamlConfiguration langConfig, int serverVersion, Logger logger,
 			StringBuilder pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements,
 			RewardParser rewardParser, @Named("ntd") Map<String, String> namesToDisplayNames,
 			AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand, FireworkListener fireworkListener,
@@ -120,15 +120,15 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		configFireworkStyle = mainConfig.getString("FireworkStyle", "BALL_LARGE").toUpperCase();
+		configFireworkStyle = mainConfig.getString("FireworkStyle").toUpperCase();
 		if (!"RANDOM".equals(configFireworkStyle) && !EnumUtils.isValidEnum(Type.class, configFireworkStyle)) {
 			configFireworkStyle = Type.BALL_LARGE.name();
 			logger.warning("Failed to load FireworkStyle, using ball_large instead. Please use one of the following: "
 					+ "ball_large, ball, burst, creeper, star or random.");
 		}
-		configFirework = mainConfig.getBoolean("Firework", true);
+		configFirework = mainConfig.getBoolean("Firework");
 		configSimplifiedReception = mainConfig.getBoolean("SimplifiedReception");
-		configTitleScreen = mainConfig.getBoolean("TitleScreen", true);
+		configTitleScreen = mainConfig.getBoolean("TitleScreen");
 		// Title screens introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
 		if (configTitleScreen && serverVersion < 8) {
 			configTitleScreen = false;
@@ -144,7 +144,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		if (configHoverableReceiverChatText && serverVersion < 8) {
 			configHoverableReceiverChatText = false;
 		}
-		configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages", true);
+		configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages");
 
 		langCommandReward = LangHelper.get(ListenerLang.COMMAND_REWARD, langConfig);
 		langAchievementReceived = LangHelper.get(ListenerLang.ACHIEVEMENT_RECEIVED, langConfig) + " " + ChatColor.WHITE;

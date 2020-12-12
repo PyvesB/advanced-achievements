@@ -13,6 +13,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,7 +28,6 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Connections achievements. This class uses delays processing of tasks to avoid spamming a
@@ -46,7 +46,7 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	private final AbstractDatabaseManager databaseManager;
 
 	@Inject
-	public ConnectionsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public ConnectionsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
 			AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager) {
 		super(NormalAchievements.CONNECTIONS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);

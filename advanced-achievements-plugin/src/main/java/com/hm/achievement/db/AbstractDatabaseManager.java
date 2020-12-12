@@ -24,13 +24,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Abstract class in charge of factoring out common functionality for the database manager.
@@ -43,7 +43,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	ExecutorService pool;
 	// Connection to the database; remains opened and shared.
 	final AtomicReference<Connection> sqlConnection = new AtomicReference<>();
-	final CommentedYamlConfiguration mainConfig;
+	final YamlConfiguration mainConfig;
 	final Logger logger;
 	final String driverPath;
 
@@ -55,8 +55,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	private DateFormat dateFormat;
 	private boolean configBookChronologicalOrder;
 
-	public AbstractDatabaseManager(CommentedYamlConfiguration mainConfig, Logger logger,
-			Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater, String driverPath) {
+	public AbstractDatabaseManager(YamlConfiguration mainConfig, Logger logger, Map<String, String> namesToDisplayNames,
+			DatabaseUpdater databaseUpdater, String driverPath) {
 		this.mainConfig = mainConfig;
 		this.logger = logger;
 		this.namesToDisplayNames = namesToDisplayNames;
@@ -69,8 +69,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		configBookChronologicalOrder = mainConfig.getBoolean("BookChronologicalOrder", true);
-		String localeString = mainConfig.getString("DateLocale", "en");
+		configBookChronologicalOrder = mainConfig.getBoolean("BookChronologicalOrder");
+		String localeString = mainConfig.getString("DateLocale");
 		boolean dateDisplayTime = mainConfig.getBoolean("DateDisplayTime");
 		Locale locale = new Locale(localeString);
 		if (dateDisplayTime) {
@@ -86,9 +86,9 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @throws PluginLoadError
 	 */
 	public void initialise() throws PluginLoadError {
-		logger.info("Initialising " + mainConfig.getString("DatabaseType", "sqlite") + " database...");
+		logger.info("Initialising " + mainConfig.getString("DatabaseType") + " database...");
 
-		prefix = mainConfig.getString("TablePrefix", "");
+		prefix = mainConfig.getString("TablePrefix");
 
 		try {
 			performPreliminaryTasks();

@@ -15,6 +15,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -26,7 +27,6 @@ import com.hm.achievement.lang.GuiLang;
 import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.MaterialHelper;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class providing all the items displayed in the GUIs.
@@ -51,9 +51,9 @@ public class GUIItems implements Reloadable {
 	private ItemStack achievementLock;
 	private ItemStack categoryLock;
 
-	private final CommentedYamlConfiguration mainConfig;
-	private final CommentedYamlConfiguration langConfig;
-	private final CommentedYamlConfiguration guiConfig;
+	private final YamlConfiguration mainConfig;
+	private final YamlConfiguration langConfig;
+	private final YamlConfiguration guiConfig;
 	private final MaterialHelper materialHelper;
 	private int serverVersion;
 
@@ -64,9 +64,8 @@ public class GUIItems implements Reloadable {
 	private String langListAchievementInCategorySingular;
 
 	@Inject
-	public GUIItems(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig,
-			@Named("gui") CommentedYamlConfiguration guiConfig, MaterialHelper materialHelper, int serverVersion) {
+	public GUIItems(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			@Named("gui") YamlConfiguration guiConfig, MaterialHelper materialHelper, int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
@@ -76,22 +75,23 @@ public class GUIItems implements Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() throws PluginLoadError {
-		configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat", "%ICON% %NAME% %ICON%");
-		configIcon = mainConfig.getString("Icon", "\u2618");
+		configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat");
+		configIcon = mainConfig.getString("Icon");
 
 		langListAchievementsInCategoryPlural = LangHelper.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_PLURAL, langConfig);
 		langListAchievementInCategorySingular = LangHelper.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_SINGULAR, langConfig);
 
 		orderedAchievementItems.clear();
 		// getShallowKeys returns a LinkedHashSet, preserving the ordering specified in the file.
-		List<String> orderedCategories = new ArrayList<>(guiConfig.getShallowKeys(""));
+		List<String> orderedCategories = new ArrayList<>(guiConfig.getKeys(false));
 		// Prepare item stacks displayed in the GUI for Multiple achievements.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
 			// Sum all achievements in the sub-categories of this category.
 			int totalAchievements = 0;
-			for (String subcategory : mainConfig.getShallowKeys(categoryName)) {
-				totalAchievements += mainConfig.getShallowKeys(categoryName + '.' + subcategory).size();
+			for (String subcategory : mainConfig.getConfigurationSection(categoryName).getKeys(false)) {
+				totalAchievements += mainConfig.getConfigurationSection(categoryName + '.' + subcategory).getKeys(false)
+						.size();
 			}
 			ItemStack itemStack = createItemStack(categoryName);
 			buildItemLore(itemStack, LangHelper.get(category, langConfig), totalAchievements);
@@ -102,14 +102,15 @@ public class GUIItems implements Reloadable {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, LangHelper.get(category, langConfig), mainConfig.getShallowKeys(categoryName).size());
+			buildItemLore(itemStack, LangHelper.get(category, langConfig),
+					mainConfig.getConfigurationSection(categoryName).getKeys(false).size());
 			orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
 		}
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
 		ItemStack itemStack = createItemStack(CommandAchievements.COMMANDS.toString());
 		buildItemLore(itemStack, LangHelper.get(CommandAchievements.COMMANDS, langConfig),
-				mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString()).size());
+				mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString()).getKeys(false).size());
 		orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(CommandAchievements.COMMANDS.toString()),
 				CommandAchievements.COMMANDS), itemStack);
 
@@ -122,17 +123,17 @@ public class GUIItems implements Reloadable {
 			achievementStartedDefault = createItemStack("AchievementStarted", "stained_clay", 4);
 			achievementReceivedDefault = createItemStack("AchievementReceived", "stained_clay", 5);
 		}
-		for (String type : guiConfig.getShallowKeys("AchievementNotStarted")) {
+		for (String type : guiConfig.getConfigurationSection("AchievementNotStarted").getKeys(false)) {
 			if (!"Item".equals(type) && !"Metadata".equals(type)) {
 				achievementNotStarted.put(type, createItemStack("AchievementNotStarted." + type));
 			}
 		}
-		for (String type : guiConfig.getShallowKeys("AchievementStarted")) {
+		for (String type : guiConfig.getConfigurationSection("AchievementStarted").getKeys(false)) {
 			if (!"Item".equals(type) && !"Metadata".equals(type)) {
 				achievementStarted.put(type, createItemStack("AchievementStarted." + type));
 			}
 		}
-		for (String type : guiConfig.getShallowKeys("AchievementReceived")) {
+		for (String type : guiConfig.getConfigurationSection("AchievementReceived").getKeys(false)) {
 			if (!"Item".equals(type) && !"Metadata".equals(type)) {
 				achievementReceived.put(type, createItemStack("AchievementReceived." + type));
 			}

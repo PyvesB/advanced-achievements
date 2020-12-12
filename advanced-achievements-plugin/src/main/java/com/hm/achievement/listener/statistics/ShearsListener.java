@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,7 +16,6 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Listener class to deal with Shear achievements (only sheep are taken into account).
@@ -27,7 +27,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 public class ShearsListener extends AbstractListener {
 
 	@Inject
-	public ShearsListener(@Named("main") CommentedYamlConfiguration mainConfig, int serverVersion,
+	public ShearsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
 			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
 		super(NormalAchievements.SHEARS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
 	}

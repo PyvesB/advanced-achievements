@@ -6,8 +6,9 @@ import java.util.logging.Logger;
 
 import javax.inject.Named;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class used to handle a SQLite database.
@@ -17,7 +18,7 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
  */
 public class SQLiteDatabaseManager extends AbstractFileDatabaseManager {
 
-	public SQLiteDatabaseManager(@Named("main") CommentedYamlConfiguration mainConfig, Logger logger,
+	public SQLiteDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
 			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
 			AdvancedAchievements advancedAchievements) {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, advancedAchievements, "org.sqlite.JDBC",

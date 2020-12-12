@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import com.hm.achievement.AdvancedAchievements;
@@ -29,7 +30,6 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.utils.StringHelper;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 
 /**
  * Class in charge of parsing the config.yml, lang.yml and gui.yml configuration files. It loads the files and populates
@@ -40,9 +40,9 @@ import com.hm.mcshared.file.CommentedYamlConfiguration;
 @Singleton
 public class ConfigurationParser {
 
-	private final CommentedYamlConfiguration mainConfig;
-	private final CommentedYamlConfiguration langConfig;
-	private final CommentedYamlConfiguration guiConfig;
+	private final YamlConfiguration mainConfig;
+	private final YamlConfiguration langConfig;
+	private final YamlConfiguration guiConfig;
 	private final Map<String, String> namesToDisplayNames;
 	private final Map<String, String> displayNamesToNames;
 	private final Map<String, List<Long>> sortedThresholds;
@@ -55,12 +55,11 @@ public class ConfigurationParser {
 	private final AdvancedAchievements plugin;
 
 	@Inject
-	public ConfigurationParser(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, @Named("gui") CommentedYamlConfiguration guiConfig,
-			@Named("ntd") Map<String, String> namesToDisplayNames, @Named("dtn") Map<String, String> displayNamesToNames,
-			Map<String, List<Long>> sortedThresholds, Set<Category> disabledCategories,
-			Set<String> enabledCategoriesWithSubcategories, StringBuilder pluginHeader, Logger logger, int serverVersion,
-			YamlUpdater yamlUpdater, AdvancedAchievements plugin) {
+	public ConfigurationParser(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			@Named("gui") YamlConfiguration guiConfig, @Named("ntd") Map<String, String> namesToDisplayNames,
+			@Named("dtn") Map<String, String> displayNamesToNames, Map<String, List<Long>> sortedThresholds,
+			Set<Category> disabledCategories, Set<String> enabledCategoriesWithSubcategories, StringBuilder pluginHeader,
+			Logger logger, int serverVersion, YamlUpdater yamlUpdater, AdvancedAchievements plugin) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
@@ -83,9 +82,9 @@ public class ConfigurationParser {
 	 * @throws PluginLoadError
 	 */
 	public void loadAndParseConfiguration() throws PluginLoadError {
-		logger.info("Loading and backing up configuration files...");
+		logger.info("Backing up and loading configuration files...");
 		backupAndLoadConfiguration("config.yml", "config.yml", mainConfig);
-		String langName = mainConfig.getString("LanguageFileName", "lang.yml");
+		String langName = mainConfig.getString("LanguageFileName");
 		backupAndLoadConfiguration(langName, langName, langConfig);
 		backupAndLoadConfiguration(serverVersion < 13 ? "gui-legacy.yml" : "gui.yml", "gui.yml", guiConfig);
 		parseHeader();
@@ -104,8 +103,8 @@ public class ConfigurationParser {
 	 *
 	 * @throws PluginLoadError
 	 */
-	private void backupAndLoadConfiguration(String defaultConfigName, String userConfigName,
-			CommentedYamlConfiguration userConfig) throws PluginLoadError {
+	private void backupAndLoadConfiguration(String defaultConfigName, String userConfigName, YamlConfiguration userConfig)
+			throws PluginLoadError {
 		File configFile = new File(plugin.getDataFolder(), userConfigName);
 		try {
 			File backupFile = new File(plugin.getDataFolder(), userConfigName + ".bak");
@@ -135,12 +134,12 @@ public class ConfigurationParser {
 	 */
 	private void parseHeader() {
 		pluginHeader.setLength(0);
-		String icon = mainConfig.getString("Icon", "\u2618");
+		String icon = mainConfig.getString("Icon");
 		if (StringUtils.isNotBlank(icon)) {
-			String coloredIcon = ChatColor.getByChar(mainConfig.getString("Color", "5")) + icon;
+			String coloredIcon = ChatColor.getByChar(mainConfig.getString("Color")) + icon;
 			pluginHeader
 					.append(ChatColor.translateAlternateColorCodes('&',
-							StringUtils.replace(mainConfig.getString("ChatHeader", "&7[%ICON%&7]"), "%ICON%", coloredIcon)))
+							StringUtils.replace(mainConfig.getString("ChatHeader"), "%ICON%", coloredIcon)))
 					.append(" ");
 		}
 		pluginHeader.trimToSize();
@@ -240,7 +239,7 @@ public class ConfigurationParser {
 	 */
 	private void extractDisabledCategoriesFromConfig() throws PluginLoadError {
 		disabledCategories.clear();
-		for (String disabledCategory : mainConfig.getList("DisabledCategories")) {
+		for (String disabledCategory : mainConfig.getStringList("DisabledCategories")) {
 			Category category = CommandAchievements.COMMANDS.toString().equals(disabledCategory)
 					? CommandAchievements.COMMANDS
 					: null;
@@ -270,7 +269,7 @@ public class ConfigurationParser {
 		enabledCategoriesWithSubcategories.clear();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			if (!disabledCategories.contains(category)) {
-				for (String subcategory : mainConfig.getShallowKeys(category.toString())) {
+				for (String subcategory : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
 					enabledCategoriesWithSubcategories.add(category + "." + StringUtils.deleteWhitespace(subcategory));
 				}
 			}
@@ -296,7 +295,8 @@ public class ConfigurationParser {
 
 		// Enumerate Commands achievements.
 		if (!disabledCategories.contains(CommandAchievements.COMMANDS)) {
-			Set<String> commands = mainConfig.getShallowKeys(CommandAchievements.COMMANDS.toString());
+			Set<String> commands = mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString())
+					.getKeys(false);
 			if (commands.isEmpty()) {
 				disabledCategories.add(CommandAchievements.COMMANDS);
 			} else {
@@ -309,7 +309,7 @@ public class ConfigurationParser {
 		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			if (!disabledCategories.contains(category)) {
-				if (mainConfig.getShallowKeys(category.toString()).isEmpty()) {
+				if (mainConfig.getConfigurationSection(category.toString()).getKeys(false).isEmpty()) {
 					disabledCategories.add(category);
 				} else {
 					parseAchievements(category.toString());
@@ -320,7 +320,7 @@ public class ConfigurationParser {
 		// Enumerate the achievements with multiple categories.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			if (!disabledCategories.contains(category)) {
-				Set<String> keys = mainConfig.getShallowKeys(category.toString());
+				Set<String> keys = mainConfig.getConfigurationSection(category.toString()).getKeys(false);
 				if (keys.isEmpty()) {
 					disabledCategories.add(category);
 				} else {
@@ -339,7 +339,7 @@ public class ConfigurationParser {
 	 * @throws PluginLoadError If an achievement fails to parse due to misconfiguration.
 	 */
 	private void parseAchievements(String path) throws PluginLoadError {
-		Set<String> keys = mainConfig.getShallowKeys(path);
+		Set<String> keys = mainConfig.getConfigurationSection(path).getKeys(false);
 		List<Long> thresholds = new ArrayList<>();
 		for (String threshold : keys) {
 			parseAchievement(path + "." + threshold);

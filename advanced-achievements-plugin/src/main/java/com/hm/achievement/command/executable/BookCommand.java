@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -28,7 +29,6 @@ import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.SoundPlayer;
-import com.hm.mcshared.file.CommentedYamlConfiguration;
 import com.hm.mcshared.particle.ParticleEffect;
 import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
@@ -70,9 +70,9 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	private DateFormat dateFormat;
 
 	@Inject
-	public BookCommand(@Named("main") CommentedYamlConfiguration mainConfig,
-			@Named("lang") CommentedYamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger,
-			int serverVersion, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
+	public BookCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+			StringBuilder pluginHeader, Logger logger, int serverVersion, AbstractDatabaseManager databaseManager,
+			SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.logger = logger;
 		this.serverVersion = serverVersion;
@@ -85,10 +85,10 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		super.extractConfigurationParameters();
 
 		configTimeBook = mainConfig.getInt("TimeBook") * 1000;
-		configBookSeparator = "\n&r" + mainConfig.getString("BookSeparator", "") + "\n&r";
-		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects", true);
-		configSound = mainConfig.getBoolean("Sound", true);
-		configSoundBook = mainConfig.getString("SoundBook", "ENTITY_PLAYER_LEVELUP").toUpperCase();
+		configBookSeparator = "\n&r" + mainConfig.getString("BookSeparator") + "\n&r";
+		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
+		configSound = mainConfig.getBoolean("Sound");
+		configSoundBook = mainConfig.getString("SoundBook").toUpperCase();
 
 		langBookDelay = pluginHeader + LangHelper.getReplacedOnce(CmdLang.BOOK_DELAY, "TIME",
 				Integer.toString(configTimeBook / 1000), langConfig);
@@ -97,7 +97,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		langBookName = LangHelper.get(CmdLang.BOOK_NAME, langConfig);
 		langBookReceived = pluginHeader + LangHelper.get(CmdLang.BOOK_RECEIVED, langConfig);
 
-		String localeString = mainConfig.getString("DateLocale", "en");
+		String localeString = mainConfig.getString("DateLocale");
 		dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, new Locale(localeString));
 	}
 
