@@ -1,0 +1,14 @@
+# Locale used to format dates in /aach book and /aach list. You must select an ISO 639 language code.
+# The list of possible language codes can be found at www.loc.gov/standards/iso639-2/php/code_list.php
+DateLocale: en
+
+# Make a daily backup of your local database (if sqlite or h2).
+DatabaseBackup: false
+
+# Database type, sqlite, h2, postgresql or mysql. Do a full server restart for this to take effect.
+DatabaseType: h2
+
+# Prefix added to the tables in the database. If you switch from the default tables names (no prefix),
+# the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.
+# Do a full server restart for this to take effect.
+TablePrefix: ""

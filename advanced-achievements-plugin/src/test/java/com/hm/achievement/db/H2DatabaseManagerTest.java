@@ -5,15 +5,23 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.InputStreamReader;
+import java.nio.file.Paths;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -21,28 +29,48 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 
 /**
- * Class for testing SQLite Database.
+ * Class for testing H2 Database.
  *
  * @author Rsl1122
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
+public class H2DatabaseManagerTest {
+
+	private static final String TEST_ACHIEVEMENT = "TestAchievement";
+	private static final String TEST_MESSAGE = "TestMessage";
 
 	@ClassRule
 	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private static H2DatabaseManager db;
+
+	private final UUID testUUID = UUID.randomUUID();
+
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		AdvancedAchievements plugin = Mockito.mock(AdvancedAchievements.class);
-		when(plugin.getDataFolder()).thenReturn(temporaryFolder.getRoot());
-		initDB(plugin);
+		AdvancedAchievements plugin = mock(AdvancedAchievements.class);
+		File relativeTempFolder = temporaryFolder.getRoot().toPath().relativize(Paths.get("").toAbsolutePath()).toFile();
+		when(plugin.getDataFolder()).thenReturn(relativeTempFolder);
+		Logger logger = Logger.getLogger("DBTestLogger");
+		YamlConfiguration config = YamlConfiguration
+				.loadConfiguration(new InputStreamReader(H2DatabaseManagerTest.class.getResourceAsStream("/config-h2.yml")));
+		db = new H2DatabaseManager(config, logger, Collections.emptyMap(), new DatabaseUpdater(logger, null), plugin) {
+
+			@Override
+			public void extractConfigurationParameters() {
+				super.extractConfigurationParameters();
+				pool = MoreExecutors.newDirectExecutorService();
+			}
+		};
+		db.initialise();
+		db.extractConfigurationParameters();
 	}
 
 	@Before
@@ -62,7 +90,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 		List<AwardedDBAchievement> achievements = db.getPlayerAchievementsList(testUUID);
 		assertEquals(1, achievements.size());
 		AwardedDBAchievement found = achievements.get(0);
-		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, testAchievement, testAchievementMsg,
+		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_ACHIEVEMENT, TEST_MESSAGE,
 				found.getDateAwarded(), found.getFormattedDate());
 		assertEquals(expected, found);
 	}
@@ -79,12 +107,12 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
 	@Test
 	public void testAchievementDateRegistration() {
-		String date = db.getPlayerAchievementDate(testUUID, testAchievement);
+		String date = db.getPlayerAchievementDate(testUUID, TEST_ACHIEVEMENT);
 		assertNull(date);
 
 		registerAchievement();
 
-		date = db.getPlayerAchievementDate(testUUID, testAchievement);
+		date = db.getPlayerAchievementDate(testUUID, TEST_ACHIEVEMENT);
 		assertNotNull(date);
 	}
 
@@ -99,15 +127,15 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 	public void testDeleteAchievement() {
 		testPlayerAchievementAmount();
 
-		db.deletePlayerAchievement(testUUID, testAchievement);
+		db.deletePlayerAchievement(testUUID, TEST_ACHIEVEMENT);
 
 		assertEquals(0, db.getPlayerAchievementsAmount(testUUID));
 	}
 
 	@Test
 	public void testDeleteAllAchievements() {
-		registerAchievement(testUUID, testAchievement, testAchievementMsg);
-		registerAchievement(testUUID, testAchievement + "2", testAchievementMsg);
+		registerAchievement(testUUID, TEST_ACHIEVEMENT, TEST_MESSAGE);
+		registerAchievement(testUUID, TEST_ACHIEVEMENT + "2", TEST_MESSAGE);
 
 		db.deleteAllPlayerAchievements(testUUID);
 
@@ -130,7 +158,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 		long firstSave = 99L;
 
 		System.out.println("Save first achievement:  " + System.currentTimeMillis());
-		registerAchievement(testUUID, testAchievement, testAchievementMsg, 100L);
+		registerAchievement(testUUID, TEST_ACHIEVEMENT, TEST_MESSAGE, 100L);
 
 		long secondSave = 199L;
 
@@ -138,9 +166,9 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 		String secondAch = "TestAchievement2";
 
 		System.out.println("Save second achievement: " + System.currentTimeMillis());
-		registerAchievement(secondUUID, testAchievement, testAchievementMsg, 200L);
+		registerAchievement(secondUUID, TEST_ACHIEVEMENT, TEST_MESSAGE, 200L);
 		System.out.println("Save third achievement:  " + System.currentTimeMillis());
-		registerAchievement(secondUUID, secondAch, testAchievementMsg, 200L);
+		registerAchievement(secondUUID, secondAch, TEST_MESSAGE, 200L);
 
 		Map<String, Integer> expected = new LinkedHashMap<>();
 		expected.put(secondUUID.toString(), 2);
@@ -162,18 +190,18 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 	public void testGetAchievementNameList() {
 		registerAchievement();
 
-		List<String> expected = Collections.singletonList(testAchievement);
+		List<String> expected = Collections.singletonList(TEST_ACHIEVEMENT);
 		List<String> achNames = db.getPlayerAchievementNamesList(testUUID);
 		assertEquals(expected, achNames);
 	}
 
 	@Test
 	public void testHasAchievement() {
-		assertFalse(db.hasPlayerAchievement(testUUID, testAchievement));
+		assertFalse(db.hasPlayerAchievement(testUUID, TEST_ACHIEVEMENT));
 
 		registerAchievement();
 
-		assertTrue(db.hasPlayerAchievement(testUUID, testAchievement));
+		assertTrue(db.hasPlayerAchievement(testUUID, TEST_ACHIEVEMENT));
 	}
 
 	@Test
@@ -198,5 +226,30 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
 	private String createDateString() {
 		return new Date(System.currentTimeMillis()).toString();
+	}
+
+	private void registerAchievement() {
+		registerAchievement(testUUID, TEST_ACHIEVEMENT, TEST_MESSAGE);
+	}
+
+	private void registerAchievement(UUID uuid, String ach, String msg) {
+		System.out.println("Saving test achievement: " + uuid + " | " + ach + " | " + msg);
+		db.registerAchievement(uuid, ach, msg);
+	}
+
+	private void registerAchievement(UUID uuid, String ach, String msg, long date) {
+		System.out.println("Saving test achievement: " + uuid + " | " + ach + " | " + msg);
+		db.registerAchievement(uuid, ach, msg, date);
+	}
+
+	private void clearDatabase() {
+		String sql = "DELETE FROM achievements";
+
+		((SQLWriteOperation) () -> {
+			Connection conn = db.getSQLConnection();
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.execute();
+			}
+		}).executeOperation(db.pool, null, "Clearing achievements table");
 	}
 }
