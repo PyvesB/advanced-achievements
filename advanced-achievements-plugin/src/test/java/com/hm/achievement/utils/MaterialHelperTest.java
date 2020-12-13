@@ -1,7 +1,7 @@
 package com.hm.achievement.utils;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import org.bukkit.Material;
@@ -9,14 +9,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SuppressWarnings("deprecation")
-public class MaterialHelperTest {
+class MaterialHelperTest {
 
 	@Mock
 	private PotionMeta potionMeta;
@@ -25,7 +25,7 @@ public class MaterialHelperTest {
 	private ItemStack itemStack;
 
 	@Test
-	public void shouldReturnFalseForWaterPotionWhenUsingMinecraft14() {
+	void shouldReturnFalseForWaterPotionWhenUsingMinecraft14() {
 		when(potionMeta.getBasePotionData()).thenReturn(new PotionData(PotionType.WATER));
 		when(itemStack.getItemMeta()).thenReturn(potionMeta);
 		when(itemStack.getType()).thenReturn(Material.POTION);
@@ -35,7 +35,7 @@ public class MaterialHelperTest {
 	}
 
 	@Test
-	public void shouldReturnTrueForOtherPotionWhenUsingMinecraft14() {
+	void shouldReturnTrueForOtherPotionWhenUsingMinecraft14() {
 		when(potionMeta.getBasePotionData()).thenReturn(new PotionData(PotionType.INSTANT_DAMAGE));
 		when(itemStack.getItemMeta()).thenReturn(potionMeta);
 		when(itemStack.getType()).thenReturn(Material.POTION);
@@ -45,7 +45,7 @@ public class MaterialHelperTest {
 	}
 
 	@Test
-	public void shouldReturnFalseForWaterPotionWhenUsingMinecraft8() {
+	void shouldReturnFalseForWaterPotionWhenUsingMinecraft8() {
 		when(itemStack.getType()).thenReturn(Material.POTION);
 		when(itemStack.getDurability()).thenReturn((short) 0);
 		MaterialHelper underTest = new MaterialHelper(null, 8);
@@ -54,7 +54,7 @@ public class MaterialHelperTest {
 	}
 
 	@Test
-	public void shouldReturnTrueForOtherPotionWhenUsingMinecraft8() {
+	void shouldReturnTrueForOtherPotionWhenUsingMinecraft8() {
 		when(itemStack.getType()).thenReturn(Material.POTION);
 		when(itemStack.getDurability()).thenReturn((short) 1);
 		MaterialHelper underTest = new MaterialHelper(null, 8);
@@ -63,7 +63,7 @@ public class MaterialHelperTest {
 	}
 
 	@Test
-	public void shouldReturnFalseForOtherMaterial() {
+	void shouldReturnFalseForOtherMaterial() {
 		when(itemStack.getType()).thenReturn(Material.SPLASH_POTION);
 		MaterialHelper underTest = new MaterialHelper(null, 12);
 

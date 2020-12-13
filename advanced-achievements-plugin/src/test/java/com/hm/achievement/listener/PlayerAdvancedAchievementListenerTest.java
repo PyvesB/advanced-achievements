@@ -18,13 +18,11 @@ import java.util.logging.Logger;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.AbstractDatabaseManager;
@@ -38,14 +36,11 @@ import com.hm.achievement.utils.RewardParser;
  *
  * @author Pyves
  */
-@RunWith(MockitoJUnitRunner.class)
-public class PlayerAdvancedAchievementListenerTest {
+@ExtendWith(MockitoExtension.class)
+class PlayerAdvancedAchievementListenerTest {
 
 	private static final String PLUGIN_HEADER = "[HEADER]";
 	private static final UUID PLAYER_UUID = UUID.randomUUID();
-
-	@ClassRule
-	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	@Mock
 	private Server server;
@@ -53,15 +48,15 @@ public class PlayerAdvancedAchievementListenerTest {
 	private Player player;
 	@Mock
 	private AbstractDatabaseManager abstractDatabaseManager;
-	@Mock
+	@Mock(lenient = true)
 	private RewardParser rewardParser;
 	@Mock
 	private AdvancedAchievements plugin;
 
 	private PlayerAdvancedAchievementListener underTest;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		Map<String, String> namesToDisplayNames = new HashMap<>();
 		namesToDisplayNames.put("connect_1", "Good Choice");
 		namesToDisplayNames.put("place_500_smooth_brick", "Stone Brick Layer");
@@ -80,7 +75,7 @@ public class PlayerAdvancedAchievementListenerTest {
 	}
 
 	@Test
-	public void itShouldGiveSpecialRewardWhenPlayerHasReceivedAllAchievements() {
+	void itShouldGiveSpecialRewardWhenPlayerHasReceivedAllAchievements() {
 		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(1);
 		when(rewardParser.getRewardAmount("AllAchievementsReceivedRewards", "IncreaseMaxOxygen")).thenReturn(30);
 		when(player.getMaximumAir()).thenReturn(100);
@@ -98,7 +93,7 @@ public class PlayerAdvancedAchievementListenerTest {
 	}
 
 	@Test
-	public void itShouldNotGiveSpecialRewardWhenPlayerIsMissingSomeAchievements() {
+	void itShouldNotGiveSpecialRewardWhenPlayerIsMissingSomeAchievements() {
 		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(0);
 
 		PlayerAdvancedAchievementEvent event = new PlayerAdvancedAchievementEventBuilder().player(player)

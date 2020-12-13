@@ -1,6 +1,6 @@
 package com.hm.achievement.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -8,15 +8,15 @@ import java.util.HashMap;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class InventoryHelperTest {
+@ExtendWith(MockitoExtension.class)
+class InventoryHelperTest {
 
 	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
 	private Player player;
@@ -28,8 +28,8 @@ public class InventoryHelperTest {
 	private ItemStack existingItemStack;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Before
-	public void setup() {
+	@BeforeEach
+	void setup() {
 		HashMap itemStacks = new HashMap<>();
 		itemStacks.put(1, existingItemStack);
 		itemStacks.put(2, existingItemStack);
@@ -41,7 +41,7 @@ public class InventoryHelperTest {
 	}
 
 	@Test
-	public void shouldReturnAvailableSpaceUsingMinecraft14() {
+	void shouldReturnAvailableSpaceUsingMinecraft14() {
 		InventoryHelper inventoryHelper = new InventoryHelper(14);
 		when(player.getInventory().getStorageContents()).thenReturn(new ItemStack[] { null }); // Adds 64.
 
@@ -50,7 +50,7 @@ public class InventoryHelperTest {
 	}
 
 	@Test
-	public void shouldReturnAvailableSpaceUsingMinecraft8() {
+	void shouldReturnAvailableSpaceUsingMinecraft8() {
 		InventoryHelper inventoryHelper = new InventoryHelper(8);
 		when(player.getInventory().getContents()).thenReturn(new ItemStack[] { null }); // Adds 64.
 

@@ -1,8 +1,8 @@
 package com.hm.achievement.advancement;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancementBuilder;
 
@@ -11,10 +11,10 @@ import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancem
  *
  * @author Pyves
  */
-public class AdvancementJsonHelperTest {
+class AdvancementJsonHelperTest {
 
 	@Test
-	public void shouldGenerateAdvancementJson() {
+	void shouldGenerateAdvancementJson() {
 		AchievementAdvancement aa = new AchievementAdvancementBuilder().iconItem("minecraft:dirt")
 				.iconData("0").title("Special Event Achievement!").description("You took part in the \"Special Event\"!")
 				.parent("advancedachievements:advanced_achievements_parent").type(AdvancementType.TASK).build();
@@ -44,7 +44,7 @@ public class AdvancementJsonHelperTest {
 	}
 
 	@Test
-	public void shouldGenerateParentAdvancementJson() {
+	void shouldGenerateParentAdvancementJson() {
 		AchievementAdvancement aa = new AchievementAdvancementBuilder().iconItem("minecraft:dirt")
 				.iconData("0").title("Special Event Achievement!").description("You took part in the special event!")
 				.background("minecraft:book").type(AdvancementType.GOAL).build();
@@ -74,7 +74,7 @@ public class AdvancementJsonHelperTest {
 	}
 
 	@Test
-	public void shouldGenerateHiddenParentAdvancementJson() {
+	void shouldGenerateHiddenParentAdvancementJson() {
 		assertEquals("{\n" +
 				"  \"criteria\":{\n" +
 				"    \"aach_handled\":{\n" +

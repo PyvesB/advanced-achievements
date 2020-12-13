@@ -1,15 +1,15 @@
 package com.hm.achievement.config;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ReloadableYamlConfigurationTest {
+class ReloadableYamlConfigurationTest {
 
 	@Test
-	public void shouldClearKeyInPreviouslyLoadedConfiguration() throws Exception {
+	void shouldClearKeyInPreviouslyLoadedConfiguration() throws Exception {
 		ReloadableYamlConfiguration underTest = new ReloadableYamlConfiguration();
 		underTest.load(new File(getClass().getClassLoader().getResource("config-updated.yml").toURI()));
 		underTest.load(new File(getClass().getClassLoader().getResource("config-missing-sections.yml").toURI()));

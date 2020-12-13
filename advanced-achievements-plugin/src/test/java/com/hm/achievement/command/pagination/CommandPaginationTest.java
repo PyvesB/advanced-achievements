@@ -1,6 +1,6 @@
 package com.hm.achievement.command.pagination;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -11,17 +11,15 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class for testing the command pagination utility.
  * 
  * @author Rsl1122
  */
-public class CommandPaginationTest {
+class CommandPaginationTest {
 
 	private final List<String> toPaginate = Arrays.asList(
 			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
@@ -31,18 +29,15 @@ public class CommandPaginationTest {
 			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 			"1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
 
-	@ClassRule
-	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
-
 	private YamlConfiguration langConfig;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		langConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getResourceAsStream("/lang.yml")));
 	}
 
 	@Test
-	public void testPagination() {
+	void testPagination() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
 		List<String> expected = Arrays.asList(
@@ -58,7 +53,7 @@ public class CommandPaginationTest {
 	}
 
 	@Test
-	public void testPaginationPage2() {
+	void testPaginationPage2() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
 		List<String> expected = Arrays.asList(
@@ -74,7 +69,7 @@ public class CommandPaginationTest {
 	}
 
 	@Test
-	public void testPaginationPage3() {
+	void testPaginationPage3() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
 		List<String> expected = Arrays.asList(
@@ -90,7 +85,7 @@ public class CommandPaginationTest {
 	}
 
 	@Test
-	public void testPaginationPage4() {
+	void testPaginationPage4() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
 		List<String> expected = Arrays.asList(
@@ -105,7 +100,7 @@ public class CommandPaginationTest {
 	}
 
 	@Test
-	public void testPaginationPage5WhenOnly4Pages() {
+	void testPaginationPage5WhenOnly4Pages() {
 		CommandPagination pagination = new CommandPagination(toPaginate, 18, langConfig);
 
 		List<String> expected = Arrays.asList(
@@ -120,7 +115,7 @@ public class CommandPaginationTest {
 	}
 
 	@Test
-	public void testPaginationPageSinglePage() {
+	void testPaginationPageSinglePage() {
 		CommandPagination pagination = new CommandPagination(Collections.singletonList("1"), 18, langConfig);
 
 		List<String> expected = Arrays.asList(
@@ -135,7 +130,7 @@ public class CommandPaginationTest {
 	}
 
 	@Test
-	public void testEmptyPagination() {
+	void testEmptyPagination() {
 		CommandPagination pagination = new CommandPagination(Collections.emptyList(), 18, langConfig);
 
 		List<String> expected = Arrays.asList(

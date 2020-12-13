@@ -10,11 +10,11 @@ import java.util.Set;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.HelpCommand;
@@ -26,8 +26,8 @@ import com.hm.achievement.command.executable.ListCommand;
  *
  * @author Pyves
  */
-@RunWith(MockitoJUnitRunner.class)
-public class PluginCommandExecutorTest {
+@ExtendWith(MockitoExtension.class)
+class PluginCommandExecutorTest {
 
 	private static final String PLUGIN_HEADER = "header ";
 	private static final String ERROR_MESSAGE = "error message";
@@ -49,8 +49,8 @@ public class PluginCommandExecutorTest {
 
 	private PluginCommandExecutor underTest;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		when(langConfig.getString(any())).thenReturn(ERROR_MESSAGE);
 		Set<AbstractCommand> commands = new HashSet<>();
 		commands.add(helpCommand);
@@ -62,7 +62,7 @@ public class PluginCommandExecutorTest {
 	}
 
 	@Test
-	public void itShouldCallListCommand() {
+	void itShouldCallListCommand() {
 		String[] args = new String[] { "list" };
 		underTest.onCommand(sender, null, null, args);
 
@@ -71,7 +71,7 @@ public class PluginCommandExecutorTest {
 	}
 
 	@Test
-	public void itShouldDisplayErrorMessageIfNoCommandCouldBeMapped() {
+	void itShouldDisplayErrorMessageIfNoCommandCouldBeMapped() {
 		String[] args = new String[] { "book", "unexpected_arg" };
 		underTest.onCommand(sender, null, null, args);
 
@@ -80,7 +80,7 @@ public class PluginCommandExecutorTest {
 	}
 
 	@Test
-	public void itShouldFallBackToHelpCommandIfArgsEmpty() {
+	void itShouldFallBackToHelpCommandIfArgsEmpty() {
 		String[] noArgs = new String[0];
 		underTest.onCommand(sender, null, null, noArgs);
 
@@ -89,7 +89,7 @@ public class PluginCommandExecutorTest {
 	}
 
 	@Test
-	public void itShouldParseOpenBoxCharactersIntoArray() {
+	void itShouldParseOpenBoxCharactersIntoArray() {
 		String[] args = new String[] { "inspect", "one\u2423two", "three\u2423four" };
 		String[] expected = { "inspect", "one", "two", "three", "four" };
 		underTest.onCommand(sender, null, null, args);

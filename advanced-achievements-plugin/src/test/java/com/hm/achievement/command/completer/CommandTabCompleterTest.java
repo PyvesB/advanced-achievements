@@ -5,8 +5,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -22,12 +22,12 @@ import java.util.stream.IntStream;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.BookCommand;
@@ -41,8 +41,8 @@ import com.hm.achievement.command.executable.Upgrade13Command;
  *
  * @author Pyves
  */
-@RunWith(MockitoJUnitRunner.class)
-public class CommandTabCompleterTest {
+@ExtendWith(MockitoExtension.class)
+class CommandTabCompleterTest {
 
 	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
 	private YamlConfiguration mainConfig;
@@ -70,8 +70,8 @@ public class CommandTabCompleterTest {
 
 	private CommandTabCompleter underTest;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		when(command.getName()).thenReturn("aach");
 
 		when(mainConfig.getConfigurationSection("Commands").getKeys(false)).thenReturn(singleton("myCommand"));
@@ -97,7 +97,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shouldReturnNullIfNotAachCommand() {
+	void shouldReturnNullIfNotAachCommand() {
 		when(command.getName()).thenReturn("someothercommand");
 
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, new String[0]);
@@ -106,7 +106,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shouldReturnNullForPlayerArgOfGiveCommand() {
+	void shouldReturnNullForPlayerArgOfGiveCommand() {
 		String[] args = new String[] { "give", "yourAch1", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -114,7 +114,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shouldReturnNullForPlayerArgOfResetCommand() {
+	void shouldReturnNullForPlayerArgOfResetCommand() {
 		String[] args = new String[] { "reset", "Beds", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -122,7 +122,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shouldReturnNullForPlayerArgOfCheckCommand() {
+	void shouldReturnNullForPlayerArgOfCheckCommand() {
 		String[] args = new String[] { "check", "yourAch1", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -130,7 +130,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shouldReturnNullForPlayerArgOfDeleteCommand() {
+	void shouldReturnNullForPlayerArgOfDeleteCommand() {
 		String[] args = new String[] { "delete", "yourAch1", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -138,7 +138,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shouldReturnNullForPlayerArgOfAddCommand() {
+	void shouldReturnNullForPlayerArgOfAddCommand() {
 		String[] args = new String[] { "add", "1", "Breaks.sand", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -146,7 +146,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudCompleteWithNonEasterEggAndNonUpgrade13Commands() {
+	void shoudCompleteWithNonEasterEggAndNonUpgrade13Commands() {
 		when(commandSender.hasPermission(anyString())).thenReturn(true);
 
 		String[] args = new String[] { "" };
@@ -156,7 +156,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudNotCompleteWithGenerateCommandOnOldMinecraftVersion() {
+	void shoudNotCompleteWithGenerateCommandOnOldMinecraftVersion() {
 		Set<AbstractCommand> commands = new HashSet<>();
 		commands.add(bookCommand);
 		commands.add(generateCommand);
@@ -170,7 +170,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudNotCompleteWithCommandsForWhichTheSenderHasNoPermissions() {
+	void shoudNotCompleteWithCommandsForWhichTheSenderHasNoPermissions() {
 		when(commandSender.hasPermission(anyString())).thenReturn(false);
 
 		String[] args = new String[] { "" };
@@ -180,7 +180,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudCompleteForResetCommand() {
+	void shoudCompleteForResetCommand() {
 		String[] args = new String[] { "reset", "B" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -188,7 +188,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudCompleteWithNumberForAddCommand() {
+	void shoudCompleteWithNumberForAddCommand() {
 		String[] args = new String[] { "add", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -196,7 +196,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudCompleteWithCategoryForAddCommand() {
+	void shoudCompleteWithCategoryForAddCommand() {
 		String[] args = new String[] { "add", "1", "Cust" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -204,7 +204,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudCompleteForGiveCommand() {
+	void shoudCompleteForGiveCommand() {
 		String[] args = new String[] { "give", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -212,7 +212,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudCompleteForDeleteCommand() {
+	void shoudCompleteForDeleteCommand() {
 		String[] args = new String[] { "delete", "y" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -220,7 +220,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudCompleteForCheckCommand() {
+	void shoudCompleteForCheckCommand() {
 		String[] args = new String[] { "check", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -228,7 +228,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudCompleteForInspectCommand() {
+	void shoudCompleteForInspectCommand() {
 		String[] args = new String[] { "inspect", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -237,7 +237,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudTruncateCompletionListOnOldServerVersionsIfOverFiftyElements() {
+	void shoudTruncateCompletionListOnOldServerVersionsIfOverFiftyElements() {
 		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptyMap(), emptySet(), emptySet(), 12);
 		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
 		when(mainConfig.getConfigurationSection("Commands").getKeys(false)).thenReturn(commands);
@@ -250,7 +250,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudNotTruncateCompletionListIfRecentServerVersion() {
+	void shoudNotTruncateCompletionListIfRecentServerVersion() {
 		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
 		when(mainConfig.getConfigurationSection("Commands").getKeys(false)).thenReturn(commands);
 
@@ -261,7 +261,7 @@ public class CommandTabCompleterTest {
 	}
 
 	@Test
-	public void shoudReturnEmptyStringIfNoCompletionAvailable() {
+	void shoudReturnEmptyStringIfNoCompletionAvailable() {
 		String[] args = new String[] { "list", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 

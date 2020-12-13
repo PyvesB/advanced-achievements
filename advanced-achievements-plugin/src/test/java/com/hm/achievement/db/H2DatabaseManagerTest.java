@@ -1,15 +1,15 @@
 package com.hm.achievement.db;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.Date;
@@ -22,14 +22,13 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.common.util.concurrent.MoreExecutors;
 import com.hm.achievement.AdvancedAchievements;
@@ -40,24 +39,20 @@ import com.hm.achievement.db.data.AwardedDBAchievement;
  *
  * @author Rsl1122
  */
-@RunWith(MockitoJUnitRunner.class)
-public class H2DatabaseManagerTest {
+@ExtendWith(MockitoExtension.class)
+class H2DatabaseManagerTest {
 
 	private static final String TEST_ACHIEVEMENT = "TestAchievement";
 	private static final String TEST_MESSAGE = "TestMessage";
-
-	@ClassRule
-	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private static H2DatabaseManager db;
 
 	private final UUID testUUID = UUID.randomUUID();
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
+	@BeforeAll
+	static void setUpClass(@TempDir Path tempDir) throws Exception {
 		AdvancedAchievements plugin = mock(AdvancedAchievements.class);
-		File relativeTempFolder = temporaryFolder.getRoot().toPath().relativize(Paths.get("").toAbsolutePath()).toFile();
-		when(plugin.getDataFolder()).thenReturn(relativeTempFolder);
+		when(plugin.getDataFolder()).thenReturn(tempDir.relativize(Paths.get("").toAbsolutePath()).toFile());
 		Logger logger = Logger.getLogger("DBTestLogger");
 		YamlConfiguration config = YamlConfiguration
 				.loadConfiguration(new InputStreamReader(H2DatabaseManagerTest.class.getResourceAsStream("/config-h2.yml")));
@@ -73,18 +68,18 @@ public class H2DatabaseManagerTest {
 		db.extractConfigurationParameters();
 	}
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		clearDatabase();
 	}
 
-	@AfterClass
-	public static void tearDownClass() {
+	@AfterAll
+	static void tearDownClass() {
 		db.shutdown();
 	}
 
 	@Test
-	public void testGetAchievementList() {
+	void testGetAchievementList() {
 		registerAchievement();
 
 		List<AwardedDBAchievement> achievements = db.getPlayerAchievementsList(testUUID);
@@ -96,7 +91,7 @@ public class H2DatabaseManagerTest {
 	}
 
 	@Test
-	public void testAchievementCount() {
+	void testAchievementCount() {
 		registerAchievement();
 
 		Map<UUID, Integer> expected = Collections.singletonMap(testUUID, 1);
@@ -106,7 +101,7 @@ public class H2DatabaseManagerTest {
 	}
 
 	@Test
-	public void testAchievementDateRegistration() {
+	void testAchievementDateRegistration() {
 		String date = db.getPlayerAchievementDate(testUUID, TEST_ACHIEVEMENT);
 		assertNull(date);
 
@@ -117,14 +112,14 @@ public class H2DatabaseManagerTest {
 	}
 
 	@Test
-	public void testPlayerAchievementAmount() {
+	void testPlayerAchievementAmount() {
 		registerAchievement();
 
 		assertEquals(1, db.getPlayerAchievementsAmount(testUUID));
 	}
 
 	@Test
-	public void testDeleteAchievement() {
+	void testDeleteAchievement() {
 		testPlayerAchievementAmount();
 
 		db.deletePlayerAchievement(testUUID, TEST_ACHIEVEMENT);
@@ -133,7 +128,7 @@ public class H2DatabaseManagerTest {
 	}
 
 	@Test
-	public void testDeleteAllAchievements() {
+	void testDeleteAllAchievements() {
 		registerAchievement(testUUID, TEST_ACHIEVEMENT, TEST_MESSAGE);
 		registerAchievement(testUUID, TEST_ACHIEVEMENT + "2", TEST_MESSAGE);
 
@@ -143,7 +138,7 @@ public class H2DatabaseManagerTest {
 	}
 
 	@Test
-	public void testConnectionUpdate() {
+	void testConnectionUpdate() {
 		assertEquals(0, db.getConnectionsAmount(testUUID));
 
 		assertEquals(1, db.updateAndGetConnection(testUUID, createDateString()));
@@ -154,7 +149,7 @@ public class H2DatabaseManagerTest {
 	}
 
 	@Test
-	public void testGetTopAchievements() {
+	void testGetTopAchievements() {
 		long firstSave = 99L;
 
 		System.out.println("Save first achievement:  " + System.currentTimeMillis());
@@ -178,7 +173,7 @@ public class H2DatabaseManagerTest {
 		assertEquals(expected, topList);
 
 		Map<String, Integer> topListFirst = db.getTopList(firstSave);
-		assertEquals("Top list from first save & all top list should be the same", topList, topListFirst);
+		assertEquals(topList, topListFirst, "Top list from first save & all top list should be the same");
 
 		expected.remove(testUUID.toString());
 
@@ -187,7 +182,7 @@ public class H2DatabaseManagerTest {
 	}
 
 	@Test
-	public void testGetAchievementNameList() {
+	void testGetAchievementNameList() {
 		registerAchievement();
 
 		List<String> expected = Collections.singletonList(TEST_ACHIEVEMENT);
@@ -196,7 +191,7 @@ public class H2DatabaseManagerTest {
 	}
 
 	@Test
-	public void testHasAchievement() {
+	void testHasAchievement() {
 		assertFalse(db.hasPlayerAchievement(testUUID, TEST_ACHIEVEMENT));
 
 		registerAchievement();
@@ -205,7 +200,7 @@ public class H2DatabaseManagerTest {
 	}
 
 	@Test
-	public void testGetPlayerConnectionDate() {
+	void testGetPlayerConnectionDate() {
 		assertNull(db.getPlayerConnectionDate(testUUID));
 
 		db.updateAndGetConnection(testUUID, createDateString());
@@ -214,7 +209,7 @@ public class H2DatabaseManagerTest {
 	}
 
 	@Test
-	public void testClearConnection() {
+	void testClearConnection() {
 		db.updateAndGetConnection(testUUID, createDateString());
 
 		assertNotNull(db.getPlayerConnectionDate(testUUID));
