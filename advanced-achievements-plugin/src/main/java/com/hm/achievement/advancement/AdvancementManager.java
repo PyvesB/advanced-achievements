@@ -27,8 +27,8 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.OrderedCategory;
 import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.particle.external.ReflectionUtils.PackageType;
 import com.hm.achievement.utils.StringHelper;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Class in charge of registering achievements as advancements for servers running on Minecraft 1.12+.

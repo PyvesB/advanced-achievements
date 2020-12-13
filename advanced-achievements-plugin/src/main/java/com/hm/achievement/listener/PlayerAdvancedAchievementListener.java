@@ -42,11 +42,11 @@ import com.hm.achievement.command.executable.ToggleCommand;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.particle.FancyMessageSender;
+import com.hm.achievement.particle.external.ParticleEffect;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.SoundPlayer;
-import com.hm.mcshared.particle.FancyMessageSender;
-import com.hm.mcshared.particle.ParticleEffect;
 
 import net.milkbowl.vault.economy.Economy;
 

@@ -4,7 +4,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
+import com.hm.achievement.particle.external.ReflectionUtils.PackageType;
 
 import dagger.Module;
 import dagger.Provides;

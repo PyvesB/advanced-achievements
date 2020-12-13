@@ -16,8 +16,8 @@ import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
+import com.hm.achievement.particle.FancyMessageSender;
 import com.hm.achievement.utils.RewardParser;
-import com.hm.mcshared.particle.FancyMessageSender;
 
 /**
  * Abstract class in charge of factoring out common functionality for the listener classes with cooldown maps.

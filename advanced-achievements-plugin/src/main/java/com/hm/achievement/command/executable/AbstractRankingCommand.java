@@ -18,8 +18,8 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.command.pagination.CommandPagination;
 import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.particle.external.ParticleEffect;
 import com.hm.achievement.utils.SoundPlayer;
-import com.hm.mcshared.particle.ParticleEffect;
 
 /**
  * Abstract class in charge of factoring out common functionality for /aach top, week and month commands.

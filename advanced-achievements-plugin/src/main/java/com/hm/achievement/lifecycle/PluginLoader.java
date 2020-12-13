@@ -37,12 +37,12 @@ import com.hm.achievement.listener.ListGUIListener;
 import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
 import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.listener.TeleportListener;
+import com.hm.achievement.listener.UpdateChecker;
 import com.hm.achievement.listener.statistics.AbstractListener;
 import com.hm.achievement.placeholder.AchievementCountBungeeTabListPlusVariable;
 import com.hm.achievement.placeholder.AchievementPlaceholderHook;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
-import com.hm.mcshared.update.UpdateChecker;
 
 import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
 import dagger.Lazy;
@@ -57,7 +57,7 @@ public class PluginLoader {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final Logger logger;
-	private final Lazy<UpdateChecker> updateChecker;
+	private final UpdateChecker updateChecker;
 	private final ReloadCommand reloadCommand;
 	private final Set<Reloadable> reloadables;
 	private final Map<String, String> namesToDisplayNames;
@@ -105,7 +105,7 @@ public class PluginLoader {
 			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
 			Set<Category> disabledCategories, @Named("main") YamlConfiguration mainConfig,
 			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
-			AchievePlayTimeRunnable playTimeRunnable, Lazy<UpdateChecker> updateChecker, ReloadCommand reloadCommand,
+			AchievePlayTimeRunnable playTimeRunnable, UpdateChecker updateChecker, ReloadCommand reloadCommand,
 			@Named("ntd") Map<String, String> namesToDisplayNames) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
@@ -264,15 +264,15 @@ public class PluginLoader {
 	 */
 	private void launchUpdateChecker() {
 		if (!mainConfig.getBoolean("CheckForUpdate")) {
-			PlayerJoinEvent.getHandlerList().unregister(updateChecker.get());
+			PlayerJoinEvent.getHandlerList().unregister(updateChecker);
 		} else {
 			for (RegisteredListener registeredListener : PlayerJoinEvent.getHandlerList().getRegisteredListeners()) {
 				if (registeredListener.getListener() == updateChecker) {
 					return;
 				}
 			}
-			advancedAchievements.getServer().getPluginManager().registerEvents(updateChecker.get(), advancedAchievements);
-			updateChecker.get().launchUpdateCheckerTask();
+			advancedAchievements.getServer().getPluginManager().registerEvents(updateChecker, advancedAchievements);
+			updateChecker.launchUpdateCheckerTask();
 		}
 
 	}

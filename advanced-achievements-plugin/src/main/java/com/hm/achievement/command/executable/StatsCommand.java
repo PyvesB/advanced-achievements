@@ -15,8 +15,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
 
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.particle.external.ParticleEffect;
 import com.hm.achievement.utils.SoundPlayer;
-import com.hm.mcshared.particle.ParticleEffect;
 
 /**
  * Class in charge of handling the /aach stats command, which creates and displays a progress bar of the player's

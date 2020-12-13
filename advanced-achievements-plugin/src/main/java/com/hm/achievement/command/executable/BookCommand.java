@@ -26,9 +26,9 @@ import org.bukkit.inventory.meta.BookMeta;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.lifecycle.Cleanable;
+import com.hm.achievement.particle.external.ParticleEffect;
+import com.hm.achievement.particle.external.ReflectionUtils.PackageType;
 import com.hm.achievement.utils.SoundPlayer;
-import com.hm.mcshared.particle.ParticleEffect;
-import com.hm.mcshared.particle.ReflectionUtils.PackageType;
 
 /**
  * Class in charge of handling the /aach book command, which creates and gives a book containing the player's

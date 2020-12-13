@@ -51,13 +51,6 @@
 								</filter>
 							</filters>
 							<relocations>
-								<relocation>
-									<pattern>com.hm.mcshared</pattern>
-									<shadedPattern>com.hm.achievement</shadedPattern>
-									<excludes>
-										<exclude>com.hm.mcshared.event.*</exclude>
-									</excludes>
-								</relocation>
 								<!-- Older versions of Minecraft may ship antique builds of Apache 
 									Commons, relocate our own managed version. -->
 								<relocation>
@@ -119,7 +112,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.pyvesb</groupId>
-			<artifactId>mcshared</artifactId>
+			<artifactId>petmaster</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>codecrafter47.bungeetablistplus</groupId>

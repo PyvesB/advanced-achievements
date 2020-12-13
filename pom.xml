@@ -121,8 +121,9 @@
 			</dependency>
 			<dependency>
 				<groupId>com.github.pyvesb</groupId>
-				<artifactId>mcshared</artifactId>
-				<version>1.1.7</version>
+				<artifactId>petmaster</artifactId>
+				<version>1.12.0</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>codecrafter47.bungeetablistplus</groupId>
