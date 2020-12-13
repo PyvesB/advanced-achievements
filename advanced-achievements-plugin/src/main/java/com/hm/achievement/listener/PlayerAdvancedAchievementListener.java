@@ -41,8 +41,6 @@ import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.command.executable.ToggleCommand;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.ListenerLang;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.RewardParser;
@@ -145,16 +143,16 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		}
 		configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages");
 
-		langCommandReward = LangHelper.get(ListenerLang.COMMAND_REWARD, langConfig);
-		langAchievementReceived = LangHelper.get(ListenerLang.ACHIEVEMENT_RECEIVED, langConfig) + " " + ChatColor.WHITE;
-		langItemRewardReceived = LangHelper.get(ListenerLang.ITEM_REWARD_RECEIVED, langConfig) + " ";
-		langMoneyRewardReceived = LangHelper.get(ListenerLang.MONEY_REWARD_RECEIVED, langConfig);
-		langExperienceRewardReceived = LangHelper.get(ListenerLang.EXPERIENCE_REWARD_RECEIVED, langConfig);
-		langIncreaseMaxHealthRewardReceived = LangHelper.get(ListenerLang.INCREASE_MAX_HEALTH_REWARD_RECEIVED, langConfig);
-		langIncreaseMaxOxygenRewardReceived = LangHelper.get(ListenerLang.INCREASE_MAX_OXYGEN_REWARD_RECEIVED, langConfig);
-		langAchievementNew = pluginHeader + LangHelper.get(ListenerLang.ACHIEVEMENT_NEW, langConfig) + " " + ChatColor.WHITE;
-		langCustomMessageCommandReward = LangHelper.get(ListenerLang.CUSTOM_COMMAND_REWARD, langConfig);
-		langAllAchievementsReceived = pluginHeader + LangHelper.get(ListenerLang.ALL_ACHIEVEMENTS_RECEIVED, langConfig);
+		langCommandReward = langConfig.getString("command-reward");
+		langAchievementReceived = langConfig.getString("achievement-received") + " " + ChatColor.WHITE;
+		langItemRewardReceived = langConfig.getString("item-reward-received") + " ";
+		langMoneyRewardReceived = langConfig.getString("money-reward-received");
+		langExperienceRewardReceived = langConfig.getString("experience-reward-received");
+		langIncreaseMaxHealthRewardReceived = langConfig.getString("increase-max-health-reward-received");
+		langIncreaseMaxOxygenRewardReceived = langConfig.getString("increase-max-oxygen-reward-received");
+		langAchievementNew = pluginHeader + langConfig.getString("achievement-new") + " " + ChatColor.WHITE;
+		langCustomMessageCommandReward = langConfig.getString("custom-command-reward");
+		langAllAchievementsReceived = pluginHeader + langConfig.getString("all-achievements-received");
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

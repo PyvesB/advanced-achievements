@@ -12,8 +12,6 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StringHelper;
@@ -50,10 +48,10 @@ public class GiveCommand extends AbstractParsableCommand {
 
 		configMultiCommand = mainConfig.getBoolean("MultiCommand");
 
-		langAchievementAlreadyReceived = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_ALREADY_RECEIVED, langConfig);
-		langAchievementGiven = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_GIVEN, langConfig);
-		langAchievementNotFound = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_NOT_FOUND, langConfig);
-		langAchievementNoPermission = pluginHeader + LangHelper.get(CmdLang.ACHIEVEMENT_NO_PERMISSION, langConfig);
+		langAchievementAlreadyReceived = pluginHeader + langConfig.getString("achievement-already-received");
+		langAchievementGiven = pluginHeader + langConfig.getString("achievement-given");
+		langAchievementNotFound = pluginHeader + langConfig.getString("achievement-not-found");
+		langAchievementNoPermission = pluginHeader + langConfig.getString("achievement-no-permission");
 	}
 
 	@Override

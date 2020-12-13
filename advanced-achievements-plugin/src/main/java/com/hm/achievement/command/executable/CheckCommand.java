@@ -10,8 +10,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 
 /**
  * Class in charge of handling the /aach check command, which checks whether a player has received an achievement.
@@ -38,8 +36,8 @@ public class CheckCommand extends AbstractParsableCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langCheckAchievementTrue = pluginHeader + LangHelper.get(CmdLang.CHECK_ACHIEVEMENT_TRUE, langConfig);
-		langCheckAchievementFalse = pluginHeader + LangHelper.get(CmdLang.CHECK_ACHIEVEMENTS_FALSE, langConfig);
+		langCheckAchievementTrue = pluginHeader + langConfig.getString("check-achievement-true");
+		langCheckAchievementFalse = pluginHeader + langConfig.getString("check-achievements-false");
 	}
 
 	@Override

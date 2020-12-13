@@ -16,8 +16,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.CommandSpec;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lifecycle.Reloadable;
 
 /**
@@ -44,7 +42,7 @@ public class PluginCommandExecutor implements CommandExecutor, Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		langInvalidCommand = pluginHeader + LangHelper.get(CmdLang.INVALID_COMMAND, langConfig);
+		langInvalidCommand = pluginHeader + langConfig.getString("invalid-command");
 	}
 
 	@Override

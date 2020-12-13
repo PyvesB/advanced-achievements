@@ -25,7 +25,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.ListenerLang;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.utils.RewardParser;
@@ -94,9 +93,8 @@ public class PlayerAdvancedAchievementListenerTest {
 		underTest.onPlayerAdvancedAchievementReception(event);
 
 		verify(player).setMaximumAir(130);
-		verify(player).sendMessage(PLUGIN_HEADER + ListenerLang.ALL_ACHIEVEMENTS_RECEIVED.toLangDefault());
-		verify(player).sendMessage(PLUGIN_HEADER
-				+ ListenerLang.INCREASE_MAX_OXYGEN_REWARD_RECEIVED.toLangDefault().replace("AMOUNT", "30"));
+		verify(player).sendMessage(PLUGIN_HEADER + "Congratulations, you have received all the achievements!");
+		verify(player).sendMessage(PLUGIN_HEADER + "Your max oxygen has increased by 30!");
 	}
 
 	@Test
@@ -111,7 +109,7 @@ public class PlayerAdvancedAchievementListenerTest {
 		underTest.onPlayerAdvancedAchievementReception(event);
 
 		verify(player, never()).setMaximumAir(anyInt());
-		verify(player, never()).sendMessage(PLUGIN_HEADER + ListenerLang.ALL_ACHIEVEMENTS_RECEIVED.toLangDefault());
+		verify(player, never()).sendMessage(PLUGIN_HEADER + "Congratulations, you have received all the achievements!");
 	}
 
 }

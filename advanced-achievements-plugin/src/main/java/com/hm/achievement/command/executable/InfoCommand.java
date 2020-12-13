@@ -10,8 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.InfoLang;
 import com.hm.achievement.utils.RewardParser;
 
 /**
@@ -60,31 +58,32 @@ public class InfoCommand extends AbstractCommand {
 				+ configIcon + configColor + " ------------";
 
 		langVersionCommandDescription = pluginHeader.toString() + configColor
-				+ LangHelper.get(InfoLang.DESCRIPTION, langConfig)
-				+ " " + ChatColor.GRAY + LangHelper.get(InfoLang.DESCRIPTION_DETAILS, langConfig);
+				+ langConfig.getString("version-command-description") + " " + ChatColor.GRAY
+				+ langConfig.getString("version-command-description-details");
 
-		langVersionCommandVersion = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.VERSION, langConfig)
+		langVersionCommandVersion = pluginHeader.toString() + configColor + langConfig.getString("version-command-version")
 				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getVersion();
 
-		langVersionCommandAuthor = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.AUTHOR, langConfig)
+		langVersionCommandAuthor = pluginHeader.toString() + configColor + langConfig.getString("version-command-author")
 				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getAuthors().get(0);
 
-		langVersionCommandWebsite = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.WEBSITE, langConfig)
+		langVersionCommandWebsite = pluginHeader.toString() + configColor + langConfig.getString("version-command-website")
 				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getWebsite();
 
 		// Display whether Advanced Achievements is linked to Vault.
 		String vaultState = rewardParser.getEconomy() != null ? "&a\u2714" : "&4\u2718";
-		langVersionCommandVault = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.VAULT, langConfig)
+		langVersionCommandVault = pluginHeader.toString() + configColor + langConfig.getString("version-command-vault")
 				+ " " + ChatColor.GRAY + translateColorCodes(vaultState);
 
 		// Display whether Advanced Achievements is linked to Pet Master.
 		String petMasterState = Bukkit.getPluginManager().isPluginEnabled("PetMaster") ? "&a\u2714" : "&4\u2718";
-		langVersionCommandPetmaster = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.PETMASTER, langConfig)
-				+ " " + ChatColor.GRAY + translateColorCodes(petMasterState);
+		langVersionCommandPetmaster = pluginHeader.toString() + configColor
+				+ langConfig.getString("version-command-petmaster") + " " + ChatColor.GRAY
+				+ translateColorCodes(petMasterState);
 
 		// Display whether Advanced Achievements is linked to BungeeTabListPlus.
 		String btlpState = Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus") ? "&a\u2714" : "&4\u2718";
-		langVersionCommandBtlp = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.BTLP, langConfig)
+		langVersionCommandBtlp = pluginHeader.toString() + configColor + langConfig.getString("version-command-btlp")
 				+ " " + ChatColor.GRAY + translateColorCodes(btlpState);
 
 		// Display whether Advanced Achievements is linked to Essentials.
@@ -92,18 +91,18 @@ public class InfoCommand extends AbstractCommand {
 				&& mainConfig.getBoolean("IgnoreAFKPlayedTime");
 		String essentialsState = essentialsUsed ? "&a\u2714" : "&4\u2718";
 		langVersionCommandEssentials = pluginHeader.toString() + configColor
-				+ LangHelper.get(InfoLang.ESSENTIALS, langConfig) + " " + ChatColor.GRAY
+				+ langConfig.getString("version-command-essentials") + " " + ChatColor.GRAY
 				+ translateColorCodes(essentialsState);
 
 		// Display whether Advanced Achievements is linked to PlaceholderAPI.
 		String placeholderAPIState = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "&a\u2714" : "&4\u2718";
 		langVersionCommandPlaceholderAPI = pluginHeader.toString() + configColor
-				+ LangHelper.get(InfoLang.PLACEHOLDERAPI, langConfig) + " " + ChatColor.GRAY
+				+ langConfig.getString("version-command-placeholderapi") + " " + ChatColor.GRAY
 				+ translateColorCodes(placeholderAPIState);
 
 		// Display database type.
 		String databaseType = getDatabaseType();
-		langVersionCommandDatabase = pluginHeader.toString() + configColor + LangHelper.get(InfoLang.DATABASE, langConfig)
+		langVersionCommandDatabase = pluginHeader.toString() + configColor + langConfig.getString("version-command-database")
 				+ " " + ChatColor.GRAY + databaseType;
 	}
 

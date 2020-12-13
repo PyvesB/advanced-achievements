@@ -10,7 +10,6 @@ import javax.inject.Singleton;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.db.AbstractDatabaseManager;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.SoundPlayer;
 
 /**
@@ -26,7 +25,7 @@ public class MonthCommand extends AbstractRankingCommand {
 	public MonthCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
 			StringBuilder pluginHeader, Logger logger, int serverVersion, AbstractDatabaseManager databaseManager,
 			SoundPlayer soundPlayer) {
-		super(mainConfig, langConfig, pluginHeader, logger, serverVersion, CmdLang.MONTH_ACHIEVEMENT, databaseManager,
+		super(mainConfig, langConfig, pluginHeader, logger, serverVersion, "month-achievement", databaseManager,
 				soundPlayer);
 	}
 

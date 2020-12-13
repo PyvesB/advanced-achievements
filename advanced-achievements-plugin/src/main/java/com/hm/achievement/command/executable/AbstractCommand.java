@@ -4,8 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lifecycle.Reloadable;
 
 /**
@@ -29,7 +27,7 @@ public abstract class AbstractCommand implements Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		langNoPermissions = pluginHeader.toString() + LangHelper.get(CmdLang.NO_PERMISSIONS, langConfig);
+		langNoPermissions = pluginHeader.toString() + langConfig.getString("no-permissions");
 	}
 
 	/**

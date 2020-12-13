@@ -8,8 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.advancement.AdvancementManager;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 
 /**
  * Class in charge of handling the /aach generate command, which creates advancements for the achievements defined in
@@ -39,8 +37,8 @@ public class GenerateCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langAdvancementsGenerated = pluginHeader + LangHelper.get(CmdLang.ADVANCEMENTS_GENERATED, langConfig);
-		langMinecraftNotSupported = pluginHeader + LangHelper.get(CmdLang.MINECRAFT_NOT_SUPPORTED, langConfig);
+		langAdvancementsGenerated = pluginHeader + langConfig.getString("advancements-generated");
+		langMinecraftNotSupported = pluginHeader + langConfig.getString("minecraft-not-supported");
 	}
 
 	@Override

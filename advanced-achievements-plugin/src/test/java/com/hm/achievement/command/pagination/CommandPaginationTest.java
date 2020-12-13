@@ -7,15 +7,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 
 import utilities.MockUtility;
 
@@ -158,13 +156,12 @@ public class CommandPaginationTest {
 
 	private String getPaginationHeader(int page, int max) {
 		return ChatColor.translateAlternateColorCodes('&',
-				LangHelper.getEachReplaced(CmdLang.PAGINATION_HEADER, langConfig,
-						new String[] { "PAGE", "MAX" },
+				StringUtils.replaceEach(langConfig.getString("pagination-header"), new String[] { "PAGE", "MAX" },
 						new String[] { Integer.toString(page), Integer.toString(max) }));
 	}
 
 	private String getPaginationFooter() {
-		return ChatColor.translateAlternateColorCodes('&', LangHelper.get(CmdLang.PAGINATION_FOOTER, langConfig));
+		return ChatColor.translateAlternateColorCodes('&', langConfig.getString("pagination-footer"));
 	}
 
 }

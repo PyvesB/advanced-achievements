@@ -15,8 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
 
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.SoundPlayer;
 import com.hm.mcshared.particle.ParticleEffect;
 
@@ -70,7 +68,7 @@ public class StatsCommand extends AbstractCommand {
 		configSound = mainConfig.getBoolean("Sound");
 		configSoundStats = mainConfig.getString("SoundStats").toUpperCase();
 
-		langNumberAchievements = pluginHeader + LangHelper.get(CmdLang.NUMBER_ACHIEVEMENTS, langConfig) + " " + configColor;
+		langNumberAchievements = pluginHeader + langConfig.getString("number-achievements") + " " + configColor;
 	}
 
 	@Override

@@ -15,8 +15,6 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.exception.PluginLoadError;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lifecycle.PluginLoader;
 import com.hm.achievement.lifecycle.Reloadable;
 
@@ -54,9 +52,8 @@ public class ReloadCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langConfigReloadFailed = pluginHeader + LangHelper.get(CmdLang.CONFIGURATION_RELOAD_FAILED, langConfig);
-		langConfigSuccessfullyReloaded = pluginHeader
-				+ LangHelper.get(CmdLang.CONFIGURATION_SUCCESSFULLY_RELOADED, langConfig);
+		langConfigReloadFailed = pluginHeader + langConfig.getString("configuration-reload-failed");
+		langConfigSuccessfullyReloaded = pluginHeader + langConfig.getString("configuration-successfully-reloaded");
 	}
 
 	/**

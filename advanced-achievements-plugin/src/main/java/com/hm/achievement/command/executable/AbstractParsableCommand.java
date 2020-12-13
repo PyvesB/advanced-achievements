@@ -7,8 +7,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.command.external.CommandUtils;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 
 /**
  * Abstract class in charge of factoring out common functionality for commands with more than one argument (/aach give,
@@ -29,8 +27,8 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langPlayerOffline = LangHelper.get(CmdLang.PLAYER_OFFLINE, langConfig);
-		langEntityNotPlayer = LangHelper.get(CmdLang.NOT_A_PLAYER, langConfig);
+		langPlayerOffline = langConfig.getString("player-offline");
+		langEntityNotPlayer = langConfig.getString("not-a-player");
 	}
 
 	/**

@@ -23,8 +23,6 @@ import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.exception.PluginLoadError;
-import com.hm.achievement.lang.GuiLang;
-import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.MaterialHelper;
 
@@ -78,8 +76,8 @@ public class GUIItems implements Reloadable {
 		configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat");
 		configIcon = mainConfig.getString("Icon");
 
-		langListAchievementsInCategoryPlural = LangHelper.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_PLURAL, langConfig);
-		langListAchievementInCategorySingular = LangHelper.get(GuiLang.ACHIEVEMENTS_IN_CATEGORY_SINGULAR, langConfig);
+		langListAchievementsInCategoryPlural = langConfig.getString("list-achievements-in-category-plural");
+		langListAchievementInCategorySingular = langConfig.getString("list-achievements-in-category-singular");
 
 		orderedAchievementItems.clear();
 		// getShallowKeys returns a LinkedHashSet, preserving the ordering specified in the file.
@@ -94,7 +92,7 @@ public class GUIItems implements Reloadable {
 						.size();
 			}
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, LangHelper.get(category, langConfig), totalAchievements);
+			buildItemLore(itemStack, langConfig.getString(category.toLangKey()), totalAchievements);
 			orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
 		}
 
@@ -102,14 +100,14 @@ public class GUIItems implements Reloadable {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, LangHelper.get(category, langConfig),
+			buildItemLore(itemStack, langConfig.getString(category.toLangKey()),
 					mainConfig.getConfigurationSection(categoryName).getKeys(false).size());
 			orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
 		}
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
 		ItemStack itemStack = createItemStack(CommandAchievements.COMMANDS.toString());
-		buildItemLore(itemStack, LangHelper.get(CommandAchievements.COMMANDS, langConfig),
+		buildItemLore(itemStack, langConfig.getString(CommandAchievements.COMMANDS.toLangKey()),
 				mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString()).getKeys(false).size());
 		orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(CommandAchievements.COMMANDS.toString()),
 				CommandAchievements.COMMANDS), itemStack);
@@ -138,11 +136,11 @@ public class GUIItems implements Reloadable {
 				achievementReceived.put(type, createItemStack("AchievementReceived." + type));
 			}
 		}
-		previousButton = createButton("PreviousButton", GuiLang.PREVIOUS_MESSAGE, GuiLang.PREVIOUS_LORE);
-		nextButton = createButton("NextButton", GuiLang.NEXT_MESSAGE, GuiLang.NEXT_LORE);
-		backButton = createButton("BackButton", GuiLang.BACK_MESSAGE, GuiLang.BACK_LORE);
-		achievementLock = createButton("AchievementLock", GuiLang.ACHIEVEMENT_NOT_UNLOCKED, null);
-		categoryLock = createButton("CategoryLock", GuiLang.CATEGORY_NOT_UNLOCKED, null);
+		previousButton = createButton("PreviousButton", "list-previous-message", "list-previous-lore");
+		nextButton = createButton("NextButton", "list-next-message", "list-next-lore");
+		backButton = createButton("BackButton", "list-back-message", "list-back-lore");
+		achievementLock = createButton("AchievementLock", "list-achievement-not-unlocked", null);
+		categoryLock = createButton("CategoryLock", "list-category-not-unlocked", null);
 	}
 
 	/**
@@ -180,13 +178,13 @@ public class GUIItems implements Reloadable {
 	 * @param lore
 	 * @return the item stack
 	 */
-	private ItemStack createButton(String category, GuiLang msg, GuiLang lore) {
+	private ItemStack createButton(String category, String msg, String lore) {
 		ItemStack button = createItemStack(category);
 		ItemMeta meta = button.getItemMeta();
-		String displayName = ChatColor.translateAlternateColorCodes('&', LangHelper.get(msg, langConfig));
+		String displayName = ChatColor.translateAlternateColorCodes('&', langConfig.getString(msg));
 		meta.setDisplayName(displayName);
 		if (lore != null) {
-			String loreString = ChatColor.translateAlternateColorCodes('&', LangHelper.get(lore, langConfig));
+			String loreString = ChatColor.translateAlternateColorCodes('&', langConfig.getString(lore));
 			if (!loreString.isEmpty()) {
 				meta.setLore(Collections.singletonList(loreString));
 			}

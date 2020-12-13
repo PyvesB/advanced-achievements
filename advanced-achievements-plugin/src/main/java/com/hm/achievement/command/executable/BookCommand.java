@@ -25,8 +25,6 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.SoundPlayer;
 import com.hm.mcshared.particle.ParticleEffect;
@@ -90,12 +88,12 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		configSound = mainConfig.getBoolean("Sound");
 		configSoundBook = mainConfig.getString("SoundBook").toUpperCase();
 
-		langBookDelay = pluginHeader + LangHelper.getReplacedOnce(CmdLang.BOOK_DELAY, "TIME",
-				Integer.toString(configTimeBook / 1000), langConfig);
-		langBookNotReceived = pluginHeader + LangHelper.get(CmdLang.BOOK_NOT_RECEIVED, langConfig);
-		langBookDate = translateColorCodes("&8" + LangHelper.get(CmdLang.BOOK_DATE, langConfig));
-		langBookName = LangHelper.get(CmdLang.BOOK_NAME, langConfig);
-		langBookReceived = pluginHeader + LangHelper.get(CmdLang.BOOK_RECEIVED, langConfig);
+		langBookDelay = pluginHeader + StringUtils.replaceOnce(langConfig.getString("book-delay"), "TIME",
+				Integer.toString(configTimeBook / 1000));
+		langBookNotReceived = pluginHeader + langConfig.getString("book-not-received");
+		langBookDate = translateColorCodes("&8" + langConfig.getString("book-date"));
+		langBookName = langConfig.getString("book-name");
+		langBookReceived = pluginHeader + langConfig.getString("book-received");
 
 		String localeString = mainConfig.getString("DateLocale");
 		dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, new Locale(localeString));

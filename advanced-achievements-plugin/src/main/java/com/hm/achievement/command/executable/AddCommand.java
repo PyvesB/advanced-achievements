@@ -16,8 +16,6 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
 import com.hm.achievement.utils.StringHelper;
 
@@ -54,9 +52,9 @@ public class AddCommand extends AbstractParsableCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langErrorValue = pluginHeader + LangHelper.get(CmdLang.ERROR_VALUE, langConfig);
-		langStatisticIncreased = pluginHeader + LangHelper.get(CmdLang.STATISTIC_INCREASED, langConfig);
-		langCategoryDoesNotExist = pluginHeader + LangHelper.get(CmdLang.CATEGORY_DOES_NOT_EXIST, langConfig);
+		langErrorValue = pluginHeader + langConfig.getString("error-value");
+		langStatisticIncreased = pluginHeader + langConfig.getString("statistic-increased");
+		langCategoryDoesNotExist = pluginHeader + langConfig.getString("category-does-not-exist");
 	}
 
 	@Override

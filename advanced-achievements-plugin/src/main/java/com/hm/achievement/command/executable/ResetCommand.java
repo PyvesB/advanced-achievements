@@ -13,8 +13,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.StringHelper;
 
 /**
@@ -48,9 +46,9 @@ public class ResetCommand extends AbstractParsableCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langResetSuccessful = pluginHeader + LangHelper.get(CmdLang.RESET_SUCCESSFUL, langConfig);
-		langResetAllSuccessful = pluginHeader + LangHelper.get(CmdLang.RESET_ALL_SUCCESSFUL, langConfig);
-		langCategoryDoesNotExist = pluginHeader + LangHelper.get(CmdLang.CATEGORY_DOES_NOT_EXIST, langConfig);
+		langResetSuccessful = pluginHeader + langConfig.getString("reset-successful");
+		langResetAllSuccessful = pluginHeader + langConfig.getString("reset-all-successful");
+		langCategoryDoesNotExist = pluginHeader + langConfig.getString("category-does-not-exist");
 	}
 
 	@Override

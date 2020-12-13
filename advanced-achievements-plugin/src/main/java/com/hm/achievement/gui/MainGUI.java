@@ -18,8 +18,6 @@ import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.GuiLang;
-import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.NumberHelper;
 
@@ -57,7 +55,7 @@ public class MainGUI implements Reloadable {
 		configHideNotReceivedCategories = mainConfig.getBoolean("HideNotReceivedCategories");
 		configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories");
 
-		langListGUITitle = ChatColor.translateAlternateColorCodes('&', LangHelper.get(GuiLang.GUI_TITLE, langConfig));
+		langListGUITitle = ChatColor.translateAlternateColorCodes('&', langConfig.getString("list-gui-title"));
 	}
 
 	/**

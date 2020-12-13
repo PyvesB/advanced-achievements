@@ -15,9 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
-
 /**
  * Class in charge of handling the /aach toggle command, which allows a player to override the default behaviour of the
  * NotifyOtherPlayers parameter.
@@ -48,8 +45,8 @@ public class ToggleCommand extends AbstractCommand {
 
 		configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers");
 
-		langToggleDisplayed = pluginHeader + LangHelper.get(CmdLang.TOGGLE_DISPLAYED, langConfig);
-		langToggleHidden = pluginHeader + LangHelper.get(CmdLang.TOGGLE_HIDDEN, langConfig);
+		langToggleDisplayed = pluginHeader + langConfig.getString("toggle-displayed");
+		langToggleHidden = pluginHeader + langConfig.getString("toggle-hidden");
 	}
 
 	/**

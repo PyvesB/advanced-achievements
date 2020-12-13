@@ -18,9 +18,6 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.command.pagination.CommandPagination;
 import com.hm.achievement.db.AbstractDatabaseManager;
-import com.hm.achievement.lang.Lang;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.SoundPlayer;
 import com.hm.mcshared.particle.ParticleEffect;
 
@@ -41,7 +38,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
 	private final Logger logger;
 	private final int serverVersion;
-	private final Lang languageHeader;
+	private final String languageKey;
 	private final AbstractDatabaseManager databaseManager;
 	private final SoundPlayer soundPlayer;
 
@@ -59,12 +56,12 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private long lastCacheUpdate = 0L;
 
 	AbstractRankingCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, StringBuilder pluginHeader,
-			Logger logger, int serverVersion, Lang languageHeader, AbstractDatabaseManager databaseManager,
+			Logger logger, int serverVersion, String languageKey, AbstractDatabaseManager databaseManager,
 			SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.logger = logger;
 		this.serverVersion = serverVersion;
-		this.languageHeader = languageHeader;
+		this.languageKey = languageKey;
 		this.databaseManager = databaseManager;
 		this.soundPlayer = soundPlayer;
 	}
@@ -79,9 +76,9 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 		configSound = mainConfig.getBoolean("Sound");
 		configSoundRanking = mainConfig.getString("SoundRanking").toUpperCase();
 
-		langPeriodAchievement = pluginHeader + LangHelper.get(languageHeader, langConfig);
-		langPlayerRank = pluginHeader + LangHelper.get(CmdLang.PLAYER_RANK, langConfig) + " " + configColor;
-		langNotRanked = pluginHeader + LangHelper.get(CmdLang.NOT_RANKED, langConfig);
+		langPeriodAchievement = pluginHeader + langConfig.getString(languageKey);
+		langPlayerRank = pluginHeader + langConfig.getString("player-rank") + " " + configColor;
+		langNotRanked = pluginHeader + langConfig.getString("not-ranked");
 	}
 
 	@Override

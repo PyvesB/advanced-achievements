@@ -14,8 +14,6 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 
 /**
  * Class in charge of handling the /aach delete command, which deletes an achievement from a player.
@@ -50,9 +48,9 @@ public class DeleteCommand extends AbstractParsableCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langCheckAchievementFalse = pluginHeader + LangHelper.get(CmdLang.CHECK_ACHIEVEMENTS_FALSE, langConfig);
-		langDeleteAchievements = pluginHeader + LangHelper.get(CmdLang.DELETE_ACHIEVEMENTS, langConfig);
-		langAllDeleteAchievements = pluginHeader + LangHelper.get(CmdLang.DELETE_ALL_ACHIEVEMENTS, langConfig);
+		langCheckAchievementFalse = pluginHeader + langConfig.getString("check-achievements-false");
+		langDeleteAchievements = pluginHeader + langConfig.getString("delete-achievements");
+		langAllDeleteAchievements = pluginHeader + langConfig.getString("delete-all-achievements");
 	}
 
 	@Override

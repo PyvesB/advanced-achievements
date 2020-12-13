@@ -19,9 +19,6 @@ import com.hm.achievement.gui.CategoryGUI;
 import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.MainGUI;
 import com.hm.achievement.gui.OrderedCategory;
-import com.hm.achievement.lang.GuiLang;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.StringHelper;
 
 /**
@@ -52,7 +49,7 @@ public class ListCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		langCategoryDoesNotExist = pluginHeader + LangHelper.get(CmdLang.CATEGORY_DOES_NOT_EXIST, langConfig);
+		langCategoryDoesNotExist = pluginHeader + langConfig.getString("category-does-not-exist");
 	}
 
 	@Override
@@ -64,7 +61,7 @@ public class ListCommand extends AbstractCommand {
 		Player player = (Player) sender;
 
 		if (player.isSleeping()) {
-			sender.sendMessage(LangHelper.get(GuiLang.UNAVAILABLE_WHILST_SLEEPING, langConfig));
+			sender.sendMessage(langConfig.getString("list-unavailable-whilst-sleeping"));
 			return;
 		}
 

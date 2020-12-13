@@ -51,7 +51,7 @@ public class PluginCommandExecutorTest {
 
 	@Before
 	public void setUp() {
-		when(langConfig.getString(any(), any())).thenReturn(ERROR_MESSAGE);
+		when(langConfig.getString(any())).thenReturn(ERROR_MESSAGE);
 		Set<AbstractCommand> commands = new HashSet<>();
 		commands.add(helpCommand);
 		commands.add(listCommand);

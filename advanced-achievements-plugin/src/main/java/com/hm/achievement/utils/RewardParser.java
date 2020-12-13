@@ -22,8 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.RewardLang;
 import com.hm.achievement.lifecycle.Reloadable;
 
 import net.milkbowl.vault.economy.Economy;
@@ -68,12 +66,12 @@ public class RewardParser implements Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		langListRewardMoney = LangHelper.get(RewardLang.MONEY, langConfig);
-		langListRewardItem = LangHelper.get(RewardLang.ITEM, langConfig);
-		langListRewardCommand = LangHelper.get(RewardLang.COMMAND, langConfig);
-		langListRewardExperience = LangHelper.get(RewardLang.EXPERIENCE, langConfig);
-		langListRewardIncreaseMaxHealth = LangHelper.get(RewardLang.INCREASE_MAX_HEALTH, langConfig);
-		langListRewardIncreaseMaxOxygen = LangHelper.get(RewardLang.INCREASE_MAX_OXYGEN, langConfig);
+		langListRewardMoney = langConfig.getString("list-reward-money");
+		langListRewardItem = langConfig.getString("list-reward-item");
+		langListRewardCommand = langConfig.getString("list-reward-command");
+		langListRewardExperience = langConfig.getString("list-reward-experience");
+		langListRewardIncreaseMaxHealth = langConfig.getString("list-reward-increase-max-health");
+		langListRewardIncreaseMaxOxygen = langConfig.getString("list-reward-increase-max-oxygen");
 	}
 
 	public Economy getEconomy() {

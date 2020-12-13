@@ -15,8 +15,6 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.ListenerLang;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.particle.FancyMessageSender;
@@ -66,7 +64,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 			configCooldownActionBar = false;
 		}
 
-		langStatisticCooldown = LangHelper.get(ListenerLang.STATISTIC_COOLDOWN, langConfig);
+		langStatisticCooldown = langConfig.getString("statistic-cooldown");
 	}
 
 	@Override

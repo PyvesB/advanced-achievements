@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.TextStringBuilder;
 import org.bukkit.OfflinePlayer;
@@ -25,8 +26,6 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.command.pagination.SupplierCommandPagination;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
-import com.hm.achievement.lang.LangHelper;
-import com.hm.achievement.lang.command.CmdLang;
 import com.hm.achievement.utils.StringHelper;
 
 /**
@@ -77,7 +76,7 @@ public class InspectCommand extends AbstractCommand {
 		String achievementDisplayName = parseAchievementName(args).toLowerCase();
 		String achievementName = getAchievementName(achievementDisplayName);
 		if (achievementName == null) {
-			sender.sendMessage(pluginHeader + LangHelper.getEachReplaced(CmdLang.ACHIEVEMENT_NOT_RECOGNIZED, langConfig,
+			sender.sendMessage(pluginHeader + StringUtils.replaceEach(langConfig.getString("achievement_not_recognized"),
 					new String[] { "NAME", "CLOSEST_MATCH" }, new String[] { achievementDisplayName, StringHelper
 							.getClosestMatch(achievementDisplayName, displayNamesToNames.keySet()) }));
 			return;

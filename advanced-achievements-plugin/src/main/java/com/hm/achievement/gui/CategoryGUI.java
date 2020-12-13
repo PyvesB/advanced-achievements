@@ -30,8 +30,6 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lang.GuiLang;
-import com.hm.achievement.lang.LangHelper;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.NumberHelper;
 import com.hm.achievement.utils.RewardParser;
@@ -103,21 +101,20 @@ public class CategoryGUI implements Reloadable {
 		configListColorNotReceived = ChatColor.getByChar(mainConfig.getString("ListColorNotReceived"));
 		configFormatNotReceived = mainConfig.getBoolean("ListItaliciseNotReceived") ? "&o" : "";
 
-		langListGUITitle = translateColorCodes(LangHelper.get(GuiLang.GUI_TITLE, langConfig));
-		langListAchievementReceived = LangHelper.get(GuiLang.ACHIEVEMENT_RECEIVED, langConfig);
-		langListAchievementNotReceived = LangHelper.get(GuiLang.ACHIEVEMENT_NOT_RECEIVED, langConfig)
-				+ configListColorNotReceived;
-		String description = LangHelper.get(GuiLang.DESCRIPTION, langConfig);
+		langListGUITitle = translateColorCodes(langConfig.getString("list-gui-title"));
+		langListAchievementReceived = langConfig.getString("list-achievement-received");
+		langListAchievementNotReceived = langConfig.getString("list-achievement-not-received") + configListColorNotReceived;
+		String description = langConfig.getString("list-description");
 		langListDescription = description.isEmpty() ? "" : translateColorCodes("&7&l" + description);
-		String reception = LangHelper.get(GuiLang.RECEPTION, langConfig);
+		String reception = langConfig.getString("list-reception");
 		langListReception = reception.isEmpty() ? "" : translateColorCodes("&7&l" + reception);
-		String goal = LangHelper.get(GuiLang.GOAL, langConfig);
+		String goal = langConfig.getString("list-goal");
 		langListGoal = goal.isEmpty() ? "" : translateColorCodes("&7&l" + goal);
-		String progress = LangHelper.get(GuiLang.PROGRESS, langConfig);
+		String progress = langConfig.getString("list-progress");
 		langListProgress = progress.isEmpty() ? "" : translateColorCodes("&7&l" + progress);
-		String reward = LangHelper.get(GuiLang.REWARD, langConfig);
+		String reward = langConfig.getString("list-reward");
 		langListReward = reward.isEmpty() ? "" : translateColorCodes("&7&l" + reward);
-		String rewards = LangHelper.get(GuiLang.REWARDS, langConfig);
+		String rewards = langConfig.getString("list-rewards");
 		langListRewards = rewards.isEmpty() ? "" : translateColorCodes("&7&l" + rewards);
 	}
 
