@@ -21,11 +21,11 @@ import java.util.stream.IntStream;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -44,8 +44,11 @@ import com.hm.achievement.command.executable.Upgrade13Command;
 @ExtendWith(MockitoExtension.class)
 class CommandTabCompleterTest {
 
-	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
+	@Mock
 	private YamlConfiguration mainConfig;
+
+	@Mock
+	private ConfigurationSection configurationSection;
 
 	@Mock
 	private Command command;
@@ -73,8 +76,6 @@ class CommandTabCompleterTest {
 	@BeforeEach
 	void setUp() {
 		when(command.getName()).thenReturn("aach");
-
-		when(mainConfig.getConfigurationSection("Commands").getKeys(false)).thenReturn(singleton("myCommand"));
 
 		Set<AbstractCommand> commands = new HashSet<>();
 		commands.add(bookCommand);
@@ -205,6 +206,8 @@ class CommandTabCompleterTest {
 
 	@Test
 	void shoudCompleteForGiveCommand() {
+		when(mainConfig.getConfigurationSection("Commands")).thenReturn(configurationSection);
+		when(configurationSection.getKeys(false)).thenReturn(singleton("myCommand"));
 		String[] args = new String[] { "give", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
@@ -240,7 +243,8 @@ class CommandTabCompleterTest {
 	void shoudTruncateCompletionListOnOldServerVersionsIfOverFiftyElements() {
 		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptyMap(), emptySet(), emptySet(), 12);
 		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
-		when(mainConfig.getConfigurationSection("Commands").getKeys(false)).thenReturn(commands);
+		when(mainConfig.getConfigurationSection("Commands")).thenReturn(configurationSection);
+		when(configurationSection.getKeys(false)).thenReturn(commands);
 
 		String[] args = new String[] { "give", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
@@ -252,7 +256,8 @@ class CommandTabCompleterTest {
 	@Test
 	void shoudNotTruncateCompletionListIfRecentServerVersion() {
 		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
-		when(mainConfig.getConfigurationSection("Commands").getKeys(false)).thenReturn(commands);
+		when(mainConfig.getConfigurationSection("Commands")).thenReturn(configurationSection);
+		when(configurationSection.getKeys(false)).thenReturn(commands);
 
 		String[] args = new String[] { "give", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);

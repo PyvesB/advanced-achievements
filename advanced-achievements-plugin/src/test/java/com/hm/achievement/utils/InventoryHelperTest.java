@@ -8,18 +8,21 @@ import java.util.HashMap;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class InventoryHelperTest {
 
-	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
+	@Mock
 	private Player player;
+
+	@Mock
+	private PlayerInventory playerInventory;
 
 	@Mock
 	private ItemStack inputItemStack;
@@ -33,7 +36,8 @@ class InventoryHelperTest {
 		HashMap itemStacks = new HashMap<>();
 		itemStacks.put(1, existingItemStack);
 		itemStacks.put(2, existingItemStack);
-		when(player.getInventory().all(Material.STICK)).thenReturn(itemStacks);
+		when(player.getInventory()).thenReturn(playerInventory);
+		when(playerInventory.all(Material.STICK)).thenReturn(itemStacks);
 		when(existingItemStack.getAmount()).thenReturn(3, 6);
 		when(inputItemStack.getType()).thenReturn(Material.STICK);
 		when(inputItemStack.isSimilar(existingItemStack)).thenReturn(true, false);
