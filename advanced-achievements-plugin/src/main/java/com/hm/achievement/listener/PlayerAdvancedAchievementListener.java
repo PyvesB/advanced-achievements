@@ -479,7 +479,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			// simulate a firework.
 			soundPlayer.play(player, "ENTITY_FIREWORK_ROCKET_LAUNCH", "ENTITY_FIREWORK_ROCKET_LAUNCH",
 					"ENTITY_FIREWORK_LAUNCH");
-			if (serverVersion >= 13) {
+			if (serverVersion >= 9) {
 				player.spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 500, 0, 3, 0, 0.1f);
 			} else {
 				ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, player.getLocation(), 1);
@@ -513,7 +513,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 */
 	private void displaySimplifiedReception(Player player) {
 		soundPlayer.play(player, "ENTITY_PLAYER_LEVELUP", "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
-		if (serverVersion >= 13) {
+		if (serverVersion >= 9) {
 			player.spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 500, 0, 3, 0, 0.1f);
 		} else {
 			ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, player.getLocation(), 1);

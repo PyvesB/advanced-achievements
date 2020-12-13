@@ -1,7 +1,6 @@
 package com.hm.achievement.command.executable;
 
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,7 +30,6 @@ public class StatsCommand extends AbstractCommand {
 	// Minecraft font, used to get size information in the progress bar.
 	private static final MinecraftFont FONT = MinecraftFont.Font;
 
-	private final Logger logger;
 	private final int serverVersion;
 	private final CacheManager cacheManager;
 	private final Map<String, String> namesToDisplayNames;
@@ -47,11 +45,10 @@ public class StatsCommand extends AbstractCommand {
 
 	@Inject
 	public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			StringBuilder pluginHeader, Logger logger, int serverVersion, CacheManager cacheManager,
+			StringBuilder pluginHeader, int serverVersion, CacheManager cacheManager,
 			@Named("ntd") Map<String, String> namesToDisplayNames, SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.serverVersion = serverVersion;
-		this.logger = logger;
 		this.cacheManager = cacheManager;
 		this.namesToDisplayNames = namesToDisplayNames;
 		this.soundPlayer = soundPlayer;
@@ -115,14 +112,10 @@ public class StatsCommand extends AbstractCommand {
 		// Player has received all achievement; play special effect and sound.
 		if (playerAchievements >= totalAchievements) {
 			if (configAdditionalEffects) {
-				if (serverVersion >= 13) {
+				if (serverVersion >= 9) {
 					player.spawnParticle(Particle.SPELL_WITCH, player.getLocation(), 400, 0, 1, 0, 0.5f);
 				} else {
-					try {
-						ParticleEffect.SPELL_WITCH.display(0, 1, 0, 0.5f, 400, player.getLocation(), 1);
-					} catch (Exception e) {
-						logger.warning("Failed to display additional particle effects for stats command.");
-					}
+					ParticleEffect.SPELL_WITCH.display(0, 1, 0, 0.5f, 400, player.getLocation(), 1);
 				}
 			}
 

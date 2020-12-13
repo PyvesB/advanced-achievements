@@ -121,14 +121,10 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 			}
 			// Play special particle effect when receiving the book.
 			if (configAdditionalEffects) {
-				if (serverVersion >= 13) {
+				if (serverVersion >= 9) {
 					player.spawnParticle(Particle.ENCHANTMENT_TABLE, player.getLocation(), 1000, 0, 2, 0, 1);
 				} else {
-					try {
-						ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 100);
-					} catch (Exception e) {
-						logger.warning("Failed to display additional particle effects for books.");
-					}
+					ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 100);
 				}
 			}
 

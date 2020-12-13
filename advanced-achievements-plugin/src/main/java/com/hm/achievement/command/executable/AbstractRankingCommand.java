@@ -181,14 +181,10 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	 */
 	private void launchEffects(Player player) {
 		if (configAdditionalEffects) {
-			if (serverVersion >= 13) {
+			if (serverVersion >= 9) {
 				player.spawnParticle(Particle.PORTAL, player.getLocation(), 100, 0, 1, 0, 0.5f);
 			} else {
-				try {
-					ParticleEffect.PORTAL.display(0, 1, 0, 0.5f, 1000, player.getLocation(), 1);
-				} catch (Exception e) {
-					logger.warning("Failed to display additional particle effects for rankings.");
-				}
+				ParticleEffect.PORTAL.display(0, 1, 0, 0.5f, 1000, player.getLocation(), 1);
 			}
 		}
 
