@@ -1,6 +1,7 @@
 package com.hm.achievement.config;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,22 +13,28 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import utilities.MockUtility;
+import com.hm.achievement.AdvancedAchievements;
 
+@RunWith(MockitoJUnitRunner.class)
 public class YamlUpdaterTest {
 
 	@ClassRule
 	public static final TemporaryFolder TEMPORARY_FOLDER = new TemporaryFolder();
 
+	@Mock
+	private AdvancedAchievements plugin;
+
 	private YamlUpdater underTest;
 
 	@Before
 	public void setUp() throws Exception {
-		MockUtility mockUtility = MockUtility.setUp()
-				.withDataFolder(TEMPORARY_FOLDER.getRoot())
-				.withPluginFile("config-default.yml");
-		underTest = new YamlUpdater(mockUtility.getPluginMock());
+		when(plugin.getDataFolder()).thenReturn(TEMPORARY_FOLDER.getRoot());
+		when(plugin.getResource("config-default.yml")).thenReturn(getClass().getResourceAsStream("/config-default.yml"));
+		underTest = new YamlUpdater(plugin);
 	}
 
 	@Test

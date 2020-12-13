@@ -2,6 +2,7 @@ package com.hm.achievement.db;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Map;
@@ -14,11 +15,11 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
-
-import utilities.MockUtility;
 
 /**
  * Class for testing SQLite Database.
@@ -33,10 +34,9 @@ public class SQLiteDatabaseNullSafetyTest extends SQLiteDatabaseTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		MockUtility mockUtility = MockUtility.setUp()
-				.withDataFolder(temporaryFolder.getRoot())
-				.withPluginFile("config.yml");
-		initDB(mockUtility);
+		AdvancedAchievements plugin = Mockito.mock(AdvancedAchievements.class);
+		when(plugin.getDataFolder()).thenReturn(temporaryFolder.getRoot());
+		initDB(plugin);
 	}
 
 	@Before

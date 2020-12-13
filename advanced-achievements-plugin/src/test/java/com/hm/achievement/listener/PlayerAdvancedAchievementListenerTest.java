@@ -1,17 +1,21 @@
 package com.hm.achievement.listener;
 
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.junit.Before;
@@ -29,8 +33,6 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 import com.hm.achievement.utils.RewardParser;
 
-import utilities.MockUtility;
-
 /**
  * Class for testing PlayerAdvancedAchievementListener. Currently covers AllAchievementsReceivedRewards usage.
  *
@@ -46,12 +48,14 @@ public class PlayerAdvancedAchievementListenerTest {
 	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	@Mock
+	private Server server;
+	@Mock
 	private Player player;
 	@Mock
 	private AbstractDatabaseManager abstractDatabaseManager;
 	@Mock
 	private RewardParser rewardParser;
-
+	@Mock
 	private AdvancedAchievements plugin;
 
 	private PlayerAdvancedAchievementListener underTest;
@@ -61,22 +65,18 @@ public class PlayerAdvancedAchievementListenerTest {
 		Map<String, String> namesToDisplayNames = new HashMap<>();
 		namesToDisplayNames.put("connect_1", "Good Choice");
 		namesToDisplayNames.put("place_500_smooth_brick", "Stone Brick Layer");
-		MockUtility mockUtility = MockUtility.setUp()
-				.mockServer()
-				.withOnlinePlayers(player)
-				.withDataFolder(temporaryFolder.getRoot())
-				.withPluginFile("config-reward-reception.yml")
-				.withPluginFile("lang.yml");
-		plugin = mockUtility.getPluginMock();
-
-		YamlConfiguration mainConfig = mockUtility.getLoadedConfig("config-reward-reception.yml");
-		underTest = new PlayerAdvancedAchievementListener(mainConfig, mockUtility.getLoadedConfig("lang.yml"), 11,
-				mock(Logger.class), new StringBuilder(PLUGIN_HEADER),
-				new CacheManager(plugin, mainConfig, abstractDatabaseManager),
+		YamlConfiguration mainConfig = YamlConfiguration
+				.loadConfiguration(new InputStreamReader(getClass().getResourceAsStream("/config-reward-reception.yml")));
+		YamlConfiguration langConfig = YamlConfiguration
+				.loadConfiguration(new InputStreamReader(getClass().getResourceAsStream("/lang.yml")));
+		underTest = new PlayerAdvancedAchievementListener(mainConfig, langConfig, 11, mock(Logger.class),
+				new StringBuilder(PLUGIN_HEADER), new CacheManager(plugin, mainConfig, abstractDatabaseManager),
 				plugin, rewardParser, namesToDisplayNames, abstractDatabaseManager, null, null, null);
 		underTest.extractConfigurationParameters();
 		when(player.getUniqueId()).thenReturn(PLAYER_UUID);
 		when(player.getName()).thenReturn("DarkPyves");
+		when(plugin.getServer()).thenReturn(server);
+		doReturn(Arrays.asList(player)).when(server).getOnlinePlayers();
 	}
 
 	@Test

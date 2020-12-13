@@ -1,14 +1,16 @@
 package com.hm.achievement.db;
 
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Collections;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import com.google.common.util.concurrent.MoreExecutors;
+import org.bukkit.configuration.file.YamlConfiguration;
 
-import utilities.MockUtility;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.hm.achievement.AdvancedAchievements;
 
 public class SQLiteDatabaseTest {
 
@@ -18,10 +20,11 @@ public class SQLiteDatabaseTest {
 	final String testAchievement = "TestAchievement";
 	final String testAchievementMsg = "TestMessage";
 
-	static void initDB(MockUtility mockUtility) throws Exception {
+	static void initDB(AdvancedAchievements plugin) throws Exception {
 		Logger logger = Logger.getLogger("DBTestLogger");
-		db = new SQLiteDatabaseManager(mockUtility.getLoadedConfig("config.yml"), logger, Collections.emptyMap(),
-				new DatabaseUpdater(logger, null), mockUtility.getPluginMock()) {
+		YamlConfiguration config = YamlConfiguration
+				.loadConfiguration(new InputStreamReader(SQLiteDatabaseTest.class.getResourceAsStream("/config.yml")));
+		db = new SQLiteDatabaseManager(config, logger, Collections.emptyMap(), new DatabaseUpdater(logger, null), plugin) {
 
 			@Override
 			public void extractConfigurationParameters() {

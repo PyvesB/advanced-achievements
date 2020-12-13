@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.sql.Date;
 import java.util.Collections;
@@ -20,11 +21,11 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
-
-import utilities.MockUtility;
 
 /**
  * Class for testing SQLite Database.
@@ -39,10 +40,9 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		MockUtility mockUtility = MockUtility.setUp()
-				.withDataFolder(temporaryFolder.getRoot())
-				.withPluginFile("config.yml");
-		initDB(mockUtility);
+		AdvancedAchievements plugin = Mockito.mock(AdvancedAchievements.class);
+		when(plugin.getDataFolder()).thenReturn(temporaryFolder.getRoot());
+		initDB(plugin);
 	}
 
 	@Before
@@ -52,9 +52,7 @@ public class SQLiteDatabaseBasicTest extends SQLiteDatabaseTest {
 
 	@AfterClass
 	public static void tearDownClass() {
-		if (db != null) {
-			db.shutdown();
-		}
+		db.shutdown();
 	}
 
 	@Test

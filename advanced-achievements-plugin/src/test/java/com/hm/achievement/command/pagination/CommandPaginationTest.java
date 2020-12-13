@@ -2,6 +2,7 @@ package com.hm.achievement.command.pagination;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,8 +15,6 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import utilities.MockUtility;
 
 /**
  * Class for testing the command pagination utility.
@@ -39,12 +38,7 @@ public class CommandPaginationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		MockUtility mockUtility = MockUtility.setUp()
-				.withPluginDescription()
-				.withLogger()
-				.withDataFolder(temporaryFolder.getRoot())
-				.withPluginFile("lang.yml");
-		langConfig = mockUtility.getLoadedConfig("lang.yml");
+		langConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getResourceAsStream("/lang.yml")));
 	}
 
 	@Test
