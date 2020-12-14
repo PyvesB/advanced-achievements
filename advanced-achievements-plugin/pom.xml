@@ -51,6 +51,16 @@
 									<pattern>org.apache.commons</pattern>
 									<shadedPattern>com.hm.apache.commons</shadedPattern>
 								</relocation>
+								<!-- Reduce risks of conflicts with dependencies commonly used in 
+									other plugins. -->
+								<relocation>
+									<pattern>org.h2</pattern>
+									<shadedPattern>com.hm.h2</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>org.postgresql</pattern>
+									<shadedPattern>com.hm.postgresql</shadedPattern>
+								</relocation>
 								<relocation>
 									<pattern>dagger</pattern>
 									<shadedPattern>com.hm.dagger</shadedPattern>
