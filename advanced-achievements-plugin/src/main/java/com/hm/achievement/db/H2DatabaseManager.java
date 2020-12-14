@@ -24,5 +24,11 @@ public class H2DatabaseManager extends AbstractFileDatabaseManager {
 		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, advancedAchievements, "org.h2.Driver", "jdbc:h2:./"
 				+ new File(advancedAchievements.getDataFolder(), "achievements") + ";DATABASE_TO_UPPER=false;MODE=MySQL",
 				"achievements.mv.db");
+
+		// Convince Maven Shade that H2 is used to prevent full exclusion during minimisation.
+		@SuppressWarnings("unused")
+		Class<?>[] classes = new Class<?>[] {
+				org.h2.engine.Engine.class
+		};
 	}
 }

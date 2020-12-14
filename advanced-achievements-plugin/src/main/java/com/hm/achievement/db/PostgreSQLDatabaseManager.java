@@ -33,7 +33,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 	void performPreliminaryTasks() throws ClassNotFoundException, UnsupportedEncodingException {
 		super.performPreliminaryTasks();
 
-		// Make Maven Shade think that PostgreSQL is used to prevent full exclusion during minimisation.
+		// Convince Maven Shade that PostgreSQL is used to prevent full exclusion during minimisation.
 		@SuppressWarnings("unused")
 		Class<?>[] classes = new Class<?>[] {
 				org.postgresql.Driver.class

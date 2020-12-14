@@ -43,12 +43,6 @@
 										<include>**</include>
 									</includes>
 								</filter>
-								<filter>
-									<artifact>com.h2database:h2</artifact>
-									<includes>
-										<include>**</include>
-									</includes>
-								</filter>
 							</filters>
 							<relocations>
 								<!-- Older versions of Minecraft may ship antique builds of Apache 
