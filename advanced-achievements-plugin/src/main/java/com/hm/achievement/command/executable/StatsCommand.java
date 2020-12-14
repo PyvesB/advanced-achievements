@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
@@ -60,7 +61,7 @@ public class StatsCommand extends AbstractCommand {
 
 		// Load configuration parameters.
 		configColor = ChatColor.getByChar(mainConfig.getString("Color"));
-		configIcon = mainConfig.getString("Icon");
+		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
 		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
 		configSound = mainConfig.getBoolean("Sound");
 		configSoundStats = mainConfig.getString("SoundStats").toUpperCase();

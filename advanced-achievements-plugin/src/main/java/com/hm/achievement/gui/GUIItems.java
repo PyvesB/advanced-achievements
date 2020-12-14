@@ -13,6 +13,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -74,7 +75,7 @@ public class GUIItems implements Reloadable {
 	@Override
 	public void extractConfigurationParameters() throws PluginLoadError {
 		configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat");
-		configIcon = mainConfig.getString("Icon");
+		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
 
 		langListAchievementsInCategoryPlural = langConfig.getString("list-achievements-in-category-plural");
 		langListAchievementInCategorySingular = langConfig.getString("list-achievements-in-category-singular");
@@ -181,10 +182,12 @@ public class GUIItems implements Reloadable {
 	private ItemStack createButton(String category, String msg, String lore) {
 		ItemStack button = createItemStack(category);
 		ItemMeta meta = button.getItemMeta();
-		String displayName = ChatColor.translateAlternateColorCodes('&', langConfig.getString(msg));
+		String displayName = ChatColor.translateAlternateColorCodes('&',
+				StringEscapeUtils.unescapeJava(langConfig.getString(msg)));
 		meta.setDisplayName(displayName);
 		if (lore != null) {
-			String loreString = ChatColor.translateAlternateColorCodes('&', langConfig.getString(lore));
+			String loreString = ChatColor.translateAlternateColorCodes('&',
+					StringEscapeUtils.unescapeJava(langConfig.getString(lore)));
 			if (!loreString.isEmpty()) {
 				meta.setLore(Collections.singletonList(loreString));
 			}

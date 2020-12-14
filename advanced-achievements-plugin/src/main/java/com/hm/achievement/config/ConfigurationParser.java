@@ -17,6 +17,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -134,7 +135,7 @@ public class ConfigurationParser {
 	 */
 	private void parseHeader() {
 		pluginHeader.setLength(0);
-		String icon = mainConfig.getString("Icon");
+		String icon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
 		if (StringUtils.isNotBlank(icon)) {
 			String coloredIcon = ChatColor.getByChar(mainConfig.getString("Color")) + icon;
 			pluginHeader

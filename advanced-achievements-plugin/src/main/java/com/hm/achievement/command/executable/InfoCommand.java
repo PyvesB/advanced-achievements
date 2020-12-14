@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -51,7 +52,7 @@ public class InfoCommand extends AbstractCommand {
 		super.extractConfigurationParameters();
 
 		ChatColor configColor = ChatColor.getByChar(mainConfig.getString("Color"));
-		String configIcon = mainConfig.getString("Icon");
+		String configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
 		configDatabaseType = mainConfig.getString("DatabaseType");
 
 		header = configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ") + configColor
@@ -73,18 +74,18 @@ public class InfoCommand extends AbstractCommand {
 		// Display whether Advanced Achievements is linked to Vault.
 		String vaultState = rewardParser.getEconomy() != null ? "&a\u2714" : "&4\u2718";
 		langVersionCommandVault = pluginHeader.toString() + configColor + langConfig.getString("version-command-vault")
-				+ " " + ChatColor.GRAY + translateColorCodes(vaultState);
+				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(vaultState));
 
 		// Display whether Advanced Achievements is linked to Pet Master.
 		String petMasterState = Bukkit.getPluginManager().isPluginEnabled("PetMaster") ? "&a\u2714" : "&4\u2718";
 		langVersionCommandPetmaster = pluginHeader.toString() + configColor
 				+ langConfig.getString("version-command-petmaster") + " " + ChatColor.GRAY
-				+ translateColorCodes(petMasterState);
+				+ translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
 
 		// Display whether Advanced Achievements is linked to BungeeTabListPlus.
 		String btlpState = Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus") ? "&a\u2714" : "&4\u2718";
 		langVersionCommandBtlp = pluginHeader.toString() + configColor + langConfig.getString("version-command-btlp")
-				+ " " + ChatColor.GRAY + translateColorCodes(btlpState);
+				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(btlpState));
 
 		// Display whether Advanced Achievements is linked to Essentials.
 		boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials")
@@ -92,13 +93,13 @@ public class InfoCommand extends AbstractCommand {
 		String essentialsState = essentialsUsed ? "&a\u2714" : "&4\u2718";
 		langVersionCommandEssentials = pluginHeader.toString() + configColor
 				+ langConfig.getString("version-command-essentials") + " " + ChatColor.GRAY
-				+ translateColorCodes(essentialsState);
+				+ translateColorCodes(StringEscapeUtils.unescapeJava(essentialsState));
 
 		// Display whether Advanced Achievements is linked to PlaceholderAPI.
 		String placeholderAPIState = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "&a\u2714" : "&4\u2718";
 		langVersionCommandPlaceholderAPI = pluginHeader.toString() + configColor
 				+ langConfig.getString("version-command-placeholderapi") + " " + ChatColor.GRAY
-				+ translateColorCodes(placeholderAPIState);
+				+ translateColorCodes(StringEscapeUtils.unescapeJava(placeholderAPIState));
 
 		// Display database type.
 		String databaseType = getDatabaseType();
