@@ -1,0 +1,224 @@
+#===============================================================#
+# +-----------------------------------------------------------+ #
+# |  Advanceret Præsentationer Dansk oversættelse af tobi224c | #
+# |         ~ Gylden version fra ${project.version} ~         | #
+# |      Nyere plugin versioner vil automatisk tilføje nye    | #
+# |     ikke oversat parameterere til slutningen af filen.    | #
+# +-----------------------------------------------------------+ #
+#===============================================================#
+
+no-permissions: "Du har ikke tilladelse til at gøre dette."
+statistic-cooldown: "Præsentations nedkøling: vent TIME sekunder før denne aktion tæller igen."
+category-does-not-exist: "Kategorien og/eller underkategorien CAT eksisterer ikke. Mente du CLOSEST_MATCH?"
+all-achievements-received: "Tillykke, du har opnået alle præsentationer!"
+invalid-command: "Ugyldig kommando. Venligst skriv /aach for at få vist kommando hjælp."
+
+# Relateret til /aach reload.
+configuration-successfully-reloaded: "Konfiguration vellykket genindlæst."
+configuration-reload-failed: "Fejl da konfigurationen blev genindlæst. Tjek venligst logfilerne for flere detaljer."
+
+# Relateret til /aach top week og month.
+top-achievement: "Top præsentations ejere:"
+player-rank: "Nuværende rang:"
+week-achievement: "Ugentlige præsentations placeringer:"
+month-achievement: "Månedlige præsentations placeringer:"
+not-ranked: "Du er nuværende ikke rangeret for denne periode."
+pagination-header: "&7> &Side PAGE/MAX"
+pagination-footer: "&7>"
+
+# Relateret til /aach stats.
+number-achievements: "Præsentationer opnået:"
+
+# Relateret til /aach book.
+book-received: "Du modtagede din præsentations bog!"
+book-delay: "Du skal vente TIME imellem hver bog udgivelse!"
+book-name: "Præsentations Bog"
+book-date: "Bog fremstillet DATE."
+book-not-received: "Du har ikke modtaget nogen præsentationer endnu."
+
+# Relateret til /aach give.
+player-offline: "Spilleren PLAYER er offline!"
+not-a-player: "Du kan ikke give præsentationer til ENTITY, det er ikke en spiller!"
+achievement-already-received: "Spilleren PLAYER har allerede modtaget denne præsentation!"
+achievement-not-found: "Den specifikke præsentation var ikke fundet i kommando kategorien. Mente du CLOSEST_MATCH?"
+achievement-given: "Præsentation givet!"
+achievement-no-permission: "Spilleren PLAYER har ikke tilladelse til at modtage denne præsentation!"
+
+# Relateret til /aach add.
+error-value: "Værdien VALUE skal være en integer!"
+statistic-increased: "Statistisk ACH øget med AMOUNT for PLAYER!"
+
+# Relateret til achievement reception.
+achievement-received: "PLAYER modtagede præsentationen:"
+achievement-new: "Ny præsentation:"
+
+# Relateret til /aach check.
+check-achievement-true: "PLAYER har modtaget præsentationen ACH!"
+check-achievements-false: "PLAYER har ikke modtaget præsentationen ACH!"
+
+# Relateret til /aach delete.
+delete-achievements: "Præsentation ACH var slettet fra PLAYER."
+delete-all-achievements: "Alle præsentationer var slettet fra PLAYER."
+
+# Relateret til achievement rewards.
+item-reward-received: "Du modtog en genstands belønning: AMOUNT ITEM"
+money-reward-received: "Du modtog: AMOUNT!"
+command-reward: "Belønnings kommandoen udført!"
+custom-command-reward: "Du modtog din belønning: MESSAGE"
+experience-reward-received: "Du modtog: AMOUNT erfaring!"
+increase-max-health-reward-received: "Dit maksimale liv var øget med AMOUNT!"
+increase-max-oxygen-reward-received: "Dit maksimale oxygen var øget med AMOUNT!"
+
+# Relateret til /aach help.
+aach-command-book: "Modtag din præsentations bog."
+aach-command-book-hover: "RP genstande du kan samle og bytte med andre! Tids-baseret noteringer."
+aach-command-stats: "Vis mængde af opnåede præsentationer."
+aach-command-stats-hover: "Fremskridts bar. Gotta catch 'em all!"
+aach-command-list: "Vis modtagede of manglende præsentationer."
+aach-command-list-hover: "Fancy GUI til at få et overblik over alle dine præsentationer og dit fremskridt!"
+aach-command-top: "Viser personlig og global placering."
+aach-command-top-hover: "Hvem er serverens leadere og hvordan sammenligner du til dem?"
+aach-command-give: "Giv præsentationen ACH til NAME."
+aach-command-give-hover: "Spilleren skal være online; kun kommando præsentationer kan blive brugt."
+aach-command-add: "Øget en statistik."
+aach-command-add-hover: "Spilleren skal være online; hovedsagelig brugt for brugerdefinerede Kategorier."
+aach-command-reload: "Genindlæs pluginets konfiguration."
+aach-command-reload-hover: "Genindlæs de fleste indstillinger i config.yml, gui.yml og lang.yml filerne."
+aach-command-info: "Vis information omkring pluginnet."
+aach-command-info-hover: "Noget ekstra information omkring pluginnet samt dets fantastiske forfatter!"
+aach-command-check: "Tjek vis NAME har ACH."
+aach-command-check-hover: "Brug navne parameteret specificeret i config."
+aach-command-delete: "Slet ACH fra NAME."
+aach-command-delete-hover: "Spilleren skal være online; Nulstiller ikke nogen relaterede statistikker."
+aach-command-week: "Viser ugentlig placering."
+aach-command-week-hover: "Bedste præsentations jægere siden starten af denne uge!"
+aach-command-month: "Viser månedlig placering."
+aach-command-month-hover: "Bedste præsentations jægere siden starten af denne month!"
+aach-command-toggle: "Slå andre spillereres præsentationer til og fra."
+aach-command-toggle-hover: "Dit valg er gemt til næste server genstart!"
+aach-command-reset: "Nulstil statistik for kategorien CAT."
+aach-command-reset-hover: "Spilleren skal være online; eksempel: nulstil Places.stone DarkPyves"
+aach-command-generate: "Generere præsentationer."
+aach-command-generate-hover: "Potentiel langsom kommando; brug med forsigtighed!"
+aach-command-inspect: "Inspicer modtager af ACH."
+aach-command-inspect-hover: "Lister de mest nye modtagerere af en præsentation, maks 1000."
+aach-tip: "&lTIP &8Du kan &7&n&osvæve over&8 eller &7&n&klikke&8 på en kommando!"
+
+# Relateret til /aach info.
+version-command-version: "Version:"
+version-command-website: "Hjemmeside:"
+version-command-author: "Forfatter:"
+version-command-description: "Beskrivelse:"
+version-command-description-details: "Advanceret Præsentationer muliggør unikke og udfordrende præsentationer. Prøv at samle så mange som du kan, få belønninger, stig i placering og modtag RP bøger!"
+version-command-vault: "Vault integration:"
+version-command-petmaster: "Pet Master integration:"
+version-command-btlp: "BungeeTabListPlus integration:"
+version-command-essentials: "Essentials integration:"
+version-command-placeholderapi: "PlaceholderAPI integration:"
+version-command-database: "Database type:"
+
+# Relateret til /aach list.
+list-gui-title: "&5&Præsentations Liste"
+list-delay: "Du skal vente TIME sekunder imellem hver list kommando!"
+list-description: "Beskrivelse:"
+list-goal: "Mål:"
+list-reception: "Receptions dato:"
+list-progress: "Fremskidt:"
+list-reward: "Belønning:"
+list-rewards: "Belønninger:"
+list-reward-money: "Modtag AMOUNT"
+list-reward-item: "Modtag AMOUNT ITEM"
+list-reward-command: "Anden"
+list-reward-experience: "Modtag AMOUNT erfaring"
+list-reward-increase-max-health: "Øg maks liv med AMOUNT"
+list-reward-increase-max-oxygen: "Øg maks oxygen med AMOUNT"
+list-achievement-received: "&5\u2714&f "
+list-achievement-not-received: "&4\u2718 "
+list-category-not-unlocked: "Du har ikke opnået denne kategori endnu."
+list-achievement-not-unlocked: "Du har ikke opnået denne præsentation endnu."
+list-back-message: "&7Tilbage"
+list-back-lore: ""
+list-previous-message: "&7Tidligere"
+list-previous-lore: ""
+list-next-message: "&7Næste"
+list-next-lore: ""
+list-achievements-in-category-singular: "AMOUNT præsentation"
+list-achievements-in-category-plural: "AMOUNT præsentationer"
+list-unavailable-whilst-sleeping: "&c&lDu kan ikke åbne præsentations listen imens du sover."
+
+# Relateret til kategori navne i /aach list.
+# Sæt en parametre til "" for at skjule den fra /aach list (men ikke deaktivere kategorien).
+list-connections: "Forbindelser"
+list-places: "Blokke placeret"
+list-breaks: "Blokke smadret"
+list-kills: "Entities dræbt"
+list-crafts: "Genstande udformet"
+list-playercommands: "Kommandoer indtastet"
+list-deaths: "Mængde af dødfald"
+list-arrows: "Pile affyret"
+list-snowballs: "Snebolde kastet"
+list-eggs: "Æg kastet"
+list-fish: "Fisk fanget"
+list-treasure: "Skatte fisket op"
+list-itembreaks: "Genstande smadret"
+list-eatenitems: "Genstande spist"
+list-shear: "Får klippet"
+list-milk: "Køer mælket"
+list-lavabuckets: "Spande fyldt med lava"
+list-waterbuckets: "Spande fyldt med vand"
+list-trades: "Mængde handler foretaget"
+list-anvils: "Ambolter brugt"
+list-enchantments: "Genstande fortryllet"
+list-beds: "Senge sovet i"
+list-maxlevel: "Maks niveau opnået"
+list-potions: "Potions drukket"
+list-playedtime: "Tid Spillet"
+list-distance-foot: "Distance rejst ved fod"
+list-distance-pig: "Distance rejst på en gris"
+list-distance-horse: "Distance rejst på en hest"
+list-distance-minecart: "Distance rejst i en minevogn"
+list-distance-boat: "Distance  rejst i en båd"
+list-distance-gliding: "Distance  rejst med en Elytra"
+list-distance-llama: "Distance  rejst på en lama"
+list-distance-sneaking: "Distance  rejst mens du sneg"
+list-itemdrops: "Genstande tabt"
+list-itempickups: "Genstande samlet op"
+list-hoeplowings: "Overflade pløjet"
+list-fertilising: "Planter befrugtet"
+list-taming: "Dyr tæmmet"
+list-breeding: "Dyr opdrættet"
+list-brewing: "Potions brygget"
+list-fireworks: "Fyrværkeri lanceret"
+list-musicdiscs: "Musik diske spillet"
+list-enderpearls: "Teleportationer med Ender Perler"
+list-petmastergive: "Kæledyr givet til en anden spiller"
+list-petmasterreceive: "Kæledyr modtaget fra en anden spiller"
+list-smelting: "Genstande smeltet"
+list-commands: "Andre præsentationer"
+list-custom: "Brugerdefinerede kategorier"
+list-targetsshot: "Mål skudt"
+list-raids-won: "Raids vundet"
+list-riptides: "Riptides brugt"
+list-jobsreborn: "Jobs niveau forhøjet"
+list-advancements-completed: "præsentationer færdiggjort"
+
+# Relateret til /aach toggle.
+toggle-displayed: "Du vil nu blive underrettet når andre spillere får præsentationer."
+toggle-hidden: "Du vil ikke længere blive underrettet når andre spillere får præsentationer."
+
+# Relateret til /aach reset.
+reset-successful: "CAT statistikker var ryddet for PLAYER."
+reset-all-successful: "Alle statistikker var ryddet for PLAYER."
+
+# Relateret til /aach generate.
+advancements-generated: "præsentationer var vellykket genereret."
+minecraft-not-supported: "Præsentationer ikke understøttet i din Minecraft version. Venligst opdater til 1.12+."
+
+# Relateret til /aach inspect
+achievement-not-recognized: "Præsentation kaldet 'NAME' var ikke genkedt. Mente du CLOSEST_MATCH?"
+
+#============================================================#
+# +--------------------------------------------------------+ #
+# |Parametre i fremtidige plugin versioner vil dukke op her| #
+# +--------------------------------------------------------+ #
+#============================================================#
