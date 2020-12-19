@@ -26,6 +26,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.MaterialHelper;
+import com.hm.achievement.utils.StringHelper;
 
 /**
  * Class providing all the items displayed in the GUIs.
@@ -93,7 +94,7 @@ public class GUIItems implements Reloadable {
 						.size();
 			}
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, langConfig.getString(category.toLangKey()), totalAchievements);
+			buildItemLore(itemStack, categoryName, totalAchievements);
 			orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
 		}
 
@@ -101,16 +102,15 @@ public class GUIItems implements Reloadable {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, langConfig.getString(category.toLangKey()),
-					mainConfig.getConfigurationSection(categoryName).getKeys(false).size());
+			buildItemLore(itemStack, categoryName, mainConfig.getConfigurationSection(categoryName).getKeys(false).size());
 			orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
 		}
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
-		ItemStack itemStack = createItemStack(CommandAchievements.COMMANDS.toString());
-		buildItemLore(itemStack, langConfig.getString(CommandAchievements.COMMANDS.toLangKey()),
-				mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString()).getKeys(false).size());
-		orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(CommandAchievements.COMMANDS.toString()),
+		String categoryName = CommandAchievements.COMMANDS.toString();
+		ItemStack itemStack = createItemStack(categoryName);
+		buildItemLore(itemStack, categoryName, mainConfig.getConfigurationSection(categoryName).getKeys(false).size());
+		orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName),
 				CommandAchievements.COMMANDS), itemStack);
 
 		if (serverVersion >= 13) {
@@ -200,11 +200,14 @@ public class GUIItems implements Reloadable {
 	 * Sets the metadata of an ItemStack representing a category in the main GUI.
 	 *
 	 * @param item
-	 * @param displayName
+	 * @param categoryName
 	 * @param totalAchievements
 	 */
-	private void buildItemLore(ItemStack item, String displayName, int totalAchievements) {
+	private void buildItemLore(ItemStack item, String categoryName, int totalAchievements) {
 		ItemMeta itemMeta = item.getItemMeta();
+		// Some lang.yml keys differ slightly for the category name (e.g. Treasure*s* -> list-treasure).
+		String langKey = StringHelper.getClosestMatch("list-" + categoryName.toLowerCase(), langConfig.getKeys(false));
+		String displayName = langConfig.getString(langKey);
 		// Construct title of the category item.
 		if (StringUtils.isBlank(displayName)) {
 			itemMeta.setDisplayName("");

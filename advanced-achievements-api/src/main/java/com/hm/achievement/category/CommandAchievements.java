@@ -33,12 +33,4 @@ public class CommandAchievements implements Category {
 	public String toPermName() {
 		return "";
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toLangKey() {
-		return "list-commands";
-	}
 }

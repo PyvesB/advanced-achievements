@@ -44,9 +44,13 @@ public interface Category {
 	/**
 	 * Converts to the key in the language file.
 	 *
+	 * @deprecated this is effectively an internal implementation detail.
 	 * @return the language configuration key
 	 */
-	String toLangKey();
+	@Deprecated
+	default String toLangKey() {
+		return "";
+	}
 
 	/**
 	 * Converts to the default message that is returned, if key is not found in the configuration.
