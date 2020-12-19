@@ -40,7 +40,7 @@
 
 * [Wiki](https://github.com/PyvesB/advanced-achievements/wiki), a lot of valuable information on how to set the plugin up and use it properly.
 
-* [Translations](https://github.com/PyvesB/advanced-achievements/tree/master/advanced-achievements-plugin/src/main/resources), 18 languages available, feel free to improve them!
+* [Translations](https://github.com/PyvesB/advanced-achievements/tree/master/advanced-achievements-plugin/src/main/resources), 19 languages available, feel free to improve them!
 
 ## :star: Support and feedback
 
