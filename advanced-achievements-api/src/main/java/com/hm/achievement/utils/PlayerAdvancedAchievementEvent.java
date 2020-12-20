@@ -1,9 +1,7 @@
 package com.hm.achievement.utils;
 
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -89,28 +87,12 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 		return type;
 	}
 
-	/**
-	 * @deprecated use {@link #getCommandMessages()} instead
-	 */
-	@Deprecated
-	public String getCommandMessage() {
-		return StringUtils.join(commandMessages, ' ');
-	}
-
 	public List<String> getCommandMessages() {
 		return commandMessages;
 	}
 
 	public String[] getCommandRewards() {
 		return commandRewards;
-	}
-
-	/**
-	 * @deprecated use {@link #getItemRewards()} instead
-	 */
-	@Deprecated
-	public ItemStack getItemReward() {
-		return itemRewards == null || itemRewards.length == 0 ? null : itemRewards[0];
 	}
 
 	public ItemStack[] getItemRewards() {
@@ -173,15 +155,6 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 			return this;
 		}
 
-		/**
-		 * @deprecated use {@link #commandMessage(List)} instead
-		 */
-		@Deprecated
-		public PlayerAdvancedAchievementEventBuilder commandMessage(String commandMessage) {
-			this.commandMessage = Collections.singletonList(commandMessage);
-			return this;
-		}
-
 		public PlayerAdvancedAchievementEventBuilder commandMessage(List<String> commandMessage) {
 			this.commandMessage = commandMessage;
 			return this;
@@ -189,15 +162,6 @@ public class PlayerAdvancedAchievementEvent extends Event implements Cancellable
 
 		public PlayerAdvancedAchievementEventBuilder commandRewards(String[] commandRewards) {
 			this.commandRewards = commandRewards;
-			return this;
-		}
-
-		/**
-		 * @deprecated use {@link #itemRewards(ItemStack[])} instead
-		 */
-		@Deprecated
-		public PlayerAdvancedAchievementEventBuilder itemReward(ItemStack itemReward) {
-			this.itemRewards = new ItemStack[] { itemReward };
 			return this;
 		}
 
