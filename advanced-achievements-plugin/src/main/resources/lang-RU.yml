@@ -175,7 +175,7 @@ list-anvils: Починенные предметы
 list-enchantments: Зачарованные предметы
 list-beds: Сон
 list-maxlevel: Уровень
-list-potions: Выпитые зелья
+list-consumedpotions: Выпитые зелья
 list-playedtime: Проведенное на сервере время
 list-distance-foot: Пройденное расстояние на своих двоих
 list-distance-pig: Пройденное расстояние верхом на свинье

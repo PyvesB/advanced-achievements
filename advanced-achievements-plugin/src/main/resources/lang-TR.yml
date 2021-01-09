@@ -172,7 +172,7 @@ list-anvils: Örs Kullanım Başarımları
 list-enchantments: Eşyalara Büyü Basımları
 list-beds: Yatağa Girme Başarımları
 list-maxlevel: Seviye Başarımları
-list-potions: Kullanılan Büyü Başarımları
+list-consumedpotions: Kullanılan Büyü Başarımları
 list-playedtime: Oyunda Kalma Süresi Başarımları
 list-distance-foot: Yürüme Başarımları
 list-distance-pig: Domuz ile Yürüme Başarımları
