@@ -425,7 +425,7 @@ PlayerCommands:
       DisplayName: Statistician
       Type: normal
       Rewards:
-        Commands:
+        Command:
           Execute: say §7PLAYER is now a statistician
           Display: Broadcast
 

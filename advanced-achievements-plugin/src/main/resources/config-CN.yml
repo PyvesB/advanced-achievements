@@ -395,7 +395,7 @@ PlayerCommands:
       Name: playercommand_aachstats_10
       DisplayName: 统 计 学 家
       Rewards:
-        Commands:
+        Command:
           Execute: say §7PLAYER 成为了 带 统 计 学 家
           Display: Broadcast
 
