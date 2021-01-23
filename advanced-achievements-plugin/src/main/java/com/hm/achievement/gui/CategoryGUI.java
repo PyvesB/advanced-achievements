@@ -46,7 +46,7 @@ import com.hm.achievement.utils.StringHelper;
 public class CategoryGUI implements Reloadable {
 
 	private static final int MAX_PAGE_SIZE = 54;
-	private static final int MAX_ACHIEVEMENTS_PER_PAGE = 50;
+	private static final int MAX_ACHIEVEMENTS_PER_PAGE = 44;
 	private static final long NO_STAT = -1L;
 	private static final String NO_SUBCATEGORY = "";
 	private static final int PROGRESS_BAR_SIZE = 90;
@@ -161,11 +161,10 @@ public class CategoryGUI implements Reloadable {
 		int pageIndex = getPageIndex(requestedIndex, achievements.size());
 		int pageStart = MAX_ACHIEVEMENTS_PER_PAGE * pageIndex;
 		int pageEnd = Math.min(MAX_ACHIEVEMENTS_PER_PAGE * (pageIndex + 1), achievements.size());
-		int navigationItems = achievements.size() > MAX_ACHIEVEMENTS_PER_PAGE ? 3 : 1;
 
 		// Create a new chest-like inventory as small as possible whilst still containing the category item, all page
-		// achievements and the navigation items.
-		int guiSize = Math.min(NumberHelper.nextMultipleOf9(achievements.size() + navigationItems + 1), MAX_PAGE_SIZE);
+		// achievements and an entire row for the navigation items.
+		int guiSize = Math.min(NumberHelper.nextMultipleOf9(achievements.size() + 10), MAX_PAGE_SIZE);
 		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder(pageIndex);
 		Inventory inventory = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
 		inventoryHolder.setInventory(inventory);
@@ -218,12 +217,12 @@ public class CategoryGUI implements Reloadable {
 			previousSubcategory = achievement.getSubcategory();
 		}
 		// Add navigation items.
-		if (navigationItems > 1) {
-			inventory.setItem(pageEnd - pageStart + 1, guiItems.getPreviousButton());
-			inventory.setItem(pageEnd - pageStart + 2, guiItems.getNextButton());
-			inventory.setItem(pageEnd - pageStart + 3, guiItems.getBackButton());
+		if (achievements.size() > MAX_ACHIEVEMENTS_PER_PAGE) {
+			inventory.setItem(guiSize - 9, guiItems.getPreviousButton());
+			inventory.setItem(guiSize - 5, guiItems.getBackButton());
+			inventory.setItem(guiSize - 1, guiItems.getNextButton());
 		} else {
-			inventory.setItem(pageEnd - pageStart + 1, guiItems.getBackButton());
+			inventory.setItem(guiSize - 5, guiItems.getBackButton());
 		}
 
 		// Display page.
