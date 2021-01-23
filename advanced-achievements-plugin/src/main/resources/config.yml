@@ -155,6 +155,10 @@ BookChronologicalOrder: true
 # Do not take into account items broken with Silk Touch for the Breaks achievements.
 DisableSilkTouchBreaks: false
 
+# By default, the back button in the GUI returns to the listing of all categories. Use this option if you want to 
+# run a command instead. PLAYER placeholder is supported. 
+OverrideBackButtonBehaviour: ""
+
 # Do not take into account ores broken with Silk Touch for the Breaks achievements.
 # DisableSilkTouchBreaks takes precedence over this. Not applicable to iron or gold ores.
 DisableSilkTouchOreBreaks: false

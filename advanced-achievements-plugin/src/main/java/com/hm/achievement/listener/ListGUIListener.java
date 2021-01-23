@@ -8,8 +8,12 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,13 +38,16 @@ import com.hm.achievement.gui.MainGUI;
 @Singleton
 public class ListGUIListener implements Listener {
 
+	private final YamlConfiguration mainConfig;
 	private final Set<Category> disabledCategories;
 	private final MainGUI mainGUI;
 	private final CategoryGUI categoryGUI;
 	private final GUIItems guiItems;
 
 	@Inject
-	public ListGUIListener(Set<Category> disabledCategories, MainGUI mainGUI, CategoryGUI categoryGUI, GUIItems guiItems) {
+	public ListGUIListener(@Named("main") YamlConfiguration mainConfig, Set<Category> disabledCategories, MainGUI mainGUI,
+			CategoryGUI categoryGUI, GUIItems guiItems) {
+		this.mainConfig = mainConfig;
 		this.disabledCategories = disabledCategories;
 		this.mainGUI = mainGUI;
 		this.categoryGUI = categoryGUI;
@@ -76,7 +83,13 @@ public class ListGUIListener implements Listener {
 		ItemStack categoryItem = inventory.getItem(0);
 		// Check whether a navigation button was clicked in a category GUI.
 		if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getBackButton())) {
-			mainGUI.displayMainGUI(player);
+			String command = mainConfig.getString("OverrideBackButtonBehaviour");
+			if (StringUtils.isBlank(command)) {
+				mainGUI.displayMainGUI(player);
+			} else {
+				Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),
+						StringUtils.replace(command, "PLAYER", player.getName()));
+			}
 		} else if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getPreviousButton())) {
 			categoryGUI.displayCategoryGUI(categoryItem, player, currentPage - 1);
 		} else if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getNextButton())) {
