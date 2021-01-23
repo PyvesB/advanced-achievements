@@ -77,12 +77,15 @@ public class RewardParser {
 	 */
 	public List<Reward> parseRewards(String path) {
 		ConfigurationSection configSection = mainConfig.getConfigurationSection(path + ".Reward");
+		if (configSection == null) {
+			configSection = mainConfig.getConfigurationSection(path + ".Rewards");
+		}
 		List<Reward> rewards = new ArrayList<>();
 		if (configSection != null) {
 			if (economy != null && configSection.contains("Money")) {
 				rewards.add(parseMoneyReward(configSection));
 			}
-			if (configSection.contains("Item")) {
+			if (configSection.contains("Item") || configSection.contains("Items")) {
 				rewards.add(parseItemReward(configSection));
 			}
 			if (configSection.contains("Experience")) {
@@ -94,7 +97,7 @@ public class RewardParser {
 			if (configSection.contains("IncreaseMaxOxygen")) {
 				rewards.add(parseIncreaseMaxOxygenReward(configSection));
 			}
-			if (configSection.contains("Command")) {
+			if (configSection.contains("Command") || configSection.contains("Commands")) {
 				rewards.add(parseCommandReward(configSection));
 			}
 		}
@@ -117,9 +120,9 @@ public class RewardParser {
 		List<String> listTexts = new ArrayList<>();
 		List<String> chatTexts = new ArrayList<>();
 		List<ItemStack> items = new ArrayList<>();
-		String itemString = StringUtils.normalizeSpace(configSection.getString("Item", ""));
 
-		String[] itemStrings = MULTIPLE_REWARDS_SPLITTER.split(itemString);
+		String itemString = configSection.getString("Item", configSection.getString("Items", ""));
+		String[] itemStrings = MULTIPLE_REWARDS_SPLITTER.split(StringUtils.normalizeSpace(itemString));
 		for (int i = 0; i < itemStrings.length; i++) {
 			if (!itemStrings[i].contains(" ")) {
 				continue;
@@ -239,8 +242,8 @@ public class RewardParser {
 	 * @return the array containing the commands to be performed as a reward
 	 */
 	private List<String> getCommandRewards(ConfigurationSection configSection, Player player) {
-		String searchFrom = "Command";
-		if (configSection.isConfigurationSection("Command")) {
+		String searchFrom = configSection.contains("Command") ? "Command" : "Commands";
+		if (configSection.isConfigurationSection(searchFrom)) {
 			searchFrom += ".Execute";
 		}
 
