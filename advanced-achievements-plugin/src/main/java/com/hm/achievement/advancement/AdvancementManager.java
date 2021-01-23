@@ -2,7 +2,6 @@ package com.hm.achievement.advancement;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -23,7 +22,8 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancementBuilder;
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.CommandAchievements;
-import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.OrderedCategory;
 import com.hm.achievement.lifecycle.Reloadable;
@@ -60,9 +60,9 @@ public class AdvancementManager implements Reloadable {
 	private final GUIItems guiItems;
 	private final AdvancedAchievements advancedAchievements;
 	private final Logger logger;
-	private final Map<String, List<Long>> sortedThresholds;
 	private final Set<Category> disabledCategories;
 	private final int serverVersion;
+	private final AchievementMap achievementMap;
 
 	private boolean configRegisterAdvancementDescriptions;
 	private boolean configHideAdvancements;
@@ -71,16 +71,15 @@ public class AdvancementManager implements Reloadable {
 	private int generatedAdvancements;
 
 	@Inject
-	public AdvancementManager(@Named("main") YamlConfiguration mainConfig, GUIItems guiItems,
-			AdvancedAchievements advancedAchievements, Logger logger, Map<String, List<Long>> sortedThresholds,
-			Set<Category> disabledCategories, int serverVersion) {
+	public AdvancementManager(@Named("main") YamlConfiguration mainConfig, GUIItems guiItems, AchievementMap achievementMap,
+			AdvancedAchievements advancedAchievements, Logger logger, Set<Category> disabledCategories, int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.guiItems = guiItems;
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
-		this.sortedThresholds = sortedThresholds;
 		this.disabledCategories = disabledCategories;
 		this.serverVersion = serverVersion;
+		this.achievementMap = achievementMap;
 	}
 
 	@Override
@@ -171,17 +170,14 @@ public class AdvancementManager implements Reloadable {
 				continue;
 			}
 			ItemStack item = categoryItemPair.getValue();
-			if (category == CommandAchievements.COMMANDS) {
-				String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
-				for (String ach : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
-					parentKey = registerAdvancement(item, category + "." + ach, parentKey, true);
-				}
-			} else if (category instanceof MultipleAchievements) {
-				for (String subcategory : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
-					registerCategoryAdvancements(item, category + "." + subcategory);
-				}
-			} else {
-				registerCategoryAdvancements(item, category.toString());
+			String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
+			List<Achievement> categoryAchievements = achievementMap.getForCategory(category);
+			for (int i = 0; i < categoryAchievements.size(); ++i) {
+				Achievement achievement = categoryAchievements.get(i);
+				boolean last = achievement.getCategory() == CommandAchievements.COMMANDS
+						|| i == categoryAchievements.size() - 1
+						|| !achievement.getSubcategory().equals(categoryAchievements.get(i + 1).getSubcategory());
+				parentKey = registerAdvancement(item, categoryAchievements.get(i), parentKey, last);
 			}
 		}
 		Bukkit.reloadData();
@@ -189,55 +185,29 @@ public class AdvancementManager implements Reloadable {
 	}
 
 	/**
-	 * Registers all advancements for a given category or subcategory.
-	 * 
-	 * @param item
-	 * @param categorySubcategory
-	 */
-	private void registerCategoryAdvancements(ItemStack item, String categorySubcategory) {
-		List<Long> orderedThresholds = sortedThresholds.get(categorySubcategory);
-		String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
-		// Advancements are registered as a branch with increasing threshold values.
-		for (int i = 0; i < orderedThresholds.size(); ++i) {
-			boolean last = (i == orderedThresholds.size() - 1);
-			parentKey = registerAdvancement(item, categorySubcategory + "." + orderedThresholds.get(i), parentKey, last);
-		}
-	}
-
-	/**
 	 * Registers an individual advancement.
 	 * 
 	 * @param item
-	 * @param configAchievement
+	 * @param achievement
 	 * @param parentKey
 	 * @param lastAchievement
 	 * @return the key of the registered achievement
 	 */
-	private String registerAdvancement(ItemStack item, String configAchievement, String parentKey, boolean lastAchievement) {
-		String achName = mainConfig.getString(configAchievement + ".Name");
-		String achDisplayName = mainConfig.getString(configAchievement + ".DisplayName");
-		if (StringUtils.isEmpty(achDisplayName)) {
-			achDisplayName = achName;
-		}
-		// Strip colours as the advancements interface does not support them.
-		achDisplayName = StringHelper.removeFormattingCodes(achDisplayName);
+	private String registerAdvancement(ItemStack item, Achievement achievement, String parentKey, boolean lastAchievement) {
+		// Strip formatting codes as the advancements interface does not support them.
+		String displayName = StringHelper.removeFormattingCodes(achievement.getDisplayName());
 
-		String achKey = getKey(achName);
+		String achKey = getKey(achievement.getName());
 		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, achKey);
 		String description = "";
 		if (configRegisterAdvancementDescriptions) {
-			// Give priority to the goal to stick with Vanilla naming of advancements. Advancement descriptions do not
-			// support multiline goals.
-			description = StringUtils.replace(mainConfig.getString(configAchievement + ".Goal"), "\\n", " ");
-			if (!StringUtils.isNotBlank(description)) {
-				description = mainConfig.getString(configAchievement + ".Message");
-			}
-			description = StringHelper.removeFormattingCodes(description);
+			// Advancement descriptions do not support multiline goals.
+			description = StringHelper.removeFormattingCodes(StringUtils.replace(achievement.getGoal(), "\\n", " "));
 		}
 
 		AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
 				.iconItem(serverVersion == 12 ? getInternalName(item) : item.getType().name().toLowerCase())
-				.title(achDisplayName)
+				.title(displayName)
 				.description(description)
 				.parent("advancedachievements:" + parentKey)
 				.type(lastAchievement ? AdvancementType.CHALLENGE : AdvancementType.TASK);

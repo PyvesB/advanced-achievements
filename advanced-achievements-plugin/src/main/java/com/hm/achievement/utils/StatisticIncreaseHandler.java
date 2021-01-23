@@ -2,7 +2,6 @@ package com.hm.achievement.utils;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -15,9 +14,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.Category;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
 
 /**
  * Abstract class in charge of factoring out common functionality for classes which track statistic increases (such as
@@ -30,7 +30,7 @@ public class StatisticIncreaseHandler implements Reloadable {
 
 	protected final YamlConfiguration mainConfig;
 	protected final int serverVersion;
-	protected final Map<String, List<Long>> sortedThresholds;
+	protected final AchievementMap achievementMap;
 	protected final CacheManager cacheManager;
 	protected final RewardParser rewardParser;
 
@@ -41,10 +41,10 @@ public class StatisticIncreaseHandler implements Reloadable {
 
 	@Inject
 	public StatisticIncreaseHandler(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
+			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser) {
 		this.mainConfig = mainConfig;
 		this.serverVersion = serverVersion;
-		this.sortedThresholds = sortedThresholds;
+		this.achievementMap = achievementMap;
 		this.cacheManager = cacheManager;
 		this.rewardParser = rewardParser;
 	}
@@ -66,36 +66,36 @@ public class StatisticIncreaseHandler implements Reloadable {
 	 * wasn't previously received.
 	 * 
 	 * @param player
-	 * @param categorySubcategory
+	 * @param category
 	 * @param currentValue
 	 */
-	public void checkThresholdsAndAchievements(Player player, String categorySubcategory, long currentValue) {
-		// Iterate through all the different thresholds.
-		for (long threshold : sortedThresholds.get(categorySubcategory)) {
-			// Check whether player has met the threshold.
-			if (currentValue >= threshold) {
-				String achievementPath = categorySubcategory + "." + threshold;
-				String achievementName = mainConfig.getString(achievementPath + ".Name");
-				// Check whether player has received the achievement and has permission to do so.
-				if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)
-						&& player.hasPermission("achievement." + achievementName)) {
-					String rewardPath = achievementPath + ".Reward";
-					// Fire achievement event.
-					PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
-							.player(player)
-							.name(achievementName)
-							.displayName(mainConfig.getString(achievementPath + ".DisplayName"))
-							.message(mainConfig.getString(achievementPath + ".Message"))
-							.type(mainConfig.getString(achievementPath + ".Type"))
-							.commandRewards(rewardParser.getCommandRewards(rewardPath, player))
-							.commandMessage(rewardParser.getCustomCommandMessages(rewardPath))
-							.itemRewards(rewardParser.getItemRewards(rewardPath, player))
-							.moneyReward(rewardParser.getRewardAmount(rewardPath, "Money"))
-							.experienceReward(rewardParser.getRewardAmount(rewardPath, "Experience"))
-							.maxHealthReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxHealth"))
-							.maxOxygenReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxOxygen"));
+	public void checkThresholdsAndAchievements(Player player, Category category, long currentValue) {
+		checkThresholdsAndAchievements(player, achievementMap.getForCategory(category), currentValue);
+	}
 
-					Bukkit.getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
+	/**
+	 * Compares the current value to the achievement thresholds in the same subcategory. If a threshold is reached,
+	 * awards the achievement if it wasn't previously received.
+	 * 
+	 * @param player
+	 * @param category
+	 * @param subcategory
+	 * @param currentValue
+	 */
+	public void checkThresholdsAndAchievements(Player player, Category category, String subcategory,
+			long currentValue) {
+		checkThresholdsAndAchievements(player, achievementMap.getForCategoryAndSubcategory(category, subcategory),
+				currentValue);
+	}
+
+	private void checkThresholdsAndAchievements(Player player, List<Achievement> achievements, long currentValue) {
+		for (Achievement achievement : achievements) {
+			// Check whether player has met the threshold.
+			if (currentValue >= achievement.getThreshold()) {
+				// Check whether player has received the achievement and has permission to do so.
+				if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievement.getName())
+						&& player.hasPermission("achievement." + achievement.getName())) {
+					Bukkit.getPluginManager().callEvent(new PlayerAdvancedAchievementEvent(player, achievement));
 				}
 			} else {
 				// Entries in List sorted in increasing order, all subsequent thresholds will fail the condition.

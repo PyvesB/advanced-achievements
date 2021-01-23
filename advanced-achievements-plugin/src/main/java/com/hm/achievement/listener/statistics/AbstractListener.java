@@ -1,7 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,6 +10,7 @@ import org.bukkit.event.Listener;
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
@@ -24,18 +23,18 @@ import com.hm.achievement.utils.StatisticIncreaseHandler;
 public abstract class AbstractListener extends StatisticIncreaseHandler implements Listener {
 
 	final Category category;
-	Set<String> categoryKeys;
+	Set<String> subcategories;
 
-	AbstractListener(Category category, YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+	AbstractListener(Category category, YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+			CacheManager cacheManager, RewardParser rewardParser) {
+		super(mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
 		this.category = category;
 	}
 
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
-		categoryKeys = mainConfig.getConfigurationSection(category.toString()).getKeys(false);
+		subcategories = achievementMap.getSubcategoriesForCategory(category);
 	}
 
 	public Category getCategory() {
@@ -53,7 +52,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 		if (shouldIncreaseBeTakenIntoAccount(player, category)) {
 			long amount = cacheManager.getAndIncrementStatisticAmount((NormalAchievements) category, player.getUniqueId(),
 					incrementValue);
-			checkThresholdsAndAchievements(player, category.toString(), amount);
+			checkThresholdsAndAchievements(player, category, amount);
 		}
 	}
 
@@ -70,7 +69,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 			subcategories.forEach(subcategory -> {
 				long amount = cacheManager.getAndIncrementStatisticAmount((MultipleAchievements) category, subcategory,
 						player.getUniqueId(), incrementValue);
-				checkThresholdsAndAchievements(player, category + "." + subcategory, amount);
+				checkThresholdsAndAchievements(player, category, subcategory, amount);
 			});
 		}
 	}
@@ -85,7 +84,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * @author tassu
 	 */
 	Set<String> findAchievementsByCategoryAndName(String id) {
-		return categoryKeys.stream()
+		return subcategories.stream()
 				.filter(keys -> keys.equals(id) || keys.startsWith(id + '|') || keys.contains('|' + id + '|')
 						|| keys.endsWith('|' + id))
 				.collect(Collectors.toSet());

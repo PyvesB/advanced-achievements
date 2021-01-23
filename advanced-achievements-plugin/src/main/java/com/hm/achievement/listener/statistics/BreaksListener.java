@@ -2,8 +2,6 @@ package com.hm.achievement.listener.statistics;
 
 import static org.bukkit.enchantments.Enchantment.SILK_TOUCH;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -19,6 +17,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 
@@ -35,9 +34,9 @@ public class BreaksListener extends AbstractListener {
 	private boolean disableSilkTouchOreBreaks;
 
 	@Inject
-	public BreaksListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(MultipleAchievements.BREAKS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+	public BreaksListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+			CacheManager cacheManager, RewardParser rewardParser) {
+		super(MultipleAchievements.BREAKS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
 	}
 
 	@Override

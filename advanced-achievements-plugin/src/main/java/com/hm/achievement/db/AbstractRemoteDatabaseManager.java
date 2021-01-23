@@ -7,12 +7,13 @@ import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import com.hm.achievement.config.AchievementMap;
 
 /**
  * Class used to handle a remote (in the sense not managed by the plugin) database.
@@ -30,9 +31,8 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 	private final String databaseType;
 
 	public AbstractRemoteDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
-			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater, String driverPath,
-			String databaseType) {
-		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, driverPath);
+			AchievementMap achievementMap, DatabaseUpdater databaseUpdater, String driverPath, String databaseType) {
+		super(mainConfig, logger, achievementMap, databaseUpdater, driverPath);
 		this.databaseType = databaseType;
 	}
 

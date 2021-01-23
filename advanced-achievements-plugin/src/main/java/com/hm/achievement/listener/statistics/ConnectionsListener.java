@@ -3,8 +3,6 @@ package com.hm.achievement.listener.statistics;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,10 +21,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
-import com.hm.achievement.utils.PlayerAdvancedAchievementEvent.PlayerAdvancedAchievementEventBuilder;
+import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.RewardParser;
 
 /**
@@ -46,10 +45,10 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	private final AbstractDatabaseManager databaseManager;
 
 	@Inject
-	public ConnectionsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager) {
-		super(NormalAchievements.CONNECTIONS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+	public ConnectionsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+			CacheManager cacheManager, RewardParser rewardParser, AdvancedAchievements advancedAchievements,
+			AbstractDatabaseManager databaseManager) {
+		super(NormalAchievements.CONNECTIONS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;
 	}
@@ -103,28 +102,12 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	private void handleConnectionAchievements(Player player) {
 		String dateString = LocalDate.now().format(DATE_TIME_FORMATTER);
 		if (!dateString.equals(databaseManager.getPlayerConnectionDate(player.getUniqueId()))) {
-			int connections = databaseManager.updateAndGetConnection(player.getUniqueId(), dateString);
-			String achievementPath = category + "." + connections;
-			String achievementName = mainConfig.getString(achievementPath + ".Name");
-			if (mainConfig.contains(achievementPath) && player.hasPermission("achievement." + achievementName)) {
-				String rewardPath = achievementPath + ".Reward";
-				// Fire achievement event.
-				PlayerAdvancedAchievementEventBuilder playerAdvancedAchievementEventBuilder = new PlayerAdvancedAchievementEventBuilder()
-						.player(player)
-						.name(achievementName)
-						.displayName(mainConfig.getString(achievementPath + ".DisplayName"))
-						.message(mainConfig.getString(achievementPath + ".Message"))
-						.type(mainConfig.getString(achievementPath + ".Type"))
-						.commandRewards(rewardParser.getCommandRewards(rewardPath, player))
-						.commandMessage(rewardParser.getCustomCommandMessages(rewardPath))
-						.itemRewards(rewardParser.getItemRewards(rewardPath, player))
-						.moneyReward(rewardParser.getRewardAmount(rewardPath, "Money"))
-						.experienceReward(rewardParser.getRewardAmount(rewardPath, "Experience"))
-						.maxHealthReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxHealth"))
-						.maxOxygenReward(rewardParser.getRewardAmount(rewardPath, "IncreaseMaxOxygen"));
-
-				Bukkit.getPluginManager().callEvent(playerAdvancedAchievementEventBuilder.build());
-			}
+			long connections = databaseManager.updateAndGetConnection(player.getUniqueId(), dateString);
+			achievementMap.getForCategory(NormalAchievements.CONNECTIONS).stream()
+					.filter(achievement -> achievement.getThreshold() == connections)
+					.filter(achievement -> player.hasPermission("achievement." + achievement.getName()))
+					.forEach(achievement -> Bukkit.getPluginManager()
+							.callEvent(new PlayerAdvancedAchievementEvent(player, achievement)));
 		}
 	}
 }

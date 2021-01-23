@@ -12,16 +12,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.lifecycle.Cleanable;
 
 /**
@@ -35,7 +34,7 @@ import com.hm.achievement.lifecycle.Cleanable;
 public class CacheManager implements Cleanable {
 
 	private final AdvancedAchievements advancedAchievements;
-	private final YamlConfiguration mainConfig;
+	private final AchievementMap achievementMap;
 	private final AbstractDatabaseManager databaseManager;
 	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
 	private final Map<NormalAchievements, Map<UUID, CachedStatistic>> normalAchievementsToPlayerStatistics;
@@ -49,10 +48,10 @@ public class CacheManager implements Cleanable {
 	private final Map<UUID, Integer> totalPlayerAchievementsCache;
 
 	@Inject
-	public CacheManager(AdvancedAchievements advancedAchievements, @Named("main") YamlConfiguration mainConfig,
+	public CacheManager(AdvancedAchievements advancedAchievements, AchievementMap achievementMap,
 			AbstractDatabaseManager databaseManager) {
 		this.advancedAchievements = advancedAchievements;
-		this.mainConfig = mainConfig;
+		this.achievementMap = achievementMap;
 		this.databaseManager = databaseManager;
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
@@ -79,7 +78,7 @@ public class CacheManager implements Cleanable {
 		// Indicate to the relevant cached statistics that the player has disconnected.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Map<SubcategoryUUID, CachedStatistic> categoryMap = getHashMap(category);
-			for (String subcategory : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
+			for (String subcategory : achievementMap.getSubcategoriesForCategory(category)) {
 				CachedStatistic statistic = categoryMap.get(new SubcategoryUUID(subcategory, uuid));
 				if (statistic != null) {
 					statistic.signalPlayerDisconnection();

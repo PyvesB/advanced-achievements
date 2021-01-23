@@ -1,7 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -15,6 +13,7 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 
@@ -28,10 +27,10 @@ import com.hm.achievement.utils.RewardParser;
 public class BedsListener extends AbstractRateLimitedListener {
 
 	@Inject
-	public BedsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, @Named("lang") YamlConfiguration langConfig, Logger logger) {
-		super(NormalAchievements.BEDS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser,
+	public BedsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+			CacheManager cacheManager, RewardParser rewardParser, AdvancedAchievements advancedAchievements,
+			@Named("lang") YamlConfiguration langConfig, Logger logger) {
+		super(NormalAchievements.BEDS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser,
 				advancedAchievements, langConfig, logger);
 	}
 

@@ -7,7 +7,6 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +16,7 @@ import javax.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.exception.PluginLoadError;
 
 /**
@@ -32,9 +32,9 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
 	private final String filename;
 
 	public AbstractFileDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
-			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater,
-			AdvancedAchievements advancedAchievements, String driverPath, String url, String filename) {
-		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, driverPath);
+			AchievementMap achievementMap, DatabaseUpdater databaseUpdater, AdvancedAchievements advancedAchievements,
+			String driverPath, String url, String filename) {
+		super(mainConfig, logger, achievementMap, databaseUpdater, driverPath);
 		this.advancedAchievements = advancedAchievements;
 		this.url = url;
 		this.filename = filename;

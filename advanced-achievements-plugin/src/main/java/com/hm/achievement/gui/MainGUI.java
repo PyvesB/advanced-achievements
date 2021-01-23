@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.NumberHelper;
@@ -34,6 +35,7 @@ public class MainGUI implements Reloadable {
 	private final CacheManager cacheManager;
 	private final Set<Category> disabledCategories;
 	private final GUIItems guiItems;
+	private final AchievementMap achievementMap;
 
 	private boolean configHideNotReceivedCategories;
 	private boolean configHideNoPermissionCategories;
@@ -42,12 +44,13 @@ public class MainGUI implements Reloadable {
 
 	@Inject
 	public MainGUI(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			CacheManager cacheManager, Set<Category> disabledCategories, GUIItems guiItems) {
+			CacheManager cacheManager, Set<Category> disabledCategories, GUIItems guiItems, AchievementMap achievementMap) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.cacheManager = cacheManager;
 		this.disabledCategories = disabledCategories;
 		this.guiItems = guiItems;
+		this.achievementMap = achievementMap;
 	}
 
 	@Override
@@ -109,36 +112,12 @@ public class MainGUI implements Reloadable {
 	 * @param position
 	 */
 	private void displayCategory(ItemStack item, Inventory gui, Player player, Category category, int position) {
-		if (category instanceof MultipleAchievements) {
-			for (String subcategory : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
-				if (!configHideNotReceivedCategories || hasReceivedInCategory(player, category + "." + subcategory)) {
-					gui.setItem(position, item);
-					return;
-				}
-			}
-			gui.setItem(position, guiItems.getCategoryLock());
-		} else if (!configHideNotReceivedCategories || hasReceivedInCategory(player, category.toString())) {
+		boolean hasReceivedAny = achievementMap.getForCategory(category).stream()
+				.anyMatch(a -> cacheManager.hasPlayerAchievement(player.getUniqueId(), a.getName()));
+		if (!configHideNotReceivedCategories || hasReceivedAny) {
 			gui.setItem(position, item);
 		} else {
 			gui.setItem(position, guiItems.getCategoryLock());
 		}
-	}
-
-	/**
-	 * Determines whether the player has received at least one achievement in the category or subcategory.
-	 *
-	 * @param player
-	 * @param configPath
-	 * @return true if the player has received at least one achievement in the category, false otherwise
-	 */
-	private boolean hasReceivedInCategory(Player player, String configPath) {
-		for (String threshold : mainConfig.getConfigurationSection(configPath).getKeys(false)) {
-			if (cacheManager.hasPlayerAchievement(player.getUniqueId(),
-					mainConfig.getString(configPath + '.' + threshold + ".Name"))) {
-				// At least one achievement was received in the current category: it is unlocked.
-				return true;
-			}
-		}
-		return false;
 	}
 }

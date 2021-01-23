@@ -28,7 +28,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.data.AwardedDBAchievement;
+import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.Reloadable;
 
@@ -49,17 +51,17 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 
 	volatile String prefix;
 
-	private final Map<String, String> namesToDisplayNames;
+	private final AchievementMap achievementMap;
 	private final DatabaseUpdater databaseUpdater;
 
 	private DateFormat dateFormat;
 	private boolean configBookChronologicalOrder;
 
-	public AbstractDatabaseManager(YamlConfiguration mainConfig, Logger logger, Map<String, String> namesToDisplayNames,
+	public AbstractDatabaseManager(YamlConfiguration mainConfig, Logger logger, AchievementMap achievementMap,
 			DatabaseUpdater databaseUpdater, String driverPath) {
 		this.mainConfig = mainConfig;
 		this.logger = logger;
-		this.namesToDisplayNames = namesToDisplayNames;
+		this.achievementMap = achievementMap;
 		this.databaseUpdater = databaseUpdater;
 		this.driverPath = driverPath;
 		// We expect to execute many short writes to the database. The pool can grow dynamically under high load and
@@ -542,16 +544,15 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setString(1, uuid.toString());
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
-						String achName = rs.getString(2);
-						String displayName = namesToDisplayNames.get(achName);
-						if (StringUtils.isNotBlank(displayName)) {
-							achName = displayName;
+						Achievement achievement = achievementMap.getForName(rs.getString(2));
+						if (achievement == null) {
+							continue;
 						}
 						String achMsg = rs.getString(3);
 						Timestamp dateAwarded = rs.getTimestamp(4);
 
-						achievements.add(new AwardedDBAchievement(uuid, achName, achMsg, dateAwarded.getTime(),
-								dateFormat.format(dateAwarded)));
+						achievements.add(new AwardedDBAchievement(uuid, achievement.getDisplayName(), achMsg,
+								dateAwarded.getTime(), dateFormat.format(dateAwarded)));
 					}
 				}
 			}
@@ -587,8 +588,9 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 						}
 						Date dateAwarded = new Date(rs.getTimestamp("date").getTime());
 
-						achievements.add(new AwardedDBAchievement(uuid, namesToDisplayNames.get(achievementName), "",
-								dateAwarded.getTime(), dateFormat.format(dateAwarded)));
+						String displayName = achievementMap.getForName(achievementName).getDisplayName();
+						achievements.add(new AwardedDBAchievement(uuid, displayName, "", dateAwarded.getTime(),
+								dateFormat.format(dateAwarded)));
 					}
 				}
 			}

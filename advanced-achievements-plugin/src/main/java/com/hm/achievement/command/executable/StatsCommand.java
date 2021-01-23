@@ -1,7 +1,5 @@
 package com.hm.achievement.command.executable;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -14,6 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
 
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.particle.external.ParticleEffect;
 import com.hm.achievement.utils.SoundPlayer;
@@ -33,7 +32,7 @@ public class StatsCommand extends AbstractCommand {
 
 	private final int serverVersion;
 	private final CacheManager cacheManager;
-	private final Map<String, String> namesToDisplayNames;
+	private final AchievementMap achievementMap;
 	private final SoundPlayer soundPlayer;
 
 	private ChatColor configColor;
@@ -46,12 +45,12 @@ public class StatsCommand extends AbstractCommand {
 
 	@Inject
 	public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			StringBuilder pluginHeader, int serverVersion, CacheManager cacheManager,
-			@Named("ntd") Map<String, String> namesToDisplayNames, SoundPlayer soundPlayer) {
+			StringBuilder pluginHeader, int serverVersion, CacheManager cacheManager, AchievementMap achievementMap,
+			SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.serverVersion = serverVersion;
 		this.cacheManager = cacheManager;
-		this.namesToDisplayNames = namesToDisplayNames;
+		this.achievementMap = achievementMap;
 		this.soundPlayer = soundPlayer;
 	}
 
@@ -78,7 +77,7 @@ public class StatsCommand extends AbstractCommand {
 		Player player = (Player) sender;
 
 		int playerAchievements = cacheManager.getPlayerTotalAchievements(player.getUniqueId());
-		int totalAchievements = namesToDisplayNames.size();
+		int totalAchievements = achievementMap.getAll().size();
 
 		player.sendMessage(
 				langNumberAchievements + String.format("%.1f", 100 * (double) playerAchievements / totalAchievements) + "%");

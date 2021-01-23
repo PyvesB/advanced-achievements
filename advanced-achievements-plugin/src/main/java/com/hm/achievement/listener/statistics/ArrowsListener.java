@@ -1,8 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -14,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityShootBowEvent;
 
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 
@@ -27,9 +25,9 @@ import com.hm.achievement.utils.RewardParser;
 public class ArrowsListener extends AbstractListener {
 
 	@Inject
-	public ArrowsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(NormalAchievements.ARROWS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+	public ArrowsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+			CacheManager cacheManager, RewardParser rewardParser) {
+		super(NormalAchievements.ARROWS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

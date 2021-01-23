@@ -4,19 +4,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.command.executable.AbstractCommand;
@@ -26,6 +23,7 @@ import com.hm.achievement.command.executable.EasterEggCommand;
 import com.hm.achievement.command.executable.GenerateCommand;
 import com.hm.achievement.command.executable.ResetCommand;
 import com.hm.achievement.command.executable.Upgrade13Command;
+import com.hm.achievement.config.AchievementMap;
 
 /**
  * Class in charge of handling auto-completion for achievements and categories when using /aach check, /aach reset,
@@ -38,21 +36,13 @@ public class CommandTabCompleter implements TabCompleter {
 
 	private static final int MAX_LIST_LENGTH = 50;
 
-	private final YamlConfiguration mainConfig;
-	private final Map<String, String> namesToDisplayNames;
-	private final Map<String, String> displayNamesToNames;
-	private final Set<String> enabledCategoriesWithSubcategories;
+	private final AchievementMap achievementMap;
 	private final Set<CommandSpec> commandSpecs;
 	private final int serverVersion;
 
 	@Inject
-	public CommandTabCompleter(@Named("main") YamlConfiguration mainConfig,
-			@Named("ntd") Map<String, String> namesToDisplayNames, @Named("dtn") Map<String, String> displayNamesToNames,
-			Set<String> enabledCategoriesWithSubcategories, Set<AbstractCommand> commands, int serverVersion) {
-		this.mainConfig = mainConfig;
-		this.namesToDisplayNames = namesToDisplayNames;
-		this.displayNamesToNames = displayNamesToNames;
-		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;
+	public CommandTabCompleter(AchievementMap achievementMap, Set<AbstractCommand> commands, int serverVersion) {
+		this.achievementMap = achievementMap;
 		this.serverVersion = serverVersion;
 		this.commandSpecs = commands.stream()
 				.filter(c -> !(c instanceof EasterEggCommand || c instanceof Upgrade13Command
@@ -70,21 +60,21 @@ public class CommandTabCompleter implements TabCompleter {
 		String aachCommand = args[0];
 		Collection<String> options = Collections.emptyList();
 		if (args.length == 2 && "reset".equalsIgnoreCase(aachCommand)) {
-			options = new HashSet<>(enabledCategoriesWithSubcategories);
+			options = new HashSet<>(achievementMap.getCategorySubcategories());
 			options.add(ResetCommand.WILDCARD);
 		} else if (args.length == 2 && "give".equalsIgnoreCase(aachCommand)) {
-			options = mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString()).getKeys(false);
+			options = achievementMap.getSubcategoriesForCategory(CommandAchievements.COMMANDS);
 		} else if (args.length == 2 && "check".equalsIgnoreCase(aachCommand)) {
-			options = namesToDisplayNames.keySet();
+			options = achievementMap.getAllNames();
 		} else if (args.length == 2 && "delete".equalsIgnoreCase(aachCommand)) {
-			options = new HashSet<>(namesToDisplayNames.keySet());
+			options = new HashSet<>(achievementMap.getAllNames());
 			options.add(DeleteCommand.WILDCARD);
 		} else if (args.length == 2 && "inspect".equalsIgnoreCase(aachCommand)) {
-			options = displayNamesToNames.keySet();
+			options = achievementMap.getAllSanitisedDisplayNames();
 		} else if (args.length == 2 && "add".equalsIgnoreCase(aachCommand)) {
 			options = Collections.singleton("1");
 		} else if (args.length == 3 && "add".equalsIgnoreCase(aachCommand)) {
-			options = enabledCategoriesWithSubcategories;
+			options = achievementMap.getCategorySubcategories();
 		} else if (args.length == 1) {
 			options = commandSpecs.stream()
 					.filter(cs -> cs.permission().isEmpty() || sender.hasPermission("achievement." + cs.permission()))

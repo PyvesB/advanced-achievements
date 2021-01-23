@@ -1,7 +1,5 @@
 package com.hm.achievement.runnable;
 
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -14,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.Essentials;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
@@ -36,8 +35,8 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 
 	@Inject
 	public AchievePlayTimeRunnable(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser) {
+		super(mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
 
 		if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
 			essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
@@ -82,6 +81,6 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 		long totalMillis = cacheManager.getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME, player.getUniqueId(),
 				millisSincePreviousRun);
 		// Thresholds in the configuration are in hours.
-		checkThresholdsAndAchievements(player, NormalAchievements.PLAYEDTIME.toString(), totalMillis / MILLIS_PER_HOUR);
+		checkThresholdsAndAchievements(player, NormalAchievements.PLAYEDTIME, totalMillis / MILLIS_PER_HOUR);
 	}
 }

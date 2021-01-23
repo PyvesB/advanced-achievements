@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
 import com.hm.achievement.utils.StringHelper;
@@ -36,16 +37,16 @@ public class AddCommand extends AbstractParsableCommand {
 	private String langErrorValue;
 	private String langStatisticIncreased;
 	private String langCategoryDoesNotExist;
-	private final Set<String> enabledCategoriesWithSubcategories;
+	private final AchievementMap achievementMap;
 
 	@Inject
 	public AddCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
 			StringBuilder pluginHeader, CacheManager cacheManager, StatisticIncreaseHandler statisticIncreaseHandler,
-			Set<String> enabledCategoriesWithSubcategories) {
+			AchievementMap achievementMap) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.statisticIncreaseHandler = statisticIncreaseHandler;
-		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;
+		this.achievementMap = achievementMap;
 	}
 
 	@Override
@@ -65,12 +66,14 @@ public class AddCommand extends AbstractParsableCommand {
 		}
 
 		int valueToAdd = Integer.parseInt(args[1]);
-		if (enabledCategoriesWithSubcategories.contains(args[2])) {
+		Set<String> categorySubcategories = achievementMap.getCategorySubcategories();
+		if (categorySubcategories.contains(args[2])) {
 			if (args[2].contains(".")) {
 				MultipleAchievements category = MultipleAchievements.getByName(StringUtils.substringBefore(args[2], "."));
-				long amount = cacheManager.getAndIncrementStatisticAmount(category, StringUtils.substringAfter(args[2], "."),
-						player.getUniqueId(), valueToAdd);
-				statisticIncreaseHandler.checkThresholdsAndAchievements(player, args[2], amount);
+				String subcategory = StringUtils.substringAfter(args[2], ".");
+				long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
+						valueToAdd);
+				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category, subcategory, amount);
 				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
 						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
 			} else if (!NormalAchievements.CONNECTIONS.toString().equals(args[2])) {
@@ -84,13 +87,13 @@ public class AddCommand extends AbstractParsableCommand {
 				} else {
 					amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd);
 				}
-				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category.toString(), amount);
+				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category, amount);
 				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
 						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
 			}
 		} else {
 			sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[] { "CAT", "CLOSEST_MATCH" },
-					new String[] { args[2], StringHelper.getClosestMatch(args[2], enabledCategoriesWithSubcategories) }));
+					new String[] { args[2], StringHelper.getClosestMatch(args[2], categorySubcategories) }));
 		}
 	}
 }

@@ -1,7 +1,6 @@
 package com.hm.achievement.command.executable;
 
 import java.util.Collections;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -12,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 
@@ -28,20 +28,20 @@ public class DeleteCommand extends AbstractParsableCommand {
 
 	private final CacheManager cacheManager;
 	private final AbstractDatabaseManager databaseManager;
+	private final AchievementMap achievementMap;
 
 	private String langCheckAchievementFalse;
 	private String langDeleteAchievements;
 	private String langAllDeleteAchievements;
-	private final Map<String, String> namesToDisplayNames;
 
 	@Inject
 	public DeleteCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
 			StringBuilder pluginHeader, CacheManager cacheManager, AbstractDatabaseManager databaseManager,
-			@Named("ntd") Map<String, String> namesToDisplayNames) {
+			AchievementMap achievementMap) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
 		this.databaseManager = databaseManager;
-		this.namesToDisplayNames = namesToDisplayNames;
+		this.achievementMap = achievementMap;
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class DeleteCommand extends AbstractParsableCommand {
 		String achievementName = parseAchievementName(args);
 
 		if (WILDCARD.equals(achievementName)) {
-			cacheManager.removePreviouslyReceivedAchievements(player.getUniqueId(), namesToDisplayNames.keySet());
+			cacheManager.removePreviouslyReceivedAchievements(player.getUniqueId(), achievementMap.getAllNames());
 			databaseManager.deleteAllPlayerAchievements(player.getUniqueId());
 			sender.sendMessage(StringUtils.replace(langAllDeleteAchievements, "PLAYER", args[args.length - 1]));
 		} else if (cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {

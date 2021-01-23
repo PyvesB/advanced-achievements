@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.StringHelper;
 
@@ -28,7 +29,7 @@ public class ResetCommand extends AbstractParsableCommand {
 	public static final String WILDCARD = "*";
 
 	private final CacheManager cacheManager;
-	private final Set<String> enabledCategoriesWithSubcategories;
+	private final AchievementMap achievementMap;
 
 	private String langResetSuccessful;
 	private String langResetAllSuccessful;
@@ -36,10 +37,10 @@ public class ResetCommand extends AbstractParsableCommand {
 
 	@Inject
 	public ResetCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			StringBuilder pluginHeader, CacheManager cacheManager, Set<String> enabledCategoriesWithSubcategories) {
+			StringBuilder pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.cacheManager = cacheManager;
-		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;
+		this.achievementMap = achievementMap;
 	}
 
 	@Override
@@ -54,17 +55,18 @@ public class ResetCommand extends AbstractParsableCommand {
 	@Override
 	void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
 		String categoryWithSubcategory = args[1];
+		Set<String> categorySubcategories = achievementMap.getCategorySubcategories();
 		if (WILDCARD.equals(categoryWithSubcategory)) {
-			cacheManager.resetPlayerStatistics(player.getUniqueId(), enabledCategoriesWithSubcategories);
+			cacheManager.resetPlayerStatistics(player.getUniqueId(), categorySubcategories);
 			sender.sendMessage(StringUtils.replace(langResetAllSuccessful, "PLAYER", player.getName()));
-		} else if (enabledCategoriesWithSubcategories.contains(categoryWithSubcategory)) {
+		} else if (categorySubcategories.contains(categoryWithSubcategory)) {
 			cacheManager.resetPlayerStatistics(player.getUniqueId(), Collections.singletonList(categoryWithSubcategory));
 			sender.sendMessage(StringUtils.replaceEach(langResetSuccessful, new String[] { "CAT", "PLAYER" },
 					new String[] { categoryWithSubcategory, player.getName() }));
 		} else {
 			sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[] { "CAT", "CLOSEST_MATCH" },
 					new String[] { categoryWithSubcategory,
-							StringHelper.getClosestMatch(categoryWithSubcategory, enabledCategoriesWithSubcategories) }));
+							StringHelper.getClosestMatch(categoryWithSubcategory, categorySubcategories) }));
 		}
 	}
 }

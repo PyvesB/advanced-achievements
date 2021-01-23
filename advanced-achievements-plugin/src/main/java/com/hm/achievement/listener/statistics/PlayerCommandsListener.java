@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -21,6 +20,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 
@@ -29,8 +29,8 @@ public class PlayerCommandsListener extends AbstractListener {
 
 	@Inject
 	public PlayerCommandsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(MultipleAchievements.PLAYERCOMMANDS, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser) {
+		super(MultipleAchievements.PLAYERCOMMANDS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -38,7 +38,7 @@ public class PlayerCommandsListener extends AbstractListener {
 		Player player = event.getPlayer();
 		List<String> equivalentCommands = getEquivalentCommands(event.getMessage());
 		Set<String> foundAchievements = new HashSet<>();
-		for (String groupedPrefixes : categoryKeys) {
+		for (String groupedPrefixes : subcategories) {
 			for (String prefix : StringUtils.split(groupedPrefixes, '|')) {
 				if (player.hasPermission(category.toChildPermName(StringUtils.deleteWhitespace(prefix)))) {
 					for (String equivalentCommand : equivalentCommands) {

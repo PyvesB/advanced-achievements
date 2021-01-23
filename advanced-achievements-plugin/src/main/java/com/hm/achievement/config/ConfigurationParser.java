@@ -7,10 +7,10 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -29,7 +30,10 @@ import com.hm.achievement.category.Category;
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.domain.Achievement;
+import com.hm.achievement.domain.Achievement.AchievementBuilder;
 import com.hm.achievement.exception.PluginLoadError;
+import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StringHelper;
 
 /**
@@ -44,36 +48,31 @@ public class ConfigurationParser {
 	private final YamlConfiguration mainConfig;
 	private final YamlConfiguration langConfig;
 	private final YamlConfiguration guiConfig;
-	private final Map<String, String> namesToDisplayNames;
-	private final Map<String, String> displayNamesToNames;
-	private final Map<String, List<Long>> sortedThresholds;
+	private final AchievementMap achievementMap;
 	private final Set<Category> disabledCategories;
-	private final Set<String> enabledCategoriesWithSubcategories;
 	private final StringBuilder pluginHeader;
 	private final Logger logger;
 	private final int serverVersion;
 	private final YamlUpdater yamlUpdater;
 	private final AdvancedAchievements plugin;
+	private final RewardParser rewardParser;
 
 	@Inject
 	public ConfigurationParser(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			@Named("gui") YamlConfiguration guiConfig, @Named("ntd") Map<String, String> namesToDisplayNames,
-			@Named("dtn") Map<String, String> displayNamesToNames, Map<String, List<Long>> sortedThresholds,
-			Set<Category> disabledCategories, Set<String> enabledCategoriesWithSubcategories, StringBuilder pluginHeader,
-			Logger logger, int serverVersion, YamlUpdater yamlUpdater, AdvancedAchievements plugin) {
+			@Named("gui") YamlConfiguration guiConfig, AchievementMap achievementMap, Set<Category> disabledCategories,
+			StringBuilder pluginHeader, Logger logger, int serverVersion, YamlUpdater yamlUpdater,
+			AdvancedAchievements plugin, RewardParser rewardParser) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
-		this.namesToDisplayNames = namesToDisplayNames;
-		this.displayNamesToNames = displayNamesToNames;
-		this.sortedThresholds = sortedThresholds;
+		this.achievementMap = achievementMap;
 		this.disabledCategories = disabledCategories;
-		this.enabledCategoriesWithSubcategories = enabledCategoriesWithSubcategories;
 		this.pluginHeader = pluginHeader;
 		this.logger = logger;
 		this.serverVersion = serverVersion;
 		this.yamlUpdater = yamlUpdater;
 		this.plugin = plugin;
+		this.rewardParser = rewardParser;
 	}
 
 	/**
@@ -90,7 +89,6 @@ public class ConfigurationParser {
 		backupAndLoadConfiguration(serverVersion < 13 ? "gui-legacy.yml" : "gui.yml", "gui.yml", guiConfig);
 		parseHeader();
 		parseDisabledCategories();
-		parseEnabledCategoriesWithSubcategories();
 		parseAchievements();
 		logLoadingMessages();
 	}
@@ -263,26 +261,6 @@ public class ConfigurationParser {
 	}
 
 	/**
-	 * Extracts all enabled categories from the configuration and adds subcategories if relevant. Ignores the Commands
-	 * category.
-	 */
-	private void parseEnabledCategoriesWithSubcategories() {
-		enabledCategoriesWithSubcategories.clear();
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			if (!disabledCategories.contains(category)) {
-				for (String subcategory : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
-					enabledCategoriesWithSubcategories.add(category + "." + StringUtils.deleteWhitespace(subcategory));
-				}
-			}
-		}
-		for (NormalAchievements category : NormalAchievements.values()) {
-			if (!disabledCategories.contains(category)) {
-				enabledCategoriesWithSubcategories.add(category.toString());
-			}
-		}
-	}
-
-	/**
 	 * Goes through all the achievements for non-disabled categories.
 	 * 
 	 * Populates relevant data structures and performs basic validation.
@@ -290,9 +268,7 @@ public class ConfigurationParser {
 	 * @throws PluginLoadError If an achievement fails to parse due to misconfiguration.
 	 */
 	private void parseAchievements() throws PluginLoadError {
-		namesToDisplayNames.clear();
-		displayNamesToNames.clear();
-		sortedThresholds.clear();
+		achievementMap.clearAll();
 
 		// Enumerate Commands achievements.
 		if (!disabledCategories.contains(CommandAchievements.COMMANDS)) {
@@ -301,8 +277,8 @@ public class ConfigurationParser {
 			if (commands.isEmpty()) {
 				disabledCategories.add(CommandAchievements.COMMANDS);
 			} else {
-				for (String ach : commands) {
-					parseAchievement(CommandAchievements.COMMANDS + "." + ach);
+				for (String command : commands) {
+					parseAchievement(CommandAchievements.COMMANDS, command, -1L);
 				}
 			}
 		}
@@ -312,8 +288,10 @@ public class ConfigurationParser {
 			if (!disabledCategories.contains(category)) {
 				if (mainConfig.getConfigurationSection(category.toString()).getKeys(false).isEmpty()) {
 					disabledCategories.add(category);
-				} else {
-					parseAchievements(category.toString());
+					continue;
+				}
+				for (long threshold : getSortedThresholds(category.toString())) {
+					parseAchievement(category, "", threshold);
 				}
 			}
 		}
@@ -321,64 +299,75 @@ public class ConfigurationParser {
 		// Enumerate the achievements with multiple categories.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			if (!disabledCategories.contains(category)) {
-				Set<String> keys = mainConfig.getConfigurationSection(category.toString()).getKeys(false);
-				if (keys.isEmpty()) {
+				Set<String> subcategories = mainConfig.getConfigurationSection(category.toString()).getKeys(false);
+				if (subcategories.isEmpty()) {
 					disabledCategories.add(category);
-				} else {
-					for (String section : keys) {
-						parseAchievements(category + "." + section);
+					continue;
+				}
+				for (String subcategory : subcategories) {
+					for (long threshold : getSortedThresholds(category + "." + subcategory)) {
+						parseAchievement(category, subcategory, threshold);
 					}
 				}
 			}
 		}
 	}
 
-	/**
-	 * Parses all achievements for a given category or category + subcategory. Populates the sortedThresholds map.
-	 *
-	 * @param path category or category.subcategory
-	 * @throws PluginLoadError If an achievement fails to parse due to misconfiguration.
-	 */
-	private void parseAchievements(String path) throws PluginLoadError {
-		Set<String> keys = mainConfig.getConfigurationSection(path).getKeys(false);
-		List<Long> thresholds = new ArrayList<>();
-		for (String threshold : keys) {
-			parseAchievement(path + "." + threshold);
-			thresholds.add(Long.valueOf(threshold));
-		}
-		thresholds.sort(null);
-		sortedThresholds.put(path, thresholds);
+	private List<Long> getSortedThresholds(String path) {
+		return mainConfig.getConfigurationSection(path).getKeys(false).stream()
+				.map(Long::parseLong)
+				.sorted()
+				.collect(Collectors.toList());
 	}
 
 	/**
 	 * Performs validation for a single achievement and populates an entry in the namesToDisplayNames map.
+	 * 
+	 * @param category
+	 * @param subcategory
+	 * @param threshold
 	 *
-	 * @param path
 	 * @throws PluginLoadError If the achievement fails to parse due to misconfiguration.
 	 */
-	private void parseAchievement(String path) throws PluginLoadError {
-		String achName = mainConfig.getString(path + ".Name");
-		if (achName == null) {
+	private void parseAchievement(Category category, String subcategory, long threshold) throws PluginLoadError {
+		String path;
+		if (category instanceof CommandAchievements) {
+			path = category + "." + subcategory;
+		} else if (category instanceof NormalAchievements) {
+			path = category + "." + threshold;
+		} else {
+			path = category + "." + subcategory + "." + threshold;
+		}
+		ConfigurationSection section = mainConfig.getConfigurationSection(path);
+		if (!section.contains("Name")) {
 			throw new PluginLoadError("Achievement with path (" + path + ") is missing its Name parameter in config.yml.");
-		} else if (namesToDisplayNames.containsKey(achName)) {
-			throw new PluginLoadError(
-					"Duplicate achievement Name (" + achName + "). " + "Please ensure each Name is unique in config.yml.");
-		} else if (mainConfig.getString(path + ".Message") == null) {
+		} else if (achievementMap.getForName(section.getString("Name")) != null) {
+			throw new PluginLoadError("Duplicate achievement Name (" + section.getString("Name") + "). "
+					+ "Please ensure each Name is unique in config.yml.");
+		} else if (!section.contains("Message")) {
 			throw new PluginLoadError(
 					"Achievement with path (" + path + ") is missing its Message parameter in config.yml.");
-		} else {
-			namesToDisplayNames.put(achName, mainConfig.getString(path + ".DisplayName", ""));
-			String formattedDisplayName = StringHelper
-					.removeFormattingCodes(mainConfig.getString(path + ".DisplayName", achName)).toLowerCase();
-			displayNamesToNames.put(formattedDisplayName, achName);
 		}
+
+		Achievement achievement = new AchievementBuilder()
+				.name(section.getString("Name"))
+				.displayName(StringUtils.defaultString(section.getString("DisplayName"), section.getString("Name")))
+				.message(section.getString("Message"))
+				.goal(StringUtils.defaultString(section.getString("Goal"), section.getString("Message")))
+				.type(section.getString("Type"))
+				.threshold(threshold)
+				.category(category)
+				.subcategory(subcategory)
+				.rewards(rewardParser.parseRewards(path))
+				.build();
+		achievementMap.put(achievement);
 	}
 
 	private void logLoadingMessages() {
 		int disabledCategoryCount = disabledCategories.size();
 		int categories = NormalAchievements.values().length + MultipleAchievements.values().length + 1
 				- disabledCategoryCount;
-		logger.info("Loaded " + namesToDisplayNames.size() + " achievements in " + categories + " categories.");
+		logger.info("Loaded " + achievementMap.getAll().size() + " achievements in " + categories + " categories.");
 
 		if (!disabledCategories.isEmpty()) {
 			String noun = disabledCategoryCount == 1 ? "category" : "categories";

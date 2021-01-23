@@ -1,18 +1,31 @@
 package com.hm.achievement.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Class for testing the text helpers.
  *
  * @author Pyves
  */
+@ExtendWith(MockitoExtension.class)
 class StringHelperTest {
+
+	@Mock
+	private Player player;
+	@Mock
+	private World world;
 
 	@Test
 	void shouldRemoveFormattingCodes() {
@@ -34,6 +47,19 @@ class StringHelperTest {
 		String result = StringHelper.getClosestMatch("somaeThing", possibleMatches);
 
 		assertEquals("something", result);
+	}
+
+	@Test
+	void shouldReplacePlayerPlaceholders() {
+		when(player.getName()).thenReturn("Pyves");
+		when(player.getLocation()).thenReturn(new Location(world, 1, 5, 8));
+		when(player.getWorld()).thenReturn(world);
+		when(world.getName()).thenReturn("Nether");
+
+		String result = StringHelper.replacePlayerPlaceholders(
+				"Player PLAYER is in the PLAYER_WORLD at position PLAYER_X PLAYER_Y PLAYER_Z", player);
+
+		assertEquals("Player Pyves is in the Nether at position 1 5 8", result);
 	}
 
 }

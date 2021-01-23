@@ -1,9 +1,6 @@
 package com.hm.achievement.module;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Named;
@@ -22,33 +19,7 @@ public class ConfigModule {
 
 	@Provides
 	@Singleton
-	Map<String, List<Long>> provideSortedThresholds() {
-		return new HashMap<>();
-	}
-
-	@Provides
-	@Singleton
-	@Named("ntd")
-	Map<String, String> provideNamesToDisplayNames() {
-		return new HashMap<>();
-	}
-
-	@Provides
-	@Singleton
-	@Named("dtn")
-	Map<String, String> provideDisplayNamesToNames() {
-		return new HashMap<>();
-	}
-
-	@Provides
-	@Singleton
 	Set<Category> provideDisabledCategories() {
-		return new HashSet<>();
-	}
-
-	@Provides
-	@Singleton
-	Set<String> provideEnabledCategoriesWithSubcategories() {
 		return new HashSet<>();
 	}
 

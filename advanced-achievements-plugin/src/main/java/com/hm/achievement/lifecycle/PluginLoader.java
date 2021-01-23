@@ -1,6 +1,5 @@
 package com.hm.achievement.lifecycle;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -27,6 +26,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.command.completer.CommandTabCompleter;
 import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.command.executor.PluginCommandExecutor;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.config.ConfigurationParser;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.AsyncCachedRequestsSender;
@@ -60,7 +60,7 @@ public class PluginLoader {
 	private final UpdateChecker updateChecker;
 	private final ReloadCommand reloadCommand;
 	private final Set<Reloadable> reloadables;
-	private final Map<String, String> namesToDisplayNames;
+	private final AchievementMap achievementMap;
 
 	// Listeners, to monitor various events.
 	private final FireworkListener fireworkListener;
@@ -106,7 +106,7 @@ public class PluginLoader {
 			Set<Category> disabledCategories, @Named("main") YamlConfiguration mainConfig,
 			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
 			AchievePlayTimeRunnable playTimeRunnable, UpdateChecker updateChecker, ReloadCommand reloadCommand,
-			@Named("ntd") Map<String, String> namesToDisplayNames) {
+			AchievementMap achievementMap) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.reloadables = reloadables;
@@ -129,7 +129,7 @@ public class PluginLoader {
 		this.playTimeRunnable = playTimeRunnable;
 		this.updateChecker = updateChecker;
 		this.reloadCommand = reloadCommand;
-		this.namesToDisplayNames = namesToDisplayNames;
+		this.achievementMap = achievementMap;
 	}
 
 	/**
@@ -290,7 +290,7 @@ public class PluginLoader {
 		PluginManager pluginManager = Bukkit.getPluginManager();
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Permission categoryParent = new Permission(category.toPermName(), PermissionDefault.TRUE);
-			for (String section : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
+			for (String section : achievementMap.getSubcategoriesForCategory(category)) {
 				// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories and don't take
 				// spaces into account.
 				section = StringUtils.deleteWhitespace(StringUtils.substringBefore(section, ":"));
@@ -307,7 +307,7 @@ public class PluginLoader {
 		}
 
 		Permission achievementParent = new Permission("achievement.*", PermissionDefault.OP);
-		for (String name : namesToDisplayNames.keySet()) {
+		for (String name : achievementMap.getAllNames()) {
 			String permissionNode = "achievement." + name;
 			if (pluginManager.getPermission(permissionNode) == null) {
 				Permission perm = new Permission(permissionNode, PermissionDefault.TRUE);

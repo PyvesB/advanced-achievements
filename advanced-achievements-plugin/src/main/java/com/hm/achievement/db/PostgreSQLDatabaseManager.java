@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -14,6 +13,7 @@ import javax.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 
 /**
  * Class used to handle a PosgreSQL database. Note that some query methods are overriden as the SQL syntax is different
@@ -25,8 +25,8 @@ import com.hm.achievement.category.NormalAchievements;
 public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
 	public PostgreSQLDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
-			@Named("ntd") Map<String, String> namesToDisplayNames, DatabaseUpdater databaseUpdater) {
-		super(mainConfig, logger, namesToDisplayNames, databaseUpdater, "org.postgresql.Driver", "postgresql");
+			AchievementMap achievementMap, DatabaseUpdater databaseUpdater) {
+		super(mainConfig, logger, achievementMap, databaseUpdater, "org.postgresql.Driver", "postgresql");
 	}
 
 	@Override

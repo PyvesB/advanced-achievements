@@ -1,7 +1,6 @@
 package com.hm.achievement.runnable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -19,6 +18,7 @@ import org.bukkit.util.NumberConversions;
 
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.RewardParser;
@@ -40,9 +40,9 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 
 	@Inject
 	public AchieveDistanceRunnable(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
+			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser,
 			Set<Category> disabledCategories) {
-		super(mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
 		this.disabledCategories = disabledCategories;
 	}
 
@@ -141,6 +141,6 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 		}
 
 		long distance = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), difference);
-		checkThresholdsAndAchievements(player, category.toString(), distance);
+		checkThresholdsAndAchievements(player, category, distance);
 	}
 }

@@ -2,39 +2,35 @@ package com.hm.achievement.command.completer;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.hm.achievement.category.CommandAchievements;
+import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.BookCommand;
 import com.hm.achievement.command.executable.EasterEggCommand;
 import com.hm.achievement.command.executable.GenerateCommand;
 import com.hm.achievement.command.executable.HelpCommand;
 import com.hm.achievement.command.executable.Upgrade13Command;
+import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.domain.Achievement.AchievementBuilder;
 
 /**
  * Class for testing the command tab completer.
@@ -43,12 +39,6 @@ import com.hm.achievement.command.executable.Upgrade13Command;
  */
 @ExtendWith(MockitoExtension.class)
 class CommandTabCompleterTest {
-
-	@Mock
-	private YamlConfiguration mainConfig;
-
-	@Mock
-	private ConfigurationSection configurationSection;
 
 	@Mock
 	private Command command;
@@ -83,18 +73,16 @@ class CommandTabCompleterTest {
 		commands.add(upgrade13Command);
 		commands.add(generateCommand);
 		commands.add(helpCommand);
-		Map<String, String> namesToDisplayNames = new HashMap<>();
-		namesToDisplayNames.put("yourAch1", "Special Event Achievement!");
-		namesToDisplayNames.put("yourAch2", "&2Coloured &rAchievement!");
-		namesToDisplayNames.put("No Display Name Achievement!", "");
-		Map<String, String> displayNamesToNames = new HashMap<>();
-		displayNamesToNames.put("special event achievement!", "yourAch1");
-		displayNamesToNames.put("coloured achievement!", "yourAch2");
-		displayNamesToNames.put("no display name Achievement!", "No Display Name Achievement!");
-		Set<String> enabledCategoriesWithSubcategories = new HashSet<>(Arrays.asList("Custom.someSubcategory", "Beds",
-				"Breaks.someSubcategory", "Breeding.someSubcategory", "Brewing"));
-		underTest = new CommandTabCompleter(mainConfig, namesToDisplayNames, displayNamesToNames,
-				enabledCategoriesWithSubcategories, commands, 13);
+		AchievementMap achievementMap = new AchievementMap();
+		achievementMap.put(new AchievementBuilder().name("ach1").displayName("Special Event Achievement!")
+				.category(CommandAchievements.COMMANDS).subcategory("yourAch1").build());
+		achievementMap.put(new AchievementBuilder().name("ach2").displayName("&2Coloured &rAchievement!")
+				.category(CommandAchievements.COMMANDS).subcategory("yourAch2").build());
+		achievementMap.put(new AchievementBuilder().name("Spaced Name Achievement!")
+				.displayName("Spaced Name Achievement!").build());
+		achievementMap.put(new AchievementBuilder().name("ach4").displayName("Display 4").subcategory("workbench")
+				.category(MultipleAchievements.CRAFTS).build());
+		underTest = new CommandTabCompleter(achievementMap, commands, 13);
 	}
 
 	@Test
@@ -161,7 +149,7 @@ class CommandTabCompleterTest {
 		Set<AbstractCommand> commands = new HashSet<>();
 		commands.add(bookCommand);
 		commands.add(generateCommand);
-		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptyMap(), emptySet(), commands, 11);
+		underTest = new CommandTabCompleter(new AchievementMap(), commands, 11);
 		when(commandSender.hasPermission(anyString())).thenReturn(true);
 
 		String[] args = new String[] { "" };
@@ -182,10 +170,10 @@ class CommandTabCompleterTest {
 
 	@Test
 	void shoudCompleteForResetCommand() {
-		String[] args = new String[] { "reset", "B" };
+		String[] args = new String[] { "reset", "C" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("Beds", "Breaks.someSubcategory", "Breeding.someSubcategory", "Brewing"), completionResult);
+		assertEquals(asList("Crafts.workbench"), completionResult);
 	}
 
 	@Test
@@ -198,28 +186,26 @@ class CommandTabCompleterTest {
 
 	@Test
 	void shoudCompleteWithCategoryForAddCommand() {
-		String[] args = new String[] { "add", "1", "Cust" };
+		String[] args = new String[] { "add", "1", "Cra" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("Custom.someSubcategory"), completionResult);
+		assertEquals(asList("Crafts.workbench"), completionResult);
 	}
 
 	@Test
 	void shoudCompleteForGiveCommand() {
-		when(mainConfig.getConfigurationSection("Commands")).thenReturn(configurationSection);
-		when(configurationSection.getKeys(false)).thenReturn(singleton("myCommand"));
 		String[] args = new String[] { "give", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("myCommand"), completionResult);
+		assertEquals(asList("yourAch1", "yourAch2"), completionResult);
 	}
 
 	@Test
 	void shoudCompleteForDeleteCommand() {
-		String[] args = new String[] { "delete", "y" };
+		String[] args = new String[] { "delete", "a" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("yourAch1", "yourAch2"), completionResult);
+		assertEquals(asList("ach1", "ach2", "ach4"), completionResult);
 	}
 
 	@Test
@@ -227,24 +213,30 @@ class CommandTabCompleterTest {
 		String[] args = new String[] { "check", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("No␣Display␣Name␣Achievement!", "yourAch1", "yourAch2"), completionResult);
+		assertEquals(asList("Spaced␣Name␣Achievement!", "ach1", "ach2", "ach4"), completionResult);
 	}
 
 	@Test
 	void shoudCompleteForInspectCommand() {
-		String[] args = new String[] { "inspect", "" };
+		String[] args = new String[] { "inspect", "s" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("coloured␣achievement!", "no␣display␣name␣Achievement!", "special␣event␣achievement!"),
-				completionResult);
+		assertEquals(asList("spaced␣name␣achievement!", "special␣event␣achievement!"), completionResult);
 	}
 
 	@Test
 	void shoudTruncateCompletionListOnOldServerVersionsIfOverFiftyElements() {
-		underTest = new CommandTabCompleter(mainConfig, emptyMap(), emptyMap(), emptySet(), emptySet(), 12);
-		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
-		when(mainConfig.getConfigurationSection("Commands")).thenReturn(configurationSection);
-		when(configurationSection.getKeys(false)).thenReturn(commands);
+		AchievementMap achievementMap = new AchievementMap();
+		IntStream.rangeClosed(1, 100)
+				.boxed()
+				.map(i -> new AchievementBuilder()
+						.name("ach" + i)
+						.displayName("Display " + i)
+						.category(CommandAchievements.COMMANDS)
+						.subcategory("yourAch" + i)
+						.build())
+				.forEach(achievementMap::put);
+		underTest = new CommandTabCompleter(achievementMap, emptySet(), 12);
 
 		String[] args = new String[] { "give", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
@@ -255,9 +247,17 @@ class CommandTabCompleterTest {
 
 	@Test
 	void shoudNotTruncateCompletionListIfRecentServerVersion() {
-		Set<String> commands = IntStream.rangeClosed(1, 100).boxed().map(i -> ("myCommand" + i)).collect(Collectors.toSet());
-		when(mainConfig.getConfigurationSection("Commands")).thenReturn(configurationSection);
-		when(configurationSection.getKeys(false)).thenReturn(commands);
+		AchievementMap achievementMap = new AchievementMap();
+		IntStream.rangeClosed(1, 100)
+				.boxed()
+				.map(i -> new AchievementBuilder()
+						.name("ach" + i)
+						.displayName("Display " + i)
+						.category(CommandAchievements.COMMANDS)
+						.subcategory("yourAch" + i)
+						.build())
+				.forEach(achievementMap::put);
+		underTest = new CommandTabCompleter(achievementMap, emptySet(), 16);
 
 		String[] args = new String[] { "give", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);

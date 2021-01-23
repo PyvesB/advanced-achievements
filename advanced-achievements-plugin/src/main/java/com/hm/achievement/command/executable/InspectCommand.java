@@ -24,8 +24,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.command.pagination.SupplierCommandPagination;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
+import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.utils.StringHelper;
 
 /**
@@ -42,7 +44,7 @@ public class InspectCommand extends AbstractCommand {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final AbstractDatabaseManager databaseManager;
-	private final Map<String, String> displayNamesToNames;
+	private AchievementMap achievementMap;
 
 	private final Map<String, Long> lastCached;
 	private final Map<String, SupplierCommandPagination> cachedPaginations;
@@ -50,11 +52,11 @@ public class InspectCommand extends AbstractCommand {
 	@Inject
 	public InspectCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
 			StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager,
-			@Named("dtn") Map<String, String> displayNamesToNames) {
+			AchievementMap achievementMap) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;
-		this.displayNamesToNames = displayNamesToNames;
+		this.achievementMap = achievementMap;
 
 		this.lastCached = new HashMap<>();
 		this.cachedPaginations = new HashMap<>();
@@ -73,12 +75,12 @@ public class InspectCommand extends AbstractCommand {
 	@Override
 	void onExecute(CommandSender sender, String[] args) {
 		// Argument Parsing
-		String achievementDisplayName = parseAchievementName(args).toLowerCase();
-		String achievementName = getAchievementName(achievementDisplayName);
-		if (achievementName == null) {
+		String displayName = parseAchievementName(args);
+		Achievement achievement = getAchievement(displayName);
+		if (achievement == null) {
 			sender.sendMessage(pluginHeader + StringUtils.replaceEach(langConfig.getString("achievement_not_recognized"),
-					new String[] { "NAME", "CLOSEST_MATCH" }, new String[] { achievementDisplayName, StringHelper
-							.getClosestMatch(achievementDisplayName, displayNamesToNames.keySet()) }));
+					new String[] { "NAME", "CLOSEST_MATCH" }, new String[] { displayName, StringHelper
+							.getClosestMatch(displayName, achievementMap.getAllSanitisedDisplayNames()) }));
 			return;
 		}
 		int page = getPage(args);
@@ -86,10 +88,10 @@ public class InspectCommand extends AbstractCommand {
 		advancedAchievements.getServer().getScheduler().runTaskAsynchronously(advancedAchievements, () -> {
 			// Cleaning the cache & caching desired pagination
 			cleanUpCache();
-			checkAndCache(achievementName);
+			checkAndCache(achievement.getName());
 
 			// Send pagination
-			SupplierCommandPagination pagination = cachedPaginations.get(achievementName);
+			SupplierCommandPagination pagination = cachedPaginations.get(achievement.getName());
 			pagination.sendPage(page, sender);
 		});
 	}
@@ -109,15 +111,12 @@ public class InspectCommand extends AbstractCommand {
 		return achName.toString();
 	}
 
-	private String getAchievementName(String achievementDisplayName) {
-		String achievementName = displayNamesToNames.get(achievementDisplayName);
-		if (achievementName == null) {
-			String whiteSpaceRemovedName = achievementDisplayName.replace(' ', '_');
-			if (displayNamesToNames.containsValue(whiteSpaceRemovedName)) {
-				achievementName = whiteSpaceRemovedName;
-			}
+	private Achievement getAchievement(String achievementDisplayName) {
+		Achievement achievement = achievementMap.getForDisplayName(achievementDisplayName);
+		if (achievement == null) {
+			achievement = achievementMap.getForDisplayName(achievementDisplayName.replace(' ', '_'));
 		}
-		return achievementName;
+		return achievement;
 	}
 
 	private void cleanUpCache() {

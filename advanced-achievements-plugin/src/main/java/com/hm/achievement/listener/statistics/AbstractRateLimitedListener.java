@@ -14,7 +14,9 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.particle.FancyMessageSender;
 import com.hm.achievement.utils.RewardParser;
@@ -38,9 +40,9 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	private String langStatisticCooldown;
 
 	AbstractRateLimitedListener(Category category, YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
+			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser,
 			AdvancedAchievements advancedAchievements, YamlConfiguration langConfig, Logger logger) {
-		super(category, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+		super(category, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
 		this.advancedAchievements = advancedAchievements;
 		this.langConfig = langConfig;
 		this.logger = logger;
@@ -50,8 +52,9 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		List<Long> thresholds = sortedThresholds.get(category.toString());
-		hardestCategoryThreshold = thresholds == null ? Long.MAX_VALUE : thresholds.get(thresholds.size() - 1);
+		List<Achievement> achievements = achievementMap.getForCategory(category);
+		hardestCategoryThreshold = achievements.isEmpty() ? Long.MAX_VALUE
+				: achievements.get(achievements.size() - 1).getThreshold();
 		if (mainConfig.isInt("StatisticCooldown")) {
 			// Old configuration style for plugin versions up to version 5.4.
 			categoryCooldown = mainConfig.getInt("StatisticCooldown") * 1000;

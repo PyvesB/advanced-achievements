@@ -32,7 +32,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.common.util.concurrent.MoreExecutors;
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.data.AwardedDBAchievement;
+import com.hm.achievement.domain.Achievement.AchievementBuilder;
 
 /**
  * Class for testing H2 Database.
@@ -42,7 +44,8 @@ import com.hm.achievement.db.data.AwardedDBAchievement;
 @ExtendWith(MockitoExtension.class)
 class H2DatabaseManagerTest {
 
-	private static final String TEST_ACHIEVEMENT = "TestAchievement";
+	private static final String TEST_ACHIEVEMENT = "testachievement";
+	private static final String TEST_DISPLAY = "TestDisplay";
 	private static final String TEST_MESSAGE = "TestMessage";
 
 	private static H2DatabaseManager db;
@@ -56,7 +59,10 @@ class H2DatabaseManagerTest {
 		Logger logger = Logger.getLogger("DBTestLogger");
 		YamlConfiguration config = YamlConfiguration
 				.loadConfiguration(new InputStreamReader(H2DatabaseManagerTest.class.getResourceAsStream("/config-h2.yml")));
-		db = new H2DatabaseManager(config, logger, Collections.emptyMap(), new DatabaseUpdater(logger, null), plugin) {
+		AchievementMap achievementMap = new AchievementMap();
+		achievementMap.put(
+				new AchievementBuilder().name(TEST_ACHIEVEMENT).displayName(TEST_DISPLAY).message(TEST_MESSAGE).build());
+		db = new H2DatabaseManager(config, logger, achievementMap, new DatabaseUpdater(logger, null), plugin) {
 
 			@Override
 			public void extractConfigurationParameters() {
@@ -85,7 +91,7 @@ class H2DatabaseManagerTest {
 		List<AwardedDBAchievement> achievements = db.getPlayerAchievementsList(testUUID);
 		assertEquals(1, achievements.size());
 		AwardedDBAchievement found = achievements.get(0);
-		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_ACHIEVEMENT, TEST_MESSAGE,
+		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_DISPLAY, TEST_MESSAGE,
 				found.getDateAwarded(), found.getFormattedDate());
 		assertEquals(expected, found);
 	}

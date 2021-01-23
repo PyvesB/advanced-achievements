@@ -1,7 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -15,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.RewardParser;
 
@@ -22,9 +21,9 @@ import com.hm.achievement.utils.RewardParser;
 public class TargetsShotListener extends AbstractListener {
 
 	@Inject
-	public TargetsShotListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser) {
-		super(MultipleAchievements.TARGETSSHOT, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser);
+	public TargetsShotListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+			CacheManager cacheManager, RewardParser rewardParser) {
+		super(MultipleAchievements.TARGETSSHOT, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

@@ -1,18 +1,16 @@
 package com.hm.achievement.placeholder;
 
-import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -26,17 +24,15 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 	private final AdvancedAchievements advancedAchievements;
-	private final YamlConfiguration mainConfig;
 	private final CacheManager cacheManager;
-	private final Map<String, String> namesToDisplayNames;
+	private final AchievementMap achievementMap;
 
 	@Inject
-	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements, @Named("main") YamlConfiguration mainConfig,
-			CacheManager cacheManager, @Named("ntd") Map<String, String> namesToDisplayNames) {
+	public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements, CacheManager cacheManager,
+			AchievementMap achievementMap) {
 		this.advancedAchievements = advancedAchievements;
-		this.mainConfig = mainConfig;
 		this.cacheManager = cacheManager;
-		this.namesToDisplayNames = namesToDisplayNames;
+		this.achievementMap = achievementMap;
 	}
 
 	@Override
@@ -47,7 +43,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 	@Override
 	public String onPlaceholderRequest(Player p, String identifier) {
 		if ("total_achievements".equalsIgnoreCase(identifier)) {
-			return Integer.toString(namesToDisplayNames.size());
+			return Integer.toString(achievementMap.getAll().size());
 		}
 
 		if (p != null) {
@@ -58,7 +54,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 			if ("achievements_percentage".equalsIgnoreCase(identifier)) {
 				return String.format("%.1f%%", 100 * (double) cacheManager.getPlayerTotalAchievements(uuid)
-						/ namesToDisplayNames.size());
+						/ achievementMap.getAll().size());
 			}
 
 			for (NormalAchievements category : NormalAchievements.values()) {
@@ -71,7 +67,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 			}
 
 			for (MultipleAchievements category : MultipleAchievements.values()) {
-				for (String subcategory : mainConfig.getConfigurationSection(category.toString()).getKeys(false)) {
+				for (String subcategory : achievementMap.getSubcategoriesForCategory(category)) {
 					String categoryPath = category + "_" + subcategory;
 					if (categoryPath.equalsIgnoreCase(identifier)) {
 						return Long.toString(cacheManager.getAndIncrementStatisticAmount(category, subcategory, uuid, 0));

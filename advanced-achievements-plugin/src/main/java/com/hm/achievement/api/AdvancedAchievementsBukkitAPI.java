@@ -12,21 +12,21 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.hm.achievement.utils.StatisticIncreaseHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
-import org.bukkit.entity.Player;
+import com.hm.achievement.utils.StatisticIncreaseHandler;
 
 /**
  * Underlying implementation of the AdvancedAchievementsAPI interface.
@@ -40,19 +40,19 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	private final CacheManager cacheManager;
 	private final AbstractDatabaseManager databaseManager;
 	private final StatisticIncreaseHandler statisticIncreaseHandler;
-	private final Map<String, String> namesToDisplayNames;
 	private final Logger logger;
+	private final AchievementMap achievementMap;
 
 	@Inject
 	AdvancedAchievementsBukkitAPI(AdvancedAchievements advancedAchievements, Logger logger, CacheManager cacheManager,
 			AbstractDatabaseManager databaseManager, StatisticIncreaseHandler statisticIncreaseHandler,
-			@Named("ntd") Map<String, String> namesToDisplayNames) {
+			AchievementMap achievementMap) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.cacheManager = cacheManager;
 		this.databaseManager = databaseManager;
 		this.statisticIncreaseHandler = statisticIncreaseHandler;
-		this.namesToDisplayNames = namesToDisplayNames;
+		this.achievementMap = achievementMap;
 	}
 
 	/**
@@ -172,7 +172,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	@Override
 	public String getDisplayNameForName(String achievementName) {
 		validateNotEmpty(achievementName, "Achievement Name");
-		return namesToDisplayNames.get(achievementName);
+		com.hm.achievement.domain.Achievement achievement = achievementMap.getForName(achievementName);
+		return achievement == null ? null : achievement.getDisplayName();
 	}
 
 	@Override
@@ -186,7 +187,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		validateNotNull(player, "player");
 
 		long amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd);
-		statisticIncreaseHandler.checkThresholdsAndAchievements(player, category.toString(), amount);
+		statisticIncreaseHandler.checkThresholdsAndAchievements(player, category, amount);
 	}
 
 	@Override
@@ -197,7 +198,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		validateNotNull(player, "player");
 
 		long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(), valueToAdd);
-		statisticIncreaseHandler.checkThresholdsAndAchievements(player, category.toString() + "." + subcategory, amount);
+		statisticIncreaseHandler.checkThresholdsAndAchievements(player, category, subcategory, amount);
 	}
 
 	/**

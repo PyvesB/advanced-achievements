@@ -1,7 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -21,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.InventoryHelper;
 import com.hm.achievement.utils.MaterialHelper;
@@ -39,11 +38,11 @@ public class BrewingListener extends AbstractRateLimitedListener {
 	private final InventoryHelper inventoryHelper;
 
 	@Inject
-	public BrewingListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			Map<String, List<Long>> sortedThresholds, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, @Named("lang") YamlConfiguration langConfig, Logger logger,
-			MaterialHelper materialHelper, InventoryHelper inventoryHelper) {
-		super(NormalAchievements.BREWING, mainConfig, serverVersion, sortedThresholds, cacheManager, rewardParser,
+	public BrewingListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+			CacheManager cacheManager, RewardParser rewardParser, AdvancedAchievements advancedAchievements,
+			@Named("lang") YamlConfiguration langConfig, Logger logger, MaterialHelper materialHelper,
+			InventoryHelper inventoryHelper) {
+		super(NormalAchievements.BREWING, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser,
 				advancedAchievements, langConfig, logger);
 		this.materialHelper = materialHelper;
 		this.inventoryHelper = inventoryHelper;
