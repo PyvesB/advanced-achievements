@@ -70,7 +70,8 @@ public class ListGUIListener implements Listener {
 			return;
 		}
 
-		int currentPage = ((AchievementInventoryHolder) inventory.getHolder()).getPageIndex();
+		AchievementInventoryHolder holder = (AchievementInventoryHolder) inventory.getHolder();
+		int currentPage = holder.getPageIndex();
 		Player player = (Player) event.getWhoClicked();
 		if (currentPage == MAIN_GUI_PAGE) {
 			// Main GUI, check whether player can interact with the selected item.
@@ -80,7 +81,6 @@ public class ListGUIListener implements Listener {
 			return;
 		}
 
-		ItemStack categoryItem = inventory.getItem(0);
 		// Check whether a navigation button was clicked in a category GUI.
 		if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getBackButton())) {
 			String command = mainConfig.getString("OverrideBackButtonBehaviour");
@@ -91,9 +91,9 @@ public class ListGUIListener implements Listener {
 						StringUtils.replace(command, "PLAYER", player.getName()));
 			}
 		} else if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getPreviousButton())) {
-			categoryGUI.displayCategoryGUI(categoryItem, player, currentPage - 1);
+			categoryGUI.displayCategoryGUI(holder.getCategoryItem(), player, currentPage - 1);
 		} else if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getNextButton())) {
-			categoryGUI.displayCategoryGUI(categoryItem, player, currentPage + 1);
+			categoryGUI.displayCategoryGUI(holder.getCategoryItem(), player, currentPage + 1);
 		}
 	}
 

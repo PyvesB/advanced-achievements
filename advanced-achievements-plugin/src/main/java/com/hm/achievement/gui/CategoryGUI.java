@@ -46,7 +46,7 @@ import com.hm.achievement.utils.StringHelper;
 public class CategoryGUI implements Reloadable {
 
 	private static final int MAX_PAGE_SIZE = 54;
-	private static final int MAX_ACHIEVEMENTS_PER_PAGE = 44;
+	private static final int MAX_ACHIEVEMENTS_PER_PAGE = 45;
 	private static final long NO_STAT = -1L;
 	private static final String NO_SUBCATEGORY = "";
 	private static final int PROGRESS_BAR_SIZE = 90;
@@ -162,14 +162,12 @@ public class CategoryGUI implements Reloadable {
 		int pageStart = MAX_ACHIEVEMENTS_PER_PAGE * pageIndex;
 		int pageEnd = Math.min(MAX_ACHIEVEMENTS_PER_PAGE * (pageIndex + 1), achievements.size());
 
-		// Create a new chest-like inventory as small as possible whilst still containing the category item, all page
-		// achievements and an entire row for the navigation items.
-		int guiSize = Math.min(NumberHelper.nextMultipleOf9(achievements.size() + 10), MAX_PAGE_SIZE);
-		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder(pageIndex);
+		// Create a new chest-like inventory as small as possible whilst still all page achievements and an entire row
+		// for the navigation items.
+		int guiSize = Math.min(NumberHelper.nextMultipleOf9(achievements.size() + 9), MAX_PAGE_SIZE);
+		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder(pageIndex, clickedItem);
 		Inventory inventory = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
 		inventoryHolder.setInventory(inventory);
-		// Persist clicked item (ie. category's item in the main GUI) as first item in the category GUI.
-		inventory.setItem(0, clickedItem);
 
 		String previousItemDate = null;
 		String previousSubcategory = NO_SUBCATEGORY;
@@ -206,11 +204,11 @@ public class CategoryGUI implements Reloadable {
 			}
 
 			if (configHideProgressiveAchievements && ineligibleSeriesItem) {
-				inventory.setItem(index - pageStart + 1, guiItems.getAchievementLock());
+				inventory.setItem(index - pageStart, guiItems.getAchievementLock());
 			} else {
 				List<String> lore = buildLore(achievement, receptionDate, statistic, ineligibleSeriesItem, player);
-				insertAchievement(inventory, index - pageStart + 1, statistic, achievement.getDisplayName(), receptionDate,
-						ineligibleSeriesItem, index - seriesStart + 1, lore, achievement.getType());
+				insertAchievement(inventory, index - pageStart, statistic, achievement.getDisplayName(), receptionDate,
+						ineligibleSeriesItem, index - seriesStart, lore, achievement.getType());
 			}
 
 			previousItemDate = receptionDate;
