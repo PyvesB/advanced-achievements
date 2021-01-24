@@ -123,32 +123,6 @@ public class DatabaseUpdater {
 	}
 
 	/**
-	 * Updates the database achievements table. The table is now using a timestamp type for the date column.
-	 * 
-	 * @param databaseManager
-	 */
-	void updateOldDBToTimestamps(AbstractDatabaseManager databaseManager) {
-		// SQLite unaffected by this change, H2 support added with timestamp from the start.
-		if (databaseManager instanceof AbstractRemoteDatabaseManager) {
-			Connection conn = databaseManager.getSQLConnection();
-			try (Statement st = conn.createStatement()) {
-				ResultSet rs = st.executeQuery("SELECT date FROM " + databaseManager.getPrefix() + "achievements LIMIT 1");
-				String type = rs.getMetaData().getColumnTypeName(1);
-				// Old column type for versions prior to 5.11.0 was date.
-				if ("date".equalsIgnoreCase(type)) {
-					logger.info("Updating database table with timestamp datatype for achievements, please wait...");
-					String query = databaseManager instanceof MySQLDatabaseManager
-							? "ALTER TABLE " + databaseManager.getPrefix() + "achievements MODIFY date TIMESTAMP"
-							: "ALTER TABLE " + databaseManager.getPrefix() + "achievements ALTER COLUMN date TYPE TIMESTAMP";
-					st.execute(query);
-				}
-			} catch (SQLException e) {
-				logger.log(Level.SEVERE, "Database error while updating old achievements table:", e);
-			}
-		}
-	}
-
-	/**
 	 * Increases the size of the sub-category column of MultipleAchievements database tables to accommodate new
 	 * parameters such as specificplayer-56c79b19-4500-466c-94ea-514a755fdd09 or grouped sub-categories.
 	 * 
