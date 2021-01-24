@@ -228,6 +228,8 @@ public class CategoryGUI implements Reloadable {
 			backMeta.setDisplayName(langListBackMessage);
 			if (StringUtils.isNotBlank(langListBackLore)) {
 				backMeta.setLore(Collections.singletonList(langListBackLore));
+			} else {
+				backMeta.setLore(Collections.emptyList());
 			}
 			backButton.setItemMeta(backMeta);
 			inventory.setItem(guiSize - (ROW_SIZE + 1) / 2, backButton);
