@@ -233,6 +233,11 @@ DatabaseType: h2
 # Do a full server restart for this to take effect.
 TablePrefix: ""
 
+# When using groups of subcategories for Multiple action achievements (e.g. snow|snow_block|ice), you need to
+# ensure that the value of this parameter is greater than the total number of characters in the group. Unless
+# you use groups of very large sizes, you don't need to change this value.
+TableMaxSizeOfGroupedSubcategories: 128
+
 # Specify additional options when opening a connection to a MySQL/PostgreSQL database. Start each option with &,
 # for instance "&useUnicode=yes&characterEncoding=UTF-8". Make sure the key-value pairs themselves are URL encoded.
 AdditionalConnectionOptions: ""

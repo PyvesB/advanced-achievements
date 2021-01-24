@@ -44,12 +44,13 @@ public class DatabaseUpdater {
 	 * Update the database table to use 1.13 materials rather than the old 1.12 ones.
 	 * 
 	 * @param databaseManager
+	 * @param size
 	 */
-	public void updateOldMaterialsToNewOnes(AbstractDatabaseManager databaseManager) {
+	public void updateOldMaterialsToNewOnes(AbstractDatabaseManager databaseManager, int size) {
 		logger.info("Starting database upgrade to new Minecraft 1.13 material names, please wait...");
-		updateOldMaterialsToNewOnes(databaseManager, MultipleAchievements.BREAKS);
-		updateOldMaterialsToNewOnes(databaseManager, MultipleAchievements.CRAFTS);
-		updateOldMaterialsToNewOnes(databaseManager, MultipleAchievements.PLACES);
+		updateOldMaterialsToNewOnes(databaseManager, MultipleAchievements.BREAKS, size);
+		updateOldMaterialsToNewOnes(databaseManager, MultipleAchievements.CRAFTS, size);
+		updateOldMaterialsToNewOnes(databaseManager, MultipleAchievements.PLACES, size);
 		logger.info("Finished database upgrade.");
 	}
 
@@ -92,9 +93,10 @@ public class DatabaseUpdater {
 	 * database.
 	 * 
 	 * @param databaseManager
+	 * @param size
 	 * @throws PluginLoadError
 	 */
-	void initialiseTables(AbstractDatabaseManager databaseManager) throws PluginLoadError {
+	void initialiseTables(AbstractDatabaseManager databaseManager, int size) throws PluginLoadError {
 		Connection conn = databaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix()
@@ -102,8 +104,8 @@ public class DatabaseUpdater {
 
 			for (MultipleAchievements category : MultipleAchievements.values()) {
 				st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix() + category.toDBName()
-						+ " (playername char(36)," + category.toSubcategoryDBName() + " varchar(191)," + category.toDBName()
-						+ " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
+						+ " (playername char(36)," + category.toSubcategoryDBName() + " varchar(" + size + "),"
+						+ category.toDBName() + " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 			}
 
 			for (NormalAchievements category : NormalAchievements.values()) {
@@ -128,20 +130,21 @@ public class DatabaseUpdater {
 	 * 
 	 * @param databaseManager
 	 * @param category
+	 * @param size
 	 */
-	void updateOldDBColumnSize(AbstractDatabaseManager databaseManager, MultipleAchievements category) {
+	void updateOldDBColumnSize(AbstractDatabaseManager databaseManager, MultipleAchievements category, int size) {
 		// SQLite ignores size for varchar datatype. H2 support was added after this was an issue.
 		if (!(databaseManager instanceof AbstractFileDatabaseManager)) {
 			Connection conn = databaseManager.getSQLConnection();
 			try (Statement st = conn.createStatement()) {
 				ResultSet rs = st.executeQuery("SELECT " + category.toSubcategoryDBName() + " FROM "
 						+ databaseManager.getPrefix() + category.toDBName() + " LIMIT 1");
-				if (rs.getMetaData().getPrecision(1) < 191) {
+				if (rs.getMetaData().getPrecision(1) < size) {
 					logger.info("Updating " + category.toDBName() + " database table with extended column, please wait...");
 					// Increase size of table.
 					String alterOperation = databaseManager instanceof PostgreSQLDatabaseManager
-							? "ALTER COLUMN " + category.toSubcategoryDBName() + " TYPE varchar(191)"
-							: "MODIFY " + category.toSubcategoryDBName() + " varchar(191)";
+							? "ALTER COLUMN " + category.toSubcategoryDBName() + " TYPE varchar(" + size + ")"
+							: "MODIFY " + category.toSubcategoryDBName() + " varchar(" + size + ")";
 					st.execute("ALTER TABLE " + databaseManager.getPrefix() + category.toDBName() + " " + alterOperation);
 				}
 			} catch (SQLException e) {
@@ -156,14 +159,16 @@ public class DatabaseUpdater {
 	 * 
 	 * @param databaseManager
 	 * @param category
+	 * @param size
 	 */
-	private void updateOldMaterialsToNewOnes(AbstractDatabaseManager databaseManager, MultipleAchievements category) {
+	private void updateOldMaterialsToNewOnes(AbstractDatabaseManager databaseManager, MultipleAchievements category,
+			int size) {
 		String tableName = databaseManager.getPrefix() + category.toDBName();
 		Connection conn = databaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			// Create new temporary table.
-			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(191),"
-					+ tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
+			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(" + size
+					+ ")," + tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
 			try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
 				ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "");
 				List<String> uuids = new ArrayList<>();

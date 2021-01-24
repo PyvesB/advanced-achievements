@@ -23,6 +23,8 @@ public class Upgrade13Command extends AbstractCommand {
 	private final AbstractDatabaseManager databaseManager;
 	private final DatabaseUpdater databaseUpdater;
 
+	private int configTableMaxSizeOfGroupedSubcategories;
+
 	@Inject
 	public Upgrade13Command(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
 			StringBuilder pluginHeader, AbstractDatabaseManager databaseManager, DatabaseUpdater databaseUpdater) {
@@ -32,8 +34,15 @@ public class Upgrade13Command extends AbstractCommand {
 	}
 
 	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		configTableMaxSizeOfGroupedSubcategories = mainConfig.getInt("TableMaxSizeOfGroupedSubcategories");
+	}
+
+	@Override
 	void onExecute(CommandSender sender, String[] args) {
-		databaseUpdater.updateOldMaterialsToNewOnes(databaseManager);
+		databaseUpdater.updateOldMaterialsToNewOnes(databaseManager, configTableMaxSizeOfGroupedSubcategories);
 		sender.sendMessage(pluginHeader +
 				"Database upgrade to Minecraft 1.13 completed for the Crafts, Places and Breaks categories.");
 	}
