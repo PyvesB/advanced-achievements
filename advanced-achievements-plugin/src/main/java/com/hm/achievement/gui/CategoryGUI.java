@@ -185,7 +185,7 @@ public class CategoryGUI implements Reloadable {
 			String currentSubcategory = achievements.get(pageStart).getSubcategory();
 			if (!currentSubcategory.isEmpty()) {
 				seriesStart = IntStream.range(0, achievements.size())
-						.filter(i -> achievements.get(i).getSubcategory().startsWith(currentSubcategory + "."))
+						.filter(i -> achievements.get(i).getSubcategory().equals(currentSubcategory))
 						.findFirst()
 						.getAsInt();
 			}
