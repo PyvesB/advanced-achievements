@@ -220,6 +220,7 @@ public class CategoryGUI implements Reloadable {
 			previousItemDate = receptionDate;
 			previousSubcategory = achievement.getSubcategory();
 		}
+
 		// Add navigation items.
 		if (configBackButtonIsCategoryItem) {
 			ItemStack backButton = clickedItem.clone();
@@ -233,8 +234,10 @@ public class CategoryGUI implements Reloadable {
 		} else {
 			inventory.setItem(guiSize - (ROW_SIZE + 1) / 2, guiItems.getBackButton());
 		}
-		if (achievements.size() > MAX_ACHIEVEMENTS_PER_PAGE) {
+		if (pageIndex > 0) {
 			inventory.setItem(guiSize - ROW_SIZE, guiItems.getPreviousButton());
+		}
+		if (achievements.size() > MAX_ACHIEVEMENTS_PER_PAGE * (pageIndex + 1)) {
 			inventory.setItem(guiSize - 1, guiItems.getNextButton());
 		}
 
