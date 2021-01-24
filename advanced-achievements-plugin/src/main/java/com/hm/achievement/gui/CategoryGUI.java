@@ -45,8 +45,8 @@ import com.hm.achievement.utils.StringHelper;
 @Singleton
 public class CategoryGUI implements Reloadable {
 
-	private static final int MAX_PAGE_SIZE = 54;
-	private static final int MAX_ACHIEVEMENTS_PER_PAGE = 45;
+	private static final int ROW_SIZE = 9;
+	private static final int MAX_ACHIEVEMENTS_PER_PAGE = 5 * ROW_SIZE;
 	private static final long NO_STAT = -1L;
 	private static final String NO_SUBCATEGORY = "";
 	private static final int PROGRESS_BAR_SIZE = 90;
@@ -162,9 +162,8 @@ public class CategoryGUI implements Reloadable {
 		int pageStart = MAX_ACHIEVEMENTS_PER_PAGE * pageIndex;
 		int pageEnd = Math.min(MAX_ACHIEVEMENTS_PER_PAGE * (pageIndex + 1), achievements.size());
 
-		// Create a new chest-like inventory as small as possible whilst still all page achievements and an entire row
-		// for the navigation items.
-		int guiSize = Math.min(NumberHelper.nextMultipleOf9(achievements.size() + 9), MAX_PAGE_SIZE);
+		// The inventory must be big enough to contain all page achievements and an entire row for the navigation items.
+		int guiSize = Math.min(NumberHelper.nextMultipleOf9(achievements.size()), MAX_ACHIEVEMENTS_PER_PAGE) + ROW_SIZE;
 		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder(pageIndex, clickedItem);
 		Inventory inventory = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
 		inventoryHolder.setInventory(inventory);
@@ -215,12 +214,10 @@ public class CategoryGUI implements Reloadable {
 			previousSubcategory = achievement.getSubcategory();
 		}
 		// Add navigation items.
+		inventory.setItem(guiSize - (ROW_SIZE + 1) / 2, guiItems.getBackButton());
 		if (achievements.size() > MAX_ACHIEVEMENTS_PER_PAGE) {
-			inventory.setItem(guiSize - 9, guiItems.getPreviousButton());
-			inventory.setItem(guiSize - 5, guiItems.getBackButton());
+			inventory.setItem(guiSize - ROW_SIZE, guiItems.getPreviousButton());
 			inventory.setItem(guiSize - 1, guiItems.getNextButton());
-		} else {
-			inventory.setItem(guiSize - 5, guiItems.getBackButton());
 		}
 
 		// Display page.
