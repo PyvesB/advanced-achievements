@@ -45,7 +45,8 @@ import com.hm.achievement.utils.StringHelper;
 @Singleton
 public class CategoryGUI implements Reloadable {
 
-	private static final int ROW_SIZE = 9;
+	public static final int ROW_SIZE = 9;
+
 	private static final int MAX_ACHIEVEMENTS_PER_PAGE = 5 * ROW_SIZE;
 	private static final long NO_STAT = -1L;
 	private static final String NO_SUBCATEGORY = "";

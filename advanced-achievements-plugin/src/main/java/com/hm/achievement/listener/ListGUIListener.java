@@ -1,11 +1,9 @@
 package com.hm.achievement.listener;
 
 import static com.hm.achievement.gui.AchievementInventoryHolder.MAIN_GUI_PAGE;
+import static com.hm.achievement.gui.CategoryGUI.ROW_SIZE;
 
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -82,7 +80,7 @@ public class ListGUIListener implements Listener {
 		}
 
 		// Check whether a navigation button was clicked in a category GUI.
-		if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getBackButton())) {
+		if (event.getRawSlot() == inventory.getSize() - (ROW_SIZE + 1) / 2) {
 			String command = mainConfig.getString("OverrideBackButtonBehaviour");
 			if (StringUtils.isBlank(command)) {
 				mainGUI.displayMainGUI(player);
@@ -90,39 +88,11 @@ public class ListGUIListener implements Listener {
 				Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),
 						StringUtils.replace(command, "PLAYER", player.getName()));
 			}
-		} else if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getPreviousButton())) {
+		} else if (event.getRawSlot() == inventory.getSize() - ROW_SIZE) {
 			categoryGUI.displayCategoryGUI(holder.getCategoryItem(), player, currentPage - 1);
-		} else if (isButtonClicked(inventory, clickedItem, event.getRawSlot(), guiItems.getNextButton())) {
+		} else if (event.getRawSlot() == inventory.getSize() - 1) {
 			categoryGUI.displayCategoryGUI(holder.getCategoryItem(), player, currentPage + 1);
 		}
-	}
-
-	/**
-	 * Verifies whether the user has clicked on the given navigation button.
-	 *
-	 * @param inventory
-	 * @param clickedItem
-	 * @param rawSlot
-	 * @param button
-	 * @return true if the button is clicked, false otherwise
-	 */
-	private boolean isButtonClicked(Inventory inventory, ItemStack clickedItem, int rawSlot, ItemStack button) {
-		if (clickedItem.isSimilar(button)) {
-			// Clicked item seems to be the button. But player could have clicked on item in his personal inventory that
-			// matches the properties of the button used by Advanced Achievements. The first item matching the
-			// properties of the button is the real one, check that this is indeed the clicked one.
-			Map<Integer, ItemStack> backButtonCandidates = new TreeMap<>(inventory.all(clickedItem.getType()));
-			for (Entry<Integer, ItemStack> entry : backButtonCandidates.entrySet()) {
-				if (clickedItem.isSimilar(entry.getValue())) {
-					// Found real button. Did the player click on it?
-					if (entry.getKey() == rawSlot) {
-						return true;
-					}
-					break;
-				}
-			}
-		}
-		return false;
 	}
 
 	/**
