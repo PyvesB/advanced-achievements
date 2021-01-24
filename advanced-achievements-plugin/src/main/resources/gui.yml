@@ -30,7 +30,7 @@ AchievementLock:
 CategoryLock:
   Item: barrier
 
-# Buttons when navigating in a category.
+# Buttons when navigating in a category. BackButton is ignored if BackButtonIsCategoryItem is true in config.yml.
 BackButton:
   Item: book
 PreviousButton:

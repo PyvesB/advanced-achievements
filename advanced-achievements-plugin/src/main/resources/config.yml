@@ -159,6 +159,9 @@ DisableSilkTouchBreaks: false
 # run a command instead. PLAYER placeholder is supported. 
 OverrideBackButtonBehaviour: ""
 
+# If true, the icon of the back button in the GUI will be the same as the category currently being viewed.
+BackButtonIsCategoryItem: true
+
 # Do not take into account ores broken with Silk Touch for the Breaks achievements.
 # DisableSilkTouchBreaks takes precedence over this. Not applicable to iron or gold ores.
 DisableSilkTouchOreBreaks: false

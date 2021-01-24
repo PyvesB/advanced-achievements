@@ -67,6 +67,9 @@ public class CategoryGUI implements Reloadable {
 	private ChatColor configColor;
 	private ChatColor configListColorNotReceived;
 	private String configFormatNotReceived;
+	private boolean configBackButtonIsCategoryItem;
+	private String langListBackMessage;
+	private String langListBackLore;
 	private String langListGUITitle;
 	private String langListAchievementReceived;
 	private String langListAchievementNotReceived;
@@ -100,7 +103,10 @@ public class CategoryGUI implements Reloadable {
 		configColor = ChatColor.getByChar(mainConfig.getString("Color"));
 		configListColorNotReceived = ChatColor.getByChar(mainConfig.getString("ListColorNotReceived"));
 		configFormatNotReceived = mainConfig.getBoolean("ListItaliciseNotReceived") ? "&o" : "";
+		configBackButtonIsCategoryItem = mainConfig.getBoolean("BackButtonIsCategoryItem");
 
+		langListBackMessage = translateColorCodes(langConfig.getString("list-back-message"));
+		langListBackLore = translateColorCodes(langConfig.getString("list-back-lore"));
 		langListGUITitle = translateColorCodes(langConfig.getString("list-gui-title"));
 		langListAchievementReceived = StringEscapeUtils.unescapeJava(langConfig.getString("list-achievement-received"));
 		langListAchievementNotReceived = StringEscapeUtils
@@ -214,7 +220,18 @@ public class CategoryGUI implements Reloadable {
 			previousSubcategory = achievement.getSubcategory();
 		}
 		// Add navigation items.
-		inventory.setItem(guiSize - (ROW_SIZE + 1) / 2, guiItems.getBackButton());
+		if (configBackButtonIsCategoryItem) {
+			ItemStack backButton = clickedItem.clone();
+			ItemMeta backMeta = backButton.getItemMeta();
+			backMeta.setDisplayName(langListBackMessage);
+			if (StringUtils.isNotBlank(langListBackLore)) {
+				backMeta.setLore(Collections.singletonList(langListBackLore));
+			}
+			backButton.setItemMeta(backMeta);
+			inventory.setItem(guiSize - (ROW_SIZE + 1) / 2, backButton);
+		} else {
+			inventory.setItem(guiSize - (ROW_SIZE + 1) / 2, guiItems.getBackButton());
+		}
 		if (achievements.size() > MAX_ACHIEVEMENTS_PER_PAGE) {
 			inventory.setItem(guiSize - ROW_SIZE, guiItems.getPreviousButton());
 			inventory.setItem(guiSize - 1, guiItems.getNextButton());
