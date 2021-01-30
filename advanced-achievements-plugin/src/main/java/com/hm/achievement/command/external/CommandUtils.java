@@ -259,9 +259,6 @@ public class CommandUtils {
 			}
 			return mathIt(arg, relInt);
 		} else if (arg.startsWith("^")) {
-			// TODO: Fix code. The currently just acts the same as ~. This should move the
-			// entity relative to what its looking at.
-
 			switch (rel.toLowerCase()) {
 				case "x":
 					relInt = e.getLocation().getBlockX();
