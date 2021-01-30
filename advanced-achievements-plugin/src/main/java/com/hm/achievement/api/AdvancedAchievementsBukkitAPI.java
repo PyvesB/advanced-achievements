@@ -77,6 +77,11 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	}
 
 	@Override
+	public List<com.hm.achievement.domain.Achievement> getAllAchievements() {
+		return new ArrayList<>(achievementMap.getAll());
+	}
+
+	@Override
 	public List<Achievement> getPlayerAchievementsList(UUID player) {
 		validateNotNull(player, "Player");
 		return databaseManager.getPlayerAchievementsList(player).stream()

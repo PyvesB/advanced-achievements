@@ -38,6 +38,14 @@ public interface AdvancedAchievementsAPI {
 	boolean hasPlayerReceivedAchievement(UUID player, String achievementName);
 
 	/**
+	 * Retrieves all achievements currently registered with the plugin.
+	 *
+	 * @return list of {@code com.hm.achievement.domain.Achievement} objects received by the player
+	 * @since 7.0.0
+	 */
+	List<com.hm.achievement.domain.Achievement> getAllAchievements();
+
+	/**
 	 * Retrieves all achievements received by the player.
 	 *
 	 * @param player should not be null
