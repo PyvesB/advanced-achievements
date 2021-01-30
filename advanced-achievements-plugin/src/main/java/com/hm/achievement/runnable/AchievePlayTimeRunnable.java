@@ -71,11 +71,9 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 			return;
 		}
 
-		if (configIgnoreAFKPlayedTime) {
-			// If player is AFK, don't update played time.
-			if (essentials.getUser(player).isAfk()) {
-				return;
-			}
+		// If player is AFK, don't update played time.
+		if (configIgnoreAFKPlayedTime && essentials.getUser(player).isAfk()) {
+			return;
 		}
 
 		long totalMillis = cacheManager.getAndIncrementStatisticAmount(NormalAchievements.PLAYEDTIME, player.getUniqueId(),

@@ -119,36 +119,36 @@ public class RewardParser {
 	private Reward parseItemReward(ConfigurationSection configSection) {
 		List<String> listTexts = new ArrayList<>();
 		List<String> chatTexts = new ArrayList<>();
-		List<ItemStack> items = new ArrayList<>();
+		List<ItemStack> itemStacks = new ArrayList<>();
 
 		String itemString = configSection.getString("Item", configSection.getString("Items", ""));
-		String[] itemStrings = MULTIPLE_REWARDS_SPLITTER.split(StringUtils.normalizeSpace(itemString));
-		for (int i = 0; i < itemStrings.length; i++) {
-			if (!itemStrings[i].contains(" ")) {
+		String[] items = MULTIPLE_REWARDS_SPLITTER.split(StringUtils.normalizeSpace(itemString));
+		for (String item : items) {
+			if (!item.contains(" ")) {
 				continue;
 			}
-			String[] parts = StringUtils.split(itemStrings[i]);
+			String[] parts = StringUtils.split(item);
 			Optional<Material> rewardMaterial = materialHelper.matchMaterial(parts[0],
 					"config.yml (" + (configSection.getCurrentPath() + ".Item") + ")");
 			if (rewardMaterial.isPresent()) {
 				int amount = NumberUtils.toInt(parts[1], 1);
-				ItemStack item = new ItemStack(rewardMaterial.get(), amount);
-				ItemMeta meta = item.getItemMeta();
+				ItemStack itemStack = new ItemStack(rewardMaterial.get(), amount);
+				ItemMeta itemMeta = itemStack.getItemMeta();
 				String name = StringUtils.join(parts, " ", 2, parts.length);
 				if (name.isEmpty()) {
-					name = getItemName(item);
+					name = getItemName(itemStack);
 				} else {
-					meta.setDisplayName(name);
+					itemMeta.setDisplayName(name);
 				}
 				listTexts.add(StringUtils.replaceEach(langConfig.getString("list-reward-item"),
 						new String[] { "AMOUNT", "ITEM" }, new String[] { Integer.toString(amount), name }));
 				chatTexts.add(StringUtils.replaceEach(langConfig.getString("item-reward-received") + " ",
 						new String[] { "AMOUNT", "ITEM" }, new String[] { Integer.toString(amount), name }));
-				item.setItemMeta(meta);
-				items.add(item);
+				itemStack.setItemMeta(itemMeta);
+				itemStacks.add(itemStack);
 			}
 		}
-		Consumer<Player> rewarder = player -> items.forEach(item -> {
+		Consumer<Player> rewarder = player -> itemStacks.forEach(item -> {
 			ItemStack playerItem = item.clone();
 			ItemMeta itemMeta = playerItem.getItemMeta();
 			if (itemMeta.hasDisplayName()) {

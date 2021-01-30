@@ -146,7 +146,7 @@ public class CategoryGUI implements Reloadable {
 					subcategoriesToStatistics = Collections.singletonMap(NO_SUBCATEGORY, statistic);
 				} else {
 					subcategoriesToStatistics = achievements.stream()
-							.collect(Collectors.toMap(a -> a.getSubcategory(), a -> NO_STAT));
+							.collect(Collectors.toMap(Achievement::getSubcategory, a -> NO_STAT));
 				}
 				displayPage(player, subcategoriesToStatistics, requestedPage, item, achievements);
 				return;

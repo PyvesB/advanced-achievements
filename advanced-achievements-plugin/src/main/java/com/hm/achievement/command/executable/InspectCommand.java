@@ -44,7 +44,7 @@ public class InspectCommand extends AbstractCommand {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final AbstractDatabaseManager databaseManager;
-	private AchievementMap achievementMap;
+	private final AchievementMap achievementMap;
 
 	private final Map<String, Long> lastCached;
 	private final Map<String, SupplierCommandPagination> cachedPaginations;
