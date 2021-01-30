@@ -54,32 +54,6 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		this.achievementMap = achievementMap;
 	}
 
-	/**
-	 * Returns a ready to use API instance. The caller must previously check whether the plugin is enabled and has a
-	 * minimum version of 5.0.
-	 *
-	 * @return API instance
-	 * @deprecated use the AdvancedAchievementsAPIFetcher class in the public API
-	 */
-	@Deprecated
-	public static AdvancedAchievementsAPI linkAdvancedAchievements() {
-		return ((AdvancedAchievements) Bukkit.getPluginManager().getPlugin("AdvancedAchievements"))
-				.getAdvancedAchievementsAPI();
-	}
-
-	@Override
-	public int getAdvancedAchievementsVersionCode() {
-		String version = advancedAchievements.getDescription().getVersion();
-		int versionCode = 100
-				* Integer.parseInt(Character.toString(advancedAchievements.getDescription().getVersion().charAt(0)))
-				+ 10 * Integer.parseInt(Character.toString(advancedAchievements.getDescription().getVersion().charAt(2)));
-		if (version.length() > 4) {
-			versionCode += Integer
-					.parseInt(Character.toString(advancedAchievements.getDescription().getVersion().charAt(4)));
-		}
-		return versionCode;
-	}
-
 	@Override
 	public Version getAdvancedAchievementsVersion() {
 		String[] versionParts = StringUtils.split(advancedAchievements.getDescription().getVersion(), '.');

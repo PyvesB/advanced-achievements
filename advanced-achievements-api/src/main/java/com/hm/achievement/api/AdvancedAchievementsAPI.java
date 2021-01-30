@@ -1,12 +1,13 @@
 package com.hm.achievement.api;
 
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import org.bukkit.entity.Player;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import org.bukkit.entity.Player;
+
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
 
 /**
  * Advanced Achievements API. Unless explicitly stated otherwise, implementations are expected to be thread-safe.
@@ -14,17 +15,6 @@ import java.util.UUID;
  * @author Pyves
  */
 public interface AdvancedAchievementsAPI {
-
-	/**
-	 * Formats Advanced Achievements's version as an integer. The version is computed as follows: 100 * major + 10 *
-	 * minor + patch. For instance plugin version 5.5.0 will return 550; plugin version 5.1.2 will return 512.
-	 *
-	 * @deprecated use {@link #getAdvancedAchievementsVersion()} instead
-	 * @return version code
-	 * @since 5.8.0
-	 */
-	@Deprecated
-	int getAdvancedAchievementsVersionCode();
 
 	/**
 	 * Returns Advanced Achievement's version as an object. Version 5.10.1 corresponds to major version 5, minor version
