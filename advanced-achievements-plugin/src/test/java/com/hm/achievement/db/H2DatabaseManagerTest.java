@@ -32,9 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.common.util.concurrent.MoreExecutors;
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.data.AwardedDBAchievement;
-import com.hm.achievement.domain.Achievement.AchievementBuilder;
 
 /**
  * Class for testing H2 Database.
@@ -46,7 +44,6 @@ class H2DatabaseManagerTest {
 
 	private static final String TEST_ACHIEVEMENT = "testachievement";
 	private static final String TEST_DISPLAY = "TestDisplay";
-	private static final String TEST_MESSAGE = "TestMessage";
 
 	private static H2DatabaseManager db;
 
@@ -59,10 +56,7 @@ class H2DatabaseManagerTest {
 		Logger logger = Logger.getLogger("DBTestLogger");
 		YamlConfiguration config = YamlConfiguration
 				.loadConfiguration(new InputStreamReader(H2DatabaseManagerTest.class.getResourceAsStream("/config-h2.yml")));
-		AchievementMap achievementMap = new AchievementMap();
-		achievementMap.put(
-				new AchievementBuilder().name(TEST_ACHIEVEMENT).displayName(TEST_DISPLAY).message(TEST_MESSAGE).build());
-		db = new H2DatabaseManager(config, logger, achievementMap, new DatabaseUpdater(logger, null), plugin) {
+		db = new H2DatabaseManager(config, logger, new DatabaseUpdater(logger, null), plugin) {
 
 			@Override
 			public void extractConfigurationParameters() {
@@ -91,8 +85,8 @@ class H2DatabaseManagerTest {
 		List<AwardedDBAchievement> achievements = db.getPlayerAchievementsList(testUUID);
 		assertEquals(1, achievements.size());
 		AwardedDBAchievement found = achievements.get(0);
-		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_DISPLAY, TEST_MESSAGE,
-				found.getDateAwarded(), found.getFormattedDate());
+		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_DISPLAY, found.getDateAwarded(),
+				found.getFormattedDate());
 		assertEquals(expected, found);
 	}
 
@@ -135,8 +129,8 @@ class H2DatabaseManagerTest {
 
 	@Test
 	void testDeleteAllAchievements() {
-		registerAchievement(testUUID, TEST_ACHIEVEMENT, TEST_MESSAGE);
-		registerAchievement(testUUID, TEST_ACHIEVEMENT + "2", TEST_MESSAGE);
+		registerAchievement(testUUID, TEST_ACHIEVEMENT);
+		registerAchievement(testUUID, TEST_ACHIEVEMENT + "2");
 
 		db.deleteAllPlayerAchievements(testUUID);
 
@@ -159,7 +153,7 @@ class H2DatabaseManagerTest {
 		long firstSave = 99L;
 
 		System.out.println("Save first achievement:  " + System.currentTimeMillis());
-		registerAchievement(testUUID, TEST_ACHIEVEMENT, TEST_MESSAGE, 100L);
+		registerAchievement(testUUID, TEST_ACHIEVEMENT, 100L);
 
 		long secondSave = 199L;
 
@@ -167,9 +161,9 @@ class H2DatabaseManagerTest {
 		String secondAch = "TestAchievement2";
 
 		System.out.println("Save second achievement: " + System.currentTimeMillis());
-		registerAchievement(secondUUID, TEST_ACHIEVEMENT, TEST_MESSAGE, 200L);
+		registerAchievement(secondUUID, TEST_ACHIEVEMENT, 200L);
 		System.out.println("Save third achievement:  " + System.currentTimeMillis());
-		registerAchievement(secondUUID, secondAch, TEST_MESSAGE, 200L);
+		registerAchievement(secondUUID, secondAch, 200L);
 
 		Map<String, Integer> expected = new LinkedHashMap<>();
 		expected.put(secondUUID.toString(), 2);
@@ -230,17 +224,16 @@ class H2DatabaseManagerTest {
 	}
 
 	private void registerAchievement() {
-		registerAchievement(testUUID, TEST_ACHIEVEMENT, TEST_MESSAGE);
+		registerAchievement(testUUID, TEST_ACHIEVEMENT);
 	}
 
-	private void registerAchievement(UUID uuid, String ach, String msg) {
-		System.out.println("Saving test achievement: " + uuid + " | " + ach + " | " + msg);
-		db.registerAchievement(uuid, ach, msg);
+	private void registerAchievement(UUID uuid, String ach) {
+		registerAchievement(uuid, ach, System.currentTimeMillis());
 	}
 
-	private void registerAchievement(UUID uuid, String ach, String msg, long date) {
-		System.out.println("Saving test achievement: " + uuid + " | " + ach + " | " + msg);
-		db.registerAchievement(uuid, ach, msg, date);
+	private void registerAchievement(UUID uuid, String ach, long date) {
+		System.out.println("Saving test achievement: " + uuid + " | " + ach);
+		db.registerAchievement(uuid, ach, date);
 	}
 
 	private void clearDatabase() {

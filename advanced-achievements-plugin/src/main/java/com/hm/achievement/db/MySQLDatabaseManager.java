@@ -7,8 +7,6 @@ import javax.inject.Named;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.hm.achievement.config.AchievementMap;
-
 /**
  * Class used to handle a MySQL database.
  * 
@@ -17,9 +15,9 @@ import com.hm.achievement.config.AchievementMap;
  */
 public class MySQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
-	public MySQLDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger, AchievementMap achievementMap,
+	public MySQLDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
 			DatabaseUpdater databaseUpdater) {
-		super(mainConfig, logger, achievementMap, databaseUpdater, "com.mysql.jdbc.Driver", "mysql");
+		super(mainConfig, logger, databaseUpdater, "com.mysql.jdbc.Driver", "mysql");
 	}
 
 	@Override

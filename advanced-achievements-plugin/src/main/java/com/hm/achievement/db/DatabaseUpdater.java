@@ -100,7 +100,7 @@ public class DatabaseUpdater {
 		Connection conn = databaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix()
-					+ "achievements (playername char(36),achievement varchar(64),description varchar(128),date TIMESTAMP,PRIMARY KEY (playername, achievement))");
+					+ "achievements (playername char(36),achievement varchar(64),date TIMESTAMP,PRIMARY KEY (playername, achievement))");
 
 			for (MultipleAchievements category : MultipleAchievements.values()) {
 				st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix() + category.toDBName()
@@ -150,6 +150,44 @@ public class DatabaseUpdater {
 			} catch (SQLException e) {
 				logger.log(Level.SEVERE, "Database error while updating old " + category.toDBName() + " table:", e);
 			}
+		}
+	}
+
+	/**
+	 * Removes achievement descriptions from database storage.
+	 * 
+	 * @param databaseManager
+	 */
+	void removeAchievementDescriptions(AbstractDatabaseManager databaseManager) {
+		Connection conn = databaseManager.getSQLConnection();
+		try (ResultSet rs = conn.getMetaData().getColumns(null, null, databaseManager.getPrefix() + "achievements",
+				"description")) {
+			if (rs.next()) {
+				logger.info("Removing descriptions from database storage, please wait...");
+				try (Statement st = conn.createStatement()) {
+					// SQLite does not support dropping columns: create new table and copy contents over.
+					if (databaseManager instanceof SQLiteDatabaseManager) {
+						st.execute(
+								"CREATE TABLE tempTable (playername char(36),achievement varchar(64),date TIMESTAMP,PRIMARY KEY (playername, achievement))");
+						try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
+							ResultSet achievements = st.executeQuery("SELECT * FROM achievements");
+							while (achievements.next()) {
+								prep.setString(1, achievements.getString(1));
+								prep.setString(2, achievements.getString(2));
+								prep.setTimestamp(3, achievements.getTimestamp(3));
+								prep.addBatch();
+							}
+							prep.executeBatch();
+							st.execute("DROP TABLE achievements");
+							st.execute("ALTER TABLE tempTable RENAME TO achievements");
+						}
+					} else {
+						st.execute("ALTER TABLE " + databaseManager.getPrefix() + "achievements DROP COLUMN description");
+					}
+				}
+			}
+		} catch (SQLException e) {
+			logger.log(Level.SEVERE, "Database error while removing descriptions:", e);
 		}
 	}
 

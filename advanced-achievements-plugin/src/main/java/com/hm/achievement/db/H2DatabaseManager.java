@@ -8,7 +8,6 @@ import javax.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.config.AchievementMap;
 
 /**
  * Class used to handle a H2 database.
@@ -18,11 +17,11 @@ import com.hm.achievement.config.AchievementMap;
  */
 public class H2DatabaseManager extends AbstractFileDatabaseManager {
 
-	public H2DatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger, AchievementMap achievementMap,
-			DatabaseUpdater databaseUpdater, AdvancedAchievements advancedAchievements) {
-		super(mainConfig, logger, achievementMap, databaseUpdater, advancedAchievements, "org.h2.Driver", "jdbc:h2:./"
-				+ new File(advancedAchievements.getDataFolder(), "achievements") + ";DATABASE_TO_UPPER=false;MODE=MySQL",
-				"achievements.mv.db");
+	public H2DatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger, DatabaseUpdater databaseUpdater,
+			AdvancedAchievements advancedAchievements) {
+		super(mainConfig, logger, databaseUpdater, advancedAchievements, "org.h2.Driver", "jdbc:h2:./"
+				+ new File(advancedAchievements.getDataFolder(), "achievements")
+				+ ";DATABASE_TO_UPPER=false;MODE=MySQL", "achievements.mv.db");
 
 		// Convince Maven Shade that H2 is used to prevent full exclusion during minimisation.
 		@SuppressWarnings("unused")

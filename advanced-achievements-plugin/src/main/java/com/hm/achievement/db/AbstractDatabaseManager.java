@@ -28,9 +28,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.data.AwardedDBAchievement;
-import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.Reloadable;
 
@@ -51,17 +49,15 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 
 	volatile String prefix;
 
-	private final AchievementMap achievementMap;
 	private final DatabaseUpdater databaseUpdater;
 
 	private DateFormat dateFormat;
 	private boolean configBookChronologicalOrder;
 
-	public AbstractDatabaseManager(YamlConfiguration mainConfig, Logger logger, AchievementMap achievementMap,
-			DatabaseUpdater databaseUpdater, String driverPath) {
+	public AbstractDatabaseManager(YamlConfiguration mainConfig, Logger logger, DatabaseUpdater databaseUpdater,
+			String driverPath) {
 		this.mainConfig = mainConfig;
 		this.logger = logger;
-		this.achievementMap = achievementMap;
 		this.databaseUpdater = databaseUpdater;
 		this.driverPath = driverPath;
 		// We expect to execute many short writes to the database. The pool can grow dynamically under high load and
@@ -110,6 +106,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		databaseUpdater.renameExistingTables(this);
 		int size = mainConfig.getInt("TableMaxSizeOfGroupedSubcategories");
 		databaseUpdater.initialiseTables(this, size);
+		databaseUpdater.removeAchievementDescriptions(this);
 		Arrays.stream(MultipleAchievements.values()).forEach(m -> databaseUpdater.updateOldDBColumnSize(this, m, size));
 	}
 
@@ -297,33 +294,20 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Registers a new achievement for a player with the reception time set to now.
-	 *
-	 * @param uuid
-	 * @param achName
-	 * @param achMessage
-	 */
-	public void registerAchievement(UUID uuid, String achName, String achMessage) {
-		registerAchievement(uuid, achName, achMessage, System.currentTimeMillis());
-	}
-
-	/**
 	 * Registers a new achievement for a player.
 	 *
 	 * @param uuid
 	 * @param achName
-	 * @param achMessage
 	 * @param epochMs Moment the achievement was registered at.
 	 */
-	void registerAchievement(UUID uuid, String achName, String achMessage, long epochMs) {
-		String sql = "REPLACE INTO " + prefix + "achievements VALUES (?,?,?,?)";
+	public void registerAchievement(UUID uuid, String achName, long epochMs) {
+		String sql = "REPLACE INTO " + prefix + "achievements VALUES (?,?,?)";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
 				ps.setString(2, achName);
-				ps.setString(3, achMessage == null ? "" : achMessage);
-				ps.setTimestamp(4, new Timestamp(epochMs));
+				ps.setTimestamp(3, new Timestamp(epochMs));
 				ps.execute();
 			}
 		}).executeOperation(pool, logger, "registering an achievement");
@@ -544,15 +528,9 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setString(1, uuid.toString());
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
-						Achievement achievement = achievementMap.getForName(rs.getString(2));
-						if (achievement == null) {
-							continue;
-						}
-						String achMsg = rs.getString(3);
-						Timestamp dateAwarded = rs.getTimestamp(4);
-
-						achievements.add(new AwardedDBAchievement(uuid, achievement.getDisplayName(), achMsg,
-								dateAwarded.getTime(), dateFormat.format(dateAwarded)));
+						Timestamp dateAwarded = rs.getTimestamp(3);
+						achievements.add(new AwardedDBAchievement(uuid, rs.getString(2), dateAwarded.getTime(),
+								dateFormat.format(dateAwarded)));
 					}
 				}
 			}
@@ -587,9 +565,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 							continue;
 						}
 						Date dateAwarded = new Date(rs.getTimestamp("date").getTime());
-
-						String displayName = achievementMap.getForName(achievementName).getDisplayName();
-						achievements.add(new AwardedDBAchievement(uuid, displayName, "", dateAwarded.getTime(),
+						achievements.add(new AwardedDBAchievement(uuid, achievementName, dateAwarded.getTime(),
 								dateFormat.format(dateAwarded)));
 					}
 				}

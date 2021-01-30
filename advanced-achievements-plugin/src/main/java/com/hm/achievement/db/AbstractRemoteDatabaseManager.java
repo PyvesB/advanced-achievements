@@ -13,8 +13,6 @@ import javax.inject.Named;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.hm.achievement.config.AchievementMap;
-
 /**
  * Class used to handle a remote (in the sense not managed by the plugin) database.
  * 
@@ -31,8 +29,8 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 	private final String databaseType;
 
 	public AbstractRemoteDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
-			AchievementMap achievementMap, DatabaseUpdater databaseUpdater, String driverPath, String databaseType) {
-		super(mainConfig, logger, achievementMap, databaseUpdater, driverPath);
+			DatabaseUpdater databaseUpdater, String driverPath, String databaseType) {
+		super(mainConfig, logger, databaseUpdater, driverPath);
 		this.databaseType = databaseType;
 	}
 

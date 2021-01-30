@@ -8,7 +8,6 @@ import javax.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.config.AchievementMap;
 
 /**
  * Class used to handle a SQLite database.
@@ -18,9 +17,9 @@ import com.hm.achievement.config.AchievementMap;
  */
 public class SQLiteDatabaseManager extends AbstractFileDatabaseManager {
 
-	public SQLiteDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger, AchievementMap achievementMap,
-			DatabaseUpdater databaseUpdater, AdvancedAchievements advancedAchievements) {
-		super(mainConfig, logger, achievementMap, databaseUpdater, advancedAchievements, "org.sqlite.JDBC",
+	public SQLiteDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger, DatabaseUpdater databaseUpdater,
+			AdvancedAchievements advancedAchievements) {
+		super(mainConfig, logger, databaseUpdater, advancedAchievements, "org.sqlite.JDBC",
 				"jdbc:sqlite:" + new File(advancedAchievements.getDataFolder(), "achievements.db"), "achievements.db");
 	}
 }

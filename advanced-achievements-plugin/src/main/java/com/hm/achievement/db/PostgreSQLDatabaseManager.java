@@ -13,7 +13,6 @@ import javax.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.config.AchievementMap;
 
 /**
  * Class used to handle a PosgreSQL database. Note that some query methods are overriden as the SQL syntax is different
@@ -25,8 +24,8 @@ import com.hm.achievement.config.AchievementMap;
 public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
 	public PostgreSQLDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
-			AchievementMap achievementMap, DatabaseUpdater databaseUpdater) {
-		super(mainConfig, logger, achievementMap, databaseUpdater, "org.postgresql.Driver", "postgresql");
+			DatabaseUpdater databaseUpdater) {
+		super(mainConfig, logger, databaseUpdater, "org.postgresql.Driver", "postgresql");
 	}
 
 	@Override
@@ -41,20 +40,18 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 	}
 
 	@Override
-	public void registerAchievement(UUID uuid, String achName, String achMessage) {
+	public void registerAchievement(UUID uuid, String achName, long time) {
 		// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available
 		// for PostgreSQL 9.5+.
-		String sql = "INSERT INTO " + prefix + "achievements VALUES (?,?,?,?)"
-				+ " ON CONFLICT (playername,achievement) DO UPDATE SET (description,date)=(?,?)";
+		String sql = "INSERT INTO " + prefix + "achievements VALUES (?,?,?)"
+				+ " ON CONFLICT (playername,achievement) DO UPDATE SET (date)=(?)";
 		((SQLWriteOperation) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
 				ps.setString(2, achName);
-				ps.setString(3, achMessage);
-				ps.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
-				ps.setString(5, achMessage);
-				ps.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+				ps.setTimestamp(3, new Timestamp(time));
+				ps.setTimestamp(4, new Timestamp(time));
 				ps.execute();
 			}
 		}).executeOperation(pool, logger, "registering an achievement");

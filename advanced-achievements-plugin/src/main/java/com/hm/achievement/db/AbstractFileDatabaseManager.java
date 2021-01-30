@@ -16,7 +16,6 @@ import javax.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.exception.PluginLoadError;
 
 /**
@@ -32,9 +31,9 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
 	private final String filename;
 
 	public AbstractFileDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
-			AchievementMap achievementMap, DatabaseUpdater databaseUpdater, AdvancedAchievements advancedAchievements,
+			DatabaseUpdater databaseUpdater, AdvancedAchievements advancedAchievements,
 			String driverPath, String url, String filename) {
-		super(mainConfig, logger, achievementMap, databaseUpdater, driverPath);
+		super(mainConfig, logger, databaseUpdater, driverPath);
 		this.advancedAchievements = advancedAchievements;
 		this.url = url;
 		this.filename = filename;

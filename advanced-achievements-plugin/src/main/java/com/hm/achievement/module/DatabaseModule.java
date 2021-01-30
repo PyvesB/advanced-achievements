@@ -8,7 +8,6 @@ import javax.inject.Singleton;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.DatabaseUpdater;
 import com.hm.achievement.db.H2DatabaseManager;
@@ -25,17 +24,17 @@ public class DatabaseModule {
 	@Provides
 	@Singleton
 	AbstractDatabaseManager provideSQLDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
-			AchievementMap achievementMap, DatabaseUpdater databaseUpdater, AdvancedAchievements advancedAchievements) {
+			DatabaseUpdater databaseUpdater, AdvancedAchievements advancedAchievements) {
 		String databaseType = advancedAchievements.getConfig().getString("DatabaseType", "sqlite");
 		if ("mysql".equalsIgnoreCase(databaseType)) {
-			return new MySQLDatabaseManager(mainConfig, logger, achievementMap, databaseUpdater);
+			return new MySQLDatabaseManager(mainConfig, logger, databaseUpdater);
 		} else if ("postgresql".equalsIgnoreCase(databaseType)) {
-			return new PostgreSQLDatabaseManager(mainConfig, logger, achievementMap, databaseUpdater);
+			return new PostgreSQLDatabaseManager(mainConfig, logger, databaseUpdater);
 		} else if ("h2".equalsIgnoreCase(databaseType)) {
-			return new H2DatabaseManager(mainConfig, logger, achievementMap, databaseUpdater, advancedAchievements);
+			return new H2DatabaseManager(mainConfig, logger, databaseUpdater, advancedAchievements);
 		} else {
 			// User has specified "sqlite" or an invalid type.
-			return new SQLiteDatabaseManager(mainConfig, logger, achievementMap, databaseUpdater, advancedAchievements);
+			return new SQLiteDatabaseManager(mainConfig, logger, databaseUpdater, advancedAchievements);
 		}
 	}
 

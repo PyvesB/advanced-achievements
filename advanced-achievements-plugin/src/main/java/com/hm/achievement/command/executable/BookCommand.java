@@ -23,8 +23,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
+import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.particle.external.ParticleEffect;
 import com.hm.achievement.particle.external.ReflectionUtils.PackageType;
@@ -54,6 +56,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	private final int serverVersion;
 	private final AbstractDatabaseManager databaseManager;
 	private final SoundPlayer soundPlayer;
+	private final AchievementMap achievementMap;
 
 	private int configTimeBook;
 	private String configBookSeparator;
@@ -70,12 +73,13 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	@Inject
 	public BookCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
 			StringBuilder pluginHeader, Logger logger, int serverVersion, AbstractDatabaseManager databaseManager,
-			SoundPlayer soundPlayer) {
+			SoundPlayer soundPlayer, AchievementMap achievementMap) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.logger = logger;
 		this.serverVersion = serverVersion;
 		this.databaseManager = databaseManager;
 		this.soundPlayer = soundPlayer;
+		this.achievementMap = achievementMap;
 	}
 
 	@Override
@@ -150,11 +154,14 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		List<String> bookPages = new ArrayList<>(achievements.size());
 		BookMeta bookMeta = (BookMeta) book.getItemMeta();
 
-		for (AwardedDBAchievement achievement : achievements) {
-			String currentAchievement = "&0" + achievement.getName() + configBookSeparator + achievement.getMessage()
-					+ configBookSeparator + achievement.getFormattedDate();
-			currentAchievement = translateColorCodes(currentAchievement);
-			bookPages.add(currentAchievement);
+		for (AwardedDBAchievement awardedAchievement : achievements) {
+			Achievement achievement = achievementMap.getForName(awardedAchievement.getName());
+			if (achievement != null) {
+				String currentAchievement = "&0" + achievement.getDisplayName() + configBookSeparator
+						+ achievement.getMessage() + configBookSeparator + awardedAchievement.getFormattedDate();
+				currentAchievement = translateColorCodes(currentAchievement);
+				bookPages.add(currentAchievement);
+			}
 		}
 
 		// Set the pages and other elements of the book (author, title and date of reception).

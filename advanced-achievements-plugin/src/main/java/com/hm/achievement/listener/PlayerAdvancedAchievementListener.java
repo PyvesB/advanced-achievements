@@ -153,7 +153,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 				}
 			}
 		}
-		databaseManager.registerAchievement(player.getUniqueId(), achievement.getName(), achievement.getMessage());
+		databaseManager.registerAchievement(player.getUniqueId(), achievement.getName(), System.currentTimeMillis());
 
 		achievement.getRewards().forEach(r -> r.getRewarder().accept(player));
 		displayAchievement(player, achievement);
