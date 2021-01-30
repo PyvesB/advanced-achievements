@@ -11,10 +11,12 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -179,10 +181,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @param uuid
 	 * @return array list with Name parameters
 	 */
-	public List<String> getPlayerAchievementNamesList(UUID uuid) {
+	public Set<String> getPlayerAchievementNames(UUID uuid) {
 		String sql = "SELECT achievement FROM " + prefix + "achievements WHERE playername = ?";
-		return ((SQLReadOperation<List<String>>) () -> {
-			List<String> achievementNamesList = new ArrayList<>();
+		return ((SQLReadOperation<Set<String>>) () -> {
+			Set<String> achievementNamesList = new HashSet<>();
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());

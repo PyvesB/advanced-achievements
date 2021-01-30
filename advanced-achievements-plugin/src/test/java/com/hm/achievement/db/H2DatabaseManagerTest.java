@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -184,8 +185,8 @@ class H2DatabaseManagerTest {
 	void testGetAchievementNameList() {
 		registerAchievement();
 
-		List<String> expected = Collections.singletonList(TEST_ACHIEVEMENT);
-		List<String> achNames = db.getPlayerAchievementNamesList(testUUID);
+		Set<String> expected = Collections.singleton(TEST_ACHIEVEMENT);
+		Set<String> achNames = db.getPlayerAchievementNames(testUUID);
 		assertEquals(expected, achNames);
 	}
 

@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -80,7 +82,9 @@ class PlayerAdvancedAchievementListenerTest {
 
 	@Test
 	void itShouldGiveSpecialRewardWhenPlayerHasReceivedAllAchievements() {
-		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(1);
+		Set<String> receivedAchievements = new HashSet<>();
+		receivedAchievements.add("some_ach");
+		when(abstractDatabaseManager.getPlayerAchievementNames(PLAYER_UUID)).thenReturn(receivedAchievements);
 		Reward reward = new Reward(Arrays.asList(), Arrays.asList("Your max oxygen in PLAYER_WORLD has increased by 30!"),
 				p -> p.setMaximumAir(130));
 		when(rewardParser.parseRewards("AllAchievementsReceivedRewards")).thenReturn(Arrays.asList(reward));
@@ -102,7 +106,7 @@ class PlayerAdvancedAchievementListenerTest {
 
 	@Test
 	void itShouldNotGiveSpecialRewardWhenPlayerIsMissingSomeAchievements() {
-		when(abstractDatabaseManager.getPlayerAchievementsAmount(PLAYER_UUID)).thenReturn(0);
+		when(abstractDatabaseManager.getPlayerAchievementNames(PLAYER_UUID)).thenReturn(new HashSet<>());
 		Reward reward = new Reward(Arrays.asList(), Arrays.asList("Your max oxygen has increased by 30!"),
 				p -> p.setMaximumAir(130));
 		when(rewardParser.parseRewards("AllAchievementsReceivedRewards")).thenReturn(Arrays.asList(reward));

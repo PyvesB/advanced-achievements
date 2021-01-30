@@ -21,6 +21,7 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
 
 /**
@@ -36,15 +37,17 @@ public class JoinListener implements Listener, Cleanable {
 	private final Set<UUID> playersConnectionProcessed = new HashSet<>();
 	private final AdvancedAchievements advancedAchievements;
 	private final AbstractDatabaseManager databaseManager;
+	private final CacheManager cacheManager;
 
 	private final int serverVersion;
 
 	@Inject
 	public JoinListener(int serverVersion, AdvancedAchievements advancedAchievements,
-			AbstractDatabaseManager databaseManager) {
+			AbstractDatabaseManager databaseManager, CacheManager cacheManager) {
 		this.serverVersion = serverVersion;
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;
+		this.cacheManager = cacheManager;
 	}
 
 	@Override
@@ -54,9 +57,21 @@ public class JoinListener implements Listener, Cleanable {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		scheduleReceivedCacheLoad(event.getPlayer());
 		if (serverVersion >= 12) {
 			scheduleAwardAdvancements(event.getPlayer());
 		}
+	}
+
+	/**
+	 * Schedules an asynchronous task to load the received achievement cache.
+	 * 
+	 * @param player
+	 */
+	private void scheduleReceivedCacheLoad(Player player) {
+		Bukkit.getScheduler().runTaskAsynchronously(advancedAchievements,
+				() -> cacheManager.getPlayerTotalAchievements(player.getUniqueId()));
+
 	}
 
 	/**
@@ -80,7 +95,7 @@ public class JoinListener implements Listener, Cleanable {
 				if (!advancementProgress.isDone()) {
 					advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
 				}
-				for (String achName : databaseManager.getPlayerAchievementNamesList(player.getUniqueId())) {
+				for (String achName : databaseManager.getPlayerAchievementNames(player.getUniqueId())) {
 					advancement = Bukkit.getAdvancement(new NamespacedKey(advancedAchievements,
 							AdvancementManager.getKey(achName)));
 					// Matching advancement might not exist if user has not called /aach generate.

@@ -2,8 +2,6 @@ package com.hm.achievement.db;
 
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -41,11 +39,8 @@ public class CacheManager implements Cleanable {
 	// Statistics of the different players for multiple achievements; keys in the inner maps correspond to concatenated
 	// UUIDs and block/entity/command identifiers.
 	private final Map<MultipleAchievements, Map<SubcategoryUUID, CachedStatistic>> multipleAchievementsToPlayerStatistics;
-	// Multimaps corresponding to the different achievements received by the players.
+	// Multimap corresponding to the different achievement names received by players.
 	private final Map<UUID, Set<String>> receivedAchievementsCache;
-	private final Map<UUID, Set<String>> notReceivedAchievementsCache;
-	// Map corresponding to the total amount of achievements received by each player.
-	private final Map<UUID, Integer> totalPlayerAchievementsCache;
 
 	@Inject
 	public CacheManager(AdvancedAchievements advancedAchievements, AchievementMap achievementMap,
@@ -55,8 +50,7 @@ public class CacheManager implements Cleanable {
 		this.databaseManager = databaseManager;
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
-		receivedAchievementsCache = new HashMap<>();
-		notReceivedAchievementsCache = new HashMap<>();
+		receivedAchievementsCache = new ConcurrentHashMap<>();
 
 		// ConcurrentHashMaps are necessary to guarantee thread safety.
 		for (NormalAchievements normalAchievement : NormalAchievements.values()) {
@@ -65,15 +59,11 @@ public class CacheManager implements Cleanable {
 		for (MultipleAchievements multipleAchievement : MultipleAchievements.values()) {
 			multipleAchievementsToPlayerStatistics.put(multipleAchievement, new ConcurrentHashMap<>());
 		}
-		totalPlayerAchievementsCache = new ConcurrentHashMap<>();
 	}
 
 	@Override
 	public void cleanPlayerData(UUID uuid) {
-		// Clear achievements caches.
 		receivedAchievementsCache.remove(uuid);
-		notReceivedAchievementsCache.remove(uuid);
-		totalPlayerAchievementsCache.remove(uuid);
 
 		// Indicate to the relevant cached statistics that the player has disconnected.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
@@ -202,38 +192,17 @@ public class CacheManager implements Cleanable {
 	 * @return true if achievement received by player, false otherwise
 	 */
 	public boolean hasPlayerAchievement(UUID player, String name) {
-		Set<String> playerReceived = receivedAchievementsCache.computeIfAbsent(player, s -> new HashSet<>());
-		if (playerReceived.contains(name)) {
-			return true;
-		}
-		Set<String> playerNotReceived = notReceivedAchievementsCache.computeIfAbsent(player, s -> new HashSet<>());
-		if (playerNotReceived.contains(name)) {
-			return false;
-		}
-
-		boolean received = databaseManager.hasPlayerAchievement(player, name);
-		if (received) {
-			playerReceived.add(name);
-		} else {
-			playerNotReceived.add(name);
-		}
-		return received;
+		return receivedAchievementsCache.computeIfAbsent(player, databaseManager::getPlayerAchievementNames).contains(name);
 	}
 
 	/**
-	 * Returns the total number of achievements received by a player. Can be called asynchronously by BungeeTabListPlus,
-	 * method must therefore be synchronized to avoid race conditions if a player calls /aach stats at the same time.
+	 * Returns the total number of achievements received by a player.
 	 *
 	 * @param player
 	 * @return the number of achievements received by the player
 	 */
-	public synchronized int getPlayerTotalAchievements(UUID player) {
-		Integer totalAchievements = totalPlayerAchievementsCache.get(player);
-		if (totalAchievements == null) {
-			totalAchievements = databaseManager.getPlayerAchievementsAmount(player);
-			totalPlayerAchievementsCache.put(player, totalAchievements);
-		}
-		return totalAchievements;
+	public int getPlayerTotalAchievements(UUID player) {
+		return receivedAchievementsCache.computeIfAbsent(player, databaseManager::getPlayerAchievementNames).size();
 	}
 
 	/**
@@ -244,9 +213,7 @@ public class CacheManager implements Cleanable {
 	 * @param achievementName
 	 */
 	public void registerNewlyReceivedAchievement(UUID player, String achievementName) {
-		receivedAchievementsCache.get(player).add(achievementName);
-		notReceivedAchievementsCache.get(player).remove(achievementName);
-		totalPlayerAchievementsCache.put(player, getPlayerTotalAchievements(player) + 1);
+		receivedAchievementsCache.computeIfAbsent(player, databaseManager::getPlayerAchievementNames).add(achievementName);
 	}
 
 	/**
@@ -256,9 +223,8 @@ public class CacheManager implements Cleanable {
 	 * @param achievementNames
 	 */
 	public void removePreviouslyReceivedAchievements(UUID player, Collection<String> achievementNames) {
-		receivedAchievementsCache.computeIfAbsent(player, s -> new HashSet<>()).removeAll(achievementNames);
-		notReceivedAchievementsCache.computeIfAbsent(player, s -> new HashSet<>()).addAll(achievementNames);
-		totalPlayerAchievementsCache.put(player, Math.max(0, getPlayerTotalAchievements(player) - achievementNames.size()));
+		receivedAchievementsCache.computeIfAbsent(player, databaseManager::getPlayerAchievementNames)
+				.removeAll(achievementNames);
 	}
 
 	/**
