@@ -43,7 +43,6 @@ import com.hm.achievement.db.data.AwardedDBAchievement;
 class H2DatabaseManagerTest {
 
 	private static final String TEST_ACHIEVEMENT = "testachievement";
-	private static final String TEST_DISPLAY = "TestDisplay";
 
 	private static H2DatabaseManager db;
 
@@ -85,7 +84,7 @@ class H2DatabaseManagerTest {
 		List<AwardedDBAchievement> achievements = db.getPlayerAchievementsList(testUUID);
 		assertEquals(1, achievements.size());
 		AwardedDBAchievement found = achievements.get(0);
-		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_DISPLAY, found.getDateAwarded(),
+		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_ACHIEVEMENT, found.getDateAwarded(),
 				found.getFormattedDate());
 		assertEquals(expected, found);
 	}
