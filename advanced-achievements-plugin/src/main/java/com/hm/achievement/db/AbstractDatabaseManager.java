@@ -187,9 +187,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
 				ps.setFetchSize(1000);
-				ResultSet rs = ps.executeQuery();
-				while (rs.next()) {
-					achievementNamesList.add(rs.getString(1));
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						achievementNamesList.add(rs.getString(1));
+					}
 				}
 			}
 			return achievementNamesList;
@@ -210,9 +211,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
 				ps.setString(2, achName);
-				ResultSet rs = ps.executeQuery();
-				if (rs.next()) {
-					return dateFormat.format(new Date(rs.getTimestamp(1).getTime()));
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						return dateFormat.format(new Date(rs.getTimestamp(1).getTime()));
+					}
 				}
 			}
 			return null;
@@ -257,9 +259,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
-				ResultSet rs = ps.executeQuery();
-				rs.next();
-				return rs.getInt(1);
+				try (ResultSet rs = ps.executeQuery()) {
+					rs.next();
+					return rs.getInt(1);
+				}
 			}
 		}).executeOperation("counting a player's achievements");
 	}
@@ -284,9 +287,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 					ps.setTimestamp(1, new Timestamp(start));
 				}
 				ps.setFetchSize(1000);
-				ResultSet rs = ps.executeQuery();
-				while (rs.next()) {
-					topList.put(rs.getString(1), rs.getInt(2));
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						topList.put(rs.getString(1), rs.getInt(2));
+					}
 				}
 			}
 			return topList;
@@ -327,7 +331,9 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
 				ps.setString(2, achName);
-				return ps.executeQuery().next();
+				try (ResultSet rs = ps.executeQuery()) {
+					return rs.next();
+				}
 			}
 		}).executeOperation("checking for an achievement");
 	}
@@ -346,9 +352,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
-				ResultSet rs = ps.executeQuery();
-				if (rs.next()) {
-					return rs.getLong(dbName);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						return rs.getLong(dbName);
+					}
 				}
 			}
 			return 0L;
@@ -372,9 +379,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
 				ps.setString(2, subcategory);
-				ResultSet rs = ps.executeQuery();
-				if (rs.next()) {
-					return rs.getLong(dbName);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						return rs.getLong(dbName);
+					}
 				}
 			}
 			return 0L;
@@ -394,9 +402,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
-				ResultSet rs = ps.executeQuery();
-				if (rs.next()) {
-					return rs.getInt(dbName);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						return rs.getInt(dbName);
+					}
 				}
 			}
 			return 0;
@@ -416,9 +425,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
-				ResultSet rs = ps.executeQuery();
-				if (rs.next()) {
-					return rs.getString("date");
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						return rs.getString("date");
+					}
 				}
 			}
 			return null;
@@ -440,19 +450,20 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sqlRead)) {
 				ps.setString(1, uuid.toString());
-				ResultSet rs = ps.executeQuery();
-				int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
-				String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES (?,?,?)";
-				((SQLWriteOperation) () -> {
-					Connection writeConn = getSQLConnection();
-					try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
-						writePrep.setString(1, uuid.toString());
-						writePrep.setInt(2, connections);
-						writePrep.setString(3, date);
-						writePrep.execute();
-					}
-				}).executeOperation(pool, logger, "updating connection date and count");
-				return connections;
+				try (ResultSet rs = ps.executeQuery()) {
+					int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
+					String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES (?,?,?)";
+					((SQLWriteOperation) () -> {
+						Connection writeConn = getSQLConnection();
+						try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
+							writePrep.setString(1, uuid.toString());
+							writePrep.setInt(2, connections);
+							writePrep.setString(3, date);
+							writePrep.execute();
+						}
+					}).executeOperation(pool, logger, "updating connection date and count");
+					return connections;
+				}
 			}
 		}).executeOperation("handling connection event");
 	}

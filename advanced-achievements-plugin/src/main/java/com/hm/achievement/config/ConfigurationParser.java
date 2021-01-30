@@ -2,6 +2,7 @@ package com.hm.achievement.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -118,7 +119,9 @@ public class ConfigurationParser {
 		try {
 			if (!configFile.exists()) {
 				configFile.getParentFile().mkdir();
-				Files.copy(plugin.getResource(defaultConfigName), configFile.toPath());
+				try (InputStream defaultConfig = plugin.getResource(defaultConfigName)) {
+					Files.copy(defaultConfig, configFile.toPath());
+				}
 			}
 			userConfig.load(configFile);
 			yamlUpdater.update(defaultConfigName, userConfigName, userConfig);

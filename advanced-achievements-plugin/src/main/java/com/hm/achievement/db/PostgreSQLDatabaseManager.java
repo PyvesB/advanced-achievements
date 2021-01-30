@@ -65,24 +65,25 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sqlRead)) {
 				ps.setString(1, uuid.toString());
-				ResultSet rs = ps.executeQuery();
-				int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
-				// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
-				// available for PostgreSQL 9.5+.
-				String sqlWrite = "INSERT INTO " + prefix + dbName + " VALUES (?,?,?)"
-						+ " ON CONFLICT (playername) DO UPDATE SET (" + dbName + ",date)=(?,?)";
-				((SQLWriteOperation) () -> {
-					Connection writeConn = getSQLConnection();
-					try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
-						writePrep.setString(1, uuid.toString());
-						writePrep.setInt(2, connections);
-						writePrep.setString(3, date);
-						writePrep.setInt(4, connections);
-						writePrep.setString(5, date);
-						writePrep.execute();
-					}
-				}).executeOperation(pool, logger, "updating connection date and count");
-				return connections;
+				try (ResultSet rs = ps.executeQuery()) {
+					int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
+					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
+					// available for PostgreSQL 9.5+.
+					String sqlWrite = "INSERT INTO " + prefix + dbName + " VALUES (?,?,?)"
+							+ " ON CONFLICT (playername) DO UPDATE SET (" + dbName + ",date)=(?,?)";
+					((SQLWriteOperation) () -> {
+						Connection writeConn = getSQLConnection();
+						try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
+							writePrep.setString(1, uuid.toString());
+							writePrep.setInt(2, connections);
+							writePrep.setString(3, date);
+							writePrep.setInt(4, connections);
+							writePrep.setString(5, date);
+							writePrep.execute();
+						}
+					}).executeOperation(pool, logger, "updating connection date and count");
+					return connections;
+				}
 			}
 		}).executeOperation("handling connection event");
 	}

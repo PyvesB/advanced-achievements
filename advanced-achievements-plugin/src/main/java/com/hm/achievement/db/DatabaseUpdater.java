@@ -65,22 +65,23 @@ public class DatabaseUpdater {
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
 		if (StringUtils.isNotBlank(databaseManager.getPrefix())) {
 			Connection conn = databaseManager.getSQLConnection();
-			try (Statement st = conn.createStatement()) {
-				ResultSet rs = conn.getMetaData().getTables(null, null, "achievements", null);
+			try (ResultSet rs = conn.getMetaData().getTables(null, null, "achievements", null)) {
 				// If the achievements table still has its default name (ie. no prefix), but a prefix is set in the
 				// configuration, do a renaming of all tables.
 				if (rs.next()) {
 					logger.info("Adding " + databaseManager.getPrefix() + " prefix to database table names, please wait...");
-					st.addBatch("ALTER TABLE achievements RENAME TO " + databaseManager.getPrefix() + "achievements");
-					for (NormalAchievements category : NormalAchievements.values()) {
-						st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + databaseManager.getPrefix()
-								+ category.toDBName());
+					try (Statement st = conn.createStatement()) {
+						st.addBatch("ALTER TABLE achievements RENAME TO " + databaseManager.getPrefix() + "achievements");
+						for (NormalAchievements category : NormalAchievements.values()) {
+							st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + databaseManager.getPrefix()
+									+ category.toDBName());
+						}
+						for (MultipleAchievements category : MultipleAchievements.values()) {
+							st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + databaseManager.getPrefix()
+									+ category.toDBName());
+						}
+						st.executeBatch();
 					}
-					for (MultipleAchievements category : MultipleAchievements.values()) {
-						st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + databaseManager.getPrefix()
-								+ category.toDBName());
-					}
-					st.executeBatch();
 				}
 			} catch (SQLException e) {
 				throw new PluginLoadError("Error while setting prefix of database tables.", e);
@@ -136,9 +137,9 @@ public class DatabaseUpdater {
 		// SQLite ignores size for varchar datatype. H2 support was added after this was an issue.
 		if (!(databaseManager instanceof AbstractFileDatabaseManager)) {
 			Connection conn = databaseManager.getSQLConnection();
-			try (Statement st = conn.createStatement()) {
-				ResultSet rs = st.executeQuery("SELECT " + category.toSubcategoryDBName() + " FROM "
-						+ databaseManager.getPrefix() + category.toDBName() + " LIMIT 1");
+			try (Statement st = conn.createStatement();
+					ResultSet rs = st.executeQuery("SELECT " + category.toSubcategoryDBName() + " FROM "
+							+ databaseManager.getPrefix() + category.toDBName() + " LIMIT 1")) {
 				if (rs.getMetaData().getPrecision(1) < size) {
 					logger.info("Updating " + category.toDBName() + " database table with extended column, please wait...");
 					// Increase size of table.
@@ -169,8 +170,8 @@ public class DatabaseUpdater {
 					if (databaseManager instanceof SQLiteDatabaseManager) {
 						st.execute(
 								"CREATE TABLE tempTable (playername char(36),achievement varchar(64),date TIMESTAMP,PRIMARY KEY (playername, achievement))");
-						try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
-							ResultSet achievements = st.executeQuery("SELECT * FROM achievements");
+						try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
+								ResultSet achievements = st.executeQuery("SELECT * FROM achievements")) {
 							while (achievements.next()) {
 								prep.setString(1, achievements.getString(1));
 								prep.setString(2, achievements.getString(2));
@@ -207,8 +208,8 @@ public class DatabaseUpdater {
 			// Create new temporary table.
 			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(" + size
 					+ ")," + tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
-			try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);")) {
-				ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "");
+			try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
+					ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "")) {
 				List<String> uuids = new ArrayList<>();
 				List<String> materialKeys = new ArrayList<>();
 				List<Integer> amounts = new ArrayList<>();
