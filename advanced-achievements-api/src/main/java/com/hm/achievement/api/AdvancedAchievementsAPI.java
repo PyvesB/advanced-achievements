@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.domain.AwardedAchievement;
 
 /**
  * Advanced Achievements API. Unless explicitly stated otherwise, implementations are expected to be thread-safe.
@@ -49,9 +50,20 @@ public interface AdvancedAchievementsAPI {
 	 * Retrieves all achievements received by the player.
 	 *
 	 * @param player should not be null
+	 * @return list of {@code AwardedAchievement} objects received by the player
+	 * @since 7.0.0
+	 */
+	List<AwardedAchievement> getPlayerAchievements(UUID player);
+
+	/**
+	 * Retrieves all achievements received by the player.
+	 *
+	 * @param player should not be null
 	 * @return list of {@code Achievement} objects received by the player
 	 * @since 5.8.0
+	 * @deprecated use {@link AdvancedAchievementsAPI#getPlayerAchievements(UUID)} instead
 	 */
+	@Deprecated
 	List<Achievement> getPlayerAchievementsList(UUID player);
 
 	/**
@@ -160,6 +172,7 @@ public interface AdvancedAchievementsAPI {
 		}
 	}
 
+	@Deprecated
 	final class Achievement {
 
 		public final String name;

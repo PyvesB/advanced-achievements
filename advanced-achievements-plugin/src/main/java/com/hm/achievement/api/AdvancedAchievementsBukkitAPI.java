@@ -25,6 +25,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.domain.AwardedAchievement;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
 
 /**
@@ -81,6 +82,16 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		return new ArrayList<>(achievementMap.getAll());
 	}
 
+	@Override
+	public List<AwardedAchievement> getPlayerAchievements(UUID player) {
+		validateNotNull(player, "Player");
+		return databaseManager.getPlayerAchievementsList(player).stream()
+				.filter(a -> achievementMap.getForName(a.getName()) != null)
+				.map(a -> new AwardedAchievement(achievementMap.getForName(a.getName()), player, a.getDateAwarded()))
+				.collect(Collectors.toList());
+	}
+
+	@SuppressWarnings("deprecation")
 	@Override
 	public List<Achievement> getPlayerAchievementsList(UUID player) {
 		validateNotNull(player, "Player");
