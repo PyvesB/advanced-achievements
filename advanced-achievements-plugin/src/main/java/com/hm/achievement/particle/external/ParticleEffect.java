@@ -42,6 +42,7 @@ import com.hm.achievement.particle.external.ReflectionUtils.PackageType;
  * @author DarkBlade12
  * @version 1.7
  */
+@SuppressWarnings("javadoc")
 public enum ParticleEffect {
 
 	/**

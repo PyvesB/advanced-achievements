@@ -26,6 +26,7 @@ import org.bukkit.Bukkit;
  * @author DarkBlade12
  * @version 1.1
  */
+@SuppressWarnings("javadoc")
 public final class ReflectionUtils {
 
 	// Prevent accidental construction
