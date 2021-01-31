@@ -1,7 +1,6 @@
 package com.hm.achievement.listener;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,7 +17,6 @@ import com.hm.achievement.runnable.AchieveDistanceRunnable;
  * @author Pyves
  *
  */
-@Singleton
 public class TeleportListener implements Listener {
 
 	private final AchieveDistanceRunnable distanceRunnable;

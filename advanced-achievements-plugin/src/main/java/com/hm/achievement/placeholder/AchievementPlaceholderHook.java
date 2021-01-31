@@ -3,7 +3,6 @@ package com.hm.achievement.placeholder;
 import java.util.UUID;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.bukkit.entity.Player;
 
@@ -20,7 +19,6 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
  * 
  * @author Phoetrix
  */
-@Singleton
 public class AchievementPlaceholderHook extends PlaceholderExpansion {
 
 	private final AdvancedAchievements advancedAchievements;

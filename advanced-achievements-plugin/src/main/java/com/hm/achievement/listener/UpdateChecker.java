@@ -7,7 +7,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -29,7 +28,6 @@ import com.hm.achievement.AdvancedAchievements;
  * 
  * @author Pyves
  */
-@Singleton
 public class UpdateChecker implements Listener {
 
 	private final AdvancedAchievements plugin;

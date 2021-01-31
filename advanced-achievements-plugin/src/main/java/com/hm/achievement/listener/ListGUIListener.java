@@ -7,7 +7,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -33,7 +32,6 @@ import com.hm.achievement.gui.MainGUI;
  *
  * @author Pyves
  */
-@Singleton
 public class ListGUIListener implements Listener {
 
 	private final YamlConfiguration mainConfig;

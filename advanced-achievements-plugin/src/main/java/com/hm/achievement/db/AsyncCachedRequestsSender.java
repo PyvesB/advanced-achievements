@@ -11,7 +11,6 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,7 +23,6 @@ import com.hm.achievement.category.NormalAchievements;
  * @author Pyves
  *
  */
-@Singleton
 public class AsyncCachedRequestsSender implements Runnable {
 
 	private final Logger logger;

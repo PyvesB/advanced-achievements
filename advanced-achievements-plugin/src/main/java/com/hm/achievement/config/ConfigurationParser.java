@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -43,7 +42,6 @@ import com.hm.achievement.utils.StringHelper;
  *
  * @author Pyves
  */
-@Singleton
 public class ConfigurationParser {
 
 	private final YamlConfiguration mainConfig;

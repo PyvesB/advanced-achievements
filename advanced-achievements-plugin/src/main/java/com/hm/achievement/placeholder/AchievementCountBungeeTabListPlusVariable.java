@@ -1,7 +1,6 @@
 package com.hm.achievement.placeholder;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.bukkit.entity.Player;
 
@@ -15,7 +14,6 @@ import codecrafter47.bungeetablistplus.api.bukkit.Variable;
  * @author Pyves
  *
  */
-@Singleton
 public class AchievementCountBungeeTabListPlusVariable extends Variable {
 
 	private final CacheManager cacheManager;

@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -22,7 +21,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
 
-@Singleton
 public class YamlUpdater {
 
 	private final AdvancedAchievements plugin;
