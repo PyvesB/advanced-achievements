@@ -19,7 +19,6 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.particle.FancyMessageSender;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Abstract class in charge of factoring out common functionality for the listener classes with cooldown maps.
@@ -40,9 +39,9 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	private String langStatisticCooldown;
 
 	AbstractRateLimitedListener(Category category, YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, YamlConfiguration langConfig, Logger logger) {
-		super(category, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			AchievementMap achievementMap, CacheManager cacheManager, AdvancedAchievements advancedAchievements,
+			YamlConfiguration langConfig, Logger logger) {
+		super(category, mainConfig, serverVersion, achievementMap, cacheManager);
 		this.advancedAchievements = advancedAchievements;
 		this.langConfig = langConfig;
 		this.logger = logger;

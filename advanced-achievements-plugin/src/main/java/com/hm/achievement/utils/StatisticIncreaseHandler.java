@@ -32,7 +32,6 @@ public class StatisticIncreaseHandler implements Reloadable {
 	protected final int serverVersion;
 	protected final AchievementMap achievementMap;
 	protected final CacheManager cacheManager;
-	protected final RewardParser rewardParser;
 
 	private boolean configRestrictCreative;
 	private boolean configRestrictSpectator;
@@ -41,12 +40,11 @@ public class StatisticIncreaseHandler implements Reloadable {
 
 	@Inject
 	public StatisticIncreaseHandler(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser) {
+			AchievementMap achievementMap, CacheManager cacheManager) {
 		this.mainConfig = mainConfig;
 		this.serverVersion = serverVersion;
 		this.achievementMap = achievementMap;
 		this.cacheManager = cacheManager;
-		this.rewardParser = rewardParser;
 	}
 
 	@Override

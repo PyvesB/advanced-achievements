@@ -26,7 +26,6 @@ import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with Connections achievements. This class uses delays processing of tasks to avoid spamming a
@@ -46,9 +45,8 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 
 	@Inject
 	public ConnectionsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser, AdvancedAchievements advancedAchievements,
-			AbstractDatabaseManager databaseManager) {
-		super(NormalAchievements.CONNECTIONS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager) {
+		super(NormalAchievements.CONNECTIONS, mainConfig, serverVersion, achievementMap, cacheManager);
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;
 	}

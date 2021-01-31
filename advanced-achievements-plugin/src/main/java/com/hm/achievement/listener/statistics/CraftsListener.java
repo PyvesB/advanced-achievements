@@ -25,7 +25,6 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.InventoryHelper;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with Crafts achievements.
@@ -40,8 +39,8 @@ public class CraftsListener extends AbstractListener {
 
 	@Inject
 	public CraftsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser, InventoryHelper inventoryHelper) {
-		super(MultipleAchievements.CRAFTS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager, InventoryHelper inventoryHelper) {
+		super(MultipleAchievements.CRAFTS, mainConfig, serverVersion, achievementMap, cacheManager);
 		this.inventoryHelper = inventoryHelper;
 	}
 

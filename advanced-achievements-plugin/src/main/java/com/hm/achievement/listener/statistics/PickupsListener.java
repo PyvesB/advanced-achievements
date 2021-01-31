@@ -12,7 +12,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with ItemPickups achievements. Keep PlayerPickupItemEvent for now, as it was only introduced
@@ -27,8 +26,8 @@ public class PickupsListener extends AbstractListener {
 
 	@Inject
 	public PickupsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser) {
-		super(NormalAchievements.PICKUPS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager) {
+		super(NormalAchievements.PICKUPS, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

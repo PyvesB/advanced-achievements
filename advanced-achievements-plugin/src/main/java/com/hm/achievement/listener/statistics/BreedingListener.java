@@ -15,7 +15,6 @@ import org.bukkit.event.entity.EntityBreedEvent;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with Breeding achievements.
@@ -25,8 +24,8 @@ public class BreedingListener extends AbstractListener {
 
 	@Inject
 	public BreedingListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser) {
-		super(MultipleAchievements.BREEDING, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager) {
+		super(MultipleAchievements.BREEDING, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

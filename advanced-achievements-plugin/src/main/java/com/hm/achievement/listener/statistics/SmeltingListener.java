@@ -19,7 +19,6 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.InventoryHelper;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with Smelting achievements.
@@ -34,8 +33,8 @@ public class SmeltingListener extends AbstractListener {
 
 	@Inject
 	public SmeltingListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser, InventoryHelper inventoryHelper) {
-		super(NormalAchievements.SMELTING, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager, InventoryHelper inventoryHelper) {
+		super(NormalAchievements.SMELTING, mainConfig, serverVersion, achievementMap, cacheManager);
 		this.inventoryHelper = inventoryHelper;
 	}
 

@@ -18,7 +18,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with Fireworks achievements.
@@ -31,8 +30,8 @@ public class FireworksListener extends AbstractListener {
 
 	@Inject
 	public FireworksListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser) {
-		super(NormalAchievements.FIREWORKS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager) {
+		super(NormalAchievements.FIREWORKS, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR) // Do NOT set ignoreCancelled to true, see SPIGOT-4793.

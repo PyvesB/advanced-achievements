@@ -15,15 +15,14 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 
 @Singleton
 public class TargetsShotListener extends AbstractListener {
 
 	@Inject
 	public TargetsShotListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser) {
-		super(MultipleAchievements.TARGETSSHOT, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager) {
+		super(MultipleAchievements.TARGETSSHOT, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

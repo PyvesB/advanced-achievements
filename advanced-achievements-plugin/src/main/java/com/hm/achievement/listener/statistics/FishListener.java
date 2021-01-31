@@ -14,7 +14,6 @@ import org.bukkit.event.player.PlayerFishEvent;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with Fish achievements.
@@ -27,8 +26,8 @@ public class FishListener extends AbstractListener {
 
 	@Inject
 	public FishListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser) {
-		super(NormalAchievements.FISH, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager) {
+		super(NormalAchievements.FISH, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

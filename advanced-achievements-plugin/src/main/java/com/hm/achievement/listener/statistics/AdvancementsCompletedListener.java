@@ -12,7 +12,6 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with Advancement achievements.
@@ -25,9 +24,8 @@ public class AdvancementsCompletedListener extends AbstractListener {
 
 	@Inject
 	public AdvancementsCompletedListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser) {
-		super(NormalAchievements.ADVANCEMENTSCOMPLETED, mainConfig, serverVersion, achievementMap, cacheManager,
-				rewardParser);
+			AchievementMap achievementMap, CacheManager cacheManager) {
+		super(NormalAchievements.ADVANCEMENTSCOMPLETED, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

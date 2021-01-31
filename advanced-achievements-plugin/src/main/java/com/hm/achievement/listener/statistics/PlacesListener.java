@@ -19,7 +19,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with Places achievements.
@@ -32,8 +31,8 @@ public class PlacesListener extends AbstractListener {
 
 	@Inject
 	public PlacesListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser) {
-		super(MultipleAchievements.PLACES, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager) {
+		super(MultipleAchievements.PLACES, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
 	@SuppressWarnings("deprecation")

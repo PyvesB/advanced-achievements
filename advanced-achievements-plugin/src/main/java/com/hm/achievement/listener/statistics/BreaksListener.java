@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with Breaks achievements.
@@ -35,8 +34,8 @@ public class BreaksListener extends AbstractListener {
 
 	@Inject
 	public BreaksListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser) {
-		super(MultipleAchievements.BREAKS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager) {
+		super(MultipleAchievements.BREAKS, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
 	@Override

@@ -22,15 +22,14 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 
 @Singleton
 public class PlayerCommandsListener extends AbstractListener {
 
 	@Inject
 	public PlayerCommandsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser) {
-		super(MultipleAchievements.PLAYERCOMMANDS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			AchievementMap achievementMap, CacheManager cacheManager) {
+		super(MultipleAchievements.PLAYERCOMMANDS, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

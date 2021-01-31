@@ -16,7 +16,6 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with WaterBuckets achievements.
@@ -28,10 +27,10 @@ public class WaterBucketsListener extends AbstractRateLimitedListener {
 
 	@Inject
 	public WaterBucketsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser,
-			AdvancedAchievements advancedAchievements, @Named("lang") YamlConfiguration langConfig, Logger logger) {
-		super(NormalAchievements.WATERBUCKETS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser,
-				advancedAchievements, langConfig, logger);
+			AchievementMap achievementMap, CacheManager cacheManager, AdvancedAchievements advancedAchievements,
+			@Named("lang") YamlConfiguration langConfig, Logger logger) {
+		super(NormalAchievements.WATERBUCKETS, mainConfig, serverVersion, achievementMap, cacheManager, advancedAchievements,
+				langConfig, logger);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

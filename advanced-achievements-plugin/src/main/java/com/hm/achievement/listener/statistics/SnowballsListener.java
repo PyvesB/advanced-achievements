@@ -15,7 +15,6 @@ import org.bukkit.projectiles.ProjectileSource;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with Snowballsachievements.
@@ -28,8 +27,8 @@ public class SnowballsListener extends AbstractListener {
 
 	@Inject
 	public SnowballsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser) {
-		super(NormalAchievements.SNOWBALLS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager) {
+		super(NormalAchievements.SNOWBALLS, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

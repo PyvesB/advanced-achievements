@@ -13,7 +13,6 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.MaterialHelper;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with ConsumedPotions achievements.
@@ -28,9 +27,8 @@ public class ConsumedPotionsListener extends AbstractListener {
 
 	@Inject
 	public ConsumedPotionsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser,
-			MaterialHelper materialHelper) {
-		super(NormalAchievements.CONSUMEDPOTIONS, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			AchievementMap achievementMap, CacheManager cacheManager, MaterialHelper materialHelper) {
+		super(NormalAchievements.CONSUMEDPOTIONS, mainConfig, serverVersion, achievementMap, cacheManager);
 		this.materialHelper = materialHelper;
 	}
 

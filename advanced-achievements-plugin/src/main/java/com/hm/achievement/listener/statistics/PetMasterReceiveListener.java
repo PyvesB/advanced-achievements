@@ -12,7 +12,6 @@ import org.bukkit.event.EventPriority;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 import com.hm.mcshared.event.PlayerChangeAnimalOwnershipEvent;
 
 /**
@@ -26,8 +25,8 @@ public class PetMasterReceiveListener extends AbstractListener {
 
 	@Inject
 	public PetMasterReceiveListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager, RewardParser rewardParser) {
-		super(NormalAchievements.PETMASTERRECEIVE, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			AchievementMap achievementMap, CacheManager cacheManager) {
+		super(NormalAchievements.PETMASTERRECEIVE, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

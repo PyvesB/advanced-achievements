@@ -23,7 +23,6 @@ import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.InventoryHelper;
 import com.hm.achievement.utils.MaterialHelper;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Listener class to deal with Brewing achievements.
@@ -39,11 +38,11 @@ public class BrewingListener extends AbstractRateLimitedListener {
 
 	@Inject
 	public BrewingListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser, AdvancedAchievements advancedAchievements,
+			CacheManager cacheManager, AdvancedAchievements advancedAchievements,
 			@Named("lang") YamlConfiguration langConfig, Logger logger, MaterialHelper materialHelper,
 			InventoryHelper inventoryHelper) {
-		super(NormalAchievements.BREWING, mainConfig, serverVersion, achievementMap, cacheManager, rewardParser,
-				advancedAchievements, langConfig, logger);
+		super(NormalAchievements.BREWING, mainConfig, serverVersion, achievementMap, cacheManager, advancedAchievements,
+				langConfig, logger);
 		this.materialHelper = materialHelper;
 		this.inventoryHelper = inventoryHelper;
 	}

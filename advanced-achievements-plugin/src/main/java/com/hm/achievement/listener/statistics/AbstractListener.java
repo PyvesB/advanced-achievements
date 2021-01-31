@@ -12,7 +12,6 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
 
 /**
@@ -26,8 +25,8 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	Set<String> subcategories;
 
 	AbstractListener(Category category, YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, RewardParser rewardParser) {
-		super(mainConfig, serverVersion, achievementMap, cacheManager, rewardParser);
+			CacheManager cacheManager) {
+		super(mainConfig, serverVersion, achievementMap, cacheManager);
 		this.category = category;
 	}
 
