@@ -242,12 +242,8 @@ public class RewardParser {
 	 * @return the array containing the commands to be performed as a reward
 	 */
 	private List<String> getCommandRewards(ConfigurationSection configSection, Player player) {
-		String searchFrom = configSection.contains("Command") ? "Command" : "Commands";
-		if (configSection.isConfigurationSection(searchFrom)) {
-			searchFrom += ".Execute";
-		}
-
-		String commandReward = configSection.getString(searchFrom);
+		String executePath = configSection.contains("Command") ? "Command.Execute" : "Commands.Execute";
+		String commandReward = configSection.getString(executePath);
 		if (commandReward == null) {
 			return Collections.emptyList();
 		}
