@@ -70,12 +70,6 @@ public class RewardParser {
 		return economy;
 	}
 
-	/**
-	 * Constructs the listing of an achievement's rewards with strings coming from language file.
-	 *
-	 * @param path achievement path
-	 * @return type(s) of the achievement reward as an array of strings
-	 */
 	public List<Reward> parseRewards(String path) {
 		ConfigurationSection configSection = mainConfig.getConfigurationSection(path + ".Reward");
 		if (configSection == null) {
@@ -137,7 +131,8 @@ public class RewardParser {
 				ItemMeta itemMeta = itemStack.getItemMeta();
 				String name = StringUtils.join(parts, " ", 2, parts.length);
 				if (name.isEmpty()) {
-					name = getItemName(itemStack);
+					// Convert the item stack material to an item name in a readable format.
+					name = WordUtils.capitalizeFully(itemStack.getType().toString().replace('_', ' '));
 				} else {
 					itemMeta.setDisplayName(name);
 				}
@@ -216,23 +211,6 @@ public class RewardParser {
 		return new Reward(listTexts, chatTexts, rewarder);
 	}
 
-	/**
-	 * Returns the name of an item reward, in a readable format.
-	 *
-	 * @param item the item reward
-	 * @return the item name
-	 */
-	private String getItemName(ItemStack item) {
-		return WordUtils.capitalizeFully(item.getType().toString().replace('_', ' '));
-	}
-
-	/**
-	 * Extracts the list of commands to be executed as rewards.
-	 *
-	 * @param configSection achievement configuration path
-	 * @param player the player to parse commands for
-	 * @return the array containing the commands to be performed as a reward
-	 */
 	private List<String> getCommandRewards(ConfigurationSection configSection, Player player) {
 		String executePath = configSection.contains("Command") ? "Command.Execute" : "Commands.Execute";
 		String commandReward = configSection.getString(executePath);
@@ -243,13 +221,6 @@ public class RewardParser {
 		return Arrays.asList(MULTIPLE_REWARDS_SPLITTER.split(StringHelper.replacePlayerPlaceholders(commandReward, player)));
 	}
 
-	/**
-	 * Extracts custom command message from config. Might be null.
-	 *
-	 * @param configSection achievement configuration path
-	 * @return the custom command message (null if not present)
-	 * @author tassu
-	 */
 	private List<String> getCustomCommandMessages(ConfigurationSection configSection) {
 		if (configSection.isList("Command.Display")) {
 			return configSection.getStringList("Command.Display");
