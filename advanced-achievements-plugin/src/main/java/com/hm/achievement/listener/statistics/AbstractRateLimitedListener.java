@@ -54,12 +54,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 		List<Achievement> achievements = achievementMap.getForCategory(category);
 		hardestCategoryThreshold = achievements.isEmpty() ? Long.MAX_VALUE
 				: achievements.get(achievements.size() - 1).getThreshold();
-		if (mainConfig.isInt("StatisticCooldown")) {
-			// Old configuration style for plugin versions up to version 5.4.
-			categoryCooldown = mainConfig.getInt("StatisticCooldown") * 1000;
-		} else {
-			categoryCooldown = mainConfig.getInt("StatisticCooldown." + category) * 1000;
-		}
+		categoryCooldown = mainConfig.getInt("StatisticCooldown." + category) * 1000;
 		configCooldownActionBar = mainConfig.getBoolean("CooldownActionBar");
 		// Action bars introduced in Minecraft 1.8. Automatically disable for older versions.
 		if (configCooldownActionBar && serverVersion < 8) {
