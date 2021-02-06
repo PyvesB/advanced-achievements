@@ -279,37 +279,21 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private void displayFirework(Player player) {
 		// Set firework to launch beneath player.
 		Location location = player.getLocation().subtract(0, 1, 0);
-		try {
-			Firework firework = player.getWorld().spawn(location, Firework.class);
-			FireworkMeta fireworkMeta = firework.getFireworkMeta();
-			FireworkEffect fireworkEffect = FireworkEffect.builder()
-					.flicker(false)
-					.trail(false)
-					.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))
-					.withFade(Color.PURPLE)
-					.with(getFireworkType())
-					.build();
-			fireworkMeta.addEffects(fireworkEffect);
-			firework.setFireworkMeta(fireworkMeta);
-			firework.setVelocity(location.getDirection().multiply(0));
+		Firework firework = player.getWorld().spawn(location, Firework.class);
+		FireworkMeta fireworkMeta = firework.getFireworkMeta();
+		FireworkEffect fireworkEffect = FireworkEffect.builder()
+				.flicker(false)
+				.trail(false)
+				.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))
+				.withFade(Color.PURPLE)
+				.with(getFireworkType())
+				.build();
+		fireworkMeta.addEffects(fireworkEffect);
+		firework.setFireworkMeta(fireworkMeta);
+		firework.setVelocity(location.getDirection().multiply(0));
 
-			// Firework launched by plugin: damage will later be cancelled out.
-			fireworkListener.addFirework(firework);
-		} catch (Exception e) {
-			// Particle effect workaround to handle various bugs in early Spigot 1.9 and 1.11 releases. We try to
-			// simulate a firework.
-			soundPlayer.play(player, "ENTITY_FIREWORK_ROCKET_LAUNCH", "ENTITY_FIREWORK_ROCKET_LAUNCH",
-					"ENTITY_FIREWORK_LAUNCH");
-			if (serverVersion >= 9) {
-				player.spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 500, 0, 3, 0, 0.1f);
-			} else {
-				ParticleEffect.FIREWORKS_SPARK.display(0, 3, 0, 0.1f, 500, player.getLocation(), 1);
-			}
-			soundPlayer.play(player, "ENTITY_FIREWORK_ROCKET_BLAST", "ENTITY_FIREWORK_ROCKET_BLAST",
-					"ENTITY_FIREWORK_BLAST");
-			soundPlayer.play(player, "ENTITY_FIREWORK_ROCKET_BLAST", "ENTITY_FIREWORK_ROCKET_BLAST",
-					"ENTITY_FIREWORK_TWINKLE");
-		}
+		// Firework launched by plugin: damage will later be cancelled out.
+		fireworkListener.addFirework(firework);
 	}
 
 	/**
