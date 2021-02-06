@@ -49,7 +49,6 @@ delete-achievements: "Prestationen ACH togs bort från PLAYER."
 # Related to achievement rewards.
 item-reward-received: "Du mottog ett objekt som belöning: AMOUNT ITEM"
 money-reward-received: "Du mottog: AMOUNT !"
-command-reward: "Belöningskommando utfört!"
 
 # Related to /aach help.
 aach-command-book: "Ta emot en prestationsbok."
@@ -92,7 +91,6 @@ list-delay: "Du måste vänta TIME sekunder mellan varje listkommando!"
 list-reward: "Belöning: "
 list-reward-money: "pengar"
 list-reward-item: "objekt"
-list-reward-command: "annat"
 list-amount: "Lvl: "
 list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "

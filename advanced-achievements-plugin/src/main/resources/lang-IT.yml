@@ -45,7 +45,6 @@ delete-achievements: "L'obiettivo ACH è stato tolto a PLAYER."
 # Related to achievement rewards.
 item-reward-received: "Hai ricevuto un oggetto per ricompensa: AMOUNT ITEM"
 money-reward-received: 'Hai ricevuto: AMOUNT !'
-command-reward: Comando ricompensa eseguito!
 
 # Related to /aach help.
 aach-command-book: Ricevi il libro dei tuoi obiettivi.
@@ -74,7 +73,6 @@ list-delay: "Devi aspettare TIME secondi tra un comando lista e l'altro!"
 list-reward: "Ricompensa: "
 list-reward-money: "soldi"
 list-reward-item: "oggetto"
-list-reward-command: "altro"
 list-amount: "Lvl: "
 list-achievement-received: "&a\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "

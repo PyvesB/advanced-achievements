@@ -59,7 +59,6 @@ delete-achievements: Thành tựu ACH đã được xóa từ người chơi PLA
 # Related to achievement rewards.
 item-reward-received: 'Bạn nhận được vật phẩm là: AMOUNT ITEM'
 money-reward-received: 'Bạn nhận được số tiền là: AMOUNT !'
-command-reward: Lệnh thưởng thực hiện!
 custom-command-reward: 'Bạn đã nhận phẩn thưởng của bạn: MESSAGE'
 experience-reward-received: 'Bạn đã nhận: AMOUNT kinh nghiệm!'
 increase-max-health-reward-received: Sức khỏe tối đa của bạn đã tăng lên AMOUNT!
@@ -117,7 +116,6 @@ list-delay: Bạn phải chờ TIME giây giữa mỗi lệnh trong danh sách!
 list-reward: 'Phần thưởng: '
 list-reward-money: tiền
 list-reward-item: vật phẩm
-list-reward-command: khác
 list-reward-experience: nhận AMOUNT kinh nghiệm
 list-reward-increase-max-health: tăng sức khỏe tối đa lên AMOUNT
 list-reward-increase-max-oxygen: tăng lượng oxy tối đa lên AMOUNT

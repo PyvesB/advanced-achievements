@@ -57,7 +57,6 @@ delete-achievements: Gracz PLAYER ponownie musi wykonac osiagniecie o nazwie ACH
 # Related to achievement rewards.
 item-reward-received: '&eOtrzymano nagrode: AMOUNT ITEM'
 money-reward-received: '&eOtrzymano &aAMOUNT&e$'
-command-reward: Komenda Reward zostala wykonana!
 custom-command-reward: '&eOtrzymano nagrode: MESSAGE'
 experience-reward-received: 'Otrzymano: AMOUNT doswiadczenia!'
 increase-max-health-reward-received: Twoje zdrowie zostalo zwiekszone o AMOUNT!
@@ -129,7 +128,6 @@ list-reward: 'Nagroda:'
 list-rewards: 'Nagrody:'
 list-reward-money: '&ePieniadze &aAMOUNT&e$'
 list-reward-item: '&eOtrzymasz &aAMOUNT&6ITEM'
-list-reward-command: '&eInne'
 list-reward-experience: '&eOtrzymasz &aAMOUNT &edoswiadczenia'
 list-reward-increase-max-health: '&eZwiekszy twoje zdrowie o &aAMOUNT'
 list-reward-increase-max-oxygen: '&eZwiekszy tlen o &aAMOUNT'

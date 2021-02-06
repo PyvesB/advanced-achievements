@@ -60,7 +60,6 @@ delete-achievements: "Der Erfolg ACH wurde von PLAYER entfernt."
 # Related to achievement rewards.
 item-reward-received: "Du hast eine Itembelohnung erhalten: AMOUNT ITEM"
 money-reward-received: "Du erhälst: AMOUNT!"
-command-reward: "Die Belohnung wurde überliefert!"
 custom-command-reward: "Du erhälst deine Belohnung: MESSAGE"
 experience-reward-received: 'Du erhälst: AMOUNT Erfahrung!'
 increase-max-health-reward-received: Deine maximale Gesundheit hat sich auf AMOUNT erhöht!
@@ -124,7 +123,6 @@ list-progress: 'Fortschritt:'
 list-reward: ' Belohnung:'
 list-reward-money: Token/s
 list-reward-item: Item/s
-list-reward-command: Sonstiges
 list-reward-experience: Erreiche AMOUNT Erfahrung
 list-reward-increase-max-health: Erhöht die maximale Gesundheit um AMOUNT.
 list-reward-increase-max-oxygen: Erhöht dein Lungenvolumen um AMOUNT.

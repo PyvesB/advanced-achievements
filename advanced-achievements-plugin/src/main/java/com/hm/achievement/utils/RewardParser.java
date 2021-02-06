@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -207,20 +208,11 @@ public class RewardParser {
 
 	private Reward parseCommandReward(ConfigurationSection configSection) {
 		List<String> listTexts = getCustomCommandMessages(configSection);
-		List<String> chatTexts = new ArrayList<>();
-		if (listTexts.isEmpty()) {
-			listTexts.add(langConfig.getString("list-reward-command"));
-			if (!langConfig.getString("command-reward").isEmpty()) {
-				chatTexts.add(langConfig.getString("command-reward"));
-			}
-		}
-		listTexts.stream()
+		List<String> chatTexts = listTexts.stream()
 				.map(message -> StringUtils.replace(langConfig.getString("custom-command-reward"), "MESSAGE", message))
-				.forEach(chatTexts::add);
-
+				.collect(Collectors.toList());
 		Consumer<Player> rewarder = player -> getCommandRewards(configSection, player)
 				.forEach(command -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command));
-
 		return new Reward(listTexts, chatTexts, rewarder);
 	}
 

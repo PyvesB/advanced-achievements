@@ -63,7 +63,6 @@ delete-achievements: ACH adlı başarım PLAYER oyuncusundan silindi.
 # Related to achievement rewards.
 item-reward-received: 'Aldığınız Eşya Ödülü: AMOUNT ITEM'
 money-reward-received: 'Aldığınız Para Ödülü: AMOUNT!'
-command-reward: Ödülünüz Komut İle Verildi!
 custom-command-reward: 'Şu Ödüllere Sahip Oldun: MESSAGE'
 experience-reward-received: AMOUNT tecrübe kazandın!
 increase-max-health-reward-received: Maksimum sağlığın AMOUNT arttı!
@@ -131,7 +130,6 @@ list-progress: 'İlerleme:'
 list-reward: 'Ödüller:'
 list-reward-money: 'Kazanılan Para: AMOUNT T'
 list-reward-item: Kazanılan Eşyalar AMOUNT ITEM
-list-reward-command: Diğer Ödüller
 list-reward-experience: AMOUNT tecrübe kazan
 list-reward-increase-max-health: Maksimum canını AMOUNT arttır
 list-reward-increase-max-oxygen: Maksimum oksijenini AMOUNT arttır
