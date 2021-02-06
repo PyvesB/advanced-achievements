@@ -116,9 +116,8 @@ public class RewardParser {
 		List<String> chatTexts = new ArrayList<>();
 		List<ItemStack> itemStacks = new ArrayList<>();
 
-		String itemString = configSection.getString("Item", configSection.getString("Items", ""));
-		String[] items = MULTIPLE_REWARDS_SPLITTER.split(StringUtils.normalizeSpace(itemString));
-		for (String item : items) {
+		String itemPath = configSection.contains("Item") ? "Item" : "Items";
+		for (String item : getOneOrManyConfigStrings(configSection, itemPath)) {
 			if (!item.contains(" ")) {
 				continue;
 			}
@@ -202,35 +201,29 @@ public class RewardParser {
 	}
 
 	private Reward parseCommandReward(ConfigurationSection configSection) {
-		List<String> listTexts = getCustomCommandMessages(configSection);
+		String displayPath = configSection.contains("Command") ? "Command.Display" : "Commands.Display";
+		List<String> listTexts = getOneOrManyConfigStrings(configSection, displayPath);
 		List<String> chatTexts = listTexts.stream()
 				.map(message -> StringUtils.replace(langConfig.getString("custom-command-reward"), "MESSAGE", message))
 				.collect(Collectors.toList());
-		Consumer<Player> rewarder = player -> getCommandRewards(configSection, player)
+		String executePath = configSection.contains("Command") ? "Command.Execute" : "Commands.Execute";
+		Consumer<Player> rewarder = player -> getOneOrManyConfigStrings(configSection, executePath).stream()
+				.map(command -> StringHelper.replacePlayerPlaceholders(command, player))
 				.forEach(command -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command));
 		return new Reward(listTexts, chatTexts, rewarder);
 	}
 
-	private List<String> getCommandRewards(ConfigurationSection configSection, Player player) {
-		String executePath = configSection.contains("Command") ? "Command.Execute" : "Commands.Execute";
-		String commandReward = configSection.getString(executePath);
-		if (commandReward == null) {
-			return Collections.emptyList();
+	private List<String> getOneOrManyConfigStrings(ConfigurationSection configSection, String path) {
+		if (configSection.isList(path)) {
+			// Real YAML list.
+			return configSection.getStringList(path);
 		}
-		// Multiple reward commands can be set, separated by a semicolon and space. Extra parsing needed.
-		return Arrays.asList(MULTIPLE_REWARDS_SPLITTER.split(StringHelper.replacePlayerPlaceholders(commandReward, player)));
-	}
-
-	private List<String> getCustomCommandMessages(ConfigurationSection configSection) {
-		if (configSection.isList("Command.Display")) {
-			return configSection.getStringList("Command.Display");
+		String configString = configSection.getString(path);
+		if (configString != null) {
+			// Either a list of strings separate by "; " (old configuration style), or a single string.
+			return Arrays.asList(MULTIPLE_REWARDS_SPLITTER.split(StringUtils.normalizeSpace(configString)));
 		}
-
-		List<String> messages = new ArrayList<>();
-		if (configSection.contains("Command.Display")) {
-			messages.add(configSection.getString("Command.Display"));
-		}
-		return messages;
+		return Collections.emptyList();
 	}
 
 }
