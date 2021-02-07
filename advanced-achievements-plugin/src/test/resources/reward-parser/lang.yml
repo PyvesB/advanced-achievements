@@ -1,0 +1,12 @@
+list-reward-money: "receive AMOUNT"
+list-reward-item: "receive AMOUNT ITEM"
+list-reward-experience: "receive AMOUNT experience"
+list-reward-increase-max-health: "increase max health by AMOUNT"
+list-reward-increase-max-oxygen: "increase max oxygen by AMOUNT"
+
+money-reward-received: "You received: AMOUNT!"
+item-reward-received: "You received an item reward: AMOUNT ITEM"
+custom-command-reward: "You received your reward: MESSAGE"
+experience-reward-received: "You received: AMOUNT experience!"
+increase-max-health-reward-received: "Your max health has increased by AMOUNT!"
+increase-max-oxygen-reward-received: "Your max oxygen has increased by AMOUNT!"

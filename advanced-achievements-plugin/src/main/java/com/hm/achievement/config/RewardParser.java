@@ -1,4 +1,4 @@
-package com.hm.achievement.utils;
+package com.hm.achievement.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,9 +16,9 @@ import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.WordUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.ConfigurationSection;
@@ -28,7 +28,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.domain.Reward;
+import com.hm.achievement.utils.MaterialHelper;
+import com.hm.achievement.utils.StringHelper;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -44,6 +47,7 @@ public class RewardParser {
 
 	private final YamlConfiguration mainConfig;
 	private final YamlConfiguration langConfig;
+	private final Server server;
 	private final MaterialHelper materialHelper;
 	private final int serverVersion;
 
@@ -52,14 +56,15 @@ public class RewardParser {
 
 	@Inject
 	public RewardParser(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			MaterialHelper materialHelper, int serverVersion) {
+			AdvancedAchievements advancedAchievements, MaterialHelper materialHelper, int serverVersion) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.materialHelper = materialHelper;
 		this.serverVersion = serverVersion;
+		this.server = advancedAchievements.getServer();
 		// Try to retrieve an Economy instance from Vault.
-		if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
-			RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
+		if (server.getPluginManager().isPluginEnabled("Vault")) {
+			RegisteredServiceProvider<Economy> rsp = server.getServicesManager().getRegistration(Economy.class);
 			if (rsp != null) {
 				economy = rsp.getProvider();
 			}
@@ -127,29 +132,29 @@ public class RewardParser {
 			if (rewardMaterial.isPresent()) {
 				int amount = NumberUtils.toInt(parts[1], 1);
 				ItemStack itemStack = new ItemStack(rewardMaterial.get(), amount);
-				ItemMeta itemMeta = itemStack.getItemMeta();
 				String name = StringUtils.join(parts, " ", 2, parts.length);
 				if (name.isEmpty()) {
 					// Convert the item stack material to an item name in a readable format.
 					name = WordUtils.capitalizeFully(itemStack.getType().toString().replace('_', ' '));
-				} else {
+				} else if (itemStack.hasItemMeta()) {
+					ItemMeta itemMeta = itemStack.getItemMeta();
 					itemMeta.setDisplayName(name);
+					itemStack.setItemMeta(itemMeta);
 				}
 				listTexts.add(StringUtils.replaceEach(langConfig.getString("list-reward-item"),
 						new String[] { "AMOUNT", "ITEM" }, new String[] { Integer.toString(amount), name }));
-				chatTexts.add(StringUtils.replaceEach(langConfig.getString("item-reward-received") + " ",
+				chatTexts.add(StringUtils.replaceEach(langConfig.getString("item-reward-received"),
 						new String[] { "AMOUNT", "ITEM" }, new String[] { Integer.toString(amount), name }));
-				itemStack.setItemMeta(itemMeta);
 				itemStacks.add(itemStack);
 			}
 		}
 		Consumer<Player> rewarder = player -> itemStacks.forEach(item -> {
 			ItemStack playerItem = item.clone();
 			ItemMeta itemMeta = playerItem.getItemMeta();
-			if (itemMeta.hasDisplayName()) {
+			if (itemMeta != null && itemMeta.hasDisplayName()) {
 				itemMeta.setDisplayName(StringHelper.replacePlayerPlaceholders(itemMeta.getDisplayName(), player));
+				playerItem.setItemMeta(itemMeta);
 			}
-			playerItem.setItemMeta(itemMeta);
 			if (player.getInventory().firstEmpty() != -1) {
 				player.getInventory().addItem(playerItem);
 			} else {
@@ -209,7 +214,7 @@ public class RewardParser {
 		String executePath = configSection.contains("Command") ? "Command.Execute" : "Commands.Execute";
 		Consumer<Player> rewarder = player -> getOneOrManyConfigStrings(configSection, executePath).stream()
 				.map(command -> StringHelper.replacePlayerPlaceholders(command, player))
-				.forEach(command -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command));
+				.forEach(command -> server.dispatchCommand(server.getConsoleSender(), command));
 		return new Reward(listTexts, chatTexts, rewarder);
 	}
 

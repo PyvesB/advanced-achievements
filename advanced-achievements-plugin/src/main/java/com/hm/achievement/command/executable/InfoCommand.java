@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.utils.RewardParser;
+import com.hm.achievement.config.RewardParser;
 
 /**
  * Class in charge of displaying the plugin's extra information (/aach info).

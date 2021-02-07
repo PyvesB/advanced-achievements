@@ -27,13 +27,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.RewardParser;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.domain.Achievement.AchievementBuilder;
 import com.hm.achievement.domain.Reward;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
-import com.hm.achievement.utils.RewardParser;
 
 /**
  * Class for testing PlayerAdvancedAchievementListener. Currently covers AllAchievementsReceivedRewards usage.

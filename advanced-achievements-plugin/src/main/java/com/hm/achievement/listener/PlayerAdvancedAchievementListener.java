@@ -33,6 +33,7 @@ import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.command.executable.ToggleCommand;
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.RewardParser;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
@@ -41,7 +42,6 @@ import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.particle.FancyMessageSender;
 import com.hm.achievement.particle.external.ParticleEffect;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
-import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.SoundPlayer;
 import com.hm.achievement.utils.StringHelper;
 

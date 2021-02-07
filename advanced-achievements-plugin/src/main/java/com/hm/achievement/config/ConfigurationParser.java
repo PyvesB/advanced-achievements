@@ -33,7 +33,6 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.domain.Achievement.AchievementBuilder;
 import com.hm.achievement.exception.PluginLoadError;
-import com.hm.achievement.utils.RewardParser;
 import com.hm.achievement.utils.StringHelper;
 
 /**
