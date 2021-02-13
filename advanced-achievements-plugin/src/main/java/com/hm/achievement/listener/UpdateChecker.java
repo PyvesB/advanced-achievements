@@ -53,7 +53,6 @@ public class UpdateChecker implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		// Check if OP to display new version message if needed.
 		if (isUpdateNeeded() && event.getPlayer().hasPermission("achievement.update")) {
 			event.getPlayer().sendMessage(pluginHeader + plugin.getDescription().getName() + " update available: v"
 					+ version + ". Download at spigotmc.org/resources/advanced-achievements.83466");

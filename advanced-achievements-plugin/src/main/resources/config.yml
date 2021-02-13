@@ -20,7 +20,7 @@
 # Time in seconds between each /aach book (unless user has permission achievement.*).
 TimeBook: 900
 
-# Check for update on plugin launch and notify when an OP joins the game.
+# Check for update on plugin launch and notify when a player with permission achievement.update joins the game.
 CheckForUpdate: true
 
 # Set to true to activate firework effects when a player receives an achievement.
