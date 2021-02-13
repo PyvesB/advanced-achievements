@@ -18,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.InventoryHelper;
 
 /**
  * Listener class to deal with Trades achievements.
@@ -29,13 +28,10 @@ import com.hm.achievement.utils.InventoryHelper;
 @Singleton
 public class TradesListener extends AbstractListener {
 
-	private final InventoryHelper inventoryHelper;
-
 	@Inject
 	public TradesListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, InventoryHelper inventoryHelper) {
+			CacheManager cacheManager) {
 		super(NormalAchievements.TRADES, mainConfig, serverVersion, achievementMap, cacheManager);
-		this.inventoryHelper = inventoryHelper;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -46,16 +42,6 @@ public class TradesListener extends AbstractListener {
 				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
 			return;
 		}
-		Player player = (Player) event.getWhoClicked();
-
-		int eventAmount = item.getAmount();
-		if (event.isShiftClick()) {
-			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, item));
-			if (eventAmount == 0) {
-				return;
-			}
-		}
-
-		updateStatisticAndAwardAchievementsIfAvailable(player, eventAmount);
+		updateStatisticAndAwardAchievementsIfAvailable((Player) event.getWhoClicked(), 1);
 	}
 }
