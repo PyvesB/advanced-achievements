@@ -18,6 +18,7 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import com.darkblade12.particleeffect.ReflectionUtils.PackageType;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancementBuilder;
 import com.hm.achievement.category.Category;
@@ -27,7 +28,6 @@ import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.OrderedCategory;
 import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.achievement.particle.external.ReflectionUtils.PackageType;
 import com.hm.achievement.utils.StringHelper;
 
 /**

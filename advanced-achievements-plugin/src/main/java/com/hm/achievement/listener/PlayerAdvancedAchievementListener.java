@@ -28,6 +28,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.meta.FireworkMeta;
 
+import com.darkblade12.particleeffect.ParticleEffect;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
@@ -39,8 +40,7 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.domain.Reward;
 import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.achievement.particle.FancyMessageSender;
-import com.hm.achievement.particle.external.ParticleEffect;
+import com.hm.achievement.utils.FancyMessageSender;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.SoundPlayer;
 import com.hm.achievement.utils.StringHelper;

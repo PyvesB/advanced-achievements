@@ -16,9 +16,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.darkblade12.particleeffect.ParticleEffect;
 import com.hm.achievement.command.pagination.CommandPagination;
 import com.hm.achievement.db.AbstractDatabaseManager;
-import com.hm.achievement.particle.external.ParticleEffect;
 import com.hm.achievement.utils.SoundPlayer;
 
 /**

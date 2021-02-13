@@ -18,7 +18,7 @@ import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.lifecycle.Cleanable;
-import com.hm.achievement.particle.FancyMessageSender;
+import com.hm.achievement.utils.FancyMessageSender;
 
 /**
  * Abstract class in charge of factoring out common functionality for the listener classes with cooldown maps.

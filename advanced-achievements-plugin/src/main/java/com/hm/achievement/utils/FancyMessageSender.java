@@ -1,12 +1,12 @@
-package com.hm.achievement.particle;
+package com.hm.achievement.utils;
 
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.particle.external.ReflectionUtils;
-import com.hm.achievement.particle.external.ReflectionUtils.PackageType;
+import com.darkblade12.particleeffect.ReflectionUtils;
+import com.darkblade12.particleeffect.ReflectionUtils.PackageType;
 
 /**
  * Class used to send fancy messages to the player; can be titles, hoverable chat messages or action bar messages. All

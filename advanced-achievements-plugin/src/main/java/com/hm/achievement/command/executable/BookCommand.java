@@ -23,13 +23,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
+import com.darkblade12.particleeffect.ParticleEffect;
+import com.darkblade12.particleeffect.ReflectionUtils.PackageType;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.lifecycle.Cleanable;
-import com.hm.achievement.particle.external.ParticleEffect;
-import com.hm.achievement.particle.external.ReflectionUtils.PackageType;
 import com.hm.achievement.utils.SoundPlayer;
 
 /**

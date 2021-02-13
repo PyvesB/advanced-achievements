@@ -12,9 +12,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
 
+import com.darkblade12.particleeffect.ParticleEffect;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.particle.external.ParticleEffect;
 import com.hm.achievement.utils.SoundPlayer;
 
 /**

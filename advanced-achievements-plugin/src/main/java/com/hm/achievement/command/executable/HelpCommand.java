@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import com.hm.achievement.particle.FancyMessageSender;
+import com.hm.achievement.utils.FancyMessageSender;
 
 /**
  * Class in charge of displaying the plugin's help (/aach help).
