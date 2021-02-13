@@ -293,14 +293,12 @@ permissions:
   achievement.count.custom.*:
     description: Allows custom statistics in database to increase.
     default: true
-#============================================================#
-# +--------------------------------------------------------+ #
-# |  /!\  Dynamic permissions added at plugin startup  /!\ | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#======================================================================================================================#
+#                                /!\  Dynamic permissions added at plugin startup  /!\                                 #
+#======================================================================================================================#
 # For individual achievements, simply use the Name property, e.g achievement.place_100_stone
 # For categories with sub-categories (Breaks, Places, Crafts, Kills, Breeding, PlayerCommands, Custom and TargetsShot):
 # - use the sub-category key: for example for stone breaks, achievement.count.breaks.stone
-# - for PlayerCommands, use lower case without spaces nor the initial slash, e.g. achievement.count.playercommands.aachbook
-# - for Kills with a custom mob name you should remove any whitespaces, e.g. achievement.count.kills.§2SkeletalKnight
+# - for PlayerCommands, use lower case without spaces nor the initial slash: achievement.count.playercommands.aachbook
+# - for Kills with a custom mob name you should remove any whitespaces: achievement.count.kills.§2SkeletalKnight
 # - for Places with a custom item display name you should also remove any whitespaces.

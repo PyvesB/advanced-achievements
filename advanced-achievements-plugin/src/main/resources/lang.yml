@@ -1,23 +1,25 @@
-#=============================================================#
-# +---------------------------------------------------------+ #
-# | Advanced Achievements English translation by DarkPyves  | #
-# |             ~ Valid as of version ${project.version} ~              | #
-# |   Newer plugin versions will automatically append new   | #
-# |     untranslated parameters to the end of the file.     | #
-# +---------------------------------------------------------+ #
-#=============================================================#
+#======================================================================================================================#
+#      _       _                               _      _        _     _                                     _           #
+#      / \   __| |_   ____ _ _ __   ___ ___  __| |    / \   ___| |__ (_) _____   _____ _ __ ___   ___ _ __ | |_ ___    #
+#     / _ \ / _` \ \ / / _` | '_ \ / __/ _ \/ _` |   / _ \ / __| '_ \| |/ _ \ \ / / _ \ '_ ` _ \ / _ \ '_ \| __/ __|   #
+#    / ___ \ (_| |\ V / (_| | | | | (_|  __/ (_| |  / ___ \ (__| | | | |  __/\ V /  __/ | | | | |  __/ | | | |_\__ \   #
+#   /_/   \_\__,_| \_/ \__,_|_| |_|\___\___|\__,_| /_/   \_\___|_| |_|_|\___| \_/ \___|_| |_| |_|\___|_| |_|\__|___/   #
+#                                                                                                                      #
+#                                             English translation by Pyves                                             #
+#======================================================================================================================#
 
+# Various user messages.
 no-permissions: "You do not have the permission to do this."
 statistic-cooldown: "Achievements cooldown: wait TIME seconds before this action counts again."
 category-does-not-exist: "The category and/or sub-category CAT does not exist. Did you mean CLOSEST_MATCH?"
 all-achievements-received: "Congratulations, you have received all the achievements!"
 invalid-command: "Invalid command. Please type /aach to display the command help."
 
-# Related to /aach reload.
+# Used in /aach reload.
 configuration-successfully-reloaded: "Configuration successfully reloaded."
 configuration-reload-failed: "Errors while reloading configuration. Please view logs for more details."
 
-# Related to /aach top week and month.
+# Used in /aach top week and month.
 top-achievement: "Top achievement owners:"
 player-rank: "Current rank:"
 week-achievement: "Weekly achievement rankings:"
@@ -26,17 +28,17 @@ not-ranked: "You are currently not ranked for this period."
 pagination-header: "&7> &5Page PAGE/MAX"
 pagination-footer: "&7>"
 
-# Related to /aach stats.
+# Used in /aach stats.
 number-achievements: "Achievements received:"
 
-# Related to /aach book.
+# Used in /aach book.
 book-received: "You received your achievements book!"
 book-delay: "You must wait TIME seconds between each book reception!"
 book-name: "Achievements Book"
 book-date: "Book created on DATE."
 book-not-received: "You have not yet received any achievements."
 
-# Related to /aach give.
+# Used in /aach give.
 player-offline: "The player PLAYER is offline!"
 not-a-player: "You cannot give achievements to ENTITY, it is not a player!"
 achievement-already-received: "The player PLAYER has already received this achievement!"
@@ -44,23 +46,23 @@ achievement-not-found: "The specified achievement was not found in Commands cate
 achievement-given: "Achievement given!"
 achievement-no-permission: "The player PLAYER does not have permission to receive this achievement!"
 
-# Related to /aach add.
+# Used in /aach add.
 error-value: "The value VALUE must to be an integer!"
 statistic-increased: "Statistic ACH increased by AMOUNT for PLAYER!"
 
-# Related to achievement reception.
+# Used in achievement reception.
 achievement-received: "PLAYER received the achievement:"
 achievement-new: "New Achievement:"
 
-# Related to /aach check.
+# Used in /aach check.
 check-achievement-true: "PLAYER has received the achievement ACH!"
 check-achievements-false: "PLAYER has not received the achievement ACH!"
 
-# Related to /aach delete.
+# Used in /aach delete.
 delete-achievements: "The achievement ACH was deleted from PLAYER."
 delete-all-achievements: "All achievements were deleted from PLAYER."
 
-# Related to achievement rewards.
+# Used in achievement rewards.
 item-reward-received: "You received an item reward: AMOUNT ITEM"
 money-reward-received: "You received: AMOUNT!"
 custom-command-reward: "You received your reward: MESSAGE"
@@ -68,7 +70,7 @@ experience-reward-received: "You received: AMOUNT experience!"
 increase-max-health-reward-received: "Your max health has increased by AMOUNT!"
 increase-max-oxygen-reward-received: "Your max oxygen has increased by AMOUNT!"
 
-# Related to /aach help.
+# Used in /aach help.
 aach-command-book: "Receive your achievements book."
 aach-command-book-hover: "RP items you can collect and exchange with others! Time-based listing."
 aach-command-stats: "Display amount of received achievements."
@@ -103,7 +105,7 @@ aach-command-inspect: "Inspect recipients of ACH."
 aach-command-inspect-hover: "Lists most recent recipients of an achievement, max 1000."
 aach-tip: "&lHINT &8You can &7&n&ohover&8 or &7&n&oclick&8 on the commands!"
 
-# Related to /aach info.
+# Used in /aach info.
 version-command-version: "Version:"
 version-command-website: "Website:"
 version-command-author: "Author:"
@@ -116,7 +118,7 @@ version-command-essentials: "Essentials integration:"
 version-command-placeholderapi: "PlaceholderAPI integration:"
 version-command-database: "Database type:"
 
-# Related to /aach list.
+# Used in /aach list.
 list-gui-title: "&5&lAchievements List"
 list-delay: "You must wait TIME seconds between each list command!"
 list-description: "Description:"
@@ -144,7 +146,7 @@ list-achievements-in-category-singular: "AMOUNT achievement"
 list-achievements-in-category-plural: "AMOUNT achievements"
 list-unavailable-whilst-sleeping: "&c&lYou cannot open the Achievements List whilst sleeping."
 
-# Related to category names in /aach list.
+# Used in category names in /aach list.
 # Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: "Connections"
 list-places: "Blocks Placed"
@@ -200,23 +202,23 @@ list-riptides: "Riptides Used"
 list-jobsreborn: "Jobs Level-Up"
 list-advancements-completed: "Advancements Completed"
 
-# Related to /aach toggle.
+# Used in /aach toggle.
 toggle-displayed: "You will now be notified when other players get achievements."
 toggle-hidden: "You will no longer be notified when other players get achievements."
 
-# Related to /aach reset.
+# Used in /aach reset.
 reset-successful: "CAT statistics were cleared for PLAYER."
 reset-all-successful: "All statistics were cleared for PLAYER."
 
-# Related to /aach generate.
+# Used in /aach generate.
 advancements-generated: "Advancements were successfully generated."
 minecraft-not-supported: "Advancements not supported in your Minecraft version. Please update to 1.12+."
 
-# Related to /aach inspect
+# Used in /aach inspect
 achievement-not-recognized: "Achievement called 'NAME' was not recognized. Did you mean CLOSEST_MATCH?"
 
-#============================================================#
-# +--------------------------------------------------------+ #
-# | Parameters in future plugin versions will  appear here | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#======================================================================================================================#
+#                                                  FUTURE PAREMETERS                                                   #
+#                                                                                                                      #
+#                          New parameters added in future plugin releases will appear below.                           #
+#======================================================================================================================#
