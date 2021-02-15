@@ -1,24 +1,26 @@
-#=============================================================#
-# +---------------------------------------------------------+ #
-# |        Advanced Achievements Spanish translation        | #
-# |                    By Arciniegasdiaz                    | #
-# |             ~ Valid as of version 6.1.3 ~               | #
-# |       Las versiones más nuevas del Plugin agregarán     | #
-# |    nuevos parámetros sin traducir al final del archivo  | #
-# +---------------------------------------------------------+ #
-#=============================================================#
+#======================================================================================================================#
+#       _       _                               _      _        _     _                                     _          #
+#      / \   __| |_   ____ _ _ __   ___ ___  __| |    / \   ___| |__ (_) _____   _____ _ __ ___   ___ _ __ | |_ ___    #
+#     / _ \ / _` \ \ / / _` | '_ \ / __/ _ \/ _` |   / _ \ / __| '_ \| |/ _ \ \ / / _ \ '_ ` _ \ / _ \ '_ \| __/ __|   #
+#    / ___ \ (_| |\ V / (_| | | | | (_|  __/ (_| |  / ___ \ (__| | | | |  __/\ V /  __/ | | | | |  __/ | | | |_\__ \   #
+#   /_/   \_\__,_| \_/ \__,_|_| |_|\___\___|\__,_| /_/   \_\___|_| |_|_|\___| \_/ \___|_| |_| |_|\___|_| |_|\__|___/   #
+#                                                                                                                      #
+#                                       Spanish translation by Arciniegasdiaz                                          #
+#                                            Versión valida para la 6.7.2                                              #
+#======================================================================================================================#
 
+# Varios mensajes de usuario.
 no-permissions: "No tienes el permiso para hacer esto."
 statistic-cooldown: "Enfriamiento de logros: espere TIME segundos antes de que esta acción cuente de nuevo."
 category-does-not-exist: "La categoria y/o la sub-categoria CAT no existe. Tal vez quisiste decir CLOSEST_MATCH?"
 all-achievements-received: "Felicidades, has recibido todos los logros!"
 invalid-command: "Comando inválido. Por favor escribe /aach para mostrar el comando de ayuda."
 
-# Related to /aach reload.
+# Usado en /aach reload.
 configuration-successfully-reloaded: "La configuración se volvió a cargar correctamente."
 configuration-reload-failed: "Errores al recargar la configuración. Por favor, vea los registros para más detalles."
 
-# Related to /aach top week and month.
+# Utilizado en /aach top semana y mes.
 top-achievement: "Principales propietarios de logros:"
 player-rank: "Posición actual:"
 week-achievement: "Clasificación de logros semanales:"
@@ -27,40 +29,41 @@ not-ranked: "Actualmente no está clasificado para este período."
 pagination-header: "&7> &5Pagina PAGE/MAX"
 pagination-footer: "&7>"
 
-# Related to /aach stats.
+# Usado en /aach stats.
 number-achievements: "Logros recibidos:"
 
-# Related to /aach book.
+# Usado en /aach book.
 book-received: "¡Recibiste tu libro de logros!"
 book-delay: "Tu debes esperar TIME segundos entre cada recepción de libro!"
 book-name: "Libro de logros"
 book-date: "Libro creado el DATE."
 book-not-received: "Aún no has recibido ningún logro."
 
-# Related to /aach give.
+# Usado en /aach give.
 player-offline: "¡El jugador PLAYER está desconectado!"
 not-a-player: "¡No puedes dar ningun logro a un ENTITY, ya que no es un jugador!"
 achievement-already-received: "¡El jugador PLAYER ya ha recibido este logro!"
 achievement-not-found: "El logro especificado no se encontró en la categoría Comandos. Tal vez quisiste decir CLOSEST_MATCH?"
 achievement-given: "Logro dado!"
+achievement-no-permission: "¡El jugador PLAYER no tiene permiso para recibir este logro!"
 
-# Related to /aach add.
+# Usado en /aach add.
 error-value: "¡El valor VALUE debe ser un entero!"
 statistic-increased: "¡La estadística ACH aumentó en AMOUNT para el jugador PLAYER!"
 
-# Related to achievement reception.
+# Relacionado con la recepción de logros.
 achievement-received: "PLAYER recibió el logro:"
 achievement-new: "Nuevo logro:"
 
-# Related to /aach check.
+# Usado en /aach check.
 check-achievement-true: "PLAYER ha recibido el logro ACH!"
 check-achievements-false: "PLAYER no ha recibido el logro ACH!"
 
-# Related to /aach delete.
+# Usado en /aach delete.
 delete-achievements: "El logro ACH fue eliminado del jugador PLAYER."
 delete-all-achievements: "Todos los Logros fueron eliminados de PLAYER."
 
-# Related to achievement rewards.
+# Relacionado con las recompensas por logros.
 item-reward-received: "Recibiste una recompensa de item: AMOUNT ITEM"
 money-reward-received: "Recibiste: AMOUNT!"
 custom-command-reward: "Recibiste tu recompensa: MESSAGE"
@@ -68,7 +71,7 @@ experience-reward-received: "Recibiste: AMOUNT experiencia!"
 increase-max-health-reward-received: "Tu salud máxima ha aumentado en AMOUNT!"
 increase-max-oxygen-reward-received: "Su oxígeno máximo ha aumentado en AMOUNT!"
 
-# Related to /aach help.
+# Usado en /aach help.
 aach-command-book: "Recibe tu libro de logros."
 aach-command-book-hover: "¡RP Artículos que puedes recoger e intercambiar con otros! Listado basado en el tiempo."
 aach-command-stats: "Muestra la cantidad de logros recibidos."
@@ -103,7 +106,7 @@ aach-command-inspect: "Inspeccionar los destinatarios de ACH."
 aach-command-inspect-hover: "Enumera los destinatarios más recientes de un logro, máximo 1000."
 aach-tip: "&lTIP: &8Puedes &7&n&odesplazarte &8o dar un &7&n&oclick&8 sobre el comando!"
 
-# Related to /aach info.
+# Usado en /aach info.
 version-command-version: "Version:"
 version-command-website: "Sitio Web:"
 version-command-author: "Autor:"
@@ -116,7 +119,7 @@ version-command-essentials: "Integración con Essentials:"
 version-command-placeholderapi: "Integración con PlaceholderAPI:"
 version-command-database: "Tipo de base de datos:"
 
-# Related to /aach list.
+# Usado en /aach list.
 list-gui-title: "&5&lLista de Logros"
 list-delay: "¡Debes esperar TIME segundos entre cada comando de lista!"
 list-description: "Descripción:"
@@ -144,8 +147,8 @@ list-achievements-in-category-singular: "AMOUNT logro"
 list-achievements-in-category-plural: "AMOUNT logros"
 list-unavailable-whilst-sleeping: "&c&lNo puedes abrir la Lista de logros mientras duermes."
 
-# Related to category names in /aach list.
-# Set a parameter to "" to hide it from /aach list (but not disable the category).
+# Se usa en nombres de categorías en /aach list.
+# Establezca un parámetro en "" para ocultarlo del /aach list (pero no deshabilitar la categoría).
 list-connections: "Connections"
 list-places: "Bloques colocados"
 list-breaks: "Bloques rotos"
@@ -178,6 +181,7 @@ list-distance-minecart: "Distancia recorrida en un Minecart"
 list-distance-boat: "Distancia recorrida en un bote"
 list-distance-gliding: "Distancia recorrida con Elytra"
 list-distance-llama: "Distancia recorrida en una llama"
+list-distance-sneaking: "Distancia recorrida mientras se escabulle"
 list-itemdrops: "Items Droppeados"
 list-itempickups: "Items Tomados"
 list-hoeplowings: "Superficie arada"
@@ -196,25 +200,26 @@ list-custom: "Categorías personalizadas"
 list-targetsshot: "Objetivos alcanzados"
 list-raids-won: "Incursiones ganadas"
 list-riptides: "Mareas rotas Usadas"
+list-jobsreborn: "Subida de nivel de Jobs"
 list-advancements-completed: "Avances completados"
 
-# Related to /aach toggle.
+# Usado en /aach toggle.
 toggle-displayed: "Ahora se te notificará cuando otros jugadores obtengan logros."
 toggle-hidden: "Ya no se te notificará cuando otros jugadores obtengan logros."
 
-# Related to /aach reset.
+# Usado en /aach reset.
 reset-successful: " Se borraron las estadísticas de CAT para PLAYER."
 reset-all-successful: "Se borraron todas las estadísticas para PLAYER."
 
-# Related to /aach generate.
+# Usado en /aach generate.
 advancements-generated: "Los avances se generaron con éxito."
 minecraft-not-supported: "Los avances no son compatibles con su versión de Minecraft. Actualiza a 1.12+."
 
-# Related to /aach inspect
+# Usado en /aach inspect
 achievement-not-recognized: "El logro llamado 'NAME' no fue reconocido. ¿Quiso decir CLOSEST_MATCH?"
 
-#============================================================#
-# +--------------------------------------------------------+ #
-# | Parameters in future plugin versions will  appear here | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#======================================================================================================================#
+#                                                 PAREMETROS FUTUROS                                                   #
+#                                                                                                                      #
+#             Los nuevos parámetros agregados en futuras versiones de complementos aparecerán a continuación.          #
+#======================================================================================================================#
