@@ -29,7 +29,7 @@ public class EggsListener extends AbstractListener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onProjectileLaunch(PlayerEggThrowEvent event) {
+	public void onPlayerEggThrow(PlayerEggThrowEvent event) {
 		updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), 1);
 	}
 }
