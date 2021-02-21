@@ -96,7 +96,7 @@ RestrictSpectator: true
 # be handled once a player switches to a non-adventure mode.
 RestrictAdventure: false
 
-# Stop all stats from increasing when player in a specific world, including PlayedTime (delete the [] before adding
+# Stop all stats from increasing when player in a specific world, including PlayedTime (delete the [] before listing
 # values). Connection achievements will only be handled once a player enters a non-excluded world.
 ExcludedWorlds: []
 #  - yourWorld1
@@ -105,9 +105,10 @@ ExcludedWorlds: []
 # Ignore vertical dimension (Y axis) when calculating distance statistics.
 IgnoreVerticalDistance: false
 
-# Hide these categories from the GUI or the stats output. Also prevent statisticss from increasing.
+# Hide these categories from the GUI or the stats output and prevent statisticss from increasing. To not disable any
+# categories, remove all listed items and instead specify DisabledCategories: [] 
 DisabledCategories:
-- AdvancementsCompleted
+  - AdvancementsCompleted
 
 # Do not take into account items broken with Silk Touch for the Breaks achievements.
 DisableSilkTouchBreaks: false
