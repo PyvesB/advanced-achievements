@@ -175,7 +175,7 @@ public class DatabaseUpdater {
 							while (achievements.next()) {
 								prep.setString(1, achievements.getString(1));
 								prep.setString(2, achievements.getString(2));
-								prep.setTimestamp(3, achievements.getTimestamp(3));
+								prep.setTimestamp(3, achievements.getTimestamp(4));
 								prep.addBatch();
 							}
 							prep.executeBatch();
