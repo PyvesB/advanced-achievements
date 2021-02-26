@@ -1,6 +1,6 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.Set;
+import java.util.Collections;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,7 +45,13 @@ public class JobsRebornListener extends AbstractListener {
 			return;
 		}
 
-		Set<String> foundAchievements = findAchievementsByCategoryAndName(jobName);
-		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
+		findAchievementsByCategoryAndName(jobName).forEach(key -> {
+			int previousJobLevel = (int) cacheManager.getAndIncrementStatisticAmount(MultipleAchievements.JOBSREBORN, key,
+					player.getUniqueId(), 0);
+			int levelDiff = event.getLevel() - previousJobLevel;
+			if (levelDiff > 0) {
+				updateStatisticAndAwardAchievementsIfAvailable(player, Collections.singleton(key), levelDiff);
+			}
+		});
 	}
 }
