@@ -30,11 +30,7 @@ public class JobsRebornListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onJob(JobsLevelUpEvent event) {
-		if (event.getPlayer() == null) {
-			return;
-		}
-
-		// Grab the player from the JobsPlayer
+		// Get the Player from the JobsPlayer.
 		Player player = event.getPlayer().getPlayer();
 		if (player == null) {
 			return;
