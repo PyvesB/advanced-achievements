@@ -256,12 +256,12 @@ public class CategoryGUI implements Reloadable {
 	 * @param name
 	 * @param date
 	 * @param ineligibleSeriesItem
-	 * @param seriesNumber
+	 * @param seriesIndex
 	 * @param lore
 	 * @param type
 	 */
 	private void insertAchievement(Inventory gui, int position, long statistic, String name, String date,
-			boolean ineligibleSeriesItem, int seriesNumber, List<String> lore, String type) {
+			boolean ineligibleSeriesItem, int seriesIndex, List<String> lore, String type) {
 		// Display an item depending on whether the achievement was received or not, or whether progress was started.
 		// Clone in order to work with an independent set of metadata.
 		ItemStack achItem;
@@ -280,7 +280,7 @@ public class CategoryGUI implements Reloadable {
 		itemMeta.setLore(lore);
 		achItem.setItemMeta(itemMeta);
 		if (configNumberedItemsInList) {
-			achItem.setAmount(seriesNumber);
+			achItem.setAmount(seriesIndex + 1);
 		}
 		gui.setItem(position, achItem);
 	}
