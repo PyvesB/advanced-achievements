@@ -1,9 +1,5 @@
 package com.hm.achievement.listener;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -22,7 +18,6 @@ import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.lifecycle.Cleanable;
 
 /**
  * Listener class to deal with advancements for Minecraft 1.12+. This class uses delays processing of tasks to avoid
@@ -32,9 +27,8 @@ import com.hm.achievement.lifecycle.Cleanable;
  *
  */
 @Singleton
-public class JoinListener implements Listener, Cleanable {
+public class JoinListener implements Listener {
 
-	private final Set<UUID> playersConnectionProcessed = new HashSet<>();
 	private final AdvancedAchievements advancedAchievements;
 	private final AbstractDatabaseManager databaseManager;
 	private final CacheManager cacheManager;
@@ -48,11 +42,6 @@ public class JoinListener implements Listener, Cleanable {
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;
 		this.cacheManager = cacheManager;
-	}
-
-	@Override
-	public void cleanPlayerData(UUID uuid) {
-		playersConnectionProcessed.remove(uuid);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

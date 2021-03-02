@@ -3,7 +3,6 @@ package com.hm.achievement.module;
 import com.hm.achievement.command.executable.BookCommand;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
-import com.hm.achievement.listener.JoinListener;
 import com.hm.achievement.listener.statistics.BedsListener;
 import com.hm.achievement.listener.statistics.BrewingListener;
 import com.hm.achievement.listener.statistics.ConnectionsListener;
@@ -43,10 +42,6 @@ public interface CleanableModule {
 	@Binds
 	@IntoSet
 	Cleanable bindConnectionsListener(ConnectionsListener connectionsListener);
-
-	@Binds
-	@IntoSet
-	Cleanable bindJoinListener(JoinListener joinListener);
 
 	@Binds
 	@IntoSet
