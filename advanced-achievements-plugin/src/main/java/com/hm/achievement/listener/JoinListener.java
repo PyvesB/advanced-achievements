@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
-import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 
 /**
@@ -29,18 +29,17 @@ import com.hm.achievement.db.CacheManager;
 @Singleton
 public class JoinListener implements Listener {
 
+	private final int serverVersion;
 	private final AdvancedAchievements advancedAchievements;
-	private final AbstractDatabaseManager databaseManager;
+	private final AchievementMap achievementMap;
 	private final CacheManager cacheManager;
 
-	private final int serverVersion;
-
 	@Inject
-	public JoinListener(int serverVersion, AdvancedAchievements advancedAchievements,
-			AbstractDatabaseManager databaseManager, CacheManager cacheManager) {
+	public JoinListener(int serverVersion, AdvancedAchievements advancedAchievements, AchievementMap achievementMap,
+			CacheManager cacheManager) {
 		this.serverVersion = serverVersion;
 		this.advancedAchievements = advancedAchievements;
-		this.databaseManager = databaseManager;
+		this.achievementMap = achievementMap;
 		this.cacheManager = cacheManager;
 	}
 
@@ -84,13 +83,13 @@ public class JoinListener implements Listener {
 				if (!advancementProgress.isDone()) {
 					advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
 				}
-				for (String achName : databaseManager.getPlayerAchievementNames(player.getUniqueId())) {
+				for (String name : achievementMap.getAllNames()) {
+					// May be null if user has not called /aach generate since that achievement was added to the config.
 					advancement = Bukkit.getAdvancement(new NamespacedKey(advancedAchievements,
-							AdvancementManager.getKey(achName)));
-					// Matching advancement might not exist if user has not called /aach generate.
+							AdvancementManager.getKey(name)));
 					if (advancement != null) {
 						advancementProgress = player.getAdvancementProgress(advancement);
-						if (!advancementProgress.isDone()) {
+						if (!advancementProgress.isDone() && cacheManager.hasPlayerAchievement(player.getUniqueId(), name)) {
 							advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
 						}
 					}
