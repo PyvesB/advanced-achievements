@@ -1,7 +1,5 @@
 package com.hm.achievement.db;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * Class used to provide a cache wrapper for a database statistic.
  * 
@@ -14,14 +12,14 @@ public class CachedStatistic {
 	private volatile long value;
 	// Indicates whether this in-memory value was written to or is about to be written to the database. Can be modified
 	// concurrently by either the main server thread or the AsyncCachedRequestsSender thread.
-	private final AtomicBoolean databaseConsistent;
+	private volatile boolean databaseConsistent;
 	// Indicates whether the player linked to this statistic has recently disconnected. Can only be modified by the main
 	// server thread.
 	private volatile boolean disconnection;
 
 	public CachedStatistic(long value, boolean databaseConsistent) {
 		this.value = value;
-		this.databaseConsistent = new AtomicBoolean(databaseConsistent);
+		this.databaseConsistent = databaseConsistent;
 		disconnection = false;
 	}
 
@@ -31,15 +29,15 @@ public class CachedStatistic {
 
 	public void setValue(long value) {
 		this.value = value;
-		databaseConsistent.set(false);
+		databaseConsistent = false;
 	}
 
 	public boolean isDatabaseConsistent() {
-		return databaseConsistent.get();
+		return databaseConsistent;
 	}
 
 	public void prepareDatabaseWrite() {
-		databaseConsistent.set(true);
+		databaseConsistent = true;
 	}
 
 	public boolean didPlayerDisconnect() {
