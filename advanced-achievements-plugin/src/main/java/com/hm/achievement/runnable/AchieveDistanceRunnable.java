@@ -52,8 +52,8 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	}
 
 	@Override
-	public void cleanPlayerData(UUID uuid) {
-		playerLocations.remove(uuid);
+	public void cleanPlayerData() {
+		playerLocations.keySet().removeIf(player -> !Bukkit.getOfflinePlayer(player).isOnline());
 	}
 
 	@Override

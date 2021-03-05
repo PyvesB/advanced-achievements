@@ -34,7 +34,6 @@ import com.hm.achievement.listener.FireworkListener;
 import com.hm.achievement.listener.JoinListener;
 import com.hm.achievement.listener.ListGUIListener;
 import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
-import com.hm.achievement.listener.QuitListener;
 import com.hm.achievement.listener.TeleportListener;
 import com.hm.achievement.listener.UpdateChecker;
 import com.hm.achievement.listener.statistics.AbstractListener;
@@ -65,7 +64,6 @@ public class PluginLoader {
 	private final JoinListener joinListener;
 	private final ListGUIListener listGUIListener;
 	private final PlayerAdvancedAchievementListener playerAdvancedAchievementListener;
-	private final QuitListener quitListener;
 	private final TeleportListener teleportListener;
 
 	// Integrations with other plugins. Use lazy injection as these may or may not be used depending on runtime
@@ -87,16 +85,18 @@ public class PluginLoader {
 	// Plugin runnable classes.
 	private final AchieveDistanceRunnable distanceRunnable;
 	private final AchievePlayTimeRunnable playTimeRunnable;
+	private final Cleaner cleaner;
 
 	// Bukkit scheduler tasks.
 	private BukkitTask asyncCachedRequestsSenderTask;
 	private BukkitTask playedTimeTask;
 	private BukkitTask distanceTask;
+	private BukkitTask cleanerTask;
 
 	@Inject
 	public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger, Set<Reloadable> reloadables,
 			FireworkListener fireworkListener, JoinListener joinListener, ListGUIListener listGUIListener,
-			PlayerAdvancedAchievementListener playerAdvancedAchievementListener, QuitListener quitListener,
+			PlayerAdvancedAchievementListener playerAdvancedAchievementListener, Cleaner cleaner,
 			TeleportListener teleportListener, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
 			Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
 			AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
@@ -112,7 +112,7 @@ public class PluginLoader {
 		this.joinListener = joinListener;
 		this.listGUIListener = listGUIListener;
 		this.playerAdvancedAchievementListener = playerAdvancedAchievementListener;
-		this.quitListener = quitListener;
+		this.cleaner = cleaner;
 		this.teleportListener = teleportListener;
 		this.achievementPlaceholderHook = achievementPlaceholderHook;
 		this.achievementCountBungeeTabListPlusVariable = achievementCountBungeeTabListPlusVariable;
@@ -160,6 +160,9 @@ public class PluginLoader {
 		if (asyncCachedRequestsSenderTask != null) {
 			asyncCachedRequestsSenderTask.cancel();
 		}
+		if (cleanerTask != null) {
+			cleanerTask.cancel();
+		}
 		if (playedTimeTask != null) {
 			playedTimeTask.cancel();
 		}
@@ -198,8 +201,6 @@ public class PluginLoader {
 		pluginManager.registerEvents(listGUIListener, advancedAchievements);
 		HandlerList.unregisterAll(playerAdvancedAchievementListener);
 		pluginManager.registerEvents(playerAdvancedAchievementListener, advancedAchievements);
-		HandlerList.unregisterAll(quitListener);
-		pluginManager.registerEvents(quitListener, advancedAchievements);
 		HandlerList.unregisterAll(teleportListener);
 		pluginManager.registerEvents(teleportListener, advancedAchievements);
 	}
@@ -226,6 +227,11 @@ public class PluginLoader {
 			long taskPeriod = mainConfig.getBoolean("BungeeMode") ? 40L : 1200L;
 			asyncCachedRequestsSenderTask = Bukkit.getScheduler().runTaskTimerAsynchronously(advancedAchievements,
 					asyncCachedRequestsSender, taskPeriod, taskPeriod);
+		}
+
+		if (cleanerTask == null) {
+			long taskPeriod = mainConfig.getBoolean("BungeeMode") ? 50L : 20000L;
+			cleanerTask = Bukkit.getScheduler().runTaskTimer(advancedAchievements, cleaner, taskPeriod, taskPeriod);
 		}
 
 		// Schedule a repeating task to monitor played time for each player (not directly related to an event).

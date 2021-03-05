@@ -65,8 +65,10 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	}
 
 	@Override
-	public void cleanPlayerData(UUID uuid) {
-		slotsToPlayersLastActionTimes.values().forEach(m -> m.remove(uuid));
+	public void cleanPlayerData() {
+		long currentTime = System.currentTimeMillis();
+		slotsToPlayersLastActionTimes.values().forEach(playersLastActionTimes -> playersLastActionTimes.values()
+				.removeIf(lastActionTime -> currentTime > lastActionTime + categoryCooldown));
 	}
 
 	void updateStatisticAndAwardAchievementsIfAvailable(Player player, int incrementValue, int slotNumber) {

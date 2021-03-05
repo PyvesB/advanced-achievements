@@ -104,8 +104,9 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	}
 
 	@Override
-	public void cleanPlayerData(UUID uuid) {
-		playersBookTime.remove(uuid);
+	public void cleanPlayerData() {
+		long currentTime = System.currentTimeMillis();
+		playersBookTime.values().removeIf(bookTime -> currentTime > bookTime + configTimeBook);
 	}
 
 	@Override

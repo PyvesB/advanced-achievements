@@ -18,7 +18,6 @@ import org.bukkit.Bukkit;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.lifecycle.Cleanable;
 
 /**
@@ -32,7 +31,6 @@ import com.hm.achievement.lifecycle.Cleanable;
 public class CacheManager implements Cleanable {
 
 	private final AdvancedAchievements advancedAchievements;
-	private final AchievementMap achievementMap;
 	private final AbstractDatabaseManager databaseManager;
 	// Statistics of the different players for normal achievements; keys in the inner maps correspond to UUIDs.
 	private final Map<NormalAchievements, Map<UUID, CachedStatistic>> normalAchievementsToPlayerStatistics;
@@ -43,10 +41,8 @@ public class CacheManager implements Cleanable {
 	private final Map<UUID, Set<String>> receivedAchievementsCache;
 
 	@Inject
-	public CacheManager(AdvancedAchievements advancedAchievements, AchievementMap achievementMap,
-			AbstractDatabaseManager databaseManager) {
+	public CacheManager(AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager) {
 		this.advancedAchievements = advancedAchievements;
-		this.achievementMap = achievementMap;
 		this.databaseManager = databaseManager;
 		normalAchievementsToPlayerStatistics = new EnumMap<>(NormalAchievements.class);
 		multipleAchievementsToPlayerStatistics = new EnumMap<>(MultipleAchievements.class);
@@ -62,23 +58,22 @@ public class CacheManager implements Cleanable {
 	}
 
 	@Override
-	public void cleanPlayerData(UUID uuid) {
-		receivedAchievementsCache.remove(uuid);
+	public void cleanPlayerData() {
+		receivedAchievementsCache.keySet().removeIf(player -> !Bukkit.getOfflinePlayer(player).isOnline());
 
 		// Indicate to the relevant cached statistics that the player has disconnected.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
-			Map<SubcategoryUUID, CachedStatistic> categoryMap = getHashMap(category);
-			for (String subcategory : achievementMap.getSubcategoriesForCategory(category)) {
-				CachedStatistic statistic = categoryMap.get(new SubcategoryUUID(subcategory, uuid));
-				if (statistic != null) {
-					statistic.signalPlayerDisconnection();
+			for (Entry<SubcategoryUUID, CachedStatistic> cachedEntry : getHashMap(category).entrySet()) {
+				if (!Bukkit.getOfflinePlayer(cachedEntry.getKey().getUUID()).isOnline()) {
+					cachedEntry.getValue().signalPlayerDisconnection();
 				}
 			}
 		}
 		for (NormalAchievements category : NormalAchievements.values()) {
-			CachedStatistic statistic = getHashMap(category).get(uuid);
-			if (statistic != null) {
-				statistic.signalPlayerDisconnection();
+			for (Entry<UUID, CachedStatistic> cachedEntry : getHashMap(category).entrySet()) {
+				if (!Bukkit.getOfflinePlayer(cachedEntry.getKey()).isOnline()) {
+					cachedEntry.getValue().signalPlayerDisconnection();
+				}
 			}
 		}
 	}
