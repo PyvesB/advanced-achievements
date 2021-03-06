@@ -282,8 +282,6 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		Firework firework = player.getWorld().spawn(location, Firework.class);
 		FireworkMeta fireworkMeta = firework.getFireworkMeta();
 		FireworkEffect fireworkEffect = FireworkEffect.builder()
-				.flicker(false)
-				.trail(false)
 				.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))
 				.withFade(Color.PURPLE)
 				.with(getFireworkType())
