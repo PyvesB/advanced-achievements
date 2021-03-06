@@ -1,6 +1,8 @@
 package com.hm.achievement.listener;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -40,6 +42,7 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.domain.Reward;
 import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.FancyMessageSender;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.SoundPlayer;
@@ -54,6 +57,26 @@ import com.hm.achievement.utils.StringHelper;
 public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 	private static final Random RANDOM = new Random();
+
+	private static final Map<ChatColor, ChatColor> FIREWORK_COLOR_MIX = new HashMap<>();
+	static {
+		FIREWORK_COLOR_MIX.put(ChatColor.AQUA, ChatColor.DARK_AQUA);
+		FIREWORK_COLOR_MIX.put(ChatColor.BLACK, ChatColor.GRAY);
+		FIREWORK_COLOR_MIX.put(ChatColor.BLUE, ChatColor.DARK_BLUE);
+		FIREWORK_COLOR_MIX.put(ChatColor.GRAY, ChatColor.DARK_GRAY);
+		FIREWORK_COLOR_MIX.put(ChatColor.DARK_AQUA, ChatColor.AQUA);
+		FIREWORK_COLOR_MIX.put(ChatColor.DARK_BLUE, ChatColor.BLUE);
+		FIREWORK_COLOR_MIX.put(ChatColor.DARK_GRAY, ChatColor.GRAY);
+		FIREWORK_COLOR_MIX.put(ChatColor.DARK_GREEN, ChatColor.GREEN);
+		FIREWORK_COLOR_MIX.put(ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE);
+		FIREWORK_COLOR_MIX.put(ChatColor.DARK_RED, ChatColor.RED);
+		FIREWORK_COLOR_MIX.put(ChatColor.GOLD, ChatColor.YELLOW);
+		FIREWORK_COLOR_MIX.put(ChatColor.GREEN, ChatColor.DARK_GREEN);
+		FIREWORK_COLOR_MIX.put(ChatColor.LIGHT_PURPLE, ChatColor.DARK_PURPLE);
+		FIREWORK_COLOR_MIX.put(ChatColor.RED, ChatColor.DARK_RED);
+		FIREWORK_COLOR_MIX.put(ChatColor.WHITE, ChatColor.GRAY);
+		FIREWORK_COLOR_MIX.put(ChatColor.YELLOW, ChatColor.GOLD);
+	}
 
 	private final YamlConfiguration mainConfig;
 	private final YamlConfiguration langConfig;
@@ -71,6 +94,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 	private String configFireworkStyle;
 	private boolean configFirework;
+	private Color configColor;
+	private Color mixColor;
 	private boolean configSimplifiedReception;
 	private boolean configTitleScreen;
 	private boolean configNotifyOtherPlayers;
@@ -130,6 +155,9 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			configHoverableReceiverChatText = false;
 		}
 		configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages");
+		ChatColor chatColor = ChatColor.getByChar(mainConfig.getString("Color"));
+		configColor = ColorHelper.convertChatColorToColor(chatColor);
+		mixColor = Color.WHITE.mixColors(ColorHelper.convertChatColorToColor(FIREWORK_COLOR_MIX.get(chatColor)));
 
 		langAchievementReceived = langConfig.getString("achievement-received") + " " + ChatColor.WHITE;
 		langAchievementNew = pluginHeader + langConfig.getString("achievement-new") + " " + ChatColor.WHITE;
@@ -282,8 +310,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		Firework firework = player.getWorld().spawn(location, Firework.class);
 		FireworkMeta fireworkMeta = firework.getFireworkMeta();
 		FireworkEffect fireworkEffect = FireworkEffect.builder()
-				.withColor(Color.WHITE.mixColors(Color.BLUE.mixColors(Color.NAVY)))
-				.withFade(Color.PURPLE)
+				.withColor(configColor)
+				.withFade(mixColor)
 				.with(getFireworkType())
 				.build();
 		fireworkMeta.addEffects(fireworkEffect);

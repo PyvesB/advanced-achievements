@@ -11,3 +11,6 @@ HoverableReceiverChatText: false
 
 # Display achievement Name and Message as screen titles. No effect if using Minecraft 1.7.9 or 1.7.10.
 TitleScreen: false
+
+# Main color of the plugin (default: 5, dark purple).
+Color: 5
