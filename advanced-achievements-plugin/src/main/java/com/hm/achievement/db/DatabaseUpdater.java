@@ -101,22 +101,22 @@ public class DatabaseUpdater {
 		Connection conn = databaseManager.getSQLConnection();
 		try (Statement st = conn.createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix()
-					+ "achievements (playername char(36),achievement varchar(64),date TIMESTAMP,PRIMARY KEY (playername, achievement))");
+					+ "achievements (playername char(36),achievement varchar(64),date TIMESTAMP,PRIMARY KEY (playername, achievement)) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci");
 
 			for (MultipleAchievements category : MultipleAchievements.values()) {
 				st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix() + category.toDBName()
 						+ " (playername char(36)," + category.toSubcategoryDBName() + " varchar(" + size + "),"
-						+ category.toDBName() + " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
+						+ category.toDBName() + " INT,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + ")) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci");
 			}
 
 			for (NormalAchievements category : NormalAchievements.values()) {
 				if (category == NormalAchievements.CONNECTIONS) {
 					st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix() + category.toDBName()
 							+ " (playername char(36)," + category.toDBName()
-							+ " INT,date varchar(10),PRIMARY KEY (playername))");
+							+ " INT,date varchar(10),PRIMARY KEY (playername)) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci");
 				} else {
 					st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix() + category.toDBName()
-							+ " (playername char(36)," + category.toDBName() + " BIGINT,PRIMARY KEY (playername))");
+							+ " (playername char(36)," + category.toDBName() + " BIGINT,PRIMARY KEY (playername)) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci");
 				}
 			}
 			st.executeBatch();
