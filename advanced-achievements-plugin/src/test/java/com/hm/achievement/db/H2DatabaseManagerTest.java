@@ -112,19 +112,12 @@ class H2DatabaseManagerTest {
 	}
 
 	@Test
-	void testPlayerAchievementAmount() {
-		registerAchievement();
-
-		assertEquals(1, db.getPlayerAchievementsAmount(testUUID));
-	}
-
-	@Test
 	void testDeleteAchievement() {
-		testPlayerAchievementAmount();
+		registerAchievement();
 
 		db.deletePlayerAchievement(testUUID, TEST_ACHIEVEMENT);
 
-		assertEquals(0, db.getPlayerAchievementsAmount(testUUID));
+		assertEquals(0, db.getPlayerAchievementNames(testUUID).size());
 	}
 
 	@Test
@@ -134,7 +127,7 @@ class H2DatabaseManagerTest {
 
 		db.deleteAllPlayerAchievements(testUUID);
 
-		assertEquals(0, db.getPlayerAchievementsAmount(testUUID));
+		assertEquals(0, db.getPlayerAchievementNames(testUUID).size());
 	}
 
 	@Test

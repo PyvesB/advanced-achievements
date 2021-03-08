@@ -28,8 +28,7 @@ public interface AdvancedAchievementsAPI {
 
 	/**
 	 * Checks whether player has received achievement {@code achievementName}. The underlying implementation of this API
-	 * method benefits from Advanced Achievements caching when the player is online and if method called from the main
-	 * server thread.
+	 * method benefits from Advanced Achievements caching if method called from the main server thread.
 	 *
 	 * @param player should not be null
 	 * @param achievementName as defined by the Name parameter in Advanced Achievements config.yml, should not be empty
@@ -67,8 +66,7 @@ public interface AdvancedAchievementsAPI {
 	List<Achievement> getPlayerAchievementsList(UUID player);
 
 	/**
-	 * Retrieves the total number of achievements received by the player. The underlying implementation of this API
-	 * method benefits from Advanced Achievements caching when the player is online.
+	 * Retrieves the total number of achievements received by the player.
 	 *
 	 * @param player should not be null
 	 * @return total achievements by the player
@@ -100,7 +98,7 @@ public interface AdvancedAchievementsAPI {
 
 	/**
 	 * Retrieves a statistic for a normal category. The underlying implementation of this API method benefits from
-	 * Advanced Achievements caching when the player is online and if method called from the main server thread.
+	 * Advanced Achievements caching if method called from the main server thread.
 	 *
 	 * @param player should not be null
 	 * @param category should not be null
@@ -111,7 +109,7 @@ public interface AdvancedAchievementsAPI {
 
 	/**
 	 * Retrieves a statistic for a multiple category. The underlying implementation of this API method benefits from
-	 * Advanced Achievements caching when the player is online and if method called from the main server thread.
+	 * Advanced Achievements caching if method called from the main server thread.
 	 *
 	 * @param player should not be null
 	 * @param category should not be null

@@ -250,26 +250,6 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Gets the total number of achievements received by a player, using an UUID.
-	 *
-	 * @param uuid
-	 * @return number of achievements
-	 */
-	public int getPlayerAchievementsAmount(UUID uuid) {
-		String sql = "SELECT COUNT(*) FROM " + prefix + "achievements WHERE playername = ?";
-		return ((SQLReadOperation<Integer>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setString(1, uuid.toString());
-				try (ResultSet rs = ps.executeQuery()) {
-					rs.next();
-					return rs.getInt(1);
-				}
-			}
-		}).executeOperation("counting a player's achievements");
-	}
-
-	/**
 	 * Constructs a mapping of players with the most achievements over a given period.
 	 *
 	 * @param start
