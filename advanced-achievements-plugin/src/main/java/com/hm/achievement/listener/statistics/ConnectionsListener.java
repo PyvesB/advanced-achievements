@@ -73,8 +73,10 @@ public class ConnectionsListener extends AbstractListener {
 				if (!dateString.equals(databaseManager.getPlayerConnectionDate(player.getUniqueId()))) {
 					long connections = databaseManager.updateAndGetConnection(player.getUniqueId(), dateString);
 					achievementMap.getForCategory(NormalAchievements.CONNECTIONS).stream()
-							.filter(achievement -> achievement.getThreshold() == connections)
+							.filter(achievement -> connections >= achievement.getThreshold())
 							.filter(achievement -> player.hasPermission("achievement." + achievement.getName()))
+							.filter(achievement -> !cacheManager.hasPlayerAchievement(player.getUniqueId(),
+									achievement.getName()))
 							.forEach(achievement -> Bukkit.getPluginManager()
 									.callEvent(new PlayerAdvancedAchievementEvent(player, achievement)));
 				}
