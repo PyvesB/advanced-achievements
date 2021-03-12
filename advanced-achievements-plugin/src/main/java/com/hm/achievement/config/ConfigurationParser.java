@@ -275,7 +275,8 @@ public class ConfigurationParser {
 			if (!mainConfig.isConfigurationSection(CommandAchievements.COMMANDS.toString())) {
 				disabledCategories.add(CommandAchievements.COMMANDS);
 			} else {
-				Set<String> commands = mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString()).getKeys(false);
+				Set<String> commands = mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString())
+						.getKeys(false);
 				for (String command : commands) {
 					parseAchievement(CommandAchievements.COMMANDS, command, -1L);
 				}
