@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -58,7 +59,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 	}
 
 	@Override
-	public int updateAndGetConnection(UUID uuid, String date) {
+	public int updateAndGetConnection(UUID uuid, int amount) {
 		String dbName = NormalAchievements.CONNECTIONS.toDBName();
 		String sqlRead = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<Integer>) () -> {
@@ -66,7 +67,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 			try (PreparedStatement ps = conn.prepareStatement(sqlRead)) {
 				ps.setString(1, uuid.toString());
 				try (ResultSet rs = ps.executeQuery()) {
-					int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
+					int connections = rs.next() ? rs.getInt(dbName) + amount : amount;
 					// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
 					// available for PostgreSQL 9.5+.
 					String sqlWrite = "INSERT INTO " + prefix + dbName + " VALUES (?,?,?)"
@@ -74,6 +75,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 					((SQLWriteOperation) () -> {
 						Connection writeConn = getSQLConnection();
 						try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
+							String date = LocalDate.now().format(DATE_TIME_FORMATTER);
 							writePrep.setString(1, uuid.toString());
 							writePrep.setInt(2, connections);
 							writePrep.setString(3, date);

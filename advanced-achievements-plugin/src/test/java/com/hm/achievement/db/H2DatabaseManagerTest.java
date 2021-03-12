@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -134,11 +133,11 @@ class H2DatabaseManagerTest {
 	void testConnectionUpdate() {
 		assertEquals(0, db.getConnectionsAmount(testUUID));
 
-		assertEquals(1, db.updateAndGetConnection(testUUID, createDateString()));
-		assertEquals(2, db.updateAndGetConnection(testUUID, createDateString()));
-		assertEquals(3, db.updateAndGetConnection(testUUID, createDateString()));
+		assertEquals(1, db.updateAndGetConnection(testUUID, 1));
+		assertEquals(3, db.updateAndGetConnection(testUUID, 2));
+		assertEquals(4, db.updateAndGetConnection(testUUID, 1));
 
-		assertEquals(3, db.getConnectionsAmount(testUUID));
+		assertEquals(4, db.getConnectionsAmount(testUUID));
 	}
 
 	@Test
@@ -194,26 +193,22 @@ class H2DatabaseManagerTest {
 
 	@Test
 	void testGetPlayerConnectionDate() {
-		assertNull(db.getPlayerConnectionDate(testUUID));
+		assertFalse(db.hasPlayerConnectedToday(testUUID));
 
-		db.updateAndGetConnection(testUUID, createDateString());
+		db.updateAndGetConnection(testUUID, 1);
 
-		assertNotNull(db.getPlayerConnectionDate(testUUID));
+		assertTrue(db.hasPlayerConnectedToday(testUUID));
 	}
 
 	@Test
 	void testClearConnection() {
-		db.updateAndGetConnection(testUUID, createDateString());
+		db.updateAndGetConnection(testUUID, 1);
 
-		assertNotNull(db.getPlayerConnectionDate(testUUID));
+		assertTrue(db.hasPlayerConnectedToday(testUUID));
 
 		db.clearConnection(testUUID);
 
-		assertNull(db.getPlayerConnectionDate(testUUID));
-	}
-
-	private String createDateString() {
-		return new Date(System.currentTimeMillis()).toString();
+		assertFalse(db.hasPlayerConnectedToday(testUUID));
 	}
 
 	private void registerAchievement() {

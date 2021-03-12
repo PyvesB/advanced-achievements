@@ -1,8 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -21,7 +18,6 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
-import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 
 /**
  * Listener class to deal with Connections achievements. This class uses delays processing of tasks to avoid spamming a
@@ -32,8 +28,6 @@ import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
  */
 @Singleton
 public class ConnectionsListener extends AbstractListener {
-
-	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	private final AdvancedAchievements advancedAchievements;
 	private final AbstractDatabaseManager databaseManager;
@@ -69,16 +63,9 @@ public class ConnectionsListener extends AbstractListener {
 	private void scheduleAwardConnection(Player player) {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> {
 			if (shouldIncreaseBeTakenIntoAccount(player, category) && player.isOnline()) {
-				String dateString = LocalDate.now().format(DATE_TIME_FORMATTER);
-				if (!dateString.equals(databaseManager.getPlayerConnectionDate(player.getUniqueId()))) {
-					long connections = databaseManager.updateAndGetConnection(player.getUniqueId(), dateString);
-					achievementMap.getForCategory(NormalAchievements.CONNECTIONS).stream()
-							.filter(achievement -> connections >= achievement.getThreshold())
-							.filter(achievement -> player.hasPermission("achievement." + achievement.getName()))
-							.filter(achievement -> !cacheManager.hasPlayerAchievement(player.getUniqueId(),
-									achievement.getName()))
-							.forEach(achievement -> Bukkit.getPluginManager()
-									.callEvent(new PlayerAdvancedAchievementEvent(player, achievement)));
+				if (!databaseManager.hasPlayerConnectedToday(player.getUniqueId())) {
+					long connections = databaseManager.updateAndGetConnection(player.getUniqueId(), 1);
+					checkThresholdsAndAchievements(player, category, connections);
 				}
 			}
 		}, 100);

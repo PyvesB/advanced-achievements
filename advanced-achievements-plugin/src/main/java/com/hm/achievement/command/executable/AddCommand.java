@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
 import com.hm.achievement.utils.StringHelper;
@@ -31,6 +32,7 @@ public class AddCommand extends AbstractParsableCommand {
 
 	private static final long MILLIS_PER_HOUR = TimeUnit.HOURS.toMillis(1);
 
+	private final AbstractDatabaseManager databaseManager;
 	private final CacheManager cacheManager;
 	private final StatisticIncreaseHandler statisticIncreaseHandler;
 
@@ -41,9 +43,10 @@ public class AddCommand extends AbstractParsableCommand {
 
 	@Inject
 	public AddCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			StringBuilder pluginHeader, CacheManager cacheManager, StatisticIncreaseHandler statisticIncreaseHandler,
-			AchievementMap achievementMap) {
+			StringBuilder pluginHeader, AbstractDatabaseManager databaseManager, CacheManager cacheManager,
+			StatisticIncreaseHandler statisticIncreaseHandler, AchievementMap achievementMap) {
 		super(mainConfig, langConfig, pluginHeader);
+		this.databaseManager = databaseManager;
 		this.cacheManager = cacheManager;
 		this.statisticIncreaseHandler = statisticIncreaseHandler;
 		this.achievementMap = achievementMap;
@@ -76,7 +79,7 @@ public class AddCommand extends AbstractParsableCommand {
 				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category, subcategory, amount);
 				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
 						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
-			} else if (!NormalAchievements.CONNECTIONS.toString().equals(args[2])) {
+			} else {
 				NormalAchievements category = NormalAchievements.getByName(args[2]);
 				long amount;
 				if (category == NormalAchievements.PLAYEDTIME) {
@@ -84,6 +87,8 @@ public class AddCommand extends AbstractParsableCommand {
 					valueToAdd = (int) (valueToAdd * MILLIS_PER_HOUR);
 					amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd)
 							/ MILLIS_PER_HOUR;
+				} else if (category == NormalAchievements.CONNECTIONS) {
+					amount = databaseManager.updateAndGetConnection(player.getUniqueId(), valueToAdd);
 				} else {
 					amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd);
 				}

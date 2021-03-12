@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,6 +42,8 @@ import com.hm.achievement.lifecycle.Reloadable;
  * @author Pyves
  */
 public abstract class AbstractDatabaseManager implements Reloadable {
+
+	static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	// Used to do perform the database write operations asynchronously.
 	ExecutorService pool;
@@ -395,37 +399,36 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Gets a player's last connection date.
+	 * Indicates whether a player has already connected today.
 	 *
 	 * @param uuid
-	 * @return String with date
+	 * @return true if the player has already connected today, false otherwise
 	 */
-	public String getPlayerConnectionDate(UUID uuid) {
+	public boolean hasPlayerConnectedToday(UUID uuid) {
 		String dbName = NormalAchievements.CONNECTIONS.toDBName();
 		String sql = "SELECT date FROM " + prefix + dbName + " WHERE playername = ?";
-		return ((SQLReadOperation<String>) () -> {
+		return ((SQLReadOperation<Boolean>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next()) {
-						return rs.getString("date");
+						return LocalDate.now().format(DATE_TIME_FORMATTER).equals(rs.getString("date"));
 					}
 				}
 			}
-			return null;
+			return false;
 		}).executeOperation("retrieving a player's last connection date");
 	}
 
 	/**
-	 * Updates a player's number of connections and last connection date and returns number of connections (used by
-	 * Connections listener).
+	 * Updates a player's number of connections and last connection date and returns number of connections.
 	 *
 	 * @param uuid
-	 * @param date
+	 * @param amount
 	 * @return connections statistic
 	 */
-	public int updateAndGetConnection(UUID uuid, String date) {
+	public int updateAndGetConnection(UUID uuid, int amount) {
 		String dbName = NormalAchievements.CONNECTIONS.toDBName();
 		String sqlRead = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
 		return ((SQLReadOperation<Integer>) () -> {
@@ -433,14 +436,14 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			try (PreparedStatement ps = conn.prepareStatement(sqlRead)) {
 				ps.setString(1, uuid.toString());
 				try (ResultSet rs = ps.executeQuery()) {
-					int connections = rs.next() ? rs.getInt(dbName) + 1 : 1;
+					int connections = rs.next() ? rs.getInt(dbName) + amount : amount;
 					String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES (?,?,?)";
 					((SQLWriteOperation) () -> {
 						Connection writeConn = getSQLConnection();
 						try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
 							writePrep.setString(1, uuid.toString());
 							writePrep.setInt(2, connections);
-							writePrep.setString(3, date);
+							writePrep.setString(3, LocalDate.now().format(DATE_TIME_FORMATTER));
 							writePrep.execute();
 						}
 					}).executeOperation(pool, logger, "updating connection date and count");
