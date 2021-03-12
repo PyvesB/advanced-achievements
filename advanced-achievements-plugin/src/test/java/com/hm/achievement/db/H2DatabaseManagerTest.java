@@ -32,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.common.util.concurrent.MoreExecutors;
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 
 /**
@@ -131,13 +132,13 @@ class H2DatabaseManagerTest {
 
 	@Test
 	void testConnectionUpdate() {
-		assertEquals(0, db.getConnectionsAmount(testUUID));
+		assertEquals(0, db.getNormalAchievementAmount(testUUID, NormalAchievements.CONNECTIONS));
 
 		assertEquals(1, db.updateAndGetConnection(testUUID, 1));
 		assertEquals(3, db.updateAndGetConnection(testUUID, 2));
 		assertEquals(4, db.updateAndGetConnection(testUUID, 1));
 
-		assertEquals(4, db.getConnectionsAmount(testUUID));
+		assertEquals(4, db.getNormalAchievementAmount(testUUID, NormalAchievements.CONNECTIONS));
 	}
 
 	@Test

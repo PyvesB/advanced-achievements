@@ -376,29 +376,6 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Returns a player's number of connections on separate days (used by GUI).
-	 *
-	 * @param uuid
-	 * @return connections statistic
-	 */
-	public int getConnectionsAmount(UUID uuid) {
-		String dbName = NormalAchievements.CONNECTIONS.toDBName();
-		String sql = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
-		return ((SQLReadOperation<Integer>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setString(1, uuid.toString());
-				try (ResultSet rs = ps.executeQuery()) {
-					if (rs.next()) {
-						return rs.getInt(dbName);
-					}
-				}
-			}
-			return 0;
-		}).executeOperation("retrieving connection statistics");
-	}
-
-	/**
 	 * Indicates whether a player has already connected today.
 	 *
 	 * @param uuid

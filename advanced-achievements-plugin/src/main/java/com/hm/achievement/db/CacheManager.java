@@ -244,7 +244,6 @@ public class CacheManager implements Cleanable {
 			} else {
 				NormalAchievements category = NormalAchievements.getByName(categoryWithSubcategory);
 				if (category == NormalAchievements.CONNECTIONS) {
-					// Not handled by a database cache.
 					databaseManager.clearConnection(uuid);
 				} else {
 					Map<UUID, CachedStatistic> cache = getHashMap(category);

@@ -306,9 +306,6 @@ public class CategoryGUI implements Reloadable {
 	 * @return the player's statistic for the category
 	 */
 	public long getNormalStatistic(NormalAchievements category, Player player) {
-		if (category == NormalAchievements.CONNECTIONS) {
-			return databaseManager.getConnectionsAmount(player.getUniqueId());
-		}
 		return cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
 	}
 
