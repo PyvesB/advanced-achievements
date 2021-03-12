@@ -272,11 +272,10 @@ public class ConfigurationParser {
 
 		// Enumerate Commands achievements.
 		if (!disabledCategories.contains(CommandAchievements.COMMANDS)) {
-			Set<String> commands = mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString())
-					.getKeys(false);
-			if (commands.isEmpty()) {
+			if (!mainConfig.isConfigurationSection(CommandAchievements.COMMANDS.toString())) {
 				disabledCategories.add(CommandAchievements.COMMANDS);
 			} else {
+				Set<String> commands = mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString()).getKeys(false);
 				for (String command : commands) {
 					parseAchievement(CommandAchievements.COMMANDS, command, -1L);
 				}
@@ -286,7 +285,7 @@ public class ConfigurationParser {
 		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			if (!disabledCategories.contains(category)) {
-				if (mainConfig.getConfigurationSection(category.toString()).getKeys(false).isEmpty()) {
+				if (!mainConfig.isConfigurationSection(category.toString())) {
 					disabledCategories.add(category);
 					continue;
 				}
@@ -299,11 +298,12 @@ public class ConfigurationParser {
 		// Enumerate the achievements with multiple categories.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			if (!disabledCategories.contains(category)) {
-				Set<String> subcategories = mainConfig.getConfigurationSection(category.toString()).getKeys(false);
-				if (subcategories.isEmpty()) {
+				if (!mainConfig.isConfigurationSection(category.toString())) {
 					disabledCategories.add(category);
 					continue;
 				}
+
+				Set<String> subcategories = mainConfig.getConfigurationSection(category.toString()).getKeys(false);
 				for (String subcategory : subcategories) {
 					for (long threshold : getSortedThresholds(category + "." + subcategory)) {
 						parseAchievement(category, subcategory, threshold);
