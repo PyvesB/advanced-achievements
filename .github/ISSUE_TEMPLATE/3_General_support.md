@@ -12,6 +12,7 @@ labels: 'general support'
 * Minecraft version: <!-- Please fill in. -->
 * [Wiki](https://github.com/PyvesB/advanced-achievements/wiki) read: <!-- Fill in yes if you have read the Wiki. -->
 * [Existing issues](https://github.com/PyvesB/advanced-achievements/issues) searched: <!-- Fill in yes if you have searched existing issues. -->
+* Spigot username: <!-- Please fill in. -->
 
 :question: **Help request**
 

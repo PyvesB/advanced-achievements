@@ -6,8 +6,7 @@ Found a problem or need some help? The following steps may help:
 2. Upgrade to the latest version of the plugin (available [here](https://www.spigotmc.org/resources/advanced-achievements.83466/history)) and a recent Spigot/Bukkit build for your Minecraft version (see [here](https://www.spigotmc.org/wiki/buildtools/#versions)).
 3. Check your server's logs (including when plugins are loaded!), there may be warnings/errors/stack straces to help you out with your issue.
 4. Do a quick search through the existing [issues](https://github.com/PyvesB/advanced-achievements/issues), you might get lucky!
-5. Simply open a new issue if none of the above help or if you want to suggest a new feature! Help is free, so be polite and friendly! :heart:
-6. Don't forget to include your configuration and as much information as you can to reproduce the problem. Pro tip: logs or config excerpts can nicely be formatted using [code blocks](https://help.github.com/en/github/writing-on-github/creating-and-highlighting-code-blocks#fenced-code-blocks)!
+5. Simply open a new issue and carefully fill out one of the three templates available if none of the above help or if you want to suggest a new feature! Help is free, so be polite and friendly! :heart:
 
 ## Pull requests
 
