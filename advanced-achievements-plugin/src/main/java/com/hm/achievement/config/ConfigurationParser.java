@@ -311,12 +311,12 @@ public class ConfigurationParser {
 		// Enumerate the achievements with multiple categories.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			if (!disabledCategories.contains(category)) {
-				if (getSectionKeys(category.toString()).isEmpty()) {
+				Set<String> subcategories = getSectionKeys(category.toString());
+				if (subcategories.isEmpty()) {
 					disabledCategories.add(category);
 					continue;
 				}
 
-				Set<String> subcategories = mainConfig.getConfigurationSection(category.toString()).getKeys(false);
 				for (String subcategory : subcategories) {
 					for (long threshold : getSortedThresholds(category + "." + subcategory)) {
 						parseAchievement(category, subcategory, threshold);
