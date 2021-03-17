@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -89,6 +90,18 @@ public class ConfigurationParser {
 		parseDisabledCategories();
 		parseAchievements();
 		logLoadingMessages();
+	}
+
+	/**
+	 * Reterive keys associated with the configuration section at the given path
+	 *
+	 * @param path
+	 * @return A set containing the keys
+	 */
+	private Set<String> getSectionKeys(String path) {
+		return this.mainConfig.isConfigurationSection(path)
+				? this.mainConfig.getConfigurationSection(path).getKeys(false)
+				: Collections.emptySet();
 	}
 
 	/**
@@ -272,8 +285,7 @@ public class ConfigurationParser {
 
 		// Enumerate Commands achievements.
 		if (!disabledCategories.contains(CommandAchievements.COMMANDS)) {
-			Set<String> commands = mainConfig.getConfigurationSection(CommandAchievements.COMMANDS.toString())
-					.getKeys(false);
+			Set<String> commands = getSectionKeys(CommandAchievements.COMMANDS.toString());
 			if (commands.isEmpty()) {
 				disabledCategories.add(CommandAchievements.COMMANDS);
 			} else {
@@ -286,7 +298,7 @@ public class ConfigurationParser {
 		// Enumerate the normal achievements.
 		for (NormalAchievements category : NormalAchievements.values()) {
 			if (!disabledCategories.contains(category)) {
-				if (mainConfig.getConfigurationSection(category.toString()).getKeys(false).isEmpty()) {
+				if (getSectionKeys(category.toString()).isEmpty()) {
 					disabledCategories.add(category);
 					continue;
 				}
@@ -299,11 +311,12 @@ public class ConfigurationParser {
 		// Enumerate the achievements with multiple categories.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			if (!disabledCategories.contains(category)) {
-				Set<String> subcategories = mainConfig.getConfigurationSection(category.toString()).getKeys(false);
+				Set<String> subcategories = getSectionKeys(category.toString());
 				if (subcategories.isEmpty()) {
 					disabledCategories.add(category);
 					continue;
 				}
+
 				for (String subcategory : subcategories) {
 					for (long threshold : getSortedThresholds(category + "." + subcategory)) {
 						parseAchievement(category, subcategory, threshold);
