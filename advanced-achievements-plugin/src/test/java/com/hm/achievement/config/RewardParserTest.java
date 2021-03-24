@@ -101,7 +101,7 @@ class RewardParserTest {
 		assertEquals(Arrays.asList("receive 1 Diamond"), reward.getListTexts());
 		assertEquals(Arrays.asList("You received an item reward: 1 Diamond"), reward.getChatTexts());
 
-		// Note: this test is incomplete and cannot run the rewarder not test for custom item names. Anything related
+		// Note: this test is incomplete and cannot run the rewarder nor test for custom item names. Anything related
 		// to item meta is only available on a server at runtime. Leveraging PowerMockito would be required.
 	}
 

@@ -136,10 +136,12 @@ public class RewardParser {
 				if (name.isEmpty()) {
 					// Convert the item stack material to an item name in a readable format.
 					name = WordUtils.capitalizeFully(itemStack.getType().toString().replace('_', ' '));
-				} else if (itemStack.hasItemMeta()) {
+				} else {
 					ItemMeta itemMeta = itemStack.getItemMeta();
-					itemMeta.setDisplayName(name);
-					itemStack.setItemMeta(itemMeta);
+					if (itemMeta != null) {
+						itemMeta.setDisplayName(name);
+						itemStack.setItemMeta(itemMeta);
+					}
 				}
 				listTexts.add(StringUtils.replaceEach(langConfig.getString("list-reward-item"),
 						new String[] { "AMOUNT", "ITEM" }, new String[] { Integer.toString(amount), name }));
