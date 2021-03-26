@@ -77,8 +77,6 @@ public class AddCommand extends AbstractParsableCommand {
 				long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
 						valueToAdd);
 				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category, subcategory, amount);
-				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
-						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
 			} else {
 				NormalAchievements category = NormalAchievements.getByName(args[2]);
 				long amount;
@@ -93,9 +91,9 @@ public class AddCommand extends AbstractParsableCommand {
 					amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd);
 				}
 				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category, amount);
-				sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased,
-						new String[] { "ACH", "AMOUNT", "PLAYER" }, new String[] { args[2], args[1], args[3] }));
 			}
+			sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased, new String[] { "ACH", "AMOUNT", "PLAYER" },
+					new String[] { args[2], args[1], args[3] }));
 		} else {
 			sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[] { "CAT", "CLOSEST_MATCH" },
 					new String[] { args[2], StringHelper.getClosestMatch(args[2], categorySubcategories) }));
