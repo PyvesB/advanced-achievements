@@ -1,5 +1,6 @@
 package com.hm.achievement.gui;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,6 +52,10 @@ public class CategoryGUI implements Reloadable {
 	private static final long NO_STAT = -1L;
 	private static final String NO_SUBCATEGORY = "";
 	private static final int PROGRESS_BAR_SIZE = 90;
+	private static final DecimalFormat TIME_FORMAT = new DecimalFormat("0");
+	static {
+		TIME_FORMAT.setMaximumFractionDigits(1);
+	}
 
 	private final YamlConfiguration mainConfig;
 	private final YamlConfiguration langConfig;
@@ -413,18 +418,19 @@ public class CategoryGUI implements Reloadable {
 	 * @return progress bar
 	 */
 	private String constructProgressBar(long threshold, long statistic, boolean time) {
-		String middleText;
 		double statisticDouble;
+		String statisticString;
 		if (time) {
-			statisticDouble = statistic / 3600000.0; // Convert from millis to hours.
-			// Display one floating digit in the progress bar.
-			middleText = String.format(" %s%s%.1f/%s ", configListColorNotReceived,
-					configFormatNotReceived, statisticDouble, threshold);
+			// Convert millis to hours. Math.floor(X * 10) / 10 ensures that the value isn't rounded up when formatting.
+			// This would lead to displaying values such as 2/2 even if the player hasn't yet reached the threshold.
+			statisticDouble = Math.floor(statistic / 3600000.0 * 10) / 10;
+			statisticString = TIME_FORMAT.format(statisticDouble);
 		} else {
 			statisticDouble = statistic; // Cast to double.
-			middleText = String.format(" %s%s%s/%s ", configListColorNotReceived, configFormatNotReceived,
-					statistic, threshold);
+			statisticString = Long.toString(statistic);
 		}
+		String middleText = " " + configListColorNotReceived + configFormatNotReceived + statisticString + "/" + threshold
+				+ " ";
 
 		StringBuilder barDisplay = new StringBuilder().append(configListColorNotReceived).append("[").append(configColor);
 		// Approximation: colours chars account for no size, spaces ~2 vertical bars, other chars ~3 vertical bars.
