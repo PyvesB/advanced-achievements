@@ -46,8 +46,13 @@ public class BreaksListener extends AbstractListener {
 		disableSilkTouchOreBreaks = mainConfig.getBoolean("DisableSilkTouchOreBreaks");
 	}
 
+	/*
+	Should use the more flexible option to let the server owners determine which EventPriority to use rather than hardcode.
+	But, to allow other plugins to also process BlockBreakEvent, the level is set to the HIGH since typically used plugin like WorldGuard
+	also processes BlockBreakEvent at HIGH level (WG is also added to softdepend in plugin.yml).
+	*/
 	@SuppressWarnings("deprecation")
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
