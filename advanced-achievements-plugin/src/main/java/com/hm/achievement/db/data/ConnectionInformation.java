@@ -29,7 +29,7 @@ public class ConnectionInformation {
 	}
 
 	public static String epoch() {
-		return LocalDate.EPOCH.format(DATE_TIME_FORMATTER);
+		return LocalDate.ofEpochDay(0).format(DATE_TIME_FORMATTER);
 	}
 
 	public static String today() {
