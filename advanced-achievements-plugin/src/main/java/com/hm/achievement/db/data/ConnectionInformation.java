@@ -16,7 +16,7 @@ public class ConnectionInformation {
 	}
 
 	public ConnectionInformation() {
-		this.date = LocalDate.EPOCH.format(DATE_TIME_FORMATTER);
+		this.date = epoch();
 		this.count = 0L;
 	}
 
@@ -28,8 +28,8 @@ public class ConnectionInformation {
 		return count;
 	}
 
-	public boolean isToday() {
-		return today().equals(date);
+	public static String epoch() {
+		return LocalDate.EPOCH.format(DATE_TIME_FORMATTER);
 	}
 
 	public static String today() {

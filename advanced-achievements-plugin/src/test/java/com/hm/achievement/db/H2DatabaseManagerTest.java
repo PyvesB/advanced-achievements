@@ -34,6 +34,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
+import com.hm.achievement.db.data.ConnectionInformation;
 
 /**
  * Class for testing H2 Database.
@@ -205,22 +206,26 @@ class H2DatabaseManagerTest {
 
 	@Test
 	void testGetPlayerConnectionDate() {
-		assertFalse(db.getConnectionInformation(testUUID).isToday());
+		ConnectionInformation connectionInformation1 = db.getConnectionInformation(testUUID);
+		assertEquals(ConnectionInformation.epoch(), connectionInformation1.getDate());
+		assertEquals(0, connectionInformation1.getCount());
 
 		db.updateConnectionInformation(testUUID, 1);
 
-		assertTrue(db.getConnectionInformation(testUUID).isToday());
+		ConnectionInformation connectionInformation2 = db.getConnectionInformation(testUUID);
+		assertEquals(ConnectionInformation.today(), connectionInformation2.getDate());
+		assertEquals(1, connectionInformation2.getCount());
 	}
 
 	@Test
 	void testClearConnection() {
 		db.updateConnectionInformation(testUUID, 1);
 
-		assertTrue(db.getConnectionInformation(testUUID).isToday());
-
 		db.clearConnection(testUUID);
 
-		assertFalse(db.getConnectionInformation(testUUID).isToday());
+		ConnectionInformation connectionInformation = db.getConnectionInformation(testUUID);
+		assertEquals(ConnectionInformation.epoch(), connectionInformation.getDate());
+		assertEquals(0, connectionInformation.getCount());
 	}
 
 	private void registerAchievement() {
