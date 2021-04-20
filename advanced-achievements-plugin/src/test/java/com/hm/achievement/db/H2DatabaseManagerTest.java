@@ -146,11 +146,10 @@ class H2DatabaseManagerTest {
 	void testConnectionUpdate() {
 		assertEquals(0, db.getNormalAchievementAmount(testUUID, NormalAchievements.CONNECTIONS));
 
-		assertEquals(1, db.updateAndGetConnection(testUUID, 1));
-		assertEquals(3, db.updateAndGetConnection(testUUID, 2));
-		assertEquals(4, db.updateAndGetConnection(testUUID, 1));
-
-		assertEquals(4, db.getNormalAchievementAmount(testUUID, NormalAchievements.CONNECTIONS));
+		db.updateConnectionInformation(testUUID, 1);
+		assertEquals(1, db.getNormalAchievementAmount(testUUID, NormalAchievements.CONNECTIONS));
+		db.updateConnectionInformation(testUUID, 3);
+		assertEquals(3, db.getNormalAchievementAmount(testUUID, NormalAchievements.CONNECTIONS));
 	}
 
 	@Test
@@ -206,22 +205,22 @@ class H2DatabaseManagerTest {
 
 	@Test
 	void testGetPlayerConnectionDate() {
-		assertFalse(db.hasPlayerConnectedToday(testUUID));
+		assertFalse(db.getConnectionInformation(testUUID).isToday());
 
-		db.updateAndGetConnection(testUUID, 1);
+		db.updateConnectionInformation(testUUID, 1);
 
-		assertTrue(db.hasPlayerConnectedToday(testUUID));
+		assertTrue(db.getConnectionInformation(testUUID).isToday());
 	}
 
 	@Test
 	void testClearConnection() {
-		db.updateAndGetConnection(testUUID, 1);
+		db.updateConnectionInformation(testUUID, 1);
 
-		assertTrue(db.hasPlayerConnectedToday(testUUID));
+		assertTrue(db.getConnectionInformation(testUUID).isToday());
 
 		db.clearConnection(testUUID);
 
-		assertFalse(db.hasPlayerConnectedToday(testUUID));
+		assertFalse(db.getConnectionInformation(testUUID).isToday());
 	}
 
 	private void registerAchievement() {

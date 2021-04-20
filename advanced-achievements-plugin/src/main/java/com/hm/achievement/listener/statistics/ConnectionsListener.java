@@ -18,6 +18,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.db.data.ConnectionInformation;
 
 /**
  * Listener class to deal with Connections achievements. This class uses delays processing of tasks to avoid spamming a
@@ -63,9 +64,10 @@ public class ConnectionsListener extends AbstractListener {
 	private void scheduleAwardConnection(Player player) {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> {
 			if (shouldIncreaseBeTakenIntoAccount(player, category) && player.isOnline()) {
-				if (!databaseManager.hasPlayerConnectedToday(player.getUniqueId())) {
-					long connections = databaseManager.updateAndGetConnection(player.getUniqueId(), 1);
-					checkThresholdsAndAchievements(player, category, connections);
+				ConnectionInformation connectionInformation = databaseManager.getConnectionInformation(player.getUniqueId());
+				if (!connectionInformation.isToday()) {
+					databaseManager.updateConnectionInformation(player.getUniqueId(), connectionInformation.getCount() + 1);
+					checkThresholdsAndAchievements(player, category, connectionInformation.getCount() + 1);
 				}
 			}
 		}, 100);

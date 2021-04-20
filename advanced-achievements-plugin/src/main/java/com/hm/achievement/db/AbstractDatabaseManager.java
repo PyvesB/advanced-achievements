@@ -8,8 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,6 +31,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
+import com.hm.achievement.db.data.ConnectionInformation;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.Reloadable;
 
@@ -42,8 +41,6 @@ import com.hm.achievement.lifecycle.Reloadable;
  * @author Pyves
  */
 public abstract class AbstractDatabaseManager implements Reloadable {
-
-	static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	// Used to do perform the database write operations asynchronously.
 	ExecutorService pool;
@@ -376,58 +373,45 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Indicates whether a player has already connected today.
+	 * Returns a player's last connection data and the total number of connections.
 	 *
 	 * @param uuid
-	 * @return true if the player has already connected today, false otherwise
+	 * @return the connection information
 	 */
-	public boolean hasPlayerConnectedToday(UUID uuid) {
+	public ConnectionInformation getConnectionInformation(UUID uuid) {
 		String dbName = NormalAchievements.CONNECTIONS.toDBName();
-		String sql = "SELECT date FROM " + prefix + dbName + " WHERE playername = ?";
-		return ((SQLReadOperation<Boolean>) () -> {
+		String sql = "SELECT * FROM " + prefix + dbName + " WHERE playername = ?";
+		return ((SQLReadOperation<ConnectionInformation>) () -> {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next()) {
-						return LocalDate.now().format(DATE_TIME_FORMATTER).equals(rs.getString("date"));
+						return new ConnectionInformation(rs.getString("date"), rs.getLong(dbName));
 					}
 				}
 			}
-			return false;
-		}).executeOperation("retrieving a player's last connection date");
+			return new ConnectionInformation();
+		}).executeOperation("retrieving a player's connection information");
 	}
 
 	/**
-	 * Updates a player's number of connections and last connection date and returns number of connections.
+	 * Updates a player's number of connections and last connection date.
 	 *
 	 * @param uuid
-	 * @param amount
-	 * @return connections statistic
+	 * @param connections
 	 */
-	public int updateAndGetConnection(UUID uuid, int amount) {
-		String dbName = NormalAchievements.CONNECTIONS.toDBName();
-		String sqlRead = "SELECT " + dbName + " FROM " + prefix + dbName + " WHERE playername = ?";
-		return ((SQLReadOperation<Integer>) () -> {
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sqlRead)) {
-				ps.setString(1, uuid.toString());
-				try (ResultSet rs = ps.executeQuery()) {
-					int connections = rs.next() ? rs.getInt(dbName) + amount : amount;
-					String sqlWrite = "REPLACE INTO " + prefix + dbName + " VALUES (?,?,?)";
-					((SQLWriteOperation) () -> {
-						Connection writeConn = getSQLConnection();
-						try (PreparedStatement writePrep = writeConn.prepareStatement(sqlWrite)) {
-							writePrep.setString(1, uuid.toString());
-							writePrep.setInt(2, connections);
-							writePrep.setString(3, LocalDate.now().format(DATE_TIME_FORMATTER));
-							writePrep.execute();
-						}
-					}).executeOperation(pool, logger, "updating connection date and count");
-					return connections;
-				}
+	public void updateConnectionInformation(UUID uuid, long connections) {
+		String sql = "REPLACE INTO " + prefix + NormalAchievements.CONNECTIONS.toDBName() + " VALUES (?,?,?)";
+		((SQLWriteOperation) () -> {
+			Connection writeConn = getSQLConnection();
+			try (PreparedStatement writePrep = writeConn.prepareStatement(sql)) {
+				writePrep.setString(1, uuid.toString());
+				writePrep.setLong(2, connections);
+				writePrep.setString(3, ConnectionInformation.today());
+				writePrep.execute();
 			}
-		}).executeOperation("handling connection event");
+		}).executeOperation(pool, logger, "updating connection date and count");
 	}
 
 	/**

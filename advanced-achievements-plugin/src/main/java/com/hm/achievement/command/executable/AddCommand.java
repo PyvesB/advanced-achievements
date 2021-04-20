@@ -1,6 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -71,11 +72,11 @@ public class AddCommand extends AbstractParsableCommand {
 		int valueToAdd = Integer.parseInt(args[1]);
 		Set<String> categorySubcategories = achievementMap.getCategorySubcategories();
 		if (categorySubcategories.contains(args[2])) {
+			UUID uuid = player.getUniqueId();
 			if (args[2].contains(".")) {
 				MultipleAchievements category = MultipleAchievements.getByName(StringUtils.substringBefore(args[2], "."));
 				String subcategory = StringUtils.substringAfter(args[2], ".");
-				long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, player.getUniqueId(),
-						valueToAdd);
+				long amount = cacheManager.getAndIncrementStatisticAmount(category, subcategory, uuid, valueToAdd);
 				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category, subcategory, amount);
 			} else {
 				NormalAchievements category = NormalAchievements.getByName(args[2]);
@@ -83,12 +84,12 @@ public class AddCommand extends AbstractParsableCommand {
 				if (category == NormalAchievements.PLAYEDTIME) {
 					// Thresholds in the configuration are in hours, underlying statistics are millis.
 					valueToAdd = (int) (valueToAdd * MILLIS_PER_HOUR);
-					amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd)
-							/ MILLIS_PER_HOUR;
+					amount = cacheManager.getAndIncrementStatisticAmount(category, uuid, valueToAdd) / MILLIS_PER_HOUR;
 				} else if (category == NormalAchievements.CONNECTIONS) {
-					amount = databaseManager.updateAndGetConnection(player.getUniqueId(), valueToAdd);
+					amount = databaseManager.getNormalAchievementAmount(uuid, NormalAchievements.CONNECTIONS) + valueToAdd;
+					databaseManager.updateConnectionInformation(uuid, amount);
 				} else {
-					amount = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), valueToAdd);
+					amount = cacheManager.getAndIncrementStatisticAmount(category, uuid, valueToAdd);
 				}
 				statisticIncreaseHandler.checkThresholdsAndAchievements(player, category, amount);
 			}
