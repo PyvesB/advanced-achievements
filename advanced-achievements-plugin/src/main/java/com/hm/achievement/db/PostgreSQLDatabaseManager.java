@@ -41,11 +41,11 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
 	@Override
 	public void registerAchievement(UUID uuid, String achName, long time) {
-		// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available
-		// for PostgreSQL 9.5+.
-		String sql = "INSERT INTO " + prefix + "achievements VALUES (?,?,?)"
-				+ " ON CONFLICT (playername,achievement) DO UPDATE SET (date)=(?)";
 		((SQLWriteOperation) () -> {
+			// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
+			// available for PostgreSQL 9.5+.
+			String sql = "INSERT INTO " + prefix + "achievements VALUES (?,?,?) ON CONFLICT (playername,achievement) "
+					+ "DO UPDATE SET (date)=(?)";
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
@@ -59,13 +59,13 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
 	@Override
 	public void updateConnectionInformation(UUID uuid, long connections) {
-		// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is available
-		// for PostgreSQL 9.5+.
-		String sql = "INSERT INTO " + prefix + NormalAchievements.CONNECTIONS.toDBName() + " VALUES (?,?,?) "
-				+ "ON CONFLICT (playername) DO UPDATE SET (" + NormalAchievements.CONNECTIONS.toDBName() + ",date)=(?,?)";
 		((SQLWriteOperation) () -> {
-			Connection writeConn = getSQLConnection();
-			try (PreparedStatement writePrep = writeConn.prepareStatement(sql)) {
+			// PostgreSQL has no REPLACE operator. We have to use the INSERT ... ON CONFLICT construct, which is
+			// available for PostgreSQL 9.5+.
+			String sql = "INSERT INTO " + prefix + NormalAchievements.CONNECTIONS.toDBName() + " VALUES (?,?,?) ON"
+					+ " CONFLICT (playername) DO UPDATE SET (" + NormalAchievements.CONNECTIONS.toDBName() + ",date)=(?,?)";
+			Connection conn = getSQLConnection();
+			try (PreparedStatement writePrep = conn.prepareStatement(sql)) {
 				String date = ConnectionInformation.today();
 				writePrep.setString(1, uuid.toString());
 				writePrep.setLong(2, connections);
