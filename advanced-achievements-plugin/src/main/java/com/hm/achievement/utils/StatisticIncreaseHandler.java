@@ -89,15 +89,14 @@ public class StatisticIncreaseHandler implements Reloadable {
 	private void checkThresholdsAndAchievements(Player player, List<Achievement> achievements, long currentValue) {
 		for (Achievement achievement : achievements) {
 			// Check whether player has met the threshold.
-			if (currentValue >= achievement.getThreshold()) {
-				// Check whether player has received the achievement and has permission to do so.
-				if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievement.getName())
-						&& player.hasPermission("achievement." + achievement.getName())) {
-					Bukkit.getPluginManager().callEvent(new PlayerAdvancedAchievementEvent(player, achievement));
-				}
-			} else {
+			if (currentValue < achievement.getThreshold()) {
 				// Entries in List sorted in increasing order, all subsequent thresholds will fail the condition.
 				return;
+			}
+			// Check whether player has received the achievement and has permission to do so.
+			if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievement.getName())
+					&& player.hasPermission("achievement." + achievement.getName())) {
+				Bukkit.getPluginManager().callEvent(new PlayerAdvancedAchievementEvent(player, achievement));
 			}
 		}
 	}
