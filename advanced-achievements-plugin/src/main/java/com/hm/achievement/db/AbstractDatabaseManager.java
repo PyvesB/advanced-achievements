@@ -338,7 +338,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setString(1, uuid.toString());
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next()) {
-						return rs.getLong(dbName);
+						return rs.getLong(1);
 					}
 				}
 			}
@@ -365,7 +365,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setString(2, subcategory);
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next()) {
-						return rs.getLong(dbName);
+						return rs.getLong(1);
 					}
 				}
 			}
@@ -388,7 +388,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setString(1, uuid.toString());
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next()) {
-						return new ConnectionInformation(rs.getString("date"), rs.getLong(dbName));
+						return new ConnectionInformation(rs.getString(3), rs.getLong(2));
 					}
 				}
 			}
@@ -517,12 +517,12 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 					while (rs.next()) {
 						UUID uuid;
 						try {
-							String uuidString = rs.getString("playername");
+							String uuidString = rs.getString(1);
 							uuid = UUID.fromString(uuidString);
 						} catch (IllegalArgumentException improperUUIDFormatException) {
 							continue;
 						}
-						Date dateAwarded = new Date(rs.getTimestamp("date").getTime());
+						Date dateAwarded = new Date(rs.getTimestamp(2).getTime());
 						achievements.add(new AwardedDBAchievement(uuid, achievementName, dateAwarded.getTime(),
 								dateFormat.format(dateAwarded)));
 					}
