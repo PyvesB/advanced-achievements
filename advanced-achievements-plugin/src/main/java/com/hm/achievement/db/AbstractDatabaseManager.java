@@ -189,7 +189,6 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
-				ps.setFetchSize(1000);
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
 						achievementNamesList.add(rs.getString(1));
