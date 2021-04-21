@@ -63,7 +63,7 @@ class PluginCommandExecutorTest {
 
 	@Test
 	void itShouldCallListCommand() {
-		String[] args = new String[] { "list" };
+		String[] args = { "list" };
 		underTest.onCommand(sender, null, null, args);
 
 		verify(listCommand).execute(sender, args);
@@ -72,7 +72,7 @@ class PluginCommandExecutorTest {
 
 	@Test
 	void itShouldDisplayErrorMessageIfNoCommandCouldBeMapped() {
-		String[] args = new String[] { "book", "unexpected_arg" };
+		String[] args = { "book", "unexpected_arg" };
 		underTest.onCommand(sender, null, null, args);
 
 		verify(sender).sendMessage(PLUGIN_HEADER + ERROR_MESSAGE);
@@ -81,7 +81,7 @@ class PluginCommandExecutorTest {
 
 	@Test
 	void itShouldFallBackToHelpCommandIfArgsEmpty() {
-		String[] noArgs = new String[0];
+		String[] noArgs = {};
 		underTest.onCommand(sender, null, null, noArgs);
 
 		verify(helpCommand).execute(sender, noArgs);
@@ -90,7 +90,7 @@ class PluginCommandExecutorTest {
 
 	@Test
 	void itShouldParseOpenBoxCharactersIntoArray() {
-		String[] args = new String[] { "inspect", "one\u2423two", "three\u2423four" };
+		String[] args = { "inspect", "one\u2423two", "three\u2423four" };
 		String[] expected = { "inspect", "one", "two", "three", "four" };
 		underTest.onCommand(sender, null, null, args);
 
