@@ -382,13 +382,13 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	public ConnectionInformation getConnectionInformation(UUID uuid) {
 		return ((SQLReadOperation<ConnectionInformation>) () -> {
 			String dbName = NormalAchievements.CONNECTIONS.toDBName();
-			String sql = "SELECT * FROM " + prefix + dbName + " WHERE playername = ?";
+			String sql = "SELECT " + dbName + ", date FROM " + prefix + dbName + " WHERE playername = ?";
 			Connection conn = getSQLConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
 				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next()) {
-						return new ConnectionInformation(rs.getString(3), rs.getLong(2));
+						return new ConnectionInformation(rs.getString(2), rs.getLong(1));
 					}
 				}
 			}
@@ -477,7 +477,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	public List<AwardedDBAchievement> getPlayerAchievementsList(UUID uuid) {
 		return ((SQLReadOperation<List<AwardedDBAchievement>>) () -> {
 			// Either oldest date to newest one or newest date to oldest one.
-			String sql = "SELECT * FROM " + prefix + "achievements WHERE playername = ? ORDER BY date "
+			String sql = "SELECT achievement, date FROM " + prefix + "achievements WHERE playername = ? ORDER BY date "
 					+ (configBookChronologicalOrder ? "ASC" : "DESC");
 			List<AwardedDBAchievement> achievements = new ArrayList<>();
 			Connection conn = getSQLConnection();
@@ -486,8 +486,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setString(1, uuid.toString());
 				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
-						Timestamp dateAwarded = rs.getTimestamp(3);
-						achievements.add(new AwardedDBAchievement(uuid, rs.getString(2), dateAwarded.getTime(),
+						Timestamp dateAwarded = rs.getTimestamp(2);
+						achievements.add(new AwardedDBAchievement(uuid, rs.getString(1), dateAwarded.getTime(),
 								dateFormat.format(dateAwarded)));
 					}
 				}
