@@ -302,27 +302,6 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	}
 
 	/**
-	 * Checks whether player has received a specific achievement.
-	 *
-	 * @param uuid
-	 * @param achName
-	 * @return true if achievement found in database, false otherwise
-	 */
-	public boolean hasPlayerAchievement(UUID uuid, String achName) {
-		return ((SQLReadOperation<Boolean>) () -> {
-			String sql = "SELECT achievement FROM " + prefix + "achievements WHERE playername = ? AND achievement = ?";
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setString(1, uuid.toString());
-				ps.setString(2, achName);
-				try (ResultSet rs = ps.executeQuery()) {
-					return rs.next();
-				}
-			}
-		}).executeOperation("checking for an achievement");
-	}
-
-	/**
 	 * Gets a player's NormalAchievement statistic.
 	 *
 	 * @param uuid

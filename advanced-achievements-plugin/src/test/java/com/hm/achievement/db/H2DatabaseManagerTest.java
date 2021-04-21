@@ -1,10 +1,8 @@
 package com.hm.achievement.db;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -193,15 +191,6 @@ class H2DatabaseManagerTest {
 		Set<String> expected = Collections.singleton(TEST_ACHIEVEMENT);
 		Set<String> achNames = db.getPlayerAchievementNames(testUUID);
 		assertEquals(expected, achNames);
-	}
-
-	@Test
-	void testHasAchievement() {
-		assertFalse(db.hasPlayerAchievement(testUUID, TEST_ACHIEVEMENT));
-
-		registerAchievement();
-
-		assertTrue(db.hasPlayerAchievement(testUUID, TEST_ACHIEVEMENT));
 	}
 
 	@Test
