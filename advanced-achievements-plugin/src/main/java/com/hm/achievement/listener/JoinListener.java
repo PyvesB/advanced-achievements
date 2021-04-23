@@ -16,7 +16,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
-import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 
 /**
@@ -31,15 +30,12 @@ public class JoinListener implements Listener {
 
 	private final int serverVersion;
 	private final AdvancedAchievements advancedAchievements;
-	private final AchievementMap achievementMap;
 	private final CacheManager cacheManager;
 
 	@Inject
-	public JoinListener(int serverVersion, AdvancedAchievements advancedAchievements, AchievementMap achievementMap,
-			CacheManager cacheManager) {
+	public JoinListener(int serverVersion, AdvancedAchievements advancedAchievements, CacheManager cacheManager) {
 		this.serverVersion = serverVersion;
 		this.advancedAchievements = advancedAchievements;
-		this.achievementMap = achievementMap;
 		this.cacheManager = cacheManager;
 	}
 
@@ -58,7 +54,7 @@ public class JoinListener implements Listener {
 	 */
 	private void scheduleReceivedCacheLoad(Player player) {
 		Bukkit.getScheduler().runTaskAsynchronously(advancedAchievements,
-				() -> cacheManager.getPlayerTotalAchievements(player.getUniqueId()));
+				() -> cacheManager.getPlayerAchievements(player.getUniqueId()));
 
 	}
 
@@ -77,19 +73,19 @@ public class JoinListener implements Listener {
 			}
 			Advancement advancement = Bukkit.getAdvancement(new NamespacedKey(advancedAchievements,
 					AdvancementManager.ADVANCED_ACHIEVEMENTS_PARENT));
-			// If no parent, user has not used /aach generate, do not do anything.
+			// If no parent, /aach generate has not been run on server, do not do anything.
 			if (advancement != null) {
 				AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
 				if (!advancementProgress.isDone()) {
 					advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
 				}
-				for (String name : achievementMap.getAllNames()) {
-					// May be null if user has not called /aach generate since that achievement was added to the config.
+				for (String name : cacheManager.getPlayerAchievements(player.getUniqueId())) {
+					// May be null if /aach generate has not been called since that achievement was added to the config.
 					advancement = Bukkit.getAdvancement(new NamespacedKey(advancedAchievements,
 							AdvancementManager.getKey(name)));
 					if (advancement != null) {
 						advancementProgress = player.getAdvancementProgress(advancement);
-						if (!advancementProgress.isDone() && cacheManager.hasPlayerAchievement(player.getUniqueId(), name)) {
+						if (!advancementProgress.isDone()) {
 							advancementProgress.awardCriteria(AchievementAdvancement.CRITERIA_NAME);
 						}
 					}

@@ -186,7 +186,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		achievement.getRewards().forEach(r -> r.getRewarder().accept(player));
 		displayAchievement(player, achievement);
 
-		if (cacheManager.getPlayerTotalAchievements(player.getUniqueId()) == achievementMap.getAll().size()) {
+		if (cacheManager.getPlayerAchievements(player.getUniqueId()).size() == achievementMap.getAll().size()) {
 			handleAllAchievementsReceived(player);
 		}
 	}

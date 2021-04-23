@@ -47,11 +47,11 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 		if (p != null) {
 			UUID uuid = p.getUniqueId();
 			if ("achievements".equalsIgnoreCase(identifier)) {
-				return Integer.toString(cacheManager.getPlayerTotalAchievements(uuid));
+				return Integer.toString(cacheManager.getPlayerAchievements(uuid).size());
 			}
 
 			if ("achievements_percentage".equalsIgnoreCase(identifier)) {
-				return String.format("%.1f%%", 100 * (double) cacheManager.getPlayerTotalAchievements(uuid)
+				return String.format("%.1f%%", 100 * (double) cacheManager.getPlayerAchievements(uuid).size()
 						/ achievementMap.getAll().size());
 			}
 

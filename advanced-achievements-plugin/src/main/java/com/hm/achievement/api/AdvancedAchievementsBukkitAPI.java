@@ -92,7 +92,7 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	@Override
 	public int getPlayerTotalAchievements(UUID player) {
 		validateNotNull(player, "Player");
-		return cacheManager.getPlayerTotalAchievements(player);
+		return cacheManager.getPlayerAchievements(player).size();
 	}
 
 	@Override

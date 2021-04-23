@@ -76,7 +76,7 @@ public class StatsCommand extends AbstractCommand {
 
 		Player player = (Player) sender;
 
-		int playerAchievements = cacheManager.getPlayerTotalAchievements(player.getUniqueId());
+		int playerAchievements = cacheManager.getPlayerAchievements(player.getUniqueId()).size();
 		int totalAchievements = achievementMap.getAll().size();
 
 		player.sendMessage(

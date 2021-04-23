@@ -26,6 +26,6 @@ public class AchievementCountBungeeTabListPlusVariable extends Variable {
 
 	@Override
 	public String getReplacement(Player player) {
-		return Integer.toString(cacheManager.getPlayerTotalAchievements(player.getUniqueId()));
+		return Integer.toString(cacheManager.getPlayerAchievements(player.getUniqueId()).size());
 	}
 }

@@ -191,13 +191,13 @@ public class CacheManager implements Cleanable {
 	}
 
 	/**
-	 * Returns the total number of achievements received by a player.
+	 * Returns the achievement names received by a player.
 	 *
 	 * @param player
-	 * @return the number of achievements received by the player
+	 * @return the achievement names received by the player
 	 */
-	public int getPlayerTotalAchievements(UUID player) {
-		return receivedAchievementsCache.computeIfAbsent(player, databaseManager::getPlayerAchievementNames).size();
+	public Set<String> getPlayerAchievements(UUID player) {
+		return receivedAchievementsCache.computeIfAbsent(player, databaseManager::getPlayerAchievementNames);
 	}
 
 	/**
