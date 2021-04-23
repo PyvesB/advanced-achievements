@@ -1,5 +1,7 @@
 package com.hm.achievement.listener.statistics;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,7 +24,7 @@ import com.hm.achievement.utils.StatisticIncreaseHandler;
 public abstract class AbstractListener extends StatisticIncreaseHandler implements Listener {
 
 	final Category category;
-	Set<String> subcategories;
+	List<String> subcategories;
 
 	AbstractListener(Category category, YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
 			CacheManager cacheManager) {
@@ -33,7 +35,7 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	@Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
-		subcategories = achievementMap.getSubcategoriesForCategory(category);
+		subcategories = new ArrayList<>(achievementMap.getSubcategoriesForCategory(category));
 	}
 
 	public Category getCategory() {
@@ -83,9 +85,9 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	 * @author tassu
 	 */
 	Set<String> findAchievementsByCategoryAndName(String id) {
+		String pipedId = '|' + id + '|';
 		return subcategories.stream()
-				.filter(keys -> keys.equals(id) || keys.startsWith(id + '|') || keys.contains('|' + id + '|')
-						|| keys.endsWith('|' + id))
+				.filter(keys -> ('|' + keys + '|').contains(pipedId))
 				.collect(Collectors.toSet());
 	}
 
