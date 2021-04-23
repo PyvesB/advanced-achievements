@@ -41,7 +41,7 @@ public class JobsRebornListener extends AbstractListener {
 			return;
 		}
 
-		findAchievementsByCategoryAndName(jobName).forEach(key -> {
+		findMatchingSubcategories(jobName).forEach(key -> {
 			int previousJobLevel = (int) cacheManager.getAndIncrementStatisticAmount(MultipleAchievements.JOBSREBORN, key,
 					player.getUniqueId(), 0);
 			int levelDiff = event.getLevel() - previousJobLevel;

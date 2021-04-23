@@ -39,7 +39,7 @@ public class BreedingListener extends AbstractListener {
 			return;
 		}
 
-		Set<String> foundAchievements = findAchievementsByCategoryAndName(mobName);
-		updateStatisticAndAwardAchievementsIfAvailable((Player) event.getBreeder(), foundAchievements, 1);
+		Set<String> matchingSubcategories = findMatchingSubcategories(mobName);
+		updateStatisticAndAwardAchievementsIfAvailable((Player) event.getBreeder(), matchingSubcategories, 1);
 	}
 }

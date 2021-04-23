@@ -63,10 +63,10 @@ public class BreaksListener extends AbstractListener {
 			return;
 		}
 
-		Set<String> foundAchievements = findAchievementsByCategoryAndName(
+		Set<String> matchingSubcategories = findMatchingSubcategories(
 				blockName + ':' + block.getState().getData().toItemStack().getDurability());
-		foundAchievements.addAll(findAchievementsByCategoryAndName(blockName));
-		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
+		matchingSubcategories.addAll(findMatchingSubcategories(blockName));
+		updateStatisticAndAwardAchievementsIfAvailable(player, matchingSubcategories, 1);
 	}
 
 	/**

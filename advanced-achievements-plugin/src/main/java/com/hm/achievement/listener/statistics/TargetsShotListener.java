@@ -45,7 +45,7 @@ public class TargetsShotListener extends AbstractListener {
 			return;
 		}
 
-		Set<String> foundAchievements = findAchievementsByCategoryAndName(targetName);
-		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
+		Set<String> matchingSubcategories = findMatchingSubcategories(targetName);
+		updateStatisticAndAwardAchievementsIfAvailable(player, matchingSubcategories, 1);
 	}
 }

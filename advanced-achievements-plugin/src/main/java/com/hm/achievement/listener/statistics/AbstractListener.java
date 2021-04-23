@@ -76,15 +76,15 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	}
 
 	/**
-	 * Returns all achievements that match the provided identifier. This methods accounts for groups of sub-categories,
-	 * e.g. 'zombie|pig_zombie|zombie_horse|zombie_villager'.
+	 * Returns all sub-categories that match the provided identifier. This methods accounts for groups of
+	 * sub-categories, e.g. 'zombie|pig_zombie|zombie_horse|zombie_villager'.
 	 * 
 	 * @param id the identifier to match
 	 * 
 	 * @return all matched achievements
 	 * @author tassu
 	 */
-	Set<String> findAchievementsByCategoryAndName(String id) {
+	Set<String> findMatchingSubcategories(String id) {
 		String pipedId = '|' + id + '|';
 		return subcategories.stream()
 				.filter(keys -> ('|' + keys + '|').contains(pipedId))

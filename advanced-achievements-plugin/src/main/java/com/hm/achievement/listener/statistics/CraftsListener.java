@@ -60,8 +60,8 @@ public class CraftsListener extends AbstractListener {
 			return;
 		}
 
-		Set<String> foundAchievements = findAchievementsByCategoryAndName(craftName + ':' + item.getDurability());
-		foundAchievements.addAll(findAchievementsByCategoryAndName(craftName));
+		Set<String> matchingSubcategories = findMatchingSubcategories(craftName + ':' + item.getDurability());
+		matchingSubcategories.addAll(findMatchingSubcategories(craftName));
 
 		int eventAmount = item.getAmount();
 		if (event.isShiftClick()) {
@@ -82,7 +82,7 @@ public class CraftsListener extends AbstractListener {
 			}
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, eventAmount);
+		updateStatisticAndAwardAchievementsIfAvailable(player, matchingSubcategories, eventAmount);
 	}
 
 	/**

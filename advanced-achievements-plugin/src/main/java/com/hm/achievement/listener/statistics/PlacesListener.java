@@ -41,22 +41,22 @@ public class PlacesListener extends AbstractListener {
 		Player player = event.getPlayer();
 		ItemStack placedItem = event.getItemInHand();
 
-		Set<String> foundAchievements = new HashSet<>();
+		Set<String> matchingSubcategories = new HashSet<>();
 
 		String blockName = placedItem.getType().name().toLowerCase();
 		if (player.hasPermission(category.toChildPermName(blockName))) {
-			foundAchievements.addAll(findAchievementsByCategoryAndName(blockName + ':' + placedItem.getDurability()));
-			foundAchievements.addAll(findAchievementsByCategoryAndName(blockName));
+			matchingSubcategories.addAll(findMatchingSubcategories(blockName + ':' + placedItem.getDurability()));
+			matchingSubcategories.addAll(findMatchingSubcategories(blockName));
 		}
 
 		ItemMeta itemMeta = placedItem.getItemMeta();
 		if (itemMeta != null && itemMeta.hasDisplayName()) {
 			String displayName = itemMeta.getDisplayName();
 			if (player.hasPermission(category.toChildPermName(StringUtils.deleteWhitespace(displayName)))) {
-				foundAchievements.addAll(findAchievementsByCategoryAndName(displayName));
+				matchingSubcategories.addAll(findMatchingSubcategories(displayName));
 			}
 		}
 
-		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(player, matchingSubcategories, 1);
 	}
 }

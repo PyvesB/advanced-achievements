@@ -36,19 +36,19 @@ public class PlayerCommandsListener extends AbstractListener {
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
 		List<String> equivalentCommands = getEquivalentCommands(event.getMessage());
-		Set<String> foundAchievements = new HashSet<>();
+		Set<String> matchingSubcategories = new HashSet<>();
 		for (String groupedPrefixes : subcategories) {
 			for (String prefix : StringUtils.split(groupedPrefixes, '|')) {
 				if (player.hasPermission(category.toChildPermName(StringUtils.deleteWhitespace(prefix)))) {
 					for (String equivalentCommand : equivalentCommands) {
 						if (equivalentCommand.startsWith(prefix)) {
-							foundAchievements.add(groupedPrefixes);
+							matchingSubcategories.add(groupedPrefixes);
 						}
 					}
 				}
 			}
 		}
-		updateStatisticAndAwardAchievementsIfAvailable(player, foundAchievements, 1);
+		updateStatisticAndAwardAchievementsIfAvailable(player, matchingSubcategories, 1);
 	}
 
 	/**
