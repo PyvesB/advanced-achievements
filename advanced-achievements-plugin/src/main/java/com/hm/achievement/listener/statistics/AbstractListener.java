@@ -3,7 +3,6 @@ package com.hm.achievement.listener.statistics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -76,19 +75,19 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	}
 
 	/**
-	 * Returns all sub-categories that match the provided identifier. This methods accounts for groups of
+	 * Adds all sub-categories that match the identifier to the provided Set. This methods accounts for groups of
 	 * sub-categories, e.g. 'zombie|pig_zombie|zombie_horse|zombie_villager'.
 	 * 
+	 * @param matchingSubcategories the subcategories matched so far
 	 * @param id the identifier to match
-	 * 
-	 * @return all matched achievements
-	 * @author tassu
 	 */
-	Set<String> findMatchingSubcategories(String id) {
+	void addMatchingSubcategories(Set<String> matchingSubcategories, String id) {
 		String pipedId = '|' + id + '|';
-		return subcategories.stream()
-				.filter(keys -> ('|' + keys + '|').contains(pipedId))
-				.collect(Collectors.toSet());
+		for (String subcategory : subcategories) {
+			if (('|' + subcategory + '|').contains(pipedId)) {
+				matchingSubcategories.add(subcategory);
+			}
+		}
 	}
 
 }

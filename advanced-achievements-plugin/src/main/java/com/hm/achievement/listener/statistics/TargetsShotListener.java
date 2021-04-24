@@ -1,5 +1,6 @@
 package com.hm.achievement.listener.statistics;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -45,7 +46,9 @@ public class TargetsShotListener extends AbstractListener {
 			return;
 		}
 
-		Set<String> matchingSubcategories = findMatchingSubcategories(targetName);
-		updateStatisticAndAwardAchievementsIfAvailable(player, matchingSubcategories, 1);
+		Set<String> subcategories = new HashSet<>();
+
+		addMatchingSubcategories(subcategories, targetName);
+		updateStatisticAndAwardAchievementsIfAvailable(player, subcategories, 1);
 	}
 }

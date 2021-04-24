@@ -2,6 +2,7 @@ package com.hm.achievement.listener.statistics;
 
 import static org.bukkit.enchantments.Enchantment.SILK_TOUCH;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -63,10 +64,10 @@ public class BreaksListener extends AbstractListener {
 			return;
 		}
 
-		Set<String> matchingSubcategories = findMatchingSubcategories(
-				blockName + ':' + block.getState().getData().toItemStack().getDurability());
-		matchingSubcategories.addAll(findMatchingSubcategories(blockName));
-		updateStatisticAndAwardAchievementsIfAvailable(player, matchingSubcategories, 1);
+		Set<String> subcategories = new HashSet<>();
+		addMatchingSubcategories(subcategories, blockName + ':' + block.getState().getData().toItemStack().getDurability());
+		addMatchingSubcategories(subcategories, blockName);
+		updateStatisticAndAwardAchievementsIfAvailable(player, subcategories, 1);
 	}
 
 	/**
