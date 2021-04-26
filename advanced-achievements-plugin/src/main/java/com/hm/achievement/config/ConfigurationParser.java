@@ -24,7 +24,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.Category;
@@ -164,15 +163,15 @@ public class ConfigurationParser {
 	 */
 	private void parseDisabledCategories() throws PluginLoadError {
 		extractDisabledCategoriesFromConfig();
-		// Need PetMaster with a minimum version of 1.4 for PetMasterGive and PetMasterReceive categories.
+		// Need PetMaster for PetMasterGive and PetMasterReceive categories.
 		if ((!disabledCategories.contains(NormalAchievements.PETMASTERGIVE)
 				|| !disabledCategories.contains(NormalAchievements.PETMASTERRECEIVE))
-				&& (!Bukkit.getPluginManager().isPluginEnabled("PetMaster") || getPetMasterMinorVersion() < 4)) {
+				&& !Bukkit.getPluginManager().isPluginEnabled("PetMaster")) {
 			disabledCategories.add(NormalAchievements.PETMASTERGIVE);
 			disabledCategories.add(NormalAchievements.PETMASTERRECEIVE);
 			logger.warning("Overriding configuration: disabling PetMasterGive and PetMasterReceive categories.");
 			logger.warning(
-					"Ensure you have placed Pet Master with a minimum version of 1.4 in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in config.yml.");
+					"Ensure you have placed Pet Master in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in config.yml.");
 		}
 		// Need Jobs for JobsReborn category.
 		if (!disabledCategories.contains(MultipleAchievements.JOBSREBORN)
@@ -194,7 +193,7 @@ public class ConfigurationParser {
 			disabledCategories.add(NormalAchievements.DISTANCELLAMA);
 			logger.warning("Overriding configuration: disabling DistanceLlama category.");
 			logger.warning(
-					"Llamas not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in config.yml.");
+					"Llamas are not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in config.yml.");
 		}
 		// Breeding event introduced in Bukkit 1.10.2.
 		if (!disabledCategories.contains(MultipleAchievements.BREEDING) && serverVersion < 10) {
@@ -231,17 +230,6 @@ public class ConfigurationParser {
 			logger.warning(
 					"Riptides are not available in your server version, please add Riptides to the DisabledCategories list in config.yml.");
 		}
-	}
-
-	/**
-	 * Retrieves Pet Master's minor version number (e.g. "1.4" -> 4).
-	 * 
-	 * @return Pet Master's minor version number
-	 */
-	private int getPetMasterMinorVersion() {
-		Plugin petMaster = Bukkit.getPluginManager().getPlugin("PetMaster");
-		String minorVersionString = StringUtils.split(petMaster.getDescription().getVersion(), '.')[1];
-		return Integer.parseInt(minorVersionString);
 	}
 
 	/**
