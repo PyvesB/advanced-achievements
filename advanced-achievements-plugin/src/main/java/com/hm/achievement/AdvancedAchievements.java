@@ -46,7 +46,7 @@ public class AdvancedAchievements extends JavaPlugin {
 		advancedAchievementsAPI = advancedAchievementsComponent.advancedAchievementsBukkitAPI();
 
 		try {
-			pluginLoader.loadAdvancedAchievements(true);
+			pluginLoader.loadAdvancedAchievements();
 		} catch (PluginLoadError e) {
 			getLogger().log(Level.SEVERE,
 					"A non recoverable error was encountered while loading the plugin, disabling it:", e);

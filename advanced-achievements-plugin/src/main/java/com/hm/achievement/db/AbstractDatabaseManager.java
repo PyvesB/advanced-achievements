@@ -56,6 +56,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 
 	private DateFormat dateFormat;
 	private boolean configBookChronologicalOrder;
+	private boolean initialised = false;
 
 	public AbstractDatabaseManager(YamlConfiguration mainConfig, Logger logger, DatabaseUpdater databaseUpdater,
 			String driverPath) {
@@ -111,6 +112,11 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		databaseUpdater.initialiseTables(this, size);
 		databaseUpdater.removeAchievementDescriptions(this);
 		Arrays.stream(MultipleAchievements.values()).forEach(m -> databaseUpdater.updateOldDBColumnSize(this, m, size));
+		initialised = true;
+	}
+
+	public boolean isInitialised() {
+		return initialised;
 	}
 
 	/**

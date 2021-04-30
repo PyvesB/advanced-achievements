@@ -70,7 +70,7 @@ public class ReloadCommand extends AbstractCommand {
 	@Override
 	void onExecute(CommandSender sender, String[] args) {
 		try {
-			pluginLoader.get().loadAdvancedAchievements(false);
+			pluginLoader.get().loadAdvancedAchievements();
 		} catch (PluginLoadError e) {
 			if (sender instanceof Player) {
 				sender.sendMessage(langConfigReloadFailed);
@@ -83,6 +83,6 @@ public class ReloadCommand extends AbstractCommand {
 		if (sender instanceof Player) {
 			sender.sendMessage(langConfigSuccessfullyReloaded);
 		}
-		logger.info("Configuration successfully reloaded.");
+		logger.info("Plugin successfully reloaded.");
 	}
 }
