@@ -1,7 +1,6 @@
 package com.hm.achievement.db;
 
 import java.sql.BatchUpdateException;
-import java.sql.Connection;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,14 +60,13 @@ public class AsyncCachedRequestsSender implements Runnable {
 
 		if (!batchedRequests.isEmpty()) {
 			((SQLWriteOperation) () -> {
-				Connection conn = databaseManager.getSQLConnection();
-				try (Statement st = conn.createStatement()) {
+				try (Statement st = databaseManager.getConnection().createStatement()) {
 					for (String request : batchedRequests) {
 						st.addBatch(request);
 					}
 					st.executeBatch();
 				} catch (BatchUpdateException e) { // Attempt to solve issue #309.
-					conn.close();
+					databaseManager.getConnection().close();
 					throw e;
 				}
 			}).attemptWrites(logger, "batching statistic updates");

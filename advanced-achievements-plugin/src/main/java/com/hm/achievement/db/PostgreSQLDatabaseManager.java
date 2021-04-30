@@ -1,7 +1,6 @@
 package com.hm.achievement.db;
 
 import java.io.UnsupportedEncodingException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -46,8 +45,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 			// available for PostgreSQL 9.5+.
 			String sql = "INSERT INTO " + prefix + "achievements VALUES (?,?,?) ON CONFLICT (playername,achievement) "
 					+ "DO UPDATE SET (date)=(?)";
-			Connection conn = getSQLConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
 				ps.setString(2, achName);
 				ps.setTimestamp(3, new Timestamp(time));
@@ -64,8 +62,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 			// available for PostgreSQL 9.5+.
 			String sql = "INSERT INTO " + prefix + NormalAchievements.CONNECTIONS.toDBName() + " VALUES (?,?,?) ON"
 					+ " CONFLICT (playername) DO UPDATE SET (" + NormalAchievements.CONNECTIONS.toDBName() + ",date)=(?,?)";
-			Connection conn = getSQLConnection();
-			try (PreparedStatement writePrep = conn.prepareStatement(sql)) {
+			try (PreparedStatement writePrep = getConnection().prepareStatement(sql)) {
 				String date = ConnectionInformation.today();
 				writePrep.setString(1, uuid.toString());
 				writePrep.setLong(2, connections);

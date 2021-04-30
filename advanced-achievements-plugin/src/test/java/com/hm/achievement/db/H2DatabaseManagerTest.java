@@ -234,7 +234,7 @@ class H2DatabaseManagerTest {
 		String sql = "DELETE FROM achievements";
 
 		((SQLWriteOperation) () -> {
-			Connection conn = db.getSQLConnection();
+			Connection conn = db.getConnection();
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.execute();
 			}

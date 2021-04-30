@@ -64,13 +64,12 @@ public class DatabaseUpdater {
 	void renameExistingTables(AbstractDatabaseManager databaseManager) throws PluginLoadError {
 		// If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
 		if (StringUtils.isNotBlank(databaseManager.getPrefix())) {
-			Connection conn = databaseManager.getSQLConnection();
-			try (ResultSet rs = conn.getMetaData().getTables(null, null, "achievements", null)) {
+			try (ResultSet rs = databaseManager.getConnection().getMetaData().getTables(null, null, "achievements", null)) {
 				// If the achievements table still has its default name (ie. no prefix), but a prefix is set in the
 				// configuration, do a renaming of all tables.
 				if (rs.next()) {
 					logger.info("Adding " + databaseManager.getPrefix() + " prefix to database table names, please wait...");
-					try (Statement st = conn.createStatement()) {
+					try (Statement st = databaseManager.getConnection().createStatement()) {
 						st.addBatch("ALTER TABLE achievements RENAME TO " + databaseManager.getPrefix() + "achievements");
 						for (NormalAchievements category : NormalAchievements.values()) {
 							st.addBatch("ALTER TABLE " + category.toDBName() + " RENAME TO " + databaseManager.getPrefix()
@@ -98,8 +97,7 @@ public class DatabaseUpdater {
 	 * @throws PluginLoadError
 	 */
 	void initialiseTables(AbstractDatabaseManager databaseManager, int size) throws PluginLoadError {
-		Connection conn = databaseManager.getSQLConnection();
-		try (Statement st = conn.createStatement()) {
+		try (Statement st = databaseManager.getConnection().createStatement()) {
 			st.addBatch("CREATE TABLE IF NOT EXISTS " + databaseManager.getPrefix()
 					+ "achievements (playername char(36),achievement varchar(64),date TIMESTAMP,PRIMARY KEY (playername, achievement))");
 
@@ -136,8 +134,7 @@ public class DatabaseUpdater {
 	void updateOldDBColumnSize(AbstractDatabaseManager databaseManager, MultipleAchievements category, int size) {
 		// SQLite ignores size for varchar datatype. H2 support was added after this was an issue.
 		if (!(databaseManager instanceof AbstractFileDatabaseManager)) {
-			Connection conn = databaseManager.getSQLConnection();
-			try (Statement st = conn.createStatement();
+			try (Statement st = databaseManager.getConnection().createStatement();
 					ResultSet rs = st.executeQuery("SELECT " + category.toSubcategoryDBName() + " FROM "
 							+ databaseManager.getPrefix() + category.toDBName() + " LIMIT 1")) {
 				if (rs.getMetaData().getPrecision(1) < size) {
@@ -160,17 +157,17 @@ public class DatabaseUpdater {
 	 * @param databaseManager
 	 */
 	void removeAchievementDescriptions(AbstractDatabaseManager databaseManager) {
-		Connection conn = databaseManager.getSQLConnection();
-		try (ResultSet rs = conn.getMetaData().getColumns(null, null, databaseManager.getPrefix() + "achievements",
-				"description")) {
+		try (ResultSet rs = databaseManager.getConnection().getMetaData().getColumns(null, null, databaseManager.getPrefix()
+				+ "achievements", "description")) {
 			if (rs.next()) {
 				logger.info("Removing descriptions from database storage, please wait...");
-				try (Statement st = conn.createStatement()) {
+				try (Statement st = databaseManager.getConnection().createStatement()) {
 					// SQLite does not support dropping columns: create new table and copy contents over.
 					if (databaseManager instanceof SQLiteDatabaseManager) {
 						st.execute(
 								"CREATE TABLE tempTable (playername char(36),achievement varchar(64),date TIMESTAMP,PRIMARY KEY (playername, achievement))");
-						try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
+						try (PreparedStatement prep = databaseManager.getConnection()
+								.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
 								ResultSet achievements = st.executeQuery("SELECT * FROM achievements")) {
 							while (achievements.next()) {
 								prep.setString(1, achievements.getString(1));
@@ -203,12 +200,12 @@ public class DatabaseUpdater {
 	private void updateOldMaterialsToNewOnes(AbstractDatabaseManager databaseManager, MultipleAchievements category,
 			int size) {
 		String tableName = databaseManager.getPrefix() + category.toDBName();
-		Connection conn = databaseManager.getSQLConnection();
-		try (Statement st = conn.createStatement()) {
+		Connection connection = databaseManager.getConnection();
+		try (Statement st = connection.createStatement()) {
 			// Create new temporary table.
 			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(" + size
 					+ ")," + tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
-			try (PreparedStatement prep = conn.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
+			try (PreparedStatement prep = connection.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
 					ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "")) {
 				List<String> uuids = new ArrayList<>();
 				List<String> materialKeys = new ArrayList<>();
@@ -220,7 +217,7 @@ public class DatabaseUpdater {
 					amounts.add(rs.getInt(3));
 				}
 				// Prevent from doing any commits before entire transaction is ready.
-				conn.setAutoCommit(false);
+				connection.setAutoCommit(false);
 
 				// Populate new table with contents of the old one and material strings. Batch the insert requests.
 				for (int i = 0; i < uuids.size(); ++i) {
@@ -237,8 +234,8 @@ public class DatabaseUpdater {
 				st.execute("ALTER TABLE tempTable RENAME TO " + tableName);
 			}
 			// Commit entire transaction.
-			conn.commit();
-			conn.setAutoCommit(true);
+			connection.commit();
+			connection.setAutoCommit(true);
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Database error while updating old material names to new Minecraft 1.13 ones:", e);
 		}
