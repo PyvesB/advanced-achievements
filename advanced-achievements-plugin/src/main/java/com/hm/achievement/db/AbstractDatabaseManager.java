@@ -161,7 +161,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		try {
 			// Check if Connection was not previously closed.
 			if (currentConnection == null || currentConnection.isClosed()) {
-				Connection newConnection = createSQLConnection();
+				Connection newConnection = createConnection();
 				if (!connectionHolder.compareAndSet(currentConnection, newConnection)) {
 					newConnection.close();
 				}
@@ -179,7 +179,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @return connection object to database
 	 * @throws SQLException
 	 */
-	abstract Connection createSQLConnection() throws SQLException;
+	abstract Connection createConnection() throws SQLException;
 
 	/**
 	 * Gets the list of names of all the achievements of a player.

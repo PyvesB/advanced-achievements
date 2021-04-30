@@ -45,7 +45,7 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 	}
 
 	@Override
-	Connection createSQLConnection() throws SQLException {
+	Connection createConnection() throws SQLException {
 		return DriverManager.getConnection(databaseAddress + "?autoReconnect=true" + additionalConnectionOptions + "&user="
 				+ databaseUser + "&password=" + databasePassword);
 	}

@@ -58,7 +58,7 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
 	}
 
 	@Override
-	Connection createSQLConnection() throws SQLException {
+	Connection createConnection() throws SQLException {
 		return DriverManager.getConnection(url);
 	}
 }
