@@ -157,19 +157,20 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * @return the cached SQL connection or a new one
 	 */
 	Connection getConnection() {
-		Connection oldConnection = connectionHolder.get();
+		Connection currentConnection = connectionHolder.get();
 		try {
 			// Check if Connection was not previously closed.
-			if (oldConnection == null || oldConnection.isClosed()) {
+			if (currentConnection == null || currentConnection.isClosed()) {
 				Connection newConnection = createSQLConnection();
-				if (!connectionHolder.compareAndSet(oldConnection, newConnection)) {
+				if (!connectionHolder.compareAndSet(currentConnection, newConnection)) {
 					newConnection.close();
 				}
+				return connectionHolder.get();
 			}
 		} catch (SQLException e) {
 			logger.log(Level.SEVERE, "Error while attempting to retrieve a connection to the database:", e);
 		}
-		return connectionHolder.get();
+		return currentConnection;
 	}
 
 	/**
