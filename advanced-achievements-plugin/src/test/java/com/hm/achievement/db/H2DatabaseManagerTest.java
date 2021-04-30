@@ -55,14 +55,8 @@ class H2DatabaseManagerTest {
 		Logger logger = Logger.getLogger("DBTestLogger");
 		YamlConfiguration config = YamlConfiguration
 				.loadConfiguration(new InputStreamReader(H2DatabaseManagerTest.class.getResourceAsStream("/config-h2.yml")));
-		db = new H2DatabaseManager(config, logger, new DatabaseUpdater(logger, null), plugin) {
-
-			@Override
-			public void extractConfigurationParameters() {
-				super.extractConfigurationParameters();
-				pool = MoreExecutors.newDirectExecutorService();
-			}
-		};
+		db = new H2DatabaseManager(config, logger, new DatabaseUpdater(logger, null), plugin);
+		db.pool = MoreExecutors.newDirectExecutorService();
 		db.initialise();
 		db.extractConfigurationParameters();
 	}
