@@ -451,7 +451,7 @@ Breeding:
       DisplayName: Breeder
       Type: normal
 
-# Count the maximum level reached in a job (job name lower case).
+# Count the maximum level reached in a job (full job name in lower case).
 JobsReborn:
   hunter:
     1:
