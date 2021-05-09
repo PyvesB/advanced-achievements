@@ -72,7 +72,7 @@ class H2DatabaseManagerTest {
 
 	@Test
 	void testGetPlayerAchievementsList() {
-		registerAchievement();
+		db.registerAchievement(testUUID, TEST_ACHIEVEMENT, System.currentTimeMillis());
 
 		List<AwardedDBAchievement> achievements = db.getPlayerAchievementsList(testUUID);
 		assertEquals(1, achievements.size());
@@ -84,7 +84,7 @@ class H2DatabaseManagerTest {
 
 	@Test
 	void testGetAchievementsRecipientList() {
-		registerAchievement();
+		db.registerAchievement(testUUID, TEST_ACHIEVEMENT, System.currentTimeMillis());
 
 		List<AwardedDBAchievement> achievements = db.getAchievementsRecipientList(TEST_ACHIEVEMENT);
 		assertEquals(1, achievements.size());
@@ -96,7 +96,7 @@ class H2DatabaseManagerTest {
 
 	@Test
 	void testAchievementCount() {
-		registerAchievement();
+		db.registerAchievement(testUUID, TEST_ACHIEVEMENT, System.currentTimeMillis());
 
 		Map<UUID, Integer> expected = Collections.singletonMap(testUUID, 1);
 
@@ -109,7 +109,7 @@ class H2DatabaseManagerTest {
 		String date = db.getPlayerAchievementDate(testUUID, TEST_ACHIEVEMENT);
 		assertNull(date);
 
-		registerAchievement();
+		db.registerAchievement(testUUID, TEST_ACHIEVEMENT, System.currentTimeMillis());
 
 		date = db.getPlayerAchievementDate(testUUID, TEST_ACHIEVEMENT);
 		assertNotNull(date);
@@ -117,7 +117,7 @@ class H2DatabaseManagerTest {
 
 	@Test
 	void testDeleteAchievement() {
-		registerAchievement();
+		db.registerAchievement(testUUID, TEST_ACHIEVEMENT, System.currentTimeMillis());
 
 		db.deletePlayerAchievement(testUUID, TEST_ACHIEVEMENT);
 
@@ -126,8 +126,8 @@ class H2DatabaseManagerTest {
 
 	@Test
 	void testDeleteAllAchievements() {
-		registerAchievement(testUUID, TEST_ACHIEVEMENT);
-		registerAchievement(testUUID, TEST_ACHIEVEMENT + "2");
+		db.registerAchievement(testUUID, TEST_ACHIEVEMENT, System.currentTimeMillis());
+		db.registerAchievement(testUUID, TEST_ACHIEVEMENT + "2", System.currentTimeMillis());
 
 		db.deleteAllPlayerAchievements(testUUID);
 
@@ -148,18 +148,14 @@ class H2DatabaseManagerTest {
 	void testGetTopAchievements() {
 		long firstSave = 99L;
 
-		System.out.println("Save first achievement:  " + System.currentTimeMillis());
-		registerAchievement(testUUID, TEST_ACHIEVEMENT, 100L);
+		db.registerAchievement(testUUID, TEST_ACHIEVEMENT, 100L);
 
 		long secondSave = 199L;
 
 		UUID secondUUID = UUID.randomUUID();
-		String secondAch = "TestAchievement2";
 
-		System.out.println("Save second achievement: " + System.currentTimeMillis());
-		registerAchievement(secondUUID, TEST_ACHIEVEMENT, 200L);
-		System.out.println("Save third achievement:  " + System.currentTimeMillis());
-		registerAchievement(secondUUID, secondAch, 200L);
+		db.registerAchievement(secondUUID, TEST_ACHIEVEMENT, 200L);
+		db.registerAchievement(secondUUID, TEST_ACHIEVEMENT + "2", 200L);
 
 		Map<String, Integer> expected = new LinkedHashMap<>();
 		expected.put(secondUUID.toString(), 2);
@@ -179,7 +175,7 @@ class H2DatabaseManagerTest {
 
 	@Test
 	void testGetAchievementNameList() {
-		registerAchievement();
+		db.registerAchievement(testUUID, TEST_ACHIEVEMENT, System.currentTimeMillis());
 
 		Set<String> expected = Collections.singleton(TEST_ACHIEVEMENT);
 		Set<String> achNames = db.getPlayerAchievementNames(testUUID);
@@ -208,19 +204,6 @@ class H2DatabaseManagerTest {
 		ConnectionInformation connectionInformation = db.getConnectionInformation(testUUID);
 		assertEquals(ConnectionInformation.epoch(), connectionInformation.getDate());
 		assertEquals(0, connectionInformation.getCount());
-	}
-
-	private void registerAchievement() {
-		registerAchievement(testUUID, TEST_ACHIEVEMENT);
-	}
-
-	private void registerAchievement(UUID uuid, String ach) {
-		registerAchievement(uuid, ach, System.currentTimeMillis());
-	}
-
-	private void registerAchievement(UUID uuid, String ach, long date) {
-		System.out.println("Saving test achievement: " + uuid + " | " + ach);
-		db.registerAchievement(uuid, ach, date);
 	}
 
 	private void clearDatabase() {
