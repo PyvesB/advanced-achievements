@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -30,6 +29,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.db.data.ConnectionInformation;
@@ -43,6 +43,7 @@ import com.hm.achievement.db.data.ConnectionInformation;
 class H2DatabaseManagerTest {
 
 	private static final String TEST_ACHIEVEMENT = "testachievement";
+	private static final Logger LOGGER = Logger.getLogger("DBTestLogger");
 
 	private static H2DatabaseManager db;
 
@@ -52,10 +53,9 @@ class H2DatabaseManagerTest {
 	static void setUpClass(@TempDir Path tempDir) throws Exception {
 		AdvancedAchievements plugin = mock(AdvancedAchievements.class);
 		when(plugin.getDataFolder()).thenReturn(tempDir.relativize(Paths.get("").toAbsolutePath()).toFile());
-		Logger logger = Logger.getLogger("DBTestLogger");
 		YamlConfiguration config = YamlConfiguration
 				.loadConfiguration(new InputStreamReader(H2DatabaseManagerTest.class.getResourceAsStream("/config-h2.yml")));
-		db = new H2DatabaseManager(config, logger, new DatabaseUpdater(logger, null), plugin, newDirectExecutorService());
+		db = new H2DatabaseManager(config, LOGGER, new DatabaseUpdater(LOGGER, null), plugin, newDirectExecutorService());
 		db.initialise();
 		db.extractConfigurationParameters();
 	}
@@ -206,14 +206,39 @@ class H2DatabaseManagerTest {
 		assertEquals(0, connectionInformation.getCount());
 	}
 
-	private void clearDatabase() {
-		String sql = "DELETE FROM achievements";
+	@Test
+	void testGetNormalAchievementAmount() {
+		assertEquals(0, db.getNormalAchievementAmount(testUUID, NormalAchievements.BEDS));
 
 		((SQLWriteOperation) () -> {
-			Connection conn = db.getConnection();
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (PreparedStatement ps = db.getConnection()
+					.prepareStatement("REPLACE INTO beds VALUES ('" + testUUID + "',5)")) {
 				ps.execute();
 			}
-		}).executeOperation(db.writeExecutor, null, "Clearing achievements table");
+		}).executeOperation(db.writeExecutor, LOGGER, "Writing beds statistics");
+
+		assertEquals(5, db.getNormalAchievementAmount(testUUID, NormalAchievements.BEDS));
+	}
+
+	@Test
+	void testGetMultipleAchievementAmount() {
+		assertEquals(0, db.getMultipleAchievementAmount(testUUID, MultipleAchievements.CRAFTS, "diamond_axe"));
+
+		((SQLWriteOperation) () -> {
+			try (PreparedStatement ps = db.getConnection()
+					.prepareStatement("REPLACE INTO crafts VALUES ('" + testUUID + "','diamond_axe',7)")) {
+				ps.execute();
+			}
+		}).executeOperation(db.writeExecutor, LOGGER, "Writing crafts statistics");
+
+		assertEquals(7, db.getMultipleAchievementAmount(testUUID, MultipleAchievements.CRAFTS, "diamond_axe"));
+	}
+
+	private void clearDatabase() {
+		((SQLWriteOperation) () -> {
+			try (PreparedStatement ps = db.getConnection().prepareStatement("DELETE FROM achievements")) {
+				ps.execute();
+			}
+		}).executeOperation(db.writeExecutor, LOGGER, "Clearing achievements table");
 	}
 }
