@@ -12,3 +12,8 @@ DatabaseType: h2
 # the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.
 # Do a full server restart for this to take effect.
 TablePrefix: ""
+
+# When using groups of subcategories for Multiple action achievements (e.g. snow|snow_block|ice), you must ensure that
+# the value of this parameter is greater than the total number of characters in the group. Unless you use groups of very
+# large sizes, you don't need to change this value.
+TableMaxSizeOfGroupedSubcategories: 16
