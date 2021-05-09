@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
@@ -23,8 +24,8 @@ import com.hm.achievement.db.data.ConnectionInformation;
 public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
 	public PostgreSQLDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
-			DatabaseUpdater databaseUpdater) {
-		super(mainConfig, logger, databaseUpdater, "org.postgresql.Driver", "postgresql");
+			DatabaseUpdater databaseUpdater, ExecutorService writeExecutor) {
+		super(mainConfig, logger, databaseUpdater, "org.postgresql.Driver", "postgresql", writeExecutor);
 	}
 
 	@Override
@@ -52,7 +53,7 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 				ps.setTimestamp(4, new Timestamp(time));
 				ps.execute();
 			}
-		}).executeOperation(pool, logger, "registering an achievement");
+		}).executeOperation(writeExecutor, logger, "registering an achievement");
 	}
 
 	@Override
@@ -71,6 +72,6 @@ public class PostgreSQLDatabaseManager extends AbstractRemoteDatabaseManager {
 				writePrep.setString(5, date);
 				writePrep.execute();
 			}
-		}).executeOperation(pool, logger, "updating connection date and count");
+		}).executeOperation(writeExecutor, logger, "updating connection date and count");
 	}
 }

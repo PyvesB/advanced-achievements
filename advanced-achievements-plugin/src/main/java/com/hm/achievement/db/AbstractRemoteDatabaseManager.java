@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
@@ -29,8 +30,8 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 	private final String databaseType;
 
 	public AbstractRemoteDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
-			DatabaseUpdater databaseUpdater, String driverPath, String databaseType) {
-		super(mainConfig, logger, databaseUpdater, driverPath);
+			DatabaseUpdater databaseUpdater, String driverPath, String databaseType, ExecutorService writeExecutor) {
+		super(mainConfig, logger, databaseUpdater, driverPath, writeExecutor);
 		this.databaseType = databaseType;
 	}
 

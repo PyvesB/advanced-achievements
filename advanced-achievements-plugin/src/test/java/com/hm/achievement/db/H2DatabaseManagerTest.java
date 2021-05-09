@@ -1,5 +1,6 @@
 package com.hm.achievement.db;
 
+import static com.google.common.util.concurrent.MoreExecutors.newDirectExecutorService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -28,7 +29,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.google.common.util.concurrent.MoreExecutors;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
@@ -55,8 +55,7 @@ class H2DatabaseManagerTest {
 		Logger logger = Logger.getLogger("DBTestLogger");
 		YamlConfiguration config = YamlConfiguration
 				.loadConfiguration(new InputStreamReader(H2DatabaseManagerTest.class.getResourceAsStream("/config-h2.yml")));
-		db = new H2DatabaseManager(config, logger, new DatabaseUpdater(logger, null), plugin);
-		db.pool = MoreExecutors.newDirectExecutorService();
+		db = new H2DatabaseManager(config, logger, new DatabaseUpdater(logger, null), plugin, newDirectExecutorService());
 		db.initialise();
 		db.extractConfigurationParameters();
 	}
@@ -232,6 +231,6 @@ class H2DatabaseManagerTest {
 			try (PreparedStatement ps = conn.prepareStatement(sql)) {
 				ps.execute();
 			}
-		}).executeOperation(db.pool, null, "Clearing achievements table");
+		}).executeOperation(db.writeExecutor, null, "Clearing achievements table");
 	}
 }

@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -42,13 +41,12 @@ import com.hm.achievement.lifecycle.Reloadable;
  */
 public abstract class AbstractDatabaseManager implements Reloadable {
 
-	// Used to do perform the database write operations asynchronously.
-	ExecutorService pool;
 	// Connection to the database; remains opened and shared.
 	final AtomicReference<Connection> connectionHolder = new AtomicReference<>();
 	final YamlConfiguration mainConfig;
 	final Logger logger;
 	final String driverPath;
+	final ExecutorService writeExecutor;
 
 	volatile String prefix;
 
@@ -59,14 +57,12 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	private boolean initialised = false;
 
 	public AbstractDatabaseManager(YamlConfiguration mainConfig, Logger logger, DatabaseUpdater databaseUpdater,
-			String driverPath) {
+			String driverPath, ExecutorService writeExecutor) {
 		this.mainConfig = mainConfig;
 		this.logger = logger;
 		this.databaseUpdater = databaseUpdater;
 		this.driverPath = driverPath;
-		// We expect to execute many short writes to the database. The pool can grow dynamically under high load and
-		// allows to reuse threads.
-		pool = Executors.newCachedThreadPool();
+		this.writeExecutor = writeExecutor;
 	}
 
 	@Override
@@ -130,10 +126,10 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * Shuts the thread pool down and closes connection to database.
 	 */
 	public void shutdown() {
-		pool.shutdown();
+		writeExecutor.shutdown();
 		try {
 			// Wait a few seconds for remaining tasks to execute.
-			if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
+			if (!writeExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
 				logger.warning("Some write operations could not be sent to the database during plugin shutdown.");
 			}
 		} catch (InterruptedException e) {
@@ -298,7 +294,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setTimestamp(3, new Timestamp(epochMs));
 				ps.execute();
 			}
-		}).executeOperation(pool, logger, "registering an achievement");
+		}).executeOperation(writeExecutor, logger, "registering an achievement");
 	}
 
 	/**
@@ -387,7 +383,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				writePrep.setString(3, ConnectionInformation.today());
 				writePrep.execute();
 			}
-		}).executeOperation(pool, logger, "updating connection date and count");
+		}).executeOperation(writeExecutor, logger, "updating connection date and count");
 	}
 
 	/**
@@ -404,7 +400,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setString(2, achName);
 				ps.execute();
 			}
-		}).executeOperation(pool, logger, "deleting an achievement");
+		}).executeOperation(writeExecutor, logger, "deleting an achievement");
 	}
 
 	/**
@@ -419,7 +415,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 				ps.setString(1, uuid.toString());
 				ps.execute();
 			}
-		}).executeOperation(pool, logger, "deleting all achievements");
+		}).executeOperation(writeExecutor, logger, "deleting all achievements");
 	}
 
 	/**
@@ -433,7 +429,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 			try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 				ps.execute();
 			}
-		}).executeOperation(pool, logger, "clearing connection statistics");
+		}).executeOperation(writeExecutor, logger, "clearing connection statistics");
 	}
 
 	String getPrefix() {
