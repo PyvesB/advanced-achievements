@@ -342,7 +342,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 					}
 				}
 			}
-			return 0L;
+			return category == MultipleAchievements.JOBSREBORN ? 1L : 0L;
 		}).executeOperation("retrieving " + category + "." + subcategory + " statistics");
 	}
 

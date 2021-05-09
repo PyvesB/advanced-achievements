@@ -234,6 +234,11 @@ class H2DatabaseManagerTest {
 		assertEquals(7, db.getMultipleAchievementAmount(testUUID, MultipleAchievements.CRAFTS, "diamond_axe"));
 	}
 
+	@Test
+	void testGetDefaultJobsRebornAchievementAmount() {
+		assertEquals(1, db.getMultipleAchievementAmount(testUUID, MultipleAchievements.JOBSREBORN, "hunter"));
+	}
+
 	private void clearDatabase() {
 		((SQLWriteOperation) () -> {
 			try (PreparedStatement ps = db.getConnection().prepareStatement("DELETE FROM achievements")) {
