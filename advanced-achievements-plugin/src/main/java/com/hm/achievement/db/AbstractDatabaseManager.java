@@ -41,8 +41,6 @@ import com.hm.achievement.lifecycle.Reloadable;
  */
 public abstract class AbstractDatabaseManager implements Reloadable {
 
-	// Connection to the database; remains opened and shared.
-	final AtomicReference<Connection> connectionHolder = new AtomicReference<>();
 	final YamlConfiguration mainConfig;
 	final Logger logger;
 	final String driverPath;
@@ -50,6 +48,8 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 
 	volatile String prefix;
 
+	// Connection to the database; remains opened and shared.
+	private final AtomicReference<Connection> connectionHolder = new AtomicReference<>();
 	private final DatabaseUpdater databaseUpdater;
 
 	private DateFormat dateFormat;
