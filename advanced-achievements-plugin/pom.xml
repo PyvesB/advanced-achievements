@@ -121,10 +121,6 @@
 			<artifactId>petmaster</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>codecrafter47.bungeetablistplus</groupId>
-			<artifactId>bungeetablistplus-api-bukkit</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.github.Zrips</groupId>
 			<artifactId>Jobs</artifactId>
 		</dependency>

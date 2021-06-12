@@ -112,7 +112,6 @@ version-command-description-details: Advanced Achievements wprowadza do gry unik
   sie po szczeblach rankingu i zbieraj ksiegi osiagniec!
 version-command-vault: 'Integracja z Vault:'
 version-command-petmaster: 'Integracja z Pet Master:'
-version-command-btlp: 'Integracja z BungeeTabListPlus:'
 version-command-database: 'Typ bazy danych:'
 version-command-essentials: 'Essentials integration:'
 version-command-placeholderapi: 'Integracja z PaPi:'

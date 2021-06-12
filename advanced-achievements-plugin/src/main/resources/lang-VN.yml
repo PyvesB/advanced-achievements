@@ -105,7 +105,6 @@ version-command-description: 'Miêu tả:'
 version-command-description-details: Thành tựu tiên tiến cho phép tạo ra những thành tựu độc đáo và đầy thử thách. Hãy cố gắng thu thập càng nhiều như bạn có thể, kiếm được phần thưởng, leo lên các bảng xếp hạng và nhận sách RP!
 version-command-vault: 'Tích hợp Vault:'
 version-command-petmaster: 'Tích hợp Pet Master:'
-version-command-btlp: 'Tích hợp BungeeTabListPlus:'
 version-command-essentials: 'Tích hợp Essentials:'
 version-command-placeholderapi: 'Tích hợp PlaceholderAPI:'
 version-command-database: 'Kiểu CSDL:'

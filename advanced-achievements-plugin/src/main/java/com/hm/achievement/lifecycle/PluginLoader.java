@@ -36,12 +36,10 @@ import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
 import com.hm.achievement.listener.TeleportListener;
 import com.hm.achievement.listener.UpdateChecker;
 import com.hm.achievement.listener.statistics.AbstractListener;
-import com.hm.achievement.placeholder.AchievementCountBungeeTabListPlusVariable;
 import com.hm.achievement.placeholder.AchievementPlaceholderHook;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 
-import codecrafter47.bungeetablistplus.api.bukkit.BungeeTabListPlusBukkitAPI;
 import dagger.Lazy;
 
 /**
@@ -66,10 +64,8 @@ public class PluginLoader {
 	private final PlayerAdvancedAchievementListener playerAdvancedAchievementListener;
 	private final TeleportListener teleportListener;
 
-	// Integrations with other plugins. Use lazy injection as these may or may not be used depending on runtime
-	// conditions.
+	// Integration with PlaceholderAPI. Use lazy injection as it may or may not be used depending on runtime conditions.
 	private final Lazy<AchievementPlaceholderHook> achievementPlaceholderHook;
-	private final Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable;
 
 	// Database related.
 	private final AbstractDatabaseManager databaseManager;
@@ -98,7 +94,6 @@ public class PluginLoader {
 			FireworkListener fireworkListener, JoinListener joinListener, ListGUIListener listGUIListener,
 			PlayerAdvancedAchievementListener playerAdvancedAchievementListener, Cleaner cleaner,
 			TeleportListener teleportListener, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
-			Lazy<AchievementCountBungeeTabListPlusVariable> achievementCountBungeeTabListPlusVariable,
 			AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
 			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
 			Set<Category> disabledCategories, @Named("main") YamlConfiguration mainConfig,
@@ -115,7 +110,6 @@ public class PluginLoader {
 		this.cleaner = cleaner;
 		this.teleportListener = teleportListener;
 		this.achievementPlaceholderHook = achievementPlaceholderHook;
-		this.achievementCountBungeeTabListPlusVariable = achievementCountBungeeTabListPlusVariable;
 		this.databaseManager = databaseManager;
 		this.asyncCachedRequestsSender = asyncCachedRequestsSender;
 		this.pluginCommandExecutor = pluginCommandExecutor;
@@ -306,19 +300,12 @@ public class PluginLoader {
 	}
 
 	/**
-	 * Links third-party placeholder plugins (PlaceholderAPI and BungeeTabListPlus currently supported).
+	 * Links the PlaceholderAPI plugin.
 	 */
 	private void linkPlaceholders() {
-		if (Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus")) {
-			BungeeTabListPlusBukkitAPI.unregisterVariables(advancedAchievements);
-			BungeeTabListPlusBukkitAPI.registerVariable(advancedAchievements,
-					achievementCountBungeeTabListPlusVariable.get());
-		}
-
-		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-			if (!achievementPlaceholderHook.get().isRegistered()) {
-				achievementPlaceholderHook.get().register();
-			}
+		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")
+				&& !achievementPlaceholderHook.get().isRegistered()) {
+			achievementPlaceholderHook.get().register();
 		}
 	}
 }

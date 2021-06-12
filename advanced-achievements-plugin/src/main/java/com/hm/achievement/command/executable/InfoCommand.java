@@ -34,7 +34,6 @@ public class InfoCommand extends AbstractCommand {
 	private String langVersionCommandWebsite;
 	private String langVersionCommandVault;
 	private String langVersionCommandPetmaster;
-	private String langVersionCommandBtlp;
 	private String langVersionCommandEssentials;
 	private String langVersionCommandPlaceholderAPI;
 	private String langVersionCommandDatabase;
@@ -82,11 +81,6 @@ public class InfoCommand extends AbstractCommand {
 				+ langConfig.getString("version-command-petmaster") + " " + ChatColor.GRAY
 				+ translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
 
-		// Display whether Advanced Achievements is linked to BungeeTabListPlus.
-		String btlpState = Bukkit.getPluginManager().isPluginEnabled("BungeeTabListPlus") ? "&a\u2714" : "&4\u2718";
-		langVersionCommandBtlp = pluginHeader.toString() + configColor + langConfig.getString("version-command-btlp")
-				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(btlpState));
-
 		// Display whether Advanced Achievements is linked to Essentials.
 		boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials")
 				&& mainConfig.getBoolean("IgnoreAFKPlayedTime");
@@ -129,7 +123,6 @@ public class InfoCommand extends AbstractCommand {
 		if (sender.hasPermission("achievement.*")) {
 			sender.sendMessage(langVersionCommandVault);
 			sender.sendMessage(langVersionCommandPetmaster);
-			sender.sendMessage(langVersionCommandBtlp);
 			sender.sendMessage(langVersionCommandEssentials);
 			sender.sendMessage(langVersionCommandPlaceholderAPI);
 			sender.sendMessage(langVersionCommandDatabase);
