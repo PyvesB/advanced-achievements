@@ -81,10 +81,11 @@ public class ConfigurationParser {
 	 */
 	public void loadAndParseConfiguration() throws PluginLoadError {
 		logger.info("Backing up and loading configuration files...");
-		backupAndLoadConfiguration("config.yml", "config.yml", mainConfig);
+		backupAndLoadConfiguration("config.yml", "config.yml", "config.yml", mainConfig);
 		String langName = mainConfig.getString("LanguageFileName");
-		backupAndLoadConfiguration(langName, langName, langConfig);
-		backupAndLoadConfiguration(serverVersion < 13 ? "gui-legacy.yml" : "gui.yml", "gui.yml", guiConfig);
+		backupAndLoadConfiguration(langName, "lang.yml", langName, langConfig);
+		String guiName = serverVersion < 13 ? "gui-legacy.yml" : "gui.yml";
+		backupAndLoadConfiguration(guiName, guiName, "gui.yml", guiConfig);
 		parseHeader();
 		parseDisabledCategories();
 		parseAchievements();
@@ -107,12 +108,14 @@ public class ConfigurationParser {
 	 * Loads and backs up a configuration file.
 	 *
 	 * @param defaultConfigName
+	 * @param latestConfigName
 	 * @param userConfigName
 	 * @param userConfig
 	 *
 	 * @throws PluginLoadError
 	 */
-	private void backupAndLoadConfiguration(String defaultConfigName, String userConfigName, YamlConfiguration userConfig)
+	private void backupAndLoadConfiguration(String defaultConfigName, String latestConfigName, String userConfigName,
+			YamlConfiguration userConfig)
 			throws PluginLoadError {
 		File configFile = new File(plugin.getDataFolder(), userConfigName);
 		try {
@@ -133,7 +136,7 @@ public class ConfigurationParser {
 				}
 			}
 			userConfig.load(configFile);
-			yamlUpdater.update(defaultConfigName, userConfigName, userConfig);
+			yamlUpdater.update(latestConfigName, userConfigName, userConfig);
 		} catch (IOException | InvalidConfigurationException e) {
 			throw new PluginLoadError("Failed to load " + userConfigName
 					+ ". Verify its syntax on yaml-online-parser.appspot.com and use the following logs.", e);
