@@ -203,7 +203,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		String nameToShowUser = ChatColor.translateAlternateColorCodes('&', achievement.getDisplayName());
 		String messageToShowUser = ChatColor.translateAlternateColorCodes('&', achievement.getMessage());
 
-		if (configReceiverChatMessages) {
+		if (configReceiverChatMessages || player.hasPermission("achievement.config.receiver.chat.messages")) {
 			displayReceiverMessages(player, nameToShowUser, messageToShowUser, achievement.getRewards());
 		}
 
@@ -223,7 +223,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			displaySimplifiedReception(player);
 		}
 
-		if (configTitleScreen) {
+		if (configTitleScreen || player.hasPermission("achievement.config.title.screen")) {
 			displayTitle(player, nameToShowUser, messageToShowUser);
 		}
 	}

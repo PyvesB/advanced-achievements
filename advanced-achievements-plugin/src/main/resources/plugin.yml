@@ -81,6 +81,12 @@ permissions:
       achievement.generate: true
       achievement.update: true
       achievement.count.*: true
+  achievement.config.title.screen:
+    description: If TitleScreen is false in config.yml, allows overriding to true on a per-player basis.
+    default: false
+  achievement.config.receiver.chat.messages:
+    description: If ReceiverChatMessages is false in config.yml, allows overriding to true on a per-player basis.
+    default: false
   achievement.count.*:
     description: Star notation of statistic count permissions.
     default: true
