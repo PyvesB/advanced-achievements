@@ -224,6 +224,8 @@ public class FireworksListener extends AbstractListener {
 		}
 		// The following materials prevent firework launches regardless of whether the player is sneaking or not.
 		switch (clickedMaterial.name()) {
+			case "GLOW_ITEM_FRAME":
+				// Pre Minecraft 1.17:
 			case "PAINTING":
 			case "ITEM_FRAME":
 			case "MINECART":

@@ -19,21 +19,40 @@ public final class FancyMessageSender {
 
 	private static final byte CHAT_MESSAGE_BYTE = 1;
 	private static final byte ACTION_BAR_BYTE = 2;
-	private static final int MINOR_VERSION_NUMBER = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
-	private static final String CLASS_CHAT_BASE_COMPONENT = "IChatBaseComponent";
+	private static final String CLASS_CHAT_BASE_COMPONENT;
 	private static final String CLASS_CRAFT_PLAYER = "CraftPlayer";
-	private static final String CLASS_ENTITY_PLAYER = "EntityPlayer";
-	private static final String CLASS_PACKET = "Packet";
-	private static final String CLASS_PACKET_PLAY_OUT_CHAT = "PacketPlayOutChat";
+	private static final String CLASS_ENTITY_PLAYER;
+	private static final String CLASS_PACKET;
+	private static final String CLASS_PACKET_PLAY_OUT_CHAT;
 	private static final String CLASS_PACKET_PLAY_OUT_TITLE = "PacketPlayOutTitle";
-	private static final String CLASS_PLAYER_CONNECTION = "PlayerConnection";
+	private static final String CLASS_PLAYER_CONNECTION;
 	private static final String ENUM_TITLE_ACTION = "EnumTitleAction";
-	private static final String ENUM_CHAT_MESSAGE_TYPE = "ChatMessageType";
-	private static final String FIELD_PLAYER_CONNECTION = "playerConnection";
+	private static final String ENUM_CHAT_MESSAGE_TYPE;
+	private static final String FIELD_PLAYER_CONNECTION;
 	private static final String METHOD_GET_HANDLE = "getHandle";
 	private static final String METHOD_SEND_PACKET = "sendPacket";
 	private static final String NESTED_CHAT_SERIALIZER = "ChatSerializer";
 	private static final String PACKAGE_ENTITY = "entity";
+	private static final int MINOR_VERSION_NUMBER = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
+	static {
+		if (MINOR_VERSION_NUMBER < 17) {
+			CLASS_CHAT_BASE_COMPONENT = PackageType.MINECRAFT_SERVER + ".IChatBaseComponent";
+			CLASS_ENTITY_PLAYER = PackageType.MINECRAFT_SERVER + ".EntityPlayer";
+			CLASS_PACKET = PackageType.MINECRAFT_SERVER + ".Packet";
+			CLASS_PACKET_PLAY_OUT_CHAT = PackageType.MINECRAFT_SERVER + ".PacketPlayOutChat";
+			CLASS_PLAYER_CONNECTION = PackageType.MINECRAFT_SERVER + ".PlayerConnection";
+			ENUM_CHAT_MESSAGE_TYPE = PackageType.MINECRAFT_SERVER + ".ChatMessageType";
+			FIELD_PLAYER_CONNECTION = "playerConnection";
+		} else {
+			CLASS_CHAT_BASE_COMPONENT = "net.minecraft.network.chat.IChatBaseComponent";
+			CLASS_ENTITY_PLAYER = "net.minecraft.server.level.EntityPlayer";
+			CLASS_PACKET = "net.minecraft.network.protocol.Packet";
+			CLASS_PACKET_PLAY_OUT_CHAT = "net.minecraft.network.protocol.game.PacketPlayOutChat";
+			CLASS_PLAYER_CONNECTION = "net.minecraft.server.network.PlayerConnection";
+			ENUM_CHAT_MESSAGE_TYPE = "net.minecraft.network.chat.ChatMessageType";
+			FIELD_PLAYER_CONNECTION = "b";
+		}
+	}
 
 	private FancyMessageSender() {
 		// Not called.
@@ -113,8 +132,7 @@ public final class FancyMessageSender {
 		Object craftPlayer = PackageType.CRAFTBUKKIT.getClass(PACKAGE_ENTITY + "." + CLASS_CRAFT_PLAYER).cast(player);
 		Object craftHandle = PackageType.CRAFTBUKKIT.getClass(PACKAGE_ENTITY + "." + CLASS_CRAFT_PLAYER)
 				.getMethod(METHOD_GET_HANDLE).invoke(craftPlayer);
-		Object playerConnection = PackageType.MINECRAFT_SERVER.getClass(CLASS_ENTITY_PLAYER)
-				.getField(FIELD_PLAYER_CONNECTION).get(craftHandle);
+		Object playerConnection = Class.forName(CLASS_ENTITY_PLAYER).getField(FIELD_PLAYER_CONNECTION).get(craftHandle);
 
 		Object parsedMainMessage;
 		Object parsedSubMessage;
@@ -129,11 +147,11 @@ public final class FancyMessageSender {
 					.invoke(null, ChatColor.translateAlternateColorCodes('&', subtitleJson));
 			titleClass = PackageType.MINECRAFT_SERVER.getClass(ENUM_TITLE_ACTION);
 		} else {
-			parsedMainMessage = PackageType.MINECRAFT_SERVER
-					.getClass(CLASS_CHAT_BASE_COMPONENT + "$" + NESTED_CHAT_SERIALIZER).getMethod("a", String.class)
+			parsedMainMessage = Class.forName(CLASS_CHAT_BASE_COMPONENT + "$" + NESTED_CHAT_SERIALIZER)
+					.getMethod("a", String.class)
 					.invoke(null, ChatColor.translateAlternateColorCodes('&', titleJson));
-			parsedSubMessage = PackageType.MINECRAFT_SERVER
-					.getClass(CLASS_CHAT_BASE_COMPONENT + "$" + NESTED_CHAT_SERIALIZER).getMethod("a", String.class)
+			parsedSubMessage = Class.forName(CLASS_CHAT_BASE_COMPONENT + "$" + NESTED_CHAT_SERIALIZER)
+					.getMethod("a", String.class)
 					.invoke(null, ChatColor.translateAlternateColorCodes('&', subtitleJson));
 			titleClass = PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET_PLAY_OUT_TITLE + "$" + ENUM_TITLE_ACTION);
 		}
@@ -153,23 +171,23 @@ public final class FancyMessageSender {
 		Object packetPlayOutChatMainTitle = ReflectionUtils
 				.getConstructor(PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET_PLAY_OUT_TITLE),
 						PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET_PLAY_OUT_TITLE + "$" + ENUM_TITLE_ACTION),
-						PackageType.MINECRAFT_SERVER.getClass(CLASS_CHAT_BASE_COMPONENT))
+						Class.forName(CLASS_CHAT_BASE_COMPONENT))
 				.newInstance(mainTitleEnumValue, parsedMainMessage);
 
 		// Send the message packet through the PlayerConnection (title).
-		PackageType.MINECRAFT_SERVER.getClass(CLASS_PLAYER_CONNECTION)
-				.getMethod(METHOD_SEND_PACKET, PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET))
+		Class.forName(CLASS_PLAYER_CONNECTION)
+				.getMethod(METHOD_SEND_PACKET, Class.forName(CLASS_PACKET))
 				.invoke(playerConnection, packetPlayOutChatMainTitle);
 
 		Object packetPlayOutChatSubTitle = ReflectionUtils
 				.getConstructor(PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET_PLAY_OUT_TITLE),
 						PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET_PLAY_OUT_TITLE + "$" + ENUM_TITLE_ACTION),
-						PackageType.MINECRAFT_SERVER.getClass(CLASS_CHAT_BASE_COMPONENT))
+						Class.forName(CLASS_CHAT_BASE_COMPONENT))
 				.newInstance(subTitleEnumValue, parsedSubMessage);
 
 		// Send the message packet through the PlayerConnection (subtitle).
-		PackageType.MINECRAFT_SERVER.getClass(CLASS_PLAYER_CONNECTION)
-				.getMethod(METHOD_SEND_PACKET, PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET))
+		Class.forName(CLASS_PLAYER_CONNECTION)
+				.getMethod(METHOD_SEND_PACKET, Class.forName(CLASS_PACKET))
 				.invoke(playerConnection, packetPlayOutChatSubTitle);
 	}
 
@@ -187,8 +205,7 @@ public final class FancyMessageSender {
 		Object craftPlayer = PackageType.CRAFTBUKKIT.getClass(PACKAGE_ENTITY + "." + CLASS_CRAFT_PLAYER).cast(player);
 		Object craftHandle = PackageType.CRAFTBUKKIT.getClass(PACKAGE_ENTITY + "." + CLASS_CRAFT_PLAYER)
 				.getMethod(METHOD_GET_HANDLE).invoke(craftPlayer);
-		Object playerConnection = PackageType.MINECRAFT_SERVER.getClass(CLASS_ENTITY_PLAYER)
-				.getField(FIELD_PLAYER_CONNECTION).get(craftHandle);
+		Object playerConnection = Class.forName(CLASS_ENTITY_PLAYER).getField(FIELD_PLAYER_CONNECTION).get(craftHandle);
 
 		Object parsedMessage;
 		if (PackageType.getServerVersion().startsWith("1_8_R1")) {
@@ -196,20 +213,19 @@ public final class FancyMessageSender {
 			parsedMessage = PackageType.MINECRAFT_SERVER.getClass(NESTED_CHAT_SERIALIZER).getMethod("a", String.class)
 					.invoke(null, ChatColor.translateAlternateColorCodes('&', json));
 		} else {
-			parsedMessage = Class
-					.forName(PackageType.MINECRAFT_SERVER + "." + CLASS_CHAT_BASE_COMPONENT + "$" + NESTED_CHAT_SERIALIZER)
+			parsedMessage = Class.forName(CLASS_CHAT_BASE_COMPONENT + "$" + NESTED_CHAT_SERIALIZER)
 					.getMethod("a", String.class)
 					.invoke(null, ChatColor.translateAlternateColorCodes('&', json));
 		}
 
 		Object packetPlayOutChat;
 		if (MINOR_VERSION_NUMBER < 12) {
-			packetPlayOutChat = PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET_PLAY_OUT_CHAT)
-					.getConstructor(PackageType.MINECRAFT_SERVER.getClass(CLASS_CHAT_BASE_COMPONENT), byte.class)
+			packetPlayOutChat = Class.forName(CLASS_PACKET_PLAY_OUT_CHAT)
+					.getConstructor(Class.forName(CLASS_CHAT_BASE_COMPONENT), byte.class)
 					.newInstance(parsedMessage, type);
 		} else {
 			// New method uses the ChatMessageType enum rather than a byte.
-			Class<?> chatMessageTypeClass = PackageType.MINECRAFT_SERVER.getClass(ENUM_CHAT_MESSAGE_TYPE);
+			Class<?> chatMessageTypeClass = Class.forName(ENUM_CHAT_MESSAGE_TYPE);
 			Enum<?> chatType = null;
 			for (Object chatMessageType : chatMessageTypeClass.getEnumConstants()) {
 				Enum<?> e = (Enum<?>) chatMessageType;
@@ -225,21 +241,19 @@ public final class FancyMessageSender {
 			// public PacketPlayOutChat(IChatBaseComponent ichatbasecomponent, ChatMessageType chatmessagetype, UUID
 			// uuid)
 			if (MINOR_VERSION_NUMBER < 16) {
-				packetPlayOutChat = PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET_PLAY_OUT_CHAT)
-						.getConstructor(PackageType.MINECRAFT_SERVER.getClass(CLASS_CHAT_BASE_COMPONENT),
-								chatMessageTypeClass)
+				packetPlayOutChat = Class.forName(CLASS_PACKET_PLAY_OUT_CHAT)
+						.getConstructor(Class.forName(CLASS_CHAT_BASE_COMPONENT), chatMessageTypeClass)
 						.newInstance(parsedMessage, chatType);
 			} else {
-				packetPlayOutChat = PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET_PLAY_OUT_CHAT)
-						.getConstructor(PackageType.MINECRAFT_SERVER.getClass(CLASS_CHAT_BASE_COMPONENT),
-								chatMessageTypeClass, UUID.class)
+				packetPlayOutChat = Class.forName(CLASS_PACKET_PLAY_OUT_CHAT)
+						.getConstructor(Class.forName(CLASS_CHAT_BASE_COMPONENT), chatMessageTypeClass, UUID.class)
 						.newInstance(parsedMessage, chatType, player.getUniqueId());
 			}
 		}
 
 		// Send the message packet through the PlayerConnection.
-		PackageType.MINECRAFT_SERVER.getClass(CLASS_PLAYER_CONNECTION)
-				.getMethod(METHOD_SEND_PACKET, PackageType.MINECRAFT_SERVER.getClass(CLASS_PACKET))
+		Class.forName(CLASS_PLAYER_CONNECTION)
+				.getMethod(METHOD_SEND_PACKET, Class.forName(CLASS_PACKET))
 				.invoke(playerConnection, packetPlayOutChat);
 	}
 

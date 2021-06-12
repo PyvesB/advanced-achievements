@@ -214,7 +214,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	 */
 	@SuppressWarnings("unchecked")
 	private void setBookPages(List<String> bookPages, BookMeta bookMeta) {
-		if (serverVersion >= 11) {
+		if (serverVersion >= 11 && serverVersion <= 15) {
 			try {
 				// Code we're trying to execute: this.pages.add(CraftChatMessage.fromString(page, true)[0]); in
 				// CraftMetaBook.java.
