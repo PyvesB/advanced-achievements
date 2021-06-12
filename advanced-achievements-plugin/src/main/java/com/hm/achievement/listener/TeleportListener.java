@@ -1,10 +1,16 @@
 package com.hm.achievement.listener;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -20,10 +26,12 @@ import com.hm.achievement.runnable.AchieveDistanceRunnable;
 public class TeleportListener implements Listener {
 
 	private final AchieveDistanceRunnable distanceRunnable;
+	private final int serverVersion;
 
 	@Inject
-	public TeleportListener(AchieveDistanceRunnable distanceRunnable) {
+	public TeleportListener(AchieveDistanceRunnable distanceRunnable, int serverVersion) {
 		this.distanceRunnable = distanceRunnable;
+		this.serverVersion = serverVersion;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -42,7 +50,21 @@ public class TeleportListener implements Listener {
 			return;
 		}
 
-		// Update location of player if he teleports somewhere else.
+		// Update location of player if they teleport somewhere else.
 		distanceRunnable.updateLocation(event.getPlayer().getUniqueId(), event.getTo());
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityTeleport(EntityTeleportEvent event) {
+		@SuppressWarnings("deprecation")
+		List<Entity> passengers = serverVersion < 11 ? Collections.singletonList(event.getEntity().getPassenger())
+				: event.getEntity().getPassengers();
+		for (Entity passenger : passengers) {
+			if (passenger instanceof Player) {
+				// Update location of player if they teleport somewhere else.
+				distanceRunnable.updateLocation(((Player) passenger).getUniqueId(), event.getTo());
+			}
+		}
+
 	}
 }
