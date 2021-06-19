@@ -3,9 +3,9 @@ updates:
 - package-ecosystem: maven
   directory: "/"
   schedule:
-    interval: weekly
+    interval: monthly
 # For dagger-compiler annotation processor.
 - package-ecosystem: maven
   directory: "/advanced-achievements-plugin"
   schedule:
-    interval: weekly
+    interval: monthly
