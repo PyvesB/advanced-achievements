@@ -157,16 +157,17 @@ public class DatabaseUpdater {
 	 * @param databaseManager
 	 */
 	void removeAchievementDescriptions(AbstractDatabaseManager databaseManager) {
-		try (ResultSet rs = databaseManager.getConnection().getMetaData().getColumns(null, null, databaseManager.getPrefix()
+		Connection connection = databaseManager.getConnection();
+		try (ResultSet rs = connection.getMetaData().getColumns(null, null, databaseManager.getPrefix()
 				+ "achievements", "description")) {
 			if (rs.next()) {
 				logger.info("Removing descriptions from database storage, please wait...");
-				try (Statement st = databaseManager.getConnection().createStatement()) {
-					// SQLite does not support dropping columns: create new table and copy contents over.
-					if (databaseManager instanceof SQLiteDatabaseManager) {
+				// SQLite does not support dropping columns: create new table and copy contents over.
+				if (databaseManager instanceof SQLiteDatabaseManager) {
+					SQLOperation operation = st -> {
 						st.execute(
 								"CREATE TABLE tempTable (playername char(36),achievement varchar(64),date TIMESTAMP,PRIMARY KEY (playername, achievement))");
-						try (PreparedStatement prep = databaseManager.getConnection()
+						try (PreparedStatement prep = connection
 								.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
 								ResultSet achievements = st.executeQuery("SELECT * FROM achievements")) {
 							while (achievements.next()) {
@@ -179,7 +180,10 @@ public class DatabaseUpdater {
 							st.execute("DROP TABLE achievements");
 							st.execute("ALTER TABLE tempTable RENAME TO achievements");
 						}
-					} else {
+					};
+					doInTransaction(databaseManager, operation);
+				} else {
+					try (Statement st = connection.createStatement()) {
 						st.execute("ALTER TABLE " + databaseManager.getPrefix() + "achievements DROP COLUMN description");
 					}
 				}
@@ -199,13 +203,13 @@ public class DatabaseUpdater {
 	 */
 	private void updateOldMaterialsToNewOnes(AbstractDatabaseManager databaseManager, MultipleAchievements category,
 			int size) {
-		String tableName = databaseManager.getPrefix() + category.toDBName();
-		Connection connection = databaseManager.getConnection();
-		try (Statement st = connection.createStatement()) {
+		SQLOperation operation = st -> {
+			String tableName = databaseManager.getPrefix() + category.toDBName();
 			// Create new temporary table.
 			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(" + size
 					+ ")," + tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
-			try (PreparedStatement prep = connection.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
+			try (PreparedStatement prep = databaseManager.getConnection()
+					.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
 					ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "")) {
 				List<String> uuids = new ArrayList<>();
 				List<String> materialKeys = new ArrayList<>();
@@ -216,8 +220,6 @@ public class DatabaseUpdater {
 					materialKeys.add(convertToNewMaterialKey(rs.getString(2)));
 					amounts.add(rs.getInt(3));
 				}
-				// Prevent from doing any commits before entire transaction is ready.
-				connection.setAutoCommit(false);
 
 				// Populate new table with contents of the old one and material strings. Batch the insert requests.
 				for (int i = 0; i < uuids.size(); ++i) {
@@ -227,16 +229,15 @@ public class DatabaseUpdater {
 					prep.addBatch();
 				}
 				prep.executeBatch();
-			} finally {
 				// Delete old table.
 				st.execute("DROP TABLE " + tableName);
 				// Rename new table to old one.
 				st.execute("ALTER TABLE tempTable RENAME TO " + tableName);
 			}
-			// Commit entire transaction.
-			connection.commit();
-			connection.setAutoCommit(true);
-		} catch (Exception e) {
+		};
+		try {
+			doInTransaction(databaseManager, operation);
+		} catch (SQLException e) {
 			logger.log(Level.SEVERE, "Database error while updating old material names to new Minecraft 1.13 ones:", e);
 		}
 	}
@@ -261,5 +262,27 @@ public class DatabaseUpdater {
 			}
 		}
 		return StringUtils.join(newMaterials, "|");
+	}
+
+	private void doInTransaction(AbstractDatabaseManager databaseManager, SQLOperation operation) throws SQLException {
+		Connection connection = databaseManager.getConnection();
+		try (Statement st = connection.createStatement()) {
+			// Prevent from doing any commits before entire transaction is ready.
+			connection.setAutoCommit(false);
+			operation.perform(st);
+			connection.commit();
+		} catch (SQLException e) {
+			connection.rollback();
+			throw e;
+		} finally {
+			connection.setAutoCommit(true);
+		}
+	}
+
+	@FunctionalInterface
+	private interface SQLOperation {
+
+		void perform(Statement statement) throws SQLException;
+
 	}
 }
