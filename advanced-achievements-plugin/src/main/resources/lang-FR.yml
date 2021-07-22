@@ -45,11 +45,11 @@ book-not-received: "Vous n'avez pas encore reçu de succès."
 
 # Used in /aach give.
 player-offline: "Le joueur PLAYER n'est pas en ligne !"
-not-a-player: "You cannot give achievements to ENTITY, it is not a player!"
+not-a-player: "Vous ne pouvez pas donner un succès à une entité, ce n'est pas un joueur !"
 achievement-already-received: "Le joueur PLAYER possède déjà ce succès !"
 achievement-not-found: "Le succès spécifié n'a pas été trouvé dans la catégorie Commandes. Vouliez-vous dire CLOSEST_MATCH ?"
 achievement-given: "Succès donné !"
-achievement-no-permission: "The player PLAYER does not have permission to receive this achievement !"
+achievement-no-permission: "Le joueur PLAYER n'a pas la permission de recevoir ce succès !"
 
 # Used in /aach add.
 error-value: "La valeur VALUE doit être un nombre entier !"
@@ -129,8 +129,8 @@ list-description: "Description :"
 list-goal: "Objectif :"
 list-reception: "Date de réception :"
 list-progress: "Progression :"
-list-reward: "Récompense(s) :"
-list-rewards: "Rewards:"
+list-reward: "Récompense :"
+list-rewards: "Récompenses :"
 list-reward-money: "POs"
 list-reward-item: "objet"
 list-reward-experience: "recevez AMOUNT points d'EXP"
@@ -212,7 +212,7 @@ toggle-hidden: "Vous ne serez plus notifié quand d'autres joueurs recevront des
 
 # Used in /aach reset.
 reset-successful: " statistique réinitialisée pour joueur PLAYER."
-reset-all-successful: "Toute les statistiques ont été réinitialisée pour PLAYER."
+reset-all-successful: "Toute les statistiques ont été réinitialisées pour PLAYER."
 
 # Used in /aach generate.
 advancements-generated: "Avancements générés avec succès."
