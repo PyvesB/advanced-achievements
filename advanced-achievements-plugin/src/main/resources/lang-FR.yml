@@ -1,23 +1,26 @@
-#=====================================================================#
-# +-----------------------------------------------------------------+ #
-# | Advanced Achievements French translation by DarkPyves/Taehyuun  | #
-# |                 ~ Valid as of version 5.15.1 ~                   | #
-# |       Newer plugin versions will automatically append new       | #
-# |         untranslated parameters to the end of the file.         | #
-# +-----------------------------------------------------------------+ #
-#=====================================================================#
+#======================================================================================================================#
+#       _       _                               _      _        _     _                                     _          #
+#      / \   __| |_   ____ _ _ __   ___ ___  __| |    / \   ___| |__ (_) _____   _____ _ __ ___   ___ _ __ | |_ ___    #
+#     / _ \ / _` \ \ / / _` | '_ \ / __/ _ \/ _` |   / _ \ / __| '_ \| |/ _ \ \ / / _ \ '_ ` _ \ / _ \ '_ \| __/ __|   #
+#    / ___ \ (_| |\ V / (_| | | | | (_|  __/ (_| |  / ___ \ (__| | | | |  __/\ V /  __/ | | | | |  __/ | | | |_\__ \   #
+#   /_/   \_\__,_| \_/ \__,_|_| |_|\___\___|\__,_| /_/   \_\___|_| |_|_|\___| \_/ \___|_| |_| |_|\___|_| |_|\__|___/   #
+#                                                                                                                      #
+#                    French translation by DarkPyves, Taehyuun and Nogapra (play.jaime-la-survie.fr)                   #
+#                                             À jour avec la version 7.1.1                                             #
+#======================================================================================================================#
 
+# Various user messages.
 no-permissions: "Vous n'avez pas la permission de faire cela."
 statistic-cooldown: "Achievements : Veuillez attendre TIME secondes avant que cette action ne compte à nouveau."
-category-does-not-exist: "La catégorie ou la sous-catégories CAT n'existe pas. Voulez-vous dire CLOSEST_MATCH ?"
-all-achievements-received: "Félicitations, tu as obtenu tous les succès !"
+category-does-not-exist: "La catégorie ou la sous-catégories CAT n'existe pas. Vouliez-vous dire CLOSEST_MATCH ?"
+all-achievements-received: "Félicitations, vous avez obtenu tous les succès !"
 invalid-command: "Commande invalide. Faites /aach pour afficher l'aide sur la commande."
 
-# Related to /aach reload.
+# Used in /aach reload.
 configuration-successfully-reloaded: "Configuration rechargée avec succès."
 configuration-reload-failed: "Erreur(s) lors du rechargement des configurations. Merci de consulter les logs détaillés pour plus d'informations."
 
-# Related to /aach top week and month.
+# Used in /aach top week and month.
 top-achievement: "Joueurs ayant obtenu le plus de succès :"
 player-rank: "Classement actuel :"
 week-achievement: "Joueurs ayant obtenu le plus de succès cette semaine :"
@@ -26,46 +29,49 @@ not-ranked: "Vous n'êtes pas classé sur cette période."
 pagination-header: "&7> &5Page PAGE/MAX"
 pagination-footer: "&7>"
 
-# Related to /aach stats.
+# Used in /aach stats.
 number-achievements: "Nombre de succès obtenus :"
 
-# Related to /aach book.
+# Used in /aach book.
 book-received: "Vous avez reçu votre livre de succès!"
 book-delay: "Vous devez attendre TIME secondes entre chaque obtention de livre !"
-book-name: "Livre de Succès"
+book-name: "Livre des succès"
 book-date: "Livre créé le DATE."
 book-not-received: "Vous n'avez pas encore reçu de succès."
 
-# Related to /aach give.
+# Used in /aach give.
 player-offline: "Le joueur PLAYER n'est pas en ligne !"
+not-a-player: "Vous ne pouvez pas donner un succès à une entité, ce n'est pas un joueur !"
 achievement-already-received: "Le joueur PLAYER possède déjà ce succès !"
-achievement-not-found: "Le succès spécifié n'a pas été trouvé dans la catégorie Commandes. Voulez-vous dire CLOSEST_MATCH ?"
+achievement-not-found: "Le succès spécifié n'a pas été trouvé dans la catégorie Commandes. Vouliez-vous dire CLOSEST_MATCH ?"
 achievement-given: "Succès donné !"
+achievement-no-permission: "Le joueur PLAYER n'a pas la permission de recevoir ce succès !"
 
-# Related to /aach add.
+# Used in /aach add.
 error-value: "La valeur VALUE doit être un nombre entier !"
 statistic-increased: "La statistique ACH de PLAYER a été augmentée de AMOUNT !"
 
-# Related to achievement reception.
+# Used in achievement reception.
 achievement-received: "PLAYER a reçu le succès :"
 achievement-new: "Nouveau succès :"
 
-# Related to /aach check.
+# Used in /aach check.
 check-achievement-true: "PLAYER a reçu le succès ACH !"
 check-achievements-false: "PLAYER n'a pas reçu ACH !"
 
-# Related to /aach delete.
+# Used in /aach delete.
 delete-achievements: "Le succès ACH a été supprimé du joueur PLAYER."
+delete-all-achievements: "All achievements were deleted from PLAYER."
 
-# Related to achievement rewards.
+# Used in achievement rewards.
 item-reward-received: "Vous avez reçu une récompense : AMOUNT ITEM"
 money-reward-received: "Vous avez gagné : AMOUNT !"
-custom-command-reward: "Tu as reçu ta récompense : MESSAGE"
-experience-reward-received: "Vous recevez: AMOUNT points d'EXP!"
-increase-max-health-reward-received: "Votre vie max. a été augmentée de AMOUNT!"
-increase-max-oxygen-reward-received: "Votre oxygène max. a été augmenté de AMOUNT!"
+custom-command-reward: "Vous avez reçu votre récompense : MESSAGE"
+experience-reward-received: "Vous recevez : AMOUNT points d'EXP !"
+increase-max-health-reward-received: "Votre vie max. a été augmentée de AMOUNT !"
+increase-max-oxygen-reward-received: "Votre oxygène max. a été augmenté de AMOUNT !"
 
-# Related to /aach help.
+# Used in /aach help.
 aach-command-book: "Obtenir votre livre de succès."
 aach-command-book-hover: "Des livres RP, que vous pouvez échanger et collectionner !"
 aach-command-stats: "Visualiser son nombre total de succès."
@@ -95,12 +101,12 @@ aach-command-toggle-hover: "Choix sauvegardé jusqu'au prochain redémarrage !"
 aach-command-reset: "Réinitialiser la stat pour CAT."
 aach-command-reset-hover: "Pour les catégories avec sous-catégories, elles sont toutes réinitialisées."
 aach-command-generate: "Générer les avancements."
-aach-command-generate-hover: "La commande rique de prendre du temps, à utiliser avec précaution!"
+aach-command-generate-hover: "La commande rique de prendre du temps, à utiliser avec précaution !"
 aach-command-inspect: "Montre les joueurs ayant obtenu le succès ACH."
 aach-command-inspect-hover: "Liste les joueurs ayant obtenu le succès le plus récemment, max 1000."
 aach-tip: "&lASTUCE &7&n&oCliquez&8 ou &7&n&opassez votre curseur&8 sur les commandes !"
 
-# Related to /aach info.
+# Used in /aach info.
 version-command-version: "Version :"
 version-command-website: "Site :"
 version-command-author: "Auteur :"
@@ -112,14 +118,15 @@ version-command-essentials: "Intégration d'Essentials :"
 version-command-placeholderapi: "Intégration de PlaceholderAPI :"
 version-command-database: "Type de la BDD :"
 
-# Related to /aach list.
+# Used in /aach list.
 list-gui-title: "&5&lListe de Succès"
 list-delay: "Vous devez attendre TIME secondes entre chaque /aach list !"
 list-description: "Description :"
 list-goal: "Objectif :"
 list-reception: "Date de réception :"
 list-progress: "Progression :"
-list-reward: "Récompense(s) :"
+list-reward: "Récompense :"
+list-rewards: "Récompenses :"
 list-reward-money: "POs"
 list-reward-item: "objet"
 list-reward-experience: "recevez AMOUNT points d'EXP"
@@ -128,6 +135,7 @@ list-reward-increase-max-oxygen: "Oxygène max. augmenté de AMOUNT"
 list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718&8 "
 list-category-not-unlocked: "Vous n'avez pas encore déverrouillé cette catégorie."
+list-achievement-not-unlocked: "Vous n'avez pas encore débloquer ce succès."
 list-back-message: "&7Retour"
 list-back-lore: ""
 list-previous-message: "&7Précédent"
@@ -136,8 +144,9 @@ list-next-message: "&7Suivant"
 list-next-lore: ""
 list-achievements-in-category-singular: "AMOUNT succès"
 list-achievements-in-category-plural: "AMOUNT succès"
+list-unavailable-whilst-sleeping: "&c&lVous ne pouvez pas ouvrir la liste des succès quand vous dormez."
 
-# Related to category names in /aach list.
+# Used in category names in /aach list.
 # Set a parameter to "" to hide it from /aach list (but not disable the category).
 list-connections: "Connexions"
 list-places: "Blocs Placés"
@@ -171,6 +180,7 @@ list-distance-minecart: "Distance Parcourue en Minecart"
 list-distance-boat: "Distance Parcourue en Bateau"
 list-distance-gliding: "Distance Parcourue avec Elytre"
 list-distance-llama: "Distance Parcourue avec Lama"
+list-distance-sneaking: "Distance Parcourue Accroupi"
 list-itemdrops: "Objets Jetés"
 list-itempickups: "Objets ramassés"
 list-hoeplowings: "Parcelles Labourées"
@@ -189,24 +199,26 @@ list-custom: "Catégorie Personnalisée"
 list-targetsshot: "Cibles Touchées"
 list-raids-won: "Raids gagnés"
 list-riptides: "Impulsions Utilisées"
+list-jobsreborn: "Jobs Level-Up"
 list-advancements-completed: "Succès Obtenu"
 
-# Related to /aach toggle.
+# Used in /aach toggle.
 toggle-displayed: "Vous serez notifié quand d'autres joueurs recevront des succès."
 toggle-hidden: "Vous ne serez plus notifié quand d'autres joueurs recevront des succès."
 
-# Related to /aach reset.
+# Used in /aach reset.
 reset-successful: " statistique réinitialisée pour joueur PLAYER."
+reset-all-successful: "Toute les statistiques ont été réinitialisées pour PLAYER."
 
-# Related to /aach generate.
+# Used in /aach generate.
 advancements-generated: "Avancements générés avec succès."
 minecraft-not-supported: "Les avancements ne sont pas supportés avec votre version de Minecraft. (1.12+)"
 
-# Related to /aach inspect
+# Used in /aach inspect
 achievement-not-recognized: "Le succès 'NAME' n'existe pas. Voulez-vous dire CLOSEST_MATCH ?"
 
-#============================================================#
-# +--------------------------------------------------------+ #
-# | Parameters in future plugin versions will  appear here | #
-# +--------------------------------------------------------+ #
-#============================================================#
+#======================================================================================================================#
+#                                                  FUTURE PAREMETERS                                                   #
+#                                                                                                                      #
+#                          New parameters added in future plugin releases will appear below.                           #
+#======================================================================================================================#
