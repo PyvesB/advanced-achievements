@@ -125,12 +125,16 @@ public class MainGUI implements Reloadable {
 		if (!configHideNotReceivedCategories || receivedAmount > 0) {
 			int totalAmount = achievementMap.getForCategory(category).size();
 			String message = totalAmount > 1 ? langListAchievementsInCategoryPlural : langListAchievementInCategorySingular;
-			ItemStack itemWithLore = item.clone();
-			ItemMeta itemMetaWithLore = itemWithLore.getItemMeta();
-			String amountMessage = StringUtils.replaceOnce(message, "AMOUNT", receivedAmount + "/" + totalAmount);
-			itemMetaWithLore.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
-			itemWithLore.setItemMeta(itemMetaWithLore);
-			gui.setItem(position, itemWithLore);
+			if (message.isEmpty()) {
+				gui.setItem(position, item);
+			} else {
+				ItemStack itemWithLore = item.clone();
+				ItemMeta itemMetaWithLore = itemWithLore.getItemMeta();
+				String amountMessage = StringUtils.replaceOnce(message, "AMOUNT", receivedAmount + "/" + totalAmount);
+				itemMetaWithLore.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
+				itemWithLore.setItemMeta(itemMetaWithLore);
+				gui.setItem(position, itemWithLore);
+			}
 		} else {
 			gui.setItem(position, guiItems.getCategoryLock());
 		}
