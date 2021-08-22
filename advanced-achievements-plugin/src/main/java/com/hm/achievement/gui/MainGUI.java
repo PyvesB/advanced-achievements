@@ -1,5 +1,6 @@
 package com.hm.achievement.gui;
 
+import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -7,12 +8,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
@@ -41,6 +44,8 @@ public class MainGUI implements Reloadable {
 	private boolean configHideNoPermissionCategories;
 
 	private String langListGUITitle;
+	private String langListAchievementsInCategoryPlural;
+	private String langListAchievementInCategorySingular;
 
 	@Inject
 	public MainGUI(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
@@ -59,6 +64,8 @@ public class MainGUI implements Reloadable {
 		configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories");
 
 		langListGUITitle = ChatColor.translateAlternateColorCodes('&', langConfig.getString("list-gui-title"));
+		langListAchievementsInCategoryPlural = langConfig.getString("list-achievements-in-category-plural");
+		langListAchievementInCategorySingular = langConfig.getString("list-achievements-in-category-singular");
 	}
 
 	/**
@@ -112,10 +119,18 @@ public class MainGUI implements Reloadable {
 	 * @param position
 	 */
 	private void displayCategory(ItemStack item, Inventory gui, Player player, Category category, int position) {
-		boolean hasReceivedAny = achievementMap.getForCategory(category).stream()
-				.anyMatch(a -> cacheManager.hasPlayerAchievement(player.getUniqueId(), a.getName()));
-		if (!configHideNotReceivedCategories || hasReceivedAny) {
-			gui.setItem(position, item);
+		long receivedAmount = achievementMap.getForCategory(category).stream()
+				.filter(a -> cacheManager.hasPlayerAchievement(player.getUniqueId(), a.getName()))
+				.count();
+		if (!configHideNotReceivedCategories || receivedAmount > 0) {
+			int totalAmount = achievementMap.getForCategory(category).size();
+			String message = totalAmount > 1 ? langListAchievementsInCategoryPlural : langListAchievementInCategorySingular;
+			ItemStack itemWithLore = item.clone();
+			ItemMeta itemMetaWithLore = itemWithLore.getItemMeta();
+			String amountMessage = StringUtils.replaceOnce(message, "AMOUNT", receivedAmount + "/" + totalAmount);
+			itemMetaWithLore.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
+			itemWithLore.setItemMeta(itemMetaWithLore);
+			gui.setItem(position, itemWithLore);
 		} else {
 			gui.setItem(position, guiItems.getCategoryLock());
 		}

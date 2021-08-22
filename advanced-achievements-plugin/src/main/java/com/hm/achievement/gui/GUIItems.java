@@ -1,7 +1,6 @@
 package com.hm.achievement.gui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -62,9 +61,6 @@ public class GUIItems implements Reloadable {
 	private String configListAchievementFormat;
 	private String configIcon;
 
-	private String langListAchievementsInCategoryPlural;
-	private String langListAchievementInCategorySingular;
-
 	@Inject
 	public GUIItems(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
 			@Named("gui") YamlConfiguration guiConfig, MaterialHelper materialHelper, int serverVersion,
@@ -81,9 +77,6 @@ public class GUIItems implements Reloadable {
 	public void extractConfigurationParameters() throws PluginLoadError {
 		configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat");
 		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
-
-		langListAchievementsInCategoryPlural = langConfig.getString("list-achievements-in-category-plural");
-		langListAchievementInCategorySingular = langConfig.getString("list-achievements-in-category-singular");
 
 		orderedAchievementItems.clear();
 		// getShallowKeys returns a LinkedHashSet, preserving the ordering specified in the file.
@@ -217,17 +210,6 @@ public class GUIItems implements Reloadable {
 					new String[] { "%ICON%", "%NAME%" }, new String[] { configIcon, "&l" + displayName + "&8" });
 			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', formattedDisplayName));
 		}
-
-		// Construct lore of the category item.
-		String amountMessage;
-		if (totalAchievements > 1) {
-			amountMessage = StringUtils.replaceOnce(langListAchievementsInCategoryPlural, "AMOUNT",
-					Integer.toString(totalAchievements));
-		} else {
-			amountMessage = StringUtils.replaceOnce(langListAchievementInCategorySingular, "AMOUNT",
-					Integer.toString(totalAchievements));
-		}
-		itemMeta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
 		item.setItemMeta(itemMeta);
 	}
 
