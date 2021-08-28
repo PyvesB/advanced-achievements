@@ -1,0 +1,35 @@
+name: '💡 Feature Request'
+description: Ideas for new features or improvements
+labels: [enhancement]
+body:
+  - type: input
+    id: spigot-username
+    attributes:
+      label: '🚰 Spigot username'
+      description: 'What is your username on spigotmc.org?' 
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: issues-searched
+    attributes:
+      label: '📁 Existing issues'
+      description: 'Many new issues tend to be duplicates, have you searched [existing ones](https://github.com/PyvesB/advanced-achievements/issues)?' 
+      options:
+        - label: 'I have searched existing issues.'
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: '💡 Description'
+      description: 'A clear and concise description of the new feature. Indicate whether you or someone you know will submit a pull request to contribute this new feature.'
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## :heart: Love Advanced Achievements?
+        Don't forget to star the repository or leave a review on Spigot to boost the project!
+        
