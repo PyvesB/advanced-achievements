@@ -56,7 +56,11 @@ body:
     id: configuration
     attributes:
       label: '⚙ Configuration'
-      description: 'Please paste relevant configuration sections here.'
+      description: 'Please paste relevant configuration sections between the ``` lines below.'
+      value: |
+        ```
+        
+        ```
     validations:
       required: false
 

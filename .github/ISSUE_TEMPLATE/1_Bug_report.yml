@@ -56,7 +56,11 @@ body:
     id: server-logs
     attributes:
       label: '📄 Server logs'
-      description: 'If there are any relevant server logs or exceptions, please paste them here.'
+      description: 'If there are any relevant server logs or exceptions, please paste them between the ``` lines below.'
+      value: |
+        ```
+        
+        ```
     validations:
       required: false
 
@@ -64,7 +68,11 @@ body:
     id: configuration
     attributes:
       label: '⚙ Configuration'
-      description: 'Please paste relevant configuration sections here.'
+      description: 'Please paste relevant configuration sections between the ``` lines below.'
+      value: |
+        ```
+        
+        ```
     validations:
       required: false
 
