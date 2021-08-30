@@ -61,10 +61,15 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 					// If played time, convert from millis to hours and display one decimal.
 					return category == NormalAchievements.PLAYEDTIME ? String.format("%.1f", statistic / 3600000.0)
 							: Long.toString(statistic);
+				} else if (("total_" + category).equalsIgnoreCase(identifier)) {
+					return Integer.toString(achievementMap.getForCategory(category).size());
 				}
 			}
 
 			for (MultipleAchievements category : MultipleAchievements.values()) {
+				if (("total_" + category).equalsIgnoreCase(identifier)) {
+					return Integer.toString(achievementMap.getForCategory(category).size());
+				}
 				for (String subcategory : achievementMap.getSubcategoriesForCategory(category)) {
 					String categoryPath = category + "_" + subcategory;
 					if (categoryPath.equalsIgnoreCase(identifier)) {
