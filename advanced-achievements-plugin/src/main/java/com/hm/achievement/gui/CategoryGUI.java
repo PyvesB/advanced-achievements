@@ -451,12 +451,9 @@ public class CategoryGUI implements Reloadable {
 				// Iterate a number of times equal to the number of iterations so far to have the same number of
 				// vertical bars left and right from the middle text.
 				i = PROGRESS_BAR_SIZE - i;
-			} else if (i < PROGRESS_BAR_SIZE * statisticDouble / threshold) {
-				// Standard color: progress by user.
-				barDisplay.append("|");
 			} else {
-				// Not received color: amount not yet reached by user.
-				if (!hasDisplayedNotReceivedColor) {
+				if (i >= PROGRESS_BAR_SIZE * statisticDouble / threshold && !hasDisplayedNotReceivedColor) {
+					// Not received color: amount not yet reached by user.
 					hasDisplayedNotReceivedColor = true;
 					barDisplay.append(configListColorNotReceived);
 				}

@@ -63,7 +63,7 @@ public class UpdateChecker implements Listener {
 	 * Launches a new thread to asynchronously check whether an update is available.
 	 */
 	public void launchUpdateCheckerTask() {
-		updateCheckerFutureTask = new FutureTask<>(() -> checkForUpdate());
+		updateCheckerFutureTask = new FutureTask<>(this::checkForUpdate);
 		// Run the FutureTask in a new thread.
 		new Thread(updateCheckerFutureTask).start();
 	}
@@ -77,20 +77,18 @@ public class UpdateChecker implements Listener {
 	public boolean isUpdateNeeded() {
 		// Completion of the FutureTask has not yet been checked.
 		if (updateNeeded == null) {
-			if (updateCheckerFutureTask.isDone()) {
-				try {
-					// Retrieve result of the FutureTask.
-					updateNeeded = updateCheckerFutureTask.get();
-				} catch (InterruptedException | ExecutionException e) {
-					// Error during execution; assume that no updates are available.
-					updateNeeded = false;
-					plugin.getLogger()
-							.severe("Error while checking for " + plugin.getDescription().getName() + " update.");
-				}
-			} else {
+			if (!updateCheckerFutureTask.isDone()) {
 				// FutureTask not yet completed; indicate that no updates are available. If an OP joins before the task
 				// completes, he will not be notified; this is both an unlikely and non critical scenario.
 				return false;
+			}
+			try {
+				// Retrieve result of the FutureTask.
+				updateNeeded = updateCheckerFutureTask.get();
+			} catch (InterruptedException | ExecutionException e) {
+				// Error during execution; assume that no updates are available.
+				updateNeeded = false;
+				plugin.getLogger().severe("Error while checking for " + plugin.getDescription().getName() + " update.");
 			}
 		}
 		return updateNeeded;
