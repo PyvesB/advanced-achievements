@@ -22,6 +22,9 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
@@ -96,16 +99,19 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private boolean configFirework;
 	private Color configColor;
 	private Color mixColor;
+	private BarColor barColor;
 	private boolean configSimplifiedReception;
 	private boolean configTitleScreen;
 	private boolean configNotifyOtherPlayers;
 	private boolean configActionBarNotify;
 	private boolean configHoverableReceiverChatText;
 	private boolean configReceiverChatMessages;
+	private boolean configBossBarProgress;
 
 	private String langAchievementReceived;
 	private String langAchievementNew;
 	private String langAllAchievementsReceived;
+	private String langBossBarProgress;
 
 	@Inject
 	public PlayerAdvancedAchievementListener(@Named("main") YamlConfiguration mainConfig,
@@ -154,14 +160,21 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		if (configHoverableReceiverChatText && serverVersion < 8) {
 			configHoverableReceiverChatText = false;
 		}
+		configBossBarProgress = mainConfig.getBoolean("BossBarProgress");
+		// Boss bars introduced in Minecraft 1.9. Automatically relevant parameter for older versions.
+		if (configBossBarProgress && serverVersion < 9) {
+			configBossBarProgress = false;
+		}
 		configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages");
 		ChatColor chatColor = ChatColor.getByChar(mainConfig.getString("Color"));
 		configColor = ColorHelper.convertChatColorToColor(chatColor);
 		mixColor = Color.WHITE.mixColors(ColorHelper.convertChatColorToColor(FIREWORK_COLOR_MIX.get(chatColor)));
+		barColor = ColorHelper.convertChatColorToBarColor(chatColor);
 
 		langAchievementReceived = langConfig.getString("achievement-received") + " " + ChatColor.WHITE;
 		langAchievementNew = pluginHeader + langConfig.getString("achievement-new") + " " + ChatColor.WHITE;
 		langAllAchievementsReceived = pluginHeader + langConfig.getString("all-achievements-received");
+		langBossBarProgress = langConfig.getString("boss-bar-progress");
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -225,6 +238,10 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 		if (configTitleScreen || player.hasPermission("achievement.config.title.screen")) {
 			displayTitle(player, nameToShowUser, messageToShowUser);
+		}
+
+		if (configBossBarProgress) {
+			displayBossBar(player);
 		}
 	}
 
@@ -320,6 +337,21 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 		// Firework launched by plugin: damage will later be cancelled out.
 		fireworkListener.addFirework(firework);
+	}
+
+	/**
+	 * Temporarily displays a boss bar indicating achievement progress when receiving an achievement.
+	 *
+	 * @param player
+	 */
+	private void displayBossBar(Player player) {
+		int receivedAmount = cacheManager.getPlayerAchievements(player.getUniqueId()).size();
+		int totalAmount = achievementMap.getAll().size();
+		String progressMessage = StringUtils.replaceOnce(langBossBarProgress, "AMOUNT", receivedAmount + "/" + totalAmount);
+		BossBar bossBar = Bukkit.getServer().createBossBar(progressMessage, barColor, BarStyle.SOLID);
+		bossBar.setProgress(((double) receivedAmount) / totalAmount);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.addPlayer(player), 110);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.removePlayer(player), 240);
 	}
 
 	/**

@@ -53,6 +53,7 @@ statistic-increased: "Statistic ACH increased by AMOUNT for PLAYER!"
 # Used in achievement reception.
 achievement-received: "PLAYER received the achievement:"
 achievement-new: "New Achievement:"
+boss-bar-progress: "Achievement progress: AMOUNT"
 
 # Used in /aach check.
 check-achievement-true: "PLAYER has received the achievement ACH!"

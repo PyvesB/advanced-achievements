@@ -74,6 +74,9 @@ ActionBarNotify: true
 # Display achievement DisplayName and Message as screen titles. Minimum Minecraft version: 1.8.
 TitleScreen: true
 
+# Display a boss bar showing progress a few seconds after an achievement is received. Minimum Minecraft version: 1.9.
+BossBarProgress: true
+
 # Send informative chat messages to the player receiving an achievement.
 ReceiverChatMessages: true
 

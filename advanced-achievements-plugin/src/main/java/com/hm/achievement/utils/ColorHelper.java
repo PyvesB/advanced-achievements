@@ -2,6 +2,7 @@ package com.hm.achievement.utils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.boss.BarColor;
 
 public class ColorHelper {
 
@@ -41,6 +42,45 @@ public class ColorHelper {
 				return Color.fromRGB(0xFF, 0xFF, 0x55);
 			default:
 				return Color.WHITE;
+		}
+	}
+
+	public static BarColor convertChatColorToBarColor(ChatColor chatColor) {
+		switch (chatColor) {
+			case AQUA:
+				return BarColor.GREEN;
+			case BLACK:
+				return BarColor.PURPLE;
+			case BLUE:
+				return BarColor.BLUE;
+			case GRAY:
+				return BarColor.WHITE;
+			case DARK_AQUA:
+				return BarColor.BLUE;
+			case DARK_BLUE:
+				return BarColor.BLUE;
+			case DARK_GRAY:
+				return BarColor.PURPLE;
+			case DARK_GREEN:
+				return BarColor.GREEN;
+			case DARK_PURPLE:
+				return BarColor.PURPLE;
+			case DARK_RED:
+				return BarColor.RED;
+			case GOLD:
+				return BarColor.YELLOW;
+			case GREEN:
+				return BarColor.GREEN;
+			case LIGHT_PURPLE:
+				return BarColor.PURPLE;
+			case RED:
+				return BarColor.RED;
+			case WHITE:
+				return BarColor.WHITE;
+			case YELLOW:
+				return BarColor.YELLOW;
+			default:
+				return BarColor.WHITE;
 		}
 	}
 
