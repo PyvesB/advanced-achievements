@@ -1,9 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -23,7 +19,6 @@ import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.db.data.ConnectionInformation;
-import com.hm.achievement.lifecycle.Cleanable;
 
 /**
  * Listener class to deal with Connections achievements. This class uses delays processing of tasks to avoid spamming a
@@ -33,9 +28,8 @@ import com.hm.achievement.lifecycle.Cleanable;
  *
  */
 @Singleton
-public class ConnectionsListener extends AbstractListener implements Cleanable {
+public class ConnectionsListener extends AbstractListener {
 
-	private final Map<UUID, String> playerConnectionDates = new HashMap<>();
 	private final AdvancedAchievements advancedAchievements;
 	private final AbstractDatabaseManager databaseManager;
 
@@ -45,11 +39,6 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 		super(NormalAchievements.CONNECTIONS, mainConfig, serverVersion, achievementMap, cacheManager);
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;
-	}
-
-	@Override
-	public void cleanPlayerData() {
-		playerConnectionDates.keySet().removeIf(player -> !Bukkit.getOfflinePlayer(player).isOnline());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -73,17 +62,18 @@ public class ConnectionsListener extends AbstractListener implements Cleanable {
 	 * @param player
 	 */
 	private void scheduleAwardConnection(Player player) {
-		Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> {
-			String cachedDate = playerConnectionDates.get(player.getUniqueId());
-			String today = ConnectionInformation.today();
-			if (!today.equals(cachedDate) && shouldIncreaseBeTakenIntoAccount(player, category) && player.isOnline()) {
-				playerConnectionDates.put(player.getUniqueId(), today);
-				ConnectionInformation connectionInformation = databaseManager.getConnectionInformation(player.getUniqueId());
-				if (!today.equals(connectionInformation.getDate())) {
-					databaseManager.updateConnectionInformation(player.getUniqueId(), connectionInformation.getCount() + 1);
-					checkThresholdsAndAchievements(player, category, connectionInformation.getCount() + 1);
-				}
+		Bukkit.getScheduler().runTaskAsynchronously(advancedAchievements, () -> {
+			ConnectionInformation connectionInformation = databaseManager.getConnectionInformation(player.getUniqueId());
+			if (!ConnectionInformation.today().equals(connectionInformation.getDate())) {
+				// Switch to main server thread as Bukkit APIs aren't thread-safe and shouldn't be used in async tasks.
+				Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> {
+					if (player.isOnline() && shouldIncreaseBeTakenIntoAccount(player, category)) {
+						long updatedConnectionCount = connectionInformation.getCount() + 1;
+						databaseManager.updateConnectionInformation(player.getUniqueId(), updatedConnectionCount);
+						checkThresholdsAndAchievements(player, category, updatedConnectionCount);
+					}
+				}, 100);
 			}
-		}, 100);
+		});
 	}
 }

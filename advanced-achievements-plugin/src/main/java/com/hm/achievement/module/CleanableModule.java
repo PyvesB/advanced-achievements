@@ -5,7 +5,6 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.listener.statistics.BedsListener;
 import com.hm.achievement.listener.statistics.BrewingListener;
-import com.hm.achievement.listener.statistics.ConnectionsListener;
 import com.hm.achievement.listener.statistics.LavaBucketsListener;
 import com.hm.achievement.listener.statistics.MilksListener;
 import com.hm.achievement.listener.statistics.MusicDiscsListener;
@@ -38,10 +37,6 @@ public interface CleanableModule {
 	@Binds
 	@IntoSet
 	Cleanable bindCacheManager(CacheManager cacheManager);
-
-	@Binds
-	@IntoSet
-	Cleanable bindConnectionsListener(ConnectionsListener connectionsListener);
 
 	@Binds
 	@IntoSet
