@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -157,10 +158,9 @@ public class RewardParser {
 				itemMeta.setDisplayName(StringHelper.replacePlayerPlaceholders(itemMeta.getDisplayName(), player));
 				playerItem.setItemMeta(itemMeta);
 			}
-			if (player.getInventory().firstEmpty() != -1) {
-				player.getInventory().addItem(playerItem);
-			} else {
-				player.getWorld().dropItem(player.getLocation(), playerItem);
+			Map<Integer, ItemStack> leftoverItem = player.getInventory().addItem(playerItem);
+			for (ItemStack itemToDrop : leftoverItem.values()) {
+				player.getWorld().dropItem(player.getLocation(), itemToDrop);
 			}
 		});
 		return new Reward(listTexts, chatTexts, rewarder);
