@@ -2,7 +2,6 @@ package com.hm.achievement.utils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.boss.BarColor;
 
 public class ColorHelper {
 
@@ -45,42 +44,45 @@ public class ColorHelper {
 		}
 	}
 
-	public static BarColor convertChatColorToBarColor(ChatColor chatColor) {
+	/*
+	 * Model bar colors as strings to ensure compatibility with Minecraft 1.7/1.8, where the class did not yet exist.
+	 */
+	public static String convertChatColorToBarColor(ChatColor chatColor) {
 		switch (chatColor) {
 			case AQUA:
-				return BarColor.GREEN;
+				return "GREEN";
 			case BLACK:
-				return BarColor.PURPLE;
+				return "PURPLE";
 			case BLUE:
-				return BarColor.BLUE;
+				return "BLUE";
 			case GRAY:
-				return BarColor.WHITE;
+				return "WHITE";
 			case DARK_AQUA:
-				return BarColor.BLUE;
+				return "BLUE";
 			case DARK_BLUE:
-				return BarColor.BLUE;
+				return "BLUE";
 			case DARK_GRAY:
-				return BarColor.PURPLE;
+				return "PURPLE";
 			case DARK_GREEN:
-				return BarColor.GREEN;
+				return "GREEN";
 			case DARK_PURPLE:
-				return BarColor.PURPLE;
+				return "PURPLE";
 			case DARK_RED:
-				return BarColor.RED;
+				return "RED";
 			case GOLD:
-				return BarColor.YELLOW;
+				return "YELLOW";
 			case GREEN:
-				return BarColor.GREEN;
+				return "GREEN";
 			case LIGHT_PURPLE:
-				return BarColor.PURPLE;
+				return "PURPLE";
 			case RED:
-				return BarColor.RED;
+				return "RED";
 			case WHITE:
-				return BarColor.WHITE;
+				return "WHITE";
 			case YELLOW:
-				return BarColor.YELLOW;
+				return "YELLOW";
 			default:
-				return BarColor.WHITE;
+				return "WHITE";
 		}
 	}
 

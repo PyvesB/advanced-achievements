@@ -22,9 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.advancement.Advancement;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
@@ -45,6 +42,7 @@ import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.domain.Reward;
 import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.BossBarHelper;
 import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.FancyMessageSender;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
@@ -99,7 +97,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private boolean configFirework;
 	private Color configColor;
 	private Color mixColor;
-	private BarColor barColor;
+	private String barColor;
 	private boolean configSimplifiedReception;
 	private boolean configTitleScreen;
 	private boolean configNotifyOtherPlayers;
@@ -241,7 +239,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		}
 
 		if (configBossBarProgress) {
-			displayBossBar(player);
+			int receivedAmount = cacheManager.getPlayerAchievements(player.getUniqueId()).size();
+			int totalAmount = achievementMap.getAll().size();
+			double progress = ((double) receivedAmount) / totalAmount;
+			String message = StringUtils.replaceOnce(langBossBarProgress, "AMOUNT", receivedAmount + "/" + totalAmount);
+			BossBarHelper.displayBossBar(advancedAchievements, player, progress, barColor, message);
 		}
 	}
 
@@ -337,21 +339,6 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 		// Firework launched by plugin: damage will later be cancelled out.
 		fireworkListener.addFirework(firework);
-	}
-
-	/**
-	 * Temporarily displays a boss bar indicating achievement progress when receiving an achievement.
-	 *
-	 * @param player
-	 */
-	private void displayBossBar(Player player) {
-		int receivedAmount = cacheManager.getPlayerAchievements(player.getUniqueId()).size();
-		int totalAmount = achievementMap.getAll().size();
-		String progressMessage = StringUtils.replaceOnce(langBossBarProgress, "AMOUNT", receivedAmount + "/" + totalAmount);
-		BossBar bossBar = Bukkit.getServer().createBossBar(progressMessage, barColor, BarStyle.SOLID);
-		bossBar.setProgress(((double) receivedAmount) / totalAmount);
-		Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.addPlayer(player), 110);
-		Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.removePlayer(player), 240);
 	}
 
 	/**
