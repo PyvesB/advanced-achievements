@@ -38,6 +38,7 @@ public class JobsRebornListener extends AbstractListener {
 			return;
 		}
 
+		@SuppressWarnings("deprecation")
 		String jobName = event.getJobName().toLowerCase();
 		if (!player.hasPermission(category.toChildPermName(jobName))) {
 			return;
