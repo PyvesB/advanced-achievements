@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.bukkit.entity.Player;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
@@ -53,6 +54,10 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 			if ("achievements_percentage".equalsIgnoreCase(identifier)) {
 				return String.format("%.1f%%", 100 * (double) cacheManager.getPlayerAchievements(uuid).size()
 						/ achievementMap.getAll().size());
+			}
+
+			if ("total_commands".equalsIgnoreCase(identifier)) {
+				return Integer.toString(achievementMap.getForCategory(CommandAchievements.COMMANDS).size());
 			}
 
 			for (NormalAchievements category : NormalAchievements.values()) {
