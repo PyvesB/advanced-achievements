@@ -49,8 +49,8 @@ error-value: "Hodnota VALUE musí byť integer!"
 statistic-increased: "Štatistika ACH sa zvýšila o AMOUNT pre hrača PLAYER!"
 
 # Related to achievement reception.
-achievement-received: "Hrač PLAYER získal úspech:"
-achievement-new: "Nový Úspech:"
+achievement-received: "Hrač PLAYER získal úspech: ACH"
+achievement-new: "Nový Úspech: ACH"
 
 # Related to /aach check.
 check-achievement-true: "Hrač PLAYER už získal úspech ACH!"

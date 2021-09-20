@@ -32,8 +32,8 @@ achievement-not-found: "Aceasta realizare nu exista."
 achievement-given: "Realizare data!"
 
 # Related to achievement reception.
-achievement-received: "PLAYER a obtinut realizarea:"
-achievement-new: "New Achievement:"
+achievement-received: "PLAYER a obtinut realizarea: ACH"
+achievement-new: "New Achievement: ACH"
 
 # Related to /aach check.
 check-achievement-true: "PLAYER a primit realizarea ACH!"

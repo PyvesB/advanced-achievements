@@ -52,8 +52,8 @@ error-value: "O valor VALUE deve ser um número inteiro!"
 statistic-increased: "Estatístisca ACH aumentou em AMOUNT para PLAYER!"
 
 # Related to achievement reception.
-achievement-received: "PLAYER recebeu a conquista:"
-achievement-new: "Nova conquista:"
+achievement-received: "PLAYER recebeu a conquista: ACH"
+achievement-new: "Nova conquista: ACH"
 
 # Related to /aach check.
 check-achievement-true: "PLAYER recebeu a conquista"

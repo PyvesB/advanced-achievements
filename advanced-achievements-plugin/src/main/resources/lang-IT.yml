@@ -32,8 +32,8 @@ achievement-not-found: L'obiettivo specificato non è stato trovato.
 achievement-given: Obiettivo donato!
 
 # Related to achievement reception.
-achievement-received: 'PLAYER ha sbloccato l''obiettivo:'
-achievement-new: 'Nuovo obiettivo:'
+achievement-received: 'PLAYER ha sbloccato l''obiettivo: ACH'
+achievement-new: 'Nuovo obiettivo: ACH'
 
 # Related to /aach check.
 check-achievement-true: "PLAYER ha ottenuto l'obiettivo ACH!"

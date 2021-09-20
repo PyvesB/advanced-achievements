@@ -36,8 +36,8 @@ achievement-not-found: "Den specifierade prestationen hittades inte i kategorin 
 achievement-given: "Prestation tilldelad!"
 
 # Related to achievement reception.
-achievement-received: "PLAYER mottog prestationen"
-achievement-new: "Ny prestation:"
+achievement-received: "PLAYER mottog prestationen ACH"
+achievement-new: "Ny prestation: ACH"
 
 # Related to /aach check.
 check-achievement-true: "PLAYER har mottagit prestationen ACH!"

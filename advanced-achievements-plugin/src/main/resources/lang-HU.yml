@@ -48,8 +48,8 @@ error-value: "A VALUE értéknek egész számnak kell lennie!"
 statistic-increased: "A statisztikai ACH összege AMOUNT értékkel nőtt PLAYER számára!"
 
 # Related to achievement reception.
-achievement-received: "PLAYER megkapta a küldetést:"
-achievement-new: "Új küldetések:"
+achievement-received: "PLAYER megkapta a küldetést: ACH"
+achievement-new: "Új küldetések: ACH"
 
 # Related to /aach check.
 check-achievement-true: "PLAYER megkapta az ACH küldetést!"

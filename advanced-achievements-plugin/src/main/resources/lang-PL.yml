@@ -44,8 +44,8 @@ achievement-not-found: Podane osiagniecie nie zostalo znalezione.
 achievement-given: Podarowano osiagniecie!
 
 # Related to achievement reception.
-achievement-received: 'Gracz PLAYER otrzymal osiagniecie:'
-achievement-new: 'Nowe osiagniecie:'
+achievement-received: 'Gracz PLAYER otrzymal osiagniecie: ACH'
+achievement-new: 'Nowe osiagniecie: ACH'
 
 # Related to /aach check.
 check-achievement-true: Gracz PLAYER otrzymal osiagniecie o nazwie ACH!

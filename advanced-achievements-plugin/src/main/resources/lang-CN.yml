@@ -51,8 +51,8 @@ error-value: "给定值： VALUE 必须是一个整数!"
 statistic-increased: "玩家 PLAYER 的 ACH 成就统计增加了 AMOUNT!"
 
 # 与获得成就相关
-achievement-received: "玩家 PLAYER 获得成就"
-achievement-new: "新成就:"
+achievement-received: "玩家 PLAYER 获得成就 ACH"
+achievement-new: "新成就: ACH"
 
 # 与 /aach check 相关
 check-achievement-true: "PLAYER 已经拥有这项成就： ACH!"

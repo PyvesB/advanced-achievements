@@ -47,8 +47,8 @@ error-value: "數值 VALUE 必須為整數！"
 statistic-increased: "PLAYER 的 ACH 統計資訊已增加 AMOUNT ！"
 
 # Related to achievement reception.
-achievement-received: "PLAYER 取得成就:"
-achievement-new: "新成就:"
+achievement-received: "PLAYER 取得成就: ACH"
+achievement-new: "新成就: ACH"
 
 # Related to /aach check.
 check-achievement-true: "PLAYER 已經取得成就 ACH！"

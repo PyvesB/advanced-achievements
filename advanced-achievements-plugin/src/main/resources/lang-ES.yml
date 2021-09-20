@@ -52,8 +52,8 @@ error-value: "¡El valor VALUE debe ser un entero!"
 statistic-increased: "¡La estadística ACH aumentó en AMOUNT para el jugador PLAYER!"
 
 # Relacionado con la recepción de logros.
-achievement-received: "PLAYER recibió el logro:"
-achievement-new: "Nuevo logro:"
+achievement-received: "PLAYER recibió el logro: ACH"
+achievement-new: "Nuevo logro: ACH"
 
 # Usado en /aach check.
 check-achievement-true: "PLAYER ha recibido el logro ACH!"

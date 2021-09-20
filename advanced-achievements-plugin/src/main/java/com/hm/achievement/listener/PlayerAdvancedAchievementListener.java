@@ -263,19 +263,21 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 				.flatMap(List::stream)
 				.map(m -> StringHelper.replacePlayerPlaceholders(m, player))
 				.collect(Collectors.toList());
+		String message = langAchievementNew.contains("ACH")
+				? StringUtils.replaceOnce(langAchievementNew, "ACH", nameToShowUser)
+				: langAchievementNew + nameToShowUser;
 		if (configHoverableReceiverChatText) {
 			StringBuilder hover = new StringBuilder(messageToShowUser + "\n");
 			chatMessages.forEach(t -> hover.append(ChatColor.translateAlternateColorCodes('&', t)).append("\n"));
 			try {
-				FancyMessageSender.sendHoverableMessage(player, langAchievementNew + nameToShowUser,
-						hover.substring(0, hover.length() - 1), "white");
+				FancyMessageSender.sendHoverableMessage(player, message, hover.substring(0, hover.length() - 1), "white");
 				return;
 			} catch (Exception e) {
 				logger.warning(
 						"Failed to display hoverable message for achievement reception. Displaying standard messages instead.");
 			}
 		}
-		player.sendMessage(langAchievementNew + nameToShowUser);
+		player.sendMessage(message);
 		player.sendMessage(pluginHeader.toString() + ChatColor.WHITE + messageToShowUser);
 		chatMessages.forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
 	}
@@ -283,23 +285,23 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	/**
 	 * Displays an action bar message or chat notification to another player.
 	 *
-	 * @param achievementReceiver
+	 * @param receiver
 	 * @param nameToShowUser
 	 * @param otherPlayer
 	 */
-	private void displayNotification(Player achievementReceiver, String nameToShowUser, Player otherPlayer) {
+	private void displayNotification(Player receiver, String nameToShowUser, Player otherPlayer) {
+		String message = langAchievementReceived.contains("ACH")
+				? StringUtils.replaceEach(langAchievementReceived, new String[] { "PLAYER", "ACH" },
+						new String[] { receiver.getName(), nameToShowUser })
+				: StringUtils.replaceOnce(langAchievementReceived, "PLAYER", receiver.getName()) + nameToShowUser;
 		if (configActionBarNotify) {
 			try {
-				FancyMessageSender.sendActionBarMessage(otherPlayer,
-						"&o" + StringUtils.replaceOnce(langAchievementReceived, "PLAYER", achievementReceiver.getName())
-								+ nameToShowUser);
+				FancyMessageSender.sendActionBarMessage(otherPlayer, "&o" + message);
 			} catch (Exception e) {
 				logger.warning("Failed to display action bar message for achievement reception notification.");
 			}
 		} else {
-			otherPlayer.sendMessage(
-					pluginHeader + StringUtils.replaceOnce(langAchievementReceived, "PLAYER", achievementReceiver.getName())
-							+ nameToShowUser);
+			otherPlayer.sendMessage(pluginHeader + message);
 		}
 	}
 

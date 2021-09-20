@@ -50,8 +50,8 @@ error-value: "Girdiğiniz VALUE değeri tamsayı olmalı!"
 statistic-increased: "PLAYER oyuncusu için ACH istatistiği AMOUNT miktarda arttı!"
 
 # Related to achievement reception.
-achievement-received: 'PLAYER yeni başarımına ulaştı:'
-achievement-new: 'Yeni Başarım:'
+achievement-received: 'PLAYER yeni başarımına ulaştı: ACH'
+achievement-new: 'Yeni Başarım: ACH'
 
 # Related to /aach check.
 check-achievement-true: PLAYER adlı oyuncu ACH adlı başarıma ulaştı!

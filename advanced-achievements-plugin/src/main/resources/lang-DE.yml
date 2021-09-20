@@ -47,8 +47,8 @@ error-value: "Der Wert VALUE must muss eine ganze Zahl sein!"
 statistic-increased: "PLAYER's Statistik ACH ist um AMOUNT erhöht worden."
 
 # Related to achievement reception.
-achievement-received: "PLAYER erhielt den Erfolg:"
-achievement-new: "Neuer Erfolg:"
+achievement-received: "PLAYER erhielt den Erfolg: ACH"
+achievement-new: "Neuer Erfolg: ACH"
 
 # Related to /aach check.
 check-achievement-true: "PLAYER hat den Erfolg ACH erhalten!"

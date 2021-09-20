@@ -46,8 +46,8 @@ error-value: "Hodnota VALUE musi byt ciselna!"
 statistic-increased: "Statistika ACH se zvisila o AMOUNT pro hrace PLAYER!"
 
 # Related to achievement reception.
-achievement-received: "Hrac PLAYER ziskal uspech:"
-achievement-new: "Novy uspech:"
+achievement-received: "Hrac PLAYER ziskal uspech: ACH"
+achievement-new: "Novy uspech: ACH"
 
 # Related to /aach check.
 check-achievement-true: "Hrac PLAYER ziskal uspech ACH!"

@@ -46,8 +46,8 @@ error-value: Giá trị VALUE phải là số nguyên!
 statistic-increased: Thống kê ACH đã tăng lên AMOUNT cho PLAYER!
 
 # Related to achievement reception.
-achievement-received: 'PLAYER nhận được thành tựu:'
-achievement-new: 'Thành tựu mới:'
+achievement-received: 'PLAYER nhận được thành tựu: ACH'
+achievement-new: 'Thành tựu mới: ACH'
 
 # Related to /aach check.
 check-achievement-true: Người chơi PLAYER đã nhận được thành tựu ACH!

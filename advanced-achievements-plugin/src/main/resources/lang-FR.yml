@@ -52,8 +52,8 @@ error-value: "La valeur VALUE doit être un nombre entier !"
 statistic-increased: "La statistique ACH de PLAYER a été augmentée de AMOUNT !"
 
 # Used in achievement reception.
-achievement-received: "PLAYER a reçu le succès :"
-achievement-new: "Nouveau succès :"
+achievement-received: "PLAYER a reçu le succès : ACH"
+achievement-new: "Nouveau succès : ACH"
 
 # Used in /aach check.
 check-achievement-true: "PLAYER a reçu le succès ACH !"

@@ -47,8 +47,8 @@ error-value: "Arvon VALUE täytyy olla kokonaisluku!"
 statistic-increased: "Tilastoa ACH kasvatettiin määrällä AMOUNT pelaajalle PLAYER!"
 
 # Related to achievement reception.
-achievement-received: "PLAYER avasi saavutuksen:"
-achievement-new: "Uusi saavutus:"
+achievement-received: "PLAYER avasi saavutuksen: ACH"
+achievement-new: "Uusi saavutus: ACH"
 
 # Related to /aach check.
 check-achievement-true: "PLAYER on avannut saavutuksen ACH!"

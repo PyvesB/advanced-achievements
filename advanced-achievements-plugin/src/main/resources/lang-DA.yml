@@ -51,8 +51,8 @@ error-value: "Værdien VALUE skal være en integer!"
 statistic-increased: "Statistisk ACH øget med AMOUNT for PLAYER!"
 
 # Relateret til achievement reception.
-achievement-received: "PLAYER modtagede præsentationen:"
-achievement-new: "Ny præsentation:"
+achievement-received: "PLAYER modtagede præsentationen: ACH"
+achievement-new: "Ny præsentation: ACH"
 
 # Relateret til /aach check.
 check-achievement-true: "PLAYER har modtaget præsentationen ACH!"
