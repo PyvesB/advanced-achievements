@@ -5,220 +5,245 @@
 #    / ___ \ (_| |\ V / (_| | | | | (_|  __/ (_| |  / ___ \ (__| | | | |  __/\ V /  __/ | | | | |  __/ | | | |_\__ \   #
 #   /_/   \_\__,_| \_/ \__,_|_| |_|\___\___|\__,_| /_/   \_\___|_| |_|_|\___| \_/ \___|_| |_| |_|\___|_| |_|\__|___/   #
 #                                                                                                                      #
-#                                       Spanish translation by Arciniegasdiaz                                          #
+#                                             Spanish translation by Kissadere                                         #
 #                                            Versión valida para la 7.2.2                                              #
 #======================================================================================================================#
 
-# Varios mensajes de usuario.
-no-permissions: "No tienes el permiso para hacer esto."
-statistic-cooldown: "Enfriamiento de logros: espere TIME segundos antes de que esta acción cuente de nuevo."
-category-does-not-exist: "La categoria y/o la sub-categoria CAT no existe. Tal vez quisiste decir CLOSEST_MATCH?"
-all-achievements-received: "Felicidades, has recibido todos los logros!"
-invalid-command: "Comando inválido. Por favor escribe /aach para mostrar el comando de ayuda."
+# Mensajes misceláneos para el usuario
+no-permissions: "Lo sentimos, pero no cuentas con los permisos suficientes para hacer ésto"
+statistic-cooldown: "Debes esperar TIME segundos si quieres que ésta acción cuente para tus logros"
+category-does-not-exist: "LA categoría de CAT no existe. ¿Quizás quisiste decir CLOSEST_MATCH?"
+all-achievements-received: "¡Enhorabuena! Has recibido todos los logros"
+invalid-command: "El comando ingresado es incorrecto. Utiliza /aach para visualizar una lista entera de ayuda"
 
-# Usado en /aach reload.
-configuration-successfully-reloaded: "La configuración se volvió a cargar correctamente."
-configuration-reload-failed: "Errores al recargar la configuración. Por favor, vea los registros para más detalles."
+# Mensajes para /aach reload.
+configuration-successfully-reloaded: "Configruaciones recargadas exitosamente"
+configuration-reload-failed: "Ocurrió un error al recargar la configuración. Podrás encontrar más información el el log del servidor"
 
-# Utilizado en /aach top semana y mes.
-top-achievement: "Principales propietarios de logros:"
+# Mensajes para /aach top semanales y mensuales
+top-achievement: "Jugadores con más logros:"
 player-rank: "Posición actual:"
-week-achievement: "Clasificación de logros semanales:"
-month-achievement: "Clasificación de logros mensuales:"
-not-ranked: "Actualmente no está clasificado para este período."
-pagination-header: "&7> &5Pagina PAGE/MAX"
+week-achievement: "Jugadores con más logros de la semana:"
+month-achievement: "Jugadores con más logros del mes:"
+not-ranked: "Aún no tienes una pocisión en éste ranking"
+pagination-header: "&7> &5Página PAGE/MAX"
 pagination-footer: "&7>"
 
-# Usado en /aach stats.
-number-achievements: "Logros recibidos:"
+# Mensajes para /aach stats.
+number-achievements: "Logro desbloqueado:"
 
-# Usado en /aach book.
-book-received: "¡Recibiste tu libro de logros!"
-book-delay: "Tu debes esperar TIME segundos entre cada recepción de libro!"
-book-name: "Libro de logros"
-book-date: "Libro creado el DATE."
-book-not-received: "Aún no has recibido ningún logro."
+# Mensajes para /aach book.
+book-received: "Has recibido tu bitácora de logros"
+book-delay: "Debes esperar TIME segundos antes de volver a recibir tu bitácora de logros"
+book-name: "Bitácora De Logros"
+book-date: "Expedido en DATE"
+book-not-received: "¡Aún no cuentas con ningún logro!"
 
-# Usado en /aach give.
-player-offline: "¡El jugador PLAYER está desconectado!"
-not-a-player: "¡No puedes dar ningun logro a un ENTITY, ya que no es un jugador!"
-achievement-already-received: "¡El jugador PLAYER ya ha recibido este logro!"
-achievement-not-found: "El logro especificado no se encontró en la categoría Comandos. Tal vez quisiste decir CLOSEST_MATCH?"
-achievement-given: "Logro dado!"
-achievement-no-permission: "¡El jugador PLAYER no tiene permiso para recibir este logro!"
+# Mensajes para /aach give.
+player-offline: "El jugador PLAYER se encuentra desconectado"
+not-a-player: "No puedes otorgar el logro a ENTITY, porque no es un jugador"
+achievement-already-received: "El jugador PLAYER ya ha recibido éste logro anteriormente"
+achievement-not-found: "El logro ingresado no existe. ¿Quizás quisiste decir CLOSEST_MATCH?"
+achievement-given: "Logro otorgado exitosamente"
+achievement-no-permission: "El jugador PLAYER no cuenta con los permisos necesarios para recibir éste logro"
 
-# Usado en /aach add.
-error-value: "¡El valor VALUE debe ser un entero!"
-statistic-increased: "¡La estadística ACH aumentó en AMOUNT para el jugador PLAYER!"
+# Mensajes para /aach add.
+error-value: "Debes ingrear un valor numérico válido"
+statistic-increased: "Las estadísticas de ACH fueron aumentadas xAMOUNT veces para el jugador PLAYER"
 
-# Relacionado con la recepción de logros.
-achievement-received: "PLAYER recibió el logro: ACH"
-achievement-new: "Nuevo logro: ACH"
+# Mensajes para la recepción de logros.
+achievement-received: "El jugador &aPLAYER &eha recibido el logro &bACH"
+achievement-new: "Logro desbloqueado: ACH"
+boss-bar-progress: "Progreso: AMOUNT"
 
-# Usado en /aach check.
-check-achievement-true: "PLAYER ha recibido el logro ACH!"
-check-achievements-false: "PLAYER no ha recibido el logro ACH!"
+# Mensajes para /aach check.
+check-achievement-true: "El jugador PLAYER ya ha obtenido el logro de ACH"
+check-achievements-false: "El jugador PLAYER aún no ha obtenido el logro de ACH"
 
-# Usado en /aach delete.
-delete-achievements: "El logro ACH fue eliminado del jugador PLAYER."
-delete-all-achievements: "Todos los Logros fueron eliminados de PLAYER."
+# Mensajes para /aach delete.
+delete-achievements: "El logro de ACH ha sido eliminado del jugador PLAYER."
+delete-all-achievements: "Se han elimitado todos los logros del jugador PLAYER"
 
-# Relacionado con las recompensas por logros.
-item-reward-received: "Recibiste una recompensa de item: AMOUNT ITEM"
-money-reward-received: "Recibiste: AMOUNT!"
-custom-command-reward: "Recibiste tu recompensa: MESSAGE"
-experience-reward-received: "Recibiste: AMOUNT experiencia!"
-increase-max-health-reward-received: "Tu salud máxima ha aumentado en AMOUNT!"
-increase-max-oxygen-reward-received: "Su oxígeno máximo ha aumentado en AMOUNT!"
+# Mensajes para recompensas por completar logros.
+item-reward-received: "Has recibido una recompensa: AMOUNT ITEM"
+money-reward-received: "Has recibido una recompensa: AMOUNT"
+custom-command-reward: "Has recibido una recompensa: MESSAGE"
+experience-reward-received: "Has recibido una recompensa: AMOUNT Experiencia"
+increase-max-health-reward-received: "Tu barra de salud ha sido aumentada a AMOUNT"
+increase-max-oxygen-reward-received: "Tu barra de oxígeno ha sido aumentada a AMOUNT"
 
-# Usado en /aach help.
-aach-command-book: "Recibe tu libro de logros."
-aach-command-book-hover: "¡RP Artículos que puedes recoger e intercambiar con otros! Listado basado en el tiempo."
-aach-command-stats: "Muestra la cantidad de logros recibidos."
-aach-command-stats-hover: "Barra de progreso. ¡Hazte con todos!"
-aach-command-list: "Muestra los logros recibidos y faltantes."
-aach-command-list-hover: "Una GUI elegante para obtener una visión general de todos los logros y su progreso!"
-aach-command-top: "Mostrar clasificaciones personales y globales."
-aach-command-top-hover: "¿Quiénes son los líderes del servidor y cómo se compara con ellos?"
-aach-command-give: "Da el logro ACH a NAME."
-aach-command-give-hover: "El jugador debe estar en línea; solo se pueden usar los logros de Comandos."
-aach-command-add: "Aumentar una estadística."
-aach-command-add-hover: "El jugador debe estar en línea; Utilizado principalmente para categorías personalizadas."
-aach-command-reload: "Vuelva a cargar la configuración del plugin."
-aach-command-reload-hover: "Vuelva a cargar la mayoría de las configuraciones en los archivos config.yml, gui.yml y lang.yml."
-aach-command-info: "Mostrar información sobre el plugin."
-aach-command-info-hover: "¡Alguna información adicional sobre el plugin y su increíble autor!"
-aach-command-check: "Comprueba si NAME tiene ACH."
-aach-command-check-hover: "Use el parámetro Nombre especificado en la configuración."
-aach-command-delete: "Eliminar ACH de NAME."
-aach-command-delete-hover: "El jugador debe estar en línea; no restablece ninguna estadística asociada."
-aach-command-week: "Mostrar clasificaciones semanales."
-aach-command-week-hover: "¡Los mejores cazadores de logros desde el comienzo de la semana!"
-aach-command-month: "Mostrar clasificaciones mensuales."
-aach-command-month-hover: "Los mejores cazadores de logros desde principios de mes!"
-aach-command-toggle: "Alternar logros de otros jugadores."
-aach-command-toggle-hover: "¡Su elección se guarda hasta el próximo reinicio del servidor!"
-aach-command-reset: "Restablecer estadística para categoría CAT."
-aach-command-reset-hover: "El jugador debe estar en línea; ejemplo: reset Places.stone DarkPyves"
-aach-command-generate: "Generar avances."
-aach-command-generate-hover: "Comando potencialmente lento; usar con cuidado!"
-aach-command-inspect: "Inspeccionar los destinatarios de ACH."
-aach-command-inspect-hover: "Enumera los destinatarios más recientes de un logro, máximo 1000."
-aach-tip: "&lTIP: &8Puedes &7&n&odesplazarte &8o dar un &7&n&oclick&8 sobre el comando!"
+# Mensajes para /aach help.
+aach-command-book: "Muestra tu bitácota de logros"
+aach-command-book-hover: "Obten un libro con todos tus logros recibidos al momento"
 
-# Usado en /aach info.
+aach-command-stats: "Muestra tus logros desbloqueados"
+aach-command-stats-hover: "Visualiza el progreso de desbloqueo de tus logros"
+
+aach-command-list: "Muestra todos los logros disponibles"
+aach-command-list-hover: "Visualiza todos los logros disponibles del servidor"
+
+aach-command-top: "Muestra tu ranking personal y global del servidor"
+aach-command-top-hover: "Visualiza los jugadres con más logros en el servidor"
+
+aach-command-give: "Otorga un logro a un jugador"
+aach-command-give-hover: "El jugador debe estar conectado para poder recibir el logro, sólo disponible para logros personalizados"
+
+aach-command-add: "Incrementa la estadística de un logro para un jugador"
+aach-command-add-hover: "El jugador debe estar conectado para poder recibir el logro, sólo disponible para logros personalizados"
+
+aach-command-reload: "Recarga las configuraciones del plugin"
+aach-command-reload-hover: "Recarga todos los archivos de lenguaje y configuración del plugin"
+
+aach-command-info: "Muestra información técnica sobre el plugin"
+aach-command-info-hover: "Visualiza información sobre el plugin, versiones, etcétera"
+
+aach-command-check: "Verifica si un jugador cuenta con un logro"
+aach-command-check-hover: "Utiliza el separador de nombres utilizado en la configruación"
+
+aach-command-delete: "Elimina el logro de un jugador"
+aach-command-delete-hover: "El jugador debe estar conectado para poder surtir cambios"
+
+aach-command-week: "Muestra los rankings semanales"
+aach-command-week-hover: "Visualiza los jugadores con más logros de la semana"
+
+aach-command-month: "Muestra los rankings mensuales"
+aach-command-month-hover: "Visualiza los jugadores con más logros del mes"
+
+aach-command-toggle: "Activa o desactiva los mensajes sobre logros"
+aach-command-toggle-hover: "Éste ajuste sólo estará guardado hasta el próximo reinicio del servidor"
+
+aach-command-reset: "Reinicia las estadísticas de una categoría"
+aach-command-reset-hover: "El jugador debe estar conectado. Por ejemplo: reset Places.stone Kissadere"
+
+aach-command-generate: "Genera logros automáticamente"
+aach-command-generate-hover: "Genera logros de manera automática. Es un proceso que puede ser lento."
+
+aach-command-inspect: "Visualiza que jugadores cuentan con un logro"
+aach-command-inspect-hover: "Visualiza jugadores que hayan recibido un logro específico, máximo cien jugadores a mostrar"
+
+aach-tip: "&bPuedes pasar el mouse encima del texto para más información o hacer clic para copiarlo al portapapeles"
+
+# Mensajes para /aach info.
+#
+# [EN] Some things are better left as they are.
+# [ES] Algunos textos es mejor dejarles como están
+#
 version-command-version: "Version:"
-version-command-website: "Sitio Web:"
-version-command-author: "Autor:"
-version-command-description: "Descripción:"
-version-command-description-details: "Advanced Achievements permite logros únicos y desafiantes. ¡Intenta recoger tantos como puedas, gana recompensas, sube en el ranking y recibe libros de RP!"
-version-command-vault: "Integración con Vault:"
-version-command-petmaster: "Integración con Pet Master:"
-version-command-essentials: "Integración con Essentials:"
-version-command-placeholderapi: "Integración con PlaceholderAPI:"
-version-command-database: "Tipo de base de datos:"
+version-command-website: "Website:"
+version-command-author: "Author:"
+version-command-description: "Description:"
+version-command-description-details: "Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!"
+version-command-vault: "Vault integration:"
+version-command-petmaster: "Pet Master integration:"
+version-command-essentials: "Essentials integration:"
+version-command-placeholderapi: "PlaceholderAPI integration:"
+version-command-database: "Database type:"
 
-# Usado en /aach list.
-list-gui-title: "&5&lLista de Logros"
-list-delay: "¡Debes esperar TIME segundos entre cada comando de lista!"
+# Mensajes para /aach list.
+list-gui-title: "&8Logros"
+list-delay: "Debes esperar TIME segundos antes de poder ver la lista de nuevo"
 list-description: "Descripción:"
 list-goal: "Objetivo:"
-list-reception: "Fecha de recepción:"
+list-reception: "Obtención:"
 list-progress: "Progreso:"
 list-reward: "Recompensa:"
 list-rewards: "Recompensas:"
-list-reward-money: "recibir AMOUNT"
-list-reward-item: "recibir AMOUNT ITEM"
-list-reward-experience: "recibir AMOUNT de experiencia"
-list-reward-increase-max-health: "aumentar la salud máxima en AMOUNT"
-list-reward-increase-max-oxygen: "aumentar el oxígeno máximo en AMOUNT"
+list-reward-money: "recibiste AMOUNT"
+list-reward-item: "recibiste AMOUNT ITEM"
+list-reward-experience: "recibiste AMOUNT experiencia"
+list-reward-increase-max-health: "incrementaste tu salud máxima a AMOUNT"
+list-reward-increase-max-oxygen: "incrementaste tu oxígeno máximo a AMOUNT"
 list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718 "
-list-category-not-unlocked: "Aún no has desbloqueado esta categoría."
-list-achievement-not-unlocked: "Aun no has desbloqueado este Logro."
-list-back-message: "&7Atras"
-list-back-lore: ""
-list-previous-message: "&7Previo"
-list-previous-lore: ""
-list-next-message: "&7Próximo"
-list-next-lore: ""
-list-achievements-in-category-singular: "AMOUNT logro"
-list-achievements-in-category-plural: "AMOUNT logros"
-list-unavailable-whilst-sleeping: "&c&lNo puedes abrir la Lista de logros mientras duermes."
+list-category-not-unlocked: "Aún no has desbloqueado ésta categoría"
+list-achievement-not-unlocked: "Aún no desbloqueas éste logro"
+list-back-message: "&7Volver"
+list-back-lore: "&8Volver a al menú principal"
+list-previous-message: "&7Anterior"
+list-previous-lore: "&8Ir a la página anterior"
+list-next-message: "&7Siguiente"
+list-next-lore: "&8Ir a la página siguiente"
+list-achievements-in-category-singular: "AMOUNT logro recibido"
+list-achievements-in-category-plural: "AMOUNT logros recibidos"
+list-unavailable-whilst-sleeping: "No puedes abrir la lista de logros mientras estés dormido"
 
-# Se usa en nombres de categorías en /aach list.
-# Establezca un parámetro en "" para ocultarlo del /aach list (pero no deshabilitar la categoría).
-list-connections: "Connections"
-list-places: "Bloques colocados"
-list-breaks: "Bloques rotos"
-list-kills: "Entidades asesinadas"
-list-crafts: "Items Crafteados"
-list-playercommands: "Comandos ingresados"
-list-deaths: "Numero de Muertes"
-list-arrows: "Flechas Tiradas"
-list-snowballs: "Snowballs Arrojadas"
-list-eggs: "Huevos Arrojados"
+# Mensajes para las categorías en /aach list.
+# Para ocultar una categoría de la lista, deja el texto en blanco. Ésto la ocultará, pero no la desactivará.
+# Por ejemplo:
+#
+# list-connections: ""
+# Ésto ocultará la categoría de conexiones, más no la desactivará del plugin.
+list-connections: "Conexiones"
+list-places: "Bloques Colocados"
+list-breaks: "Bloques Rotos"
+list-kills: "Entidades Asesinadas"
+list-crafts: "Objetos Crafteados"
+list-playercommands: "Comandos Utilizados"
+list-deaths: "Muertes Totales"
+list-arrows: "Flechas Disparadas"
+list-snowballs: "Bolas de nieve Disparadas"
+list-eggs: "Huevos Disparados"
 list-fish: "Peces Capturados"
-list-treasure: "Tesoro Pescado"
-list-itembreaks: "Items Rotos"
-list-eatenitems: "Items Comido"
+list-treasure: "Tesoros Pescados"
+list-itembreaks: "Objetos Rotos"
+list-eatenitems: "Objetos Consumidos"
 list-shear: "Ovejas Esquiladas"
-list-milk: "Vacas ordeñadas"
-list-lavabuckets: "Cubos llenos de lava"
-list-waterbuckets: "Cubos llenos de agua"
-list-trades: "Numero de oficios"
+list-milk: "Vacas Ordeñadas"
+list-lavabuckets: "Cubeas llenas con Lava"
+list-waterbuckets: "Cubetas llenas con Agua"
+list-trades: "Tradeos"
 list-anvils: "Yunques Usados"
-list-enchantments: "Items Encantados"
-list-beds: "Camas entradas"
+list-enchantments: "Objetos Encantados"
+list-beds: "Camas Usadas"
 list-maxlevel: "Nivel Máximo Alcanzado"
-list-consumedpotions: "Pociones Consumidas"
-list-playedtime: "Tiempo jugado"
-list-distance-foot: "Distancia recorrida a pie"
-list-distance-pig: "Distancia recorrida en un cerdo"
-list-distance-horse: "Distancia recorrida en un caballo"
-list-distance-minecart: "Distancia recorrida en un Minecart"
-list-distance-boat: "Distancia recorrida en un bote"
-list-distance-gliding: "Distancia recorrida con Elytra"
-list-distance-llama: "Distancia recorrida en una llama"
-list-distance-sneaking: "Distancia recorrida mientras se escabulle"
-list-itemdrops: "Items Droppeados"
-list-itempickups: "Items Tomados"
-list-hoeplowings: "Superficie arada"
+list-consumedpotions: "Pociones Bebidas"
+list-playedtime: "Tiempo de Juego"
+list-distance-foot: "Distancia Recorrida a Pie"
+list-distance-pig: "Distancia Recorrida en Cerdo"
+list-distance-horse: "Distancia Recorrida a Caballo"
+list-distance-minecart: "Distancia Recorrida en Vagoneta"
+list-distance-boat: "Distancia Recorrida en Bote"
+list-distance-gliding: "Distance Travelled con Elytra"
+list-distance-llama: "Distance Travelled en Llama"
+list-distance-sneaking: "Distance Travelled Agachado"
+list-itemdrops: "Objetos Soltados"
+list-itempickups: "Objetos Recogidos"
+list-hoeplowings: "Tierra Arada"
 list-fertilising: "Plantas Fertilizadas"
-list-taming: "Animales domesticados"
-list-breeding: "Animales criados"
-list-brewing: "Pociones elaboradas"
-list-fireworks: "Fuegos artificiales lanzados"
-list-musicdiscs: "Discos de música reproducidos"
-list-enderpearls: "Teletransportaciones con Ender Pearls"
-list-petmastergive: "Mascotas dadas a otro jugador"
-list-petmasterreceive: "Mascotas recibidas de otro jugador"
-list-smelting: "Items Fundidos"
-list-commands: "Otros logros"
-list-custom: "Categorías personalizadas"
-list-targetsshot: "Objetivos alcanzados"
-list-raids-won: "Incursiones ganadas"
-list-riptides: "Mareas rotas Usadas"
-list-jobsreborn: "Subida de nivel de Jobs"
-list-advancements-completed: "Avances completados"
+list-taming: "Animales Domesticados"
+list-breeding: "Animales Criados"
+list-brewing: "Pociones Creadas"
+list-fireworks: "Fuegos Articiales Usados"
+list-musicdiscs: "Discos Musicales Escuchados"
+list-enderpearls: "Teleportaciones con Perlas del Ender"
+list-petmastergive: "Mascotas Regaladas a otro Jugador"
+list-petmasterreceive: "Mascotas Recibidas de otro Jugador"
+list-smelting: "Objetos Fundidos"
+list-commands: "Otros Logros"
+list-custom: "Categorías Personalizadas"
+list-targetsshot: "Objetivos Disparados"
+list-raids-won: "Raids Ganados"
+list-riptides: "Trinches Usados"
+list-jobsreborn: "Trabajos Subidos de Nivel"
+list-advancements-completed: "Logros Completados"
 
-# Usado en /aach toggle.
-toggle-displayed: "Ahora se te notificará cuando otros jugadores obtengan logros."
-toggle-hidden: "Ya no se te notificará cuando otros jugadores obtengan logros."
+# Mensajes para /aach toggle.
+toggle-displayed: "Has activado las notificaciones para cuando un jugador recibe un logro"
+toggle-hidden: "Has desactivado las notificaciones para cuando un jugador recibe un logro"
 
-# Usado en /aach reset.
-reset-successful: " Se borraron las estadísticas de CAT para PLAYER."
-reset-all-successful: "Se borraron todas las estadísticas para PLAYER."
+# Mensajes para /aach reset.
+reset-successful: "Las estadísticas del jugador PLAYER en la categoría de CAT han sido reiniciadas"
+reset-all-successful: "Se han reiniciado todas las estadísticas del jugador PLAYER"
 
-# Usado en /aach generate.
-advancements-generated: "Los avances se generaron con éxito."
-minecraft-not-supported: "Los avances no son compatibles con su versión de Minecraft. Actualiza a 1.12+."
+# Mensajes para /aach generate.
+advancements-generated: "Se han generado logros exitosamente"
+minecraft-not-supported: "Los logros no están soportados por tu versión de Minecraft, por favor actualiza a una versión igual o superior a la 1.12"
 
-# Usado en /aach inspect
-achievement-not-recognized: "El logro llamado 'NAME' no fue reconocido. ¿Quiso decir CLOSEST_MATCH?"
+# Mensajes para /aach inspect
+achievement-not-recognized: "El logro de NAME no existe. ¿Quizás quisiste decir CLOSEST_MATCH?"
 
 #======================================================================================================================#
-#                                                 PAREMETROS FUTUROS                                                   #
+#                                                  NUEVOS MENSAJES                                                     #
 #                                                                                                                      #
-#             Los nuevos parámetros agregados en futuras versiones de complementos aparecerán a continuación.          #
+#             En caso de haber mensajes nuevos en actualizaciones futuras, serán mostrado a partir de aquí             #
 #======================================================================================================================#
