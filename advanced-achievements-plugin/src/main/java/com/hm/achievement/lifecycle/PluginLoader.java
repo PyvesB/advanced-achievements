@@ -29,7 +29,6 @@ import com.hm.achievement.config.ConfigurationParser;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.AsyncCachedRequestsSender;
 import com.hm.achievement.exception.PluginLoadError;
-import com.hm.achievement.listener.FireworkListener;
 import com.hm.achievement.listener.JoinListener;
 import com.hm.achievement.listener.ListGUIListener;
 import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
@@ -58,7 +57,6 @@ public class PluginLoader {
 	private final AchievementMap achievementMap;
 
 	// Listeners, to monitor various events.
-	private final FireworkListener fireworkListener;
 	private final JoinListener joinListener;
 	private final ListGUIListener listGUIListener;
 	private final PlayerAdvancedAchievementListener playerAdvancedAchievementListener;
@@ -91,24 +89,22 @@ public class PluginLoader {
 
 	@Inject
 	public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger, Set<Reloadable> reloadables,
-			FireworkListener fireworkListener, JoinListener joinListener, ListGUIListener listGUIListener,
+			JoinListener joinListener, ListGUIListener listGUIListener, TeleportListener teleportListener,
 			PlayerAdvancedAchievementListener playerAdvancedAchievementListener, Cleaner cleaner,
-			TeleportListener teleportListener, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook,
-			AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender,
-			PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter,
-			Set<Category> disabledCategories, @Named("main") YamlConfiguration mainConfig,
-			ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable,
-			AchievePlayTimeRunnable playTimeRunnable, UpdateChecker updateChecker, ReloadCommand reloadCommand,
-			AchievementMap achievementMap) {
+			Lazy<AchievementPlaceholderHook> achievementPlaceholderHook, AbstractDatabaseManager databaseManager,
+			AsyncCachedRequestsSender asyncCachedRequestsSender, PluginCommandExecutor pluginCommandExecutor,
+			CommandTabCompleter commandTabCompleter, Set<Category> disabledCategories,
+			@Named("main") YamlConfiguration mainConfig, ConfigurationParser configurationParser,
+			AchieveDistanceRunnable distanceRunnable, AchievePlayTimeRunnable playTimeRunnable, UpdateChecker updateChecker,
+			ReloadCommand reloadCommand, AchievementMap achievementMap) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.reloadables = reloadables;
-		this.fireworkListener = fireworkListener;
 		this.joinListener = joinListener;
 		this.listGUIListener = listGUIListener;
+		this.teleportListener = teleportListener;
 		this.playerAdvancedAchievementListener = playerAdvancedAchievementListener;
 		this.cleaner = cleaner;
-		this.teleportListener = teleportListener;
 		this.achievementPlaceholderHook = achievementPlaceholderHook;
 		this.databaseManager = databaseManager;
 		this.asyncCachedRequestsSender = asyncCachedRequestsSender;
@@ -184,7 +180,6 @@ public class PluginLoader {
 				}
 			}
 		});
-		pluginManager.registerEvents(fireworkListener, advancedAchievements);
 		pluginManager.registerEvents(joinListener, advancedAchievements);
 		pluginManager.registerEvents(listGUIListener, advancedAchievements);
 		pluginManager.registerEvents(playerAdvancedAchievementListener, advancedAchievements);

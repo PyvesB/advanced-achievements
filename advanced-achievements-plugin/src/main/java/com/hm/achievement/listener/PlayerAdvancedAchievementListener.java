@@ -28,7 +28,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import com.darkblade12.particleeffect.ParticleEffect;
 import com.hm.achievement.AdvancedAchievements;
@@ -58,7 +60,7 @@ import com.hm.achievement.utils.StringHelper;
 public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 	private static final Random RANDOM = new Random();
-
+	private static final String ADVANCED_ACHIEVEMENTS_FIREWORK = "advanced_achievements_firework";
 	private static final Map<ChatColor, ChatColor> FIREWORK_COLOR_MIX = new HashMap<>();
 	static {
 		FIREWORK_COLOR_MIX.put(ChatColor.AQUA, ChatColor.DARK_AQUA);
@@ -90,7 +92,6 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private final AchievementMap achievementMap;
 	private final AbstractDatabaseManager databaseManager;
 	private final ToggleCommand toggleCommand;
-	private final FireworkListener fireworkListener;
 	private final SoundPlayer soundPlayer;
 
 	private String configFireworkStyle;
@@ -116,7 +117,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			@Named("lang") YamlConfiguration langConfig, int serverVersion, Logger logger, StringBuilder pluginHeader,
 			CacheManager cacheManager, AdvancedAchievements advancedAchievements, RewardParser rewardParser,
 			AchievementMap achievementMap, AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand,
-			FireworkListener fireworkListener, SoundPlayer soundPlayer) {
+			SoundPlayer soundPlayer) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.serverVersion = serverVersion;
@@ -128,7 +129,6 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		this.achievementMap = achievementMap;
 		this.databaseManager = databaseManager;
 		this.toggleCommand = toggleCommand;
-		this.fireworkListener = fireworkListener;
 		this.soundPlayer = soundPlayer;
 	}
 
@@ -173,6 +173,12 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		langAchievementNew = pluginHeader + langConfig.getString("achievement-new") + " " + ChatColor.WHITE;
 		langAllAchievementsReceived = pluginHeader + langConfig.getString("all-achievements-received");
 		langBossBarProgress = langConfig.getString("boss-bar-progress");
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+		// Cancel damage if the firework was launched by the plugin.
+		event.setCancelled(event.getEntity().hasMetadata(ADVANCED_ACHIEVEMENTS_FIREWORK));
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -337,10 +343,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 				.build();
 		fireworkMeta.addEffects(fireworkEffect);
 		firework.setFireworkMeta(fireworkMeta);
+		firework.setMetadata(ADVANCED_ACHIEVEMENTS_FIREWORK, new FixedMetadataValue(advancedAchievements, true));
 		firework.setVelocity(location.getDirection().multiply(0));
-
-		// Firework launched by plugin: damage will later be cancelled out.
-		fireworkListener.addFirework(firework);
 	}
 
 	/**
