@@ -238,7 +238,7 @@ public class AdvancementManager implements Reloadable {
 			return "minecraft:" + PackageType.MINECRAFT_SERVER.getClass(CLASS_MINECRAFT_KEY).getMethod(METHOD_GET_KEY)
 					.invoke(minecraftKey);
 		} catch (Exception e) {
-			logger.warning("Failed to get internal " + item.getType().name().toLowerCase() + " name for advancement icon."
+			logger.warning("Failed to get internal " + item.getType().name().toLowerCase() + " name for advancement icon. "
 					+ "Using book instead.");
 			return MINECRAFT_BOOK_KEY;
 		}
