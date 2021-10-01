@@ -11,6 +11,10 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v4.2
+      with:
+        maven-version: 3.8.1
     - name: Build project
       run: mvn test -B
     - name: Validate formatting
