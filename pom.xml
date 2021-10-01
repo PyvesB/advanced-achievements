@@ -78,10 +78,6 @@
 			<id>jitpack-repo</id>
 			<url>https://jitpack.io</url>
 		</repository>
-		<repository>
-			<id>google-maven</id>
-			<url>https://maven.google.com</url>
-		</repository>
 	</repositories>
 
 	<dependencyManagement>
