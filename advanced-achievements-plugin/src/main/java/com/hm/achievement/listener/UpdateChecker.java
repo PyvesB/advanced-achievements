@@ -55,7 +55,7 @@ public class UpdateChecker implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (isUpdateNeeded() && event.getPlayer().hasPermission("achievement.update")) {
 			event.getPlayer().sendMessage(pluginHeader + plugin.getDescription().getName() + " update available: v"
-					+ version + ". Download at spigotmc.org/resources/advanced-achievements.83466");
+					+ version + ". Download at https://www.spigotmc.org/resources/83466");
 		}
 	}
 
@@ -158,7 +158,7 @@ public class UpdateChecker implements Listener {
 	 * Logs in the server's console if a new version is found. The new version number and download links are printed.
 	 */
 	private void logUpdate() {
-		plugin.getLogger().warning("Update available: v" + version
-				+ "! Download at spigotmc.org/resources/advanced-achievements.83466");
+		plugin.getLogger()
+				.warning("Update available: v" + version + "! Download at https://www.spigotmc.org/resources/83466");
 	}
 }
