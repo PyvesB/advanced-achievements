@@ -20,8 +20,7 @@ import org.xml.sax.SAXException;
 import com.hm.achievement.AdvancedAchievements;
 
 /**
- * Class used to check for newer versions of the plugin by retrieving a version tag in its pom.xml file. For instance
- * versions 2.0, 1.2 and 1.1.1 are all considered newer than 1.1.
+ * Class used to check for newer versions of the plugin by retrieving a version tag in its pom.xml file.
  * <p>
  * If a newer version is available, the information will be logged in the server's console and a message will be sent
  * when players with a specific permission join the game.
@@ -35,7 +34,7 @@ public class UpdateChecker implements Listener {
 
 	// Marked as volatile to ensure that once the updateCheckerFutureTask is done, the version is visible to the main
 	// thread of execution.
-	private volatile String version;
+	private volatile String latestVersion;
 
 	private Boolean updateNeeded = null;
 	private FutureTask<Boolean> updateCheckerFutureTask;
@@ -55,7 +54,7 @@ public class UpdateChecker implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (isUpdateNeeded() && event.getPlayer().hasPermission("achievement.update")) {
 			event.getPlayer().sendMessage(pluginHeader + plugin.getDescription().getName() + " update available: v"
-					+ version + ". Download at https://www.spigotmc.org/resources/83466");
+					+ latestVersion + ". Download at https://www.spigotmc.org/resources/83466");
 		}
 	}
 
@@ -101,7 +100,7 @@ public class UpdateChecker implements Listener {
 	 * @return The version tag of the plugin parsed from the specified pom.xml.
 	 */
 	public String getVersion() {
-		return version;
+		return latestVersion;
 	}
 
 	/**
@@ -123,42 +122,19 @@ public class UpdateChecker implements Listener {
 			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(pomInput);
 		}
 
-		// Retrieve version information.
-		version = document.getElementsByTagName("version").item(0).getTextContent();
+		latestVersion = document.getElementsByTagName("version").item(0).getTextContent();
 
-		if (version.equals(plugin.getDescription().getVersion())) {
-			return false;
-		}
-		// Version of current plugin.
-		String[] pluginVersion = plugin.getDescription().getVersion().split("\\.");
-
-		// Version of the pom.xml file.
-		String[] onlineVersion = version.split("\\.");
-
-		// Compare version numbers.
-		for (int i = 0; i < Math.min(pluginVersion.length, onlineVersion.length); i++) {
-			if (Integer.parseInt(pluginVersion[i]) > Integer.parseInt(onlineVersion[i])) {
+		String[] pluginVersionNumbers = plugin.getDescription().getVersion().split("\\.");
+		String[] latestVersionNumbers = latestVersion.split("\\.");
+		for (int i = 0; i < pluginVersionNumbers.length; i++) {
+			if (Integer.parseInt(pluginVersionNumbers[i]) > Integer.parseInt(latestVersionNumbers[i])) {
 				return false;
-			} else if (Integer.parseInt(pluginVersion[i]) < Integer.parseInt(onlineVersion[i])) {
-				logUpdate();
+			} else if (Integer.parseInt(pluginVersionNumbers[i]) < Integer.parseInt(latestVersionNumbers[i])) {
+				plugin.getLogger().warning("Update available: v" + latestVersion +
+						"! Download at https://www.spigotmc.org/resources/83466");
 				return true;
 			}
 		}
-
-		// Both versions have the same prefix; additional length check (for instance pluginVersion = 2.2 and
-		// onlineVersion = 2.2.1).
-		if (pluginVersion.length < onlineVersion.length) {
-			logUpdate();
-			return true;
-		}
 		return false;
-	}
-
-	/**
-	 * Logs in the server's console if a new version is found. The new version number and download links are printed.
-	 */
-	private void logUpdate() {
-		plugin.getLogger()
-				.warning("Update available: v" + version + "! Download at https://www.spigotmc.org/resources/83466");
 	}
 }
