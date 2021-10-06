@@ -108,8 +108,9 @@ ExcludedWorlds: []
 # Ignore vertical dimension (Y axis) when calculating distance statistics.
 IgnoreVerticalDistance: false
 
-# Hide these categories from the GUI or the stats output and prevent statisticss from increasing. To not disable any
-# categories, remove all listed items and instead specify DisabledCategories: [] 
+# Hide these categories from the GUI and prevent statistics from increasing. Once added to this list, you do not need to
+# delete the corresponding achievement configuration section. To enable all categories, remove all listed items and
+# instead specify DisabledCategories: []
 DisabledCategories:
   - AdvancementsCompleted
 
