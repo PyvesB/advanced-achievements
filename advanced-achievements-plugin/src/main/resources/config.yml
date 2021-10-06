@@ -869,7 +869,7 @@ Riptides:
     DisplayName: Poseidon
     Type: normal
 
-# Count the number of advancements completed.
+# Count the number of advancements completed. Covers all Vanilla advancements, not only those created by /aach generate.
 AdvancementsCompleted:
   20:
     Goal: Complete 20 advancements.
