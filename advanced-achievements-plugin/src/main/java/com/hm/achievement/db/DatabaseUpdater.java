@@ -132,17 +132,16 @@ public class DatabaseUpdater {
 	 * @param size
 	 */
 	void updateOldDBColumnSize(AbstractDatabaseManager databaseManager, MultipleAchievements category, int size) {
-		// SQLite ignores size for varchar datatype. H2 support was added after this was an issue.
-		if (!(databaseManager instanceof AbstractFileDatabaseManager)) {
+		// SQLite ignores size for varchar datatype.
+		if (!(databaseManager instanceof SQLiteDatabaseManager)) {
 			try (Statement st = databaseManager.getConnection().createStatement();
 					ResultSet rs = st.executeQuery("SELECT " + category.toSubcategoryDBName() + " FROM "
 							+ databaseManager.getPrefix() + category.toDBName() + " LIMIT 1")) {
 				if (rs.getMetaData().getPrecision(1) < size) {
-					logger.info("Updating " + category.toDBName() + " database table with extended column, please wait...");
-					// Increase size of table.
-					String alterOperation = databaseManager instanceof PostgreSQLDatabaseManager
-							? "ALTER COLUMN " + category.toSubcategoryDBName() + " TYPE varchar(" + size + ")"
-							: "MODIFY " + category.toSubcategoryDBName() + " varchar(" + size + ")";
+					logger.info("Changing " + category.toDBName() + " database column size to " + size + ", please wait...");
+					String alterOperation = databaseManager instanceof MySQLDatabaseManager
+							? "MODIFY " + category.toSubcategoryDBName() + " varchar(" + size + ")"
+							: "ALTER COLUMN " + category.toSubcategoryDBName() + " TYPE varchar(" + size + ")";
 					st.execute("ALTER TABLE " + databaseManager.getPrefix() + category.toDBName() + " " + alterOperation);
 				}
 			} catch (SQLException e) {
