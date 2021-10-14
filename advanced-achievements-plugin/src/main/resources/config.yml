@@ -134,6 +134,7 @@ StatisticCooldown:
   Beds: 30
   Brewing: 5
   MusicDiscs: 30
+  BooksEdited: 10
 
 # Display action bar message when player performs an action while in a cooldown period. Minimum Minecraft version: 1.8.
 CooldownActionBar: true
@@ -882,6 +883,15 @@ AdvancementsCompleted:
       Item:
         - diamond 8
         - cake 1
+
+# Count books edited.
+BooksEdited:
+  10:
+    Goal: Edit 10 books.
+    Message: You've used an entire pot of ink!
+    Name: booksedited_10
+    DisplayName: Scribe
+    Type: normal
 
 #======================================================================================================================#
 #                                                 COMMAND ACHIEVEMENTS                                                 #

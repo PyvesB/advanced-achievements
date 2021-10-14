@@ -52,7 +52,8 @@ public enum NormalAchievements implements Category {
 	DISTANCESNEAKING("DistanceSneaking"),
 	RAIDSWON("RaidsWon"),
 	RIPTIDES("Riptides"),
-	ADVANCEMENTSCOMPLETED("AdvancementsCompleted");
+	ADVANCEMENTSCOMPLETED("AdvancementsCompleted"),
+	BOOKSEDITED("BooksEdited");
 
 	private static final Map<String, NormalAchievements> CATEGORY_NAMES_TO_ENUM = new HashMap<>();
 	static {

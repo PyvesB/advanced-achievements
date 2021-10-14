@@ -56,7 +56,7 @@ NextButton:
 
 # Items used to represent the categories.
 Connections:
-  Item: book_and_quill
+  Item: wood_door
   Metadata: 0
 Places:
   Item: stone
@@ -198,6 +198,9 @@ PlayerCommands:
   Metadata: 0
 TargetsShot:
   Item: firework_charge
+  Metadata: 0
+BooksEdited:
+  Item: book_and_quill
   Metadata: 0
 Custom:
   Item: feather

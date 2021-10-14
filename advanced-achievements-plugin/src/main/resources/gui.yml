@@ -58,7 +58,7 @@ PlayerCommands:
 JobsReborn:
   Item: netherite_scrap
 Connections:
-  Item: writable_book
+  Item: oak_door
 Deaths:
   Item: skeleton_skull
 Arrows:
@@ -145,6 +145,8 @@ Riptides:
   Item: trident
 AdvancementsCompleted:
   Item: gold_ingot
+BooksEdited:
+  Item: writable_book
 Custom:
   Item: feather
 Commands:

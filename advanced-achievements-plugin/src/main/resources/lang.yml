@@ -201,6 +201,7 @@ list-raids-won: "Raids Won"
 list-riptides: "Riptides Used"
 list-jobsreborn: "Jobs Level-Up"
 list-advancements-completed: "Advancements Completed"
+list-booksedited: "Books Edited"
 
 # Used in /aach toggle.
 toggle-displayed: "You will now be notified when other players get achievements."
