@@ -1,10 +1,12 @@
 package com.hm.achievement.listener.statistics;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
@@ -24,21 +26,28 @@ import com.hm.achievement.db.CacheManager;
 @Singleton
 public class FishListener extends AbstractListener {
 
+	private Set<String> fishableFish;
+
 	@Inject
 	public FishListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
 			CacheManager cacheManager) {
 		super(NormalAchievements.FISH, mainConfig, serverVersion, achievementMap, cacheManager);
 	}
 
+	@Override
+	public void extractConfigurationParameters() {
+		super.extractConfigurationParameters();
+
+		fishableFish = new HashSet<>();
+		for (String block : mainConfig.getStringList("FishableFish")) {
+			fishableFish.add(block.toUpperCase());
+		}
+	}
+
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerFish(PlayerFishEvent event) {
-		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) {
-			return;
-		}
-
-		Material caughtMaterial = ((Item) event.getCaught()).getItemStack().getType();
-		if (!caughtMaterial.name().endsWith("FISH")
-				&& (serverVersion < 13 || (caughtMaterial != Material.COD && caughtMaterial != Material.SALMON))) {
+		if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH
+				|| !fishableFish.contains(((Item) event.getCaught()).getItemStack().getType().name())) {
 			return;
 		}
 

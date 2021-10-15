@@ -334,6 +334,14 @@ HoePlowableBlocks:
   - dirt
   - grass_block
 
+# Used for the Fish achievement category. You may need to expand this list when new Minecraft versions are released.
+FishableFish:
+  - cod
+  - salmon
+  - pufferfish
+  - tropical_fish
+  - raw_fish
+
 #======================================================================================================================#
 #                                                     GUI SETTINGS                                                     #
 #                                                                                                                      #
