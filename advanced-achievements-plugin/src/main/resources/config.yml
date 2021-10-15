@@ -328,6 +328,12 @@ ForbiddenFireworkBlocksWhenNotSneaking:
   - silver_shulker_box
   - sign_post
 
+# Used for the HoePlowings achievement category. You may need to expand this list when new Minecraft versions are
+# released. In Minecraft versions prior to 1.13, replace grass_block with grass.
+HoePlowableBlocks:
+  - dirt
+  - grass_block
+
 #======================================================================================================================#
 #                                                     GUI SETTINGS                                                     #
 #                                                                                                                      #
