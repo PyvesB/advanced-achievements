@@ -233,6 +233,13 @@ public class ConfigurationParser {
 			logger.warning(
 					"Riptides are not available in your server version, please add Riptides to the DisabledCategories list in config.yml.");
 		}
+		// EntityPotionEffectEvent introduced in 1.13.
+		if (!disabledCategories.contains(MultipleAchievements.EFFECTSHELD) && serverVersion < 13) {
+			disabledCategories.add(MultipleAchievements.EFFECTSHELD);
+			logger.warning("Overriding configuration: disabling EffectsHeld category.");
+			logger.warning(
+					"The effect event is not available in your server version, please add EffectsHeld to the DisabledCategories list in config.yml.");
+		}
 	}
 
 	/**

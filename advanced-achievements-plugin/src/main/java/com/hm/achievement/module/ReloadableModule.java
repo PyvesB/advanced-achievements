@@ -25,6 +25,7 @@ import com.hm.achievement.listener.statistics.CraftsListener;
 import com.hm.achievement.listener.statistics.DeathsListener;
 import com.hm.achievement.listener.statistics.DropsListener;
 import com.hm.achievement.listener.statistics.EatenItemsListener;
+import com.hm.achievement.listener.statistics.EffectsHeldListener;
 import com.hm.achievement.listener.statistics.EggsListener;
 import com.hm.achievement.listener.statistics.EnchantmentsListener;
 import com.hm.achievement.listener.statistics.EnderPearlsListener;
@@ -287,4 +288,8 @@ public abstract class ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindBooksEditedListener(BooksEditedListener booksEditedListener);
+
+	@Binds
+	@IntoSet
+	abstract Reloadable bindEffectsHeldListener(EffectsHeldListener effectsHeldListener);
 }

@@ -466,6 +466,17 @@ JobsReborn:
       DisplayName: Hunter
       Type: normal
 
+# Count effects held (effect name in lower case). Minimum Minecraft version: 1.13.
+# Available effects: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionEffectType.html
+EffectsHeld:
+  jump:
+    1:
+      Goal: Hold the jump boost effect!
+      Message: You jumped as high as a kangaroo!
+      Name: effectsheld_1_jump
+      DisplayName: Kangaroo
+      Type: normal
+
 #======================================================================================================================#
 #                                              NORMAL ACTION ACHIEVEMENTS                                              #
 #                                                                                                                      #

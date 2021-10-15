@@ -147,6 +147,8 @@ AdvancementsCompleted:
   Item: gold_ingot
 BooksEdited:
   Item: writable_book
+EffectsHeld:
+  Item: lingering_potion
 Custom:
   Item: feather
 Commands:
