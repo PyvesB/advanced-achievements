@@ -22,7 +22,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.MaterialHelper;
@@ -55,19 +54,17 @@ public class GUIItems implements Reloadable {
 	private final YamlConfiguration langConfig;
 	private final YamlConfiguration guiConfig;
 	private final MaterialHelper materialHelper;
-	private final AchievementMap achievementMap;
 
 	private String configListAchievementFormat;
 	private String configIcon;
 
 	@Inject
 	public GUIItems(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			@Named("gui") YamlConfiguration guiConfig, MaterialHelper materialHelper, AchievementMap achievementMap) {
+			@Named("gui") YamlConfiguration guiConfig, MaterialHelper materialHelper) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.guiConfig = guiConfig;
 		this.materialHelper = materialHelper;
-		this.achievementMap = achievementMap;
 	}
 
 	@Override
@@ -81,9 +78,8 @@ public class GUIItems implements Reloadable {
 		// Prepare item stacks displayed in the GUI for Multiple achievements.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			String categoryName = category.toString();
-			int totalAchievements = achievementMap.getForCategory(category).size();
 			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, categoryName, totalAchievements);
+			buildItemLore(itemStack, categoryName);
 			orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
 		}
 
@@ -91,16 +87,14 @@ public class GUIItems implements Reloadable {
 		for (NormalAchievements category : NormalAchievements.values()) {
 			String categoryName = category.toString();
 			ItemStack itemStack = createItemStack(categoryName);
-			int totalAchievements = achievementMap.getForCategory(category).size();
-			buildItemLore(itemStack, categoryName, totalAchievements);
+			buildItemLore(itemStack, categoryName);
 			orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
 		}
 
 		// Prepare item stack displayed in the GUI for Commands achievements.
 		String categoryName = CommandAchievements.COMMANDS.toString();
 		ItemStack itemStack = createItemStack(categoryName);
-		int totalAchievements = achievementMap.getForCategory(CommandAchievements.COMMANDS).size();
-		buildItemLore(itemStack, categoryName, totalAchievements);
+		buildItemLore(itemStack, categoryName);
 		orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName),
 				CommandAchievements.COMMANDS), itemStack);
 
@@ -166,9 +160,8 @@ public class GUIItems implements Reloadable {
 	 *
 	 * @param item
 	 * @param categoryName
-	 * @param totalAchievements
 	 */
-	private void buildItemLore(ItemStack item, String categoryName, int totalAchievements) {
+	private void buildItemLore(ItemStack item, String categoryName) {
 		ItemMeta itemMeta = item.getItemMeta();
 		// Some lang.yml keys differ slightly for the category name (e.g. Treasure*s* -> list-treasure).
 		String langKey = StringHelper.getClosestMatch("list-" + categoryName.toLowerCase(), langConfig.getKeys(false));
