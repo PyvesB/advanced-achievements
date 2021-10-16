@@ -39,12 +39,6 @@ class AdvancedAchievementsBukkitAPINullSafetyTest {
 	}
 
 	@Test
-	void itShouldThrowExceptionWhenGettingAchievementListWithNullPlayer() {
-		Exception e = assertThrows(IllegalArgumentException.class, () -> underTest.getPlayerAchievementsList(null));
-		assertEquals("Player cannot be null.", e.getMessage());
-	}
-
-	@Test
 	void itShouldThrowExceptionWhenGettingTotalAchievementsWithNullPlayer() {
 		Exception e = assertThrows(IllegalArgumentException.class, () -> underTest.getPlayerTotalAchievements(null));
 		assertEquals("Player cannot be null.", e.getMessage());

@@ -78,17 +78,6 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 				.collect(Collectors.toList());
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public List<Achievement> getPlayerAchievementsList(UUID player) {
-		validateNotNull(player, "Player");
-		return databaseManager.getPlayerAchievementsList(player).stream()
-				.filter(a -> achievementMap.getForName(a.getName()) != null)
-				.map(a -> new Achievement(a.getName(), achievementMap.getForName(a.getName()).getMessage(),
-						a.getFormattedDate()))
-				.collect(Collectors.toList());
-	}
-
 	@Override
 	public int getPlayerTotalAchievements(UUID player) {
 		validateNotNull(player, "Player");
