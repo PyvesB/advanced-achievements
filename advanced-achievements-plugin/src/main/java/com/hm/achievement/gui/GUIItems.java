@@ -79,7 +79,7 @@ public class GUIItems implements Reloadable {
 		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
 
 		orderedAchievementItems.clear();
-		// getShallowKeys returns a LinkedHashSet, preserving the ordering specified in the file.
+		// getKeys returns a LinkedHashSet, preserving the ordering specified in the file.
 		List<String> orderedCategories = new ArrayList<>(guiConfig.getKeys(false));
 		// Prepare item stacks displayed in the GUI for Multiple achievements.
 		for (MultipleAchievements category : MultipleAchievements.values()) {
