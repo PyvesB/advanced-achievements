@@ -1,12 +1,17 @@
 package com.hm.achievement.utils;
 
-import java.util.UUID;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.darkblade12.particleeffect.ReflectionUtils;
 import com.darkblade12.particleeffect.ReflectionUtils.PackageType;
+
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 /**
  * Class used to send fancy messages to the player; can be titles, hoverable chat messages or action bar messages. All
@@ -19,44 +24,20 @@ public final class FancyMessageSender {
 
 	private static final byte CHAT_MESSAGE_BYTE = 1;
 	private static final byte ACTION_BAR_BYTE = 2;
-	private static final String CLASS_CHAT_BASE_COMPONENT;
+	private static final String CLASS_CHAT_BASE_COMPONENT = PackageType.MINECRAFT_SERVER + ".IChatBaseComponent";
 	private static final String CLASS_CRAFT_PLAYER = "CraftPlayer";
-	private static final String CLASS_ENTITY_PLAYER;
-	private static final String CLASS_PACKET;
-	private static final String CLASS_PACKET_PLAY_OUT_CHAT;
+	private static final String CLASS_ENTITY_PLAYER = PackageType.MINECRAFT_SERVER + ".EntityPlayer";
+	private static final String CLASS_PACKET = PackageType.MINECRAFT_SERVER + ".Packet";
+	private static final String CLASS_PACKET_PLAY_OUT_CHAT = PackageType.MINECRAFT_SERVER + ".PacketPlayOutChat";
 	private static final String CLASS_PACKET_PLAY_OUT_TITLE = "PacketPlayOutTitle";
-	private static final String CLASS_PLAYER_CONNECTION;
+	private static final String CLASS_PLAYER_CONNECTION = PackageType.MINECRAFT_SERVER + ".PlayerConnection";
 	private static final String ENUM_TITLE_ACTION = "EnumTitleAction";
-	private static final String ENUM_CHAT_MESSAGE_TYPE;
-	private static final String FIELD_PLAYER_CONNECTION;
+	private static final String FIELD_PLAYER_CONNECTION = "playerConnection";
 	private static final String METHOD_GET_HANDLE = "getHandle";
 	private static final String METHOD_SEND_PACKET = "sendPacket";
 	private static final String NESTED_CHAT_SERIALIZER = "ChatSerializer";
 	private static final String PACKAGE_ENTITY = "entity";
 	private static final int MINOR_VERSION_NUMBER = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
-	static {
-		if (MINOR_VERSION_NUMBER < 17) {
-			CLASS_CHAT_BASE_COMPONENT = PackageType.MINECRAFT_SERVER + ".IChatBaseComponent";
-			CLASS_ENTITY_PLAYER = PackageType.MINECRAFT_SERVER + ".EntityPlayer";
-			CLASS_PACKET = PackageType.MINECRAFT_SERVER + ".Packet";
-			CLASS_PACKET_PLAY_OUT_CHAT = PackageType.MINECRAFT_SERVER + ".PacketPlayOutChat";
-			CLASS_PLAYER_CONNECTION = PackageType.MINECRAFT_SERVER + ".PlayerConnection";
-			ENUM_CHAT_MESSAGE_TYPE = PackageType.MINECRAFT_SERVER + ".ChatMessageType";
-			FIELD_PLAYER_CONNECTION = "playerConnection";
-		} else {
-			CLASS_CHAT_BASE_COMPONENT = "net.minecraft.network.chat.IChatBaseComponent";
-			CLASS_ENTITY_PLAYER = "net.minecraft.server.level.EntityPlayer";
-			CLASS_PACKET = "net.minecraft.network.protocol.Packet";
-			CLASS_PACKET_PLAY_OUT_CHAT = "net.minecraft.network.protocol.game.PacketPlayOutChat";
-			CLASS_PLAYER_CONNECTION = "net.minecraft.server.network.PlayerConnection";
-			ENUM_CHAT_MESSAGE_TYPE = "net.minecraft.network.chat.ChatMessageType";
-			FIELD_PLAYER_CONNECTION = "b";
-		}
-	}
-
-	private FancyMessageSender() {
-		// Not called.
-	}
 
 	/**
 	 * Sends a hoverable message to the player. Only supported in Minecraft 1.8+.
@@ -67,8 +48,23 @@ public final class FancyMessageSender {
 	 * @param color The color of the hover text.
 	 * @throws Exception
 	 */
+	@SuppressWarnings("deprecation")
 	public static void sendHoverableMessage(Player player, String message, String hover, String color) throws Exception {
-		sendChatPacket(player, constructHoverableMessageJson(message, hover, color), CHAT_MESSAGE_BYTE);
+		if (MINOR_VERSION_NUMBER < 9) {
+			sendChatPacket(player, constructHoverableMessageJson(message, hover, color), CHAT_MESSAGE_BYTE);
+		} else {
+			TextComponent tc = new TextComponent();
+			tc.setText(message);
+			tc.setColor(ChatColor.valueOf(color.toUpperCase()).asBungee());
+
+			if (MINOR_VERSION_NUMBER >= 16) {
+				tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hover)));
+			} else {
+				tc.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
+						new ComponentBuilder(hover).create()));
+			}
+			player.spigot().sendMessage(tc);
+		}
 	}
 
 	/**
@@ -81,9 +77,25 @@ public final class FancyMessageSender {
 	 * @param color The color of the hover text.
 	 * @throws Exception
 	 */
+	@SuppressWarnings("deprecation")
 	public static void sendHoverableCommandMessage(Player player, String message, String command, String hover, String color)
 			throws Exception {
-		sendChatPacket(player, constructHoverableCommandMessageJson(message, command, hover, color), CHAT_MESSAGE_BYTE);
+		if (MINOR_VERSION_NUMBER < 9) {
+			sendChatPacket(player, constructHoverableCommandMessageJson(message, command, hover, color), CHAT_MESSAGE_BYTE);
+		} else {
+			TextComponent tc = new TextComponent();
+			tc.setText(message);
+			tc.setColor(ChatColor.valueOf(color.toUpperCase()).asBungee());
+			tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
+
+			if (MINOR_VERSION_NUMBER >= 16) {
+				tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hover)));
+			} else {
+				tc.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
+						new ComponentBuilder(hover).create()));
+			}
+			player.spigot().sendMessage(tc);
+		}
 	}
 
 	/**
@@ -94,7 +106,12 @@ public final class FancyMessageSender {
 	 * @throws Exception
 	 */
 	public static void sendActionBarMessage(Player player, String message) throws Exception {
-		sendChatPacket(player, constructTextJson(message), ACTION_BAR_BYTE);
+		if (MINOR_VERSION_NUMBER < 9) {
+			sendChatPacket(player, constructTextJson(message), ACTION_BAR_BYTE);
+		} else {
+			player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+		}
+
 	}
 
 	/**
@@ -218,38 +235,9 @@ public final class FancyMessageSender {
 					.invoke(null, ChatColor.translateAlternateColorCodes('&', json));
 		}
 
-		Object packetPlayOutChat;
-		if (MINOR_VERSION_NUMBER < 12) {
-			packetPlayOutChat = Class.forName(CLASS_PACKET_PLAY_OUT_CHAT)
-					.getConstructor(Class.forName(CLASS_CHAT_BASE_COMPONENT), byte.class)
-					.newInstance(parsedMessage, type);
-		} else {
-			// New method uses the ChatMessageType enum rather than a byte.
-			Class<?> chatMessageTypeClass = Class.forName(ENUM_CHAT_MESSAGE_TYPE);
-			Enum<?> chatType = null;
-			for (Object chatMessageType : chatMessageTypeClass.getEnumConstants()) {
-				Enum<?> e = (Enum<?>) chatMessageType;
-				if ("SYSTEM".equalsIgnoreCase(e.name()) && type == CHAT_MESSAGE_BYTE
-						|| "GAME_INFO".equalsIgnoreCase(e.name()) && type == ACTION_BAR_BYTE) {
-					chatType = e;
-					break;
-				}
-			}
-			// Constructor signature Minecraft 1.7 - 1.15:
-			// public PacketPlayOutChat(IChatBaseComponent ichatbasecomponent, ChatMessageType chatmessagetype)
-			// Constructor signature Minecraft 1.16+:
-			// public PacketPlayOutChat(IChatBaseComponent ichatbasecomponent, ChatMessageType chatmessagetype, UUID
-			// uuid)
-			if (MINOR_VERSION_NUMBER < 16) {
-				packetPlayOutChat = Class.forName(CLASS_PACKET_PLAY_OUT_CHAT)
-						.getConstructor(Class.forName(CLASS_CHAT_BASE_COMPONENT), chatMessageTypeClass)
-						.newInstance(parsedMessage, chatType);
-			} else {
-				packetPlayOutChat = Class.forName(CLASS_PACKET_PLAY_OUT_CHAT)
-						.getConstructor(Class.forName(CLASS_CHAT_BASE_COMPONENT), chatMessageTypeClass, UUID.class)
-						.newInstance(parsedMessage, chatType, player.getUniqueId());
-			}
-		}
+		Object packetPlayOutChat = Class.forName(CLASS_PACKET_PLAY_OUT_CHAT)
+				.getConstructor(Class.forName(CLASS_CHAT_BASE_COMPONENT), byte.class)
+				.newInstance(parsedMessage, type);
 
 		// Send the message packet through the PlayerConnection.
 		Class.forName(CLASS_PLAYER_CONNECTION)
@@ -272,5 +260,9 @@ public final class FancyMessageSender {
 				+ "\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"" + command + "\"},"
 				+ "\"hoverEvent\":{\"action\":\"show_text\",\"value\":[{\"text\":\""
 				+ hover.replace("\"", "\\\"") + "\",\"color\":\"" + color + "\"}]}}";
+	}
+
+	private FancyMessageSender() {
+		// Not called.
 	}
 }
