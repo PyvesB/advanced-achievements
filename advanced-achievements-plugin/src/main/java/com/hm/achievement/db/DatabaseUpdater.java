@@ -151,48 +151,6 @@ public class DatabaseUpdater {
 	}
 
 	/**
-	 * Removes achievement descriptions from database storage.
-	 * 
-	 * @param databaseManager
-	 */
-	void removeAchievementDescriptions(AbstractDatabaseManager databaseManager) {
-		Connection connection = databaseManager.getConnection();
-		try (ResultSet rs = connection.getMetaData().getColumns(null, null, databaseManager.getPrefix()
-				+ "achievements", "description")) {
-			if (rs.next()) {
-				logger.info("Removing descriptions from database storage, please wait...");
-				// SQLite does not support dropping columns: create new table and copy contents over.
-				if (databaseManager instanceof SQLiteDatabaseManager) {
-					SQLOperation operation = st -> {
-						st.execute(
-								"CREATE TABLE tempTable (playername char(36),achievement varchar(64),date TIMESTAMP,PRIMARY KEY (playername, achievement))");
-						try (PreparedStatement prep = connection
-								.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
-								ResultSet achievements = st.executeQuery("SELECT * FROM achievements")) {
-							while (achievements.next()) {
-								prep.setString(1, achievements.getString(1));
-								prep.setString(2, achievements.getString(2));
-								prep.setTimestamp(3, achievements.getTimestamp(4));
-								prep.addBatch();
-							}
-							prep.executeBatch();
-							st.execute("DROP TABLE achievements");
-							st.execute("ALTER TABLE tempTable RENAME TO achievements");
-						}
-					};
-					doInTransaction(databaseManager, operation);
-				} else {
-					try (Statement st = connection.createStatement()) {
-						st.execute("ALTER TABLE " + databaseManager.getPrefix() + "achievements DROP COLUMN description");
-					}
-				}
-			}
-		} catch (SQLException e) {
-			logger.log(Level.SEVERE, "Database error while removing descriptions:", e);
-		}
-	}
-
-	/**
 	 * Update the database table to use 1.13 materials rather than the old 1.12 ones for a given Multiple category. This
 	 * methods performs a best effort upgrade based on the functionality provided in the Bukkit.
 	 * 

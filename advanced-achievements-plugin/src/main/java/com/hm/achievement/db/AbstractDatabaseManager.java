@@ -104,7 +104,6 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		databaseUpdater.renameExistingTables(this);
 		int size = mainConfig.getInt("TableMaxSizeOfGroupedSubcategories");
 		databaseUpdater.initialiseTables(this, size);
-		databaseUpdater.removeAchievementDescriptions(this);
 		Arrays.stream(MultipleAchievements.values()).forEach(m -> databaseUpdater.updateOldDBColumnSize(this, m, size));
 		initialised = true;
 	}
