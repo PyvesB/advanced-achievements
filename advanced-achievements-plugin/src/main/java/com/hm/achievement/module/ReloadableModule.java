@@ -43,6 +43,7 @@ import com.hm.achievement.listener.statistics.MilksListener;
 import com.hm.achievement.listener.statistics.MusicDiscsListener;
 import com.hm.achievement.listener.statistics.PetMasterGiveListener;
 import com.hm.achievement.listener.statistics.PetMasterReceiveListener;
+import com.hm.achievement.listener.statistics.PickupsLegacyListener;
 import com.hm.achievement.listener.statistics.PickupsListener;
 import com.hm.achievement.listener.statistics.PlacesListener;
 import com.hm.achievement.listener.statistics.PlayerCommandsListener;
@@ -74,6 +75,13 @@ public abstract class ReloadableModule {
 	static Reloadable provideFertilisingListener(FertilisingListener fertilisingListener,
 			FertilisingLegacyListener fertilisingLegacyListener, int serverVersion) {
 		return serverVersion >= 13 ? fertilisingListener : fertilisingLegacyListener;
+	}
+
+	@Provides
+	@IntoSet
+	static Reloadable providePickupsListener(PickupsListener pickupsListener, PickupsLegacyListener pickupsLegacyListener,
+			int serverVersion) {
+		return serverVersion >= 13 ? pickupsListener : pickupsLegacyListener;
 	}
 
 	@Binds
@@ -211,10 +219,6 @@ public abstract class ReloadableModule {
 	@Binds
 	@IntoSet
 	abstract Reloadable bindPetMasterReceiveListener(PetMasterGiveListener petMasterGiveListener);
-
-	@Binds
-	@IntoSet
-	abstract Reloadable bindPickupsListener(PickupsListener pickupsListener);
 
 	@Binds
 	@IntoSet
