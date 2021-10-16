@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.domain.AwardedAchievement;
 
 /**
@@ -43,7 +44,7 @@ public interface AdvancedAchievementsAPI {
 	 * @return list of {@code com.hm.achievement.domain.Achievement} objects received by the player
 	 * @since 7.0.0
 	 */
-	List<com.hm.achievement.domain.Achievement> getAllAchievements();
+	List<Achievement> getAllAchievements();
 
 	/**
 	 * Retrieves all achievements received by the player.
