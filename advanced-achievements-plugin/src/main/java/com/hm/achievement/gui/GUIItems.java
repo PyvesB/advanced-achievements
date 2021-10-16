@@ -73,6 +73,7 @@ public class GUIItems implements Reloadable {
 		this.achievementMap = achievementMap;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void extractConfigurationParameters() throws PluginLoadError {
 		configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat");
@@ -108,28 +109,22 @@ public class GUIItems implements Reloadable {
 				CommandAchievements.COMMANDS), itemStack);
 
 		if (serverVersion >= 13) {
-			achievementNotStartedDefault = createItemStack("AchievementNotStarted", "red_terracotta", 0);
-			achievementStartedDefault = createItemStack("AchievementStarted", "yellow_terracotta", 0);
-			achievementReceivedDefault = createItemStack("AchievementReceived", "lime_terracotta", 0);
+			achievementNotStartedDefault = new ItemStack(Material.RED_TERRACOTTA, 1);
+			achievementStartedDefault = new ItemStack(Material.YELLOW_TERRACOTTA, 1);
+			achievementReceivedDefault = new ItemStack(Material.LIME_TERRACOTTA, 1);
 		} else {
-			achievementNotStartedDefault = createItemStack("AchievementNotStarted", "stained_clay", 14);
-			achievementStartedDefault = createItemStack("AchievementStarted", "stained_clay", 4);
-			achievementReceivedDefault = createItemStack("AchievementReceived", "stained_clay", 5);
+			achievementNotStartedDefault = new ItemStack(Material.valueOf("STAINED_CLAY"), 1, (short) 14);
+			achievementStartedDefault = new ItemStack(Material.valueOf("STAINED_CLAY"), 1, (short) 4);
+			achievementReceivedDefault = new ItemStack(Material.valueOf("STAINED_CLAY"), 1, (short) 5);
 		}
 		for (String type : guiConfig.getConfigurationSection("AchievementNotStarted").getKeys(false)) {
-			if (!"Item".equals(type) && !"Metadata".equals(type)) {
-				achievementNotStarted.put(type, createItemStack("AchievementNotStarted." + type));
-			}
+			achievementNotStarted.put(type, createItemStack("AchievementNotStarted." + type));
 		}
 		for (String type : guiConfig.getConfigurationSection("AchievementStarted").getKeys(false)) {
-			if (!"Item".equals(type) && !"Metadata".equals(type)) {
-				achievementStarted.put(type, createItemStack("AchievementStarted." + type));
-			}
+			achievementStarted.put(type, createItemStack("AchievementStarted." + type));
 		}
 		for (String type : guiConfig.getConfigurationSection("AchievementReceived").getKeys(false)) {
-			if (!"Item".equals(type) && !"Metadata".equals(type)) {
-				achievementReceived.put(type, createItemStack("AchievementReceived." + type));
-			}
+			achievementReceived.put(type, createItemStack("AchievementReceived." + type));
 		}
 		previousButton = createButton("PreviousButton", "list-previous-message", "list-previous-lore");
 		nextButton = createButton("NextButton", "list-next-message", "list-next-lore");
@@ -144,24 +139,12 @@ public class GUIItems implements Reloadable {
 	 * @param categoryName
 	 * @return the item for the category
 	 */
-	private ItemStack createItemStack(String categoryName) {
-		return createItemStack(categoryName, null, 0);
-	}
-
-	/**
-	 * Creates an ItemStack based on information extracted from gui.yml or default values if not found.
-	 *
-	 * @param categoryName
-	 * @param defaultMaterial
-	 * @param defaultMetadata
-	 * @return the item for the category
-	 */
 	@SuppressWarnings("deprecation")
-	private ItemStack createItemStack(String categoryName, String defaultMaterial, int defaultMetadata) {
+	private ItemStack createItemStack(String categoryName) {
 		String path = categoryName + ".Item";
-		Material material = materialHelper.matchMaterial(guiConfig.getString(path, defaultMaterial), Material.BEDROCK,
+		Material material = materialHelper.matchMaterial(guiConfig.getString(path, null), Material.BEDROCK,
 				"gui.yml (" + path + ")");
-		short metadata = (short) guiConfig.getInt(categoryName + ".Metadata", defaultMetadata);
+		short metadata = (short) guiConfig.getInt(categoryName + ".Metadata", 0);
 		return new ItemStack(material, 1, metadata);
 	}
 
