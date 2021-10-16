@@ -190,7 +190,6 @@ reset-successful: " statistiky byli resetovani hraci PLAYER."
 
 # Related to /aach generate.
 advancements-generated: "Uspechy byli uspesne vygenerovany."
-minecraft-not-supported: "Uspechy nefunguji na vasi versi serveru. Pouzijte prosim verzi 1.12+."
 
 #============================================================#
 # +--------------------------------------------------------+ #

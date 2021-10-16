@@ -17,9 +17,9 @@ import com.hm.achievement.db.CacheManager;
 public class RiptidesListener extends AbstractListener {
 
 	@Inject
-	public RiptidesListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public RiptidesListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.RIPTIDES, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.RIPTIDES, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

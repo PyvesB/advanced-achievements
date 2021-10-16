@@ -27,9 +27,9 @@ import com.hm.achievement.db.CacheManager;
 public class PlayerCommandsListener extends AbstractListener {
 
 	@Inject
-	public PlayerCommandsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager) {
-		super(MultipleAchievements.PLAYERCOMMANDS, mainConfig, serverVersion, achievementMap, cacheManager);
+	public PlayerCommandsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
+			CacheManager cacheManager) {
+		super(MultipleAchievements.PLAYERCOMMANDS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

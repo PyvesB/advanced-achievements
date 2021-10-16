@@ -81,11 +81,9 @@ public class ConfigurationParser {
 	 */
 	public void loadAndParseConfiguration() throws PluginLoadError {
 		logger.info("Backing up and loading configuration files...");
-		backupAndLoadConfiguration("config.yml", "config.yml", "config.yml", mainConfig);
-		String langName = mainConfig.getString("LanguageFileName");
-		backupAndLoadConfiguration(langName, "lang.yml", langName, langConfig);
-		String guiName = serverVersion < 13 ? "gui-legacy.yml" : "gui.yml";
-		backupAndLoadConfiguration(guiName, guiName, "gui.yml", guiConfig);
+		backupAndLoadConfiguration("config.yml", "config.yml", mainConfig);
+		backupAndLoadConfiguration("lang.yml", mainConfig.getString("LanguageFileName"), langConfig);
+		backupAndLoadConfiguration("gui.yml", "gui.yml", guiConfig);
 		parseHeader();
 		parseDisabledCategories();
 		parseAchievements();
@@ -107,15 +105,13 @@ public class ConfigurationParser {
 	/**
 	 * Loads and backs up a configuration file.
 	 *
-	 * @param defaultConfigName
 	 * @param latestConfigName
 	 * @param userConfigName
 	 * @param userConfig
 	 *
 	 * @throws PluginLoadError
 	 */
-	private void backupAndLoadConfiguration(String defaultConfigName, String latestConfigName, String userConfigName,
-			YamlConfiguration userConfig)
+	private void backupAndLoadConfiguration(String latestConfigName, String userConfigName, YamlConfiguration userConfig)
 			throws PluginLoadError {
 		File configFile = new File(plugin.getDataFolder(), userConfigName);
 		try {
@@ -131,7 +127,7 @@ public class ConfigurationParser {
 		try {
 			if (!configFile.exists()) {
 				configFile.getParentFile().mkdir();
-				try (InputStream defaultConfig = plugin.getResource(defaultConfigName)) {
+				try (InputStream defaultConfig = plugin.getResource(userConfigName)) {
 					Files.copy(defaultConfig, configFile.toPath());
 				}
 			}
@@ -184,61 +180,12 @@ public class ConfigurationParser {
 			logger.warning(
 					"Ensure you have placed JobsReborn in your plugins folder or add JobsReborn to the DisabledCategories list in config.yml.");
 		}
-		// Elytras introduced in Minecraft 1.9.
-		if (!disabledCategories.contains(NormalAchievements.DISTANCEGLIDING) && serverVersion < 9) {
-			disabledCategories.add(NormalAchievements.DISTANCEGLIDING);
-			logger.warning("Overriding configuration: disabling DistanceGliding category.");
-			logger.warning(
-					"Elytra are not available in your Minecraft version, please add DistanceGliding to the DisabledCategories list in config.yml.");
-		}
-		// Llamas introduced in Minecraft 1.11.
-		if (!disabledCategories.contains(NormalAchievements.DISTANCELLAMA) && serverVersion < 11) {
-			disabledCategories.add(NormalAchievements.DISTANCELLAMA);
-			logger.warning("Overriding configuration: disabling DistanceLlama category.");
-			logger.warning(
-					"Llamas are not available in your Minecraft version, please add DistanceLlama to the DisabledCategories list in config.yml.");
-		}
-		// Breeding event introduced in Bukkit 1.10.2.
-		if (!disabledCategories.contains(MultipleAchievements.BREEDING) && serverVersion < 10) {
-			disabledCategories.add(MultipleAchievements.BREEDING);
-			logger.warning("Overriding configuration: disabling Breeding category.");
-			logger.warning(
-					"The breeding event is not available in your server version, please add Breeding to the DisabledCategories list in config.yml.");
-		}
-		// Proper ProjectileHitEvent introduced in Bukkit 1.11.
-		if (!disabledCategories.contains(MultipleAchievements.TARGETSSHOT) && serverVersion < 11) {
-			disabledCategories.add(MultipleAchievements.TARGETSSHOT);
-			logger.warning("Overriding configuration: disabling TargetsShot category.");
-			logger.warning(
-					"The projectile hit event is not fully available in your server version, please add TargetsShot to the DisabledCategories list in config.yml.");
-		}
 		// Raids introduced in 1.14.
 		if (!disabledCategories.contains(NormalAchievements.RAIDSWON) && serverVersion < 14) {
 			disabledCategories.add(NormalAchievements.RAIDSWON);
 			logger.warning("Overriding configuration: disabling RaidsWon category.");
 			logger.warning(
 					"Raids are not available in your server version, please add RaidsWon to the DisabledCategories list in config.yml.");
-		}
-		// Advancements introduced in 1.12.
-		if (!disabledCategories.contains(NormalAchievements.ADVANCEMENTSCOMPLETED) && serverVersion < 12) {
-			disabledCategories.add(NormalAchievements.ADVANCEMENTSCOMPLETED);
-			logger.warning("Overriding configuration: disabling Advancements category.");
-			logger.warning(
-					"Advancements are not available in your server version, please add AdvancementsCompleted to the DisabledCategories list in config.yml.");
-		}
-		// Riptides introduced in 1.13.
-		if (!disabledCategories.contains(NormalAchievements.RIPTIDES) && serverVersion < 13) {
-			disabledCategories.add(NormalAchievements.RIPTIDES);
-			logger.warning("Overriding configuration: disabling Riptides category.");
-			logger.warning(
-					"Riptides are not available in your server version, please add Riptides to the DisabledCategories list in config.yml.");
-		}
-		// EntityPotionEffectEvent introduced in 1.13.
-		if (!disabledCategories.contains(MultipleAchievements.EFFECTSHELD) && serverVersion < 13) {
-			disabledCategories.add(MultipleAchievements.EFFECTSHELD);
-			logger.warning("Overriding configuration: disabling EffectsHeld category.");
-			logger.warning(
-					"The effect event is not available in your server version, please add EffectsHeld to the DisabledCategories list in config.yml.");
 		}
 	}
 

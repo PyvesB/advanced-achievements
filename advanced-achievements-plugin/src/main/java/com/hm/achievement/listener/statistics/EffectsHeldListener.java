@@ -21,9 +21,9 @@ import com.hm.achievement.db.CacheManager;
 public class EffectsHeldListener extends AbstractListener {
 
 	@Inject
-	public EffectsHeldListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public EffectsHeldListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(MultipleAchievements.EFFECTSHELD, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(MultipleAchievements.EFFECTSHELD, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

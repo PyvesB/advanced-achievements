@@ -32,9 +32,9 @@ public class HoePlowingListener extends AbstractListener {
 	private Set<String> hoePlowableBlocks;
 
 	@Inject
-	public HoePlowingListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public HoePlowingListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.HOEPLOWING, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.HOEPLOWING, mainConfig, achievementMap, cacheManager);
 	}
 
 	@Override

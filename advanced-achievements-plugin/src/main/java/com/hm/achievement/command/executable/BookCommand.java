@@ -15,6 +15,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
@@ -23,8 +24,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-import com.darkblade12.particleeffect.ParticleEffect;
-import com.darkblade12.particleeffect.ReflectionUtils.PackageType;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
@@ -126,16 +125,12 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 			}
 			// Play special particle effect when receiving the book.
 			if (configAdditionalEffects) {
-				if (serverVersion >= 9) {
-					player.spawnParticle(Particle.ENCHANTMENT_TABLE, player.getLocation(), 1000, 0, 2, 0, 1);
-				} else {
-					ParticleEffect.ENCHANTMENT_TABLE.display(0, 2, 0, 1, 1000, player.getLocation(), 100);
-				}
+				player.spawnParticle(Particle.ENCHANTMENT_TABLE, player.getLocation(), 1000, 0, 2, 0, 1);
 			}
 
 			// Play special sound when receiving the book.
 			if (configSound) {
-				soundPlayer.play(player, configSoundBook, "ENTITY_PLAYER_LEVELUP", "ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
+				soundPlayer.play(player, configSoundBook, "ENTITY_PLAYER_LEVELUP");
 			}
 
 			fillBook(playerAchievementsList, player);
@@ -214,15 +209,17 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	 */
 	@SuppressWarnings("unchecked")
 	private void setBookPages(List<String> bookPages, BookMeta bookMeta) {
-		if (serverVersion >= 11 && serverVersion <= 15) {
+		if (serverVersion <= 15) {
 			try {
 				// Code we're trying to execute: this.pages.add(CraftChatMessage.fromString(page, true)[0]); in
 				// CraftMetaBook.java.
-				Class<?> craftMetaBookClass = PackageType.CRAFTBUKKIT
-						.getClass(PACKAGE_INVENTORY + "." + CLASS_CRAFT_META_BOOK);
+				String versionIdentifier = Bukkit.getServer().getClass().getPackage().getName().substring(23);
+				Class<?> craftMetaBookClass = Class.forName("org.bukkit.craftbukkit." + versionIdentifier + "."
+						+ PACKAGE_INVENTORY + "." + CLASS_CRAFT_META_BOOK);
 				List<Object> pages = (List<Object>) craftMetaBookClass.getField(FIELD_PAGES)
 						.get(craftMetaBookClass.cast(bookMeta));
-				Method fromStringMethod = PackageType.CRAFTBUKKIT.getClass(PACKAGE_UTIL + "." + CLASS_CRAFT_CHAT_MESSAGE)
+				Method fromStringMethod = Class.forName("org.bukkit.craftbukkit." + versionIdentifier + "."
+						+ PACKAGE_UTIL + "." + CLASS_CRAFT_CHAT_MESSAGE)
 						.getMethod(METHOD_FROM_STRING, String.class, boolean.class);
 				for (String bookPage : bookPages) {
 					pages.add(((Object[]) fromStringMethod.invoke(null, bookPage, true))[0]);

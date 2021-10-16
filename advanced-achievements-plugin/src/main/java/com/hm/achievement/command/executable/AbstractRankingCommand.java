@@ -16,7 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import com.darkblade12.particleeffect.ParticleEffect;
 import com.hm.achievement.command.pagination.CommandPagination;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.utils.SoundPlayer;
@@ -37,7 +36,6 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private static final int PER_PAGE = 16;
 
 	private final Logger logger;
-	private final int serverVersion;
 	private final String languageKey;
 	private final AbstractDatabaseManager databaseManager;
 	private final SoundPlayer soundPlayer;
@@ -56,11 +54,9 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private long lastCacheUpdate = 0L;
 
 	AbstractRankingCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, StringBuilder pluginHeader,
-			Logger logger, int serverVersion, String languageKey, AbstractDatabaseManager databaseManager,
-			SoundPlayer soundPlayer) {
+			Logger logger, String languageKey, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.logger = logger;
-		this.serverVersion = serverVersion;
 		this.languageKey = languageKey;
 		this.databaseManager = databaseManager;
 		this.soundPlayer = soundPlayer;
@@ -181,16 +177,11 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	 */
 	private void launchEffects(Player player) {
 		if (configAdditionalEffects) {
-			if (serverVersion >= 9) {
-				player.spawnParticle(Particle.PORTAL, player.getLocation(), 100, 0, 1, 0, 0.5f);
-			} else {
-				ParticleEffect.PORTAL.display(0, 1, 0, 0.5f, 1000, player.getLocation(), 1);
-			}
+			player.spawnParticle(Particle.PORTAL, player.getLocation(), 100, 0, 1, 0, 0.5f);
 		}
 
 		if (configSound) {
-			soundPlayer.play(player, configSoundRanking, "ENTITY_FIREWORK_ROCKET_BLAST", "ENTITY_FIREWORK_LARGE_BLAST",
-					"FIREWORK_BLAST");
+			soundPlayer.play(player, configSoundRanking, "ENTITY_FIREWORK_ROCKET_BLAST");
 		}
 	}
 }

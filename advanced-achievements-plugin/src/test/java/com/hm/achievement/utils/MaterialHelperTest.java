@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@SuppressWarnings("deprecation")
 class MaterialHelperTest {
 
 	@Mock
@@ -25,39 +24,21 @@ class MaterialHelperTest {
 	private ItemStack itemStack;
 
 	@Test
-	void shouldReturnFalseForWaterPotionWhenUsingMinecraft14() {
+	void shouldReturnFalseForWaterPotion() {
 		when(potionMeta.getBasePotionData()).thenReturn(new PotionData(PotionType.WATER));
 		when(itemStack.getItemMeta()).thenReturn(potionMeta);
 		when(itemStack.getType()).thenReturn(Material.POTION);
-		MaterialHelper underTest = new MaterialHelper(null, 14);
+		MaterialHelper underTest = new MaterialHelper(null);
 
 		assertFalse(underTest.isAnyPotionButWater(itemStack));
 	}
 
 	@Test
-	void shouldReturnTrueForOtherPotionWhenUsingMinecraft14() {
+	void shouldReturnTrueForOtherPotion() {
 		when(potionMeta.getBasePotionData()).thenReturn(new PotionData(PotionType.INSTANT_DAMAGE));
 		when(itemStack.getItemMeta()).thenReturn(potionMeta);
 		when(itemStack.getType()).thenReturn(Material.POTION);
-		MaterialHelper underTest = new MaterialHelper(null, 14);
-
-		assertTrue(underTest.isAnyPotionButWater(itemStack));
-	}
-
-	@Test
-	void shouldReturnFalseForWaterPotionWhenUsingMinecraft8() {
-		when(itemStack.getType()).thenReturn(Material.POTION);
-		when(itemStack.getDurability()).thenReturn((short) 0);
-		MaterialHelper underTest = new MaterialHelper(null, 8);
-
-		assertFalse(underTest.isAnyPotionButWater(itemStack));
-	}
-
-	@Test
-	void shouldReturnTrueForOtherPotionWhenUsingMinecraft8() {
-		when(itemStack.getType()).thenReturn(Material.POTION);
-		when(itemStack.getDurability()).thenReturn((short) 1);
-		MaterialHelper underTest = new MaterialHelper(null, 8);
+		MaterialHelper underTest = new MaterialHelper(null);
 
 		assertTrue(underTest.isAnyPotionButWater(itemStack));
 	}
@@ -65,7 +46,7 @@ class MaterialHelperTest {
 	@Test
 	void shouldReturnFalseForOtherMaterial() {
 		when(itemStack.getType()).thenReturn(Material.SPLASH_POTION);
-		MaterialHelper underTest = new MaterialHelper(null, 12);
+		MaterialHelper underTest = new MaterialHelper(null);
 
 		assertFalse(underTest.isAnyPotionButWater(itemStack));
 	}

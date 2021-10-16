@@ -24,9 +24,9 @@ import com.hm.achievement.db.CacheManager;
 public class ArrowsListener extends AbstractListener {
 
 	@Inject
-	public ArrowsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public ArrowsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.ARROWS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.ARROWS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

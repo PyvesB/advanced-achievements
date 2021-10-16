@@ -203,7 +203,6 @@ reset-successful: "Die Statistik von Spieler wurde zurückgesetzt."
 advancements-generated: "Fortschritte wurden erfolgreich generiert."
 aach-command-generate: "Generiere Fortschritte."
 aach-command-generate-hover: "Das ist möglicherweise ein langsamer Befehl; Verwende ihn bedacht!"
-minecraft-not-supported: Fortschritte sind ab der Minecraftversion 1.12+ verfügbar.
 
 # Related to /aach inspect
 achievement-not-recognized: "Der Erfolg mit dem namen 'NAME' wurde nicht erkannt. Meintest du CLOSEST_MATCH?"

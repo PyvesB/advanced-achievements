@@ -207,8 +207,6 @@ reset-successful: Statystyki zostaly wyczyszczone przez gracza PLAYER.
 
 # Related to /aach generate.
 advancements-generated: Pomyslnie wygenerowano postepy.
-minecraft-not-supported: Postepy nie sa wspierane w twojej wersji Minecrafta. Zmien
-  wersje na 1.12+.
 
 # Related to /aach add.
 error-value: Wartosc musi byc liczba!

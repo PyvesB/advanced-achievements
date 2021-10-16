@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -31,8 +30,8 @@ class InventoryHelperTest {
 	private ItemStack existingItemStack;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@BeforeEach
-	void setup() {
+	@Test
+	void shouldReturnAvailableSpace() {
 		HashMap itemStacks = new HashMap<>();
 		itemStacks.put(1, existingItemStack);
 		itemStacks.put(2, existingItemStack);
@@ -42,23 +41,9 @@ class InventoryHelperTest {
 		when(inputItemStack.getType()).thenReturn(Material.STICK);
 		when(inputItemStack.isSimilar(existingItemStack)).thenReturn(true, false);
 		when(inputItemStack.getMaxStackSize()).thenReturn(64);
-	}
-
-	@Test
-	void shouldReturnAvailableSpaceUsingMinecraft14() {
-		InventoryHelper inventoryHelper = new InventoryHelper(14);
 		when(player.getInventory().getStorageContents()).thenReturn(new ItemStack[] { null }); // Adds 64.
 
-		int availableSpace = inventoryHelper.getAvailableSpace(player, inputItemStack);
-		assertEquals(125, availableSpace);
-	}
-
-	@Test
-	void shouldReturnAvailableSpaceUsingMinecraft8() {
-		InventoryHelper inventoryHelper = new InventoryHelper(8);
-		when(player.getInventory().getContents()).thenReturn(new ItemStack[] { null }); // Adds 64.
-
-		int availableSpace = inventoryHelper.getAvailableSpace(player, inputItemStack);
+		int availableSpace = InventoryHelper.getAvailableSpace(player, inputItemStack);
 		assertEquals(125, availableSpace);
 	}
 

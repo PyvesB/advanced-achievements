@@ -24,9 +24,9 @@ import com.hm.achievement.db.CacheManager;
 public class TamesListener extends AbstractListener {
 
 	@Inject
-	public TamesListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public TamesListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.TAMES, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.TAMES, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

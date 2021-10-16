@@ -212,7 +212,6 @@ reset-all-successful: "Toute les statistiques ont été réinitialisées pour PL
 
 # Used in /aach generate.
 advancements-generated: "Avancements générés avec succès."
-minecraft-not-supported: "Les avancements ne sont pas supportés avec votre version de Minecraft. (1.12+)"
 
 # Used in /aach inspect
 achievement-not-recognized: "Le succès 'NAME' n'existe pas. Voulez-vous dire CLOSEST_MATCH ?"

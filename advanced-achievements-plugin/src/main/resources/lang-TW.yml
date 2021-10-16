@@ -196,7 +196,6 @@ reset-successful: " 統計資訊已為 PLAYER 清除。"
 
 # Related to /aach generate.
 advancements-generated: "進度已順利生成。"
-minecraft-not-supported: "你的 Minecraft 版本不支援進度，請升級至 1.12+。"
 
 # Related to /aach inspect
 achievement-not-recognized: "名為 'NAME' 無法被識別，你想表達的是 CLOSEST_MATCH 嗎？"

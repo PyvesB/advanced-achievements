@@ -29,9 +29,9 @@ import com.hm.achievement.db.CacheManager;
 public class AnvilsListener extends AbstractListener {
 
 	@Inject
-	public AnvilsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public AnvilsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.ANVILS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.ANVILS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

@@ -19,17 +19,14 @@ import com.hm.achievement.advancement.AdvancementManager;
 @CommandSpec(name = "generate", permission = "generate", minArgs = 1, maxArgs = 1)
 public class GenerateCommand extends AbstractCommand {
 
-	private final int serverVersion;
 	private final AdvancementManager advancementManager;
 
 	private String langAdvancementsGenerated;
-	private String langMinecraftNotSupported;
 
 	@Inject
 	public GenerateCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			StringBuilder pluginHeader, int serverVersion, AdvancementManager advancementManager) {
+			StringBuilder pluginHeader, AdvancementManager advancementManager) {
 		super(mainConfig, langConfig, pluginHeader);
-		this.serverVersion = serverVersion;
 		this.advancementManager = advancementManager;
 	}
 
@@ -38,17 +35,12 @@ public class GenerateCommand extends AbstractCommand {
 		super.extractConfigurationParameters();
 
 		langAdvancementsGenerated = pluginHeader + langConfig.getString("advancements-generated");
-		langMinecraftNotSupported = pluginHeader + langConfig.getString("minecraft-not-supported");
 	}
 
 	@Override
 	void onExecute(CommandSender sender, String[] args) {
-		if (serverVersion >= 12) {
-			advancementManager.registerAdvancements();
+		advancementManager.registerAdvancements();
 
-			sender.sendMessage(langAdvancementsGenerated);
-		} else {
-			sender.sendMessage(langMinecraftNotSupported);
-		}
+		sender.sendMessage(langAdvancementsGenerated);
 	}
 }

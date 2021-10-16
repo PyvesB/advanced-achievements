@@ -24,9 +24,9 @@ import com.hm.mcshared.event.PlayerChangeAnimalOwnershipEvent;
 public class PetMasterReceiveListener extends AbstractListener {
 
 	@Inject
-	public PetMasterReceiveListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager) {
-		super(NormalAchievements.PETMASTERRECEIVE, mainConfig, serverVersion, achievementMap, cacheManager);
+	public PetMasterReceiveListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
+			CacheManager cacheManager) {
+		super(NormalAchievements.PETMASTERRECEIVE, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

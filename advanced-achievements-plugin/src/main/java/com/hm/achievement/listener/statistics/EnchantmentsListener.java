@@ -23,9 +23,9 @@ import com.hm.achievement.db.CacheManager;
 public class EnchantmentsListener extends AbstractListener {
 
 	@Inject
-	public EnchantmentsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager) {
-		super(NormalAchievements.ENCHANTMENTS, mainConfig, serverVersion, achievementMap, cacheManager);
+	public EnchantmentsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
+			CacheManager cacheManager) {
+		super(NormalAchievements.ENCHANTMENTS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

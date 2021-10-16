@@ -23,10 +23,8 @@ public class MonthCommand extends AbstractRankingCommand {
 
 	@Inject
 	public MonthCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			StringBuilder pluginHeader, Logger logger, int serverVersion, AbstractDatabaseManager databaseManager,
-			SoundPlayer soundPlayer) {
-		super(mainConfig, langConfig, pluginHeader, logger, serverVersion, "month-achievement", databaseManager,
-				soundPlayer);
+			StringBuilder pluginHeader, Logger logger, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
+		super(mainConfig, langConfig, pluginHeader, logger, "month-achievement", databaseManager, soundPlayer);
 	}
 
 	@Override

@@ -237,7 +237,6 @@ reset-all-successful: "Se han reiniciado todas las estadísticas del jugador PLA
 
 # Mensajes para /aach generate.
 advancements-generated: "Se han generado logros exitosamente"
-minecraft-not-supported: "Los logros no están soportados por tu versión de Minecraft, por favor actualiza a una versión igual o superior a la 1.12"
 
 # Mensajes para /aach inspect
 achievement-not-recognized: "El logro de NAME no existe. ¿Quizás quisiste decir CLOSEST_MATCH?"

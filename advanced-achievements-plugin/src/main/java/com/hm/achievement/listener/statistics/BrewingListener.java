@@ -1,7 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.logging.Logger;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -34,17 +32,13 @@ import com.hm.achievement.utils.MaterialHelper;
 public class BrewingListener extends AbstractRateLimitedListener {
 
 	private final MaterialHelper materialHelper;
-	private final InventoryHelper inventoryHelper;
 
 	@Inject
-	public BrewingListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public BrewingListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager, AdvancedAchievements advancedAchievements,
-			@Named("lang") YamlConfiguration langConfig, Logger logger, MaterialHelper materialHelper,
-			InventoryHelper inventoryHelper) {
-		super(NormalAchievements.BREWING, mainConfig, serverVersion, achievementMap, cacheManager, advancedAchievements,
-				langConfig, logger);
+			@Named("lang") YamlConfiguration langConfig, MaterialHelper materialHelper) {
+		super(NormalAchievements.BREWING, mainConfig, achievementMap, cacheManager, advancedAchievements, langConfig);
 		this.materialHelper = materialHelper;
-		this.inventoryHelper = inventoryHelper;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -59,7 +53,7 @@ public class BrewingListener extends AbstractRateLimitedListener {
 		Player player = (Player) event.getWhoClicked();
 		int eventAmount = item.getAmount();
 		if (event.isShiftClick()) {
-			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, item));
+			eventAmount = Math.min(eventAmount, InventoryHelper.getAvailableSpace(player, item));
 			if (eventAmount == 0) {
 				return;
 			}
@@ -75,7 +69,6 @@ public class BrewingListener extends AbstractRateLimitedListener {
 	 * @return true if for any brewable potion
 	 */
 	private boolean isBrewablePotion(ItemStack item) {
-		return item != null &&
-				(materialHelper.isAnyPotionButWater(item) || serverVersion >= 9 && item.getType() == Material.SPLASH_POTION);
+		return item != null && (materialHelper.isAnyPotionButWater(item) || item.getType() == Material.SPLASH_POTION);
 	}
 }

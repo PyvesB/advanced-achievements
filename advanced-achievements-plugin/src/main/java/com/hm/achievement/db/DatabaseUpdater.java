@@ -1,13 +1,8 @@
 package com.hm.achievement.db;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,12 +10,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Material;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.exception.PluginLoadError;
-import com.hm.achievement.utils.MaterialHelper;
 
 /**
  * Class used to update the database schema.
@@ -32,26 +25,10 @@ import com.hm.achievement.utils.MaterialHelper;
 public class DatabaseUpdater {
 
 	private final Logger logger;
-	private final MaterialHelper materialHelper;
 
 	@Inject
-	DatabaseUpdater(Logger logger, MaterialHelper materialHelper) {
+	DatabaseUpdater(Logger logger) {
 		this.logger = logger;
-		this.materialHelper = materialHelper;
-	}
-
-	/**
-	 * Update the database table to use 1.13 materials rather than the old 1.12 ones.
-	 * 
-	 * @param databaseManager
-	 * @param size
-	 */
-	public void updateOldMaterialsToNewOnes(AbstractDatabaseManager databaseManager, int size) {
-		logger.info("Starting database upgrade to new Minecraft 1.13 material names, please wait...");
-		updateOldMaterialsToNewOnes(databaseManager, MultipleAchievements.BREAKS, size);
-		updateOldMaterialsToNewOnes(databaseManager, MultipleAchievements.CRAFTS, size);
-		updateOldMaterialsToNewOnes(databaseManager, MultipleAchievements.PLACES, size);
-		logger.info("Finished database upgrade.");
 	}
 
 	/**
@@ -148,98 +125,5 @@ public class DatabaseUpdater {
 				logger.log(Level.SEVERE, "Database error while updating old " + category.toDBName() + " table:", e);
 			}
 		}
-	}
-
-	/**
-	 * Update the database table to use 1.13 materials rather than the old 1.12 ones for a given Multiple category. This
-	 * methods performs a best effort upgrade based on the functionality provided in the Bukkit.
-	 * 
-	 * @param databaseManager
-	 * @param category
-	 * @param size
-	 */
-	private void updateOldMaterialsToNewOnes(AbstractDatabaseManager databaseManager, MultipleAchievements category,
-			int size) {
-		SQLOperation operation = st -> {
-			String tableName = databaseManager.getPrefix() + category.toDBName();
-			// Create new temporary table.
-			st.execute("CREATE TABLE tempTable (playername char(36)," + category.toSubcategoryDBName() + " varchar(" + size
-					+ ")," + tableName + " INT UNSIGNED,PRIMARY KEY(playername, " + category.toSubcategoryDBName() + "))");
-			try (PreparedStatement prep = databaseManager.getConnection()
-					.prepareStatement("INSERT INTO tempTable VALUES (?,?,?);");
-					ResultSet rs = st.executeQuery("SELECT * FROM " + tableName + "")) {
-				List<String> uuids = new ArrayList<>();
-				List<String> materialKeys = new ArrayList<>();
-				List<Integer> amounts = new ArrayList<>();
-
-				while (rs.next()) {
-					uuids.add(rs.getString(1));
-					materialKeys.add(convertToNewMaterialKey(rs.getString(2)));
-					amounts.add(rs.getInt(3));
-				}
-
-				// Populate new table with contents of the old one and material strings. Batch the insert requests.
-				for (int i = 0; i < uuids.size(); ++i) {
-					prep.setString(1, uuids.get(i));
-					prep.setString(2, materialKeys.get(i));
-					prep.setInt(3, amounts.get(i));
-					prep.addBatch();
-				}
-				prep.executeBatch();
-				// Delete old table.
-				st.execute("DROP TABLE " + tableName);
-				// Rename new table to old one.
-				st.execute("ALTER TABLE tempTable RENAME TO " + tableName);
-			}
-		};
-		try {
-			doInTransaction(databaseManager, operation);
-		} catch (SQLException e) {
-			logger.log(Level.SEVERE, "Database error while updating old material names to new Minecraft 1.13 ones:", e);
-		}
-	}
-
-	/**
-	 * Converts a material key containing pre-1.13 materials (e.g. "workbench|explosive_minecart") to an equivalent key
-	 * with 1.13 materials (e.g. "crafting_table|tnt_minecart").
-	 * 
-	 * @param oldMaterialKey
-	 * @return a key with 1.13 material names.
-	 */
-	private String convertToNewMaterialKey(String oldMaterialKey) {
-		List<String> newMaterials = new ArrayList<>();
-		for (String oldMaterial : StringUtils.split(oldMaterialKey, '|')) {
-			Optional<Material> material = materialHelper.matchMaterial(StringUtils.substringBefore(oldMaterialKey, ":"),
-					"the database (" + oldMaterialKey + ")");
-			if (material.isPresent()) {
-				String metadata = StringUtils.substringAfter(oldMaterialKey, ":");
-				newMaterials.add(material.get().name().toLowerCase() + (metadata.isEmpty() ? "" : ":" + metadata));
-			} else {
-				newMaterials.add(oldMaterial);
-			}
-		}
-		return StringUtils.join(newMaterials, "|");
-	}
-
-	private void doInTransaction(AbstractDatabaseManager databaseManager, SQLOperation operation) throws SQLException {
-		Connection connection = databaseManager.getConnection();
-		try (Statement st = connection.createStatement()) {
-			// Prevent from doing any commits before entire transaction is ready.
-			connection.setAutoCommit(false);
-			operation.perform(st);
-			connection.commit();
-		} catch (SQLException e) {
-			connection.rollback();
-			throw e;
-		} finally {
-			connection.setAutoCommit(true);
-		}
-	}
-
-	@FunctionalInterface
-	private interface SQLOperation {
-
-		void perform(Statement statement) throws SQLException;
-
 	}
 }

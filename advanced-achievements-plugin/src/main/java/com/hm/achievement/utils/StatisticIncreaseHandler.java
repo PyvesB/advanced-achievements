@@ -29,7 +29,6 @@ import com.hm.achievement.lifecycle.Reloadable;
 public class StatisticIncreaseHandler implements Reloadable {
 
 	protected final YamlConfiguration mainConfig;
-	protected final int serverVersion;
 	protected final AchievementMap achievementMap;
 	protected final CacheManager cacheManager;
 
@@ -39,10 +38,9 @@ public class StatisticIncreaseHandler implements Reloadable {
 	private Set<String> configExcludedWorlds;
 
 	@Inject
-	public StatisticIncreaseHandler(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager) {
+	public StatisticIncreaseHandler(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
+			CacheManager cacheManager) {
 		this.mainConfig = mainConfig;
-		this.serverVersion = serverVersion;
 		this.achievementMap = achievementMap;
 		this.cacheManager = cacheManager;
 	}
@@ -52,10 +50,6 @@ public class StatisticIncreaseHandler implements Reloadable {
 		configRestrictCreative = mainConfig.getBoolean("RestrictCreative");
 		configRestrictSpectator = mainConfig.getBoolean("RestrictSpectator");
 		configRestrictAdventure = mainConfig.getBoolean("RestrictAdventure");
-		// Spectator mode introduced in Minecraft 1.8. Automatically relevant parameter for older versions.
-		if (configRestrictSpectator && serverVersion < 8) {
-			configRestrictSpectator = false;
-		}
 		configExcludedWorlds = new HashSet<>(mainConfig.getStringList("ExcludedWorlds"));
 	}
 

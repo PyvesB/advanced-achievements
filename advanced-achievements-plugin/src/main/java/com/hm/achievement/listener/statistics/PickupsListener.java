@@ -24,9 +24,9 @@ import com.hm.achievement.db.CacheManager;
 public class PickupsListener extends AbstractListener {
 
 	@Inject
-	public PickupsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public PickupsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.PICKUPS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.PICKUPS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

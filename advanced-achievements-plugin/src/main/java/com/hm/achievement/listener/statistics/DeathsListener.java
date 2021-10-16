@@ -23,9 +23,9 @@ import com.hm.achievement.db.CacheManager;
 public class DeathsListener extends AbstractListener {
 
 	@Inject
-	public DeathsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public DeathsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.DEATHS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.DEATHS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

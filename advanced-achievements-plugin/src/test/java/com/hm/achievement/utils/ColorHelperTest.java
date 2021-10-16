@@ -37,9 +37,9 @@ class ColorHelperTest {
 	@ParameterizedTest
 	@MethodSource("chatAndBarColors")
 	void shouldConvertChatColorToBarColor(ChatColor chatColor, BarColor barColor) {
-		String color = ColorHelper.convertChatColorToBarColor(chatColor);
+		BarColor color = ColorHelper.convertChatColorToBarColor(chatColor);
 
-		assertEquals(barColor.name(), color);
+		assertEquals(barColor, color);
 	}
 
 	static Stream<Arguments> chatAndBarColors() {

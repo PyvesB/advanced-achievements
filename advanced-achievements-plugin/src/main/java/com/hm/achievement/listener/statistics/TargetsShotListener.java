@@ -21,9 +21,9 @@ import com.hm.achievement.db.CacheManager;
 public class TargetsShotListener extends AbstractListener {
 
 	@Inject
-	public TargetsShotListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public TargetsShotListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(MultipleAchievements.TARGETSSHOT, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(MultipleAchievements.TARGETSSHOT, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

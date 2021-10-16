@@ -23,9 +23,9 @@ import com.hm.achievement.db.CacheManager;
 public class EggsListener extends AbstractListener {
 
 	@Inject
-	public EggsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public EggsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.EGGS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.EGGS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

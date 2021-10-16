@@ -23,9 +23,9 @@ import com.hm.achievement.db.CacheManager;
 public class DropsListener extends AbstractListener {
 
 	@Inject
-	public DropsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public DropsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.DROPS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.DROPS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

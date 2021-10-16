@@ -23,9 +23,9 @@ import com.hm.achievement.db.CacheManager;
 public class AdvancementsCompletedListener extends AbstractListener {
 
 	@Inject
-	public AdvancementsCompletedListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager) {
-		super(NormalAchievements.ADVANCEMENTSCOMPLETED, mainConfig, serverVersion, achievementMap, cacheManager);
+	public AdvancementsCompletedListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
+			CacheManager cacheManager) {
+		super(NormalAchievements.ADVANCEMENTSCOMPLETED, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

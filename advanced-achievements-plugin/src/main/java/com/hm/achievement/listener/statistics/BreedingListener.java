@@ -24,9 +24,9 @@ import com.hm.achievement.db.CacheManager;
 public class BreedingListener extends AbstractListener {
 
 	@Inject
-	public BreedingListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public BreedingListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(MultipleAchievements.BREEDING, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(MultipleAchievements.BREEDING, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

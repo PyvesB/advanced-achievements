@@ -139,10 +139,6 @@
 			<artifactId>placeholderapi</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.github.shadowjonathan</groupId>
-			<artifactId>ParticleEffect</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 		</dependency>

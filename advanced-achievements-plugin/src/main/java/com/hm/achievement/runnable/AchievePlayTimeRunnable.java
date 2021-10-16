@@ -33,9 +33,9 @@ public class AchievePlayTimeRunnable extends StatisticIncreaseHandler implements
 	private boolean configIgnoreAFKPlayedTime;
 
 	@Inject
-	public AchievePlayTimeRunnable(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager) {
-		super(mainConfig, serverVersion, achievementMap, cacheManager);
+	public AchievePlayTimeRunnable(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
+			CacheManager cacheManager) {
+		super(mainConfig, achievementMap, cacheManager);
 
 		if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
 			essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");

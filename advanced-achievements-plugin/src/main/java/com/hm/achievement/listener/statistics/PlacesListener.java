@@ -30,12 +30,11 @@ import com.hm.achievement.db.CacheManager;
 public class PlacesListener extends AbstractListener {
 
 	@Inject
-	public PlacesListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public PlacesListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(MultipleAchievements.PLACES, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(MultipleAchievements.PLACES, mainConfig, achievementMap, cacheManager);
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
@@ -45,7 +44,6 @@ public class PlacesListener extends AbstractListener {
 
 		String blockName = placedItem.getType().name().toLowerCase();
 		if (player.hasPermission(category.toChildPermName(blockName))) {
-			addMatchingSubcategories(subcategories, blockName + ':' + placedItem.getDurability());
 			addMatchingSubcategories(subcategories, blockName);
 		}
 

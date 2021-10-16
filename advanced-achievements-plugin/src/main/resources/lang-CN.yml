@@ -211,7 +211,6 @@ reset-all-successful: " 玩家 PLAYER 的所有统计数据已经被清除。"
 
 # 与 /aach generate 相关
 advancements-generated: "成功生成成就."
-minecraft-not-supported: "你的Minecraft版本不支持成就，请升级到 1.12+."
 
 # 与 /aach inspect 相关
 achievement-not-recognized: 名称为 'NAME' 的成就无法识别，您的意思是 CLOSEST_MATCH 吗?"

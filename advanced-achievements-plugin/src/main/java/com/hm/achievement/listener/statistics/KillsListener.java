@@ -30,9 +30,9 @@ import com.hm.achievement.db.CacheManager;
 public class KillsListener extends AbstractListener {
 
 	@Inject
-	public KillsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public KillsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(MultipleAchievements.KILLS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(MultipleAchievements.KILLS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -52,7 +52,7 @@ public class KillsListener extends AbstractListener {
 			addMatchingSubcategories(subcategories, mobType);
 		}
 
-		if (serverVersion >= 8 && entity.getCustomName() != null
+		if (entity.getCustomName() != null
 				&& player.hasPermission(category.toChildPermName(StringUtils.deleteWhitespace(entity.getCustomName())))) {
 			addMatchingSubcategories(subcategories, entity.getCustomName());
 		}

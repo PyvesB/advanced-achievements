@@ -34,9 +34,9 @@ public class ConnectionsListener extends AbstractListener {
 	private final AbstractDatabaseManager databaseManager;
 
 	@Inject
-	public ConnectionsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public ConnectionsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager) {
-		super(NormalAchievements.CONNECTIONS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.CONNECTIONS, mainConfig, achievementMap, cacheManager);
 		this.advancedAchievements = advancedAchievements;
 		this.databaseManager = databaseManager;
 	}

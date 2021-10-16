@@ -18,7 +18,6 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import com.darkblade12.particleeffect.ReflectionUtils.PackageType;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancementBuilder;
 import com.hm.achievement.category.Category;
@@ -31,7 +30,7 @@ import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.StringHelper;
 
 /**
- * Class in charge of registering achievements as advancements for servers running on Minecraft 1.12+.
+ * Class in charge of registering achievements as advancements.
  * 
  * @author Pyves
  */
@@ -43,25 +42,12 @@ public class AdvancementManager implements Reloadable {
 	private static final String MINECRAFT_BOOK_KEY = "minecraft:book";
 	// Pattern to produce keys for advancements.
 	private static final Pattern REGEX_PATTERN_KEYS = Pattern.compile("[^A-Za-z0-9_]");
-	// Strings related to Reflection.
-	private static final String PACKAGE_INVENTORY = "inventory";
-	private static final String CLASS_CRAFT_ITEM_STACK = "CraftItemStack";
-	private static final String CLASS_ITEM = "Item";
-	private static final String CLASS_ITEM_STACK = "ItemStack";
-	private static final String CLASS_REGISTRY_MATERIALS = "RegistryMaterials";
-	private static final String CLASS_MINECRAFT_KEY = "MinecraftKey";
-	private static final String FIELD_REGISTRY = "REGISTRY";
-	private static final String METHOD_AS_NMS_COPY = "asNMSCopy";
-	private static final String METHOD_GET_ITEM = "getItem";
-	private static final String METHOD_GET_KEY = "getKey";
-	private static final String METHOD_B = "b";
 
 	private final YamlConfiguration mainConfig;
 	private final GUIItems guiItems;
 	private final AdvancedAchievements advancedAchievements;
 	private final Logger logger;
 	private final Set<Category> disabledCategories;
-	private final int serverVersion;
 	private final AchievementMap achievementMap;
 
 	private boolean configRegisterAdvancementDescriptions;
@@ -72,13 +58,12 @@ public class AdvancementManager implements Reloadable {
 
 	@Inject
 	public AdvancementManager(@Named("main") YamlConfiguration mainConfig, GUIItems guiItems, AchievementMap achievementMap,
-			AdvancedAchievements advancedAchievements, Logger logger, Set<Category> disabledCategories, int serverVersion) {
+			AdvancedAchievements advancedAchievements, Logger logger, Set<Category> disabledCategories) {
 		this.mainConfig = mainConfig;
 		this.guiItems = guiItems;
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.disabledCategories = disabledCategories;
-		this.serverVersion = serverVersion;
 		this.achievementMap = achievementMap;
 	}
 
@@ -110,9 +95,6 @@ public class AdvancementManager implements Reloadable {
 	 */
 	private String parseBackgroundTexture() {
 		String configTexture = mainConfig.getString("AdvancementsBackground");
-		if (serverVersion == 12) {
-			return StringUtils.replace(configTexture, "/item/", "/items/");
-		}
 		return StringUtils.replaceEach(configTexture, new String[] { "/items/", "book_enchanted.png" },
 				new String[] { "/item/", "enchanted_book.png" });
 	}
@@ -151,9 +133,6 @@ public class AdvancementManager implements Reloadable {
 						.description("")
 						.background(configBackgroundTexture)
 						.type(AdvancementType.GOAL);
-				if (serverVersion == 12) {
-					builder.iconData("0");
-				}
 				Bukkit.getUnsafe().loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(builder.build()));
 			}
 		}
@@ -206,42 +185,13 @@ public class AdvancementManager implements Reloadable {
 		}
 
 		AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
-				.iconItem(serverVersion == 12 ? getInternalName(item) : item.getType().name().toLowerCase())
+				.iconItem(item.getType().name().toLowerCase())
 				.title(displayName)
 				.description(description)
 				.parent("advancedachievements:" + parentKey)
 				.type(lastAchievement ? AdvancementType.CHALLENGE : AdvancementType.TASK);
-		if (serverVersion == 12) {
-			builder.iconData(Short.toString(item.getDurability()));
-		}
 		Bukkit.getUnsafe().loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(builder.build()));
 		++generatedAdvancements;
 		return achKey;
 	}
-
-	/**
-	 * Gets the internal item used by Vanilla Minecraft. These are the only names supported by advancements. Material
-	 * and internal names can differ quite significantly (for instance: book_and_quill vs. writable_book).
-	 * 
-	 * @param item
-	 * @return the internal Minecraft name, prefixed with "minecraft:"
-	 */
-	private String getInternalName(ItemStack item) {
-		try {
-			Object nmsItemStack = PackageType.CRAFTBUKKIT.getClass(PACKAGE_INVENTORY + "." + CLASS_CRAFT_ITEM_STACK)
-					.getMethod(METHOD_AS_NMS_COPY, ItemStack.class).invoke(null, item);
-			Object nmsItem = PackageType.MINECRAFT_SERVER.getClass(CLASS_ITEM_STACK).getMethod(METHOD_GET_ITEM)
-					.invoke(nmsItemStack);
-			Object registry = PackageType.MINECRAFT_SERVER.getClass(CLASS_ITEM).getField(FIELD_REGISTRY).get(null);
-			Object minecraftKey = PackageType.MINECRAFT_SERVER.getClass(CLASS_REGISTRY_MATERIALS)
-					.getMethod(METHOD_B, Object.class).invoke(registry, nmsItem);
-			return "minecraft:" + PackageType.MINECRAFT_SERVER.getClass(CLASS_MINECRAFT_KEY).getMethod(METHOD_GET_KEY)
-					.invoke(minecraftKey);
-		} catch (Exception e) {
-			logger.warning("Failed to get internal " + item.getType().name().toLowerCase() + " name for advancement icon. "
-					+ "Using book instead.");
-			return MINECRAFT_BOOK_KEY;
-		}
-	}
-
 }

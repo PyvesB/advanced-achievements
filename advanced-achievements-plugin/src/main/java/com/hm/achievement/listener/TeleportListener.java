@@ -1,8 +1,5 @@
 package com.hm.achievement.listener;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.bukkit.entity.Entity;
@@ -26,12 +23,10 @@ import com.hm.achievement.runnable.AchieveDistanceRunnable;
 public class TeleportListener implements Listener {
 
 	private final AchieveDistanceRunnable distanceRunnable;
-	private final int serverVersion;
 
 	@Inject
-	public TeleportListener(AchieveDistanceRunnable distanceRunnable, int serverVersion) {
+	public TeleportListener(AchieveDistanceRunnable distanceRunnable) {
 		this.distanceRunnable = distanceRunnable;
-		this.serverVersion = serverVersion;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -56,10 +51,7 @@ public class TeleportListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityTeleport(EntityTeleportEvent event) {
-		@SuppressWarnings("deprecation")
-		List<Entity> passengers = serverVersion < 11 ? Collections.singletonList(event.getEntity().getPassenger())
-				: event.getEntity().getPassengers();
-		for (Entity passenger : passengers) {
+		for (Entity passenger : event.getEntity().getPassengers()) {
 			if (passenger instanceof Player) {
 				// Update location of player if they teleport somewhere else.
 				distanceRunnable.updateLocation(((Player) passenger).getUniqueId(), event.getTo());

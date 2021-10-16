@@ -24,9 +24,9 @@ import com.hm.achievement.db.CacheManager;
 public class ShearsListener extends AbstractListener {
 
 	@Inject
-	public ShearsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public ShearsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.SHEARS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.SHEARS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

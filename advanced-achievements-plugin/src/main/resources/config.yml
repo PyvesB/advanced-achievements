@@ -71,10 +71,10 @@ NotifyOtherPlayers: false
 # Notify other connected players using action bars, otherwise chat messages are used.
 ActionBarNotify: true
 
-# Display achievement DisplayName and Message as screen titles. Minimum Minecraft version: 1.8.
+# Display achievement DisplayName and Message as screen titles.
 TitleScreen: true
 
-# Display a boss bar showing progress a few seconds after an achievement is received. Minimum Minecraft version: 1.9.
+# Display a boss bar showing progress a few seconds after an achievement is received.
 BossBarProgress: true
 
 # Send informative chat messages to the player receiving an achievement.
@@ -92,7 +92,7 @@ ChatHeader: "§7[%ICON%§7]"
 RestrictCreative: false
 
 # Stop all stats from increasing when player in spectator mode, including PlayedTime. Connection achievements will only
-# be handled once a player switches to a non-spectator mode. Minimum Minecraft version: 1.8.
+# be handled once a player switches to a non-spectator mode.
 RestrictSpectator: true
 
 # Stop all stats from increasing when player in adventure mode, including PlayedTime. Connection achievements will only
@@ -136,7 +136,7 @@ StatisticCooldown:
   MusicDiscs: 30
   BooksEdited: 10
 
-# Display action bar message when player performs an action while in a cooldown period. Minimum Minecraft version: 1.8.
+# Display action bar message when player performs an action while in a cooldown period.
 CooldownActionBar: true
 
 # Locale used to format dates in /aach book and /aach list. You must select an ISO 639 language code. The list of
@@ -159,11 +159,10 @@ AllAchievementsReceivedRewards:
 IgnoreAFKPlayedTime: false
 
 # Register advancements with a description corresponding to the Goal parameter of each achievement. If changed, run
-# /aach generate to regenerate advancements with the new value taken into account. Minimum Minecraft version: 1.12.
+# /aach generate to regenerate advancements with the new value taken into account.
 RegisterAdvancementDescriptions: true
 
 # Hide advancements from the advancement GUI. Advancement notifications will still appear when receiving achievements.
-# Minimum Minecraft version: 1.12.
 HideAdvancements: false
 
 # Title shown on the root advancement.
@@ -185,10 +184,6 @@ ForbiddenFireworkBlocks:
   - command_block_minecart
   - furnace_minecart
   - chest_minecart
-  - explosive_minecart
-  - command_minecart
-  - powered_minecart
-  - storage_minecart
 
 # Used for the Fireworks achievement category. In vanilla Minecraft, fireworks can only be launched on the following
 # blocks when sneaking. Unless listed here, players may be able to abuse the Fireworks category by repeatedly right 
@@ -300,36 +295,9 @@ ForbiddenFireworkBlocksWhenNotSneaking:
   - oak_wall_sign
   - spruce_sign
   - spruce_wall_sign
-  - sign
-  - wall_sign
-  - workbench
-  - burning_furnace
-  - wood_button
-  - trap_door
-  - fence_gate
-  - enchantment_table
-  - wood_door
-  - wooden_door
-  - boat
-  - bed_block
-  - cake_block
-  - redstone_comparator_off
-  - redstone_comparator_on
-  - diode_block_off
-  - diode_block_on
-  - command
-  - boat_acacia
-  - boat_birch
-  - boat_dark_oak
-  - boat_jungle
-  - boat_spruce
-  - command_repeating
-  - command_chain
-  - silver_shulker_box
-  - sign_post
 
 # Used for the HoePlowings achievement category. You may need to expand this list when new Minecraft versions are
-# released. In Minecraft versions prior to 1.13, replace grass_block with grass.
+# released.
 HoePlowableBlocks:
   - dirt
   - grass_block
@@ -340,7 +308,6 @@ FishableFish:
   - salmon
   - pufferfish
   - tropical_fish
-  - raw_fish
 
 #======================================================================================================================#
 #                                                     GUI SETTINGS                                                     #
@@ -446,7 +413,6 @@ BungeeMode: false
 
 # Count blocks placed. You can use any of the following:
 # - block names (available names: https://github.com/PyvesB/advanced-achievements/wiki/Material-names).
-# - notations such as sand:1 (i.e. sand item with metadata 1, red sand) for 1.7-1.12 Minecraft versions .
 # - custom display name of items (e.g. the name of a player's head).
 Places:
   chest:
@@ -495,7 +461,6 @@ Places:
 
 # Count blocks broken. You can use any of the following:
 # - block names (available names: https://github.com/PyvesB/advanced-achievements/wiki/Material-names).
-# - notations such as sand:1 (i.e. sand item with metadata 1, red sand) for 1.7-1.12 Minecraft versions .
 Breaks:
   ice:
     10:
@@ -529,7 +494,7 @@ Breaks:
 # Count entities killed. You can use any of the following:
 # - entity types (available names: https://github.com/PyvesB/advanced-achievements/wiki/Entity-names).
 # - poweredcreeper.
-# - custom mob name (name tag/plugins such as Mythic Mobs) for Minecraft 1.8 or more recent.
+# - custom mob name (name tag/plugins such as Mythic Mobs).
 # - player to track player kills as a whole.
 # - specificplayer- followed by player UUID to track how many times a specific player has been killed.
 Kills:
@@ -636,7 +601,7 @@ JobsReborn:
       DisplayName: Hunter
       Type: normal
 
-# Count effects held (effect name in lower case). Minimum Minecraft version: 1.13.
+# Count effects held (effect name in lower case).
 # Available effects: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionEffectType.html
 EffectsHeld:
   jump:
@@ -885,7 +850,7 @@ DistanceBoat:
     DisplayName: Great Sailor
     Type: normal
 
-# Count distance traveled with elytra. Minimum Minecraft version: 1.9.
+# Count distance traveled with elytra.
 DistanceGliding:
   100:
     Goal: Fly 100 blocks with an elytra.
@@ -894,7 +859,7 @@ DistanceGliding:
     DisplayName: Angel
     Type: rare
 
-# Count distance traveled on a llama. Minimum Minecraft version: 1.11.
+# Count distance traveled on a llama.
 DistanceLlama:
   150:
     Goal: Travel 150 blocks with a llama.
@@ -997,7 +962,7 @@ EnderPearls:
     DisplayName: Teleport Man
     Type: normal
 
-# Count pets given to another player (requires Pet Master plugin version 1.4 or above).
+# Count pets given to another player (requires Pet Master plugin).
 PetMasterGive:
   3:
     Goal: Give 3 pets to friends.
@@ -1006,7 +971,7 @@ PetMasterGive:
     DisplayName: Donator
     Type: rare
 
-# Count pets received from another player (requires Pet Master plugin version 1.4 or above).
+# Count pets received from another player (requires Pet Master plugin).
 PetMasterReceive:
   10:
     Goal: Receive 10 pets.

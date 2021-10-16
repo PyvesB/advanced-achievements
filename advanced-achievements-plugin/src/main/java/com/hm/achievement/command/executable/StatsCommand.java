@@ -12,7 +12,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
 
-import com.darkblade12.particleeffect.ParticleEffect;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.SoundPlayer;
@@ -30,7 +29,6 @@ public class StatsCommand extends AbstractCommand {
 	// Minecraft font, used to get size information in the progress bar.
 	private static final MinecraftFont FONT = MinecraftFont.Font;
 
-	private final int serverVersion;
 	private final CacheManager cacheManager;
 	private final AchievementMap achievementMap;
 	private final SoundPlayer soundPlayer;
@@ -45,10 +43,8 @@ public class StatsCommand extends AbstractCommand {
 
 	@Inject
 	public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			StringBuilder pluginHeader, int serverVersion, CacheManager cacheManager, AchievementMap achievementMap,
-			SoundPlayer soundPlayer) {
+			StringBuilder pluginHeader, CacheManager cacheManager, AchievementMap achievementMap, SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader);
-		this.serverVersion = serverVersion;
 		this.cacheManager = cacheManager;
 		this.achievementMap = achievementMap;
 		this.soundPlayer = soundPlayer;
@@ -112,16 +108,11 @@ public class StatsCommand extends AbstractCommand {
 		// Player has received all achievement; play special effect and sound.
 		if (playerAchievements >= totalAchievements) {
 			if (configAdditionalEffects) {
-				if (serverVersion >= 9) {
-					player.spawnParticle(Particle.SPELL_WITCH, player.getLocation(), 400, 0, 1, 0, 0.5f);
-				} else {
-					ParticleEffect.SPELL_WITCH.display(0, 1, 0, 0.5f, 400, player.getLocation(), 1);
-				}
+				player.spawnParticle(Particle.SPELL_WITCH, player.getLocation(), 400, 0, 1, 0, 0.5f);
 			}
 
 			if (configSound) {
-				soundPlayer.play(player, configSoundStats, "ENTITY_FIREWORK_ROCKET_BLAST", "ENTITY_FIREWORK_LARGE_BLAST",
-						"FIREWORK_BLAST");
+				soundPlayer.play(player, configSoundStats, "ENTITY_FIREWORK_ROCKET_BLAST");
 			}
 		}
 	}

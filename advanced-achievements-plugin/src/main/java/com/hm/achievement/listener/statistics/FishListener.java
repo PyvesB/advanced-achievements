@@ -29,9 +29,9 @@ public class FishListener extends AbstractListener {
 	private Set<String> fishableFish;
 
 	@Inject
-	public FishListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public FishListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.FISH, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.FISH, mainConfig, achievementMap, cacheManager);
 	}
 
 	@Override

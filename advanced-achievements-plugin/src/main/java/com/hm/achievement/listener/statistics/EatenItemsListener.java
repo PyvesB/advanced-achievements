@@ -24,9 +24,9 @@ import com.hm.achievement.db.CacheManager;
 public class EatenItemsListener extends AbstractListener {
 
 	@Inject
-	public EatenItemsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public EatenItemsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.EATENITEMS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.EATENITEMS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

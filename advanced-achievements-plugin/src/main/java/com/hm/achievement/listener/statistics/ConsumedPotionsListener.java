@@ -26,9 +26,9 @@ public class ConsumedPotionsListener extends AbstractListener {
 	private final MaterialHelper materialHelper;
 
 	@Inject
-	public ConsumedPotionsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager, MaterialHelper materialHelper) {
-		super(NormalAchievements.CONSUMEDPOTIONS, mainConfig, serverVersion, achievementMap, cacheManager);
+	public ConsumedPotionsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
+			CacheManager cacheManager, MaterialHelper materialHelper) {
+		super(NormalAchievements.CONSUMEDPOTIONS, mainConfig, achievementMap, cacheManager);
 		this.materialHelper = materialHelper;
 	}
 

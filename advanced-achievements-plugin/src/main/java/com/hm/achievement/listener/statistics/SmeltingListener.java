@@ -29,13 +29,10 @@ import com.hm.achievement.utils.InventoryHelper;
 @Singleton
 public class SmeltingListener extends AbstractListener {
 
-	private final InventoryHelper inventoryHelper;
-
 	@Inject
-	public SmeltingListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, InventoryHelper inventoryHelper) {
-		super(NormalAchievements.SMELTING, mainConfig, serverVersion, achievementMap, cacheManager);
-		this.inventoryHelper = inventoryHelper;
+	public SmeltingListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
+			CacheManager cacheManager) {
+		super(NormalAchievements.SMELTING, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -51,7 +48,7 @@ public class SmeltingListener extends AbstractListener {
 
 		int eventAmount = item.getAmount();
 		if (event.isShiftClick()) {
-			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, item));
+			eventAmount = Math.min(eventAmount, InventoryHelper.getAvailableSpace(player, item));
 			if (eventAmount == 0) {
 				return;
 			}

@@ -197,7 +197,6 @@ reset-successful: " a statisztikák törölve PLAYER játékostól."
 
 # Related to /aach generate.
 advancements-generated: "A küldetések sikeresen létrehozva."
-minecraft-not-supported: "A Minecraft verziójában nem támogatott a küldetések. Kérjük, frissítse 1.12+."
 
 # Related to /aach inspect
 achievement-not-recognized: "A(z) 'NAME' elnevezésű küldetést nem sikerült felismerni. Úgy érted CLOSEST_MATCH?"

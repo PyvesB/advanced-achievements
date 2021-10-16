@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -18,7 +17,9 @@ import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.lifecycle.Cleanable;
-import com.hm.achievement.utils.FancyMessageSender;
+
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * Abstract class in charge of factoring out common functionality for the listener classes with cooldown maps.
@@ -30,7 +31,6 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	private final Map<Integer, Map<UUID, Long>> slotsToPlayersLastActionTimes = new HashMap<>();
 	private final AdvancedAchievements advancedAchievements;
 	private final YamlConfiguration langConfig;
-	private final Logger logger;
 
 	private int categoryCooldown;
 	private long hardestCategoryThreshold;
@@ -38,13 +38,11 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 
 	private String langStatisticCooldown;
 
-	AbstractRateLimitedListener(Category category, YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager, AdvancedAchievements advancedAchievements,
-			YamlConfiguration langConfig, Logger logger) {
-		super(category, mainConfig, serverVersion, achievementMap, cacheManager);
+	AbstractRateLimitedListener(Category category, YamlConfiguration mainConfig, AchievementMap achievementMap,
+			CacheManager cacheManager, AdvancedAchievements advancedAchievements, YamlConfiguration langConfig) {
+		super(category, mainConfig, achievementMap, cacheManager);
 		this.advancedAchievements = advancedAchievements;
 		this.langConfig = langConfig;
-		this.logger = logger;
 	}
 
 	@Override
@@ -56,11 +54,6 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 				: achievements.get(achievements.size() - 1).getThreshold();
 		categoryCooldown = mainConfig.getInt("StatisticCooldown." + category) * 1000;
 		configCooldownActionBar = mainConfig.getBoolean("CooldownActionBar");
-		// Action bars introduced in Minecraft 1.8. Automatically disable for older versions.
-		if (configCooldownActionBar && serverVersion < 8) {
-			configCooldownActionBar = false;
-		}
-
 		langStatisticCooldown = langConfig.getString("statistic-cooldown");
 	}
 
@@ -127,10 +120,6 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	private void displayActionBarMessage(Player player, long timeToWait) {
 		String timeWithOneDecimal = String.format("%.1f", (double) timeToWait / 1000);
 		String message = "&o" + StringUtils.replaceOnce(langStatisticCooldown, "TIME", timeWithOneDecimal);
-		try {
-			FancyMessageSender.sendActionBarMessage(player, message);
-		} catch (Exception e) {
-			logger.warning("Failed to display action bar message for cooldown.");
-		}
+		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
 	}
 }

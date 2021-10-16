@@ -22,9 +22,8 @@ public class TopCommand extends AbstractRankingCommand {
 
 	@Inject
 	public TopCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			StringBuilder pluginHeader, Logger logger, int serverVersion, AbstractDatabaseManager databaseManager,
-			SoundPlayer soundPlayer) {
-		super(mainConfig, langConfig, pluginHeader, logger, serverVersion, "top-achievement", databaseManager, soundPlayer);
+			StringBuilder pluginHeader, Logger logger, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
+		super(mainConfig, langConfig, pluginHeader, logger, "top-achievement", databaseManager, soundPlayer);
 	}
 
 	@Override

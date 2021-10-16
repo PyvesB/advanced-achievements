@@ -26,9 +26,9 @@ import com.hm.achievement.db.CacheManager;
 public class SnowballsListener extends AbstractListener {
 
 	@Inject
-	public SnowballsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public SnowballsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.SNOWBALLS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.SNOWBALLS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

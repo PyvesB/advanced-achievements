@@ -208,7 +208,6 @@ reset-all-successful: "Všetky štatistiky pre hráča PLAYER boli vyčistené."
 
 # Related to /aach generate.
 advancements-generated: "Úspechy boli úspešne vygenerované."
-minecraft-not-supported: "Úspechy nefunguju na vašej verzii servera. Použi prosím verziu 1.12+."
 
 # Related to /aach inspect
 achievement-not-recognized: "Úspech s názvom 'NAME' nebol rozpoznaný. Myslel si CLOSEST_MATCH?"

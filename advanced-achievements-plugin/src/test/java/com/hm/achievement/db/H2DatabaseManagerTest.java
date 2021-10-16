@@ -55,7 +55,7 @@ class H2DatabaseManagerTest {
 		when(plugin.getDataFolder()).thenReturn(tempDir.relativize(Paths.get("").toAbsolutePath()).toFile());
 		YamlConfiguration config = YamlConfiguration
 				.loadConfiguration(new InputStreamReader(H2DatabaseManagerTest.class.getResourceAsStream("/config-h2.yml")));
-		db = new H2DatabaseManager(config, LOGGER, new DatabaseUpdater(LOGGER, null), plugin, newDirectExecutorService());
+		db = new H2DatabaseManager(config, LOGGER, new DatabaseUpdater(LOGGER), plugin, newDirectExecutorService());
 		db.initialise();
 		db.extractConfigurationParameters();
 	}

@@ -22,9 +22,9 @@ import com.hm.achievement.db.CacheManager;
 public class WinRaidListener extends AbstractListener {
 
 	@Inject
-	public WinRaidListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public WinRaidListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.RAIDSWON, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.RAIDSWON, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

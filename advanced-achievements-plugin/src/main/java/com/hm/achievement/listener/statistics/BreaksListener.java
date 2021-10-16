@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.ItemStack;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
@@ -34,9 +33,9 @@ public class BreaksListener extends AbstractListener {
 	private boolean disableSilkTouchOreBreaks;
 
 	@Inject
-	public BreaksListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public BreaksListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(MultipleAchievements.BREAKS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(MultipleAchievements.BREAKS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@Override
@@ -47,14 +46,13 @@ public class BreaksListener extends AbstractListener {
 		disableSilkTouchOreBreaks = mainConfig.getBoolean("DisableSilkTouchOreBreaks");
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		if (disableSilkTouchBreaks || disableSilkTouchOreBreaks) {
-			ItemStack breakingTool = serverVersion >= 9 ? player.getInventory().getItemInMainHand() : player.getItemInHand();
-			if (breakingTool.containsEnchantment(SILK_TOUCH) && (disableSilkTouchBreaks || isOre(block.getType().name()))) {
+			if (player.getInventory().getItemInMainHand().containsEnchantment(SILK_TOUCH)
+					&& (disableSilkTouchBreaks || isOre(block.getType().name()))) {
 				return;
 			}
 		}
@@ -65,7 +63,6 @@ public class BreaksListener extends AbstractListener {
 		}
 
 		Set<String> subcategories = new HashSet<>();
-		addMatchingSubcategories(subcategories, blockName + ':' + block.getState().getData().toItemStack().getDurability());
 		addMatchingSubcategories(subcategories, blockName);
 		updateStatisticAndAwardAchievementsIfAvailable(player, subcategories, 1);
 	}
@@ -85,9 +82,6 @@ public class BreaksListener extends AbstractListener {
 			case "NETHER_GOLD_ORE":
 			case "NETHER_QUARTZ_ORE":
 			case "REDSTONE_ORE":
-				// Pre Minecraft 1.13:
-			case "QUARTZ_ORE":
-			case "GLOWING_REDSTONE_ORE":
 				return true;
 			default:
 				return false;

@@ -23,9 +23,9 @@ import com.hm.achievement.db.CacheManager;
 public class ItemBreaksListener extends AbstractListener {
 
 	@Inject
-	public ItemBreaksListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public ItemBreaksListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.ITEMBREAKS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.ITEMBREAKS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

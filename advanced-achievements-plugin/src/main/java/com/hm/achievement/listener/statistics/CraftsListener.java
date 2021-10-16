@@ -36,16 +36,12 @@ import com.hm.achievement.utils.InventoryHelper;
 @Singleton
 public class CraftsListener extends AbstractListener {
 
-	private final InventoryHelper inventoryHelper;
-
 	@Inject
-	public CraftsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
-			CacheManager cacheManager, InventoryHelper inventoryHelper) {
-		super(MultipleAchievements.CRAFTS, mainConfig, serverVersion, achievementMap, cacheManager);
-		this.inventoryHelper = inventoryHelper;
+	public CraftsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
+			CacheManager cacheManager) {
+		super(MultipleAchievements.CRAFTS, mainConfig, achievementMap, cacheManager);
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(CraftItemEvent event) {
 		if (!(event.getWhoClicked() instanceof Player) || event.getAction() == InventoryAction.NOTHING
@@ -62,7 +58,6 @@ public class CraftsListener extends AbstractListener {
 		}
 
 		Set<String> subcategories = new HashSet<>();
-		addMatchingSubcategories(subcategories, craftName + ':' + item.getDurability());
 		addMatchingSubcategories(subcategories, craftName);
 
 		int eventAmount = item.getAmount();
@@ -78,7 +73,7 @@ public class CraftsListener extends AbstractListener {
 				}
 			}
 			eventAmount *= maxAmount;
-			eventAmount = Math.min(eventAmount, inventoryHelper.getAvailableSpace(player, item));
+			eventAmount = Math.min(eventAmount, InventoryHelper.getAvailableSpace(player, item));
 			if (eventAmount == 0) {
 				return;
 			}

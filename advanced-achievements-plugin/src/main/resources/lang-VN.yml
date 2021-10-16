@@ -189,7 +189,6 @@ reset-successful: ' thống kê đã được xoá cho PLAYER.'
 
 # Related to /aach generate.
 advancements-generated: Các tiến bộ đã được tạo thành công.
-minecraft-not-supported: Các cải tiến không được hỗ trợ trong phiên bản Minecraft của bạn. Vui lòng cập nhật lên 1.12+.
 
 #============================================================#
 # +--------------------------------------------------------+ #

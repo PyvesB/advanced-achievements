@@ -24,9 +24,9 @@ import com.hm.achievement.db.CacheManager;
 public class LevelsListener extends AbstractListener {
 
 	@Inject
-	public LevelsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public LevelsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.LEVELS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.LEVELS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

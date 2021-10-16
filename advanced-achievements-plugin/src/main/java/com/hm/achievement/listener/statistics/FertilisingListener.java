@@ -14,7 +14,7 @@ import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 
 /**
- * Listener class to deal with Fertilising achievements for Minecraft 1.13+.
+ * Listener class to deal with Fertilising achievements.
  *
  * @author Pyves
  *
@@ -23,9 +23,9 @@ import com.hm.achievement.db.CacheManager;
 public class FertilisingListener extends AbstractListener {
 
 	@Inject
-	public FertilisingListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public FertilisingListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.FERTILISING, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.FERTILISING, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

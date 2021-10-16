@@ -33,11 +33,13 @@ public class FireworksListener extends AbstractListener {
 
 	private Set<String> forbiddenFireworkBlocks;
 	private Set<String> forbiddenFireworkBlocksWhenNotSneaking;
+	private final int serverVersion;
 
 	@Inject
 	public FireworksListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.FIREWORKS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.FIREWORKS, mainConfig, achievementMap, cacheManager);
+		this.serverVersion = serverVersion;
 	}
 
 	@Override
@@ -61,22 +63,12 @@ public class FireworksListener extends AbstractListener {
 		}
 
 		Player player = event.getPlayer();
-		if (!isFirework(event.getMaterial())
+		if (event.getMaterial() != Material.FIREWORK_ROCKET
 				|| !canAccommodateFireworkLaunch(event.getClickedBlock(), player, event.getAction())) {
 			return;
 		}
 
 		updateStatisticAndAwardAchievementsIfAvailable(player, 1);
-	}
-
-	/**
-	 * Determines whether the used material is a firework.
-	 *
-	 * @param material
-	 * @return true if the material is a firework, false otherwise
-	 */
-	private boolean isFirework(Material material) {
-		return serverVersion >= 13 ? material == Material.FIREWORK_ROCKET : "FIREWORK".equals(material.name());
 	}
 
 	/**
@@ -89,7 +81,7 @@ public class FireworksListener extends AbstractListener {
 	 */
 	private boolean canAccommodateFireworkLaunch(Block clickedBlock, Player player, Action action) {
 		// Players can launch fireworks without interacting with a block only if they're gliding.
-		if (serverVersion >= 9 && player.isGliding() && action == Action.RIGHT_CLICK_AIR) {
+		if (player.isGliding() && action == Action.RIGHT_CLICK_AIR) {
 			return true;
 		} else if (action != Action.RIGHT_CLICK_BLOCK) {
 			return false;

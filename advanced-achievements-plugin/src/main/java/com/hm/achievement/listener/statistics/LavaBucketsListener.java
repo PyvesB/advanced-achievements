@@ -1,7 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.logging.Logger;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -26,11 +24,10 @@ import com.hm.achievement.db.CacheManager;
 public class LavaBucketsListener extends AbstractRateLimitedListener {
 
 	@Inject
-	public LavaBucketsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public LavaBucketsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager, AdvancedAchievements advancedAchievements,
-			@Named("lang") YamlConfiguration langConfig, Logger logger) {
-		super(NormalAchievements.LAVABUCKETS, mainConfig, serverVersion, achievementMap, cacheManager, advancedAchievements,
-				langConfig, logger);
+			@Named("lang") YamlConfiguration langConfig) {
+		super(NormalAchievements.LAVABUCKETS, mainConfig, achievementMap, cacheManager, advancedAchievements, langConfig);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

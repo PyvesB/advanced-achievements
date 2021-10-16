@@ -29,9 +29,9 @@ public class TreasuresListener extends AbstractListener {
 	private Set<String> fishableFish;
 
 	@Inject
-	public TreasuresListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public TreasuresListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.TREASURES, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.TREASURES, mainConfig, achievementMap, cacheManager);
 	}
 
 	@Override

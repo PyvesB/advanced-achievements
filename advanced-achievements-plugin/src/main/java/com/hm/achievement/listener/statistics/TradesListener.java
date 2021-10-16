@@ -27,9 +27,9 @@ import com.hm.achievement.db.CacheManager;
 public class TradesListener extends AbstractListener {
 
 	@Inject
-	public TradesListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public TradesListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.TRADES, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.TRADES, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

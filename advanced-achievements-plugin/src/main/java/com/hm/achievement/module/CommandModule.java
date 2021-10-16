@@ -18,7 +18,6 @@ import com.hm.achievement.command.executable.ResetCommand;
 import com.hm.achievement.command.executable.StatsCommand;
 import com.hm.achievement.command.executable.ToggleCommand;
 import com.hm.achievement.command.executable.TopCommand;
-import com.hm.achievement.command.executable.Upgrade13Command;
 import com.hm.achievement.command.executable.WeekCommand;
 
 import dagger.Binds;
@@ -95,10 +94,6 @@ public interface CommandModule {
 	@Binds
 	@IntoSet
 	AbstractCommand bindAddCommand(AddCommand addCommand);
-
-	@Binds
-	@IntoSet
-	AbstractCommand bindUpdate13Command(Upgrade13Command upgrade13Command);
 
 	@Binds
 	@IntoSet

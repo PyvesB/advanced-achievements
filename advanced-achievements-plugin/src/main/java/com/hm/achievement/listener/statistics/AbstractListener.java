@@ -25,9 +25,9 @@ public abstract class AbstractListener extends StatisticIncreaseHandler implemen
 	final Category category;
 	List<String> subcategories;
 
-	AbstractListener(Category category, YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	AbstractListener(Category category, YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(mainConfig, serverVersion, achievementMap, cacheManager);
+		super(mainConfig, achievementMap, cacheManager);
 		this.category = category;
 	}
 

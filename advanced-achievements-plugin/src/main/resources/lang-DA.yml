@@ -211,7 +211,6 @@ reset-all-successful: "Alle statistikker var ryddet for PLAYER."
 
 # Relateret til /aach generate.
 advancements-generated: "præsentationer var vellykket genereret."
-minecraft-not-supported: "Præsentationer ikke understøttet i din Minecraft version. Venligst opdater til 1.12+."
 
 # Relateret til /aach inspect
 achievement-not-recognized: "Præsentation kaldet 'NAME' var ikke genkedt. Mente du CLOSEST_MATCH?"

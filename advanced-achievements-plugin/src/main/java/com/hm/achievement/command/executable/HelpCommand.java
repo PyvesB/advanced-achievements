@@ -1,7 +1,5 @@
 package com.hm.achievement.command.executable;
 
-import java.util.logging.Logger;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -24,8 +22,7 @@ import com.hm.achievement.utils.FancyMessageSender;
 @CommandSpec(name = "help", permission = "", minArgs = 0, maxArgs = Integer.MAX_VALUE)
 public class HelpCommand extends AbstractCommand {
 
-	private final int serverVersion;
-	private final Logger logger;
+	private final FancyMessageSender fancyMessageSender;
 
 	private ChatColor configColor;
 	private String configIcon;
@@ -66,10 +63,9 @@ public class HelpCommand extends AbstractCommand {
 
 	@Inject
 	public HelpCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			StringBuilder pluginHeader, int serverVersion, Logger logger) {
+			StringBuilder pluginHeader, FancyMessageSender fancyMessageSender) {
 		super(mainConfig, langConfig, pluginHeader);
-		this.serverVersion = serverVersion;
-		this.logger = logger;
+		this.fancyMessageSender = fancyMessageSender;
 	}
 
 	@Override
@@ -167,7 +163,7 @@ public class HelpCommand extends AbstractCommand {
 			sendJsonClickableHoverableMessage(sender, langCommandReload, "/aach reload", langCommandReloadHover);
 		}
 
-		if (serverVersion >= 12 && sender.hasPermission("achievement.generate")) {
+		if (sender.hasPermission("achievement.generate")) {
 			sendJsonClickableHoverableMessage(sender, langCommandGenerate, "/aach generate", langCommandGenerateHover);
 		}
 
@@ -211,16 +207,10 @@ public class HelpCommand extends AbstractCommand {
 	 * @param hover
 	 */
 	private void sendJsonClickableHoverableMessage(CommandSender sender, String message, String command, String hover) {
-		// Send clickable and hoverable message if sender is a player and if supported by the Minecraft version.
-		if (sender instanceof Player && serverVersion > 7) {
-			try {
-				FancyMessageSender.sendHoverableCommandMessage((Player) sender, message, command, hover,
-						configColor.name().toLowerCase());
-			} catch (Exception e) {
-				logger.warning(
-						"Failed to display clickable and hoverable message in /aach help command. Displaying standard message instead.");
-				sender.sendMessage(message);
-			}
+		// Send clickable and hoverable message if sender is a player.
+		if (sender instanceof Player) {
+			fancyMessageSender.sendHoverableCommandMessage((Player) sender, message, command, hover,
+					configColor.name().toLowerCase());
 		} else {
 			sender.sendMessage(message);
 		}

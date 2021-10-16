@@ -70,7 +70,7 @@ class PlayerAdvancedAchievementListenerTest {
 				.loadConfiguration(new InputStreamReader(getClass().getResourceAsStream("/config-reward-reception.yml")));
 		YamlConfiguration langConfig = YamlConfiguration
 				.loadConfiguration(new InputStreamReader(getClass().getResourceAsStream("/lang.yml")));
-		underTest = new PlayerAdvancedAchievementListener(mainConfig, langConfig, 11, mock(Logger.class),
+		underTest = new PlayerAdvancedAchievementListener(mainConfig, langConfig, mock(Logger.class),
 				new StringBuilder(PLUGIN_HEADER), new CacheManager(plugin, abstractDatabaseManager), plugin, rewardParser,
 				achievementMap, abstractDatabaseManager, null, null);
 		underTest.extractConfigurationParameters();

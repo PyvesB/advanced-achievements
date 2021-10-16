@@ -33,47 +33,19 @@ class SoundPlayerTest {
 
 	@Test
 	void shouldUseProvidedSoundIfValid() {
-		SoundPlayer underTest = new SoundPlayer(logger, 13);
+		SoundPlayer underTest = new SoundPlayer(logger);
 
-		underTest.play(player, "ENTITY_FIREWORK_ROCKET_BLAST", "SOME_FALLBACK", "SOME_FALLBACK", "SOME_FALLBACK");
+		underTest.play(player, "ENTITY_FIREWORK_ROCKET_BLAST", "SOME_FALLBACK");
 
 		verify(player).playSound(location, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1.0f, 0.7f);
 	}
 
 	@Test
 	void shouldUseFallbackSoundIfProvidedInvalid() {
-		SoundPlayer underTest = new SoundPlayer(logger, 13);
+		SoundPlayer underTest = new SoundPlayer(logger);
 
-		underTest.play(player, "INVALID", "ENTITY_FIREWORK_ROCKET_BLAST", "SOME_FALLBACK", "SOME_FALLBACK");
-
-		verify(player).playSound(location, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1.0f, 0.7f);
-	}
-
-	@Test
-	void shouldUseCurrentSoundWhenUsingMinecraft13() {
-		SoundPlayer underTest = new SoundPlayer(logger, 13);
-
-		underTest.play(player, "ENTITY_FIREWORK_ROCKET_BLAST", "SOME_FALLBACK", "SOME_FALLBACK");
+		underTest.play(player, "INVALID", "ENTITY_FIREWORK_ROCKET_BLAST");
 
 		verify(player).playSound(location, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1.0f, 0.7f);
 	}
-
-	@Test
-	void shouldUsePre13SoundWhenUsingMinecraft12() {
-		SoundPlayer underTest = new SoundPlayer(logger, 12);
-
-		underTest.play(player, "SOME_FALLBACK", "ENTITY_FIREWORK_ROCKET_BLAST", "SOME_FALLBACK");
-
-		verify(player).playSound(location, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1.0f, 0.7f);
-	}
-
-	@Test
-	void shouldUsePre9SoundWhenUsingMinecraft8() {
-		SoundPlayer underTest = new SoundPlayer(logger, 8);
-
-		underTest.play(player, "SOME_FALLBACK", "SOME_FALLBACK", "ENTITY_FIREWORK_ROCKET_BLAST");
-
-		verify(player).playSound(location, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1.0f, 0.7f);
-	}
-
 }

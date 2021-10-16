@@ -20,12 +20,10 @@ import org.bukkit.potion.PotionType;
 public class MaterialHelper {
 
 	private final Logger logger;
-	private final int serverVersion;
 
 	@Inject
-	public MaterialHelper(Logger logger, int serverVersion) {
+	public MaterialHelper(Logger logger) {
 		this.logger = logger;
-		this.serverVersion = serverVersion;
 	}
 
 	/**
@@ -53,7 +51,7 @@ public class MaterialHelper {
 			return defaultMaterial;
 		}
 		Material material = Material.matchMaterial(name);
-		if (material == null && serverVersion >= 13) {
+		if (material == null) {
 			material = Material.matchMaterial(name, true);
 		}
 		if (material == null) {
@@ -70,16 +68,11 @@ public class MaterialHelper {
 	 * @param itemStack
 	 * @return true if the item is a non-water potion, false otherwise
 	 */
-	@SuppressWarnings("deprecation")
 	public boolean isAnyPotionButWater(ItemStack itemStack) {
 		if (itemStack.getType() != Material.POTION) {
 			return false;
 		}
-		if (serverVersion >= 9) {
-			// Method getBasePotionData does not exist for versions prior to Minecraft 1.9.
-			return ((PotionMeta) itemStack.getItemMeta()).getBasePotionData().getType() != PotionType.WATER;
-		}
-		return itemStack.getDurability() != 0;
+		return ((PotionMeta) itemStack.getItemMeta()).getBasePotionData().getType() != PotionType.WATER;
 	}
 
 }

@@ -1,7 +1,5 @@
 package com.hm.achievement.listener.statistics;
 
-import java.util.logging.Logger;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -29,11 +27,10 @@ import com.hm.achievement.db.CacheManager;
 public class MusicDiscsListener extends AbstractRateLimitedListener {
 
 	@Inject
-	public MusicDiscsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public MusicDiscsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager, AdvancedAchievements advancedAchievements,
-			@Named("lang") YamlConfiguration langConfig, Logger logger) {
-		super(NormalAchievements.MUSICDISCS, mainConfig, serverVersion, achievementMap, cacheManager, advancedAchievements,
-				langConfig, logger);
+			@Named("lang") YamlConfiguration langConfig) {
+		super(NormalAchievements.MUSICDISCS, mainConfig, achievementMap, cacheManager, advancedAchievements, langConfig);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR) // Do NOT set ignoreCancelled to true, deprecated for this event.

@@ -25,9 +25,9 @@ import com.hm.achievement.db.CacheManager;
 public class JobsRebornListener extends AbstractListener {
 
 	@Inject
-	public JobsRebornListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public JobsRebornListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(MultipleAchievements.JOBSREBORN, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(MultipleAchievements.JOBSREBORN, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

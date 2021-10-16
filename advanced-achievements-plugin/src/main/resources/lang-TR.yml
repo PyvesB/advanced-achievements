@@ -204,8 +204,6 @@ reset-successful: PLAYER oyuncusunun istatistikleri sıfırlandı.
 
 # Related to /aach generate.
 advancements-generated: Gelişimler başarıyla oluşturuldu.
-minecraft-not-supported: Gelişimler bu Minecraft sürümünde kullanılamıyor. Lütfen
-  1.12+ üstüne güncelleyin.
 
 # Related to /aach inspect
 achievement-not-recognized: '''NAME'' isimli başarım bulunamadı. Bunu mu demek istediniz:

@@ -19,8 +19,8 @@ import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.db.CacheManager;
 
 /**
- * Listener class to deal with advancements for Minecraft 1.12+. This class uses delays processing of tasks to avoid
- * spamming a barely connected player.
+ * Listener class to deal with advancements. This class uses delays processing of tasks to avoid spamming a barely
+ * connected player.
  * 
  * @author Pyves
  *
@@ -28,13 +28,11 @@ import com.hm.achievement.db.CacheManager;
 @Singleton
 public class JoinListener implements Listener {
 
-	private final int serverVersion;
 	private final AdvancedAchievements advancedAchievements;
 	private final CacheManager cacheManager;
 
 	@Inject
-	public JoinListener(int serverVersion, AdvancedAchievements advancedAchievements, CacheManager cacheManager) {
-		this.serverVersion = serverVersion;
+	public JoinListener(AdvancedAchievements advancedAchievements, CacheManager cacheManager) {
 		this.advancedAchievements = advancedAchievements;
 		this.cacheManager = cacheManager;
 	}
@@ -42,9 +40,7 @@ public class JoinListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		scheduleReceivedCacheLoad(event.getPlayer());
-		if (serverVersion >= 12) {
-			scheduleAwardAdvancements(event.getPlayer());
-		}
+		scheduleAwardAdvancements(event.getPlayer());
 	}
 
 	/**

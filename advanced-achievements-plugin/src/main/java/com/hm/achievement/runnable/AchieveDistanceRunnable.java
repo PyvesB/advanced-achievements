@@ -38,9 +38,9 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	private boolean configIgnoreVerticalDistance;
 
 	@Inject
-	public AchieveDistanceRunnable(@Named("main") YamlConfiguration mainConfig, int serverVersion,
-			AchievementMap achievementMap, CacheManager cacheManager, Set<Category> disabledCategories) {
-		super(mainConfig, serverVersion, achievementMap, cacheManager);
+	public AchieveDistanceRunnable(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
+			CacheManager cacheManager, Set<Category> disabledCategories) {
+		super(mainConfig, achievementMap, cacheManager);
 		this.disabledCategories = disabledCategories;
 	}
 
@@ -95,10 +95,10 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 				updateDistance(difference, player, NormalAchievements.DISTANCEMINECART);
 			} else if (vehicleType == EntityType.BOAT) {
 				updateDistance(difference, player, NormalAchievements.DISTANCEBOAT);
-			} else if (serverVersion >= 11 && vehicleType == EntityType.LLAMA) {
+			} else if (vehicleType == EntityType.LLAMA) {
 				updateDistance(difference, player, NormalAchievements.DISTANCELLAMA);
 			}
-		} else if (serverVersion >= 9 && player.isGliding()) {
+		} else if (player.isGliding()) {
 			updateDistance(difference, player, NormalAchievements.DISTANCEGLIDING);
 		} else if (player.isSneaking()) {
 			updateDistance(difference, player, NormalAchievements.DISTANCESNEAKING);

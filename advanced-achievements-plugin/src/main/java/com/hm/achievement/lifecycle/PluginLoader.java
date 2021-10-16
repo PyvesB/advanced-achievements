@@ -268,9 +268,8 @@ public class PluginLoader {
 		for (MultipleAchievements category : MultipleAchievements.values()) {
 			Permission categoryParent = new Permission(category.toPermName(), PermissionDefault.TRUE);
 			for (String section : achievementMap.getSubcategoriesForCategory(category)) {
-				// Permission ignores metadata (eg. sand:1) for Breaks, Places and Crafts categories and don't take
-				// spaces into account.
-				section = StringUtils.deleteWhitespace(StringUtils.substringBefore(section, ":"));
+				// Permissions don't take spaces into account.
+				section = StringUtils.deleteWhitespace(section);
 
 				for (String groupElement : StringUtils.split(section, '|')) {
 					String permissionNode = category.toChildPermName(groupElement);

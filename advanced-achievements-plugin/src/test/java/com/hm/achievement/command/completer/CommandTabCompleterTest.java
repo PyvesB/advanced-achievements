@@ -2,7 +2,6 @@ package com.hm.achievement.command.completer;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -11,7 +10,6 @@ import static org.mockito.Mockito.when;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -28,7 +26,6 @@ import com.hm.achievement.command.executable.BookCommand;
 import com.hm.achievement.command.executable.EasterEggCommand;
 import com.hm.achievement.command.executable.GenerateCommand;
 import com.hm.achievement.command.executable.HelpCommand;
-import com.hm.achievement.command.executable.Upgrade13Command;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.domain.Achievement.AchievementBuilder;
 
@@ -56,9 +53,6 @@ class CommandTabCompleterTest {
 	private EasterEggCommand easterEggCommand;
 
 	@Mock
-	private Upgrade13Command upgrade13Command;
-
-	@Mock
 	private GenerateCommand generateCommand;
 
 	private CommandTabCompleter underTest;
@@ -70,7 +64,6 @@ class CommandTabCompleterTest {
 		Set<AbstractCommand> commands = new HashSet<>();
 		commands.add(bookCommand);
 		commands.add(easterEggCommand);
-		commands.add(upgrade13Command);
 		commands.add(generateCommand);
 		commands.add(helpCommand);
 		AchievementMap achievementMap = new AchievementMap();
@@ -82,7 +75,7 @@ class CommandTabCompleterTest {
 				.displayName("Spaced Name Achievement!").build());
 		achievementMap.put(new AchievementBuilder().name("ach4").displayName("Display 4").subcategory("workbench")
 				.category(MultipleAchievements.CRAFTS).build());
-		underTest = new CommandTabCompleter(achievementMap, commands, 13);
+		underTest = new CommandTabCompleter(achievementMap, commands);
 	}
 
 	@Test
@@ -135,27 +128,13 @@ class CommandTabCompleterTest {
 	}
 
 	@Test
-	void shoudCompleteWithNonEasterEggAndNonUpgrade13Commands() {
+	void shoudCompleteWithNonEasterEggCommand() {
 		when(commandSender.hasPermission(anyString())).thenReturn(true);
 
 		String[] args = { "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
 		assertEquals(asList("book", "generate", "help"), completionResult);
-	}
-
-	@Test
-	void shoudNotCompleteWithGenerateCommandOnOldMinecraftVersion() {
-		Set<AbstractCommand> commands = new HashSet<>();
-		commands.add(bookCommand);
-		commands.add(generateCommand);
-		underTest = new CommandTabCompleter(new AchievementMap(), commands, 11);
-		when(commandSender.hasPermission(anyString())).thenReturn(true);
-
-		String[] args = { "" };
-		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
-
-		assertEquals(asList("book"), completionResult);
 	}
 
 	@Test
@@ -222,47 +201,6 @@ class CommandTabCompleterTest {
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
 		assertEquals(asList("spaced␣name␣achievement!", "special␣event␣achievement!"), completionResult);
-	}
-
-	@Test
-	void shoudTruncateCompletionListOnOldServerVersionsIfOverFiftyElements() {
-		AchievementMap achievementMap = new AchievementMap();
-		IntStream.rangeClosed(1, 100)
-				.boxed()
-				.map(i -> new AchievementBuilder()
-						.name("ach" + i)
-						.displayName("Display " + i)
-						.category(CommandAchievements.COMMANDS)
-						.subcategory("yourAch" + i)
-						.build())
-				.forEach(achievementMap::put);
-		underTest = new CommandTabCompleter(achievementMap, emptySet(), 12);
-
-		String[] args = { "give", "" };
-		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
-
-		assertEquals(50, completionResult.size());
-		assertEquals("\u2022\u2022\u2022", completionResult.get(49));
-	}
-
-	@Test
-	void shoudNotTruncateCompletionListIfRecentServerVersion() {
-		AchievementMap achievementMap = new AchievementMap();
-		IntStream.rangeClosed(1, 100)
-				.boxed()
-				.map(i -> new AchievementBuilder()
-						.name("ach" + i)
-						.displayName("Display " + i)
-						.category(CommandAchievements.COMMANDS)
-						.subcategory("yourAch" + i)
-						.build())
-				.forEach(achievementMap::put);
-		underTest = new CommandTabCompleter(achievementMap, emptySet(), 16);
-
-		String[] args = { "give", "" };
-		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
-
-		assertEquals(100, completionResult.size());
 	}
 
 	@Test

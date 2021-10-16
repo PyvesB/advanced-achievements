@@ -23,9 +23,9 @@ import com.hm.achievement.db.CacheManager;
 public class EnderPearlsListener extends AbstractListener {
 
 	@Inject
-	public EnderPearlsListener(@Named("main") YamlConfiguration mainConfig, int serverVersion, AchievementMap achievementMap,
+	public EnderPearlsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
 			CacheManager cacheManager) {
-		super(NormalAchievements.ENDERPEARLS, mainConfig, serverVersion, achievementMap, cacheManager);
+		super(NormalAchievements.ENDERPEARLS, mainConfig, achievementMap, cacheManager);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

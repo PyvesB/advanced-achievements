@@ -214,7 +214,6 @@ reset-all-successful: "All statistics were cleared for PLAYER."
 
 # Used in /aach generate.
 advancements-generated: "Advancements were successfully generated."
-minecraft-not-supported: "Advancements not supported in your Minecraft version. Please update to 1.12+."
 
 # Used in /aach inspect
 achievement-not-recognized: "Achievement called 'NAME' was not recognized. Did you mean CLOSEST_MATCH?"
