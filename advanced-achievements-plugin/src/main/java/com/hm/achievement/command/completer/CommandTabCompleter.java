@@ -80,7 +80,7 @@ public class CommandTabCompleter implements TabCompleter {
 	 *
 	 * @param options
 	 * @param prefix
-	 * @return a list limited in length, containing elements matching the prefix.
+	 * @return a list containing elements matching the prefix.
 	 */
 	private List<String> getPartialList(Collection<String> options, String prefix) {
 		// Find matching options
