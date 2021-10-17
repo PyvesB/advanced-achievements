@@ -72,7 +72,7 @@ public class AdvancementManager implements Reloadable {
 		configRegisterAdvancementDescriptions = mainConfig.getBoolean("RegisterAdvancementDescriptions");
 		configHideAdvancements = mainConfig.getBoolean("HideAdvancements");
 		configRootAdvancementTitle = mainConfig.getString("RootAdvancementTitle");
-		configBackgroundTexture = parseBackgroundTexture();
+		configBackgroundTexture = mainConfig.getString("AdvancementsBackground");
 	}
 
 	public static String getKey(String achName) {
@@ -86,17 +86,6 @@ public class AdvancementManager implements Reloadable {
 		cleanupOldAchievementAdvancements();
 		registerParentAdvancement();
 		registerOtherAdvancements();
-	}
-
-	/**
-	 * Parses the background texture to insure maximum compatibility across Minecraft versions.
-	 * 
-	 * @return the background texture path
-	 */
-	private String parseBackgroundTexture() {
-		String configTexture = mainConfig.getString("AdvancementsBackground");
-		return StringUtils.replaceEach(configTexture, new String[] { "/items/", "book_enchanted.png" },
-				new String[] { "/item/", "enchanted_book.png" });
 	}
 
 	/**
