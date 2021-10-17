@@ -9,7 +9,6 @@ import javax.inject.Singleton;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.category.Category;
-import com.hm.achievement.config.ReloadableYamlConfiguration;
 
 import dagger.Module;
 import dagger.Provides;
@@ -33,21 +32,21 @@ public class ConfigModule {
 	@Singleton
 	@Named("main")
 	YamlConfiguration providesMainConfig() {
-		return new ReloadableYamlConfiguration();
+		return new YamlConfiguration();
 	}
 
 	@Provides
 	@Singleton
 	@Named("lang")
 	YamlConfiguration providesLangConfig() {
-		return new ReloadableYamlConfiguration();
+		return new YamlConfiguration();
 	}
 
 	@Provides
 	@Singleton
 	@Named("gui")
 	YamlConfiguration providesGuiConfig() {
-		return new ReloadableYamlConfiguration();
+		return new YamlConfiguration();
 	}
 
 }
