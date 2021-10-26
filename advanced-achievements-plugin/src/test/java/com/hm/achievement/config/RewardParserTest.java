@@ -64,7 +64,7 @@ class RewardParserTest {
 		mainConfig.load(Paths.get(getClass().getClassLoader().getResource("reward-parser/money-1.yml").toURI()).toFile());
 		when(economy.currencyNameSingular()).thenReturn("coin");
 
-		List<Reward> rewards = underTest.parseRewards("");
+		List<Reward> rewards = underTest.parseRewards("Reward");
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.get(0);
@@ -79,7 +79,7 @@ class RewardParserTest {
 		mainConfig.load(Paths.get(getClass().getClassLoader().getResource("reward-parser/money-2.yml").toURI()).toFile());
 		when(economy.currencyNamePlural()).thenReturn("coins");
 
-		List<Reward> rewards = underTest.parseRewards("");
+		List<Reward> rewards = underTest.parseRewards("Reward");
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.get(0);
@@ -93,7 +93,7 @@ class RewardParserTest {
 	void shouldParseItemReward() throws Exception {
 		mainConfig.load(Paths.get(getClass().getClassLoader().getResource("reward-parser/item.yml").toURI()).toFile());
 
-		List<Reward> rewards = underTest.parseRewards("");
+		List<Reward> rewards = underTest.parseRewards("Reward");
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.get(0);
@@ -113,7 +113,7 @@ class RewardParserTest {
 		when(player.getWorld()).thenReturn(world);
 		when(world.getName()).thenReturn("Nether");
 
-		List<Reward> rewards = underTest.parseRewards("");
+		List<Reward> rewards = underTest.parseRewards("Reward");
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.get(0);
@@ -132,7 +132,7 @@ class RewardParserTest {
 		when(player.getWorld()).thenReturn(world);
 		when(world.getName()).thenReturn("Nether");
 
-		List<Reward> rewards = underTest.parseRewards("");
+		List<Reward> rewards = underTest.parseRewards("Reward");
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.get(0);
@@ -148,7 +148,7 @@ class RewardParserTest {
 	void shouldParseExperienceReward() throws Exception {
 		mainConfig.load(Paths.get(getClass().getClassLoader().getResource("reward-parser/experience.yml").toURI()).toFile());
 
-		List<Reward> rewards = underTest.parseRewards("");
+		List<Reward> rewards = underTest.parseRewards("Reward");
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.get(0);
@@ -165,7 +165,7 @@ class RewardParserTest {
 		when(player.getAttribute(any())).thenReturn(healthAttribute);
 		when(healthAttribute.getBaseValue()).thenReturn(1.0);
 
-		List<Reward> rewards = underTest.parseRewards("");
+		List<Reward> rewards = underTest.parseRewards("Reward");
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.get(0);
@@ -181,7 +181,7 @@ class RewardParserTest {
 		mainConfig.load(Paths.get(getClass().getClassLoader().getResource("reward-parser/max-oxygen.yml").toURI()).toFile());
 		when(player.getMaximumAir()).thenReturn(5);
 
-		List<Reward> rewards = underTest.parseRewards("");
+		List<Reward> rewards = underTest.parseRewards("Reward");
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.get(0);

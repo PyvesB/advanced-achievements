@@ -306,6 +306,7 @@ public class ConfigurationParser {
 			throw new PluginLoadError(
 					"Achievement with path (" + path + ") is missing its Message parameter in config.yml.");
 		}
+		String rewardPath = mainConfig.isConfigurationSection(path + ".Reward") ? path + ".Reward" : path + ".Rewards";
 
 		Achievement achievement = new AchievementBuilder()
 				.name(section.getString("Name"))
@@ -316,7 +317,7 @@ public class ConfigurationParser {
 				.threshold(threshold)
 				.category(category)
 				.subcategory(subcategory)
-				.rewards(rewardParser.parseRewards(path))
+				.rewards(rewardParser.parseRewards(rewardPath))
 				.build();
 		achievementMap.put(achievement);
 	}

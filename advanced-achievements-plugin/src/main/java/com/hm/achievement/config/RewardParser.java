@@ -75,10 +75,7 @@ public class RewardParser {
 	}
 
 	public List<Reward> parseRewards(String path) {
-		ConfigurationSection configSection = mainConfig.getConfigurationSection(path + ".Reward");
-		if (configSection == null) {
-			configSection = mainConfig.getConfigurationSection(path + ".Rewards");
-		}
+		ConfigurationSection configSection = mainConfig.getConfigurationSection(path);
 		List<Reward> rewards = new ArrayList<>();
 		if (configSection != null) {
 			if (economy != null && configSection.contains("Money")) {
