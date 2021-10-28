@@ -57,9 +57,6 @@ permissions:
   achievement.generate:
     description: Allows to generate advancements from the achievements defined in the configuration.
     default: op
-  achievement.update:
-    description: Allows to be notified when a plugin update is available and CheckForUpdate is set to true in config.
-    default: op
   achievement.*:
     description: Star notation of permissions, includes all the above ones and disables book command cooldowns.
     default: op
@@ -79,7 +76,6 @@ permissions:
       achievement.delete: true
       achievement.reset: true
       achievement.generate: true
-      achievement.update: true
       achievement.count.*: true
   achievement.config.title.screen:
     description: If TitleScreen is false in config.yml, allows overriding to true on a per-player basis.

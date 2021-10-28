@@ -8,7 +8,4 @@ Firework: true
 book-not-received: "You have not yet received any achievements."
 #=============================================================#
 
-# Check for update on plugin launch and notify when an OP joins the game.
-CheckForUpdate: true
-
 book-date: "Book created on DATE."

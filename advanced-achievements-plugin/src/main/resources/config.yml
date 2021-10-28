@@ -156,9 +156,6 @@ DateLocale: en
 # Display reception time of achievements in /aach book and /aach list in addition to the date.
 DateDisplayTime: true
 
-# Check for update on plugin launch and notify when a player with achievement.update permission joins the game.
-CheckForUpdate: true
-
 # Awarded when a player has received all the achievements. Use the same reward pattern as with achievements.
 # See https://github.com/PyvesB/advanced-achievements/wiki/Rewards
 AllAchievementsReceivedRewards:

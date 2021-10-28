@@ -33,7 +33,6 @@ import com.hm.achievement.listener.JoinListener;
 import com.hm.achievement.listener.ListGUIListener;
 import com.hm.achievement.listener.PlayerAdvancedAchievementListener;
 import com.hm.achievement.listener.TeleportListener;
-import com.hm.achievement.listener.UpdateChecker;
 import com.hm.achievement.listener.statistics.AbstractListener;
 import com.hm.achievement.placeholder.AchievementPlaceholderHook;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
@@ -51,7 +50,6 @@ public class PluginLoader {
 
 	private final AdvancedAchievements advancedAchievements;
 	private final Logger logger;
-	private final UpdateChecker updateChecker;
 	private final ReloadCommand reloadCommand;
 	private final Set<Reloadable> reloadables;
 	private final AchievementMap achievementMap;
@@ -95,8 +93,8 @@ public class PluginLoader {
 			AsyncCachedRequestsSender asyncCachedRequestsSender, PluginCommandExecutor pluginCommandExecutor,
 			CommandTabCompleter commandTabCompleter, Set<Category> disabledCategories,
 			@Named("main") YamlConfiguration mainConfig, ConfigurationParser configurationParser,
-			AchieveDistanceRunnable distanceRunnable, AchievePlayTimeRunnable playTimeRunnable, UpdateChecker updateChecker,
-			ReloadCommand reloadCommand, AchievementMap achievementMap) {
+			AchieveDistanceRunnable distanceRunnable, AchievePlayTimeRunnable playTimeRunnable, ReloadCommand reloadCommand,
+			AchievementMap achievementMap) {
 		this.advancedAchievements = advancedAchievements;
 		this.logger = logger;
 		this.reloadables = reloadables;
@@ -115,7 +113,6 @@ public class PluginLoader {
 		this.configurationParser = configurationParser;
 		this.distanceRunnable = distanceRunnable;
 		this.playTimeRunnable = playTimeRunnable;
-		this.updateChecker = updateChecker;
 		this.reloadCommand = reloadCommand;
 		this.achievementMap = achievementMap;
 	}
@@ -133,7 +130,6 @@ public class PluginLoader {
 		}
 		initialiseCommands();
 		launchScheduledTasks();
-		launchUpdateChecker();
 		registerPermissions();
 		reloadCommand.notifyObservers();
 		linkPlaceholders();
@@ -240,17 +236,6 @@ public class PluginLoader {
 			int configDistanceTaskInterval = mainConfig.getInt("DistanceTaskInterval");
 			distanceTask = Bukkit.getScheduler().runTaskTimer(advancedAchievements, distanceRunnable,
 					configDistanceTaskInterval * 40L, configDistanceTaskInterval * 20L);
-		}
-	}
-
-	/**
-	 * Launches an update check task. If updateChecker already registered (i.e. reload), does not check for update
-	 * again. If CheckForUpdate switched to false unregisters listener.
-	 */
-	private void launchUpdateChecker() {
-		if (mainConfig.getBoolean("CheckForUpdate")) {
-			advancedAchievements.getServer().getPluginManager().registerEvents(updateChecker, advancedAchievements);
-			updateChecker.launchUpdateCheckerTask();
 		}
 	}
 

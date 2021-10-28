@@ -141,9 +141,6 @@ DateLocale: zh
 # 仅适用于显示插件版本3.0以上时获得的成就，不会显示具体的时间，只会显示为如 “midnight”这种
 DateDisplayTime: true
 
-# 在插件启动时检查插件更新，并且在有achievement.update权限节点的玩家登录游戏时提醒他们
-CheckForUpdate: true
-
 # 当玩家获得所有成就时给予玩家的奖励，与成就奖励设置格式相同
 # 请查看 https://github.com/PyvesB/advanced-achievements/wiki/Rewards
 AllAchievementsReceivedRewards:
