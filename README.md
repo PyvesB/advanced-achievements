@@ -8,11 +8,11 @@
 <a href="https://github.com/PyvesB/advanced-achievements/actions?query=workflow%3A%22Build+project+and+validate+formatting%22">
 <img src ="https://img.shields.io/github/workflow/status/PyvesB/advanced-achievements/Build%20project%20and%20validate%20formatting" />
 </a>
-<a href="https://github.com/PyvesB/advanced-achievements/commits/master">
-<img src ="https://img.shields.io/github/commit-activity/m/PyvesB/advanced-achievements" />
-</a>
 <a href="https://www.spigotmc.org/resources/83466/">
 <img src ="https://img.shields.io/spiget/version/83466?label=spigot%20version" />
+</a>
+<a href="https://github.com/PyvesB/advanced-achievements/issues/1083">
+<img src ="https://img.shields.io/maintenance/no/2021" />
 </a>
 
 **Advanced Achievements enables unique and challenging achievements on Minecraft servers. Collect as many as you can, earn rewards, climb the rankings and receive RP books! The plugin supports SQLite, MySQL, H2 and PostgreSQL, manages an extensive statistics system, handles YAML configuration files and features fancy in-game GUIs and effects!**
