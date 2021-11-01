@@ -119,12 +119,12 @@
 			<artifactId>Jobs</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.ess3</groupId>
+			<groupId>net.essentialsx</groupId>
 			<artifactId>EssentialsX</artifactId>
 			<exclusions>
 				<exclusion>
-					<groupId>org.bukkit</groupId>
-					<artifactId>bukkit</artifactId>
+					<groupId>org.bstats</groupId>
+					<artifactId>bstats-bukkit</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
